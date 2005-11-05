@@ -1,0 +1,32 @@
+Anthony Kruize <trandor@labyrinth.net.au>
+  - SDL port maintainer.
+
+Jeremy Scott
+  - Win32 DirectX port and ideas.
+
+Arto Jantunen
+  - Debian package maintainer, suggestions and bug reports/fixes.
+
+Michael Olson
+  - Bug fixes.
+
+Ed Snible
+  - Performance tweaks.
+
+Nix
+  - Improvements to the Make and Configure scripts.
+
+Bob Ippolito
+  - Bug fixes.
+
+Joris Beugnies
+  - OpenGL Support.
+
+Ben Hines
+  - Bug fixes for MacOSX.
+
+Julian Mayer
+  - Bug fixes for MacOSX.
+
+Crack Dot Com <http://www.abuse2.com>
+  - The best 2D platform shooter ever....Abuse!
