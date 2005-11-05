@@ -1,0 +1,2 @@
+unsigned xres,yres;
+

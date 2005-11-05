@@ -1,0 +1,16 @@
+This is a list of known bugs and features that need fixing/implementing:
+
+BUGS
+----
+- On some systems, Abuse-SDL crashes during startup due to a NULL object.
+   (This is because of corrupt datafiles)
+- On some systems, Abuse-SDL will fail run, giving a 'BOSS_ANT has no value'
+  error. (See the README file for details on how to workaround this)
+
+FEATURES
+--------
+- Multiplayer support over the internet and local network using tcp/ip.
+- Multiplayer support over a local network using IPX.
+- Performance improvements.
+- Add YUV overlay support.
+- Convert all internal rendering to 24-bit.
