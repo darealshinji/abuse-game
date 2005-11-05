@@ -1,0 +1,15 @@
+## Process this file with automake to produce Makefile.in
+noinst_LIBRARIES = libimlib.a
+
+libimlib_a_SOURCES = filter.cpp gifread.cpp globals.cpp image.cpp \
+	linked.cpp input.cpp mdlread.cpp palette.cpp ppmread.cpp \
+	include.cpp xwdread.cpp fonts.cpp decoder.cpp loader.cpp \
+	glread.cpp texture.cpp specs.cpp supmorph.cpp image24.cpp \
+	pcxread.cpp timage.cpp jmalloc.cpp jrand.cpp lbmread.cpp \
+	targa.cpp keys.cpp dprint.cpp status.cpp visobj.cpp \
+	packet.cpp readwav.cpp pmenu.cpp scroller.cpp filesel.cpp \
+	tools.cpp guistat.cpp sprite.cpp jwindow.cpp
+
+INCLUDES = -I$(srcdir)/include
+
+CPPFLAGS = @CPPFLAGS@ -DMANAGE_MEM -DNO_CHECK
