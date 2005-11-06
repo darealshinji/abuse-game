@@ -203,7 +203,7 @@ void calc_light_table(palette *pal)
 
 	char *lightpath;
 	lightpath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 9, "lightpath" );
-	sprintf( lightpath, "%slight.tbl\0", get_save_filename_prefix() );
+	sprintf( lightpath, "%slight.tbl", get_save_filename_prefix() );
 
 	bFILE *fp=open_file( lightpath, "rb" );
 	int recalc = 0;
@@ -1218,7 +1218,7 @@ void read_lights(spec_directory *sd, bFILE *fp, char *level_name)
     fp->seek(se->offset,SEEK_SET);
     long t=fp->read_long();
     min_light_level=fp->read_long();
-    light_source *last;
+    light_source *last=NULL;
     while (t)
     {
       t--;

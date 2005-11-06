@@ -283,9 +283,10 @@ void load_data(int argc, char **argv)
 
 	int should_save_sd_cache = 0;
 
+# if 0
 	char *cachepath;
 	cachepath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 12, "cachepath" );
-	sprintf( cachepath, "%ssd_cache.tmp\0", get_save_filename_prefix() );
+	sprintf( cachepath, "%ssd_cache.tmp", get_save_filename_prefix() );
 
 	bFILE *load = open_file( cachepath, "rb" );
 	if( !load->open_failure() )
@@ -297,6 +298,7 @@ void load_data(int argc, char **argv)
 		should_save_sd_cache = 1;
 	}
 	delete load;
+#endif
 
   if (!net_start())              // don't let them specify a startup file we are connect elsewhere
   {
@@ -443,6 +445,7 @@ void load_data(int argc, char **argv)
   b_wid=cash.backt(backtiles[0])->im->width();
   b_hi=cash.backt(backtiles[0])->im->height();
 
+#if 0
 	if( should_save_sd_cache )
 	{
 		bFILE *save = open_file( cachepath, "wb" );
@@ -452,10 +455,13 @@ void load_data(int argc, char **argv)
 		}
 		delete save;
 	}
+#endif
 
 	sd_cache.clear();
 	past_startup = 1;
+#if 0
 	jfree( cachepath );
+#endif
 }
 
 

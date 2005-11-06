@@ -11,7 +11,7 @@ char *jk_key_names[]= {"Up Arrow","Down Arrow","Left Arrow","Right Arrow",
 
 void key_name(int key, char *buffer)
 {
-	static char sing[2];
+	//static char sing[2];
 	if( key > 255 && key <= JK_MAX_KEY )
 		strcpy(buffer,jk_key_names[key-256]);
 	else if( key == JK_BACKSPACE )

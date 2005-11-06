@@ -150,7 +150,7 @@ int bFILE::flush_writes()
 {
   if (wbuf_end!=0)
   {
-    long ret=unbuffered_write(wbuf,wbuf_end);
+    unsigned long ret=unbuffered_write(wbuf,wbuf_end);
     if (ret!=wbuf_end && no_space_handle_fun)
       no_space_handle_fun();
       
@@ -171,7 +171,7 @@ int bFILE::read(void *buf, size_t count)       // returns number of bytes read, 
   {
     if (rbuf_start<rbuf_end)
     {
-      int avail_size=rbuf_end-rbuf_start;
+      unsigned int avail_size=rbuf_end-rbuf_start;
       int copy_size=avail_size>count ? count : avail_size;
       memcpy(buf,rbuf+rbuf_start,copy_size);
       buf=(void *)(((unsigned char *)buf)+copy_size);
@@ -208,7 +208,7 @@ int bFILE::write(void *buf, size_t count)      // returns number of bytes writte
       count-=copy_size;
       buf=(void *)(((char *)buf)+copy_size);
       if (wbuf_end==wbuf_size)
-        if (flush_writes()!=wbuf_size)
+        if ((unsigned int)flush_writes()!=wbuf_size)
 	  return total_written;
       
       total_written+=copy_size;      
@@ -216,7 +216,7 @@ int bFILE::write(void *buf, size_t count)      // returns number of bytes writte
     return total_written;
   } else
   {
-    long ret=unbuffered_write(buf,count);
+    unsigned long ret=unbuffered_write(buf,count);
     if (ret!=count && no_space_handle_fun)
       no_space_handle_fun();
   }
@@ -233,7 +233,7 @@ int bFILE::seek(long offset, int whence) // whence=SEEK_SET, SEEK_CUR, SEEK_END,
   if (whence==SEEK_CUR) offset+=curpos;
   else if (whence==SEEK_END) offset=file_size()-offset;
 
-  if (offset<realpos-rbuf_end || offset>=realpos)
+  if (offset<realpos-(long)rbuf_end || offset>=realpos)
   {
     rbuf_start=rbuf_end=0;
     unbuffered_seek(offset,SEEK_SET);
@@ -269,13 +269,13 @@ void set_spec_main_file(char *filename, int Search_order)
   
 #if (defined(__APPLE__) && !defined(__MACH__))
   spec_main_jfile.open_external(filename,"rb",O_BINARY|O_RDONLY);
-  spec_main_fd = spec_main_jfile.get_fd();
-  spec_main_sd.startup(&spec_main_jfile);
 #else
   spec_main_jfile.open_external(filename,"rb",O_RDONLY);
-  spec_main_fd = spec_main_jfile.get_fd();
-  spec_main_sd.startup(&spec_main_jfile);
 #endif
+  spec_main_fd = spec_main_jfile.get_fd();
+  if (spec_main_fd==-1)
+    return;
+  spec_main_sd.startup(&spec_main_jfile);
 }
 
 void fast_load_start_recording(char *filename)
@@ -334,7 +334,7 @@ void jFILE::open_external(char *filename, char *mode, int flags)
     if ((flags&O_APPEND)==0) 
     {
       skip_size=1;
-      int errval = unlink(tmp_name);
+      //int errval = unlink(tmp_name);
     }
 
     flags-=O_WRONLY;
@@ -486,7 +486,7 @@ int jFILE::unbuffered_tell()
 
 int jFILE::unbuffered_read(void *buf, size_t count)
 {
-	long len;
+	unsigned long len;
 
 	if (fd == spec_main_fd)
 	{
@@ -504,7 +504,7 @@ int jFILE::unbuffered_read(void *buf, size_t count)
 			
 			len = ::read(fd,(char*)buf,count);
 			::write(fast_load_fd,(char*)&len,sizeof(len));
-			::write(fast_load_fd,(char*)buf,count);
+			::write(fast_load_fd,(char*)buf,len);
 			break;
 		case 2:
 			::read(fast_load_fd,(char*)&len,sizeof(len));
@@ -524,7 +524,7 @@ int jFILE::unbuffered_read(void *buf, size_t count)
 		case 1:
 	  	len = ::read(fd,(char*)buf,count);
 			::write(fast_load_fd,(char*)&len,sizeof(len));
-			::write(fast_load_fd,(char*)buf,count);
+			::write(fast_load_fd,(char*)buf,len);
 	  	break;
 		case 2:
 			::read(fast_load_fd,(char*)&len,sizeof(len));
@@ -754,6 +754,7 @@ void spec_directory::print()
 void spec_directory::startup(bFILE *fp)
 {
   char buf[256];
+  memset(buf,0,256);
   fp->read(buf,8);
   buf[9]=0;
   size=0;

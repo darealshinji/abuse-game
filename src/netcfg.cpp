@@ -58,6 +58,8 @@ int net_configuration::restart_state()
     case RESTART_CLIENT :
     case RESTART_SINGLE :
       return 1;
+    default:
+      break;
   }
   return 0;
 }
@@ -69,6 +71,7 @@ int net_configuration::notify_reset()
     case RESTART_SERVER : { state=SERVER; } break;
     case RESTART_CLIENT : { state=CLIENT; } break;
     case RESTART_SINGLE : { state=SINGLE_PLAYER; } break;
+    default: break;
   }
 
 

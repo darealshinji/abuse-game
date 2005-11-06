@@ -98,7 +98,7 @@ net_address *tcpip_protocol::get_local_address()
 #else
   char my_name[100];						// check to see if this address is 'hostname'
   gethostname(my_name,100);
-  ip_address *ret = 0;
+  //ip_address *ret = 0;
   
   if (my_name[0]<'0' || my_name[0]>'9')
   {
@@ -378,8 +378,8 @@ int tcpip_protocol::handle_notification()
     {
 			buf[len] = 0;
       if  (strcmp(buf, notify_signature)==0) {
-				char s[256];
 #ifdef TCPIP_DEBUG
+				char s[256];
 				addr->store_string(s,256);
 				printf("responding to %s",s);
 #endif
@@ -536,7 +536,9 @@ int tcpip_protocol::handle_responder()
       		 	
       	if (!found)
       	{
+#ifdef TCPIP_DEBUG
 					char s[256];
+#endif
 					RequestItem *r = new RequestItem;
 					r->addr = addr;
 					strcpy(r->name,buf+5);					// ack hard coded numbers for now

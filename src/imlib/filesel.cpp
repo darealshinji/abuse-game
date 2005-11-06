@@ -56,9 +56,9 @@ void file_picker::note_selection(window_manager *wm, image *screen, input_manage
       wid=0;
       int i=0;
       for (;i<tf;i++)
-      if (strlen(f[i])>wid) wid=strlen(f[i]);
+      if ((int)strlen(f[i])>wid) wid=strlen(f[i]);
       for (i=0;i<td;i++)
-      if (strlen(d[i])+2>wid) wid=strlen(d[i])+2;
+      if ((int)strlen(d[i])+2>wid) wid=strlen(d[i])+2;
       sx=0;
 
       
@@ -102,9 +102,9 @@ file_picker::file_picker(int X, int Y, int ID, int Rows, ifield *Next)
   wid=0;
   int i=0;
   for (;i<tf;i++)
-    if (strlen(f[i])>wid) wid=strlen(f[i]);
+    if ((int)strlen(f[i])>wid) wid=strlen(f[i]);
   for (i=0;i<td;i++)
-    if (strlen(d[i])+2>wid) wid=strlen(d[i])+2;
+    if ((int)strlen(d[i])+2>wid) wid=strlen(d[i])+2;
   reconfigure();  
 }
 

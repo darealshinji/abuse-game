@@ -191,8 +191,9 @@ int load_game(int show_all, char *title)   // return 0 if the player escapes, el
 	if (total_saved>MAX_SAVE_GAMES)
 		total_saved=MAX_SAVE_GAMES;
 
-	int i,ih=cash.img(save_buts[0])->height();
-/*  ico_button *buts[MAX_SAVE_GAMES];
+	int i;
+/*  int ih=cash.img(save_buts[0])->height();
+  ico_button *buts[MAX_SAVE_GAMES];
   int y=WINDOW_FRAME_TOP;
 
 

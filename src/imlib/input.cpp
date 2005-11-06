@@ -256,18 +256,18 @@ void text_field::handle_event(event &ev, image *screen, window_manager *wm, inpu
     {
       case JK_LEFT : if (cur) { draw_cur(wm->dark_color(),screen,wm); cur--;
                            draw_cur(wm->bright_color(),screen,wm); } break; 
-      case JK_RIGHT : if (cur<strlen(format)-1) { draw_cur(wm->dark_color(),screen,wm); cur++;
+      case JK_RIGHT : if (cur<(int)strlen(format)-1) { draw_cur(wm->dark_color(),screen,wm); cur++;
                            draw_cur(wm->bright_color(),screen,wm); } break; 
       case JK_END : if (cur!=last_spot()) 
                           { draw_cur(wm->dark_color(),screen,wm); cur=last_spot(); 
-                            if (cur==strlen(format)-1) cur--; 
+                            if (cur==(int)strlen(format)-1) cur--; 
                            draw_cur(wm->bright_color(),screen,wm); } break; 
       case JK_HOME : if (cur) 
                           { draw_cur(wm->dark_color(),screen,wm); cur=0;
                            draw_cur(wm->bright_color(),screen,wm); } break; 
       case JK_BACKSPACE : if (cur)
          { draw_cur(wm->dark_color(),screen,wm); cur--;
-           for (xx=cur;xx<strlen(format)-1;xx++)
+           for (xx=cur;xx<(int)strlen(format)-1;xx++)
              data[xx]=data[xx+1];
            data[strlen(format)-1]=' ';
            draw_text(screen,wm);
@@ -280,7 +280,7 @@ void text_field::handle_event(event &ev, image *screen, window_manager *wm, inpu
            for (xx=strlen(format)-1;xx>cur && xx>0;xx--)
              data[xx]=data[xx-1];
            data[cur]=ev.key;
-           if (cur<strlen(format)-1)
+           if (cur<(int)strlen(format)-1)
              cur++;
 	   data[strlen(format)]=0;
            draw_text(screen,wm);
@@ -334,7 +334,7 @@ text_field::text_field(int X, int Y, int ID, char *Prompt, char *Format,
                                double Data, ifield *Next)
 {
   char num[20];
-  sprintf(num,"%Lg",Data);  
+  sprintf(num,"%g",Data);  
   int slen=(strlen(Format)>strlen(num) ? strlen(Format) : strlen(num));
   x=X; y=Y; id=ID;
   prompt=strcpy((char *)jmalloc(strlen(Prompt)+1,"text_field::prompt"),Prompt);

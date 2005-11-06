@@ -347,7 +347,7 @@ int scroller::mouse_to_drag(int mx,int my)
 void scroller::scroll_event(int newx, image *screen, window_manager *wm)
 {
   screen->bar(x,y,x+l-1,y+h-1,wm->black());
-  int xa,ya,xo,yo;
+  int xa,ya,xo=0,yo;
   if (vert) { xa=0; ya=30; yo=x+5; yo=y+5; } else { xa=30; ya=0; xo=x+5; yo=y+5; }
   for (int i=newx,c=0;c<30 && i<100;i++,c++)
   {
@@ -390,7 +390,7 @@ pick_list::pick_list(int X, int Y, int ID, int height,
   qsort((void *)lis,num_entries,sizeof(pick_list_item),lis_sort);
 
   for (i=0;i<t;i++)
-    if (strlen(List[i])>wid) 
+    if ((int)strlen(List[i])>wid) 
       wid=strlen(List[i]);
   cur_sel=sx=start_yoffset;
 }
@@ -425,11 +425,11 @@ void pick_list::handle_inside_event(event &ev, image *screen, window_manager *wm
   {
     int found=-1;
     if (key_hist_total<20)
-      key_hist[key_hist_total++]=ev.key;
+      key_hist[(int)(key_hist_total++)]=ev.key;
 
     for (int i=0;i<t && found==-1;i++)
     {
-      if (strlen(lis[i].name)>=key_hist_total && memcmp(lis[i].name,key_hist,key_hist_total)==0)
+      if ((int)strlen(lis[i].name)>=key_hist_total && memcmp(lis[i].name,key_hist,key_hist_total)==0)
 	found=i;
     }
     if (found!=-1)
@@ -479,7 +479,7 @@ void pick_list::scroll_event(int newx, image *screen, window_manager *wm)
     screen->set_clip(x,y,x+l-1,y+h-1);
     int tw=(l+tex->width()-1)/tex->width();
     int th=(h+tex->height()-1)/tex->height();
-    int dy=y,dx;
+    int dy=y;
     for (int j=0;j<th;j++,dy+=tex->height())
       for (int i=0,dx=x;i<tw;i++,dx+=tex->width())      
         tex->put_image(screen,dx,dy);

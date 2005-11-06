@@ -931,7 +931,7 @@ void *pairlis(void *list1, void *list2, void *list3)
   }
   if (l1!=0)
   {
-    void *first=NULL,*last=NULL,*cur=NULL;
+    void *first=NULL,*last=NULL,*cur=NULL,*tmp;
     p_ref r1(first),r2(last),r3(cur);
     while (list1)
     {
@@ -942,8 +942,10 @@ void *pairlis(void *list1, void *list2, void *list3)
       last=cur;
 	      
       cons_cell *cell=new_cons_cell();	      
-      ((cons_cell *)cell)->car=lcar(list1);
-      ((cons_cell *)cell)->cdr=lcar(list2);
+      tmp=lcar(list1);
+      ((cons_cell *)cell)->car=tmp;
+      tmp=lcar(list2);
+      ((cons_cell *)cell)->cdr=tmp;
       ((cons_cell *)cur)->car=cell;
 
       list1=((cons_cell *)list1)->cdr;
@@ -1150,35 +1152,38 @@ void *compile(char *&s)
     return true_symbol;
   else if (n[0]=='\'')                    // short hand for quote function
   {
-    void *cs=new_cons_cell(),*c2=NULL;
+    void *cs=new_cons_cell(),*c2=NULL,*tmp;
     p_ref r1(cs),r2(c2);
 
     ((cons_cell *)cs)->car=quote_symbol;
     c2=new_cons_cell();
-    ((cons_cell *)c2)->car=compile(s);
+    tmp=compile(s);
+    ((cons_cell *)c2)->car=tmp;
     ((cons_cell *)c2)->cdr=NULL;
     ((cons_cell *)cs)->cdr=c2;
     ret=cs;
   }
   else if (n[0]=='`')                    // short hand for backquote function
   {
-    void *cs=new_cons_cell(),*c2=NULL;
+    void *cs=new_cons_cell(),*c2=NULL,*tmp;
     p_ref r1(cs),r2(c2);
 
     ((cons_cell *)cs)->car=backquote_symbol;
     c2=new_cons_cell();
-    ((cons_cell *)c2)->car=compile(s);
+    tmp=compile(s);
+    ((cons_cell *)c2)->car=tmp;
     ((cons_cell *)c2)->cdr=NULL;
     ((cons_cell *)cs)->cdr=c2;
     ret=cs;
   }  else if (n[0]==',')              // short hand for comma function
   {
-    void *cs=new_cons_cell(),*c2=NULL;
+    void *cs=new_cons_cell(),*c2=NULL,*tmp;
     p_ref r1(cs),r2(c2);
 
     ((cons_cell *)cs)->car=comma_symbol;
     c2=new_cons_cell();
-    ((cons_cell *)c2)->car=compile(s);
+    tmp=compile(s);
+    ((cons_cell *)c2)->car=tmp;
     ((cons_cell *)c2)->cdr=NULL;
     ((cons_cell *)cs)->cdr=c2;
     ret=cs;
@@ -1206,18 +1211,22 @@ void *compile(char *&s)
 				    lerror(s,"token '.' not allowed here\n");	      
 				  else 
 				  {
+				    void *tmp;
 				    read_ltoken(s,n);              // skip the '.'
-				    ((cons_cell *)last)->cdr=compile(s);          // link the last cdr to 
+				    tmp=compile(s);
+				    ((cons_cell *)last)->cdr=tmp;          // link the last cdr to 
 				    last=NULL;
 				  }
 				} else if (!last && first)
 				  lerror(s,"illegal end of dotted list\n");
 				else
 				{		 
+				  void *tmp;
 				  cur=new_cons_cell();
 				  p_ref r1(cur);
 				  if (!first) first=cur;
-				  ((cons_cell *)cur)->car=compile(s);	
+				  tmp=compile(s);	
+				  ((cons_cell *)cur)->car=tmp;
 				  if (last)
 				    ((cons_cell *)last)->cdr=cur;
 				  last=cur;
@@ -1265,11 +1274,13 @@ void *compile(char *&s)
     }
     else if (n[1]==0)                           // short hand for function
     {
-      void *cs=new_cons_cell(),*c2=NULL;
+      void *cs=new_cons_cell(),*c2=NULL,*tmp;
       p_ref r4(cs),r5(c2);
-      ((cons_cell *)cs)->car=make_find_symbol("function");
+      tmp=make_find_symbol("function");
+      ((cons_cell *)cs)->car=tmp;
       c2=new_cons_cell();
-      ((cons_cell *)c2)->car=compile(s);
+      tmp=compile(s);
+      ((cons_cell *)c2)->car=tmp;
       ((cons_cell *)cs)->cdr=c2;
       ret=cs;
     }
@@ -1278,7 +1289,9 @@ void *compile(char *&s)
       lbreak("Unknown #\\ notation : %s\n",n);
       exit(0);
     }
-  } else return make_find_symbol(n);
+  } else {
+    ret = make_find_symbol(n);
+  } 
   return ret;
 }
 
@@ -1526,13 +1539,15 @@ void *eval_function(lisp_symbol *sym, void *arg_list)
     } break;
     case L_C_FUNCTION :
     {
-      void *first=NULL,*cur=NULL;
+      void *first=NULL,*cur=NULL,*tmp;
       p_ref r1(first),r2(cur);
       while (arg_list)
       {
-				if (first)
-				  cur=((cons_cell *)cur)->cdr=new_cons_cell();
-				else
+				if (first) {
+				  tmp=new_cons_cell();
+				  ((cons_cell *)cur)->cdr=tmp;
+				  cur=tmp;
+				} else
 				  cur=first=new_cons_cell();
 			
 				void *val=eval(CAR(arg_list));
@@ -1543,13 +1558,15 @@ void *eval_function(lisp_symbol *sym, void *arg_list)
     } break;
     case L_C_BOOL :
     {
-      void *first=NULL,*cur=NULL;
+      void *first=NULL,*cur=NULL,*tmp;
       p_ref r1(first),r2(cur);
       while (arg_list)
       {
-				if (first)
-				  cur=((cons_cell *)cur)->cdr=new_cons_cell();
-				else
+				if (first) {
+				  tmp=new_cons_cell();
+				  ((cons_cell *)cur)->cdr=tmp;
+				  cur=tmp;
+				} else
 				  cur=first=new_cons_cell();
 			
 				void *val=eval(CAR(arg_list));
@@ -1562,7 +1579,7 @@ void *eval_function(lisp_symbol *sym, void *arg_list)
       else ret=NULL;
     } break;
     default :
-      fprintf(stderr,"not a fun, sholdn't happed\n");
+      fprintf(stderr,"not a fun, shouldn't happen\n");
   }
 
 #ifdef L_PROFILE
@@ -1781,7 +1798,7 @@ void *backquote_eval(void *args)
     return eval(CAR(CDR(args)));
   else
   {
-    void *first=NULL,*last=NULL,*cur=NULL;
+    void *first=NULL,*last=NULL,*cur=NULL,*tmp;
     p_ref ref1(first),ref2(last),ref3(cur),ref4(args);
     while (args)
     {
@@ -1789,7 +1806,8 @@ void *backquote_eval(void *args)
       {
 	if (CAR(args)==comma_symbol)               // dot list with a comma?
 	{
-	  ((cons_cell *)last)->cdr=eval(CAR(CDR(args)));
+	  tmp=eval(CAR(CDR(args)));
+	  ((cons_cell *)last)->cdr=tmp;
 	  args=NULL;
 	}
 	else
@@ -1800,12 +1818,14 @@ void *backquote_eval(void *args)
 	  else 
             first=cur;
 	  last=cur;
-          ((cons_cell *)cur)->car=backquote_eval(CAR(args));
+          tmp=backquote_eval(CAR(args));
+          ((cons_cell *)cur)->car=tmp;
  	  args=CDR(args);
 	}
       } else
       {
-	((cons_cell *)last)->cdr=backquote_eval(args);
+	tmp=backquote_eval(args);
+	((cons_cell *)last)->cdr=tmp;
 	args=NULL;
       }
 
@@ -2105,7 +2125,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
 
       while (var_list)
       {
-	void *var_name=CAR(CAR(var_list));
+	void *var_name=CAR(CAR(var_list)),*tmp;
 #ifdef TYPE_CHECKING
 	if (item_type(var_name)!=L_SYMBOL)
 	{
@@ -2116,7 +2136,8 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
 #endif
 
 	l_user_stack.push(((lisp_symbol *)var_name)->value);
-	((lisp_symbol *)var_name)->value=eval(CAR(CDR(CAR(var_list))));	
+	tmp=eval(CAR(CDR(CAR(var_list))));	
+	((lisp_symbol *)var_name)->value=tmp;
 	var_list=CDR(var_list);
       }
 
@@ -2377,7 +2398,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
 				{
 					char *gammapath;
 					gammapath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 10, "gammapath" );
-					sprintf( gammapath, "%sgamma.lsp\0", get_save_filename_prefix() );
+					sprintf( gammapath, "%sgamma.lsp", get_save_filename_prefix() );
 					fp = new jFILE( gammapath, "rb" );
 					jfree( gammapath );
 				}

@@ -134,7 +134,7 @@ int nfs_file::unbuffered_read(void *buf, size_t count)      // returns number of
   else if (nfs_fd>=0)
   {
     long a=NF_read(nfs_fd,buf,count);
-    if (a>count)
+    if (a>(long)count)
     { 
       fprintf(stderr,"ooch read too much\n");
     }

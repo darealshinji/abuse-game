@@ -29,10 +29,10 @@ image *read_lbm(char *filename, palette *&pal)
     }
     else
     {
-      long offset=12,ssize;    
+      long ssize;    
       char stype[4];
       short w=0,h=0,x,y,tcolor,pagew,pageh;
-      char planes,masking,compr,padl,xa,ya;
+      char planes,masking,compr=0,padl,xa,ya;
       
       while (ftell(fp)+4<size)
       {
@@ -62,7 +62,7 @@ image *read_lbm(char *filename, palette *&pal)
 	{
 	  if (im) delete im;  // shouldn't be two BODY's butjust in case...
 	  im=new image(w,h);
-	  int x,y;
+	  int y;
 	  if (!compr)
 	  {
 	    for (y=0;y<h;h++)

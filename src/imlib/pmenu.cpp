@@ -275,7 +275,7 @@ int pmenu::itemx(pmenu_item *p, window_manager *wm)
   int w=bar->screen->width();
   
 
-  int total=0,tx,tw,i=0,x;
+  int total=0,tw,i=0,x=0;
   for (pmenu_item *pp=top;pp;pp=pp->next,i++) 
   { if (pp==p) x=i;
     total++;

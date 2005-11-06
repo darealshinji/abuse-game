@@ -457,7 +457,7 @@ int game_server::quit()
   {
     player_client *d=c;
     c=c->next;
-    delete c;
+    delete d;
   }
   player_list=NULL;
   return 1;
