@@ -359,7 +359,7 @@ void setup( int argc, char **argv )
 
 	if( (homedir = getenv( "HOME" )) != NULL )
 	{
-		savedir = (char *)jmalloc( strlen( homedir ) + 8, "savedir" );
+		savedir = (char *)jmalloc( strlen( homedir ) + 9, "savedir" );
 		sprintf( savedir, "%s/.abuse/", homedir );
 		// Check if we already have a savegame directory
 		if( (fd = fopen( savedir, "r" )) == NULL )
