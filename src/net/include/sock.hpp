@@ -16,6 +16,7 @@ class net_address
   virtual void print()               { ; }
   virtual net_address *copy()    = 0;
   virtual void store_string(char *st, int st_length) = 0;    // this should be able to be used get_node_address()
+  virtual ~net_address() {;}
 } ;
 
 
