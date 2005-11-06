@@ -35,8 +35,8 @@ class game_server : public game_handler
     int need_reload_start_ok() { return get_flag(Need_reload_start_ok); }
     void set_need_reload_start_ok(int x) { set_flag(Need_reload_start_ok,x); }
 
-    net_socket *comm;
     int client_id; 
+    net_socket *comm;
     net_address *data_address;
     player_client *next;
     player_client(int client_id, net_socket *comm, net_address *data_address, player_client *next) : 

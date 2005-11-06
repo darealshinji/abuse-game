@@ -343,6 +343,8 @@ void event_handler::get_event( event &ev )
 											ev.key = SDLK_COLON; break;
 										case SDLK_QUOTE:
 											ev.key = SDLK_QUOTEDBL; break;
+										default:
+											break;
 									}
 								}
 							}

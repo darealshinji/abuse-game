@@ -109,7 +109,7 @@ Cell *load_block(bFILE *fp)
       else
       {
 	long x=abs(t);
-	cons_cell *last,*first=NULL;
+	cons_cell *last=NULL,*first=NULL;
 	while (x)
 	{
 	  cons_cell *c=new_cons_cell();

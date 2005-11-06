@@ -2002,6 +2002,8 @@ void dev_controll::handle_event(event &ev)
 	}
       }
     }
+    default:
+      break;
   }
 
   switch (ev.type)

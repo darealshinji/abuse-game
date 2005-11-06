@@ -84,13 +84,14 @@ protected:
   };
   typedef isllist<RequestItem *>::iterator p_request;
   isllist<RequestItem*> servers,returned;
-  net_socket *responder;
-  ip_address *bcast;
 
   // Notification Data
   net_socket *notifier;
   char notify_data[512];
   int notify_len;
+
+  net_socket *responder;
+  ip_address *bcast;
 
   int handle_notification();
   int handle_responder();

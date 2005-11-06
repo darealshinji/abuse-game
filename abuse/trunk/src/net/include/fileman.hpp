@@ -18,9 +18,9 @@ class file_manager
     net_socket *sock;
     int file_fd;
 
+    nfs_client *next;
     long size_to_read;  
     long size;
-    nfs_client *next;
     nfs_client(net_socket *sock, int file_fd, nfs_client *next);
     int send_read();     // flushes as much of size_to_read as possible
     ~nfs_client();

@@ -481,7 +481,7 @@ unsigned char palette::brightest(int all)
   long brv;
   brv=0; bri=0;
 
-  for (i=0;i<ncolors;i++)
+  for (i=0;i<(unsigned int)ncolors;i++)
   { if (all || used(i))
     {
       get(i,r,g,b);
@@ -501,7 +501,7 @@ unsigned char palette::darkest(int all, int noblack)
   long brv,x;
   brv=(long)258*(long)258*(long)258; bri=0;
 
-  for (i=0;i<ncolors;i++)
+  for (i=0;i<(unsigned int)ncolors;i++)
   { if (all || used(i))
     {
       get(i,r,g,b);

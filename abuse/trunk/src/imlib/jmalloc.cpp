@@ -168,7 +168,7 @@ void block_manager::inspect()
   memory_node *f=sfirst;
   for (;f;f=f->next);               // scan through static big list
 
-  int i,bit;
+  int i,bit=1;
   for (i=0;i<JM_SMALL_SIZE;i++)
   {
     for (small_block *s=sblocks[i];s;s=s->next)
@@ -214,7 +214,7 @@ void block_manager::report(FILE *fp)
     for (small_block *s=sblocks[i];s;s=s->next)
     {      
       fprintf(fp,"*** Small Block size = %d ***\n",i);      
-      unsigned long x=0,bit=1;
+      unsigned long bit=1;
       char *addr=((char *)(s+1));
       for (int j=0;j<32;j++)
       {
@@ -251,7 +251,7 @@ void block_manager::report(FILE *fp)
     for (small_block *s=cblocks[i];s;s=s->next)
     {      
       fprintf(fp,"*** Small Block size = %d ***\n",i);      
-      unsigned long x=0,bit=1;
+      unsigned long bit=1;
       char *addr=((char *)(s+1));
       for (int j=0;j<32;j++)
       {
@@ -347,7 +347,7 @@ void *block_manager::static_alloc(long size, char *name)
       return (void *)(addr+1);  // return first block
     } else
     {
-      int bit=1,i=0,offset=0;
+      int bit=1,i=0;
       char *addr=((char *)s)+sizeof(small_block);
       while (1)        // we already know there is a bit free
       {
@@ -379,7 +379,7 @@ void *block_manager::static_alloc(long size, char *name)
   if (!s) return NULL;
   s->size=-s->size;
 
-  if (s->size-size>sizeof(memory_node)+4)  // is there enough space to split the block?
+  if (s->size-size>(int)sizeof(memory_node)+4)  // is there enough space to split the block?
   {    
     memory_node *p=(memory_node *)((char *)s+sizeof(memory_node)+size);
     if (s==slast)
@@ -430,7 +430,7 @@ void *block_manager::cache_alloc(long size, char *name)
       return (void *)(addr+1);  // return first block
     } else
     {
-      int bit=1,i=0,offset=0;
+      int bit=1,i=0;
       char *addr=((char *)s)+sizeof(small_block);
       while (1)        // we already know there is a bit free
       {
@@ -485,7 +485,7 @@ void *block_manager::cache_alloc(long size, char *name)
 
   s->size=-s->size;
 
-  if (s->size-size>sizeof(memory_node)+4)  // is there enough space to split the block?
+  if (s->size-size>(int)sizeof(memory_node)+4)  // is there enough space to split the block?
   {
     memory_node *p=s;    // store this position
     long psize=s->size-size-sizeof(memory_node);
@@ -881,7 +881,7 @@ void mem_report(char *filename)
 {
 	char *reportpath;
 	reportpath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + strlen( filename ), "reportpath" );
-	sprintf( reportpath, "%s%s\0", get_save_filename_prefix(), filename );
+	sprintf( reportpath, "%s%s", get_save_filename_prefix(), filename );
 
 	FILE *fp = fopen( reportpath, "wb" );
 	if( fp != NULL )	/* make sure we actually got a file */

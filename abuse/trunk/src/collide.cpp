@@ -147,7 +147,7 @@ void add_collide(collide_patch *&first, long x1, long y1, long x2, long y2,
 void level::check_collisions()
 {
   game_object *target,*rec,*subject;
-  long sx1,sy1,sx2,sy2,tx1,ty1,tx2,ty2,hitx,hity,t_centerx;
+  long sx1,sy1,sx2,sy2,tx1,ty1,tx2,ty2,hitx=0,hity=0,t_centerx;
 
   for (int l=0;l<attack_total;l++)
   {

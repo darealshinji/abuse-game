@@ -403,7 +403,7 @@ int game_object::decide()
     current_object=this;
     void *m=mark_heap(TMP_SPACE);
 
-    time_marker *prof1;
+    time_marker *prof1=NULL;
     if (profiling())
       prof1=new time_marker;
 
@@ -502,7 +502,7 @@ void game_object::do_damage(int amount, game_object *from, long hitx, long hity,
     ((cons_cell *)hy)->cdr=px;
     ((cons_cell *)px)->cdr=py;
 
-    time_marker *prof1;
+    time_marker *prof1=NULL;
     if (profiling())
       prof1=new time_marker;
 
@@ -617,7 +617,7 @@ void game_object::draw()
     current_object=this;
 
     void *m=mark_heap(TMP_SPACE);
-    time_marker *prof1;
+    time_marker *prof1=NULL;
     if (profiling())
       prof1=new time_marker;
 
@@ -644,7 +644,7 @@ void game_object::map_draw()
     current_object=this;
 
     void *m=mark_heap(TMP_SPACE);
-    time_marker *prof1;
+    time_marker *prof1=NULL;
     if (profiling())
       prof1=new time_marker;
 
@@ -1151,7 +1151,7 @@ game_object *create(int type, long x, long y, int skip_constructor, int aitype)
 
     void *m=mark_heap(TMP_SPACE);
 
-    time_marker *prof1;
+    time_marker *prof1=NULL;
     if (profiling())
       prof1=new time_marker;
 
@@ -1218,7 +1218,7 @@ int game_object::move(int cx, int cy, int button)
 
     void *m=mark_heap(TMP_SPACE);
 
-    time_marker *prof1;
+    time_marker *prof1=NULL;
     if (profiling())
       prof1=new time_marker;
 
@@ -1577,7 +1577,7 @@ void game_object::change_aitype(int new_type)
       game_object *o=current_object;
       current_object=(game_object *)this;
 
-      time_marker *prof1;
+      time_marker *prof1=NULL;
       if (profiling())
         prof1=new time_marker;
 
@@ -1620,7 +1620,7 @@ void game_object::change_type(int new_type)
 
     void *m=mark_heap(TMP_SPACE);
 
-    time_marker *prof1;
+    time_marker *prof1=NULL;
     if (profiling())
       prof1=new time_marker;
 

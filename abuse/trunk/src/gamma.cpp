@@ -179,7 +179,7 @@ void gamma_correct(palette *&pal, int force_menu)
 			FILE *fp;
 
 			gammapath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 10, "gammapath" );
-			sprintf( gammapath, "%sgamma.lsp\0", get_save_filename_prefix() );
+			sprintf( gammapath, "%sgamma.lsp", get_save_filename_prefix() );
 			fp = open_FILE( gammapath, "wb" );
 			if( fp )
 			{

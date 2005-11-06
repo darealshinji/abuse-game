@@ -54,7 +54,7 @@ image *load_targa(char *filename, palette *pal)
 
   int x,y;
   unsigned char ctrl;
-  unsigned char bgra[4],*sl,c,lr,lg,lb,ll=0,lc;
+  unsigned char bgra[4],*sl,c,lr=0,lg=0,lb=0,ll=0,lc=0;
   
   
   

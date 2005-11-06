@@ -225,13 +225,12 @@ void close_graphics()
 //
 void put_part_image( image *im, int x, int y, int x1, int y1, int x2, int y2 )
 {
-	int xs, xe, ys, ye;
+	int xe, ye;
 	SDL_Rect srcrect, dstrect;
 	int ii, jj;
 	int srcx, srcy, xstep, ystep;
 	Uint8 *dpixel;
 	Uint16 dinset;
-	int dest_addr, line_width;
 
 	if( (unsigned)y > yres || (unsigned)x > xres )
 	{

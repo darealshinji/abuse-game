@@ -78,7 +78,7 @@ static uchar *cstart,*cend,*collected_start,*collected_end;
 
 inline void *collect_cons_cell(void *x)
 {
-  cons_cell *last=NULL,*first;
+  cons_cell *last=NULL,*first=NULL;
   if (!x) return x;
   for (;x && item_type(x)==L_CONS_CELL;)
   {

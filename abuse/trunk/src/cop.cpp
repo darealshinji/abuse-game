@@ -142,8 +142,8 @@ void *top_ai()
 	signed char *fire_off=o->otype==S_DFRIS_TOP ? large_fire_off :
 	                                (o->otype==S_ROCKET_TOP ? large_fire_off :
 					 (o->otype==S_BFG_TOP ? large_fire_off : small_fire_off));
-	signed char *f=fire_off,*fb;
-	int best_diff=200,best_num;
+	signed char *f=fire_off,*fb=NULL;
+	int best_diff=200,best_num=0;
 	int iy=f[1],ix=f[6*2];
 	
 	int best_angle=lisp_atan2(q->y-iy-v->pointer_y,v->pointer_x-q->x-ix);
@@ -835,6 +835,7 @@ void *bottom_draw()
 	  case run_jump : o->state=(character_state)S_fast_run_jump; break;
 	  case run_jump_fall : o->state=(character_state)S_fast_run_jump_fall; break;
 	  case end_run_jump : o->state=(character_state)S_fast_end_run_jump; break;
+	  default: break;
 	}
 
 	player_draw(just_fired,o->controller()->player_number);
@@ -854,6 +855,7 @@ void *bottom_draw()
 	  case run_jump : o->state=(character_state)S_fly_run_jump; break;
 	  case run_jump_fall : o->state=(character_state)S_fly_run_jump_fall; break;
 	  case end_run_jump : o->state=(character_state)S_fly_end_run_jump; break;
+	  default: break;
 	}
 
 	player_draw(just_fired,o->controller()->player_number);

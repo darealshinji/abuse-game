@@ -544,6 +544,7 @@ void game::load_level(char *name)
   {			      
     spec_directory sd(fp);  
 
+#if 0
     spec_entry *e=sd.find("Copyright 1995 Crack dot Com, All Rights reserved"); 
     if (!e)
     { 
@@ -552,6 +553,7 @@ void game::load_level(char *name)
       the_game->need_refresh();
     }
     else 
+#endif
       current_level=new level(&sd,fp,name);
     delete fp;
   }
@@ -1420,7 +1422,7 @@ game::game(int argc, char **argv)
 //	ProfilerInit(collectDetailed, bestTimeBase, 2000, 200); //prof
 	char *fastpath;
 	fastpath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 13, "fastpath" );
-	sprintf( fastpath, "%sfastload.dat\0", get_save_filename_prefix() );
+	sprintf( fastpath, "%sfastload.dat", get_save_filename_prefix() );
 	fast_load_start_recording( fastpath );
 	load_data(argc,argv);  
 	fast_load_stop_recording();

@@ -39,6 +39,7 @@ void showHelp()
 	printf( "** Abuse Options **\n" );
 	printf( "  -size <arg>       Set the size of the screen\n" );
 	printf( "  -edit             Startup in editor mode\n" );
+	printf( "  -a <arg>          Use addon named <arg>\n" );
 	printf( "  -f <arg>          Load map file named <arg>\n" );
 	printf( "  -lisp             Startup in lisp interpreter mode\n" );
 	printf( "  -nodelay          Run at maximum speed\n" );
@@ -72,7 +73,7 @@ void createRCFile( char *rcfile )
 	if( (fd = fopen( rcfile, "w" )) != NULL )
 	{
 		fputs( "; Abuse-SDL Configuration file\n\n", fd );
-		fputs( "; Location of the datafiles\ndatadir=/usr/local/share/games/abuse\n\n", fd );
+		fputs( "; Location of the datafiles\ndatadir=/var/games/abuse\n\n", fd );
 		fputs( "; Startup fullscreen\nfullscreen=0\n\n", fd );
 		fputs( "; Use DoubleBuffering\ndoublebuf=0\n\n", fd );
 		fputs( "; Use mono audio only\nmono=0\n\n", fd );
@@ -105,7 +106,7 @@ void readRCFile()
 	char *result;
 
 	rcfile = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 9, "rcfile" );
-	sprintf( rcfile, "%s/abuserc\0", get_save_filename_prefix() );
+	sprintf( rcfile, "%s/abuserc", get_save_filename_prefix() );
 	if( (fd = fopen( rcfile, "r" )) != NULL )
 	{
 		while( fgets( buf, sizeof( buf ), fd ) != NULL )
@@ -359,7 +360,7 @@ void setup( int argc, char **argv )
 	if( (homedir = getenv( "HOME" )) != NULL )
 	{
 		savedir = (char *)jmalloc( strlen( homedir ) + 8, "savedir" );
-		sprintf( savedir, "%s/.abuse/\0", homedir );
+		sprintf( savedir, "%s/.abuse/", homedir );
 		// Check if we already have a savegame directory
 		if( (fd = fopen( savedir, "r" )) == NULL )
 		{

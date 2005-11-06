@@ -66,7 +66,7 @@ void mix_audio(void *udata, Uint8 *stream, int len)
 	{
 		if( handle->length > 0 && handle->pos )
 		{
-			len = ( len > handle->length ? handle->length : len );
+			len = ( len > (int)handle->length ? handle->length : len );
 			SDL_MixAudio( stream, handle->pos, len, handle->volume );
 			handle->pos += len;
 			handle->length -= len;
@@ -112,7 +112,7 @@ int sound_init( int argc, char **argv )
 	// Check for the sfx directory, disable sound if we can't find it.
 	datadir = get_filename_prefix();
 	sfxdir = (char *)jmalloc( strlen( datadir ) + 6, "sfxdir" );
-	sprintf( sfxdir, "%s/sfx/\0", datadir );
+	sprintf( sfxdir, "%s/sfx/", datadir );
 	if( (fd = fopen( sfxdir,"r" )) == NULL )
 	{
 		// Didn't find the directory, so disable sound.

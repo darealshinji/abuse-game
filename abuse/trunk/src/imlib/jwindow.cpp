@@ -175,7 +175,7 @@ void window_manager::get_event(event &ev)
 	ev.window->next=NULL;
 	if (red)
 	{
-	  jwindow *j=ev.window,*p;
+	  jwindow *j=ev.window;
 /*	  screen->add_dirty(j->x,j->y,j->x+j->l-1,j->y+j->h-1);
 	  for (p=first;p!=j;p=p->next)
 	    p->screen->add_dirty(j->x-p->x,j->y-p->y,j->x+j->l-1-p->x,j->y+j->h-1-p->y);*/
@@ -282,8 +282,8 @@ void window_manager::flush_screen()
 {
   jwindow *p,*q;
 
-  int mx,my,but;
-  image *mouse_pic,*mouse_save;
+  int mx=0,my=0;
+  image *mouse_pic=NULL,*mouse_save=NULL;
   
   if (has_mouse())
   {    
@@ -426,7 +426,7 @@ void jwindow::redraw(int hi, int med, int low, JCFont *fnt)
 
 ifield *input_manager::unlink(int id)     // unlinks ID from fields list and return the pointer to it
 { 
-  for (ifield *i=first,*last;i;i=i->next)
+  for (ifield *i=first,*last=NULL;i;i=i->next)
   {
     if (i->id==id) 
     {

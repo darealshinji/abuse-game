@@ -20,8 +20,7 @@ void dprintf(const char *format, ...)
 {
 	if (dprint_fun)
 	{
-		char st[1000],a,*sp;
-		int y;
+		char st[1000];
 		va_list ap;
 
 		va_start(ap, format);

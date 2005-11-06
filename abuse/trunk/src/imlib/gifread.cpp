@@ -37,7 +37,7 @@ image *read_gif(char *fn, palette *&pal)
 {
   char buf[100],er;
   unsigned char sep;
-  int ncolors;
+  unsigned int ncolors;
   FILE *fp;
   image *im;
   clear_errors();

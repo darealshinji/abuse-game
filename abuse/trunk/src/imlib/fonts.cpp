@@ -36,11 +36,11 @@ void JCFont::put_string(image *screen, int x, int y, char *st, int color)
 
 void JCFont::put_char(image *screen,  int x, int y, char ch, int color)
 {
-  if (let[ch])
+  if (let[(int)ch])
   {
     if (color>=0)
-      let[ch]->put_color(screen,x,y,color);
-    else let[ch]->put_image(screen,x,y);
+      let[(int)ch]->put_color(screen,x,y,color);
+    else let[(int)ch]->put_image(screen,x,y);
   }
 }
 

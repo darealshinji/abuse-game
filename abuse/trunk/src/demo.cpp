@@ -116,6 +116,8 @@ void demo_manager::do_inputs()
 	return ;
       }
     } break;
+    default :
+      break;
   }
 }
 
@@ -208,6 +210,8 @@ int demo_manager::set_state(demo_state new_state, char *filename)
 
 
     } break;
+    default :
+      break;
   }
 
   switch (new_state)

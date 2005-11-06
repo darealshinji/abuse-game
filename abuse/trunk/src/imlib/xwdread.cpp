@@ -139,7 +139,8 @@ image *getinit(FILE *file, palette *&pal, int *padrightP)
   image *im;
   X11WDFileHeader *h11P;
   char junk[800];
-  int i, dummy1, dummy2, dummy3;
+  unsigned int i;
+  int dummy1, dummy2, dummy3;
   unsigned  short minred, maxred;
   X11XColor x11col;
 

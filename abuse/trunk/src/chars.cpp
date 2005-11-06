@@ -412,7 +412,7 @@ character_type::character_type(void *args, void *name)
     else
     {
       lprint(lcar(field));
-      lbreak("Unknown field for character definiltion");
+      lbreak("Unknown field for character definition");
       exit(0);
     }    
   }

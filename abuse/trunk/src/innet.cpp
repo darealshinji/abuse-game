@@ -489,6 +489,7 @@ void net_reload()
 
       spec_directory sd(fp);  
 
+#if 0
       spec_entry *e=sd.find("Copyright 1995 Crack dot Com, All Rights reserved"); 
       if (!e)
       { 
@@ -497,6 +498,7 @@ void net_reload()
 				the_game->need_refresh();
       }
       else 
+#endif
         current_level=new level(&sd,fp,NET_STARTFILE);
 
       delete fp;     

@@ -5,7 +5,8 @@ void write_include(image *im, palette *pal, char *filename, char *name)
 {
   char tmp_name[200];
   strcpy(tmp_name,name);
-  int j,append=0,i;
+  unsigned int j;
+  int append=0,i;
   for (j=0;j<strlen(name);j++)
     if (toupper(tmp_name[j])<'A' || toupper(tmp_name[j])>'Z')
       tmp_name[j]='_';
