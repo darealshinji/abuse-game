@@ -3,6 +3,7 @@
 #include "specs.hpp"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include "system.h"
@@ -23,25 +24,25 @@ char *spec_types[]={"Invalid type",             // 0
                     "Palette",                  // 2
                     "Invalid Type",             // 3
                     "Image",                    // 4
-	            			"Fore Tile",
+                    "Fore Tile",
                     "Back Tile",
                     "Character",
                     "8 Morph",
                     "16 Morph",
-		    "Grue objs",
-		    "Extern WAV",
-		    "DMX MUS",
-		    "Patched morph",
-		    "Normal file",
-		    "Compress1 file",
-		    "Vector Image",
-		    "Light list",
-		    "Grue fgmap",
-		    "Grue bgmap",
-		    "Data array",
-		    "Character2",
-		    "Particle",
-		    "Extern lcache"
+                    "Grue objs",
+                    "Extern WAV",
+                    "DMX MUS",
+                    "Patched morph",
+                    "Normal file",
+                    "Compress1 file",
+                    "Vector Image",
+                    "Light list",
+                    "Grue fgmap",
+                    "Grue bgmap",
+                    "Data array",
+                    "Character2",
+                    "Particle",
+                    "Extern lcache"
 };
 
 
@@ -419,14 +420,14 @@ void jFILE::open_internal(char *filename, char *mode, int flags)
       spec_entry *se=spec_main_sd.find(filename);
       if (se)    
       {
-				start_offset=se->offset;
-				current_offset = 0;
-				file_length=se->size;
-				rbuf_start=rbuf_end=0;
+	start_offset=se->offset;
+	current_offset = 0;
+	file_length=se->size;
+	rbuf_start=rbuf_end=0;
       } else 
       {
-				close(fd);
-				fd=-1;
+	close(fd);
+	fd=-1;
       }
     }  
   }
@@ -547,28 +548,28 @@ int jFILE::unbuffered_write(void *buf, size_t count)
 
 int jFILE::unbuffered_seek(long offset, int whence) // whence=SEEK_SET, SEEK_CUR, SEEK_END, ret=0=success
 {
-	long ret;
-	
-	if (fast_load_mode == 2)
-	{
-		switch (whence)
-		{
+  long ret;
+
+  if (fast_load_mode == 2)
+  {
+    switch (whence)
+    {
     case SEEK_SET : 
-     	current_offset = start_offset+offset;
-     	break;
+      current_offset = start_offset+offset;
+      break;
     case SEEK_END : 
-    	current_offset = start_offset+file_length-offset;
-    	break;
+      current_offset = start_offset+file_length-offset;
+      break;
     case SEEK_CUR : 
-    	current_offset += offset;
-    	break;
+      current_offset += offset;
+      break;
     default:
-    	ret = -1;
-    	break;
+      ret = -1;
+      break;
     }
-		return current_offset;
-	}
-	
+    return current_offset;
+  }
+
   switch (whence)
   {
     case SEEK_SET : 
@@ -583,50 +584,50 @@ int jFILE::unbuffered_seek(long offset, int whence) // whence=SEEK_SET, SEEK_CUR
   }
   if (ret>=0)
   {
-  	current_offset = ret - start_offset;
-  	if (spec_main_fd == fd)
-  		spec_main_offset = ret;
-  	return ret;
+    current_offset = ret - start_offset;
+    if (spec_main_fd == fd)
+      spec_main_offset = ret;
+    return ret;
   }
   else
-	  return -1;  // if a bad whence, then failure
+    return -1;  // if a bad whence, then failure
 }
 
 
-unsigned char bFILE::read_byte()
-{ unsigned char x;
+uint8_t bFILE::read_byte()
+{ uint8_t x;
   read(&x,1);
   return x;
 }
 
-unsigned short bFILE::read_short()
+uint16_t bFILE::read_short()
 { 
-  unsigned short x;
+  uint16_t x;
   read(&x,2); 
   return int_to_local(x);
 }
 
 
-unsigned long bFILE::read_long()
+uint32_t bFILE::read_long()
 { 
-  unsigned long x;
+  uint32_t x;
   read(&x,4); 
   return long_to_local(x);
 }
 
-void bFILE::write_byte(unsigned char x)
+void bFILE::write_byte(uint8_t x)
 {
   write(&x,1);
 }
 
-void bFILE::write_short(unsigned short x)
+void bFILE::write_short(uint16_t x)
 { 
   x=int_to_local(x);
   write(&x,2);
 }
 
 
-void bFILE::write_long(unsigned long x)
+void bFILE::write_long(uint32_t x)
 {
   x=long_to_local(x);
   write(&x,4);
@@ -911,56 +912,56 @@ jFILE *spec_directory::write(char *filename)
 
 }
 
-unsigned short read_short(FILE *fp)
+uint16_t read_short(FILE *fp)
 {
-  unsigned short x;
+  uint16_t x;
   fread(&x,1,2,fp); 
   return int_to_local(x);
 }
 
-unsigned long read_long(FILE *fp)
+uint32_t read_long(FILE *fp)
 {
-  unsigned long x;
+  uint32_t x;
   fread(&x,1,4,fp);
-  return (long)long_to_local(x);
+  return long_to_local(x);
 }
-void write_short(FILE *fp, unsigned short x)
+void write_short(FILE *fp, uint16_t x)
 {
   x=int_to_local(x);
   fwrite(&x,1,2,fp);
 }
 
-void write_long(FILE *fp, unsigned long x)
+void write_long(FILE *fp, uint32_t x)
 {
   x=long_to_local(x);
   fwrite(&x,1,4,fp);
 }
 
-unsigned char read_byte(FILE *fp) { return fgetc(fp)&0xff; }
-void write_byte(FILE *fp, unsigned char x) { fputc(x,fp); }
+uint8_t read_byte(FILE *fp) { return fgetc(fp)&0xff; }
+void write_byte(FILE *fp, uint8_t x) { fputc((unsigned char)x,fp); }
 
-unsigned short read_other_long(FILE *fp)
+uint32_t read_other_long(FILE *fp)
 {
-  unsigned long x;
+  uint32_t x;
   fread(&x,1,4,fp);
   return big_long_to_local(x);
 }
 
-unsigned long read_other_short(FILE *fp)
+uint16_t read_other_short(FILE *fp)
 {
-  unsigned short x;
+  uint16_t x;
   fread(&x,1,2,fp);
   return big_short_to_local(x);
 }
 
 
-void write_other_short(FILE *fp, unsigned short x)
+void write_other_short(FILE *fp, uint16_t x)
 {
   x=big_short_to_local(x);
   fwrite(&x,1,2,fp);
 }
 
-void write_other_long(FILE *fp, unsigned long x)
+void write_other_long(FILE *fp, uint32_t x)
 {
   x=big_long_to_local(x);
   fwrite(&x,1,4,fp);
