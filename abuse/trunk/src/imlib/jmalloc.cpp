@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include <specs.hpp>
 //#include <new.h>
 
+#define MEM_CHECK
 //#ifdef MEM_CHECK
 //#define MEM_CLEAR
 //#endif
@@ -17,7 +19,7 @@ int alloc_space=ALLOC_SPACE_STATIC;
 extern void free_up_memory();
 
 #ifdef MEM_CHECK
-long break_mem_point=0;       // can be set in debugger, break mem fun will be called when this address is allocated
+intptr_t break_mem_point=0;       // can be set in debugger, break mem fun will be called when this address is allocated
 void break_mem_fun()
 {
   printf("memory breakpoint\n");
@@ -37,9 +39,9 @@ struct memory_node
 
 struct small_block
 {  
-  unsigned long size;                     // size of blocks...
-  unsigned long alloc_list;               // bit field saying weither each block is allocated or not.
-  small_block *next;                      // next small block of same size
+  unsigned long size;             // size of blocks...
+  uint32_t alloc_list;            // bit field saying weither each block is allocated or not.
+  small_block *next;              // next small block of same size
 #ifdef MEM_CHECK
   char *name[32];
 #endif 
@@ -143,21 +145,21 @@ void small_static_allocation_summary(int &total, int *&static_list, int *&cache_
       small_block *s=bmanage[i].sblocks[size];
       while (s) 
       { 
-				for (x=0;x<32;x++)
-				  if (s->alloc_list&(1<<x))
-				    static_list[size]++; 
-			
-				s=s->next; 
+	for (x=0;x<32;x++)
+	  if (s->alloc_list&(1<<x))
+	    static_list[size]++; 
+
+	s=s->next; 
       }
 
       s=bmanage[i].cblocks[size];
       while (s) 
       { 
-				for (x=0;x<32;x++)
-				  if (s->alloc_list&(1<<x))
-				    cache_list[size]++; 
-			
-				s=s->next; 
+	for (x=0;x<32;x++)
+	  if (s->alloc_list&(1<<x))
+	    cache_list[size]++; 
+
+	s=s->next; 
       }
     }
   }
@@ -176,17 +178,17 @@ void block_manager::inspect()
       char *addr=((char *)(s+1));
       for (int j=0;j<32;j++)
       {
-				if (s->alloc_list&bit)
-				{
-				  void *next=(void *)(*(((long *)addr)));
-				  if ((long)next!=(long)s)
-				  {
-				    fprintf(stderr,"inspect : bad pointer\n");
-				    return ;	    
-				  }
-				}
-				bit=bit<<1;
-				addr+=s->size+4;
+	if (s->alloc_list&bit)
+	{
+	  void *next=(void *)(*(((intptr_t *)addr)));
+	  if ((intptr_t)next!=(intptr_t)s)
+	  {
+	    fprintf(stderr,"inspect : bad pointer\n");
+	    return ;	    
+	  }
+	}
+	bit=bit<<1;
+	addr+=s->size+4;
       }	
     }
   }
@@ -214,21 +216,21 @@ void block_manager::report(FILE *fp)
     for (small_block *s=sblocks[i];s;s=s->next)
     {      
       fprintf(fp,"*** Small Block size = %d ***\n",i);      
-      unsigned long bit=1;
+      uint32_t bit=1;
       char *addr=((char *)(s+1));
       for (int j=0;j<32;j++)
       {
-				fprintf(fp,"%p   ",addr);
-				if (s->alloc_list&bit)
-				{
+	fprintf(fp,"%p   ",addr);
+	if (s->alloc_list&bit)
+	{
 #ifdef MEM_CHECK
-				  fprintf(fp,"%s\n",s->name[j]);
+	  fprintf(fp,"%s\n",s->name[j]);
 #else
-				  fprintf(fp,"allocated\n");
+	  fprintf(fp,"allocated\n");
 #endif	  
-				} else fprintf(fp,"FREE\n");
-				bit=bit<<1;
-				addr+=s->size+4;
+	} else fprintf(fp,"FREE\n");
+	bit=bit<<1;
+	addr+=s->size+4;
       }
     }
   }
@@ -251,7 +253,7 @@ void block_manager::report(FILE *fp)
     for (small_block *s=cblocks[i];s;s=s->next)
     {      
       fprintf(fp,"*** Small Block size = %d ***\n",i);      
-      unsigned long bit=1;
+      uint32_t bit=1;
       char *addr=((char *)(s+1));
       for (int j=0;j<32;j++)
       {
@@ -273,7 +275,7 @@ void block_manager::report(FILE *fp)
 
 long block_manager::pointer_size(void *ptr)
 {
-  void *next=(void *)(*(((long *)ptr)-1));
+  void *next=(void *)(*(((intptr_t *)ptr)-1));
   if (next>ptr)
     return ((memory_node *)(((char *)ptr)-sizeof(memory_node)))->size;
   else return ((small_block *)next)->size;
@@ -339,7 +341,7 @@ void *block_manager::static_alloc(long size, char *name)
       s->size=size;
 #ifdef MEM_CHECK
       s->name[0]=strcpy((char *)malloc(strlen(name)+1),name);
-      if ((long)s==break_mem_point)
+      if ((intptr_t)s==break_mem_point)
         break_mem_fun();
 #endif      
       long *addr=(long *)(((char *)s)+sizeof(small_block));
@@ -360,7 +362,7 @@ void *block_manager::static_alloc(long size, char *name)
 	  *((long *)addr)=(long)s;
 
 #ifdef MEM_CHECK
-	  if ((long)addr==break_mem_point)
+	  if ((intptr_t)addr==break_mem_point)
             break_mem_fun();
 #endif
 
@@ -395,7 +397,7 @@ void *block_manager::static_alloc(long size, char *name)
 #ifdef MEM_CHECK
   s->name=strcpy((char *)malloc(strlen(name)+1),name);
 
-  if ((long)s==break_mem_point)
+  if ((intptr_t)s==break_mem_point)
     break_mem_fun();
 
 #endif
@@ -424,7 +426,7 @@ void *block_manager::cache_alloc(long size, char *name)
       long *addr=(long *)(((char *)s)+sizeof(small_block));
       *addr=(long)s;
 #ifdef MEM_CHECK
-      if ((long)s==break_mem_point)
+      if ((intptr_t)s==break_mem_point)
         break_mem_fun();
 #endif
       return (void *)(addr+1);  // return first block
@@ -439,7 +441,7 @@ void *block_manager::cache_alloc(long size, char *name)
 	  s->alloc_list|=bit;
 #ifdef MEM_CHECK
 	  s->name[i]=strcpy((char *)malloc(strlen(name)+1),name);
-	  if ((long)s==break_mem_point)
+	  if ((intptr_t)s==break_mem_point)
 	    break_mem_fun();
 #endif      	 
 	  *((long *)addr)=(long)s;
@@ -472,7 +474,7 @@ void *block_manager::cache_alloc(long size, char *name)
       nc->size=size;
 #ifdef MEM_CHECK
       nc->name=strcpy((char *)malloc(strlen(name)+1),name);      
-      if ((long)nc==break_mem_point)
+      if ((intptr_t)nc==break_mem_point)
         break_mem_fun();
 #endif      
       if (!clast)
@@ -498,7 +500,7 @@ void *block_manager::cache_alloc(long size, char *name)
   }
 #ifdef MEM_CHECK
   s->name=strcpy((char *)malloc(strlen(name)+1),name);
-  if ((long)s==break_mem_point)
+  if ((intptr_t)s==break_mem_point)
     break_mem_fun();
 #endif
   return (void *)(((char *)s)+sizeof(memory_node));
@@ -695,6 +697,9 @@ char *not_enough_low_memory_message="Memory Manager : Not enough low memory avai
 
 void jmalloc_init(long min_size)
 {
+  fprintf(stderr,"Disabling memory manager, using libc instead\n");
+  return;
+
   if (bmanage_total)
     fprintf(stderr,"warning : jmalloc_init called twice\n");
   else
@@ -721,9 +726,9 @@ void jmalloc_init(long min_size)
 #endif
     if (mem)
     {
-			bmanage[bmanage_total].init(mem,size,HI_BLOCK);
-			bmanage_total++;      
-			fprintf(stderr,"Added himem block (%d bytes)\n",size);
+      bmanage[bmanage_total].init(mem,size,HI_BLOCK);
+      bmanage_total++;      
+      fprintf(stderr,"Added himem block (%d bytes)\n",size);
     }
 
 /*    bmanage[bmanage_total].init(malloc(2039552),2039552,HI_BLOCK);
@@ -731,37 +736,33 @@ void jmalloc_init(long min_size)
     bmanage[bmanage_total].init(malloc(150224),150224,HI_BLOCK);
     bmanage_total++;      */
 
-
-
 #ifdef __WATCOMC__
     if (size!=jmalloc_max_size)
     {
       do
       {
-				size=low_memory_available();
-				if (size>jmalloc_min_low_size+0x1000)              // save 64K for misc low memory needs
-				{
-				  bmanage[bmanage_total].init(alloc_low_memory(size-jmalloc_min_low_size-0x1000),size-jmalloc_min_low_size-0x1000,LOW_BLOCK);
-				  bmanage_total++; 
-				  fprintf(stderr,"Added low memory block (%d bytes)\n",size);
-				}
+	size=low_memory_available();
+	if (size>jmalloc_min_low_size+0x1000)              // save 64K for misc low memory needs
+	{
+	  bmanage[bmanage_total].init(alloc_low_memory(size-jmalloc_min_low_size-0x1000),size-jmalloc_min_low_size-0x1000,LOW_BLOCK);
+	  bmanage_total++; 
+	  fprintf(stderr,"Added low memory block (%d bytes)\n",size);
+	}
       } while (size>jmalloc_min_low_size+0x1000);
       if (size<jmalloc_min_low_size)
       {
-				fprintf(stderr,not_enough_low_memory_message,size,jmalloc_min_low_size);
-				exit(0);
+	fprintf(stderr,not_enough_low_memory_message,size,jmalloc_min_low_size);
+	exit(0);
       }
     }
 #endif
  
-
     fprintf(stderr,"Memory available : %d\n",j_available());
     if (j_available()<min_size)
     {
       fprintf(stderr,not_enough_total_memory_message);
       exit(0);
     }
-
   }
 }
 
@@ -795,9 +796,13 @@ void *jmalloc(long size, char *name)
     {
       void *a;
       if (alloc_space==ALLOC_SPACE_STATIC)
+      {
         a=bmanage[i].static_alloc(size,name);
+      }
       else
+      {
         a=bmanage[i].cache_alloc(size,name);
+      }
       if (a) return a;
     }
     free_up_memory();

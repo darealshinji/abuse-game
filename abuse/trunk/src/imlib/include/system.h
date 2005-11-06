@@ -25,16 +25,17 @@
 #else
   // so apps can find unlink
   #include <unistd.h>
+  #include <stdint.h>
 #endif
 
 
-#define short_swap(x) (((((unsigned short) (x)))<<8)|((((unsigned short) (x)))>>8))
+#define short_swap(x) (((((uint16_t) (x)))<<8)|((((uint16_t) (x)))>>8))
 #define long_swap(x) \
-   ((( ((unsigned long)(x)) )>>24)|((( ((unsigned long)(x)) )&0x00ff0000)>>8)| \
-   ((( ((unsigned long)(x)) )&0x0000ff00)<<8)|(( ((unsigned long)(x)) )<<24))
+   ((( ((uint32_t)(x)) )>>24)|((( ((uint32_t)(x)) )&0x00ff0000)>>8)| \
+   ((( ((uint32_t)(x)) )&0x0000ff00)<<8)|(( ((uint32_t)(x)) )<<24))
 
 #if defined BIG_ENDIANS
-#define LONG int
+#define LONG int32_t
 #define int_to_intel(x) short_swap(x)
 #define int_to_local(x) int_to_intel(x)
 #define big_long_to_local(x) (x)
@@ -42,7 +43,7 @@
 #define long_to_intel(x) long_swap(x)
 #define long_to_local(x) long_to_intel(x)
 #else
-#define LONG long
+#define LONG int32_t
 #define int_to_intel(x) (x)
 #define int_to_local(x) (x)
 #define long_to_local(x) (x)

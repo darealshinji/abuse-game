@@ -6,6 +6,7 @@
 #include "system.h"
 #include <fcntl.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 extern char *spec_types[];
 
@@ -95,13 +96,13 @@ class bFILE     // base file type which other files should be derived from (jFIL
 
 
   // these read and writes, allways read/write Intel endian-ness
-  unsigned short read_short();
-  unsigned long read_long();
-  unsigned char read_byte();
+  uint16_t read_short();
+  uint32_t read_long();
+  uint8_t read_byte();
   double read_double();
-  void write_short(unsigned short x);
-  void write_long(unsigned long x);
-  void write_byte(unsigned char x);
+  void write_short(uint16_t x);
+  void write_long(uint32_t x);
+  void write_byte(uint8_t x);
   void write_double(double x);
   void set_read_buffer_size(long size);
 } ;
@@ -192,17 +193,17 @@ public :
                          unsigned long data_size,
                          char *link_filename=NULL);*/
 
-unsigned short read_short(FILE *fp);
-unsigned long read_long(FILE *fp);
-unsigned short read_other_long(FILE *fp);
-unsigned long read_other_short(FILE *fp);
-unsigned char read_byte(FILE *fp);
+uint16_t read_short(FILE *fp);
+uint32_t read_long(FILE *fp);
+uint32_t read_other_long(FILE *fp);
+uint16_t read_other_short(FILE *fp);
+uint8_t read_byte(FILE *fp);
 
-void write_short(FILE *fp, unsigned short x);
-void write_long(FILE *fp, unsigned long x);
-void write_other_short(FILE *fp, unsigned short x);
-void write_other_long(FILE *fp, unsigned long x);
-void write_byte(FILE *fp, unsigned char x);
+void write_short(FILE *fp, uint16_t x);
+void write_long(FILE *fp, uint32_t x);
+void write_other_short(FILE *fp, uint16_t x);
+void write_other_long(FILE *fp, uint32_t x);
+void write_byte(FILE *fp, uint8_t x);
 
 void set_spec_main_file(char *filename, int Search_order);
 void set_file_opener(bFILE *(*open_fun)(char *, char *));
