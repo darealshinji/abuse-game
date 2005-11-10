@@ -3,8 +3,8 @@
 #include "macs.hpp"
 #include <string.h>
 
-uchar major_version=2;
-uchar minor_version=00;
+uint8_t major_version=2;
+uint8_t minor_version=00;
 
 extern int get_option(char *name);
 
@@ -28,7 +28,7 @@ static void setup()
   dprintf(msg2);
 
   for (i=0;i<80;i++)
-    *((unsigned char *)(0xb8000+i*2+1))=0x17;
+    *((uint8_t *)(0xb8000+i*2+1))=0x17;
 }
 #else
 static void setup()

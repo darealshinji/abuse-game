@@ -13,7 +13,7 @@ struct suggest_struct
 {
   int32_t cx1,cy1,cx2,cy2,shift_down,shift_right,pan_x,pan_y;
   int32_t new_weapon;
-  uchar send_view,send_weapon_change;
+  uint8_t send_view,send_weapon_change;
 } ;
 
 
@@ -22,7 +22,7 @@ class view;
 
 class view
 {
-  uchar keymap[512/8];
+  uint8_t keymap[512/8];
   char chat_buf[60];
   public : 
   int key_down(int key) { return keymap[key/8]&(1<<(key%8)); }
@@ -79,7 +79,7 @@ class view
 
   view *next;                             // next viewable player (singly linked list)  
   void get_input();
-  int process_input(char cmd, uchar *&pk);
+  int process_input(char cmd, uint8_t *&pk);
 
   void add_ammo   (int weapon_type, int total);
   int has_weapon  (int weapon_type) { return god || (weapons[weapon_type]!=-1); }
@@ -114,7 +114,7 @@ void set_local_players(int total);
 int total_local_players();
 void recalc_local_view_space();
 
-void process_packet_commands(uchar *pk, int size);
+void process_packet_commands(uint8_t *pk, int size);
 
 object_node *make_player_onodes(int player_num=-1);
 int total_view_vars();

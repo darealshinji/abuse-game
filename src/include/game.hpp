@@ -65,7 +65,7 @@ class game
 
   jwindow *top_menu,*joy_win,*last_input;
   JCFont *game_font;
-  uchar keymap[512/8];
+  uint8_t keymap[512/8];
 
 public : 
   int key_down(int key) { return keymap[key/8]&(1<<(key%8)); }

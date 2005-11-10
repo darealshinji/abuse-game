@@ -36,11 +36,11 @@ static int mytime = 0;		// an internal time keeper
 int numsounds;			// number of sound effects
 int longsound;			// longest sound effect
 int lengths[NUMSFX];		// lengths of all sound effects
-unsigned char mixbuffer[MIXBUFFERSIZE];	// mixing buffer
+uint8_t mixbuffer[MIXBUFFERSIZE];	// mixing buffer
 int sfxdevice;			// file descriptor of sfx device
 int musdevice;			// file descriptor of music device
-unsigned char *channels[8];	// the channel data pointers
-unsigned char *channelsend[8];	// the channel data end pointers
+uint8_t *channels[8];	// the channel data pointers
+uint8_t *channelsend[8];	// the channel data end pointers
 int channelstart[8];		// time that the channel started playing
 int channelhandles[8];		// the channel handles
 
@@ -74,10 +74,10 @@ int mix(void)
     } while (j);
     if (d > 127) mixbuffer[i] = 255;
     else if (d < -128) mixbuffer[i] = 0;
-    else mixbuffer[i] = (unsigned char) (d+128);
+    else mixbuffer[i] = (uint8_t) (d+128);
 //    if (d > 127) mixbuffer[i] = 0;
 //    else if (d < -128) mixbuffer[i] = 255;
-//    else mixbuffer[i] = (unsigned char) (-d+127);
+//    else mixbuffer[i] = (uint8_t) (-d+127);
   }
 
   // check for freed channels
@@ -196,7 +196,7 @@ int addsfx(int sfxid, int volume)
 
   int i;
   int rc = -1;
-  static unsigned short handlenums = 0;
+  static uint16_t handlenums = 0;
   int oldest = mytime;
   int oldestnum = 0;
 
@@ -205,7 +205,7 @@ int addsfx(int sfxid, int volume)
     if (!channels[i])
     {
       channelsend[i] =
-        (channels[i] = (unsigned char *) S_sfx[sfxid].data) + lengths[sfxid];
+        (channels[i] = (uint8_t *) S_sfx[sfxid].data) + lengths[sfxid];
       if (!handlenums) handlenums = 100;
       channelhandles[i] = rc = handlenums++;
       channelstart[i] = mytime;
@@ -225,7 +225,7 @@ int addsfx(int sfxid, int volume)
   if (i == 8)
   {
     channelsend[oldestnum] =
-      (channels[oldestnum] = (unsigned char *) S_sfx[sfxid].data)
+      (channels[oldestnum] = (uint8_t *) S_sfx[sfxid].data)
        + lengths[sfxid];
     if (!handlenums) handlenums = 100;
     channelhandles[oldestnum] = rc = handlenums++;
@@ -236,10 +236,10 @@ int addsfx(int sfxid, int volume)
 
 }
 
-void outputushort(int num)
+void output_uint16(int num)
 {
 
-  static unsigned char buff[5] = { 0, 0, 0, 0, '\n' };
+  static uint8_t buff[5] = { 0, 0, 0, 0, '\n' };
   static char *badbuff = "xxxx\n";
 
   // outputs a 16-bit # in hex or "xxxx" if -1.
@@ -263,7 +263,7 @@ void outputushort(int num)
 void initdata(void)
 {
   int i;
-  for (i=0 ; i<sizeof(channels)/sizeof(unsigned char *) ; i++) channels[i] = 0;
+  for (i=0 ; i<sizeof(channels)/sizeof(uint8_t *) ; i++) channels[i] = 0;
   gettimeofday(&last, &whocares);
   usleep(100000);
 }
@@ -273,7 +273,7 @@ int main(int c, char **v)
 
   int done = 0;
   int rc, nrc, sndnum, handle = 0;
-  unsigned char commandbuf[10];
+  uint8_t commandbuf[10];
   fd_set fdset, scratchset;
   struct timeval zerowait = { 0, 0 };
 

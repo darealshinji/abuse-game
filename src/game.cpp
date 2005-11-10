@@ -70,7 +70,7 @@ int has_joystick=0;
 char req_name[100];
 
 int registered=0;
-extern uchar chatting_enabled;
+extern uint8_t chatting_enabled;
 
 extern int confirm_quit();
 
@@ -685,11 +685,11 @@ void game::dev_scroll()
   }
 }
 
-void remap_area(image *screen, int x1, int y1, int x2, int y2, uchar *remap)
+void remap_area(image *screen, int x1, int y1, int x2, int y2, uint8_t *remap)
 {
-  uchar *sl=(uchar *)screen->scan_line(y1)+x1;
+  uint8_t *sl=(uint8_t *)screen->scan_line(y1)+x1;
   int x,y,a=screen->width()-(x2-x1+1);
-  uchar c;
+  uint8_t c;
   for (y=y1;y<=y2;y++)
   {
     for (x=x1;x<=x2;x++)
@@ -825,7 +825,7 @@ void game::draw_map(view *v, int interpolate)
     yinc=btile_height();  
     
     int bh=current_level->background_height(),bw=current_level->background_width();
-    ushort *bl;
+    uint16_t *bl;
     for (draw_y=yo,y=y1;y<=y2;y++,draw_y+=yinc)
     {
       if (y>=bh)
@@ -852,7 +852,7 @@ void game::draw_map(view *v, int interpolate)
 //  if (!(dev&EDIT_MODE))
 //    server_check();
 
-  uchar rescan=0;  
+  uint8_t rescan=0;  
 
     int fw,fh;
 
@@ -917,8 +917,8 @@ void game::draw_map(view *v, int interpolate)
       {
 	if (!(draw_y<ncy1 ||draw_y+yinc>=ncy2))
 	{
-	  ushort *cl=current_level->get_fgline(y)+x1;
-	  uchar *sl1=screen->scan_line(draw_y)+xo;
+	  uint16_t *cl=current_level->get_fgline(y)+x1;
+	  uint8_t *sl1=screen->scan_line(draw_y)+xo;
 	  for (x=x1,draw_x=xo;x<=x2;x++,cl++,sl1+=xinc,draw_x+=xinc)
 	  {
 	    if (!(draw_x<ncx1 || draw_x+xinc>=ncx2))
@@ -928,8 +928,8 @@ void game::draw_map(view *v, int interpolate)
 	        fort_num=fgvalue(*cl);
 //	      else fort_num=0;
 
-	      uchar *sl2=get_fg(fort_num)->micro_image->scan_line(0);
-	      uchar *sl3=sl1;
+	      uint8_t *sl2=get_fg(fort_num)->micro_image->scan_line(0);
+	      uint8_t *sl3=sl1;
 	      memcpy(sl3,sl2,AUTOTILE_WIDTH); sl2+=AUTOTILE_WIDTH; sl3+=scr_w;
 	      memcpy(sl3,sl2,AUTOTILE_WIDTH); sl2+=AUTOTILE_WIDTH; sl3+=scr_w;
 	      memcpy(sl3,sl2,AUTOTILE_WIDTH);
@@ -948,11 +948,11 @@ void game::draw_map(view *v, int interpolate)
       for (y=y1,draw_y=yo;y<=y2;y++,draw_y+=yinc)
       {
 	
-	ushort *cl;
+	uint16_t *cl;
 	if (y<fg_h)
 	  cl=current_level->get_fgline(y)+x1;
 	else cl=NULL;
-	uchar *sl1=draw_y<ncy1 ? 0 : screen->scan_line(draw_y)+xo;
+	uint8_t *sl1=draw_y<ncy1 ? 0 : screen->scan_line(draw_y)+xo;
 
 	for (x=x1,draw_x=xo;x<=x2;x++,draw_x+=xinc,cl++,sl1+=xinc)
 	{
@@ -1006,7 +1006,7 @@ void game::draw_map(view *v, int interpolate)
     {
       for (y=y1,draw_y=yo;y<=y2;y++,draw_y+=yinc)
       {
-	ushort *cl=current_level->get_fgline(y)+x1;
+	uint16_t *cl=current_level->get_fgline(y)+x1;
 	for (x=x1,draw_x=xo;x<=x2;x++,draw_x+=xinc,cl++)
 	{
 	  if (above_tile(*cl))
@@ -1040,7 +1040,7 @@ void game::draw_map(view *v, int interpolate)
 
       for (y=y1,draw_y=yo;y<=y2;y++,draw_y+=yinc)
       {
-	ushort *cl;
+	uint16_t *cl;
 	if (y<fg_h)
 	  cl=current_level->get_fgline(y)+x1;
 	else cl=NULL;
@@ -1052,7 +1052,7 @@ void game::draw_map(view *v, int interpolate)
 	    if (fort_num!=BLACK)
 	    {
 	      point_list *p=get_fg(fort_num)->points;
-	      uchar *d=p->data;	
+	      uint8_t *d=p->data;	
 	      if (p->tot)
 	      {
 		for (int i=1;i<p->tot;i++)
@@ -1201,8 +1201,8 @@ void fade_in(image *im, int steps)
 
   for (i=0;i<steps;i++)
   {
-    uchar *sl1=(uchar *)pal->addr();    
-    uchar *sl2=(uchar *)old_pal->addr();    
+    uint8_t *sl1=(uint8_t *)pal->addr();    
+    uint8_t *sl2=(uint8_t *)old_pal->addr();    
     int j;
     int v=(i+1)*256/steps;
     for (j=0;j<256;j++)
@@ -1225,8 +1225,8 @@ void fade_out(int steps)
   int i;
   for (i=0;i<steps;i++)
   {
-    uchar *sl1=(uchar *)pal->addr();    
-    uchar *sl2=(uchar *)old_pal->addr();    
+    uint8_t *sl1=(uint8_t *)pal->addr();    
+    uint8_t *sl2=(uint8_t *)old_pal->addr();    
     int j;
     int v=(steps-i)*256/steps;
     for (j=0;j<256;j++)
@@ -1247,7 +1247,7 @@ void fade_out(int steps)
   pal->load();
 }
 
-int text_draw(int y, int x1, int y1, int x2, int y2, char *buf, JCFont *font, uchar *cmap, char color);
+int text_draw(int y, int x1, int y1, int x2, int y2, char *buf, JCFont *font, uint8_t *cmap, char color);
 
 void do_title()
 {
@@ -1310,7 +1310,7 @@ void do_title()
 			smoke[0]->put_image( screen, dx + 24, dy + 5 );
 
 			fade_in( NULL, 16 );
-			uchar cmap[32];
+			uint8_t cmap[32];
 			for( i = 0; i < 32; i++ )
 			cmap[i] = pal->find_closest( i * 256 / 32, i * 256 / 32, i * 256 / 32 );
 
@@ -1732,17 +1732,17 @@ void game::get_input()
 					if(ev.key < 256 )
 					{
 						if( chat && chat->chat_event( ev ) )
-							base->packet.write_byte( SCMD_CHAT_KEYPRESS );
+							base->packet.write_uint8( SCMD_CHAT_KEYPRESS );
 						else
-							base->packet.write_byte( SCMD_KEYPRESS );
+							base->packet.write_uint8( SCMD_KEYPRESS );
 					}
 					else
-						base->packet.write_byte( SCMD_EXT_KEYPRESS );
-					base->packet.write_byte( client_number() );
+						base->packet.write_uint8( SCMD_EXT_KEYPRESS );
+					base->packet.write_uint8( client_number() );
 					if( ev.key > 256 )
-						base->packet.write_byte( ev.key - 256 );
+						base->packet.write_uint8( ev.key - 256 );
 					else
-						base->packet.write_byte( ev.key );
+						base->packet.write_uint8( ev.key );
 				}
 			}
 			else if(ev.type == EV_KEYRELEASE )
@@ -1751,14 +1751,14 @@ void game::get_input()
 				if( playing_state( state ) )
 				{
 					if( ev.key < 256 )
-						base->packet.write_byte( SCMD_KEYRELEASE );
+						base->packet.write_uint8( SCMD_KEYRELEASE );
 					else
-						base->packet.write_byte( SCMD_EXT_KEYRELEASE );
-					base->packet.write_byte( client_number() );
+						base->packet.write_uint8( SCMD_EXT_KEYRELEASE );
+					base->packet.write_uint8( client_number() );
 					if( ev.key > 255 )
-						base->packet.write_byte( ev.key - 256 );
+						base->packet.write_uint8( ev.key - 256 );
 					else
-						base->packet.write_byte( ev.key );
+						base->packet.write_uint8( ev.key );
 				}
 			}
 
@@ -2031,11 +2031,11 @@ void net_send(int force=0)
 	  p->get_input();
 
 
-      base->packet.write_byte(SCMD_SYNC);
-      base->packet.write_short(make_sync());
+      base->packet.write_uint8(SCMD_SYNC);
+      base->packet.write_uint16(make_sync());
 
       if (base->join_list)
-      base->packet.write_byte(SCMD_RELOAD);
+      base->packet.write_uint8(SCMD_RELOAD);
 
       //      printf("save tick %d, pk size=%d, rand_on=%d, sync=%d\n",current_level->tick_counter(),
       //	     base->packet.packet_size(),rand_on,make_sync());
@@ -2048,7 +2048,7 @@ void net_receive()
 {
   if (!(dev&EDIT_MODE) && current_level)
   {
-    uchar buf[PACKET_MAX_SIZE+1];
+    uint8_t buf[PACKET_MAX_SIZE+1];
     int size;
 
     if (demo_man.state==demo_manager::PLAYING)

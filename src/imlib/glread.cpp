@@ -8,12 +8,12 @@
 image *read_glfont(char *fn)
 {
   image *im,*sub;
-  unsigned short length,y;
-  unsigned char size,first,width,height,gsize,last;
+  uint16_t length,y;
+  uint8_t size,first,width,height,gsize,last;
   FILE *fp;
   fp=fopen(fn,"rb");
   if (!fp) return NULL;
-  fread(&length,1,2,fp);  length=int_to_local(length);
+  fread(&length,1,2,fp);  length=uint16_to_local(length);
   fread(&size,1,1,fp);
   fread(&first,1,1,fp);
   if (size+first>255) { set_error(imFILE_CORRUPTED); fclose(fp); return NULL; }
@@ -44,8 +44,8 @@ image *read_pic(char *fn, palette *&pal)
 {
   image *im;
   char x[4],bpp;
-  unsigned char *sl=NULL,esc,c,n,marker,vmode;
-  unsigned short w,h,len,bufsize,blocks,sn,esize,edesc;
+  uint8_t *sl=NULL,esc,c,n,marker,vmode;
+  uint16_t w,h,len,bufsize,blocks,sn,esize,edesc;
   int xx,yy;
   FILE *fp;
   im=NULL;
@@ -54,7 +54,7 @@ image *read_pic(char *fn, palette *&pal)
   fread(&x[0],1,2,fp);
   fread(&w,1,2,fp);
   fread(&h,1,2,fp);
-  w=int_to_local(w);  h=int_to_local(h);
+  w=uint16_to_local(w);  h=uint16_to_local(h);
   fread(x,1,4,fp);
   fread(&bpp,1,1,fp);
   fread(&marker,1,1,fp);
@@ -65,9 +65,9 @@ image *read_pic(char *fn, palette *&pal)
 
   fread(&vmode,1,1,fp);
   fread(&edesc,1,2,fp);
-  edesc=int_to_local(edesc);
+  edesc=uint16_to_local(edesc);
   fread(&esize,1,2,fp);
-  esize=int_to_local(esize);
+  esize=uint16_to_local(esize);
   if (esize==768 && !pal)
   { pal=new palette(1<<bpp);
     fread(pal->addr(),1,(1<<bpp)*3,fp);
@@ -76,16 +76,16 @@ image *read_pic(char *fn, palette *&pal)
   else if (esize)
     fseek(fp,esize,SEEK_CUR);
   fread(&blocks,1,2,fp);
-  blocks=int_to_local(blocks);
+  blocks=uint16_to_local(blocks);
 
   yy=h; xx=w;
 
   while (blocks-- && w>=1 && yy>=0)
   {
     fread(&bufsize,1,2,fp);
-    bufsize=int_to_local(bufsize);
+    bufsize=uint16_to_local(bufsize);
     fread(&len,1,2,fp);
-    len=int_to_local(len);
+    len=uint16_to_local(len);
     fread(&esc,1,1,fp);
     while (yy>=0 && len)
     {
@@ -112,7 +112,7 @@ image *read_pic(char *fn, palette *&pal)
 	else
 	{
 	  fread(&sn,1,2,fp);
-	  sn=int_to_local(sn);
+	  sn=uint16_to_local(sn);
 	  fread(&c,1,1,fp);
 	  while (sn-- && yy>=0 && len)
 	  {

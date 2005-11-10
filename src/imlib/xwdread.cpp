@@ -122,26 +122,25 @@ image *readxwd(char *input_file,palette *&pal)
 int bits_per_item, bits_used, bit_shift, bits_per_pixel, pixel_mask;
 int bit_order, byte_swap;
 char buf[4];
-unsigned char *byteP;
-unsigned short *shortP;
-unsigned long *longP;
+uint8_t *byteP;
+uint16_t *shortP;
+uint32_t *longP;
 
 
-int bs_int(int s);
-long bs_long(long s);
-short bs_short(short s );
+uint32_t bs_uint32(uint32_t s);
+uint16_t bs_uint16(uint16_t s );
 
 
 image *getinit(FILE *file, palette *&pal, int *padrightP)
 {
   /* Assume X11 headers are larger than X10 ones. */
-  unsigned char header[sizeof(X11WDFileHeader)];
+  uint8_t header[sizeof(X11WDFileHeader)];
   image *im;
   X11WDFileHeader *h11P;
   char junk[800];
   unsigned int i;
   int dummy1, dummy2, dummy3;
-  unsigned  short minred, maxred;
+  uint16_t minred, maxred;
   X11XColor x11col;
 
   h11P = (X11WDFileHeader *) header;
@@ -274,16 +273,16 @@ maxred = 0;
   bit_order = h11P->bitmap_bit_order;
   pixel_mask = ( 1 << bits_per_pixel ) - 1;
 
-  byteP = (unsigned char *) buf;
-  shortP = (unsigned short *) buf;
-  longP = (unsigned long *) buf;
+  byteP = (uint8_t *) buf;
+  shortP = (uint16_t *) buf;
+  longP = (uint32_t *) buf;
   return im;
 }
 
 void getimage(FILE *file,image *im,int pad)
 {
   int i,j;
-  unsigned char *sl;
+  uint8_t *sl;
 #if BYTE_ORDER!=BIG_ENDIAN
   printf("little guys\n");
 #endif
@@ -313,9 +312,9 @@ int getpixnum(FILE *file)
 	  case 8:
 	    break;
 
-	  case 16: *shortP=short_swap(*shortP); break;
+	  case 16: *shortP=uint16_swap(*shortP); break;
 
-	  case 32: *longP=long_swap(*longP); break;
+	  case 32: *longP=uint32_swap(*longP); break;
 
 	  default:
 	    fprintf(stderr, "can't happen" );
@@ -356,26 +355,26 @@ int getpixnum(FILE *file)
 }
 
 
-short bs_short(short s )
+uint16_t bs_uint16(uint16_t s )
 {
-  short ss;
-  unsigned char *bp, t;
+  uint16_t ss;
+  uint8_t *bp, t;
 
   ss = s;
-  bp = (unsigned char *) &ss;
+  bp = (uint8_t *) &ss;
   t = bp[0];
   bp[0] = bp[1];
   bp[1] = t;
   return ss;
 }
 
-int bs_int(int i )
+uint32_t bs_uint32(uint32_t l )
 {
-  int ii;
-  unsigned char *bp, t;
+  uint32_t ii;
+  uint8_t *bp, t;
 
-  ii = i;
-  bp = (unsigned char *) &ii;
+  ii = l;
+  bp = (uint8_t *) &ii;
   t = bp[0];
   bp[0] = bp[3];
   bp[3] = t;
@@ -385,18 +384,13 @@ int bs_int(int i )
   return ii;
 }
 
-long bs_long(long l )
-{
-  return bs_int( l );
-}
-
 struct BMP_header
 {
   char id[2];
   long filesize;
-  short reserved[2];
+  int16_t reserved[2];
   long headersize,infosize,width,height;
-  short biplanes,bits;
+  int16_t biplanes,bits;
   long bicompression, bisizeimage, bixpelspermeter, biypelspermeter,
        biclrused,biclrimportant;
 } bmp;
@@ -404,20 +398,20 @@ struct BMP_header
 int read_BMP_header(FILE *fp)
 {
   if (!fread(&bmp.id,1,2,fp)) return 0;         // 2 0
-  bmp.filesize=read_long(fp);                   // 4 4
+  bmp.filesize=read_uint32(fp);                   // 4 4
   if (!fread(bmp.reserved,1,4,fp)) return 0;    // 4 8
-  bmp.headersize=read_long(fp);                 // 4 12
-  bmp.infosize=read_long(fp);                   // 4 16
-  bmp.width=read_long(fp);                      // 4 20
-  bmp.height=read_long(fp);                     // 4 24
-  bmp.biplanes=read_short(fp);                  // 2 26
-  bmp.bits=read_short(fp);                      // 2 28
-  bmp.bicompression=read_long(fp);              // 4 32
-  bmp.bisizeimage=read_long(fp);                // 4 36
-  bmp.bixpelspermeter=read_long(fp);            // 4 40
-  bmp.biypelspermeter=read_long(fp);            // 4 44
-  bmp.biclrused=read_long(fp);                  // 4 48
-  bmp.biclrimportant=read_long(fp);             // 4 52
+  bmp.headersize=read_uint32(fp);                 // 4 12
+  bmp.infosize=read_uint32(fp);                   // 4 16
+  bmp.width=read_uint32(fp);                      // 4 20
+  bmp.height=read_uint32(fp);                     // 4 24
+  bmp.biplanes=read_uint16(fp);                  // 2 26
+  bmp.bits=read_uint16(fp);                      // 2 28
+  bmp.bicompression=read_uint32(fp);              // 4 32
+  bmp.bisizeimage=read_uint32(fp);                // 4 36
+  bmp.bixpelspermeter=read_uint32(fp);            // 4 40
+  bmp.biypelspermeter=read_uint32(fp);            // 4 44
+  bmp.biclrused=read_uint32(fp);                  // 4 48
+  bmp.biclrimportant=read_uint32(fp);             // 4 52
   return 1;
   
 }
@@ -459,11 +453,11 @@ image24 *read_bmp24(char *filename)
   if (!im)
     return NULL;
   
-  unsigned char *sl;
+  uint8_t *sl;
   int trailer=im->width()%4;
   if (trailer==1) trailer=3;
   else if (trailer==3) trailer=1;
-  uchar buf[9];
+  uint8_t buf[9];
   for (i=im->height();i;i--)
   {
     sl=im->scan_line(i-1);
@@ -486,7 +480,7 @@ image *read_bmp(palette *&pal, char *filename)
 {
   image *im;
   FILE *fp;
-  unsigned char pal_quad[4];
+  uint8_t pal_quad[4];
   char *scrap;
   int bytes,i;
   fp=fopen(filename,"rb");
@@ -529,20 +523,20 @@ image *read_bmp(palette *&pal, char *filename)
 int write_BMP_header(FILE *fp)
 {
   if (!fwrite(&bmp.id,1,2,fp)) return 0;  
-  write_long(fp,bmp.filesize);  
+  write_uint32(fp,bmp.filesize);  
   if (!fwrite(bmp.reserved,1,4,fp)) return 0;   
-  write_long(fp,bmp.headersize);
-  write_long(fp,bmp.infosize);  
-  write_long(fp,bmp.width);
-  write_long(fp,bmp.height);
-  write_short(fp,bmp.biplanes);
-  write_short(fp,bmp.bits);
-  write_long(fp,bmp.bicompression);
-  write_long(fp,bmp.bisizeimage);
-  write_long(fp,bmp.bixpelspermeter);
-  write_long(fp,bmp.biypelspermeter);
-  write_long(fp,bmp.biclrused);
-  write_long(fp,bmp.biclrimportant);   
+  write_uint32(fp,bmp.headersize);
+  write_uint32(fp,bmp.infosize);  
+  write_uint32(fp,bmp.width);
+  write_uint32(fp,bmp.height);
+  write_uint16(fp,bmp.biplanes);
+  write_uint16(fp,bmp.bits);
+  write_uint32(fp,bmp.bicompression);
+  write_uint32(fp,bmp.bisizeimage);
+  write_uint32(fp,bmp.bixpelspermeter);
+  write_uint32(fp,bmp.biypelspermeter);
+  write_uint32(fp,bmp.biclrused);
+  write_uint32(fp,bmp.biclrimportant);   
   return 1;
   
 }
@@ -551,7 +545,7 @@ void write_bmp(image *im, palette *pal, char *filename)
 {
   FILE *fp;
   int i,bytes;
-  unsigned char pal_quad[4];
+  uint8_t pal_quad[4];
   fp=fopen(filename,"wb");
   if (!fp)
   { printf("Error : unable to open %s for writing!\n",filename);

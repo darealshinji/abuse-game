@@ -12,7 +12,7 @@
 #include "dev.hpp"
 
 light_source *first_light_source=NULL;
-unsigned char *white_light,*white_light_initial,*green_light,*trans_table;
+uint8_t *white_light,*white_light_initial,*green_light,*trans_table;
 short ambient_ramp=0;
 short shutdown_lighting_value,shutdown_lighting=0;
 extern char disable_autolight;   // defined in dev.hpp
@@ -166,10 +166,10 @@ light_source *add_light_source(char type, int32_t x, int32_t y,
 
 
 #define TTINTS 9
-uchar *tints[TTINTS];
-uchar bright_tint[256];
+uint8_t *tints[TTINTS];
+uint8_t bright_tint[256];
 
-void calc_tint(uchar *tint, int rs, int gs, int bs, int ra, int ga, int ba, palette *pal)
+void calc_tint(uint8_t *tint, int rs, int gs, int bs, int ra, int ga, int ba, palette *pal)
 {
   palette npal;
   memset(npal.addr(),0,256);
@@ -191,14 +191,14 @@ void calc_tint(uchar *tint, int rs, int gs, int bs, int ra, int ga, int ba, pale
 
 void calc_light_table(palette *pal)
 {
-	white_light_initial=(unsigned char *)jmalloc(256*64,"light table");
+	white_light_initial=(uint8_t *)jmalloc(256*64,"light table");
 	white_light=white_light_initial;
 
-//	green_light=(unsigned char *)jmalloc(256*64,"green light");
+//	green_light=(uint8_t *)jmalloc(256*64,"green light");
 	int i = 0;
 	for( ; i < TTINTS; i++ )
 	{
-		tints[i] = (uchar *)jmalloc( 256, "color tint" );
+		tints[i] = (uint8_t *)jmalloc( 256, "color tint" );
 	}
 
 	char *lightpath;
@@ -214,7 +214,7 @@ void calc_light_table(palette *pal)
 	}
 	else
 	{
-		if (fp->read_short()!=calc_crc((unsigned char *)pal->addr(),768))
+		if (fp->read_uint16()!=calc_crc((uint8_t *)pal->addr(),768))
 			recalc=1;
 		else
 		{
@@ -223,7 +223,7 @@ void calc_light_table(palette *pal)
 			for (i=0;i<TTINTS;i++)
 				fp->read(tints[i],256);
 			fp->read(bright_tint,256);
-//			trans_table=(uchar *)jmalloc(256*256,"transparency table");
+//			trans_table=(uint8_t *)jmalloc(256*256,"transparency table");
 //			fp.read(trans_table,256*256);
 		}
 		delete fp;
@@ -236,7 +236,7 @@ void calc_light_table(palette *pal)
 		int color=0;
 		for (;color<256;color++)
 		{
-			unsigned char r,g,b;
+			uint8_t r,g,b;
 			pal->get(color,r,g,b);
 			stat_man->update(color*100/256);
 			for (int intensity=63;intensity>=0;intensity--)
@@ -254,7 +254,7 @@ void calc_light_table(palette *pal)
     for (color=0;color<256;color++)
     {
       stat_man->update(color*100/256);
-      unsigned char r,g,b;
+      uint8_t r,g,b;
       pal->get(color,b,r,g);
       r=r*3/5; b=b*3/5; g+=7; if (g>255) g=255;
 
@@ -273,7 +273,7 @@ void calc_light_table(palette *pal)
     stat_man->pop(); */
 
     stat_man->push("tints",NULL);
-    uchar t[TTINTS*6]={0,0,0,0,0,0, // normal
+    uint8_t t[TTINTS*6]={0,0,0,0,0,0, // normal
                    0,0,0,1,0,0,     // red
 		   0,0,0,1,1,0,     // yellow
 		   0,0,0,1,0,1,     // purple
@@ -289,8 +289,8 @@ void calc_light_table(palette *pal)
 
 		   0,0,0,0,0,0   // reverse green  (night vision effect)
 		 } ;
-    uchar *ti=t+6;
-    uchar *c;
+    uint8_t *ti=t+6;
+    uint8_t *c;
     for (i=0,c=tints[0];i<256;i++,c++) *c=i;  // make the normal tint (maps everthing to itself)
     for (i=0,c=tints[TTINTS-1];i<256;i++,c++)  // reverse green
     {
@@ -316,12 +316,12 @@ void calc_light_table(palette *pal)
     }
     stat_man->pop();
 /*    fprintf(stderr,"calculating transparency tables (256 total)\n");
-    trans_table=(uchar *)jmalloc(256*256,"transparency table");
+    trans_table=(uint8_t *)jmalloc(256*256,"transparency table");
 
-    uchar *tp=trans_table;
+    uint8_t *tp=trans_table;
     for (i=0;i<256;i++)
     {      
-      uchar r1,g1,b1,r2,g2,b2;
+      uint8_t r1,g1,b1,r2,g2,b2;
       pal->get(i,r1,g1,b1);
       if ((i%16)==0)
         fprintf(stderr,"%d ",i);
@@ -343,7 +343,7 @@ void calc_light_table(palette *pal)
 			dprintf( "Unable to open file light.tbl for writing\n" );
 		else
 		{
-			f->write_short(calc_crc((unsigned char *)pal->addr(),768));
+			f->write_uint16(calc_crc((uint8_t *)pal->addr(),768));
 			f->write(white_light,256*64);
 //      f->write(green_light,256*64);
 			for (int i=0;i<TTINTS;i++)
@@ -627,30 +627,30 @@ inline void MAP_2PUT(uint8_t * in_addr, uint8_t * out_addr, uint8_t * remap, int
 /*
 #endif
 
-inline void PUT8(int32_t *addr, uchar *remap)
+inline void PUT8(int32_t *addr, uint8_t *remap)
 {
   register uint32_t in_pixels;
   register uint32_t pixel;
   register uint32_t out_pixels;
   in_pixels=*addr;
   pixel=in_pixels;
-  out_pixels=remap[(uchar)pixel];
+  out_pixels=remap[(uint8_t)pixel];
   
   pixel=in_pixels;
   pixel>>=8;
-  pixel=remap[(uchar)pixel];
+  pixel=remap[(uint8_t)pixel];
   pixel<<=8;
   out_pixels|=pixel;
 
   pixel=in_pixels;
   pixel>>=16;
-  pixel=remap[(uchar)pixel];
+  pixel=remap[(uint8_t)pixel];
   pixel<<=16;
   out_pixels|=pixel;
 
   pixel=in_pixels;
   pixel>>=24;
-  pixel=remap[(uchar)pixel];
+  pixel=remap[(uint8_t)pixel];
   pixel<<=24;
   out_pixels|=pixel;
 
@@ -665,19 +665,19 @@ inline void PUT8(int32_t *addr, uchar *remap)
   
   pixel=in_pixels;
   pixel>>=8;
-  pixel=remap[(uchar)pixel];
+  pixel=remap[(uint8_t)pixel];
   pixel<<=8;
   out_pixels|=pixel;
 
   pixel=in_pixels;
   pixel>>=16;
-  pixel=remap[(uchar)pixel];
+  pixel=remap[(uint8_t)pixel];
   pixel<<=16;
   out_pixels|=pixel;
 
   pixel=in_pixels;
   pixel>>=24;
-  pixel=remap[(uchar)pixel];
+  pixel=remap[(uint8_t)pixel];
   pixel<<=24;
   out_pixels|=pixel;  
   addr[1]=out_pixels;        // send out bus
@@ -687,7 +687,7 @@ inline void PUT8(int32_t *addr, uchar *remap)
 inline int32_t MAP_PUT2(int32_t dest_addr, int32_t screen_addr, int32_t remap, int32_t w)
 { while (w--) 
   { 
-    *((uchar *)(dest_addr))=*((uchar *)remap+*((uchar *)screen_addr)); 
+    *((uint8_t *)(dest_addr))=*((uint8_t *)remap+*((uint8_t *)screen_addr)); 
     screen_addr++; 
     dest_addr++;
   } 
@@ -696,7 +696,7 @@ inline int32_t MAP_PUT2(int32_t dest_addr, int32_t screen_addr, int32_t remap, i
 
 */
 
-ushort min_light_level;
+uint16_t min_light_level;
 // calculate the light value for this block.  sum up all contritors
 inline int calc_light_value(light_patch *lp,   // light patch to look at
 			    int32_t sx,           // screen x & y
@@ -748,16 +748,16 @@ inline int calc_light_value(light_patch *lp,   // light patch to look at
 
 /*#ifdef __WATCOMC__
 
-extern "C" void remap_line_asm(uchar *screen_line,uchar *light_lookup,uchar *remap_line,int count);
+extern "C" void remap_line_asm(uint8_t *screen_line,uint8_t *light_lookup,uint8_t *remap_line,int count);
 
 #else */
 
-void remap_line_asm2(uchar *addr,uchar *light_lookup,uchar *remap_line,int count)
-//inline void remap_line_asm2(uchar *addr,uchar *light_lookup,uchar *remap_line,int count)
+void remap_line_asm2(uint8_t *addr,uint8_t *light_lookup,uint8_t *remap_line,int count)
+//inline void remap_line_asm2(uint8_t *addr,uint8_t *light_lookup,uint8_t *remap_line,int count)
 {
   while (count--)
   {
-    uchar *off=light_lookup+(((int32_t)*remap_line)<<8); 
+    uint8_t *off=light_lookup+(((int32_t)*remap_line)<<8); 
     remap_line++;
 
     *addr=off[*addr]; 
@@ -776,13 +776,13 @@ void remap_line_asm2(uchar *addr,uchar *light_lookup,uchar *remap_line,int count
 //#endif
 
 
-inline void put_8line(uchar *in_line, uchar *out_line, uchar *remap, uchar *light_lookup, int count)
+inline void put_8line(uint8_t *in_line, uint8_t *out_line, uint8_t *remap, uint8_t *light_lookup, int count)
 {
-  uchar v;
+  uint8_t v;
   int x;
   for (x=0;x<count;x++)                        
   {                                            
-    uchar *off=light_lookup+(((int32_t)*remap)<<8);
+    uint8_t *off=light_lookup+(((int32_t)*remap)<<8);
 
     v=off[*(in_line++)];
     *(out_line++)=v;
@@ -821,7 +821,7 @@ inline void put_8line(uchar *in_line, uchar *out_line, uchar *remap, uchar *ligh
 }
 
 
-void light_screen(image *sc, int32_t screenx, int32_t screeny, uchar *light_lookup, ushort ambient)
+void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient)
 {
   int lx_run=0,ly_run;                     // light block x & y run size in pixels ==  (1<<lx_run)
 
@@ -863,17 +863,17 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uchar *light_look
 
   int32_t remap_size=((cx2-cx1+1-prefix-suffix)>>lx_run);
 
-  uchar *remap_line=(uchar *)jmalloc(remap_size,"light remap line");
+  uint8_t *remap_line=(uint8_t *)jmalloc(remap_size,"light remap line");
 
   light_patch *f=first;
-  uchar *screen_line=screen->scan_line(cy1)+cx1;
+  uint8_t *screen_line=screen->scan_line(cy1)+cx1;
 
   for (int y=cy1;y<=cy2;)
   {
     int x,count;
 //    while (f->next && f->y2<y) 
 //      f=f->next;
-    uchar *rem=remap_line;
+    uint8_t *rem=remap_line;
 
     int todoy=4-((screeny+y)&3);
     if (y+todoy>cy2)
@@ -971,7 +971,7 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uchar *light_look
 }
 
 
-void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uchar *light_lookup, ushort ambient,
+void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient,
 			 image *out, int32_t out_x, int32_t out_y)
 {
   if (sc->width()*2+out_x>out->width() ||
@@ -1003,11 +1003,11 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uchar *lig
 
   if (ambient==63)      // lights off, just double the pixels
   {
-    uchar *src=sc->scan_line(0);
-    uchar *dst=out->scan_line(out_y+cy1*2)+cx1*2+out_x;
+    uint8_t *src=sc->scan_line(0);
+    uint8_t *dst=out->scan_line(out_y+cy1*2)+cx1*2+out_x;
     int d_skip=out->width()-sc->width()*2;
     int x,y;
-    ushort v;
+    uint16_t v;
     for (y=sc->height();y;y--)
     {
       for (x=sc->width();x;x--)
@@ -1039,11 +1039,11 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uchar *lig
 
   int32_t remap_size=((cx2-cx1+1-prefix-suffix)>>lx_run);
 
-  uchar *remap_line=(uchar *)jmalloc(remap_size,"light remap line");
+  uint8_t *remap_line=(uint8_t *)jmalloc(remap_size,"light remap line");
 
   light_patch *f=first;
-  uchar *in_line=sc->scan_line(cy1)+cx1;
-  uchar *out_line=out->scan_line(cy1*2+out_y)+cx1*2+out_x;
+  uint8_t *in_line=sc->scan_line(cy1)+cx1;
+  uint8_t *out_line=out->scan_line(cy1*2+out_y)+cx1*2+out_x;
 
 
   for (int y=cy1;y<=cy2;)
@@ -1051,7 +1051,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uchar *lig
     int x,count;
 //    while (f->next && f->y2<y) 
 //      f=f->next;
-    uchar *rem=remap_line;
+    uint8_t *rem=remap_line;
 
     int todoy=4-((screeny+y)&3);
     if (y+todoy>cy2)
@@ -1197,17 +1197,17 @@ void write_lights(bFILE *fp)
   int t=0;
   light_source *f=first_light_source;
   for (;f;f=f->next) t++;
-  fp->write_long(t);
-  fp->write_long(min_light_level);
+  fp->write_uint32(t);
+  fp->write_uint32(min_light_level);
   for (f=first_light_source;f;f=f->next)
   {
-    fp->write_long(f->x);
-    fp->write_long(f->y);
-    fp->write_long(f->xshift);
-    fp->write_long(f->yshift);
-    fp->write_long(f->inner_radius);
-    fp->write_long(f->outer_radius);
-    fp->write_byte(f->type);
+    fp->write_uint32(f->x);
+    fp->write_uint32(f->y);
+    fp->write_uint32(f->xshift);
+    fp->write_uint32(f->yshift);
+    fp->write_uint32(f->inner_radius);
+    fp->write_uint32(f->outer_radius);
+    fp->write_uint8(f->type);
   }
 }
 
@@ -1219,19 +1219,19 @@ void read_lights(spec_directory *sd, bFILE *fp, char *level_name)
   if (se)
   {
     fp->seek(se->offset,SEEK_SET);
-    int32_t t=fp->read_long();
-    min_light_level=fp->read_long();
+    int32_t t=fp->read_uint32();
+    min_light_level=fp->read_uint32();
     light_source *last=NULL;
     while (t)
     {
       t--;
-      int32_t x=fp->read_long();
-      int32_t y=fp->read_long();
-      int32_t xshift=fp->read_long();
-      int32_t yshift=fp->read_long();
-      int32_t ir=fp->read_long();
-      int32_t ora=fp->read_long();
-      int32_t ty=fp->read_byte();
+      int32_t x=fp->read_uint32();
+      int32_t y=fp->read_uint32();
+      int32_t xshift=fp->read_uint32();
+      int32_t yshift=fp->read_uint32();
+      int32_t ir=fp->read_uint32();
+      int32_t ora=fp->read_uint32();
+      int32_t ty=fp->read_uint8();
 
       light_source *p=new light_source(ty,x,y,ir,ora,xshift,yshift,NULL);
       

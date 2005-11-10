@@ -607,7 +607,7 @@ int level::tick()
   if (current_demo_mode()==DEMO_PLAY)
   {
     if (!rcheck) rcheck=open_file("rcheck","rb");
-    int32_t x=rcheck->read_long();
+    int32_t x=rcheck->read_uint32();
     if (x!=rand_on)
       dprintf("off!\n");
   } else if (current_demo_mode()==DEMO_RECORD)
@@ -617,7 +617,7 @@ int level::tick()
       rcheck=open_file("rcheck","wb");
       rcheck_lp=open_file("rcheck.lp","wb");
     }
-    rcheck->write_long(rand_on);
+    rcheck->write_uint32(rand_on);
   } else
   {
     if (rcheck)
@@ -760,7 +760,7 @@ int level::tick()
   return ret;
 }
 
-void level::set_tick_counter(ulong x) 
+void level::set_tick_counter(uint32_t x) 
 { 
   ctick=x; 
 }
@@ -866,7 +866,7 @@ int locate_var(bFILE *fp, spec_directory *sd, char *str, int size)
   if (se)
   {
     fp->seek(se->offset,0);
-    if (RC_type_size(fp->read_byte())!=size)
+    if (RC_type_size(fp->read_uint8())!=size)
       return 0;
     else return 1;
   } 
@@ -885,12 +885,12 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
   {
     fp->seek(se->offset,0);
     /******************************* Read debug info ******************************/
-    int16_t old_tot=fp->read_short();  
+    int16_t old_tot=fp->read_uint16();  
     uint16_t *o_remap=(uint16_t *)jmalloc(old_tot*2,"obj remap array");    
     char old_name[150];      
     for (i=0;i<old_tot;i++)
     {
-      fp->read(old_name,fp->read_byte());    // read the name
+      fp->read(old_name,fp->read_uint8());    // read the name
       for (o_remap[i]=0xffff,j=0;j<total_objects;j++)  // check for matching current name
       {
 	if (!strcmp(old_name,object_names[j]))
@@ -900,28 +900,28 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
 
 
     /***************************** Read state names *********************************/
-    int old_stot=fp->read_short();
+    int old_stot=fp->read_uint16();
     unsigned char *s_remap=(unsigned char *)jmalloc(old_stot,"state remap array");
     for (i=0;i<old_stot;i++)
     {
-      fp->read(old_name,fp->read_byte());
+      fp->read(old_name,fp->read_uint8());
       s_remap[i]=stopped;           // non exsitant states get mapped into stopped state
       for (j=0;j<MAX_STATE;j++)                  // see if old state exist now
 	if (!strcmp(state_names[j],old_name))
          s_remap[i]=j;
     }
-    total_objs=fp->read_long();    
+    total_objs=fp->read_uint32();    
 
     se=sd->find("type");
     if (se)
     {
       fp->seek(se->offset,0);
       last=NULL;
-      if (fp->read_byte()==RC_S)    //  read type array, this should be type RC_S
+      if (fp->read_uint8()==RC_S)    //  read type array, this should be type RC_S
       {
 	for (i=0;i<total_objs;i++)
 	{
-	  ushort t=fp->read_short();
+	  uint16_t t=fp->read_uint16();
 	  game_object *p=new game_object(o_remap[t],1);
 	  clear_tmp();
 	  if (!first) first=p; else last->next=p;
@@ -933,12 +933,12 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
 	if (se)
 	{
 	  fp->seek(se->offset,0);
-	  if (fp->read_byte()==RC_S)    //  read state array, this should be type RC_S
+	  if (fp->read_uint8()==RC_S)    //  read state array, this should be type RC_S
 	  {
 	    game_object *l=first;
 	    for (i=0;i<total_objs;i++,l=l->next)
 	    {
-	      character_state s=(character_state)s_remap[fp->read_short()];
+	      character_state s=(character_state)s_remap[fp->read_uint16()];
 	      if (l->otype!=0xffff)
 	      {
 		if (l->has_sequence((character_state)s))
@@ -964,7 +964,7 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
 	  {
 	    fp->seek(se->offset,0);
 	    int t=object_descriptions[j].type;
-	    if (fp->read_byte()!=t)
+	    if (fp->read_uint8()!=t)
 	      dprintf("Warning : load level -> var '%s' size changed\n");
 	    else
 	    {
@@ -973,9 +973,9 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
 	      {	       
 		switch (t)
 		{
-		  case RC_C : f->set_var(j,fp->read_byte()); break;
-		  case RC_S : f->set_var(j,fp->read_short()); break;
-		  case RC_L : f->set_var(j,fp->read_long()); break;
+		  case RC_C : f->set_var(j,fp->read_uint8()); break;
+		  case RC_S : f->set_var(j,fp->read_uint16()); break;
+		  case RC_L : f->set_var(j,fp->read_uint32()); break;
 		}
 
 		// check to make sure the frame number is not out of bounds from the time
@@ -1017,7 +1017,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
   else if (se)
   {
     fp->seek(se->offset,0);
-    int16_t old_tot=fp->read_short();
+    int16_t old_tot=fp->read_uint16();
     se=sd->find("describe_names");
     if (!se || !old_tot)
       return ;
@@ -1028,7 +1028,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
     char old_name[150];      
     for (i=0;i<old_tot;i++)
     {
-      fp->read(old_name,fp->read_byte());    // read the name
+      fp->read(old_name,fp->read_uint8());    // read the name
       for (o_remap[i]=0xffff,j=0;j<total_objects;j++)  // check for matching current name
       {
 	if (!strcmp(old_name,object_names[j]))
@@ -1047,7 +1047,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
     int i=0;
     for (;i<old_tot;i++)
     {
-      int16_t t=fp->read_short();
+      int16_t t=fp->read_uint16();
       s_remap_totals[i]=t;
       if (t)
       {
@@ -1061,7 +1061,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
       int j=0;
       for (;j<t;j++)
       {
-	fp->read(old_name,fp->read_byte());
+	fp->read(old_name,fp->read_uint8());
 	int new_type=o_remap[i];	
 	if (new_type<total_objects)     // make sure old object still exsist
 	{
@@ -1089,7 +1089,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
       int i=0;
       for (;i<old_tot;i++)
       {
-	int16_t t=fp->read_short();
+	int16_t t=fp->read_uint16();
 	v_remap_totals[i]=t;
 	if (t)
 	{
@@ -1099,7 +1099,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
 	int j=0;
 	for (;j<t;j++)
 	{
-	  fp->read(old_name,fp->read_byte());
+	  fp->read(old_name,fp->read_uint8());
 	  int new_type=o_remap[i];
 	  if (new_type!=0xffff)        // make sure old object still exsist
 	  {
@@ -1121,19 +1121,19 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
     se=sd->find("object_list");
     if (se)
     {
-      total_objs=fp->read_long();    
+      total_objs=fp->read_uint32();    
 
       se=sd->find("type");
       if (se)
       {
 	fp->seek(se->offset,0);
 	last=NULL;
-	if (fp->read_byte()==RC_S)    //  read type array, this should be type RC_S
+	if (fp->read_uint8()==RC_S)    //  read type array, this should be type RC_S
 	{
 	  int i=0;
 	  for (;i<total_objs;i++)
 	  {
-	    ushort t=fp->read_short();
+	    uint16_t t=fp->read_uint16();
 	    game_object *p=new game_object(o_remap[t],1);
 	    clear_tmp();
 	    if (!first) first=p; else last->next=p;
@@ -1144,12 +1144,12 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
 	  if (se)
 	  {
 	    fp->seek(se->offset,0);
-	    if (fp->read_byte()==RC_S)    //  read state array, this should be type RC_S
+	    if (fp->read_uint8()==RC_S)    //  read state array, this should be type RC_S
 	    {
 	      game_object *l=first;
 	      for (i=0;i<total_objs;i++,l=l->next)
 	      {
-		int st=fp->read_short();
+		int st=fp->read_uint16();
 		if (l->otype==0xffff)
 		  l->state=stopped;
 		else
@@ -1172,14 +1172,14 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
 	    game_object *o=first;
 	    for (;o && !abort;o=o->next)
 	    {
-	      int16_t ot=fp->read_short();
+	      int16_t ot=fp->read_uint16();
 	      int k=0;
 	      for (;k<ot;k++)
 	      {
-		if (fp->read_byte()!=RC_L) abort=1;
+		if (fp->read_uint8()!=RC_L) abort=1;
 		else
 		{
-		  int32_t v=fp->read_long();
+		  int32_t v=fp->read_uint32();
 		  if (o->otype!=0xffff)     // non-exstant object
 		  {
 		    int remap=*(v_remap[o_backmap[o->otype]]+k);
@@ -1207,7 +1207,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
 	    {
 	      fp->seek(se->offset,0);
 	      int t=object_descriptions[j].type;
-	      if (fp->read_byte()!=t)
+	      if (fp->read_uint8()!=t)
 	        dprintf("Warning : load level -> var '%s' size changed\n");
 	      else
 	      {
@@ -1217,11 +1217,11 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
 		  switch (t)
 		  {
 		    case RC_C : 
-		    { f->set_var(j,fp->read_byte()); } break;
+		    { f->set_var(j,fp->read_uint8()); } break;
 		    case RC_S : 
-		    { f->set_var(j,fp->read_short()); } break;
+		    { f->set_var(j,fp->read_uint16()); } break;
 		    case RC_L : 
-		    { f->set_var(j,fp->read_long()); } break;
+		    { f->set_var(j,fp->read_uint32()); } break;
 		  }
 		  
 		  // check to make sure the frame number is not out of bounds from the time
@@ -1292,7 +1292,7 @@ level::level(spec_directory *sd, bFILE *fp, char *lev_name)
   if (e)
   {
     fp->seek(e->offset,0);
-    int len=fp->read_byte();   // read the length of the string
+    int len=fp->read_uint8();   // read the length of the string
     first_name=(char *)jmalloc(len,"level first name");
     fp->read(first_name,len);    // read the string
   } else
@@ -1307,8 +1307,8 @@ level::level(spec_directory *sd, bFILE *fp, char *lev_name)
   if (e)
   {    
     fp->seek(e->offset,0);
-    fg_width=fp->read_long();
-    fg_height=fp->read_long();
+    fg_width=fp->read_uint32();
+    fg_height=fp->read_uint32();
     map_fg=(uint16_t *)jmalloc(2*fg_width*fg_height,"Map fg : loaded");
     fp->read((char *)map_fg,2*fg_width*fg_height);
     int t=fg_width*fg_height;
@@ -1325,8 +1325,8 @@ level::level(spec_directory *sd, bFILE *fp, char *lev_name)
   if (e)
   {
     fp->seek(e->offset,0);
-    bg_width=fp->read_long();
-    bg_height=fp->read_long();
+    bg_width=fp->read_uint32();
+    bg_height=fp->read_uint32();
     map_bg=(uint16_t *)jmalloc(2*bg_width*bg_height,"Map bg : loaded");
     fp->read((char *)map_bg,2*bg_width*bg_height);
     int t=bg_width*bg_height;
@@ -1643,8 +1643,8 @@ void level::write_thumb_nail(bFILE *fp, image *im)
   strftime(buf,80,"%T %A %B %d",localtime(&t));  
   eh->font()->put_string(i,80-strlen(buf)*eh->font()->width()/2,100+eh->font()->height(),buf);
 
-  fp->write_short(i->width());
-  fp->write_short(i->height());
+  fp->write_uint16(i->width());
+  fp->write_uint16(i->height());
   int y=0;
   for (;y<i->height();y++)
     fp->write(i->scan_line(y),i->width());
@@ -1657,33 +1657,33 @@ void level::write_player_info(bFILE *fp, object_node *save_list)
   int32_t t=0;
   view *v=player_list;
   for (;v;v=v->next) t++; 
-  fp->write_long(t);
+  fp->write_uint32(t);
 
   for (v=player_list;v;v=v->next)
-    fp->write_long(object_to_number_in_list(v->focus,save_list));
+    fp->write_uint32(object_to_number_in_list(v->focus,save_list));
 
   int tv=total_view_vars();
   int i=0;
   for (;i<tv;i++)
   {
-    fp->write_byte(RC_L);
+    fp->write_uint8(RC_L);
     for (v=player_list;v;v=v->next)
-      fp->write_long(v->get_view_var_value(i));
+      fp->write_uint32(v->get_view_var_value(i));
   }
 
-  fp->write_byte(RC_L);
-  fp->write_long(rand_on);
+  fp->write_uint8(RC_L);
+  fp->write_uint32(rand_on);
 
-  fp->write_byte(RC_L);
-  fp->write_long(total_weapons);
+  fp->write_uint8(RC_L);
+  fp->write_uint32(total_weapons);
   for (v=player_list;v;v=v->next)
     for (i=0;i<total_weapons;i++)
-      fp->write_long(v->weapons[i]);
+      fp->write_uint32(v->weapons[i]);
 
   for (v=player_list;v;v=v->next)
   {
     int len=strlen(v->name)+1;
-    fp->write_byte(len);
+    fp->write_uint8(len);
     fp->write(v->name,len);
   }
 }
@@ -1725,12 +1725,12 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
       delete v;
     }
 
-    int32_t total_players=fp->read_long();
+    int32_t total_players=fp->read_uint32();
     view *last=NULL;
     int i=0;
     for (;i<total_players;i++)    
     {
-      game_object *o=number_to_object_in_list(fp->read_long(),save_list);
+      game_object *o=number_to_object_in_list(fp->read_uint32(),save_list);
       v=new view(o,NULL,0);
       if (o) o->set_controller(v);
       if (player_list)
@@ -1749,10 +1749,10 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
       if (se)
       {
 	fp->seek(se->offset,0);
-	if (fp->read_byte()==RC_L)
+	if (fp->read_uint8()==RC_L)
 	{
 	  for (v=player_list;v;v=v->next)
-            v->set_view_var_value(i,fp->read_long());
+            v->set_view_var_value(i,fp->read_uint32());
 	}
       } else 
       {
@@ -1765,23 +1765,23 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
     if (se)
     {
       fp->seek(se->offset,0);
-      if (fp->read_byte()==RC_L)
-        rand_on=fp->read_long();
+      if (fp->read_uint8()==RC_L)
+        rand_on=fp->read_uint32();
     } else rand_on=0;
 
     se=sd->find("weapon_array");
     if (se)
     {
       fp->seek(se->offset,0);
-      if (fp->read_byte()==RC_L)
+      if (fp->read_uint8()==RC_L)
       {
-	int32_t m=fp->read_long();  // read how many weapons exsisted when last saved
+	int32_t m=fp->read_uint32();  // read how many weapons exsisted when last saved
 	int i;
 	for (v=player_list;v;v=v->next)	  
 	{
 	  for (i=0;i<m;i++)
 	  {
-	    int32_t x=fp->read_long();
+	    int32_t x=fp->read_uint32();
 	    if (i<total_weapons)
 	    {
 	      v->weapons[i]=x;
@@ -1805,7 +1805,7 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
       fp->seek(se->offset,0);
       for (v=player_list;v;v=v->next)	  
       {
-	uchar len=fp->read_byte();
+	uint8_t len=fp->read_uint8();
 	fp->read(v->name,len);
       }
     }
@@ -1853,12 +1853,12 @@ void level::write_objects(bFILE *fp, object_node *save_list)
 {
   // record information in the file about what the data structures look like
   // right now, so if they change later, they don't get get screwed up
-  fp->write_short(total_objects);   // mark how many objects we know about right now  
+  fp->write_uint16(total_objects);   // mark how many objects we know about right now  
 
   int i=0;
   for (;i<total_objects;i++)   // loop through all the object types we know of
   {    
-    fp->write_byte(strlen(object_names[i])+1);                    // sizeof name    
+    fp->write_uint8(strlen(object_names[i])+1);                    // sizeof name    
     fp->write(object_names[i],strlen(object_names[i])+1);      // write object name
   }
     
@@ -1870,13 +1870,13 @@ void level::write_objects(bFILE *fp, object_node *save_list)
     int j=0;
     for (;j<figures[i]->ts;j++)
       if (figures[i]->seq[j]) total++;
-    fp->write_short(total);
+    fp->write_uint16(total);
 
     for (j=0;j<figures[i]->ts;j++)
       if (figures[i]->seq[j])
       {
 	char *state_name=lstring_value(symbol_name(figures[i]->seq_syms[j]));
-	fp->write_byte(strlen(state_name)+1);
+	fp->write_uint8(strlen(state_name)+1);
 	fp->write(state_name,strlen(state_name)+1);
       }
   }
@@ -1885,7 +1885,7 @@ void level::write_objects(bFILE *fp, object_node *save_list)
   // write object lvar names
   for (i=0;i<total_objects;i++)
   {
-    fp->write_short(figures[i]->tv);
+    fp->write_uint16(figures[i]->tv);
     int j,x;
     
     for (x=0;x<figures[i]->tv;x++)
@@ -1895,7 +1895,7 @@ void level::write_objects(bFILE *fp, object_node *save_list)
         if (figures[i]->vars[j] && figures[i]->var_index[j]==x)
 	{
 	  char *var_name=lstring_value(symbol_name(figures[i]->vars[j]));
-	  fp->write_byte(strlen(var_name)+1);
+	  fp->write_uint8(strlen(var_name)+1);
 	  fp->write(var_name,strlen(var_name)+1);
 	}
       }
@@ -1905,39 +1905,39 @@ void level::write_objects(bFILE *fp, object_node *save_list)
   int32_t t=0;
   object_node *o=save_list;
   for (;o;o=o->next) t++;
-  fp->write_long(t);
+  fp->write_uint32(t);
 
 
-  fp->write_byte(RC_S);                                    // save type info for each record
-  for (o=save_list;o;o=o->next) fp->write_short(o->me->type());    
+  fp->write_uint8(RC_S);                                    // save type info for each record
+  for (o=save_list;o;o=o->next) fp->write_uint16(o->me->type());    
 
-  fp->write_byte(RC_S);                                    // save state info for each record
-  for (o=save_list;o;o=o->next) fp->write_short(o->me->reduced_state());
+  fp->write_uint8(RC_S);                                    // save state info for each record
+  for (o=save_list;o;o=o->next) fp->write_uint16(o->me->reduced_state());
 
   for (o=save_list;o;o=o->next)                            // save lvars
   {
-    fp->write_short(figures[o->me->otype]->tv);
+    fp->write_uint16(figures[o->me->otype]->tv);
     for (i=0;i<figures[o->me->otype]->tv;i++) 
     {
-      fp->write_byte(RC_L);                           // for now the only type allowed is int32_t
-      fp->write_long(o->me->lvars[i]);
+      fp->write_uint8(RC_L);                           // for now the only type allowed is int32_t
+      fp->write_uint32(o->me->lvars[i]);
     }
   }
 
   for (i=0;i<default_simple.total_vars();i++)
   {
     int t=object_descriptions[i].type;
-    fp->write_byte(t);
+    fp->write_uint8(t);
     for (o=save_list;o;o=o->next)
     {
       switch (t)
       { 	
 	case RC_C :
-	{ fp->write_byte(o->me->get_var(i)); } break;
+	{ fp->write_uint8(o->me->get_var(i)); } break;
 	case RC_S :
-	{ fp->write_short(o->me->get_var(i)); } break;
+	{ fp->write_uint16(o->me->get_var(i)); } break;
 	case RC_L :
-	{ fp->write_long(o->me->get_var(i)); } break;
+	{ fp->write_uint32(o->me->get_var(i)); } break;
       }
     }
   }
@@ -1962,8 +1962,8 @@ int32_t level::total_light_links(object_node *list)
 
 void level::write_links(bFILE *fp, object_node *save_list, object_node *exclude_list)
 {
-  fp->write_byte(RC_L);  
-  fp->write_long(total_object_links(save_list));
+  fp->write_uint8(RC_L);  
+  fp->write_uint32(total_object_links(save_list));
 
   int x=1;
   object_node *o=save_list;
@@ -1973,17 +1973,17 @@ void level::write_links(bFILE *fp, object_node *save_list, object_node *exclude_
     int i=0;
     for (;i<o->me->total_objects();i++)
     {
-      fp->write_long(x);
+      fp->write_uint32(x);
       int32_t x=object_to_number_in_list(o->me->get_object(i),save_list); 
       if (x)
-        fp->write_long(x);
+        fp->write_uint32(x);
       else                            // save links to excluded items as negative
-        fp->write_long((int32_t)(-(object_to_number_in_list(o->me,exclude_list))));
+        fp->write_uint32((int32_t)(-(object_to_number_in_list(o->me,exclude_list))));
     }
   }
 
-  fp->write_byte(RC_L);  
-  fp->write_long(total_light_links(save_list));
+  fp->write_uint8(RC_L);  
+  fp->write_uint32(total_light_links(save_list));
 
   x=1;
   for (o=save_list;o;o=o->next,x++)
@@ -1991,8 +1991,8 @@ void level::write_links(bFILE *fp, object_node *save_list, object_node *exclude_
     int i=0;
     for (;i<o->me->total_lights();i++)
     {
-      fp->write_long(x);
-      fp->write_long(light_to_number(o->me->get_light(i)));
+      fp->write_uint32(x);
+      fp->write_uint32(light_to_number(o->me->get_light(i)));
     }
   }
 
@@ -2006,14 +2006,14 @@ void level::load_links(bFILE *fp, spec_directory *sd,
   if (se)
   {
     fp->seek(se->offset,0);
-    if (fp->read_byte()==RC_L)
+    if (fp->read_uint8()==RC_L)
     {
-      int32_t t=fp->read_long();
+      int32_t t=fp->read_uint32();
       while (t)
       {
-	int32_t x1=fp->read_long();
+	int32_t x1=fp->read_uint32();
 	CONDITION(x1>=0,"expected x1 for object link to be > 0\n");
-	int32_t x2=fp->read_long();
+	int32_t x2=fp->read_uint32();
 	game_object *p,*q=number_to_object_in_list(x1,save_list);
 	if (x2>0)
 	  p=number_to_object_in_list(x2,save_list);
@@ -2031,13 +2031,13 @@ void level::load_links(bFILE *fp, spec_directory *sd,
   if (se)
   {
     fp->seek(se->offset,0);
-    if (fp->read_byte()==RC_L)
+    if (fp->read_uint8()==RC_L)
     {
-      int32_t t=fp->read_long();
+      int32_t t=fp->read_uint32();
       while (t)
       {
-	int32_t x1=fp->read_long();
-	int32_t x2=fp->read_long();
+	int32_t x1=fp->read_uint32();
+	int32_t x2=fp->read_uint32();
 	game_object *p=number_to_object_in_list(x1,save_list);
 	if (p)
 	  p->add_light(number_to_light(x2));
@@ -2053,34 +2053,34 @@ void level::load_links(bFILE *fp, spec_directory *sd,
 void level::write_options(bFILE *fp)
 {
   // save background scroll rate
-  fp->write_byte(RC_L);
-  fp->write_long(bg_xmul);
-  fp->write_long(bg_xdiv);
-  fp->write_long(bg_ymul);
-  fp->write_long(bg_ydiv);
+  fp->write_uint8(RC_L);
+  fp->write_uint32(bg_xmul);
+  fp->write_uint32(bg_xdiv);
+  fp->write_uint32(bg_ymul);
+  fp->write_uint32(bg_ydiv);
 
-  fp->write_byte(RC_L);
+  fp->write_uint8(RC_L);
   int ta=0;
   area_controller *a=area_list;
   for (;a;a=a->next) ta++;
-  fp->write_long(ta);
+  fp->write_uint32(ta);
   for (a=area_list;a;a=a->next)
   {
-    fp->write_long(a->x);
-    fp->write_long(a->y);
-    fp->write_long(a->w);
-    fp->write_long(a->h);
-    fp->write_long(a->active);
+    fp->write_uint32(a->x);
+    fp->write_uint32(a->y);
+    fp->write_uint32(a->w);
+    fp->write_uint32(a->h);
+    fp->write_uint32(a->active);
 
-    fp->write_long(a->ambient);
-    fp->write_long(a->view_xoff);
-    fp->write_long(a->view_yoff);
-    fp->write_long(a->ambient_speed);
-    fp->write_long(a->view_xoff_speed);
-    fp->write_long(a->view_yoff_speed);
+    fp->write_uint32(a->ambient);
+    fp->write_uint32(a->view_xoff);
+    fp->write_uint32(a->view_yoff);
+    fp->write_uint32(a->ambient_speed);
+    fp->write_uint32(a->view_xoff_speed);
+    fp->write_uint32(a->view_yoff_speed);
   }
-  fp->write_byte(RC_L);
-  fp->write_long(tick_counter());
+  fp->write_uint8(RC_L);
+  fp->write_uint32(tick_counter());
 }
 
 void level::load_options(spec_directory *sd, bFILE *fp)
@@ -2089,14 +2089,14 @@ void level::load_options(spec_directory *sd, bFILE *fp)
   if (se)
   {
     fp->seek(se->offset,0);
-    if (fp->read_byte()!=RC_L)
+    if (fp->read_uint8()!=RC_L)
     { bg_xmul=bg_ymul=1; bg_xdiv=bg_ydiv=8; }
     else
     {
-      bg_xmul=fp->read_long();
-      bg_xdiv=fp->read_long();
-      bg_ymul=fp->read_long();
-      bg_ydiv=fp->read_long();
+      bg_xmul=fp->read_uint32();
+      bg_xdiv=fp->read_uint32();
+      bg_ymul=fp->read_uint32();
+      bg_ydiv=fp->read_uint32();
     }
   } else { bg_xmul=bg_ymul=1; bg_xdiv=bg_ydiv=8; }
 
@@ -2104,29 +2104,29 @@ void level::load_options(spec_directory *sd, bFILE *fp)
   if (se)
   {
     fp->seek(se->offset,0);
-    if (fp->read_byte()==RC_L)
+    if (fp->read_uint8()==RC_L)
     {
       area_controller *l=NULL,*p;
-      int32_t ta=fp->read_long();
+      int32_t ta=fp->read_uint32();
       int i=0;
       for (;i<ta;i++)
       {
 	int32_t x,y,w,h;
-	x=fp->read_long();
-	y=fp->read_long();
-	w=fp->read_long();
-	h=fp->read_long();	
+	x=fp->read_uint32();
+	y=fp->read_uint32();
+	w=fp->read_uint32();
+	h=fp->read_uint32();	
 	p=new area_controller(x,y,w,h,NULL);
 	if (l) l->next=p;
 	else area_list=p;
 	l=p;
-	p->active=fp->read_long();
-	p->ambient=fp->read_long();
-	p->view_xoff=fp->read_long();
-	p->view_yoff=fp->read_long();
-	p->ambient_speed=fp->read_long();
-	p->view_xoff_speed=fp->read_long();
-	p->view_yoff_speed=fp->read_long();
+	p->active=fp->read_uint32();
+	p->ambient=fp->read_uint32();
+	p->view_xoff=fp->read_uint32();
+	p->view_yoff=fp->read_uint32();
+	p->ambient_speed=fp->read_uint32();
+	p->view_xoff_speed=fp->read_uint32();
+	p->view_yoff_speed=fp->read_uint32();
       }
     }
   }
@@ -2135,8 +2135,8 @@ void level::load_options(spec_directory *sd, bFILE *fp)
   if (se)
   {
     fp->seek(se->offset,0);
-    if (fp->read_byte()==RC_L)    
-      set_tick_counter(fp->read_long());
+    if (fp->read_uint8()==RC_L)    
+      set_tick_counter(fp->read_uint32());
     else set_tick_counter(0);
   } else set_tick_counter(0);
 }
@@ -2204,7 +2204,7 @@ int level::save(char *filename, int save_all)
 			else
 			{
 				int32_t size = fp->file_size();
-				uchar *buf = (uchar *)jmalloc(0x1000,"copy buf");
+				uint8_t *buf = (uint8_t *)jmalloc(0x1000,"copy buf");
 				int tr = 1;
 				while( size && tr )
 				{
@@ -2247,23 +2247,23 @@ int level::save(char *filename, int save_all)
 		{
 			if( first_name )
 			{
-				fp->write_byte( strlen( first_name ) + 1 );
+				fp->write_uint8( strlen( first_name ) + 1 );
 				fp->write( first_name, strlen( first_name ) + 1 );
 			}
 			else
 			{
-				fp->write_byte( 1 );
-				fp->write_byte( 0 );
+				fp->write_uint8( 1 );
+				fp->write_uint8( 0 );
 			}
 
-			fp->write_long( fg_width );
-			fp->write_long( fg_height );
+			fp->write_uint32( fg_width );
+			fp->write_uint32( fg_height );
 
 			int t  = fg_width * fg_height;
-			ushort *rm = map_fg;
+			uint16_t *rm = map_fg;
 			for (;t;t--,rm++)
 			{
-				ushort x = *rm;
+				uint16_t x = *rm;
 				x = lstl(x);            // convert to intel endianess
 				*rm = x;
 			}
@@ -2273,19 +2273,19 @@ int level::save(char *filename, int save_all)
 			rm = map_fg;
 			for (;t;t--,rm++)
 			{
-				ushort x = *rm;
+				uint16_t x = *rm;
 				x = lstl( x );            // convert to intel endianess
 				*rm = x;
 			}
 
-			fp->write_long( bg_width );
-			fp->write_long( bg_height );
+			fp->write_uint32( bg_width );
+			fp->write_uint32( bg_height );
 			t = bg_width * bg_height;
 			rm = map_bg;
 
 			for (;t;t--,rm++)
 			{
-				ushort x=*rm;
+				uint16_t x=*rm;
 				x = lstl( x );		// convert to intel endianess
 				*rm = x;
 			}
@@ -2296,7 +2296,7 @@ int level::save(char *filename, int save_all)
 
 			for (;t;t--,rm++)
 			{
-				ushort x = *rm;
+				uint16_t x = *rm;
 				x = lstl( x );		// convert to intel endianess
 				*rm = x;
 			}

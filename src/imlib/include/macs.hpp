@@ -23,12 +23,12 @@
 #define max(x,y) (x>y ? x:y)
 #endif
 
-#define uchar  unsigned char
-#define schar  signed char
+//#define uchar  unsigned char
+//#define schar  signed char
 //#define ushort unsigned short
-typedef unsigned short int ushort;
-#define sshort signed short
+//typedef unsigned short int ushort;
+//#define sshort signed short
 //#define ulong  unsigned long
-typedef unsigned long int ulong;
+//typedef unsigned long int ulong;
 
 #endif

@@ -37,30 +37,30 @@ struct pcm_wave
 void read_chunk(wav_chunk &chunk, bFILE *fp)
 {
   fp->read(&chunk.id,4);
-  chunk.size=fp->read_long();
+  chunk.size=fp->read_uint32();
   fp->read(&chunk.type,4);  
 }
 
 void read_tag(wav_tag &tag, bFILE *fp)
 {
   fp->read(&tag.id,4);
-  tag.size=fp->read_long();
+  tag.size=fp->read_uint32();
 }
 
 void read_wav_format(wav_format &fmt, bFILE *fp)
 {
-  fmt.fmt_tag=fp->read_short();
-  fmt.channels=fp->read_short(); 
-  fmt.samplesps=fp->read_long();
-  fmt.avg_bytesps=fp->read_long();  
-  fmt.align=fp->read_short();  
+  fmt.fmt_tag=fp->read_uint16();
+  fmt.channels=fp->read_uint16(); 
+  fmt.samplesps=fp->read_uint32();
+  fmt.avg_bytesps=fp->read_uint32();  
+  fmt.align=fp->read_uint16();  
 }
 
 
 void read_pcm(pcm_wave &pcm, bFILE *fp)
 {
   read_wav_format(pcm.wf,fp);
-  pcm.bitsps=fp->read_short();  
+  pcm.bitsps=fp->read_uint16();  
 }
 
 
@@ -77,26 +77,26 @@ void write_wav(char *filename, long sample_rate, long data_size, unsigned char *
 
   /***************  Write the chunk ***************************/
   fp->write((void *)"RIFF",4);  
-  fp->write_long(data_size+36);
+  fp->write_uint32(data_size+36);
   fp->write((void *)"WAVE",4);
 
 
   /************** Write the tag *******************************/
   fp->write((void *)"fmt ",4);
-  fp->write_long(16);
+  fp->write_uint32(16);
   
   
   /************** Write PCM ***********************************/
-  fp->write_short(1);          // format_tag
-  fp->write_short(1);          // mono recording
-  fp->write_long(sample_rate);
-  fp->write_long(sample_rate);   // average bytes per sec
-  fp->write_short(1);    // allignment? Don't know what this does?
-  fp->write_short(8);    // 8 bits per sample
+  fp->write_uint16(1);          // format_tag
+  fp->write_uint16(1);          // mono recording
+  fp->write_uint32(sample_rate);
+  fp->write_uint32(sample_rate);   // average bytes per sec
+  fp->write_uint16(1);    // allignment? Don't know what this does?
+  fp->write_uint16(8);    // 8 bits per sample
   
   /************* Write data tag ******************************/
   fp->write((void *)"data",4);
-  fp->write_long(data_size);
+  fp->write_uint32(data_size);
 
   /************ Now write sample data ************************/
   fp->write(data,data_size);

@@ -14,29 +14,29 @@
 
 
 struct {
-	unsigned short int	Width;
-	unsigned short int	Height;
-	unsigned char	ColorMap[3][256];
-	unsigned short int	BitPixel;
-	unsigned short int	ColorResolution;
-	unsigned short int	Background;
-	unsigned short int	AspectRatio;
+	uint16_t	Width;
+	uint16_t	Height;
+	uint8_t 	ColorMap[3][256];
+	uint16_t	BitPixel;
+	uint16_t	ColorResolution;
+	uint16_t	Background;
+	uint16_t	AspectRatio;
 } GifScreen;
 
 struct {
-  unsigned short int w,h;
-  unsigned char color_info,background,reserved;
+  uint16_t w,h;
+  uint8_t color_info,background,reserved;
 } gif_screen;
 
 struct {
-  unsigned short int xoff,yoff,w,h;
-  unsigned char color_info;
+  uint16_t xoff,yoff,w,h;
+  uint8_t color_info;
 } gif_image;
 
 image *read_gif(char *fn, palette *&pal)
 {
   char buf[100],er;
-  unsigned char sep;
+  uint8_t sep;
   unsigned int ncolors;
   FILE *fp;
   image *im;
@@ -52,13 +52,13 @@ image *read_gif(char *fn, palette *&pal)
       buf[6]=0;
       if (!strcmp("GIF87a",buf))
       {
-        fread((char *)&gif_screen.w,2,1,fp);
-        gif_screen.w=int_to_local(gif_screen.w);
-        fread((char *)&gif_screen.h,2,1,fp);
-        gif_screen.h=int_to_local(gif_screen.h);
-        fread((char *)&gif_screen.color_info,1,1,fp);
-        fread((char *)&gif_screen.background,1,1,fp);
-        if (fread((char *)&gif_screen.reserved,1,1,fp)==1)
+        fread((uint8_t *)&gif_screen.w,2,1,fp);
+        gif_screen.w=uint16_to_local(gif_screen.w);
+        fread((uint8_t *)&gif_screen.h,2,1,fp);
+        gif_screen.h=uint16_to_local(gif_screen.h);
+        fread((uint8_t *)&gif_screen.color_info,1,1,fp);
+        fread((uint8_t *)&gif_screen.background,1,1,fp);
+        if (fread((uint8_t *)&gif_screen.reserved,1,1,fp)==1)
 	{
 	  if (gif_screen.color_info&128)
 	  {
@@ -68,24 +68,24 @@ image *read_gif(char *fn, palette *&pal)
 	    pal=new palette(256);
 	    if (pal)
 	    {  
-              if (fread((char *)pal->addr(),1,ncolors*3,fp)!=ncolors*3) er=imREAD_ERROR;
+              if (fread((uint8_t *)pal->addr(),1,ncolors*3,fp)!=ncolors*3) er=imREAD_ERROR;
 	    } else er=imMEMORY_ERROR;
 	  }
 	  if (!er)
 	  { do
 	    {
-	      if (fread((char *)&sep,1,1,fp)!=1)
+	      if (fread((uint8_t *)&sep,1,1,fp)!=1)
 		er=imREAD_ERROR;
 	    } while (!er && sep!=',');
-            fread((char *)&gif_image.xoff,2,1,fp);
-            gif_image.xoff=int_to_local(gif_image.xoff);
-            fread((char *)&gif_image.yoff,2,1,fp);
-            gif_image.yoff=int_to_local(gif_image.yoff);
-            fread((char *)&gif_image.w,2,1,fp);
-            gif_image.w=int_to_local(gif_image.w);
-            fread((char *)&gif_image.h,2,1,fp);
-            gif_image.h=int_to_local(gif_image.h);
-	    if (!er && (fread((char *)&gif_image.color_info,1,1,fp)==1))
+            fread((uint8_t *)&gif_image.xoff,2,1,fp);
+            gif_image.xoff=uint16_to_local(gif_image.xoff);
+            fread((uint8_t *)&gif_image.yoff,2,1,fp);
+            gif_image.yoff=uint16_to_local(gif_image.yoff);
+            fread((uint8_t *)&gif_image.w,2,1,fp);
+            gif_image.w=uint16_to_local(gif_image.w);
+            fread((uint8_t *)&gif_image.h,2,1,fp);
+            gif_image.h=uint16_to_local(gif_image.h);
+	    if (!er && (fread((uint8_t *)&gif_image.color_info,1,1,fp)==1))
 	    {
 	      if (gif_image.color_info&128)
 	      {
@@ -94,7 +94,7 @@ image *read_gif(char *fn, palette *&pal)
 		make_block(sizeof(palette));
 		pal = new palette(ncolors);
 		if (pal)
-		{ if (fread((char *)pal->addr(),1,ncolors*3,fp)!=ncolors*3) er=imREAD_ERROR;
+		{ if (fread((uint8_t *)pal->addr(),1,ncolors*3,fp)!=ncolors*3) er=imREAD_ERROR;
 		} else er=imMEMORY_ERROR;
 	      }
 

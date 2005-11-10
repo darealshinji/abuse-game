@@ -17,10 +17,10 @@ boundary::boundary(bFILE *fp, char *er_name) : point_list(fp)
       exit(0);      
     }
 
-    inside=(unsigned char *)jmalloc(tot,"Boundary point list");  
+    inside=(uint8_t *)jmalloc(tot,"Boundary point list");  
   }
 
-  unsigned char *point_on;
+  uint8_t *point_on;
   
   for (i=0,point_on=data;i<tot-1;i++)
   {
@@ -33,7 +33,7 @@ boundary::boundary(bFILE *fp, char *er_name) : point_list(fp)
     checky=(y1+y2)/2;
 
     int j,xp1,yp1,xp2,yp2,maxx,maxy,minx,miny;    
-    unsigned char *point2,segs_left=0,segs_right=0,segs_down=0;    
+    uint8_t *point2,segs_left=0,segs_right=0,segs_down=0;    
     int skip_next=0;    
     int check_left=0,check_right=0,check_down=0;
 
@@ -100,10 +100,10 @@ boundary::boundary(bFILE *fp, char *er_name) : point_list(fp)
 boundary::boundary(boundary *p) : point_list(p->tot,p->data)
 {
   int x1,y1,x2,y2,checkx,checky,i;  
-  unsigned char *point_on;  
+  uint8_t *point_on;  
   if (tot)
   {
-    inside=(unsigned char *)jmalloc(tot,"Boundary point list");  
+    inside=(uint8_t *)jmalloc(tot,"Boundary point list");  
   } else inside=NULL;
   for (i=0,point_on=data;i<tot-1;i++)
   {
@@ -116,7 +116,7 @@ boundary::boundary(boundary *p) : point_list(p->tot,p->data)
     checky=(y1+y2)/2;
 
     int j,xp1,yp1,xp2,yp2,maxx,maxy,minx,miny;    
-    unsigned char *point2,segs_left=0,segs_right=0,segs_down=0;    
+    uint8_t *point2,segs_left=0,segs_right=0,segs_down=0;    
     int skip_next=0;    
     int check_left=0,check_right=0,check_down=0;
 
@@ -185,24 +185,24 @@ boundary::boundary(boundary *p) : point_list(p->tot,p->data)
 backtile::backtile(bFILE *fp)
 {
   im=load_image(fp);
-  next=fp->read_short();
+  next=fp->read_uint16();
 }
 
 backtile::backtile(spec_entry *e, bFILE *fp)
 {
   im=load_image(e,fp);
-  next=fp->read_short();
+  next=fp->read_uint16();
 }
 
 foretile::foretile(bFILE *fp)
 {
-  unsigned char *sl; 
+  uint8_t *sl; 
   image *img=load_image(fp);
 
 
   // create the micro image of the fore tile by aveginging the color values in 2 x 2 space
   // and storeing teh closest match
-//  unsigned char *buffer=(unsigned char *)&micro_image;
+//  uint8_t *buffer=(uint8_t *)&micro_image;
   int x,y,w=img->width(),h=img->height(),l;
   int r[AUTOTILE_WIDTH*AUTOTILE_HEIGHT],
       g[AUTOTILE_WIDTH*AUTOTILE_HEIGHT],
@@ -249,7 +249,7 @@ foretile::foretile(bFILE *fp)
   im=new trans_image(img,"foretile");
   delete img; 
 
-  next=fp->read_short();
+  next=fp->read_uint16();
   fp->read(&damage,1);
 
 
@@ -284,7 +284,7 @@ figure::figure(bFILE *fp, int type)
   {
     point_list p(fp); 
     advance=0;
-  } else advance=fp->read_byte();
+  } else advance=fp->read_uint8();
   
   f_damage=new boundary(fp,"fig bound"); 
   b_damage=new boundary(f_damage);
@@ -295,7 +295,7 @@ figure::figure(bFILE *fp, int type)
 char_tint::char_tint(bFILE *fp)  // se should be a palette entry
 {
   palette *p=new palette(fp);
-  uchar *t=data,*p_addr=(uchar *)p->addr();
+  uint8_t *t=data,*p_addr=(uint8_t *)p->addr();
   for (int i=0;i<256;i++,t++,p_addr+=3)  
     *t=pal->find_closest(*p_addr,p_addr[1],p_addr[2]);
    

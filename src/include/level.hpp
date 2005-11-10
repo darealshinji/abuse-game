@@ -37,10 +37,10 @@ extern int32_t last_tile_hit_x,last_tile_hit_y;
 extern int dev;
 class level        // contain map info and objects
 {
-  unsigned short *map_fg,        // just big 2d arrays
-                 *map_bg,
-	         bg_width,bg_height,
-	         fg_width,fg_height;  
+  uint16_t *map_fg,        // just big 2d arrays
+           *map_bg,
+	   bg_width,bg_height,
+	   fg_width,fg_height;  
   char *Name,*first_name;
   int32_t total_objs;
   game_object *first,*first_active,*last;
@@ -63,12 +63,12 @@ class level        // contain map info and objects
   game_object **all_block_list;            // list of characters who can block a character or can be hurt
   int all_block_list_size,all_block_total;
   void add_all_block(game_object *who);
-  ulong ctick;
+  uint32_t ctick;
   
 public :
   char *original_name() { if (first_name) return first_name; else return Name; }
-  ulong tick_counter() { return ctick; }
-  void set_tick_counter(ulong x);
+  uint32_t tick_counter() { return ctick; }
+  void set_tick_counter(uint32_t x);
   area_controller *area_list;
  
   void clear_active_list() { first_active=NULL; }
@@ -79,10 +79,10 @@ public :
 
   game_object *first_object() { return first; }
   game_object *first_active_object() { return first_active; }
-  unsigned short foreground_width() { return fg_width; }
-  unsigned short foreground_height() { return fg_height; }
-  unsigned short background_width() { return bg_width; }
-  unsigned short background_height() { return bg_height; }
+  uint16_t foreground_width() { return fg_width; }
+  uint16_t foreground_height() { return fg_height; }
+  uint16_t background_width() { return bg_width; }
+  uint16_t background_height() { return bg_height; }
   int load_failed() { return map_fg==NULL; } 
   level(spec_directory *sd, bFILE *fp, char *lev_name);
   void load_fail();             
@@ -97,7 +97,7 @@ public :
   int fg_raised(int x, int y) { CHECK(x>=0 && y>=0 && x<fg_width && y<fg_height);
 				 return (*(map_fg+x+y*fg_width))&0x4000; }
   void fg_set_raised(int x, int y, int r) { CHECK(x>=0 && y>=0 && x<fg_width && y<fg_height);
-					    ushort v=(*(map_fg+x+y*fg_width))&(0xffff-0x4000);
+					    uint16_t v=(*(map_fg+x+y*fg_width))&(0xffff-0x4000);
 					    if (r) (*(map_fg+x+y*fg_width))=v|0x4000;
 					    else (*(map_fg+x+y*fg_width))=v;
 					  }
@@ -105,18 +105,18 @@ public :
 					  (*(map_fg+x+y*fg_width))|=0x8000; }
   void clear_fg(int32_t x, int32_t y) { *(map_fg+x+y*fg_width)&=0x7fff; }
 
-  unsigned short *get_fgline(int y) { CHECK(y>=0 && y<fg_height); return map_fg+y*fg_width; }
-  unsigned short *get_bgline(int y) { CHECK(y>=0 && y<bg_height); return map_bg+y*bg_width; }
-  unsigned short get_fg(int x, int y) { if (x>=0 && y>=0 && x<fg_width && y<fg_height)
+  uint16_t *get_fgline(int y) { CHECK(y>=0 && y<fg_height); return map_fg+y*fg_width; }
+  uint16_t *get_bgline(int y) { CHECK(y>=0 && y<bg_height); return map_bg+y*bg_width; }
+  uint16_t get_fg(int x, int y) { if (x>=0 && y>=0 && x<fg_width && y<fg_height)
         			          return fgvalue(*(map_fg+x+y*fg_width)); 
 	                                else return 0;
 				      }
-  unsigned short get_bg(int x, int y) { if (x>=0 && y>=0 && x<bg_width && y<bg_height)
+  uint16_t get_bg(int x, int y) { if (x>=0 && y>=0 && x<bg_width && y<bg_height)
 					  return *(map_bg+x+y*bg_width); 
 	                                 else return 0;
 					}
-  void put_fg(int x, int y, unsigned short tile) { *(map_fg+x+y*fg_width)=tile; }   
-  void put_bg(int x, int y, unsigned short tile) { *(map_bg+x+y*bg_width)=tile; }
+  void put_fg(int x, int y, uint16_t tile) { *(map_fg+x+y*fg_width)=tile; }   
+  void put_bg(int x, int y, uint16_t tile) { *(map_bg+x+y*bg_width)=tile; }
   void draw_objects(view *v); 
   void interpolate_draw_objects(view *v);
   void draw_areas(view *v);

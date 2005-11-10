@@ -80,7 +80,7 @@ int file_manager::process_nfs_command(nfs_client *c)
   {
     case NFCMD_READ :
     {
-      long size;
+      int32_t size;
       if (c->sock->read(&size,sizeof(size))!=sizeof(size)) return 0;
       size=lltl(size);
 
@@ -93,7 +93,7 @@ int file_manager::process_nfs_command(nfs_client *c)
     } break;
     case NFCMD_SEEK :
     {
-      long offset;
+      int32_t offset;
       if (c->sock->read(&offset,sizeof(offset))!=sizeof(offset)) return 0;
       offset=lltl(offset);
       offset=lseek(c->file_fd,offset,0);
@@ -103,7 +103,7 @@ int file_manager::process_nfs_command(nfs_client *c)
     } break;
     case NFCMD_TELL :
     {
-      long offset=lseek(c->file_fd,0,SEEK_CUR);
+      int32_t offset=lseek(c->file_fd,0,SEEK_CUR);
       offset=lltl(offset);
       if (c->sock->write(&offset,sizeof(offset))!=sizeof(offset)) return 0;
       return 1;
@@ -214,7 +214,7 @@ file_manager::nfs_client::~nfs_client()
 
 void file_manager::add_nfs_client(net_socket *sock)
 {
-  uchar size[2];
+  uint8_t size[2];
   char filename[300],mode[20],*mp;
   if (sock->read(size,2)!=2) { delete sock; return ; }
   if (sock->read(filename,size[0])!=size[0]) { delete sock; return ; }
@@ -248,15 +248,15 @@ void file_manager::add_nfs_client(net_socket *sock)
     f=-1;  // make sure this is -1
 
 
-  long ret=lltl(f);
+  int32_t ret=lltl(f);
   if (sock->write(&ret,sizeof(ret))!=sizeof(ret)) { delete sock; return ; }
 
   if (f<0)    // no file, sorry
     delete sock;
   else
   {
-    long cur_pos=lseek(f,0,SEEK_CUR);
-    long size=lseek(f,0,SEEK_END);
+    int32_t cur_pos=lseek(f,0,SEEK_CUR);
+    int32_t size=lseek(f,0,SEEK_END);
     lseek(f,cur_pos,SEEK_SET);
     size=lltl(size);
     if (sock->write(&size,sizeof(size))!=sizeof(size)) {  close(f); delete sock; sock=NULL; return ; }
@@ -285,12 +285,12 @@ file_manager::remote_file::remote_file(net_socket *sock, char *filename, char *m
   next=Next;
   open_local=0;
 
-  uchar sizes[3]={CLIENT_NFS,strlen(filename)+1,strlen(mode)+1};
+  uint8_t sizes[3]={CLIENT_NFS,strlen(filename)+1,strlen(mode)+1};
   if (sock->write(sizes,3)!=3) { r_close("could not send open info"); return ; }
   if (sock->write(filename,sizes[1])!=sizes[1]) { r_close("could not send filename"); return ; }
   if (sock->write(mode,sizes[2])!=sizes[2]) { r_close("could not send mode"); return ; }
 
-  long remote_file_fd;
+  int32_t remote_file_fd;
   if (sock->read(&remote_file_fd,sizeof(remote_file_fd))!=sizeof(remote_file_fd)) 
   { r_close("could not read remote fd"); return ; }   
   remote_file_fd=lltl(remote_file_fd);
@@ -305,13 +305,13 @@ int file_manager::remote_file::unbuffered_read(void *buffer, size_t count)
 {
   if (sock && count)
   {
-    uchar cmd=NFCMD_READ;
+    uint8_t cmd=NFCMD_READ;
     if (sock->write(&cmd,sizeof(cmd))!=sizeof(cmd)) { r_close("read : could not send command"); return 0; }
 
-    long rsize=lltl(count);
+    int32_t rsize=lltl(count);
     if (sock->write(&rsize,sizeof(rsize))!=sizeof(rsize)) { r_close("read : could not send size"); return 0; }
 
-    long total_read=0;
+    int32_t total_read=0;
     char buf[READ_PACKET_SIZE];
 
     ushort packet_size;
@@ -347,28 +347,28 @@ int file_manager::remote_file::unbuffered_read(void *buffer, size_t count)
   return 0;
 }
 
-long file_manager::remote_file::unbuffered_tell()   // ask server where the offset of the file pointer is
+int32_t file_manager::remote_file::unbuffered_tell()   // ask server where the offset of the file pointer is
 {
   if (sock)
   {
-    uchar cmd=NFCMD_TELL;
+    uint8_t cmd=NFCMD_TELL;
     if (sock->write(&cmd,sizeof(cmd))!=sizeof(cmd)) { r_close("tell : could not send command"); return 0; }
 
-    long offset;
+    int32_t offset;
     if (sock->read(&offset,sizeof(offset))!=sizeof(offset)) { r_close("tell : could not read offset"); return 0; }    
     return lltl(offset);
   }    
   return 0;
 }
 
-long file_manager::remote_file::unbuffered_seek(long offset)  // tell server to seek to a spot in a file
+int32_t file_manager::remote_file::unbuffered_seek(int32_t offset)  // tell server to seek to a spot in a file
 {
   if (sock)
   {
-    uchar cmd=NFCMD_SEEK;
+    uint8_t cmd=NFCMD_SEEK;
     if (sock->write(&cmd,sizeof(cmd))!=sizeof(cmd)) { r_close("seek : could not send command"); return 0; }
 
-    long off=lltl(offset);
+    int32_t off=lltl(offset);
     if (sock->write(&off,sizeof(off))!=sizeof(off)) { r_close("seek : could not send offset"); return 0; }
 
     if (sock->read(&offset,sizeof(offset))!=sizeof(offset)) { r_close("seek : could not read offset"); return 0; }    
@@ -465,14 +465,14 @@ file_manager::remote_file *file_manager::find_rf(int fd)
 }
 
 
-long file_manager::rf_tell(int fd)
+int32_t file_manager::rf_tell(int fd)
 {
   remote_file *rf=find_rf(fd);
   if (rf) return rf->unbuffered_tell();
   else return 0;
 }
 
-long file_manager::rf_seek(int fd, long offset)
+int32_t file_manager::rf_seek(int fd, int32_t offset)
 {
   remote_file *rf=find_rf(fd);
   if (rf) return rf->unbuffered_seek(offset);
@@ -503,7 +503,7 @@ int file_manager::rf_close(int fd)
   }  
 }
 
-long file_manager::rf_file_size(int fd)
+int32_t file_manager::rf_file_size(int fd)
 {
   remote_file *rf=find_rf(fd);
   if (rf) return rf->file_size();

@@ -19,8 +19,8 @@ class file_manager
     int file_fd;
 
     nfs_client *next;
-    long size_to_read;  
-    long size;
+    int32_t size_to_read;  
+    int32_t size;
     nfs_client(net_socket *sock, int file_fd, nfs_client *next);
     int send_read();     // flushes as much of size_to_read as possible
     ~nfs_client();
@@ -32,16 +32,16 @@ class file_manager
     public :
     net_socket *sock;
     void r_close(char *reason);
-    long size;   // server tells us the size of the file when we open it
+    int32_t size;   // server tells us the size of the file when we open it
     int open_local;
     remote_file *next; 
     remote_file(net_socket *sock, char *filename, char *mode, remote_file *Next);
 
     int unbuffered_read(void *buffer, size_t count);
     int unbuffered_write(void *buf, size_t count) { return 0; } // not supported
-    long unbuffered_tell();
-    long unbuffered_seek(long offset);
-    long file_size() { return size; }
+    int32_t unbuffered_tell();
+    int32_t unbuffered_seek(int32_t offset);
+    int32_t file_size() { return size; }
     int open_failure() { return sock==NULL; }    
     ~remote_file();
     int fd() { if (sock) return sock->get_fd(); else return -1; }
@@ -63,11 +63,11 @@ class file_manager
 
 
   int rf_open_file(char *&filename, char *mode);
-  long rf_tell(int fd);
-  long rf_seek(int fd, long offset);
+  int32_t rf_tell(int fd);
+  int32_t rf_seek(int fd, int32_t offset);
   int rf_read(int fd, void *buffer, size_t count);
   int rf_close(int fd);
-  long rf_file_size(int fd);
+  int32_t rf_file_size(int fd);
   void set_default_fs(net_address *def) { default_fs=def->copy(); }
   ~file_manager() { if (default_fs) delete default_fs; }
 } ;

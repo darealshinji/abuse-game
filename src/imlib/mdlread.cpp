@@ -10,15 +10,15 @@
 // images.  Note, only the mode 320x200x256 is sopprted here for saving
 // images.  All images should be sized so they will fit on an mdl screen
 // but no checking of that is done hhere.
-void write_mdl(image **images, short total_images, palette *pal,char *fn,
-		short firstpage, short images_per_page)
+void write_mdl(image **images, int16_t total_images, palette *pal,char *fn,
+		int16_t firstpage, int16_t images_per_page)
 {
   FILE *fp;
   char buf[18];
-  unsigned short xy[2],x;
+  uint16_t xy[2],x;
   char name[13],page;
   unsigned char *c;
-  short i;
+  int16_t i;
   palette *np;
   clear_errors();
   CONDITION(images && pal && fn && total_images>0,"bad parms");
@@ -42,7 +42,7 @@ void write_mdl(image **images, short total_images, palette *pal,char *fn,
     {
       memset(buf,0,6);            // each image has 6 bytes of reserved 0
       fwrite(buf,6,1,fp);
-      xy[0]=int_to_intel(i%100+20); xy[1]=int_to_intel(30);  // the x and y position on the screen
+      xy[0]=uint16_to_intel(i%100+20); xy[1]=uint16_to_intel(30);  // the x and y position on the screen
       fwrite(xy,4,1,fp);
       sprintf(name,"JC%-10d",i);  // set the name of the image
       fwrite(name,12,1,fp);
@@ -50,14 +50,14 @@ void write_mdl(image **images, short total_images, palette *pal,char *fn,
       page=firstpage+i/images_per_page;
 
       fwrite(&page,1,1,fp);         // put all of the image on the first page
-      xy[0]=int_to_intel(images[i]->width()*images[i]->height()+4);  // calc the size of the image
+      xy[0]=uint16_to_intel(images[i]->width()*images[i]->height()+4);  // calc the size of the image
     
       fwrite(xy,2,1,fp);
-      xy[0]=int_to_intel(images[i]->width());
+      xy[0]=uint16_to_intel(images[i]->width());
       fwrite(xy,2,1,fp);
-      xy[0]=int_to_intel(images[i]->height());
+      xy[0]=uint16_to_intel(images[i]->height());
       fwrite(xy,2,1,fp);
-      for (x=0;x<(unsigned short)images[i]->height();x++)   // write all the scan_lines for the
+      for (x=0;x<(uint16_t)images[i]->height();x++)   // write all the scan_lines for the
       { c=images[i]->scan_line(x);            // image
 	fwrite(c,images[i]->width(),1,fp);
       }
@@ -66,10 +66,10 @@ void write_mdl(image **images, short total_images, palette *pal,char *fn,
   }
 }
 
-short mdl_total_images(char *fn)
+int16_t mdl_total_images(char *fn)
 {
   char buf[800];
-  unsigned short xy[2],t;
+  uint16_t xy[2],t;
   FILE *fp;
   fp=fopen(fn,"rb");
   if (!fp)
@@ -91,7 +91,7 @@ short mdl_total_images(char *fn)
   { if (fread(buf,1,23,fp)==23)
     {
       fread(xy,2,1,fp);
-      xy[0]=int_to_local(xy[0]);
+      xy[0]=uint16_to_local(xy[0]);
       fseek(fp,xy[0],SEEK_CUR);
       t++;
     }
@@ -103,12 +103,12 @@ short mdl_total_images(char *fn)
 // read_mdl returns an array containing pointers to all the desired images
 // and a palette that is read form the file
 // to load image numbers 4 through 9 let start =4, end=9
-image **read_mdl(char *fn, palette *&pal, short startn, short endn, short &total)
+image **read_mdl(char *fn, palette *&pal, int16_t startn, int16_t endn, int16_t &total)
 {
   FILE *fp;
   image **im;
   char buf[50];
-  unsigned short xy[2],i,j;
+  uint16_t xy[2],i,j;
   clear_errors();
   make_block(sizeof(FILE));
   im=NULL;
@@ -146,7 +146,7 @@ image **read_mdl(char *fn, palette *&pal, short startn, short endn, short &total
       { if (fread(buf,1,23,fp)!=23)
 	  set_error(imFILE_CORRUPTED);
 	fread(xy,2,1,fp);
-	xy[0]=int_to_local(xy[0]);
+	xy[0]=uint16_to_local(xy[0]);
 	fseek(fp,xy[0],SEEK_CUR);
 	startn--; if (endn>0) endn--;
       }
@@ -160,13 +160,13 @@ image **read_mdl(char *fn, palette *&pal, short startn, short endn, short &total
   	  if (fread(&j,1,2,fp)!=2) set_error(imFILE_CORRUPTED);
 	  else
 	  {
-	    j=int_to_local(j);
+	    j=uint16_to_local(j);
 	    j-=4;
             xy[0]=5; xy[1]=5;
 	    if (fread(xy,1,4,fp)!=4) set_error(imFILE_CORRUPTED);
 	    make_block(sizeof(image));
-	    xy[0]=int_to_local(xy[0]);
-	    xy[1]=int_to_local(xy[1]);
+	    xy[0]=uint16_to_local(xy[0]);
+	    xy[1]=uint16_to_local(xy[1]);
 	    im[startn]=new image(xy[0],xy[1]);
 	    total++;
 	    for (i=0;i<xy[1];i++)

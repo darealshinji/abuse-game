@@ -36,7 +36,7 @@ view::~view()
 }
 
 
-extern uchar bright_tint[256];
+extern uint8_t bright_tint[256];
 
 void view::add_ammo(int weapon_type, int total)
 {  
@@ -294,9 +294,9 @@ void view::draw_character_damage()
 
 
 
-ushort make_sync()
+uint16_t make_sync()
 {
-  ushort x=0;
+  uint16_t x=0;
   if (!current_level) return 0;
   if (current_level)
   {
@@ -375,30 +375,30 @@ void view::get_input()
 
 	if( view_changed() )
 	{
-		base->packet.write_byte( SCMD_VIEW_RESIZE );
-		base->packet.write_byte( player_number );
-		base->packet.write_long( suggest.cx1 );
-		base->packet.write_long( suggest.cy1 );
-		base->packet.write_long( suggest.cx2 );
-		base->packet.write_long( suggest.cy2 );
+		base->packet.write_uint8( SCMD_VIEW_RESIZE );
+		base->packet.write_uint8( player_number );
+		base->packet.write_uint32( suggest.cx1 );
+		base->packet.write_uint32( suggest.cy1 );
+		base->packet.write_uint32( suggest.cx2 );
+		base->packet.write_uint32( suggest.cy2 );
 
-		base->packet.write_long( suggest.pan_x );
-		base->packet.write_long( suggest.pan_y );
-		base->packet.write_long( suggest.shift_down );
-		base->packet.write_long( suggest.shift_right );
+		base->packet.write_uint32( suggest.pan_x );
+		base->packet.write_uint32( suggest.pan_y );
+		base->packet.write_uint32( suggest.shift_down );
+		base->packet.write_uint32( suggest.shift_right );
 	}
 
 	if( weapon_changed() )
 	{
-		base->packet.write_byte( SCMD_WEAPON_CHANGE );
-		base->packet.write_byte( player_number );
-		base->packet.write_long( suggest.new_weapon );
+		base->packet.write_uint8( SCMD_WEAPON_CHANGE );
+		base->packet.write_uint8( player_number );
+		base->packet.write_uint32( suggest.new_weapon );
 	}
 
-	base->packet.write_byte( SCMD_SET_INPUT );
-	base->packet.write_byte( player_number );
+	base->packet.write_uint8( SCMD_SET_INPUT );
+	base->packet.write_uint8( player_number );
 
-	uchar mflags = 0;
+	uint8_t mflags = 0;
 	if( sug_x > 0 )
 		mflags |= 1;
 	else if ( sug_x < 0 )
@@ -418,9 +418,9 @@ void view::get_input()
 	if( sug_b4 )
 		mflags |= 128;
 
-	base->packet.write_byte( mflags );
-	base->packet.write_short((ushort)((short)sug_px));
-	base->packet.write_short((ushort)((short)sug_py));
+	base->packet.write_uint8( mflags );
+	base->packet.write_uint16((uint16_t)((int16_t)sug_px));
+	base->packet.write_uint16((uint16_t)((int16_t)sug_py));
 }
 
 
@@ -469,7 +469,7 @@ void view::add_chat_key(int key)  // return string if buf is complete
   }
 }
 
-int view::process_input(char cmd, uchar *&pk)   // return 0 if something went wrong
+int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went wrong
 {
   switch (cmd)
   {
@@ -514,7 +514,7 @@ int view::process_input(char cmd, uchar *&pk)   // return 0 if something went wr
 
     case SCMD_SET_INPUT :
     {
-      uchar x=*(pk++);
+      uint8_t x=*(pk++);
 
       if (x&1) x_suggestion=1;
       else if (x&2) x_suggestion=-1;
@@ -529,11 +529,11 @@ int view::process_input(char cmd, uchar *&pk)   // return 0 if something went wr
       if (x&64) b3_suggestion=1; else b3_suggestion=0;
       if (x&128) b4_suggestion=1; else b4_suggestion=0;
 
-      ushort p[2];
+      uint16_t p[2];
       memcpy(p,pk,2*2);  pk+=2*2;
       
-      pointer_x=(short)(lstl(p[0]));
-      pointer_y=(short)(lstl(p[1]));
+      pointer_x=(int16_t)(lstl(p[0]));
+      pointer_y=(int16_t)(lstl(p[1]));
 	
       return 1;
     } break;
@@ -1144,14 +1144,14 @@ void view::configure_for_area(area_controller *a)
 }
 
 
-void process_packet_commands(uchar *pk, int size)
+void process_packet_commands(uint8_t *pk, int size)
 {
-  int32_t sync_short=-1;
+  int32_t sync_uint16=-1;
 
   if (!size) return ;
   pk[size]=SCMD_END_OF_PACKET;
 
-  uchar cmd;
+  uint8_t cmd;
   int already_reloaded=0;
 
 
@@ -1169,7 +1169,7 @@ void process_packet_commands(uchar *pk, int size)
       case SCMD_EXT_KEYRELEASE :
       case SCMD_CHAT_KEYPRESS :
       {
-	uchar player_num=*(pk++);
+	uint8_t player_num=*(pk++);
 
 	view *v=player_list;
 	for (;v && v->player_number!=player_num;v=v->next);
@@ -1195,17 +1195,17 @@ void process_packet_commands(uchar *pk, int size)
 
       case SCMD_SYNC :
       {
-	ushort x;
+	uint16_t x;
 	memcpy(&x,pk,2);  pk+=2;
 	x=lstl(x);
 	if (demo_man.current_state()==demo_manager::PLAYING)
-	sync_short=make_sync();
+	sync_uint16=make_sync();
 
-	if (sync_short==-1)
-	sync_short=x;
-	else if (x!=sync_short && !already_reloaded)
+	if (sync_uint16==-1)
+	sync_uint16=x;
+	else if (x!=sync_uint16 && !already_reloaded)
 	{
-	  dprintf("out of sync %d (packet=%d, calced=%d)\n",current_level->tick_counter(),x,sync_short);
+	  dprintf("out of sync %d (packet=%d, calced=%d)\n",current_level->tick_counter(),x,sync_uint16);
 	  if (demo_man.current_state()==demo_manager::NORMAL)
 	    net_reload();
 	  already_reloaded=1;
@@ -1213,7 +1213,7 @@ void process_packet_commands(uchar *pk, int size)
       } break;
       case SCMD_DELETE_CLIENT :
       {
-	uchar player_num=*(pk++);
+	uint8_t player_num=*(pk++);
 	view *v=player_list,*last=NULL;
 	for (;v && v->player_number!=player_num;v=v->next)
 	last=v;

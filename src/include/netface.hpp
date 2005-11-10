@@ -95,25 +95,25 @@ struct join_struct
 
 struct net_packet
 {
-  unsigned char data[PACKET_MAX_SIZE];
+  uint8_t data[PACKET_MAX_SIZE];
   int packet_prefix_size()                 { return 5; }    // 2 byte size, 2 byte check sum, 1 byte packet order
-  unsigned short packet_size()             { unsigned short size=(*(unsigned short *)data); return lstl(size); }
-  unsigned char tick_received()            { return data[4]; }  
-  void set_tick_received(unsigned char x)  { data[4]=x; }
-  unsigned char *packet_data()             { return data+packet_prefix_size(); }
-  unsigned short get_checksum()            { unsigned short cs=*((unsigned short *)data+1); return lstl(cs); }
-  unsigned short calc_checksum()
+  uint16_t packet_size()             { uint16_t size=(*(uint16_t *)data); return lstl(size); }
+  uint8_t tick_received()            { return data[4]; }  
+  void set_tick_received(uint8_t x)  { data[4]=x; }
+  uint8_t *packet_data()             { return data+packet_prefix_size(); }
+  uint16_t get_checksum()            { uint16_t cs=*((uint16_t *)data+1); return lstl(cs); }
+  uint16_t calc_checksum()
   {
-    *((unsigned short *)data+1)=0;
+    *((uint16_t *)data+1)=0;
     int i,size=packet_prefix_size()+packet_size();
-    unsigned char c1=0,c2=0,*p=data;
+    uint8_t c1=0,c2=0,*p=data;
     for (i=0;i<size;i++,p++)
     {
       c1+=*p;
       c2+=c1;
     }
-    unsigned short cs=( (((unsigned short)c1)<<8) | c2);
-    *((unsigned short *)data+1)=lstl(cs);
+    uint16_t cs=( (((uint16_t)c1)<<8) | c2);
+    *((uint16_t *)data+1)=lstl(cs);
     return cs;
   }
 
@@ -128,11 +128,11 @@ struct net_packet
       set_packet_size(packet_size()+size);
     }
   }
-  void write_byte(unsigned char x) { add_to_packet(&x,1); }
-  void write_short(unsigned short x) { x=lstl(x); add_to_packet(&x,2); }
-  void write_long(unsigned long x) { x=lltl(x); add_to_packet(&x,4); }
+  void write_uint8(uint8_t x) { add_to_packet(&x,1); }
+  void write_uint16(uint16_t x) { x=lstl(x); add_to_packet(&x,2); }
+  void write_uint32(uint32_t x) { x=lltl(x); add_to_packet(&x,4); }
 
-  void set_packet_size(unsigned short x) { *((unsigned short *)data)=lstl(x); }
+  void set_packet_size(uint16_t x) { *((uint16_t *)data)=lstl(x); }
 
 
 } ;
@@ -142,13 +142,13 @@ struct base_memory_struct
   net_packet packet,                        // current tick data
              last_packet;                   // last tick data (in case a client misses input, we can resend)
 
-  short mem_lock;
-  short calc_crcs;
-  short get_lsf;
-  short wait_reload;
-  short need_reload;
-  short input_state;            // COLLECTING or PROCESSING
-  short current_tick;           // set by engine, used by driver to confirm packet is not left over
+  int16_t mem_lock;
+  int16_t calc_crcs;
+  int16_t get_lsf;
+  int16_t wait_reload;
+  int16_t need_reload;
+  int16_t input_state;          // COLLECTING or PROCESSING
+  int16_t current_tick;         // set by engine, used by driver to confirm packet is not left over
   
   join_struct *join_list;
 } ;

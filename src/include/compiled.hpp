@@ -24,7 +24,7 @@ extern long S_fall_start,S_falling,S_landing,S_pounce_wait,
 void compiled_init();
 void compiled_uninit();
 
-extern uchar *bad_guy_array;    // list flaging each character saying they are a bad bug or not
+extern uint8_t *bad_guy_array;  // list flaging each character saying they are a bad bug or not
                                 // mainly used by the rocket to find targets
 
 #endif

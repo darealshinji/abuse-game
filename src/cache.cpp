@@ -66,18 +66,18 @@ int crc_manager::write_crc_file(char *filename)  // return 0 on failure
     return 0; 
   }
 
-  fp->write_short(total);
+  fp->write_uint16(total);
   total=0;
   for (i=0;i<total_files;i++)
   {
-    ulong crc;
+    uint32_t crc;
     int failed=0;
     crc=get_crc(i,failed);
     if (!failed)
     {
-      fp->write_long(crc);
-      uchar len=strlen(get_filename(i))+1;
-      fp->write_byte(len);
+      fp->write_uint32(crc);
+      uint8_t len=strlen(get_filename(i))+1;
+      fp->write_uint8(len);
       fp->write(get_filename(i),len);
       total++;
     }
@@ -95,13 +95,13 @@ int crc_manager::load_crc_file(char *filename)
     return 0;
   } else
   {
-    short total=fp->read_short();
+    short total=fp->read_uint16();
     int i;
     for (i=0;i<total;i++)
     {
       char name[256];
-      ulong crc=fp->read_long();
-      uchar len=fp->read_byte();
+      uint32_t crc=fp->read_uint32();
+      uint8_t len=fp->read_uint8();
       fp->read(name,len);
       set_crc(get_filenumber(name),crc);
     }
@@ -147,13 +147,13 @@ int crc_manager::get_filenumber(char *filename)
   return total_files-1;
 }
 
-char *crc_manager::get_filename(long filenumber)
+char *crc_manager::get_filename(int32_t filenumber)
 {
   CHECK(filenumber>=0 && filenumber<total_files);
   return files[filenumber]->filename;
 }
 
-ulong crc_manager::get_crc(long filenumber, int &failed)
+uint32_t crc_manager::get_crc(int32_t filenumber, int &failed)
 {    
   CHECK(filenumber>=0 && filenumber<total_files);
   if (files[filenumber]->crc_calculated) 
@@ -165,7 +165,7 @@ ulong crc_manager::get_crc(long filenumber, int &failed)
   return 0;
 }
 
-void crc_manager::set_crc(long filenumber, ulong crc)
+void crc_manager::set_crc(int32_t filenumber, uint32_t crc)
 {
   CHECK(filenumber>=0 && filenumber<total_files);
   files[filenumber]->crc_calculated=1;
@@ -247,28 +247,28 @@ void cache_list::prof_write(bFILE *fp)
 
     if (fp)
     {
-      fp->write_short(crc_man.total_filenames());
+      fp->write_uint16(crc_man.total_filenames());
       for (i=0;i<crc_man.total_filenames();i++)
       {
 	int l=strlen(crc_man.get_filename(i))+1;
-        fp->write_byte(l);
+        fp->write_uint8(l);
 	fp->write(crc_man.get_filename(i),l);
       }
 
       int tsaved=0;
       for (i=0;i<total;i++)
         if (list[i].last_access>0) tsaved++;
-      fp->write_long(tsaved);
+      fp->write_uint32(tsaved);
 
       for (i=0;i<total;i++)
       {
 	int id=ordered_ids[i];
         if (list[id].last_access>0)       // don't save unaccessed counts      
 	{
-	  fp->write_byte(list[id].type);    // save type, if type changed on reload 
+	  fp->write_uint8(list[id].type);    // save type, if type changed on reload 
 	                                    // don't cache in-> its a different refrence
-	  fp->write_short(list[id].file_number);
-	  fp->write_long(list[id].offset);
+	  fp->write_uint16(list[id].file_number);
+	  fp->write_uint32(list[id].offset);
 	}
       }      
     }
@@ -309,7 +309,7 @@ int cache_list::offset_compare(int a, int b)
 }
 
 
-int cache_list::search(int *sarray, ushort filenum, long offset)
+int cache_list::search(int *sarray, uint16_t filenum, int32_t offset)
 {
   int x1=0,x2=total-1;
   int split;
@@ -422,7 +422,7 @@ void cache_list::preload_cache(level *lev)
 
 
   int j;
-  ushort *fg_line;
+  uint16_t *fg_line;
   for (j=0;j<lev->foreground_height();j++)
   {
     fg_line=lev->get_fgline(j);
@@ -438,7 +438,7 @@ void cache_list::preload_cache(level *lev)
     }      
   }
 
-  ushort *bg_line;
+  uint16_t *bg_line;
   for (j=0;j<lev->background_height();j++)
   {
     bg_line=lev->get_bgline(j);
@@ -480,7 +480,7 @@ void cache_list::load_cache_prof_info(char *filename, level *lev)
       int tnames=0;
       int *fnum_remap;    // remaps old filenumbers into current ones
       
-      tnames=fp->read_short();
+      tnames=fp->read_uint16();
       if (tnames)                     /// make sure there isn't bad info in the file
       {
 	fnum_remap=(int *)jmalloc(sizeof(int)*tnames,"pfname remap");
@@ -488,7 +488,7 @@ void cache_list::load_cache_prof_info(char *filename, level *lev)
 	int i;
 	for (i=0;i<tnames;i++)
 	{
-	  fp->read(name,fp->read_byte());
+	  fp->read(name,fp->read_uint8());
 	  fnum_remap[i]=-1;                    // initialize the map to no-map
 
 	  int j;
@@ -497,7 +497,7 @@ void cache_list::load_cache_prof_info(char *filename, level *lev)
 	      fnum_remap[i]=j;
 	}
 	
-	long tsaved=fp->read_long();
+	uint32_t tsaved=fp->read_uint32();
 
 
 	int *priority=(int *)jmalloc(tsaved*sizeof(int),"priorities");
@@ -510,13 +510,13 @@ void cache_list::load_cache_prof_info(char *filename, level *lev)
 
 	for (i=0;i<tsaved;i++)
 	{
-	  uchar type=fp->read_byte();
-	  short file_num=fp->read_short();
+	  uint8_t type=fp->read_uint8();
+	  short file_num=fp->read_uint16();
 	  if (file_num>=tnames)  // bad data?
 	    file_num=-1;
 	  else file_num=fnum_remap[file_num];
 
-	  ulong offset=fp->read_long();
+	  uint32_t offset=fp->read_uint32();
 
 	  // search for a match 
 	  j=search(sorted_id_list,file_num,offset);	 
@@ -804,7 +804,7 @@ void cache_list::locate(cache_item *i, int local_only)
   used=1;
 }
 
-long cache_list::alloc_id()
+int32_t cache_list::alloc_id()
 {
   int id;
   if (prof_data)
@@ -850,9 +850,9 @@ long cache_list::alloc_id()
 
 
 
-long cache_list::reg_lisp_block(Cell *block)
+int32_t cache_list::reg_lisp_block(Cell *block)
 { 
-  long s;
+  uint32_t s;
   if (lcache_number==-1)
     lcache_number=crc_man.get_filenumber(lfname);
 
@@ -892,12 +892,12 @@ long cache_list::reg_lisp_block(Cell *block)
   ci->offset=cache_file->tell();
 
   s=block_size(block);
-  cache_file->write_long(s);
+  cache_file->write_uint32(s);
   write_level(cache_file,block);
   return id;    
 }
 
-long cache_list::reg_object(char *filename, void *object, int type, int rm_dups)
+int32_t cache_list::reg_object(char *filename, void *object, int type, int rm_dups)
 { 
   char *name;
   if (item_type(object)==L_CONS_CELL)      // see if we got a object with a filename included
@@ -911,7 +911,7 @@ long cache_list::reg_object(char *filename, void *object, int type, int rm_dups)
 
 extern int total_files_open;
 
-long cache_list::reg(char *filename, char *name, int type, int rm_dups)
+int32_t cache_list::reg(char *filename, char *name, int type, int rm_dups)
 {
 	int id=alloc_id(),i,fn=crc_man.get_filenumber(filename);
 	cache_item *ci=list+id;
@@ -1168,7 +1168,7 @@ Cell *cache_list::lblock(int id)
       
       int cache_size=80*1024;                   // 80K
       cache_read_file->set_read_buffer_size(cache_size); 
-      uchar mini_buf;
+      uint8_t mini_buf;
       cache_read_file->read(&mini_buf,1);       // prime the buffer
     }
 
@@ -1176,7 +1176,7 @@ Cell *cache_list::lblock(int id)
 
     int sp=alloc_space; alloc_space=ALLOC_SPACE_CACHE;
 
-    long size=cache_read_file->read_long();
+    uint32_t size=cache_read_file->read_uint32();
     void *space;
 
     if (size)
@@ -1205,7 +1205,7 @@ void free_up_memory()
 
 void cache_list::free_oldest()
 {
-  long i,old_time=last_access;
+  uint32_t i,old_time=last_access;
   cache_item *ci=list,*oldest=NULL;
   ful=1;
 
@@ -1256,7 +1256,7 @@ void cache_list::show_accessed()
       old=ci->last_access;
       printf("type=(%20s) file=(%20s) access=(%6ld)\n",spec_types[ci->type],
 	     crc_man.get_filename(ci->file_number),
-	     ci->last_access);
+	     (long int)ci->last_access);
     }
   } while (new_old);
 }

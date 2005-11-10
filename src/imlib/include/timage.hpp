@@ -27,15 +27,15 @@ public :
 
   // if screen x & y offset already calculated save a mul
   // and no clipping, but fast use this
-  void put_image_offseted(image *screen, uchar *s_off);   
+  void put_image_offseted(image *screen, uint8_t *s_off);   
   void put_image_filled(image *screen, int x, int y, 
-			uchar fill_color);
+			uint8_t fill_color);
   void put_fade(image *screen, int x, int y,
 			   int frame_on, int total_frames, 
 			   color_filter *f, palette *pal);
   void put_fade_tint(image *screen, int x, int y,
 		     int frame_on, int total_frames, 
-		     uchar *tint,
+		     uint8_t *tint,
 		     color_filter *f, palette *pal);
   void put_color(image *screen, int x, int y, int color);
   unsigned char *clip_y(image *screen, int x1, int y1, int x2, int y2, 

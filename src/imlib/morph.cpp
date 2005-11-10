@@ -354,20 +354,20 @@ jmorph::jmorph(spec_entry *e, bFILE *fp)
 
     for (i=0;i<total;i++)
     { 
-      ((morph_point16 *)p+i)->x1=fp->read_short();
-      ((morph_point16 *)p+i)->y1=fp->read_short();
-      ((morph_point16 *)p+i)->x2=fp->read_short();
-      ((morph_point16 *)p+i)->y2=fp->read_short();
+      ((morph_point16 *)p+i)->x1=fp->read_uint16();
+      ((morph_point16 *)p+i)->y1=fp->read_uint16();
+      ((morph_point16 *)p+i)->x2=fp->read_uint16();
+      ((morph_point16 *)p+i)->y2=fp->read_uint16();
       fp->read( &((morph_point16 *)p+i)->start_color,1);
       fp->read( &((morph_point16 *)p+i)->end_color,1);
     }
 
     small=0;
   }
-  w[0]=fp->read_short();
-  h[0]=fp->read_short();  
-  w[1]=fp->read_short();
-  h[1]=fp->read_short();
+  w[0]=fp->read_uint16();
+  h[0]=fp->read_uint16();  
+  w[1]=fp->read_uint16();
+  h[1]=fp->read_uint16();
 }
 
 void jmorph::show_frame(image *screen, int x, int y, 
@@ -677,7 +677,7 @@ int jmorph::write(bFILE *fp)
   int i;
 
   
-  fp->write_long(total);  
+  fp->write_uint32(total);  
   if (small)
   {
 
@@ -690,18 +690,18 @@ int jmorph::write(bFILE *fp)
   else
   {
     for (i=0;i<total;i++)
-    { fp->write_short(((morph_point16 *)p+i)->x1);
-      fp->write_short(((morph_point16 *)p+i)->y1);
-      fp->write_short(((morph_point16 *)p+i)->x2);
-      fp->write_short(((morph_point16 *)p+i)->y2);
+    { fp->write_uint16(((morph_point16 *)p+i)->x1);
+      fp->write_uint16(((morph_point16 *)p+i)->y1);
+      fp->write_uint16(((morph_point16 *)p+i)->x2);
+      fp->write_uint16(((morph_point16 *)p+i)->y2);
       fp->write( &((morph_point16 *)p+i)->start_color,1);
       fp->write( &((morph_point16 *)p+i)->end_color,1);
     }
   }
-  fp->write_short(w[0]);
-  fp->write_short(h[0]);
-  fp->write_short(w[1]);
-  fp->write_short(h[1]);
+  fp->write_uint16(w[0]);
+  fp->write_uint16(h[0]);
+  fp->write_uint16(w[1]);
+  fp->write_uint16(h[1]);
   return 1;
 }
 
@@ -876,12 +876,12 @@ patched_morph::patched_morph(spec_entry *e, bFILE *fp) : jmorph(e,fp)
 {
   int i;
   
-  patches=fp->read_short();
+  patches=fp->read_uint16();
   pats=(morph_patch *)jmalloc(sizeof(morph_patch)*patches,"patched_morph::points");
   
   for (i=0;i<patches;i++)
   {
-    pats[i].patches=fp->read_short();
+    pats[i].patches=fp->read_uint16();
     if (pats[i].patches)
     {      
       pats[i].patch_data=(unsigned char *)jmalloc(3*pats[i].patches,"patched_morph::patch_data");

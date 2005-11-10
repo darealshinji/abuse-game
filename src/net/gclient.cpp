@@ -23,13 +23,13 @@ extern int start_running;
 
 int game_client::process_server_command()
 {
-  uchar cmd;
+  uint8_t cmd;
   if (client_sock->read(&cmd,1)!=1) return 0;
   switch (cmd)
   {
     case CLCMD_REQUEST_RESEND :
     {
-      uchar tick;
+      uint8_t tick;
       if (client_sock->read(&tick,1)!=1) return 0;
 
       fprintf(stderr,"request for resend tick %d (game cur=%d, pack=%d, last=%d)\n",
@@ -66,7 +66,7 @@ int game_client::process_net()
     int bytes_received=game_sock->read(tmp.data,PACKET_MAX_SIZE);
     if (bytes_received==tmp.packet_size()+tmp.packet_prefix_size())   // was the packet complete?
     {
-      unsigned short rec_crc=tmp.get_checksum();
+      uint16_t rec_crc=tmp.get_checksum();
       if (rec_crc==tmp.calc_checksum())
       {
 	if (base->current_tick==tmp.tick_received())  
@@ -140,14 +140,14 @@ void game_client::add_engine_input()
 
 int game_client::end_reload(int disconnect)  // notify evryone you've reloaded the level (at server request)
 {
-  uchar cmd=CLCMD_RELOAD_END;
+  uint8_t cmd=CLCMD_RELOAD_END;
   if (client_sock->write(&cmd,1)!=1) return 0;
   return 1;
 }
 
 int game_client::start_reload()
 {
-  uchar cmd=CLCMD_RELOAD_START;
+  uint8_t cmd=CLCMD_RELOAD_START;
   if (client_sock->write(&cmd,1)!=1) return 0;
   if (client_sock->read(&cmd,1)!=1) return 0;
   return 1;
@@ -165,7 +165,7 @@ int game_client::kill_slackers()
 
 int game_client::quit()
 {
-  uchar cmd=CLCMD_UNJOIN;
+  uint8_t cmd=CLCMD_UNJOIN;
   if (client_sock->write(&cmd,1)!=1) return 0;
   if (client_sock->read(&cmd,1)!=1) return 0;
   return 1;

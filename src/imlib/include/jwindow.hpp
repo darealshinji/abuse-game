@@ -68,9 +68,8 @@ public :
 
 struct jwindow_properties
 {
-  uchar moveable,
-        hidden;
-  
+  uint8_t moveable,
+          hidden;
 } ;
 
 

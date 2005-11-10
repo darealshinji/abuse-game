@@ -34,13 +34,13 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
 
   for (y=y1;y<=y2;y++)
   {
-    unsigned char *sl=screen->scan_line(y)+x1;
+    uint8_t *sl=screen->scan_line(y)+x1;
     for (x=x1;x<=x2;x++,sl++)
     {
-      unsigned char *paddr=(unsigned char *)pal->addr()+(*sl)*3;
-      unsigned char r=((*(paddr++))-r_to)*percent/256+r_to;
-      unsigned char g=((*(paddr++))-g_to)*percent/256+g_to;
-      unsigned char b=((*(paddr++))-b_to)*percent/256+b_to;
+      uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
+      uint8_t r=((*(paddr++))-r_to)*percent/256+r_to;
+      uint8_t g=((*(paddr++))-g_to)*percent/256+g_to;
+      uint8_t b=((*(paddr++))-b_to)*percent/256+b_to;
       *sl=color_table->lookup_color((r)>>3,(g)>>3,(b)>>3);
     }
   }
@@ -60,13 +60,13 @@ void darken_area(int x1, int y1, int x2, int y2, int amount)
 
   for (y=y1;y<=y2;y++)
   {
-    unsigned char *sl=screen->scan_line(y)+x1;
+    uint8_t *sl=screen->scan_line(y)+x1;
     for (x=x1;x<=x2;x++,sl++)
     {
-      unsigned char *paddr=(unsigned char *)pal->addr()+(*sl)*3;
-      unsigned char r=(*(paddr++))*amount/256;
-      unsigned char g=(*(paddr++))*amount/256;
-      unsigned char b=(*(paddr++))*amount/256;
+      uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
+      uint8_t r=(*(paddr++))*amount/256;
+      uint8_t g=(*(paddr++))*amount/256;
+      uint8_t b=(*(paddr++))*amount/256;
       *sl=color_table->lookup_color((r)>>3,(g)>>3,(b)>>3);
     }
   }
@@ -250,7 +250,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
 struct mask_line
 {
   int x,size;
-  ushort *remap;
+  uint16_t *remap;
 } ;
 
 
@@ -260,15 +260,15 @@ void scan_map(image *screen, int sx, int sy, image *im, image *clouds, mask_line
 {  
   int x1=10000,x2=0;
   int iw=im->width();  
-  ushort r,co,off,cc;
+  uint16_t r,co,off,cc;
   int y=0;
   for (;y<mask_height;y++)
   {
     mask_line *n=p+y;
-    uchar *sl=screen->scan_line(y+sy)+sx+n->x;
-    uchar *sl2=im->scan_line(y);
-//    uchar *sl3=clouds->scan_line(y);
-    ushort *rem=n->remap;
+    uint8_t *sl=screen->scan_line(y+sy)+sx+n->x;
+    uint8_t *sl2=im->scan_line(y);
+//    uint8_t *sl3=clouds->scan_line(y);
+    uint16_t *rem=n->remap;
     if (sx+n->x<x1) x1=sx+n->x;    
     int x=0;
     for (;x<n->size;x++,sl++,rem++)   
@@ -300,7 +300,7 @@ mask_line *make_mask_lines(image *mask, int map_width)
   for (int y=0;y<mask->height();y++)
   {
     // find the start of the run..
-    uchar *sl=mask->scan_line(y);    
+    uint8_t *sl=mask->scan_line(y);    
     int x=0;
     while (*sl==0) { sl++; x++; }
     p[y].x=x;
@@ -312,8 +312,8 @@ mask_line *make_mask_lines(image *mask, int map_width)
     p[y].size=size;
 
     // now calculate remap for line
-    p[y].remap=(ushort *)jmalloc(size*2,"mask remap");
-    ushort *rem=p[y].remap;
+    p[y].remap=(uint16_t *)jmalloc(size*2,"mask remap");
+    uint16_t *rem=p[y].remap;
     for (x=0;x<size;x++,rem++)
     {
       if (x<=size/2)
@@ -507,7 +507,7 @@ void main_menu()
   char name[20];
   ico_button *buts[MENU_TICONS];
 
-  long maxx=0,maxy=0;
+  int32_t maxx=0,maxy=0;
   int i=0;
   for (;i<MENU_TICONS;i++)
   {
@@ -518,8 +518,8 @@ void main_menu()
     sprintf(name,"icon%04d.pcx",i*3+2);
     menu_icons[i*3+2]=cash.reg("art/icons.spe",name,SPEC_IMAGE,1);
 
-    long x=WINDOW_FRAME_LEFT+(i%9)*cash.img(menu_icons[0])->width();
-    long y=WINDOW_FRAME_TOP+(i/9)*cash.img(menu_icons[0])->height();
+    int32_t x=WINDOW_FRAME_LEFT+(i%9)*cash.img(menu_icons[0])->width();
+    int32_t y=WINDOW_FRAME_TOP+(i/9)*cash.img(menu_icons[0])->height();
     if (x>maxx) maxx=x;
     if (y>maxy) maxy=y;
     buts[i]=new ico_button(x,y,menu_icons_ids[i],
@@ -586,7 +586,7 @@ void main_menu()
   int eoff=0,coff=0;
   event ev;
 //  main_pm->draw(screen,eh,1);
-  long x=84,y=60;
+  int32_t x=84,y=60;
   Cell *v=find_symbol("earth_x");
   if (v && DEFINEDP(v)) x=lnumber_value(symbol_value(v));
 

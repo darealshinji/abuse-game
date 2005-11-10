@@ -32,7 +32,7 @@ JCFont *big_font,*console_font;
 int nforetiles,nbacktiles,f_wid,f_hi,b_wid,b_hi,total_songs=0,sfx_volume,music_volume,sound_avail=0;
 song *current_song=NULL;
 
-ushort current_start_type,start_position_type,last_start_number;
+uint16_t current_start_type,start_position_type,last_start_number;
 int light_buttons[13];
 int joy_picts[2*9];
 palette *pal;

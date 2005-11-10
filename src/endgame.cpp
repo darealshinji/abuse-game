@@ -20,12 +20,12 @@ extern palette *old_pal;
 struct mask_line
 {
   int x,size;
-  ushort *remap;
-  uchar *light;
+  uint16_t *remap;
+  uint8_t *light;
 } ;
 
 
-int text_draw(int y, int x1, int y1, int x2, int y2, char *buf, JCFont *font, uchar *cmap, char color);
+int text_draw(int y, int x1, int y1, int x2, int y2, char *buf, JCFont *font, uint8_t *cmap, char color);
 
 mask_line *make_mask_lines(image *mask, int map_width)
 {
@@ -33,7 +33,7 @@ mask_line *make_mask_lines(image *mask, int map_width)
   for (int y=0;y<mask->height();y++)
   {
     // find the start of the run..
-    uchar *sl=mask->scan_line(y);    
+    uint8_t *sl=mask->scan_line(y);    
     int x=0;
     while (*sl==0) { sl++; x++; }
     p[y].x=x;
@@ -41,15 +41,15 @@ mask_line *make_mask_lines(image *mask, int map_width)
    
     // find the length of the run
     int size=0; 
-    uchar *sl_start=sl;
+    uint8_t *sl_start=sl;
     while (*sl!=0 && x<mask->width()) { sl++; x++; size++; }
     p[y].size=size;
 
     // now calculate remap for line
-    p[y].remap=(ushort *)jmalloc(size*2,"mask remap");
-    p[y].light=(uchar *)jmalloc(size,"mask light");
-    ushort *rem=p[y].remap;
-    uchar *lrem=p[y].light;
+    p[y].remap=(uint16_t *)jmalloc(size*2,"mask remap");
+    p[y].light=(uint8_t *)jmalloc(size,"mask light");
+    uint16_t *rem=p[y].remap;
+    uint8_t *lrem=p[y].light;
     for (x=0;x<size;x++,rem++)
     {
       *(lrem++)=*(sl_start++);
@@ -68,23 +68,23 @@ mask_line *make_mask_lines(image *mask, int map_width)
 }
 
 
-void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256, long *paddr, mask_line *p, int mask_height, 
+void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256, int32_t *paddr, mask_line *p, int mask_height, 
 	      int xoff, int coff)
 {  
   int x1=10000,x2=0;
   int iw=im1->width();  
-  ushort r,off;
+  uint16_t r,off;
   int y=0;
-  uchar *l;
+  uint8_t *l;
 
   for (;y<mask_height;y++)
   {
     mask_line *n=p+y;
-    uchar *sl=screen->scan_line(y+sy)+sx+n->x;
-    uchar *sl2=im1->scan_line(y);
-    uchar *sl3=im2->scan_line(y);
+    uint8_t *sl=screen->scan_line(y+sy)+sx+n->x;
+    uint8_t *sl2=im1->scan_line(y);
+    uint8_t *sl3=im2->scan_line(y);
     l=n->light;
-    ushort *rem=n->remap;
+    uint16_t *rem=n->remap;
     if (sx+n->x<x1) x1=sx+n->x;    
     int x=0;
     for (;x<n->size;x++,sl++,rem++,l++)   
@@ -94,8 +94,8 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
       off=(r+xoff);
       if (off>=iw) off-=iw;
 
-      long p1=*(paddr+sl2[off]);
-      long p2=*(paddr+sl3[off]);
+      int32_t p1=*(paddr+sl2[off]);
+      int32_t p2=*(paddr+sl3[off]);
 
       int r1=p1>>16,g1=(p1>>8)&0xff,b1=p1&0xff;
       int r2=p2>>16,g2=(p2>>8)&0xff,b2=p2&0xff;
@@ -103,7 +103,7 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
           g3=g1+(g2-g1)*fade256/256,
           b3=b1+(b2-b1)*fade256/256;
 
-      uchar c=color_table->lookup_color(r3>>3,g3>>3,b3>>3);
+      uint8_t c=color_table->lookup_color(r3>>3,g3>>3,b3>>3);
 				
       *sl=*(white_light+((*l)/2+28+jrand()%4)*256+c); 
       
@@ -122,7 +122,7 @@ void fade_out(int steps);
 
 class ex_char { 
   public :
-  uchar frame,char_num;
+  uint8_t frame,char_num;
   int x,y;
   ex_char *next; 
   ex_char (int X, int Y, int Frame, int Char_num, ex_char *Next) { x=X; y=Y; frame=Frame; char_num=Char_num; next=Next; }
@@ -174,7 +174,7 @@ void show_end2()
 	    pal->find_closest(200,200,200),
 	    pal->find_closest(100,100,100),
 	    pal->find_closest(64,64,64)};
-  ushort sinfo[800*3],*si;
+  uint16_t sinfo[800*3],*si;
 
   for (si=sinfo,i=0;i<800;i++)
   {
@@ -183,7 +183,7 @@ void show_end2()
     *(si++)=c[jrand()%4];     
     screen->putpixel(si[-3],si[-2],si[-1]);
   }
-  long paddr[256];
+  int32_t paddr[256];
   if (old_pal)
   {
     for (i=0;i<256;i++) 
@@ -353,7 +353,7 @@ void show_end2()
   } while (ev.type!=EV_KEY && ev.type!=EV_MOUSE_BUTTON);
 
 
-  uchar cmap[32];
+  uint8_t cmap[32];
   for (i=0;i<32;i++)
     cmap[i]=pal->find_closest(i*256/32,i*256/32,i*256/32);
 
@@ -427,7 +427,7 @@ void share_end()
 			   lstring_value(to_be));
   fade_in(NULL,32);
 
-  uchar cmap[32];
+  uint8_t cmap[32];
   int i;
   for (i=0;i<32;i++)
     cmap[i]=pal->find_closest(i*256/32,i*256/32,i*256/32);
@@ -479,7 +479,7 @@ void show_end()
 
   fade_in(im,32);
 
-  uchar cmap[32];
+  uint8_t cmap[32];
   int i;
   for (i=0;i<32;i++)
     cmap[i]=pal->find_closest(i*256/32,i*256/32,i*256/32);

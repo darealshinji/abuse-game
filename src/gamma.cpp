@@ -219,7 +219,7 @@ void gamma_correct(palette *&pal, int force_menu)
 	pal = new palette;
 	for( int i = 0; i < 256; i++ )
 	{
-		uchar oldr, oldg, oldb;
+		uint8_t oldr, oldg, oldb;
 		old_pal->get( i, oldr, oldg, oldb );
 		pal->set( i, (int)( pow( oldr / 255.0, gamma ) * 255 ),
 			(int)( pow( oldg / 255.0, gamma ) * 255 ),

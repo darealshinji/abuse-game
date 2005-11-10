@@ -19,7 +19,7 @@ image *read_lbm(char *filename, palette *&pal)
   }
   else
   {
-    long size=read_other_long(fp);
+    int32_t size=read_other_uint32(fp);
     fread(type,1,4,fp);    
     if (memcmp(type,"PBM ",4))
     {
@@ -29,31 +29,31 @@ image *read_lbm(char *filename, palette *&pal)
     }
     else
     {
-      long ssize;    
+      int32_t ssize;    
       char stype[4];
-      short w=0,h=0,x,y,tcolor,pagew,pageh;
+      int16_t w=0,h=0,x,y,tcolor,pagew,pageh;
       char planes,masking,compr=0,padl,xa,ya;
       
       while (ftell(fp)+4<size)
       {
 	fread(stype,1,4,fp);
-	ssize=read_other_long(fp);
+	ssize=read_other_uint32(fp);
         if (ssize &1) ssize++;            // specs say all chunks are padded by 2
 	if (!memcmp(stype,"BMHD",4))
 	{
-	  w=read_other_short(fp);
-	  h=read_other_short(fp);
-	  x=read_other_short(fp);
-	  y=read_other_short(fp);
+	  w=read_other_uint16(fp);
+	  h=read_other_uint16(fp);
+	  x=read_other_uint16(fp);
+	  y=read_other_uint16(fp);
 	  planes=fgetc(fp);
 	  masking=fgetc(fp);
 	  compr=fgetc(fp);
 	  padl=fgetc(fp);
-	  tcolor=read_other_short(fp);
+	  tcolor=read_other_uint16(fp);
 	  xa=fgetc(fp);
 	  ya=fgetc(fp);
-	  pagew=read_other_short(fp);
-	  pageh=read_other_short(fp);
+	  pagew=read_other_uint16(fp);
+	  pageh=read_other_uint16(fp);
 	} else if (!memcmp(stype,"CMAP",4))
 	{
 	  pal=new palette(256);

@@ -3,29 +3,29 @@
 
 
   Simple object             (power ups, non-moving objects)
-    long x,y;
-    schar direction;
-    ushort otype,state
-    ushort current_frame;
+    int32_t x,y;
+    int8_t direction;
+    uint16_t otype,state
+    uint16_t current_frame;
     extension *
 
 
   Moving object             (simple lisp controlled characters)
-     uchar flags;
-     long xvel,yvel,xacel,yacel;
-     uchar fx,fy,fxvel,fyvel,fxacel,fyacel,aitype;
-     ushort aistate,aistate_time;
-     unsigned short hp,mp,
+     uint8_t flags;
+     int32_t xvel,yvel,xacel,yacel;
+     uint8_t fx,fy,fxvel,fyvel,fxacel,fyacel,aitype;
+     uint16_t aistate,aistate_time;
+     uint16_t hp,mp,
      extension *
 
 
   Complex objects          (can controll lights, other characters, and have a neural net ai)
-    uchar tobjs,tlights;
+    uint8_t tobjs,tlights;
     object_list *                       
     light_list *
     nnet_info *
-    schar fade_dir, frame_dir;        
-    unsigned char fade_count,fade_max;
+    int8_t fade_dir, frame_dir;        
+    uint8_t fade_count,fade_max;
     morph_char *morph_status;
 
 

@@ -11,7 +11,7 @@ int prof_height=10;
 
 struct prof_info
 {
-  ushort otype;
+  uint16_t otype;
   float total_time;
 };
 

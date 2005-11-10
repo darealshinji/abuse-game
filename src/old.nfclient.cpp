@@ -18,7 +18,7 @@ class nfs_file : public bFILE
   virtual int unbuffered_read(void *buf, size_t count);       // returns number of bytes read
   int new_read(void *buf, size_t count);       // returns number of bytes read
   virtual int unbuffered_write(void *buf, size_t count);      // returns number of bytes written
-  virtual int unbuffered_seek(long offset, int whence);  // whence=SEEK_SET, SEEK_CUR, SEEK_END, ret=0=success
+  virtual int unbuffered_seek(int32_t offset, int whence);  // whence=SEEK_SET, SEEK_CUR, SEEK_END, ret=0=success
   virtual int unbuffered_tell();
   virtual int file_size();
   virtual ~nfs_file();
@@ -79,21 +79,21 @@ nfs_file::nfs_file(char *filename, char *mode)
       {
 	delete local_test;
 	local_test=NULL;
-	pk.write_byte(NFS_OPEN);
+	pk.write_uint8(NFS_OPEN);
       }
       else
       {
-	pk.write_byte(NFS_CRC_OPEN);
+	pk.write_uint8(NFS_CRC_OPEN);
 	int fail;
-	ulong crc=crc_man.get_crc(crc_man.get_filenumber(filename),fail); // skip crc calc if we can
+	uint32_t crc=crc_man.get_crc(crc_man.get_filenumber(filename),fail); // skip crc calc if we can
 	if (fail) crc=crc_file(local_test);
-	pk.write_long(crc);
+	pk.write_uint32(crc);
       }
 
-      pk.write_byte(strlen(filename)+1);
-      pk.write((uchar *)filename,strlen(filename)+1);
-      pk.write_byte(strlen(mode)+1);
-      pk.write((uchar *)mode,strlen(mode)+1);
+      pk.write_uint8(strlen(filename)+1);
+      pk.write((uint8_t *)filename,strlen(filename)+1);
+      pk.write_uint8(strlen(mode)+1);
+      pk.write((uint8_t *)mode,strlen(mode)+1);
       dprintf("try open %s,%s\n",filename,mode);
       offset=0;
       if (!nfs_server->send(pk))
@@ -103,8 +103,8 @@ nfs_file::nfs_file(char *filename, char *mode)
 	if (!nfs_server->get(pk)) nfs_disconnect();
 	else
 	{
-	  long fd;
-	  if (pk.read((uchar *)&fd,4)!=4)
+	  int32_t fd;
+	  if (pk.read((uint8_t *)&fd,4)!=4)
 	    nfs_disconnect();
 	  else
 	  {
@@ -150,9 +150,9 @@ int nfs_file::new_read(void *buf, size_t count)      // returns number of bytes 
   else
   { 
     packet pk;
-    pk.write_byte(NFS_READ);
-    pk.write_long(nfs_fd);
-    pk.write_long(count);
+    pk.write_uint8(NFS_READ);
+    pk.write_uint32(nfs_fd);
+    pk.write_uint32(count);
     dprintf("try read %d,%d\n",nfs_fd,count);
     if (!nfs_server->send(pk))
     {
@@ -164,13 +164,13 @@ int nfs_file::new_read(void *buf, size_t count)      // returns number of bytes 
 
       int fail=0;
       int rtotal=0;
-      ushort size=1;
+      uint16_t size=1;
       while (count>0 && !fail && size)
       {
 	if (!nfs_server->get(pk)) fail=1;
 	else
 	{	  
-	  if (pk.read((uchar *)&size,2)!=2) fail=1;
+	  if (pk.read((uint8_t *)&size,2)!=2) fail=1;
 	  else
 	  {
 	    size=lstl(size);
@@ -179,7 +179,7 @@ int nfs_file::new_read(void *buf, size_t count)      // returns number of bytes 
 	    {
 	      int need_size=size>count ? count : size;
 
-	      if (pk.read((uchar *)buf,need_size)!=need_size) fail=1;
+	      if (pk.read((uint8_t *)buf,need_size)!=need_size) fail=1;
 	      else
 	      {
 		count-=need_size;	    
@@ -218,18 +218,18 @@ int nfs_file::unbuffered_write(void *buf, size_t count)      // returns number o
 }
 
 
-int nfs_file::unbuffered_seek(long off, int whence) // whence=SEEK_SET, SEEK_CUR, SEEK_END, ret=0=success
+int nfs_file::unbuffered_seek(int32_t off, int whence) // whence=SEEK_SET, SEEK_CUR, SEEK_END, ret=0=success
 {
   if (local)
     return local->seek(off,whence);
   else
   { 
     packet pk;
-    pk.write_byte(NFS_SEEK);
-    pk.write_long(nfs_fd);
+    pk.write_uint8(NFS_SEEK);
+    pk.write_uint32(nfs_fd);
 
-    pk.write_long(off);
-    pk.write_long(whence);
+    pk.write_uint32(off);
+    pk.write_uint32(whence);
     dprintf("seek %d %d %d\n",nfs_fd,off,whence);
     if (!nfs_server->send(pk))
     {
@@ -248,8 +248,8 @@ int nfs_file::unbuffered_tell()
   else if (nfs_server)
   { 
     packet pk;
-    pk.write_byte(NFS_TELL);
-    pk.write_long(nfs_fd);
+    pk.write_uint8(NFS_TELL);
+    pk.write_uint32(nfs_fd);
     if (!nfs_server->send(pk))
     {
       nfs_disconnect();    
@@ -262,8 +262,8 @@ int nfs_file::unbuffered_tell()
 	return 0;
       } else
       {
-	long off;
-	if (pk.read((uchar *)&off,4)!=4) 
+	int32_t off;
+	if (pk.read((uint8_t *)&off,4)!=4) 
 	{
 	  dprintf("Disconnected on tell()\n");
 	  nfs_disconnect();
@@ -283,8 +283,8 @@ int nfs_file::file_size()
   else if (nfs_server)
   { 
     packet pk;
-    pk.write_byte(NFS_FILESIZE);
-    pk.write_long(nfs_fd);
+    pk.write_uint8(NFS_FILESIZE);
+    pk.write_uint32(nfs_fd);
     if (!nfs_server->send(pk))
     {
       nfs_disconnect();    
@@ -297,8 +297,8 @@ int nfs_file::file_size()
 	return 0;
       } else
       {
-	long size;
-	if (pk.read((uchar *)&size,4)!=4) 
+	int32_t size;
+	if (pk.read((uint8_t *)&size,4)!=4) 
 	{
 	  dprintf("disconnected on filesize\n");
 	  nfs_disconnect();
@@ -317,8 +317,8 @@ nfs_file::~nfs_file()
   else if (nfs_server && !open_failure())
   {    
     packet pk;
-    pk.write_byte(NFS_CLOSE);
-    pk.write_long(nfs_fd);
+    pk.write_uint8(NFS_CLOSE);
+    pk.write_uint32(nfs_fd);
     dprintf("close %d\n",nfs_fd);
     if (!nfs_server->send(pk))
     {

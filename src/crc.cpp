@@ -1,8 +1,8 @@
 #include "crc.hpp"
 
-unsigned short calc_crc(unsigned char *buf, long len)
+uint16_t calc_crc(uint8_t *buf, int len)
 {
-  unsigned char c1=0,c2=0;
+  uint8_t c1=0,c2=0;
   while (len)
   {
     len--;
@@ -15,12 +15,12 @@ unsigned short calc_crc(unsigned char *buf, long len)
 
 
  
-ulong crc_file(bFILE *fp)
+uint32_t crc_file(bFILE *fp)
 {
-  uchar crc1=0,crc2=0,crc3=0,crc4=0;
+  uint8_t crc1=0,crc2=0,crc3=0,crc4=0;
 
   int size=0x1000;
-  uchar *buffer=(uchar *)jmalloc(size,"crc_buffer"),*c;
+  uint8_t *buffer=(uint8_t *)jmalloc(size,"crc_buffer"),*c;
   long l=fp->file_size();
   long cur_pos=fp->tell();
   fp->seek(0,0);

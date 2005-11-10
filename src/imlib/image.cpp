@@ -11,7 +11,7 @@
 #endif
 #include <stdlib.h>
 
-extern unsigned char current_background;
+extern uint8_t current_background;
 char *imerr_messages[]={"No error",
       		 	"Error occured while reading",
 			"Incorrect file type",
@@ -22,10 +22,10 @@ char *imerr_messages[]={"No error",
 			"Error occured while writing, (disk full?)"};
 			
                          
-short imerror=0;
-short swpfile_num=0;
+int16_t imerror=0;
+int16_t swpfile_num=0;
 
-short current_error()
+int16_t current_error()
 { return imerror; }
 
 void clear_errors()
@@ -47,12 +47,12 @@ void clear_errors()
   }
 }
 
-void set_error(short x)
+void set_error(int16_t x)
 { imerror=x; }
 
-short last_error()
+int16_t last_error()
 {
-  short ec;
+  int16_t ec;
   ec=imerror;
   imerror=0;
   return ec;
@@ -61,7 +61,7 @@ short last_error()
 linked_list image_list;
 
 
-image_descriptor::image_descriptor(short length, short height,
+image_descriptor::image_descriptor(int16_t length, int16_t height,
 				   int keep_dirties, int static_memory)
 
 { clipx1=0; clipy1=0; 
@@ -71,7 +71,7 @@ image_descriptor::image_descriptor(short length, short height,
   static_mem=static_memory;  
 }
 
-void image::change_size(short new_width, short new_height, unsigned char *page)
+void image::change_size(int16_t new_width, int16_t new_height, uint8_t *page)
 {
   delete_page();
   w=new_width;
@@ -96,14 +96,14 @@ void make_block(size_t size)
   if (dat) jfree((char *)dat);
 }
 
-unsigned char image::pixel(short x, short y)
+uint8_t image::pixel(int16_t x, int16_t y)
 {
   CONDITION(x>=0 && x<width() && y>=0 && y<height(),
      "image::pixel Bad pixel xy");
   return (*(scan_line(y)+x));
 }
 
-void image::putpixel(short x, short y, char color)
+void image::putpixel(int16_t x, int16_t y, char color)
 {
   CONDITION(x>=0 && x<width() && y>=0 && y<height(),
      "image::putpixel Bad pixel xy");
@@ -115,7 +115,7 @@ void image::putpixel(short x, short y, char color)
 }
 
 
-image::image(short width, short height, unsigned char *page_buffer, short create_descriptor)
+image::image(int16_t width, int16_t height, uint8_t *page_buffer, int16_t create_descriptor)
 {
   w=width;
   h=height;  
@@ -131,10 +131,10 @@ image::image(short width, short height, unsigned char *page_buffer, short create
 
 image::image(spec_entry *e, bFILE *fp)
 {
-  short i; 
+  int16_t i; 
   fp->seek(e->offset,0);
-  w=fp->read_short();
-  h=fp->read_short();
+  w=fp->read_uint16();
+  h=fp->read_uint16();
   special=NULL;
   make_page(w,h,NULL);
   for (i=0;i<h;i++)
@@ -144,9 +144,9 @@ image::image(spec_entry *e, bFILE *fp)
 
 image::image(bFILE *fp)
 {
-  short i; 
-  w=fp->read_short();
-  h=fp->read_short();
+  int16_t i; 
+  w=fp->read_uint16();
+  h=fp->read_uint16();
   special=NULL;
   make_page(w,h,NULL);
   for (i=0;i<h;i++)
@@ -171,12 +171,12 @@ void image_cleanup(int ret, void *arg)
 
 void image_init()
 {
-  unsigned char bt[2];
-  unsigned short wrd,*up;
+  uint8_t bt[2];
+  uint16_t wrd,*up;
   bt[0]=1;
   bt[1]=0;
-  up=(unsigned short *)bt;
-  wrd=int_to_intel(*up);
+  up=(uint16_t *)bt;
+  wrd=uint16_to_intel(*up);
   if (wrd!=0x01)
   { printf("Compiled under wrong ENDING-nes, edit system.h and try again\n");
     printf("1 (intel) = %d\n",(int)wrd);
@@ -186,11 +186,11 @@ void image_init()
 }
 
 
-long image::total_pixels(unsigned char background)
+int32_t image::total_pixels(uint8_t background)
 {
-  short i,j;
-  long co;
-  unsigned char *c;
+  int16_t i,j;
+  int32_t co;
+  uint8_t *c;
   for (co=0,i=height()-1;i>=0;i--)
   { c=scan_line(i);
     for (j=width()-1;j>=0;j--,c++)
@@ -199,9 +199,9 @@ long image::total_pixels(unsigned char background)
   return co;
 }
 
-void image::clear(short color)
+void image::clear(int16_t color)
 {
-  short i;
+  int16_t i;
   if (color==-1) color=current_background;
   if (special)
   { if (special->x1_clip()<=special->x2_clip())
@@ -219,9 +219,9 @@ void image::clear(short color)
 image *image::copy()
 {
   image *im;
-  unsigned char *c,*dat;
+  uint8_t *c,*dat;
   int i;
-  dat=(unsigned char *)jmalloc(width(),"image copy");
+  dat=(uint8_t *)jmalloc(width(),"image copy");
   im=new image(width(),height());
   for (i=height()-1;i>=0;i--)
   { c=scan_line(i);
@@ -235,13 +235,13 @@ image *image::copy()
 
 
 
-void image::line(short x1, short y1,short x2, short y2, unsigned char color)
+void image::line(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t color)
 {
-  short i,xc,yc,er,n,m,xi,yi,xcxi,ycyi,xcyi;
+  int16_t i,xc,yc,er,n,m,xi,yi,xcxi,ycyi,xcyi;
   unsigned dcy,dcx;
   // check to make sure that both endpoint are on the screen
 
-  short cx1,cy1,cx2,cy2;
+  int16_t cx1,cy1,cx2,cy2;
 
   // check to see if the line is completly clipped off
   get_clip(cx1,cy1,cx2,cy2);  
@@ -377,10 +377,10 @@ void image::line(short x1, short y1,short x2, short y2, unsigned char color)
 }
 
 
-void image::put_image(image *screen, short x, short y, char transparent)
+void image::put_image(image *screen, int16_t x, int16_t y, char transparent)
 {
-  short i,j,xl,yl;
-  unsigned char *pg1,*pg2,*source,*dest;
+  int16_t i,j,xl,yl;
+  uint8_t *pg1,*pg2,*source,*dest;
   if (screen->special)  // the screen is clipped then we onl want to put
 		    // part of the image
     put_part(screen,x,y,0,0,width()-1,height()-1,transparent);
@@ -416,10 +416,10 @@ void image::put_image(image *screen, short x, short y, char transparent)
   }
 }
 
-void image::fill_image(image *screen, short x1, short y1, short x2, short y2, short allign)
+void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t allign)
 {
-  short i,j,w,xx,start,xl,starty;
-  unsigned char *pg1,*pg2;
+  int16_t i,j,w,xx,start,xl,starty;
+  uint8_t *pg1,*pg2;
   CHECK(x1<=x2 && y1<=y2);  // we should have gotten this
 
   if (screen->special)
@@ -466,12 +466,12 @@ void image::fill_image(image *screen, short x1, short y1, short x2, short y2, sh
 }
 
 
-void image::put_part(image *screen, short x, short y,
-		short x1, short y1, short x2, short y2, char transparent)
+void image::put_part(image *screen, int16_t x, int16_t y,
+		int16_t x1, int16_t y1, int16_t x2, int16_t y2, char transparent)
 {
-  short xl,yl,j,i;
-  short cx1,cy1,cx2,cy2;
-  unsigned char *pg1,*pg2,*source,*dest;
+  int16_t xl,yl,j,i;
+  int16_t cx1,cy1,cx2,cy2;
+  uint8_t *pg1,*pg2,*source,*dest;
   CHECK(x1<=x2 && y1<=y2);
 
   screen->get_clip(cx1,cy1,cx2,cy2);
@@ -532,12 +532,12 @@ void image::put_part(image *screen, short x, short y,
   }    
 }
 
-void image::put_part_xrev(image *screen, short x, short y,
-		short x1, short y1, short x2, short y2, char transparent)
+void image::put_part_xrev(image *screen, int16_t x, int16_t y,
+		int16_t x1, int16_t y1, int16_t x2, int16_t y2, char transparent)
 {
-  short xl,yl,j,i;
-  short cx1,cy1,cx2,cy2;
-  unsigned char *pg1,*pg2,*source,*dest;
+  int16_t xl,yl,j,i;
+  int16_t cx1,cy1,cx2,cy2;
+  uint8_t *pg1,*pg2,*source,*dest;
   CHECK(x1<=x2 && y1<=y2);
 
   i=x1; x1=width()-x2-1;  // reverse the x locations
@@ -595,13 +595,13 @@ void image::put_part_xrev(image *screen, short x, short y,
 }
 
 
-void image::put_part_masked(image *screen, image *mask, short x, short y,
-		short maskx, short masky,
-		short x1, short y1, short x2, short y2)
+void image::put_part_masked(image *screen, image *mask, int16_t x, int16_t y,
+		int16_t maskx, int16_t masky,
+		int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-  short xl,yl,j,i,ml,mh;
-  short cx1,cy1,cx2,cy2;
-  unsigned char *pg1,*pg2,*pg3;
+  int16_t xl,yl,j,i,ml,mh;
+  int16_t cx1,cy1,cx2,cy2;
+  uint8_t *pg1,*pg2,*pg3;
   CHECK(x1<=x2 && y1<=y2);
 
   if (screen->special)
@@ -657,18 +657,18 @@ void image::put_part_masked(image *screen, image *mask, short x, short y,
 
 
 
-unsigned char image::brightest_color(palette *pal)
-{ unsigned char *p,r,g,b,bri;
-  short i,j;
-  long brv;
+uint8_t image::brightest_color(palette *pal)
+{ uint8_t *p,r,g,b,bri;
+  int16_t i,j;
+  int32_t brv;
   brv=0; bri=0;
   for (j=0;j<h;j++)
   {
     p=scan_line(j);
     for (i=0;i<w;i++)
     { pal->get(p[i],r,g,b);
-      if ((long)r*(long)g*(long)b>brv)
-      { brv=(long)r*(long)g*(long)b;
+      if ((int32_t)r*(int32_t)g*(int32_t)b>brv)
+      { brv=(int32_t)r*(int32_t)g*(int32_t)b;
 	bri=p[i];
       }
     }
@@ -676,17 +676,17 @@ unsigned char image::brightest_color(palette *pal)
   return bri;
 }
 
-unsigned char image::darkest_color(palette *pal, short noblack)
-{ unsigned char *p,r,g,b,bri;
-  short i,j;
-  long brv,x;
-  brv=(long)258*(long)258*(long)258; bri=0;
+uint8_t image::darkest_color(palette *pal, int16_t noblack)
+{ uint8_t *p,r,g,b,bri;
+  int16_t i,j;
+  int32_t brv,x;
+  brv=(int32_t)258*(int32_t)258*(int32_t)258; bri=0;
   for (j=0;j<h;j++)
   {
     p=scan_line(j);
     for (i=0;i<w;i++)
     { pal->get(p[i],r,g,b);
-      x=(long)r*(long)g*(long)b;
+      x=(int32_t)r*(int32_t)g*(int32_t)b;
       if (x<brv && (x || !noblack))
       { brv=x;
 	bri=p[i];
@@ -696,7 +696,7 @@ unsigned char image::darkest_color(palette *pal, short noblack)
   return bri;
 }
 
-void image::rectangle(short x1, short y1,short x2, short y2, unsigned char color)
+void image::rectangle(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t color)
 {
   line(x1,y1,x2,y1,color);
   line(x2,y1,x2,y2,color);
@@ -704,7 +704,7 @@ void image::rectangle(short x1, short y1,short x2, short y2, unsigned char color
   line(x1,y1,x1,y2,color);
 }
 
-void image::set_clip(short x1, short y1, short x2, short y2)
+void image::set_clip(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
   // If the image does not already have an Image descriptor, allocate one.
 
@@ -717,7 +717,7 @@ void image::set_clip(short x1, short y1, short x2, short y2)
 		       // should be it will adjust to fit wiothin the image.
 }
 
-void image::get_clip (short &x1, short &y1, short &x2, short &y2)
+void image::get_clip (int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2)
 {
   if (special)
     special->get_clip(x1,y1,x2,y2);
@@ -725,7 +725,7 @@ void image::get_clip (short &x1, short &y1, short &x2, short &y2)
   { x1=0; y1=0; x2=width()-1; y2=height()-1; }
 }
 
-void image::in_clip  (short x1, short y1, short x2, short y2)
+void image::in_clip  (int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
   if (special)
   {
@@ -746,7 +746,7 @@ void image::in_clip  (short x1, short y1, short x2, short y2)
 void image_descriptor::reduce_dirties()
 {
   dirty_rect *p,*q;
-  short x1,y1,x2,y2,nn;
+  int16_t x1,y1,x2,y2,nn;
   x1=6000; y1=6000;
   x2=0; y2=0;
   p=(dirty_rect *)dirties.first();
@@ -768,7 +768,7 @@ void image_descriptor::reduce_dirties()
 
 void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
 {
-  short i,ax1,ay1,ax2,ay2;
+  int16_t i,ax1,ay1,ax2,ay2;
   dirty_rect *p,*next;
   if (keep_dirt)
   {
@@ -868,7 +868,7 @@ void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
 // specifies that an area is a dirty
 void image_descriptor::add_dirty(int x1, int y1, int x2, int y2)
 {
-  short i;
+  int16_t i;
   dirty_rect *p;
   if (keep_dirt)
   {
@@ -940,9 +940,9 @@ void image_descriptor::add_dirty(int x1, int y1, int x2, int y2)
   }
 }
 
-void image::bar      (short x1, short y1, short x2, short y2, unsigned char color)
+void image::bar      (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 {
-  short y;
+  int16_t y;
   if (x1>x2 || y1>y2) return ;
   if (special)
   { x1=special->bound_x1(x1);
@@ -963,9 +963,9 @@ void image::bar      (short x1, short y1, short x2, short y2, unsigned char colo
   add_dirty(x1,y1,x2,y2);
 }
 
-void image::xor_bar  (short x1, short y1, short x2, short y2, unsigned char color)
+void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 {
-  short y,x;
+  int16_t y,x;
   if (x1>x2 || y1>y2) return ;
   if (special)
   { x1=special->bound_x1(x1);
@@ -982,10 +982,10 @@ void image::xor_bar  (short x1, short y1, short x2, short y2, unsigned char colo
   if (x2<0 || y2<0 || x1>=width() || y1>=height() || x2<x1 || y2<y1)
     return ;
 
-  unsigned char *sl=scan_line(y1)+x1; 
+  uint8_t *sl=scan_line(y1)+x1; 
   for (y=y1;y<=y2;y++)
   {
-    unsigned char *s=sl;
+    uint8_t *s=sl;
     for (x=x1;x<=x2;x++,s++)
       *s=(*s)^color;
     sl+=w;
@@ -995,11 +995,11 @@ void image::xor_bar  (short x1, short y1, short x2, short y2, unsigned char colo
 }
 
 
-void image::unpack_scanline(short line, char bitsperpixel)
+void image::unpack_scanline(int16_t line, char bitsperpixel)
 {
-  short x;
-  unsigned char *sl,*ex,mask,bt,sh;
-  ex=(unsigned char *)jmalloc(width(),"image::unpacked scanline");
+  int16_t x;
+  uint8_t *sl,*ex,mask,bt,sh;
+  ex=(uint8_t *)jmalloc(width(),"image::unpacked scanline");
   sl=scan_line(line);
   memcpy(ex,sl,width());
 
@@ -1017,13 +1017,13 @@ void image::unpack_scanline(short line, char bitsperpixel)
 
 void image::dither(palette *pal)
 {
-  short x,y,i,j;
-  unsigned char dt_matrix[]={0,  136,24, 170,
+  int16_t x,y,i,j;
+  uint8_t dt_matrix[]={0,  136,24, 170,
 		   68, 204,102,238,
 		   51, 187, 17,153,
 		   119,255, 85,221};
 
-  unsigned char *sl;
+  uint8_t *sl;
   for (y=height()-1;y>=0;y--)
   {
     sl=scan_line(y);
@@ -1048,10 +1048,10 @@ void image_descriptor::clear_dirties()
   }
 }
 
-void image::resize(short new_width, short new_height)
+void image::resize(int16_t new_width, int16_t new_height)
 {
   int old_width=width(),old_height=height();
-  unsigned char *im=(unsigned char *)jmalloc(width()*height(),"image::resized");
+  uint8_t *im=(uint8_t *)jmalloc(width()*height(),"image::resized");
   memcpy(im,scan_line(0),width()*height());
 
   delete_page();
@@ -1059,8 +1059,8 @@ void image::resize(short new_width, short new_height)
   w=new_width;      // set the new hieght and width
   h=new_height;
 
-  unsigned char *sl1,*sl2;
-  short y,y2,x2;
+  uint8_t *sl1,*sl2;
+  int16_t y,y2,x2;
   double yc,xc,yd,xd;
 
 
@@ -1079,17 +1079,17 @@ void image::resize(short new_width, short new_height)
   if (special) special->resize(new_width,new_height);
 }
 
-void image::scroll(short x1, short y1, short x2, short y2, short xd, short yd)
+void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, int16_t yd)
 {
-  short cx1,cy1,cx2,cy2;
+  int16_t cx1,cy1,cx2,cy2;
   CHECK(x1>=0 && y1>=0 && x1<x2 && y1<y2 && x2<width() && y2<height());
   if (special)
   {
     special->get_clip(cx1,cy1,cx2,cy2);
     x1=max(x1,cx1); y1=max(cy1,y1); x2=min(x2,cx2); y2=min(y2,cy2);
   }
-  short xsrc,ysrc,xdst,ydst,xtot=x2-x1-abs(xd)+1,ytot,xt;
-  unsigned char *src,*dst;
+  int16_t xsrc,ysrc,xdst,ydst,xtot=x2-x1-abs(xd)+1,ytot,xt;
+  uint8_t *src,*dst;
   if (xd<0) { xsrc=x1-xd; xdst=x1; } else { xsrc=x2-xd; xdst=x2; }
   if (yd<0) { ysrc=y1-yd; ydst=y1; } else { ysrc=y2-yd; ydst=y2; }
   for (ytot=y2-y1-abs(yd)+1;ytot;ytot--)
@@ -1106,9 +1106,9 @@ void image::scroll(short x1, short y1, short x2, short y2, short xd, short yd)
 }
 
 
-image *image::create_smooth(short smoothness)
+image *image::create_smooth(int16_t smoothness)
 {
-  short i,j,k,l,t,d;
+  int16_t i,j,k,l,t,d;
   image *im;
   CHECK(smoothness>=0);
   if (!smoothness) return NULL;
@@ -1128,8 +1128,8 @@ image *image::create_smooth(short smoothness)
   return im;
 }
 
-void image::wiget_bar(short x1, short y1, short x2, short y2, 
-   	unsigned char light, unsigned char med, unsigned char dark)
+void image::wiget_bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2, 
+   	uint8_t light, uint8_t med, uint8_t dark)
 {
   line(x1,y1,x2,y1,light);
   line(x1,y1,x1,y2,light);
@@ -1141,17 +1141,17 @@ void image::wiget_bar(short x1, short y1, short x2, short y2,
 class fill_rec
 {
 public :
-  short x,y;
+  int16_t x,y;
   fill_rec *last;
-  fill_rec(short X, short Y, fill_rec *Last)
+  fill_rec(int16_t X, int16_t Y, fill_rec *Last)
   { x=X; y=Y; last=Last; }
 } ;
 
-void image::flood_fill(short x, short y, unsigned char color)
+void image::flood_fill(int16_t x, int16_t y, uint8_t color)
 {
-  unsigned char *sl,*above,*below;
+  uint8_t *sl,*above,*below;
   fill_rec *recs=NULL,*r;
-  unsigned char fcolor;
+  uint8_t fcolor;
   sl=scan_line(y);
   fcolor=sl[x];
   if (fcolor==color) return ;
@@ -1230,16 +1230,16 @@ void image::flood_fill(short x, short y, unsigned char color)
 
 #define LED_L 5
 #define LED_H 5
-void image::burn_led(short x, short y, long num, short color, short scale)
+void image::burn_led(int16_t x, int16_t y, int32_t num, int16_t color, int16_t scale)
 {
   char st[100];
-  short ledx[]={1,2,1,2,3,3,3,3,1,2,0,0,0,0};
-  short ledy[]={3,3,0,0,1,2,4,6,7,7,4,6,1,2};
+  int16_t ledx[]={1,2,1,2,3,3,3,3,1,2,0,0,0,0};
+  int16_t ledy[]={3,3,0,0,1,2,4,6,7,7,4,6,1,2};
 
-  short dig[]={2+4+8+16+32+64,4+8,2+4+1+32+16,2+4+1+8+16,64+1+4+8,
+  int16_t dig[]={2+4+8+16+32+64,4+8,2+4+1+32+16,2+4+1+8+16,64+1+4+8,
              2+64+1+8+16,64+32+1+8+16,2+4+8,1+2+4+8+16+32+64,64+2+4+1+8,1};
-  short xx,yy,zz;
-  sprintf(st,"%8ld",num);
+  int16_t xx,yy,zz;
+  sprintf(st,"%8ld",(long int)num);
   for (xx=0;xx<8;xx++)
   {
     if (st[xx]!=' ')
@@ -1257,16 +1257,16 @@ void image::burn_led(short x, short y, long num, short color, short scale)
   }
 }
 
-unsigned char dither_matrix[]={0,  136,24, 170,
+uint8_t dither_matrix[]={0,  136,24, 170,
 		     68, 204,102,238,
 		     51, 187, 17,153,
 		     119,255, 85,221};
 
-image *image::copy_part_dithered (short x1, short y1, short x2, short y2)
+image *image::copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-  short x,y,cx1,cy1,cx2,cy2,ry,rx,bo,dity,ditx;
+  int16_t x,y,cx1,cy1,cx2,cy2,ry,rx,bo,dity,ditx;
   image *ret;
-  unsigned char *sl1,*sl2;
+  uint8_t *sl1,*sl2;
   get_clip(cx1,cy1,cx2,cy2);
   if (y1<cy1) y1=cy1;
   if (x1<cx1) x1=cx1;
@@ -1303,7 +1303,7 @@ image *image::copy_part_dithered (short x1, short y1, short x2, short y2)
 
 void image::flip_x()
 {
-  unsigned char *rev=(unsigned char *)jmalloc(width(),"image tmp::flipped_x"),*sl;
+  uint8_t *rev=(uint8_t *)jmalloc(width(),"image tmp::flipped_x"),*sl;
   CONDITION(rev,"memory allocation"); 
   int y,x,i;
   for (y=0;y<height();y++)
@@ -1317,7 +1317,7 @@ void image::flip_x()
 
 void image::flip_y()
 {
-  unsigned char *rev=(unsigned char *)jmalloc(width(),"image::flipped_y"),*sl;
+  uint8_t *rev=(uint8_t *)jmalloc(width(),"image::flipped_y"),*sl;
   CONDITION(rev,"memory allocation"); 
   int y;
   for (y=0;y<height()/2;y++)
@@ -1328,9 +1328,9 @@ void image::flip_y()
   }
 }
 
-void image::make_color(unsigned char color)
+void image::make_color(uint8_t color)
 {
-  unsigned char *sl;
+  uint8_t *sl;
   int y,x;
   for (y=0;y<height();y++)
   {

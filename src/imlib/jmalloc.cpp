@@ -12,7 +12,6 @@
 //#endif
 
 #include "jmalloc.hpp"
-#define uchar unsigned char
 #define JM_SMALL_SIZE 128      // above 128 bytes is considered to be a big block and no hashing is done
 int alloc_space=ALLOC_SPACE_STATIC;
 
@@ -28,7 +27,7 @@ void break_mem_fun()
 
 struct memory_node
 {
-  long size;
+  int32_t size;
 #ifdef MEM_CHECK
   char *name;                     // name is allocated on regular heap
 #endif                            // because it is used for debugging purposes
@@ -39,7 +38,7 @@ struct memory_node
 
 struct small_block
 {  
-  unsigned long size;             // size of blocks...
+  uint32_t size;             // size of blocks...
   uint32_t alloc_list;            // bit field saying weither each block is allocated or not.
   small_block *next;              // next small block of same size
 #ifdef MEM_CHECK
@@ -53,23 +52,23 @@ class block_manager
 {
   public :
 
-  long block_size;                             // size of this memory_block
+  int32_t block_size;                             // size of this memory_block
   small_block *sblocks[JM_SMALL_SIZE];
   small_block *cblocks[JM_SMALL_SIZE];
   void *addr;
 
   memory_node *sfirst,*slast,
               *cfirst;
-  unsigned char block_type;
+  uint8_t block_type;
 
-  void init(void *block, long Block_size, uchar type);
-  void *static_alloc(long size, char *name);
-  void *cache_alloc(long size, char *name);
+  void init(void *block, int32_t Block_size, uint8_t type);
+  void *static_alloc(int32_t size, char *name);
+  void *cache_alloc(int32_t size, char *name);
   void static_free(void *ptr);
   void cache_free(void *ptr);
-  long available();
-  long allocated();
-  long pointer_size(void *ptr);
+  int32_t available();
+  int32_t allocated();
+  int32_t pointer_size(void *ptr);
   void report(FILE *fp);
   void inspect();
 
@@ -89,7 +88,7 @@ void inspect_memory()
 
 int block_manager::valid_static_ptr(void *ptr)
 {
-  void *next=(void *)(*(((long *)ptr)-1));
+  void *next=(void *)(*(((int32_t *)ptr)-1));
   if (next && ((small_block *)next)->size<JM_SMALL_SIZE)  // small allocation
   {
     small_block *s=(small_block *)next;
@@ -110,7 +109,7 @@ int block_manager::valid_static_ptr(void *ptr)
 
 int block_manager::valid_cache_ptr(void *ptr)
 {
-  void *next=(void *)(*(((long *)ptr)-1));
+  void *next=(void *)(*(((int32_t *)ptr)-1));
   if (next && ((small_block *)next)->size<JM_SMALL_SIZE)  // small allocation
   {
     small_block *s=(small_block *)next;
@@ -273,7 +272,7 @@ void block_manager::report(FILE *fp)
   }
 }
 
-long block_manager::pointer_size(void *ptr)
+int32_t block_manager::pointer_size(void *ptr)
 {
   void *next=(void *)(*(((intptr_t *)ptr)-1));
   if (next>ptr)
@@ -281,9 +280,9 @@ long block_manager::pointer_size(void *ptr)
   else return ((small_block *)next)->size;
 }
 
-long block_manager::available()
+int32_t block_manager::available()
 {
-  long size=0;
+  int32_t size=0;
   memory_node *f;
   for (f=sfirst;f;f=f->next)
     if (f->size<0) size-=f->size;
@@ -293,9 +292,9 @@ long block_manager::available()
   return size;
 }
 
-long block_manager::allocated()
+int32_t block_manager::allocated()
 {
-  long size=0;
+  int32_t size=0;
   memory_node *f;
   for (f=sfirst;f;f=f->next)
     if (f->size>0) size+=f->size;
@@ -305,7 +304,7 @@ long block_manager::allocated()
   return size;
 }
 
-void block_manager::init(void *block, long Block_size, uchar type)
+void block_manager::init(void *block, int32_t Block_size, uint8_t type)
 {
   block_size=Block_size;
   addr=block;
@@ -325,7 +324,7 @@ void block_manager::init(void *block, long Block_size, uchar type)
   block_type=type;
 }
 
-void *block_manager::static_alloc(long size, char *name)
+void *block_manager::static_alloc(int32_t size, char *name)
 {
   if (size<JM_SMALL_SIZE)
   {
@@ -344,8 +343,8 @@ void *block_manager::static_alloc(long size, char *name)
       if ((intptr_t)s==break_mem_point)
         break_mem_fun();
 #endif      
-      long *addr=(long *)(((char *)s)+sizeof(small_block));
-      *addr=(long)s;
+      intptr_t *addr=(intptr_t *)(((char *)s)+sizeof(small_block));
+      *addr=(intptr_t)s;
       return (void *)(addr+1);  // return first block
     } else
     {
@@ -359,7 +358,7 @@ void *block_manager::static_alloc(long size, char *name)
 #ifdef MEM_CHECK
 	  s->name[i]=strcpy((char *)malloc(strlen(name)+1),name);
 #endif      	 
-	  *((long *)addr)=(long)s;
+	  *((intptr_t *)addr)=(intptr_t)s;
 
 #ifdef MEM_CHECK
 	  if ((intptr_t)addr==break_mem_point)
@@ -405,7 +404,7 @@ void *block_manager::static_alloc(long size, char *name)
 }
 
 
-void *block_manager::cache_alloc(long size, char *name)
+void *block_manager::cache_alloc(int32_t size, char *name)
 {
   if (size<JM_SMALL_SIZE)
   {
@@ -423,8 +422,8 @@ void *block_manager::cache_alloc(long size, char *name)
       s->name[0]=strcpy((char *)malloc(strlen(name)+1),name);
 
 #endif      
-      long *addr=(long *)(((char *)s)+sizeof(small_block));
-      *addr=(long)s;
+      intptr_t *addr=(intptr_t *)(((char *)s)+sizeof(small_block));
+      *addr=(intptr_t)s;
 #ifdef MEM_CHECK
       if ((intptr_t)s==break_mem_point)
         break_mem_fun();
@@ -444,7 +443,7 @@ void *block_manager::cache_alloc(long size, char *name)
 	  if ((intptr_t)s==break_mem_point)
 	    break_mem_fun();
 #endif      	 
-	  *((long *)addr)=(long)s;
+	  *((intptr_t *)addr)=(intptr_t)s;
 	  return (void *)(addr+4);
 	}
 	i++;
@@ -460,7 +459,7 @@ void *block_manager::cache_alloc(long size, char *name)
   for (;s && -s->size<size;s=s->next) clast=s;
   if (!s) // no current cache space for object, see if we can enlarge the cache space
   {
-    long size_avail=-slast->size;
+    int32_t size_avail=-slast->size;
     size_avail-=sizeof(memory_node);
 
     if (slast->size>0 || size_avail<size) // not enough space
@@ -490,7 +489,7 @@ void *block_manager::cache_alloc(long size, char *name)
   if (s->size-size>(int)sizeof(memory_node)+4)  // is there enough space to split the block?
   {
     memory_node *p=s;    // store this position
-    long psize=s->size-size-sizeof(memory_node);
+    int32_t psize=s->size-size-sizeof(memory_node);
     s=(memory_node *)(((char *)s)+psize+sizeof(memory_node));
     p->size=-psize;
     s->next=p;
@@ -514,7 +513,7 @@ void *block_manager::cache_alloc(long size, char *name)
 void block_manager::cache_free(void *ptr)
 {
   // see if this was a small_block allocation
-  void *next=(void *)(*(((long *)ptr)-1));
+  void *next=(void *)(*(((int32_t *)ptr)-1));
   if (next && ((small_block *)next)->size<JM_SMALL_SIZE)  // small allocation
   {
     small_block *s=(small_block *)next;
@@ -597,7 +596,7 @@ void block_manager::cache_free(void *ptr)
 void block_manager::static_free(void *ptr)
 {
   // see if this was a small_block allocation
-  void *next=(void *)(*(((long *)ptr)-1));
+  void *next=(void *)(*(((int32_t *)ptr)-1));
   if (next && next<ptr)  // small allocation
   {
     small_block *s=(small_block *)next;
@@ -695,7 +694,7 @@ char *not_enough_low_memory_message="Memory Manager : Not enough low memory avai
 				   "    - remove TSR's  & drivers not needed by ABUSE\n"
 				   "    - add memory to your system\n";
 
-void jmalloc_init(long min_size)
+void jmalloc_init(int32_t min_size)
 {
   fprintf(stderr,"Disabling memory manager, using libc instead\n");
   return;
@@ -708,7 +707,7 @@ void jmalloc_init(long min_size)
     void *mem;
 
 #ifdef __POWERPC__
-    long size=jmalloc_max_size-0x10000;
+    int32_t size=jmalloc_max_size-0x10000;
     for (mem=NULL;!mem && size>0x10000;)
     {
       mem=malloc(size+0x10000);
@@ -717,7 +716,7 @@ void jmalloc_init(long min_size)
     free(mem);
     mem = malloc(size);
 #else
-    long size=jmalloc_max_size;
+    int32_t size=jmalloc_max_size;
     for (mem=NULL;!mem && size>0x4000;)
     {
       mem=malloc(size);
@@ -767,24 +766,24 @@ void jmalloc_init(long min_size)
 }
 
 
-long j_available()
+int32_t j_available()
 {
-  long size=0;
+  int32_t size=0;
   for (int i=0;i<bmanage_total;i++) 
     size+=bmanage[i].available();
   return size;
 }
 
-long j_allocated()
+int32_t j_allocated()
 {
-  long size=0;
+  int32_t size=0;
   for (int i=0;i<bmanage_total;i++) 
     size+=bmanage[i].allocated();
   return size;
 }
 
 
-void *jmalloc(long size, char *name)
+void *jmalloc(int32_t size, char *name)
 {  
   if (!bmanage_total)
     return malloc(size);
@@ -837,14 +836,14 @@ void jfree(void *ptr)
 }
 
 
-void *jrealloc(void *ptr, long size, char *name)
+void *jrealloc(void *ptr, int32_t size, char *name)
 {  
   if (!ptr) return jmalloc(size,name);
   if (!bmanage_total) { return realloc(ptr,size); }
 
   if (size==0) { jfree(ptr); return NULL; }
 
-  long old_size=0;
+  int32_t old_size=0;
   for (int i=0;i<bmanage_total;i++)
     if (ptr>=(void *)bmanage[i].sfirst && 
 	ptr<=(void *)(((char *)bmanage[i].sfirst)+bmanage[i].block_size))
@@ -911,9 +910,9 @@ void operator delete(void *ptr)
 }
 
 
-long small_ptr_size(void *ptr)
+int32_t small_ptr_size(void *ptr)
 {
-  return ((small_block *)(((long *)ptr)[-1]))->size;
+  return ((small_block *)(((int32_t *)ptr)[-1]))->size;
 }
 
 

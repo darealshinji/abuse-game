@@ -2,7 +2,7 @@
 
 void trans_image::make_color(int c)
 {
-  unsigned char *dp=data;
+  uint8_t *dp=data;
   int y,x;
   for (y=0;y<h;y++)
   {
@@ -24,7 +24,7 @@ void trans_image::make_color(int c)
 image *trans_image::make_image()
 {
   image *im=new image(w,h);
-  unsigned char *d=im->scan_line(0),*dp=data,*dline;
+  uint8_t *d=im->scan_line(0),*dp=data,*dline;
   int y,x;
   for (y=0;y<h;y++)
   {
@@ -53,7 +53,7 @@ image *trans_image::make_image()
 trans_image::trans_image(image *im, char *name)
 {
   int size=0,x,y;
-  unsigned char *sl,*datap,*marker; 
+  uint8_t *sl,*datap,*marker; 
   w=im->width();
   h=im->height();
   
@@ -83,9 +83,9 @@ trans_image::trans_image(image *im, char *name)
 #ifdef MEM_CHECK
   char st[80];
   sprintf(st,"trans_image::data (%s)",name);
-  data=(unsigned char *)jmalloc(size,st);
+  data=(uint8_t *)jmalloc(size,st);
 #else
-  data=(unsigned char *)jmalloc(size,"");
+  data=(uint8_t *)jmalloc(size,"");
 #endif
   int ww=im->width(),hh=im->height();
   datap=data;
@@ -124,12 +124,12 @@ trans_image::trans_image(image *im, char *name)
 
 void trans_image::put_scan_line(image *screen, int x, int y, int line)   // always transparent   
 {
-  short x1,y1,x2,y2;
+  int16_t x1,y1,x2,y2;
   screen->get_clip(x1,y1,x2,y2);
   if (y+line<y1 || y+line>y2 || x>x2 || x+w-1<x1)            // clipped off completely?
     return;
 
-  unsigned char *datap=data;
+  uint8_t *datap=data;
   int ix;  
   while (line)            // skip scan line data until we get to the line of interest
   {
@@ -150,7 +150,7 @@ void trans_image::put_scan_line(image *screen, int x, int y, int line)   // alwa
   
   
   // now slam this list of runs to the screen
-  unsigned char *screen_line=screen->scan_line(y)+x;
+  uint8_t *screen_line=screen->scan_line(y)+x;
     
   for (ix=0;ix<w;)             
   {      
@@ -201,14 +201,14 @@ void trans_image::put_scan_line(image *screen, int x, int y, int line)   // alwa
 }
 
 
-inline unsigned char *trans_image::clip_y(image *screen, int x1, int y1, int x2, int y2, 
+inline uint8_t *trans_image::clip_y(image *screen, int x1, int y1, int x2, int y2, 
 				   int x, int &y, int &ysteps)
 {
   // check to see if it is total clipped out first
   if (y+h<=y1 || y>y2 || x>x2 || x+w<=x1)
     return NULL;
 
-  register unsigned char *datap=data;  
+  register uint8_t *datap=data;  
 
 
   ysteps=height();
@@ -244,13 +244,13 @@ inline unsigned char *trans_image::clip_y(image *screen, int x1, int y1, int x2,
 } 
 
 void trans_image::put_image_filled(image *screen, int x, int y, 
-				   uchar fill_color)
+				   uint8_t fill_color)
 {
- short x1,y1,x2,y2;
+ int16_t x1,y1,x2,y2;
   int chop_length,ysteps;
 
   screen->get_clip(x1,y1,x2,y2);
-  register unsigned char *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
+  register uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
   
   screen_line=screen->scan_line(y)+x;  
@@ -315,11 +315,11 @@ void trans_image::put_image_filled(image *screen, int x, int y,
   }    
 }
 
-void trans_image::put_image_offseted(image *screen, uchar *s_off)   // if screen x & y offset already calculated save a mul
+void trans_image::put_image_offseted(image *screen, uint8_t *s_off)   // if screen x & y offset already calculated save a mul
 {
   int ix,ysteps=height();
   int screen_skip=screen->width()-w;
-  uchar skip,*datap=data;
+  uint8_t skip,*datap=data;
   for (;ysteps;ysteps--)
   {
     for (ix=0;ix<w;)
@@ -352,11 +352,11 @@ void trans_image::put_image_offseted(image *screen, uchar *s_off)   // if screen
 
 void trans_image::put_image(image *screen, int x, int y) 
 {
-  short x1,y1,x2,y2;
+  int16_t x1,y1,x2,y2;
   int chop_length,ysteps;
 
   screen->get_clip(x1,y1,x2,y2);
-  register unsigned char *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
+  register uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
   
   screen_line=screen->scan_line(y)+x;  
@@ -413,13 +413,13 @@ void trans_image::put_image(image *screen, int x, int y)
   }    
 }
 
-void trans_image::put_remaped(image *screen, int x, int y, unsigned char *remap) 
+void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap) 
 {
-  short x1,y1,x2,y2;
+  int16_t x1,y1,x2,y2;
   int chop_length,ysteps;
 
   screen->get_clip(x1,y1,x2,y2);
-  register unsigned char *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
+  register uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
   
   screen_line=screen->scan_line(y)+x;  
@@ -469,7 +469,7 @@ void trans_image::put_remaped(image *screen, int x, int y, unsigned char *remap)
 	    else
 	      counter=slam_length;
 
-	    register unsigned char *sl=screen_line+ix,*sl2=datap;
+	    register uint8_t *sl=screen_line+ix,*sl2=datap;
 	    ix+=slam_length;	    
 	    datap+=slam_length;
 	    while (counter)
@@ -489,13 +489,13 @@ void trans_image::put_remaped(image *screen, int x, int y, unsigned char *remap)
 
 
 
-void trans_image::put_double_remaped(image *screen, int x, int y, unsigned char *remap, unsigned char *remap2) 
+void trans_image::put_double_remaped(image *screen, int x, int y, uint8_t *remap, uint8_t *remap2) 
 {
-  short x1,y1,x2,y2;
+  int16_t x1,y1,x2,y2;
   int chop_length,ysteps;
 
   screen->get_clip(x1,y1,x2,y2);
-  register unsigned char *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
+  register uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
   
   screen_line=screen->scan_line(y)+x;  
@@ -545,7 +545,7 @@ void trans_image::put_double_remaped(image *screen, int x, int y, unsigned char 
 	    else
 	      counter=slam_length;
 
-	    register unsigned char *sl=screen_line+ix,*sl2=datap;
+	    register uint8_t *sl=screen_line+ix,*sl2=datap;
 	    ix+=slam_length;	    
 	    datap+=slam_length;
 	    while (counter)
@@ -569,15 +569,15 @@ void trans_image::put_fade(image *screen, int x, int y,
 			   int frame_on, int total_frames, 
 			   color_filter *f, palette *pal) 
 {
-  short x1,y1,x2,y2;
+  int16_t x1,y1,x2,y2;
   int ix,slam_length,chop_length,ysteps;
 
   screen->get_clip(x1,y1,x2,y2);
-  unsigned char *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
+  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
                 *screen_line;
   if (!datap) return ;
 
-  unsigned char *screen_run,*paddr=(unsigned char *)pal->addr(),
+  uint8_t *screen_run,*paddr=(uint8_t *)pal->addr(),
                 *caddr1,*caddr2,r_dest,g_dest,b_dest;
 
   long fixmul=(frame_on<<16)/total_frames;
@@ -658,18 +658,18 @@ void trans_image::put_fade(image *screen, int x, int y,
 
 void trans_image::put_fade_tint(image *screen, int x, int y,
 				int frame_on, int total_frames, 
-				uchar *tint,
+				uint8_t *tint,
 				color_filter *f, palette *pal) 
 {
-  short x1,y1,x2,y2;
+  int16_t x1,y1,x2,y2;
   int ix,slam_length,chop_length,ysteps;
 
   screen->get_clip(x1,y1,x2,y2);
-  unsigned char *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
+  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
                 *screen_line;
   if (!datap) return ;
 
-  unsigned char *screen_run,*paddr=(unsigned char *)pal->addr(),
+  uint8_t *screen_run,*paddr=(uint8_t *)pal->addr(),
                 *caddr1,*caddr2,r_dest,g_dest,b_dest;
 
   long fixmul=(frame_on<<16)/total_frames;
@@ -752,11 +752,11 @@ void trans_image::put_fade_tint(image *screen, int x, int y,
 
 void trans_image::put_color(image *screen, int x, int y, int color) 
 {
-  short x1,y1,x2,y2;
+  int16_t x1,y1,x2,y2;
   int ix,slam_length,chop_length,ysteps;
   
   screen->get_clip(x1,y1,x2,y2);
-  unsigned char *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
+  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
                 *screen_line;
   if (!datap) return ;
   
@@ -818,12 +818,12 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
    	           int blendx, int blendy, int blend_amount, color_filter *f, palette *pal)
 
 {
-  short x1,y1,x2,y2;
+  int16_t x1,y1,x2,y2;
   int ix,slam_length,chop_length,ysteps;
-  unsigned char *paddr=(unsigned char *)pal->addr();  
+  uint8_t *paddr=(uint8_t *)pal->addr();  
   
   screen->get_clip(x1,y1,x2,y2);
-  unsigned char *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
+  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
                 *blend_line,*screen_line;
   if (!datap) return ;
   CONDITION(y>=blendy && y+ysteps<blendy+blend->height()+1,"Blend doesn't fit on trans_image");
@@ -875,7 +875,7 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
 	      chop_length=x2-x-ix;
 	    else chop_length=slam_length;
 
-	    unsigned char *screen_run=screen_line+x+ix,
+	    uint8_t *screen_run=screen_line+x+ix,
 	                  *blend_run=blend_line+x+ix-blendx,
 	                  *caddr1,*caddr2,r_dest,g_dest,b_dest;      
               
@@ -917,11 +917,11 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
 
 void trans_image::put_predator(image *screen, int x, int y) 
 {
-  short x1,y1,x2,y2;
+  int16_t x1,y1,x2,y2;
   int chop_length,ysteps;
 
   screen->get_clip(x1,y1,x2,y2);
-  register unsigned char *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
+  register uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
 
   // see if the last scanline is clipped off
@@ -1001,7 +1001,7 @@ void trans_image::put_predator(image *screen, int x, int y)
 
 int trans_image::size()
 {
-  uchar *d=data;
+  uint8_t *d=data;
   int t=0;
   for (int y=0;y<h;y++)
   {

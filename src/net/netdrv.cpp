@@ -23,8 +23,8 @@
 #include <bstring.h>
 #include <netdb.h>
 
-#define real2shm(type,ptr) (ptr==NULL ? NULL : ((type *)((char *)(ptr)-(char *)base)))
-#define shm2real(type,ptr) (ptr==NULL ? NULL : ((type *)((long)(ptr)+(long)(base))))
+#define real2shm(type,ptr) (ptr==NULL ? NULL : ((type *)((uint8_t *)(ptr)-(uint8_t *)base)))
+#define shm2real(type,ptr) (ptr==NULL ? NULL : ((type *)((intptr_t)(ptr)+(intptr_t)(base))))
 
 net_driver *driver=NULL;
 
@@ -137,7 +137,7 @@ int net_driver::setup_shm()
     comm_failed();
 
   // wait for engine to ack it has attached
-  uchar ack=0;
+  uint8_t ack=0;
   if (in->read(&ack,1)!=1 || ack!=1)
     comm_failed();
 
@@ -215,7 +215,7 @@ int net_driver::check_commands()
   int ret=0;
   if (in->ready_to_read())       // commands from engine?
   {
-    uchar cmd;
+    uint8_t cmd;
     if (in->read(&cmd,1)!=1) return 0;
 
     if (debug)
@@ -280,11 +280,11 @@ int net_driver::check_commands()
 
       case NFCMD_REQUEST_ENTRY :
       {
-	uchar len;
+	uint8_t len;
 	char name[256];
 	if (in->read(&len,1)!=1) { mdie("could not read server name length"); }
 	if (in->read(name,len)!=len) { mdie("could not read server name"); }
-	ushort success=join_server(name);
+	uint16_t success=join_server(name);
 	if (out->write(&success,2)!=2) mdie("cound not send lsf read failure");      
       } break;
       case NFCMD_BECOME_SERVER :
@@ -294,7 +294,7 @@ int net_driver::check_commands()
       } break;
       case NFCMD_REQUEST_LSF :
       {
-	uchar len;
+	uint8_t len;
 	char name[256];
 	if (in->read(&len,1)!=1) { mdie("could not read lsf name length"); }
 	if (in->read(name,len)!=len) { mdie("could not read lsf name"); }
@@ -312,7 +312,7 @@ int net_driver::check_commands()
 
       case NFCMD_PROCESS_LSF :
       {
-	uchar len,name[256];
+	uint8_t len,name[256];
 	if (in->read(&len,1)!=1) { mdie("could not read lsf name length"); }
 	if (in->read(name,len)!=len) { mdie("could not read lsf name"); }
 
@@ -320,7 +320,7 @@ int net_driver::check_commands()
 	{
 	  lsf_waiter *c=lsf_wait_list;
 	  lsf_wait_list=lsf_wait_list->next;
-	  uchar status=1;
+	  uint8_t status=1;
 	  c->sock->write(&len,1);
 	  c->sock->write(name,len);
 	  delete c;
@@ -333,7 +333,7 @@ int net_driver::check_commands()
 	{
 	  crc_waiter *c=crc_wait_list;
 	  crc_wait_list=crc_wait_list->next;
-	  uchar status=1;
+	  uint8_t status=1;
 	  c->sock->write(&status,1);
 	  delete c;
 	}
@@ -341,7 +341,7 @@ int net_driver::check_commands()
 
       case NFCMD_SET_FS :
       {
-	uchar size;
+	uint8_t size;
 	char sn[256];
 	if (in->read(&size,1)!=1) mdie("could not read filename length");
 	if (in->read(sn,size)!=size) mdie("could not read server name");
@@ -353,7 +353,7 @@ int net_driver::check_commands()
 
       case NFCMD_OPEN :
       {
-	uchar size[2];
+	uint8_t size[2];
 	char filename[300],mode[20],*fn;
 	fn=filename;
 	if (in->read(size,2)!=2  ||
@@ -364,18 +364,18 @@ int net_driver::check_commands()
 	int fd=fman->rf_open_file(fn,mode);
 	if (fd==-2)
 	{
-	  uchar st[2];
+	  uint8_t st[2];
 	  st[0]=NF_OPEN_LOCAL_FILE;
 	  st[1]=strlen(fn)+1;
 	  if (out->write(st,2)!=2) comm_failed();
 	  if (out->write(fn,st[1])!=st[1]) comm_failed();
 	} else if (fd==-1)
 	{
-	  uchar st=NF_OPEN_FAILED;
+	  uint8_t st=NF_OPEN_FAILED;
 	  if (out->write(&st,1)!=1) comm_failed(); 
 	} else
 	{
-	  uchar st=NF_OPEN_REMOTE_FILE;
+	  uint8_t st=NF_OPEN_REMOTE_FILE;
 	  if (out->write(&st,1)!=1) comm_failed(); 	
 	  if (out->write(&fd,sizeof(fd))!=sizeof(fd)) comm_failed(); 	
 	}
@@ -394,29 +394,29 @@ int net_driver::check_commands()
 	  case NFCMD_CLOSE : 
 	  { 
 	    fman->rf_close(fd);
-	    uchar st=1;
+	    uint8_t st=1;
 	    if (out->write(&st,1)!=1) comm_failed(); 	
 	  } break;
 	  case NFCMD_SIZE  :
 	  {
-	    long x=fman->rf_file_size(fd);
+	    int32_t x=fman->rf_file_size(fd);
 	    if (out->write(&x,sizeof(x))!=sizeof(x)) comm_failed(); 		  
 	  } break;
 	  case NFCMD_TELL :
 	  {
-	    long offset=fman->rf_tell(fd);
+	    int32_t offset=fman->rf_tell(fd);
 	    if (out->write(&offset,sizeof(offset))!=sizeof(offset)) comm_failed();  
 	  } break;
 	  case NFCMD_SEEK :
 	  {
-	    long offset;
+	    int32_t offset;
 	    if (in->read(&offset,sizeof(offset))!=sizeof(offset)) comm_failed();
 	    offset=fman->rf_seek(fd,offset);
 	    if (out->write(&offset,sizeof(offset))!=sizeof(offset)) comm_failed();  
 	  } break;
 	  case NFCMD_READ :
 	  {
-	    long size;
+	    int32_t size;
 	    if (in->read(&size,sizeof(size))!=sizeof(size)) comm_failed();
 	    fman->rf_read(fd,out,size);
 	  } break;
@@ -445,10 +445,10 @@ int net_driver::join_server(char *server_name)   // ask remote server for entry 
     return 0;
   }
 
-  uchar ctype=CLIENT_ABUSE;
-  ushort port=lstl(game_port),cnum;
+  uint8_t ctype=CLIENT_ABUSE;
+  uint16_t port=lstl(game_port),cnum;
 
-  uchar reg;
+  uint8_t reg;
   if (sock->write(&ctype,1)!=1 ||   // send server out game port
       sock->read(&reg,1)!=1)        // is remote engine registered?
   { delete sock; return 0; }
@@ -483,7 +483,7 @@ int net_driver::join_server(char *server_name)   // ask remote server for entry 
   if (getlogin())
     strcpy(uname,getlogin());
   else strcpy(uname,"unknown");
-  uchar len=strlen(uname)+1;
+  uint8_t len=strlen(uname)+1;
 
   if (sock->write(&len,1)!=1 ||
       sock->write(uname,len)!=len || 
@@ -531,8 +531,8 @@ int net_driver::get_lsf(char *name)  // contact remot host and ask for lisp star
   net_socket *sock=connect_to_server(name);
   if (!sock) return 0;
 
-  uchar ctype=CLIENT_LSF_WAITER;
-  uchar len;
+  uint8_t ctype=CLIENT_LSF_WAITER;
+  uint8_t len;
 
   if (sock->write(&ctype,1)!=1 ||
       sock->read(&len,1)!=1 || len==0 ||
@@ -552,7 +552,7 @@ int net_driver::fetch_crcs(char *server)
 {
   net_socket *sock=connect_to_server(server);
   if (!sock) return 0;
-  uchar cmd=CLIENT_CRC_WAITER;
+  uint8_t cmd=CLIENT_CRC_WAITER;
   if (sock->write(&cmd,1)!=1 ||
       sock->read(&cmd,1)!=1)  
   { delete sock; return 0; }
