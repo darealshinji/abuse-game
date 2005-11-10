@@ -885,7 +885,7 @@ void dmem_report()
 void mem_report(char *filename)
 {
 	char *reportpath;
-	reportpath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + strlen( filename ), "reportpath" );
+	reportpath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + strlen( filename ) + 1, "reportpath" );
 	sprintf( reportpath, "%s%s", get_save_filename_prefix(), filename );
 
 	FILE *fp = fopen( reportpath, "wb" );
