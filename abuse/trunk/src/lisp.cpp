@@ -212,7 +212,7 @@ void *eval_block(void *list)
   return ret;
 }
 
-lisp_1d_array *new_lisp_1d_array(ushort size, void *rest)
+lisp_1d_array *new_lisp_1d_array(int size, void *rest)
 {
   p_ref r11(rest);
   long s=sizeof(lisp_1d_array)+size*sizeof(void *);
@@ -261,7 +261,7 @@ lisp_1d_array *new_lisp_1d_array(ushort size, void *rest)
   return ((lisp_1d_array *)p);
 }
 
-lisp_fixed_point *new_lisp_fixed_point(long x)
+lisp_fixed_point *new_lisp_fixed_point(int32_t x)
 {
   lisp_fixed_point *p=(lisp_fixed_point *)lmalloc(sizeof(lisp_fixed_point),current_space);
   p->type=L_FIXED_POINT;
@@ -270,7 +270,7 @@ lisp_fixed_point *new_lisp_fixed_point(long x)
 }
 
 
-lisp_object_var *new_lisp_object_var(short number)
+lisp_object_var *new_lisp_object_var(int16_t number)
 {
   lisp_object_var *p=(lisp_object_var *)lmalloc(sizeof(lisp_object_var),current_space);
   p->type=L_OBJECT_VAR;
@@ -288,7 +288,7 @@ struct lisp_pointer *new_lisp_pointer(void *addr)
   return p;
 }
 
-struct lisp_character *new_lisp_character(unsigned short ch)
+struct lisp_character *new_lisp_character(uint16_t ch)
 {
   lisp_character *c=(lisp_character *)lmalloc(sizeof(lisp_character),current_space);
   c->type=L_CHARACTER;
@@ -298,7 +298,7 @@ struct lisp_character *new_lisp_character(unsigned short ch)
 
 struct lisp_string *new_lisp_string(char *string)
 {
-  long size=sizeof(lisp_string)+strlen(string)+1;
+  int size=sizeof(lisp_string)+strlen(string)+1;
   if (size<8) size=8;
 
   lisp_string *s=(lisp_string *)lmalloc(size,current_space);
@@ -310,7 +310,7 @@ struct lisp_string *new_lisp_string(char *string)
 
 struct lisp_string *new_lisp_string(char *string, int length)
 {
-  long size=sizeof(lisp_string)+length+1;
+  int size=sizeof(lisp_string)+length+1;
   if (size<8) size=8;
   lisp_string *s=(lisp_string *)lmalloc(size,current_space);
   s->type=L_STRING;
@@ -320,9 +320,9 @@ struct lisp_string *new_lisp_string(char *string, int length)
   return s;
 }
 
-struct lisp_string *new_lisp_string(long length)
+struct lisp_string *new_lisp_string(int length)
 {
-  long size=sizeof(lisp_string)+length;
+  int size=sizeof(lisp_string)+length;
   if (size<8) size=8;
   lisp_string *s=(lisp_string *)lmalloc(size,current_space);
   s->type=L_STRING;
@@ -342,7 +342,7 @@ lisp_user_function *new_lisp_user_function(void *arg_list, void *block_list)
   return lu;
 }
 #else
-lisp_user_function *new_lisp_user_function(long arg_list, long block_list)
+lisp_user_function *new_lisp_user_function(intptr_t arg_list, intptr_t block_list)
 {
   int sp=current_space;
   if (current_space!=GC_SPACE)
@@ -559,7 +559,7 @@ void *lcar(void *c)
   else return NULL;
 }
 
-unsigned short lcharacter_value(void *c)
+uint16_t lcharacter_value(void *c)
 {
 #ifdef TYPE_CHECKING
   if (item_type(c)!=L_CHARACTER)
@@ -1002,7 +1002,7 @@ lisp_symbol *add_sys_function(char *name, short min_args, short max_args, short 
   return s;
 }
 
-lisp_symbol *add_c_object(void *symbol, short number)
+lisp_symbol *add_c_object(void *symbol, int16_t number)
 {
   need_perm_space("add_c_object");
   lisp_symbol *s=(lisp_symbol *)symbol;
@@ -1407,7 +1407,7 @@ void lprint(void *i)
 				  current_print_file->write(&ch,1);
 				} else
 				{
-				  unsigned short ch=((lisp_character *)i)->ch;
+				  uint16_t ch=((lisp_character *)i)->ch;
 				  dprintf("#\\");
 				  switch (ch)
 				  {
@@ -2181,8 +2181,8 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       void *block_list=CDR(CDR(arg_list));
 
 #ifndef NO_LIBS
-      long a=cash.reg_lisp_block(lcar(lcdr(arg_list)));
-      long b=cash.reg_lisp_block(block_list);
+      intptr_t a=cash.reg_lisp_block(lcar(lcdr(arg_list)));
+      intptr_t b=cash.reg_lisp_block(block_list);
       lisp_user_function *ufun=new_lisp_user_function(a,b);
 #else
       lisp_user_function *ufun=new_lisp_user_function(lcar(lcdr(arg_list)),block_list);
@@ -2397,7 +2397,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
 				if( strcmp( st, "gamma.lsp" ) == 0 )
 				{
 					char *gammapath;
-					gammapath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 10, "gammapath" );
+					gammapath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 9 + 1, "gammapath" );
 					sprintf( gammapath, "%sgamma.lsp", get_save_filename_prefix() );
 					fp = new jFILE( gammapath, "rb" );
 					jfree( gammapath );
@@ -2960,7 +2960,8 @@ void *eval_user_fun(lisp_symbol *sym, void *arg_list)
   p_ref r19(arg_list);
   for (;f_arg;f_arg=CDR(f_arg))
   {
-    l_user_stack.push(((lisp_symbol *)CAR(f_arg))->value);
+    lisp_symbol *s = (lisp_symbol *)CAR(f_arg);
+    l_user_stack.push(s->value);
   }
 
   // open block so that local vars aren't saved on the stack
