@@ -171,7 +171,7 @@ void restore_heap(void *val, int heap)
 
 void *lmalloc(int size, int which_space)
 {      
-#ifdef WORD_ALLIGN
+#ifdef WORD_ALIGN
   size=(size+3)&(~3);
 #endif
 

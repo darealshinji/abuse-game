@@ -37,7 +37,7 @@ enum { L_BAD_CELL,   // error catching type
        L_FIXED_POINT, L_COLLECTED_OBJECT };
 
 typedef uint64_t ltype;    // make sure structures aren't packed differently on various compiler
-                       // and sure that word, etc are word alligned
+                       // and sure that word, etc are word aligned
 
 struct lisp_object_var
 {  

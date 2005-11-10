@@ -91,7 +91,7 @@ void write_wav(char *filename, long sample_rate, long data_size, unsigned char *
   fp->write_uint16(1);          // mono recording
   fp->write_uint32(sample_rate);
   fp->write_uint32(sample_rate);   // average bytes per sec
-  fp->write_uint16(1);    // allignment? Don't know what this does?
+  fp->write_uint16(1);    // alignment? Don't know what this does?
   fp->write_uint16(8);    // 8 bits per sample
   
   /************* Write data tag ******************************/
@@ -154,7 +154,7 @@ unsigned char *read_wav(char *filename, long &sample_rate, long &data_size)
   ERROR((unsigned int)fp->read(data,tag.size)==tag.size,"Premature end of file");
   ERROR(pcm.bitsps==8,"Only 8-bit samples supported");
   ERROR(pcm.wf.channels==1,"Only mono samples supported");  
-  ERROR(pcm.wf.align==1,"Bad block allignment");   
+  ERROR(pcm.wf.align==1,"Bad block alignment");   
   delete fp;
   return data;
 }
