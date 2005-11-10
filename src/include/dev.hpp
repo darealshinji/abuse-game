@@ -18,7 +18,7 @@ char *symbol_str(char *name);
 
 class pal_win
 {
-  long scale,w,h,x,y,last_selected;
+  int32_t scale,w,h,x,y,last_selected;
   unsigned short *pat;
   void draw();
 
@@ -100,8 +100,8 @@ public :
   void close_ai_window();
   void make_ambient();
   int ok_to_scroll();
-  long snap_x(long x);
-  long snap_y(long y);
+  int32_t snap_x(int32_t x);
+  int32_t snap_y(int32_t y);
   void area_handle_input(event &ev);
   void pick_handle_input(event &ev);
   void close_area_win(int read_values);

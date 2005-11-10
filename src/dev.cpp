@@ -275,7 +275,7 @@ void dev_controll::search_forward()
 }
 
 
-long dev_controll::snap_x(long x)
+int32_t dev_controll::snap_x(int32_t x)
 {
   if (eh->key_pressed(JK_CTRL_L) || eh->key_pressed(JK_CTRL_R))
     return x-(x%the_game->ftile_width());
@@ -284,7 +284,7 @@ long dev_controll::snap_x(long x)
   else return x;  
 }
 
-long dev_controll::snap_y(long y)
+int32_t dev_controll::snap_y(int32_t y)
 {
   if (eh->key_pressed(JK_CTRL_L) || eh->key_pressed(JK_CTRL_R))
     return y-(y%the_game->ftile_height())-1;
@@ -340,7 +340,7 @@ void load_dev_icons()
 void scale_put(image *im, image *screen, int x, int y, short new_width, short new_height)
 {
   unsigned char *sl1,*sl2;
-  long xstep=(im->width()<<16)/new_width,
+  int32_t xstep=(im->width()<<16)/new_width,
        ystep=(im->height()<<16)/new_height,iy,ix,sx,ix_start,iy_start;
   screen->add_dirty(x,y,x+new_width-1,y+new_height-1);
 
@@ -379,7 +379,7 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
 void scale_put_trans(image *im, image *screen, int x, int y, short new_width, short new_height)
 {
   unsigned char *sl1,*sl2;
-  long xstep=(im->width()<<16)/new_width,
+  int32_t xstep=(im->width()<<16)/new_width,
        ystep=(im->height()<<16)/new_height,iy,ix,sx,ix_start,iy_start;
   screen->add_dirty(x,y,x+new_width-1,y+new_height-1);
 
@@ -437,10 +437,10 @@ int last_link_x=0,last_link_y=0;
 
 void dev_controll::dev_draw(view *v)
 {
-  long x1,y1,x2,y2;
+  int32_t x1,y1,x2,y2;
   if (dev&EDIT_MODE)
   {
-    long vx=v->xoff(),vy=v->yoff();
+    int32_t vx=v->xoff(),vy=v->yoff();
   
     if (dev&DRAW_LINKS)
     {
@@ -458,7 +458,7 @@ void dev_controll::dev_draw(view *v)
 
     if (link_object)
     {
-      long rx1,ry1;
+      int32_t rx1,ry1;
       the_game->game_to_mouse(link_object->x,link_object->y,v,rx1,ry1);      
       screen->line(rx1,ry1,dlastx,dlasty,yellow);            
     }
@@ -467,7 +467,7 @@ void dev_controll::dev_draw(view *v)
     {
       image *i=cash.img(light_buttons[0]);
       int l=i->width()/2,h=i->height()/2;
-      long rx1,ry1;
+      int32_t rx1,ry1;
       the_game->game_to_mouse(selected_light->x,selected_light->y,v,rx1,ry1);      
       screen->rectangle(rx1-l,ry1-h,rx1+l,ry1+h,eh->bright_color());
     }
@@ -509,7 +509,7 @@ void dev_controll::dev_draw(view *v)
     if (selected_object)
     {    
       selected_object->picture_space(x1,y1,x2,y2);    
-      long rx1,ry1,rx2,ry2;
+      int32_t rx1,ry1,rx2,ry2;
       the_game->game_to_mouse(x1,y1,v,rx1,ry1);
       the_game->game_to_mouse(x2,y2,v,rx2,ry2);
       screen->rectangle(rx1,ry1,rx2,ry2,eh->bright_color());
@@ -529,7 +529,7 @@ void dev_controll::dev_draw(view *v)
   update_memprof();
 }
 
-light_source *find_light(long x, long y)
+light_source *find_light(int32_t x, int32_t y)
 {
   image *i=cash.img(light_buttons[0]);
   int l=i->width()/2,h=i->height()/2;
@@ -1030,11 +1030,11 @@ void dev_controll::do_command(char *command, event &ev)
     if (current_level && player_list && player_list->focus)
     {
       edit_object=selected_object=NULL;
-      long cx=player_list->focus->x,cy=player_list->focus->y;
+      int32_t cx=player_list->focus->x,cy=player_list->focus->y;
 
       // save the old weapon array
-      long *w=(long *)jmalloc(total_weapons*sizeof(long),"tmp weapon array");
-      memcpy(w,player_list->weapons,total_weapons*sizeof(long));
+      int32_t *w=(int32_t *)jmalloc(total_weapons*sizeof(int32_t),"tmp weapon array");
+      memcpy(w,player_list->weapons,total_weapons*sizeof(int32_t));
       
       char tmp[100];
       strcpy(tmp,current_level->name());
@@ -1047,7 +1047,7 @@ void dev_controll::do_command(char *command, event &ev)
       player_list->focus->x=cx;
       player_list->focus->y=cy;
 
-      memcpy(player_list->weapons,w,total_weapons*sizeof(long));     
+      memcpy(player_list->weapons,w,total_weapons*sizeof(int32_t));     
       jfree(w);
 
       the_game->need_refresh();
@@ -1056,7 +1056,7 @@ void dev_controll::do_command(char *command, event &ev)
 
   if (!strcmp(fword,"unchop"))
   {
-    long rx,ry;
+    int32_t rx,ry;
     the_game->btile_on(dlastx,dlasty,rx,ry);
     if (rx>=0 && ry>=0)
     {
@@ -1178,7 +1178,7 @@ void dev_controll::do_command(char *command, event &ev)
 
     if (t>=0)                                 // did we find it?
     {
-      long rx,ry;
+      int32_t rx,ry;
       the_game->mouse_to_game(dlastx,dlasty,rx,ry);
       edit_object=create(t,rx,ry);
       current_level->add_object(edit_object);
@@ -1215,7 +1215,7 @@ void dev_controll::do_command(char *command, event &ev)
   
   if (!strcmp(fword,"clear_auto"))
   {
-    long i,j;
+    int32_t i,j;
     for (i=0;i<current_level->foreground_width();i++)
       for (j=0;j<current_level->foreground_height();j++)
         current_level->clear_fg(i,j);
@@ -1223,7 +1223,7 @@ void dev_controll::do_command(char *command, event &ev)
 
   if (!strcmp(fword,"fg_select"))
   {
-    long x,y;
+    int32_t x,y;
     the_game->ftile_on(dlastx,dlasty,x,y);
     if (x>=0 && y>=0 && x<current_level->foreground_width() &&
 	y<current_level->foreground_height())
@@ -1237,7 +1237,7 @@ void dev_controll::do_command(char *command, event &ev)
 
   if (!strcmp(fword,"toggle_fg_raise"))
   {
-    long x,y;
+    int32_t x,y;
     the_game->ftile_on(dlastx,dlasty,x,y);
     if (x>=0 && y>=0 && x<current_level->foreground_width() &&
 	y<current_level->foreground_height())    
@@ -1486,7 +1486,7 @@ void dev_controll::close_ai_window()
   if (aiw)
   {    
     game_object *o=ai_object;
-    long x;
+    int32_t x;
     if (o)
     {
       if (figures[o->otype]->total_fields)
@@ -1536,7 +1536,7 @@ void dev_controll::area_handle_input(event &ev)
 
   if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
   {
-    long gx,gy;
+    int32_t gx,gy;
     the_game->mouse_to_game(last_demo_mx,last_demo_my,gx,gy);
     if (!current_level) return ;
     current_area=current_level->area_list=new area_controller(gx,gy,
@@ -1576,11 +1576,11 @@ void dev_controll::pick_handle_input(event &ev)
   if (!current_level) return;
   if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
   {
-    long mx=last_demo_mx,my=last_demo_my;
+    int32_t mx=last_demo_mx,my=last_demo_my;
     view *v=the_game->view_in(mx,my);
     for (area_controller *a=current_level->area_list;a;a=a->next)
     {
-      long x1,y1,x2,y2;
+      int32_t x1,y1,x2,y2;
       the_game->game_to_mouse(a->x,a->y,v,x1,y1);
       the_game->game_to_mouse(a->x+a->w,a->y+a->h,v,x2,y2);
       if (abs(x1-mx)<2 && abs(y1-my)<2)
@@ -1645,7 +1645,7 @@ int sshot_fcount=-1;
 
 void dev_controll::handle_event(event &ev)
 {
-  long x,y;
+  int32_t x,y;
   if (link_object && (dlastx!=last_link_x || dlasty!=last_link_y))
   {
     last_link_x=dlastx;
@@ -1723,7 +1723,7 @@ void dev_controll::handle_event(event &ev)
 	}
 	if (ev.window==NULL && ev.type==EV_KEY && ev.key=='d')
 	{
-	  long xv=0,yv=100;
+	  int32_t xv=0,yv=100;
 	  edit_object->try_move(edit_object->x,edit_object->y,xv,yv,1);
 	  edit_object->y+=yv;
 	  state=DEV_SELECT;
@@ -1821,7 +1821,7 @@ void dev_controll::handle_event(event &ev)
     {
       if (current_area)
       {
-	long gx,gy;
+	int32_t gx,gy;
 	the_game->mouse_to_game(last_demo_mx,last_demo_my,gx,gy);
 	if (gx>current_area->x && gy>current_area->y)
 	{       
@@ -1844,7 +1844,7 @@ void dev_controll::handle_event(event &ev)
     {
       if (current_area)
       {
-	long gx,gy;
+	int32_t gx,gy;
 	the_game->mouse_to_game(last_demo_mx,last_demo_my,gx,gy);
 	if (gx<current_area->x+current_area->w && gy<current_area->y+current_area->h)
 	{       
@@ -1871,7 +1871,7 @@ void dev_controll::handle_event(event &ev)
 	selected_object=NULL;
 	if (ev.window==NULL)
 	{	
-	  long rx,ry;
+	  int32_t rx,ry;
 	  the_game->mouse_to_game(last_demo_mx,last_demo_my,rx,ry);
 
 	  if (!(dev & MAP_MODE))
@@ -1891,7 +1891,7 @@ void dev_controll::handle_event(event &ev)
 	  {
 	    if (ev.mouse_button==1 && !selected_object && !selected_light)
 	    {
-	      long xs,ys;
+	      int32_t xs,ys;
 	      the_game->ftile_on(last_demo_mx,last_demo_my,xs,ys);
 	      if (xs>=0 && ys>=0 && xs<current_level->foreground_width() && 
 		  ys<current_level->foreground_height())	      
@@ -1899,7 +1899,7 @@ void dev_controll::handle_event(event &ev)
 	      the_game->need_refresh();
 	    } else if (ev.mouse_button==1 && !selected_object && !selected_light)
 	    {
-	      long xs,ys;
+	      int32_t xs,ys;
 	      the_game->btile_on(last_demo_mx,last_demo_my,xs,ys);
 	      if (xs>=0 && ys>=0 && xs<current_level->background_width() && 
 		  ys<current_level->background_height())
@@ -2517,7 +2517,7 @@ void dev_controll::handle_event(event &ev)
 	case DEV_LIGHT8 :
 	case DEV_LIGHT9 :
 	{
-	  long lx,ly;
+	  int32_t lx,ly;
 	  the_game->mouse_to_game(last_demo_mx,last_demo_my,lx,ly);
 	  lx=snap_x(lx);
 	  ly=snap_y(ly);
@@ -2854,7 +2854,7 @@ void dev_controll::handle_event(event &ev)
 	  case 'R' : do_command("reload",ev); break;
 	  case 'w' : 
 	  {       
-	    long rx,ry;
+	    int32_t rx,ry;
 	    the_game->mouse_to_game(dlastx,dlasty,rx,ry);
 	    char msg[100]; sprintf(msg,symbol_str("mouse_at"),rx,ry);
 	    the_game->show_help(msg);
@@ -2876,7 +2876,7 @@ void dev_controll::handle_event(event &ev)
 	  {
 	    if (current_level && player_list && player_list->focus)
 	    {
-	      long rx,ry;
+	      int32_t rx,ry;
 	      the_game->mouse_to_game(dlastx,dlasty,rx,ry);
 	      player_list->focus->x=rx;
 	      player_list->focus->y=ry;
@@ -3149,7 +3149,7 @@ void pal_win::handle_event(event &ev)
 	  case JK_ESC : close_window();	 break;
 	  case ' ' : 
 	  {
-	    long xs,ys,xx,yy;
+	    int32_t xs,ys,xx,yy;
 	    the_game->ftile_on(me->x,me->y,xs,ys);
 
 	    for (xx=xs;xx<xs+w;xx++)
@@ -3164,7 +3164,7 @@ void pal_win::handle_event(event &ev)
 	  } break;
 	  case 't' :
 	  {
-	    long xs,ys;
+	    int32_t xs,ys;
 	    the_game->ftile_on(me->x,me->y,xs,ys);
 	    dev_cont->fg_fill(-1,xs,ys,this);
 	  } break;
@@ -3210,7 +3210,7 @@ void pal_win::save(FILE *fp)
     y=me->y;
   }
 
-  fprintf(fp,"(add_palette \"%s\" %ld %ld %ld %ld %ld ",name,w,h,x,y,scale);
+  fprintf(fp,"(add_palette \"%s\" %ld %ld %ld %ld %ld ",name,(long)w,(long)h,(long)x,(long)y,(long)scale);
   int i;
   for (i=0;i<w*h;i++)
     fprintf(fp,"%d ",pat[i]&0x7fff);

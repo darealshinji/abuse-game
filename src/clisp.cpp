@@ -778,10 +778,10 @@ void *l_caller(long number, void *args)
     } break;
     case 24 :
     {
-      long x1=lnumber_value(eval(CAR(args)));  args=CDR(args);
-      long y1=lnumber_value(eval(CAR(args)));  args=CDR(args);
-      long x2=lnumber_value(eval(CAR(args)));  args=CDR(args);
-      long y2=lnumber_value(eval(CAR(args)));
+      int32_t x1=lnumber_value(eval(CAR(args)));  args=CDR(args);
+      int32_t y1=lnumber_value(eval(CAR(args)));  args=CDR(args);
+      int32_t x2=lnumber_value(eval(CAR(args)));  args=CDR(args);
+      int32_t y2=lnumber_value(eval(CAR(args)));
       current_level->foreground_intersect(x1,y1,x2,y2);
       void *ret=NULL;
       push_onto_list(new_lisp_number(y2),ret);
@@ -815,7 +815,7 @@ void *l_caller(long number, void *args)
     case 36 :
     {
       
-      long xm,ym,but;
+      int32_t xm,ym,but;
       xm=lnumber_value(CAR(args)); args=CDR(args);
       ym=lnumber_value(CAR(args)); args=CDR(args);
       but=lnumber_value(CAR(args));
@@ -891,10 +891,10 @@ void *l_caller(long number, void *args)
     } break;
     case 49 :
     {
-      long x=lnumber_value(eval(CAR(args))); args=CDR(args);
-      long y=lnumber_value(eval(CAR(args))); args=CDR(args);
+      int32_t x=lnumber_value(eval(CAR(args))); args=CDR(args);
+      int32_t y=lnumber_value(eval(CAR(args))); args=CDR(args);
 
-      long rx,ry;
+      int32_t rx,ry;
       the_game->mouse_to_game(x,y,rx,ry);
       void *ret=NULL;
       {
@@ -906,10 +906,10 @@ void *l_caller(long number, void *args)
     } break;
     case 50 :
     {
-      long x=lnumber_value(eval(CAR(args))); args=CDR(args);
-      long y=lnumber_value(eval(CAR(args))); args=CDR(args);
+      int32_t x=lnumber_value(eval(CAR(args))); args=CDR(args);
+      int32_t y=lnumber_value(eval(CAR(args))); args=CDR(args);
 
-      long rx,ry;
+      int32_t rx,ry;
       the_game->game_to_mouse(x,y,current_view,rx,ry);
       void *ret=NULL;
       {
@@ -1002,7 +1002,7 @@ void *l_caller(long number, void *args)
     {
     	long x;
     	sscanf(lstring_value(eval(CAR(args))),"%lx",&x);
-    	return new_lisp_pointer((void *)x);
+    	return new_lisp_pointer((void *)(intptr_t)x);
     } break;
     case 64 :
     {
@@ -1137,7 +1137,7 @@ long c_caller(long number, void *args)
     case 21 : return current_object->fade_dir(); break;
     case 22 :
     {
-      long x1,y1,x2,y2,xp1,yp1,xp2,yp2;
+      int32_t x1,y1,x2,y2,xp1,yp1,xp2,yp2;
       current_level->attacker(current_object)->picture_space(x1,y1,x2,y2);
       current_object->picture_space(xp1,yp1,xp2,yp2);
       if (xp1>x2 || xp2<x1 || yp1>y2 || yp2<y1) return 0;
@@ -1155,13 +1155,13 @@ long c_caller(long number, void *args)
     case 30 : return current_object->x; break;
     case 31 : return current_object->y; break;
     case 32 : 
-    { long v=lnumber_value(CAR(args));
+    { int32_t v=lnumber_value(CAR(args));
       current_object->x=v;
 //      current_object->last_x=v;
       return 1; 
     } break;
     case 33 : 
-    { long v=lnumber_value(CAR(args));
+    { int32_t v=lnumber_value(CAR(args));
       current_object->y=v;
 //      current_object->last_y=v;
       return 1; 
@@ -1173,7 +1173,7 @@ long c_caller(long number, void *args)
 
     case 37 : 
     {
-      long s=lnumber_value(CAR(args));
+      int32_t s=lnumber_value(CAR(args));
       current_object->set_state((character_state)s); 
       return (s==current_object->state);
     } break;
@@ -1279,11 +1279,11 @@ long c_caller(long number, void *args)
     case 91 : current_object->add_object((game_object *)lpointer_value(CAR(args))); return 1; break;
     case 92 : 
     {
-      long cx1,x1=lnumber_value(CAR(args)); args=lcdr(args);
-      long cy1,y1=lnumber_value(CAR(args)); args=lcdr(args);
-      long cx2,x2=lnumber_value(CAR(args)); args=lcdr(args);
-      long cy2,y2=lnumber_value(CAR(args)); args=lcdr(args);
-      long c=lnumber_value(CAR(args));
+      int32_t cx1,x1=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cy1,y1=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cx2,x2=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cy2,y2=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t c=lnumber_value(CAR(args));
       the_game->game_to_mouse(x1,y1,current_view,cx1,cy1);
       the_game->game_to_mouse(x2,y2,current_view,cx2,cy2);
       screen->line(cx1,cy1,cx2,cy2,c);
@@ -1301,7 +1301,7 @@ long c_caller(long number, void *args)
 
     case 104 :  
     { light_source *l=(light_source *)lpointer_value(CAR(args));
-      long x=lnumber_value(CAR(CDR(args)));
+      int32_t x=lnumber_value(CAR(CDR(args)));
       if (x>=1)
         l->inner_radius=x;
       l->calc_range();
@@ -1309,7 +1309,7 @@ long c_caller(long number, void *args)
     } break;
     case 105 :  
     { light_source *l=(light_source *)lpointer_value(CAR(args));
-      long x=lnumber_value(CAR(CDR(args)));
+      int32_t x=lnumber_value(CAR(CDR(args)));
       if (x>l->inner_radius)
         l->outer_radius=x;
       l->calc_range();
@@ -1396,14 +1396,14 @@ long c_caller(long number, void *args)
 	int vol=lnumber_value(lcar(a)); a=CDR(a);
 	if (a)
 	{
-	  long x=lnumber_value(lcar(a)); a=CDR(a);
+	  int32_t x=lnumber_value(lcar(a)); a=CDR(a);
 	  if (!a)
 	  {
 	    lprint(args);
 	    lbreak("expecting y after x in play_sound\n");
 	    exit(1);
 	  }
-	  long y=lnumber_value(lcar(a));
+	  int32_t y=lnumber_value(lcar(a));
 	  the_game->play_sound(id,vol,x,y);
 	} else cash.sfx(id)->play(vol);        
       }
@@ -1413,14 +1413,14 @@ long c_caller(long number, void *args)
     case 137 : return defun_pseq(args); break;
     case 138 :
     { int id=lnumber_value(CAR(args)); args=CDR(args);
-      long x=lnumber_value(CAR(args)); args=CDR(args);
-      long y=lnumber_value(CAR(args)); args=CDR(args);
-      long dir=lnumber_value(CAR(args));
+      int32_t x=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t y=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t dir=lnumber_value(CAR(args));
       add_panim(id,x,y,dir);
     } break;
     case 142 :
     {
-      long x=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t x=lnumber_value(CAR(args)); args=CDR(args);
       if (x<0 || x>=total_weapons)
       { 
 	lbreak("weapon out of range (%d)\n",x);
@@ -1430,12 +1430,12 @@ long c_caller(long number, void *args)
     } break;
     case 143 :
     {
-      long x=lnumber_value(CAR(args)); args=CDR(args);
-      long y=lnumber_value(CAR(args)); args=CDR(args);
-      long r=lnumber_value(CAR(args)); args=CDR(args);
-      long m=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t x=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t y=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t r=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t m=lnumber_value(CAR(args)); args=CDR(args);
       game_object *o=(game_object *)lpointer_value(CAR(args)); args=CDR(args);
-      long mp=lnumber_value(CAR(args));
+      int32_t mp=lnumber_value(CAR(args));
       current_level->hurt_radius(x,y,r,m,current_object,o,mp);
     } break;
 
@@ -1445,8 +1445,8 @@ long c_caller(long number, void *args)
       if (!v) dprintf("Can't add weapons for non-players\n");
       else
       {
-	long x=lnumber_value(CAR(args)); args=CDR(args);
-	long y=lnumber_value(CAR(args)); args=CDR(args);
+	int32_t x=lnumber_value(CAR(args)); args=CDR(args);
+	int32_t y=lnumber_value(CAR(args)); args=CDR(args);
 	if (x<0 || x>=total_weapons)
 	{ lbreak("weapon out of range (%d)\n",x); exit(0); }
 	v->add_ammo(x,y);
@@ -1502,18 +1502,18 @@ long c_caller(long number, void *args)
     case 153 :
     {
       game_object *o=(game_object *)lpointer_value(CAR(args));
-      long x=o->x-current_object->x,
+      int32_t x=o->x-current_object->x,
         y=-(o->y-o->picture()->height()/2-(current_object->y-(current_object->picture()->height()/2)));
       return lisp_atan2(y,x);
     } break;
     case 154 :
     {
-      long ang=lnumber_value(CAR(args)); args=CDR(args);
-      long mag=lfixed_point_value(CAR(args));
-      long xvel=(lisp_cos(ang)>>8)*(mag>>8);
+      int32_t ang=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t mag=lfixed_point_value(CAR(args));
+      int32_t xvel=(lisp_cos(ang)>>8)*(mag>>8);
       current_object->set_xvel(xvel>>16);
       current_object->set_fxvel((xvel&0xffff)>>8);
-      long yvel=-(lisp_sin(ang)>>8)*(mag>>8);
+      int32_t yvel=-(lisp_sin(ang)>>8)*(mag>>8);
       current_object->set_yvel(yvel>>16);
       current_object->set_fyvel((yvel&0xffff)>>8);      
     } break;
@@ -1521,14 +1521,14 @@ long c_caller(long number, void *args)
     {
       int tframes=current_object->total_frames(),f;
 
-      long ang1=lnumber_value(CAR(args)); args=CDR(args);      
+      int32_t ang1=lnumber_value(CAR(args)); args=CDR(args);      
       if (ang1<0) ang1=(ang1%360)+360; 
       else if (ang1>=360) ang1=ang1%360;
-      long ang2=lnumber_value(CAR(args)); args=CDR(args);      
+      int32_t ang2=lnumber_value(CAR(args)); args=CDR(args);      
       if (ang2<0) ang2=(ang2%360)+360; 
       else if (ang2>=360) ang2=ang2%360;
 
-      long ang=(lnumber_value(CAR(args))+90/tframes)%360;
+      int32_t ang=(lnumber_value(CAR(args))+90/tframes)%360;
       if (ang1>ang2)
       {
         if (ang<ang1 && ang>ang2) 	
@@ -1556,12 +1556,12 @@ long c_caller(long number, void *args)
     case 168 : if (current_object->morph_status()) return 1; else return 0; break;
     case 169 :
     {
-      long am=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t am=lnumber_value(CAR(args)); args=CDR(args);
       game_object *from=(game_object *)lpointer_value(CAR(args)); args=CDR(args);
-      long hitx=lnumber_value(CAR(args)); args=CDR(args);      
-      long hity=lnumber_value(CAR(args)); args=CDR(args);      
-      long px=lnumber_value(CAR(args)); args=CDR(args);      
-      long py=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t hitx=lnumber_value(CAR(args)); args=CDR(args);      
+      int32_t hity=lnumber_value(CAR(args)); args=CDR(args);      
+      int32_t px=lnumber_value(CAR(args)); args=CDR(args);      
+      int32_t py=lnumber_value(CAR(args)); args=CDR(args);
       current_object->damage_fun(am,from,hitx,hity,px,py);
     } break;
     case 170 : return current_object->gravity(); break;
@@ -1628,7 +1628,7 @@ long c_caller(long number, void *args)
     case 179 : 
     {
       view *v=lget_view(CAR(args),"set_ambient_light");       args=CDR(args);
-      long x=lnumber_value(CAR(args));
+      int32_t x=lnumber_value(CAR(args));
       if (x>=0 && x<64) v->ambient=x;
     } break;
     case 180 : return lget_view(CAR(args),"ambient_light")->ambient; break;
@@ -1656,9 +1656,9 @@ long c_caller(long number, void *args)
     } break;
     case 192 : 
     {     
-      long x=lnumber_value(CAR(args)); args=CDR(args);
-      long y=lnumber_value(CAR(args)); args=CDR(args);
-      long type=lnumber_value(CAR(args));
+      int32_t x=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t y=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t type=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->foreground_width() || y>=current_level->foreground_width())
         lbreak("%d %d is out of range of fg map",x,y);
       else	
@@ -1666,17 +1666,17 @@ long c_caller(long number, void *args)
     } break;
     case 193 :
     { 
-      long x=lnumber_value(CAR(args)); args=CDR(args);
-      long y=lnumber_value(CAR(args));
+      int32_t x=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t y=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->foreground_width() || y>=current_level->foreground_width())
         lbreak("%d %d is out of range of fg map",x,y);
       else return current_level->get_fg(x,y);
     } break;
     case 194 : 
     {     
-      long x=lnumber_value(CAR(args)); args=CDR(args);
-      long y=lnumber_value(CAR(args)); args=CDR(args);
-      long type=lnumber_value(CAR(args));
+      int32_t x=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t y=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t type=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->background_width() || y>=current_level->background_width())
         lbreak("%d %d is out of range of fg map",x,y);
       else	
@@ -1684,8 +1684,8 @@ long c_caller(long number, void *args)
     } break;
     case 195 :
     { 
-      long x=lnumber_value(CAR(args)); args=CDR(args);
-      long y=lnumber_value(CAR(args));
+      int32_t x=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t y=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->background_width() || y>=current_level->background_width())
         lbreak("%d %d is out of range of fg map",x,y);
       else return current_level->get_bg(x,y);
@@ -1740,13 +1740,13 @@ long c_caller(long number, void *args)
     } break;
     case 200 :
     {
-      long xv=lnumber_value(CAR(args));  args=CDR(args);
-      long yv=lnumber_value(CAR(args));  args=CDR(args);
+      int32_t xv=lnumber_value(CAR(args));  args=CDR(args);
+      int32_t yv=lnumber_value(CAR(args));  args=CDR(args);
       int top=2;
       if (args)
         if (!CAR(args)) top=0;
         
-      long oxv=xv,oyv=yv;
+      int32_t oxv=xv,oyv=yv;
       current_object->try_move(current_object->x,current_object->y,xv,yv,1|top);
       current_object->x+=xv;
       current_object->y+=yv;
@@ -1754,17 +1754,17 @@ long c_caller(long number, void *args)
     } break;
     case 201 :
     {
-      long x=lnumber_value(CAR(args));
+      int32_t x=lnumber_value(CAR(args));
       return figures[current_object->otype]->get_sequence((character_state)x)->length();
     } break;
     case 202 :
     { 
-      long x1=lnumber_value(CAR(args)); args=CDR(args);
-      long y1=lnumber_value(CAR(args)); args=CDR(args);
-      long x2=lnumber_value(CAR(args)); args=CDR(args);
-      long y2=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t x1=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t y1=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t x2=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t y2=lnumber_value(CAR(args)); args=CDR(args);
       void *block_all=CAR(args);
-      long nx2=x2,ny2=y2;
+      int32_t nx2=x2,ny2=y2;
       current_level->foreground_intersect(x1,y1,x2,y2);
       if (x2!=nx2 || y2!=ny2) return 0;
       
@@ -1795,7 +1795,7 @@ long c_caller(long number, void *args)
     } break;
     case 206 :
     {
-      long x=lnumber_value(CAR(args));
+      int32_t x=lnumber_value(CAR(args));
       if (x<current_object->total_frames())
         current_object->current_frame=x;
       else      
@@ -1833,9 +1833,9 @@ long c_caller(long number, void *args)
     } break;
     case 216 :
     {
-      long x1=lnumber_value(CAR(args)); args=lcdr(args);
-      long y1=lnumber_value(CAR(args)); args=lcdr(args);
-      long id=lnumber_value(CAR(args));
+      int32_t x1=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t y1=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t id=lnumber_value(CAR(args));
       cash.img(id)->put_image(screen,x1,y1,1);
     } break;
     case 217 :
@@ -1934,7 +1934,7 @@ long c_caller(long number, void *args)
       if (!v) lbreak("object has no view : local_player");
       else 
       {
-	long x=lnumber_value(CAR(args));
+	int32_t x=lnumber_value(CAR(args));
 	if (x<0 || x>=total_weapons)
 	{ lbreak("weapon out of range (%d)\n",x); exit(0); }
 	v->current_weapon=x;	
@@ -1956,12 +1956,12 @@ long c_caller(long number, void *args)
 
     case 234 :
     {
-      long cx1,x1=lnumber_value(CAR(args)); args=lcdr(args);
-      long cy1,y1=lnumber_value(CAR(args)); args=lcdr(args);
-      long cx2,x2=lnumber_value(CAR(args)); args=lcdr(args);
-      long cy2,y2=lnumber_value(CAR(args)); args=lcdr(args);
-      long c=lnumber_value(CAR(args)); args=lcdr(args);
-      long s=lnumber_value(CAR(args));
+      int32_t cx1,x1=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cy1,y1=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cx2,x2=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cy2,y2=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t c=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t s=lnumber_value(CAR(args));
       the_game->game_to_mouse(x1,y1,current_view,cx1,cy1);
       the_game->game_to_mouse(x2,y2,current_view,cx2,cy2);
       scatter_line(cx1,cy1,cx2,cy2,c,s);
@@ -2008,13 +2008,13 @@ long c_caller(long number, void *args)
     } break;
     case 244 :
     {
-      long cx1,x1=lnumber_value(CAR(args)); args=lcdr(args);
-      long cy1,y1=lnumber_value(CAR(args)); args=lcdr(args);
-      long cx2,x2=lnumber_value(CAR(args)); args=lcdr(args);
-      long cy2,y2=lnumber_value(CAR(args)); args=lcdr(args);
-      long c1=lnumber_value(CAR(args)); args=lcdr(args);
-      long c2=lnumber_value(CAR(args)); args=lcdr(args);
-      long s=lnumber_value(CAR(args));
+      int32_t cx1,x1=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cy1,y1=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cx2,x2=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cy2,y2=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t c1=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t c2=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t s=lnumber_value(CAR(args));
       the_game->game_to_mouse(x1,y1,current_view,cx1,cy1);
       the_game->game_to_mouse(x2,y2,current_view,cx2,cy2);
       ascatter_line(cx1,cy1,cx2,cy2,c1,c2,s);
@@ -2031,11 +2031,11 @@ long c_caller(long number, void *args)
     } break;
     case 247 :
     {
-      long cx1=lnumber_value(CAR(args)); args=lcdr(args);
-      long cy1=lnumber_value(CAR(args)); args=lcdr(args);
-      long cx2=lnumber_value(CAR(args)); args=lcdr(args);
-      long cy2=lnumber_value(CAR(args)); args=lcdr(args);
-      long c1=lnumber_value(CAR(args)); args=lcdr(args);      
+      int32_t cx1=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cy1=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cx2=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t cy2=lnumber_value(CAR(args)); args=lcdr(args);
+      int32_t c1=lnumber_value(CAR(args)); args=lcdr(args);      
       screen->bar(cx1,cy1,cx2,cy2,c1);
     } break;
     case 248 :
@@ -2186,8 +2186,8 @@ long c_caller(long number, void *args)
     case 277 :
     {
       JCFont *fnt=(JCFont *)lpointer_value(CAR(args)); args=CDR(args);
-      long x=lnumber_value(CAR(args));       args=CDR(args);
-      long y=lnumber_value(CAR(args));       args=CDR(args);
+      int32_t x=lnumber_value(CAR(args));       args=CDR(args);
+      int32_t y=lnumber_value(CAR(args));       args=CDR(args);
       char *st=lstring_value(CAR(args));     args=CDR(args);
       int color=-1;
       if (args)
@@ -2205,20 +2205,20 @@ long c_caller(long number, void *args)
     } break;
     case 282 :
     {
-      long x1=lnumber_value(CAR(args));   args=CDR(args);
-      long y1=lnumber_value(CAR(args));   args=CDR(args);
-      long x2=lnumber_value(CAR(args));   args=CDR(args);
-      long y2=lnumber_value(CAR(args));   args=CDR(args);
-      long c=lnumber_value(CAR(args));
+      int32_t x1=lnumber_value(CAR(args));   args=CDR(args);
+      int32_t y1=lnumber_value(CAR(args));   args=CDR(args);
+      int32_t x2=lnumber_value(CAR(args));   args=CDR(args);
+      int32_t y2=lnumber_value(CAR(args));   args=CDR(args);
+      int32_t c=lnumber_value(CAR(args));
       screen->bar(x1,y1,x2,y2,c);
     } break;
     case 283 :
     {
-      long x1=lnumber_value(CAR(args));   args=CDR(args);
-      long y1=lnumber_value(CAR(args));   args=CDR(args);
-      long x2=lnumber_value(CAR(args));   args=CDR(args);
-      long y2=lnumber_value(CAR(args));   args=CDR(args);
-      long c=lnumber_value(CAR(args));
+      int32_t x1=lnumber_value(CAR(args));   args=CDR(args);
+      int32_t y1=lnumber_value(CAR(args));   args=CDR(args);
+      int32_t x2=lnumber_value(CAR(args));   args=CDR(args);
+      int32_t y2=lnumber_value(CAR(args));   args=CDR(args);
+      int32_t c=lnumber_value(CAR(args));
       screen->rectangle(x1,y1,x2,y2,c);
     } break;
     case 284 :

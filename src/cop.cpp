@@ -203,7 +203,7 @@ int player_fire_weapon(game_object *o, int type, game_object *target, int angle,
  
   // fire try to move up to gun level
 
-  long x2=o->x,y2=firey;
+  int32_t x2=o->x,y2=firey;
 //  current_level->foreground_intersect(other->x,other->y,x2,y2);      // find first location we can actuall "see"
 //  current_level->all_boundary_setback(o,other->x,other->y,x2,y2);       // to make we don't fire through walls
   other->y=y2;
@@ -246,7 +246,7 @@ void *laser_ufun(void *args)
   {
     if (!o->lvars[fire_delay1])                   // make sur we are not waiting of previous fire
     {
-      long value=lnumber_value(eval(CAR(args)));
+      int32_t value=lnumber_value(eval(CAR(args)));
       if (value)                                   // do we have ammo ?
       {
 	o->lvars[fire_delay1]=3;
@@ -288,7 +288,7 @@ void *top_ufun(void *args)                       // generic top character ai GRE
   {
     if (!o->lvars[fire_delay1])                   // make sur we are not waiting of previous fire
     {
-      long value=lnumber_value(eval(CAR(args)));
+      int32_t value=lnumber_value(eval(CAR(args)));
       if (value)                                   // do we have ammo ?
       {
 	o->lvars[fire_delay1]=6;
@@ -315,7 +315,7 @@ void *plaser_ufun(void *args)
   {
     if (!o->lvars[fire_delay1])                   // make sur we are not waiting of previous fire
     {
-      long value=lnumber_value(eval(CAR(args)));
+      int32_t value=lnumber_value(eval(CAR(args)));
       if (value)                                   // do we have ammo ?
       {
 	o->lvars[fire_delay1]=2;
@@ -339,7 +339,7 @@ void *lsaber_ufun(void *args)
   {
     if (!o->lvars[fire_delay1])                   // make sur we are not waiting of previous fire
     {
-      long value=lnumber_value(eval(CAR(args)));
+      int32_t value=lnumber_value(eval(CAR(args)));
       if (value)                                   // do we have ammo ?
       {
 	o->lvars[fire_delay1]=1;
@@ -366,7 +366,7 @@ void *player_rocket_ufun(void *args)
   {
     if (!o->lvars[fire_delay1])                   // make sur we are not waiting of previous fire
     {
-      long value=lnumber_value(eval(CAR(args)));
+      int32_t value=lnumber_value(eval(CAR(args)));
       if (value)                                   // do we have ammo ?
       {
 	o->lvars[fire_delay1]=6;
@@ -465,7 +465,7 @@ static void do_special_power(game_object *o, int xm, int ym, int but, game_objec
       o->lvars[used_special_power]=1;
       o->lvars[last1_x]=o->x;
       o->lvars[last1_y]=o->y;
-      long oyvel=o->yvel();
+      int32_t oyvel=o->yvel();
       int in=o->lvars[in_climbing_area];
 
       player_move(o,xm,ym,but);
@@ -531,7 +531,7 @@ static int climb_handler(game_object *o, int xm, int ym, int but)
 
 /*	if (o->lvars[special_power]==FAST_POWER)
 	{
-	  long xv=0,yv=4;
+	  int32_t xv=0,yv=4;
 	  o->try_move(o->x,o->y,xv,yv,1);
 	  if (yv==4)
 	    o->y+=3;
@@ -556,7 +556,7 @@ static int climb_handler(game_object *o, int xm, int ym, int but)
       }
       if (xm)                     // trying to get off the ladder, check to see if that's ok
       {
-	long x2=0,y2=-20;
+	int32_t x2=0,y2=-20;
 	o->try_move(o->x,o->y,x2,y2,3);
 	if (y2==-20)
 	{
@@ -897,13 +897,13 @@ void *sgun_ai()
   o->lvars[sgb_lasty]=o->y;
   o->lvars[sgb_speed]=o->lvars[sgb_speed]*6/5;
   
-  long ang=o->lvars[sgb_angle];
-  long mag=o->lvars[sgb_speed];
+  int32_t ang=o->lvars[sgb_angle];
+  int32_t mag=o->lvars[sgb_speed];
 
-  long xvel=(lisp_cos(ang))*(mag);
+  int32_t xvel=(lisp_cos(ang))*(mag);
   current_object->set_xvel(xvel>>16);
   current_object->set_fxvel((xvel&0xffff)>>8);
-  long yvel=-(lisp_sin(ang))*(mag);
+  int32_t yvel=-(lisp_sin(ang))*(mag);
   current_object->set_yvel(yvel>>16);
   current_object->set_fyvel((yvel&0xffff)>>8);      
 
@@ -1018,7 +1018,7 @@ void *score_draw()
     for (i=0;i<tp;i++)
     {
       int color=lnumber_value(lget_array_element(symbol_value(l_player_text_color),sorted_players[i]->player_number));  
-      sprintf(msg,"%3ld %s",sorted_players[i]->kills,sorted_players[i]->name);
+      sprintf(msg,"%3ld %s",(long)sorted_players[i]->kills,sorted_players[i]->name);
       if (sorted_players[i]==local)
         strcat(msg," <<");
 
@@ -1065,7 +1065,7 @@ void *show_kills()
     char msg[100];
 
 
-    sprintf(msg,"%-17s %3ld  %3ld",max_name,v->kills,v->tkills+v->kills);
+    sprintf(msg,"%-17s %3ld  %3ld",max_name,(long)v->kills,(long)(v->tkills+v->kills));
     fnt->put_string(screen,x,y,msg,color);
 
     y+=fnt->height();

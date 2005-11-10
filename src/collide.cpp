@@ -4,17 +4,17 @@
 class collide_patch
 {
   public :
-  long total,x1,y1,x2,y2;
+  int32_t total,x1,y1,x2,y2;
   game_object **touch;  
   collide_patch *next;
-  collide_patch(long X1, long Y1, long X2, long Y2, collide_patch *Next)
+  collide_patch(int32_t X1, int32_t Y1, int32_t X2, int32_t Y2, collide_patch *Next)
   { 
     x1=X1; y1=Y1; x2=X2; y2=Y2;
     next=Next;
     total=0;
     touch=NULL;
   }
-  void add_collide(long X1, long Y1, long X2, long Y2, game_object *who);
+  void add_collide(int32_t X1, int32_t Y1, int32_t X2, int32_t Y2, game_object *who);
   collide_patch *copy(collide_patch *Next);
   ~collide_patch() { if (total) jfree(touch); }
 } ;
@@ -35,7 +35,7 @@ collide_patch *collide_patch::copy(collide_patch *Next)
 }
 
 
-void add_collide(collide_patch *&first, long x1, long y1, long x2, long y2, 
+void add_collide(collide_patch *&first, int32_t x1, int32_t y1, int32_t x2, int32_t y2, 
 			    game_object *who)
 {
   collide_patch *next;
@@ -147,7 +147,7 @@ void add_collide(collide_patch *&first, long x1, long y1, long x2, long y2,
 void level::check_collisions()
 {
   game_object *target,*rec,*subject;
-  long sx1,sy1,sx2,sy2,tx1,ty1,tx2,ty2,hitx=0,hity=0,t_centerx;
+  int32_t sx1,sy1,sx2,sy2,tx1,ty1,tx2,ty2,hitx=0,hity=0,t_centerx;
 
   for (int l=0;l<attack_total;l++)
   {
@@ -183,7 +183,7 @@ void level::check_collisions()
 	  {
 	    for (t_dat=t_damage->data,j=(int)t_damage->tot-1;j>0 && !rec;j--)
 	    {
-	      long x1,y1,x2,y2,          // define the two line segments to check
+	      int32_t x1,y1,x2,y2,          // define the two line segments to check
 	      xp1,yp1,xp2,yp2;
 
 	      xp1=target->x+target->tx(*t_dat);  t_dat++;	      
@@ -199,7 +199,7 @@ void level::check_collisions()
 
 	      // ok, now we know which line segemnts to check for intersection
 	      // now check to see if (x1,y1-x2,y2) intercest with (xp1,yp1-xp2,yp2)
-	      int _x2=x2,_y2=y2;	      
+	      int32_t _x2=x2,_y2=y2;	      
 	      setback_intersect(x1, y1, x2, y2, xp1, yp1, xp2, yp2,0);
 
 

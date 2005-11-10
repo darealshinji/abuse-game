@@ -1,8 +1,8 @@
 #include "macs.hpp"
 #include <stdlib.h>
 
-void pushback(long x1,long y1,long &x2,long &y2,
-		     long xp1, long yp1, long xp2, long yp2, int xdir, int ydir, int inside)
+void pushback(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
+		     int32_t xp1, int32_t yp1, int32_t xp2, int32_t yp2, int xdir, int ydir, int inside)
 {
 
    // determine if the lines are intersecting before we set back
@@ -14,10 +14,10 @@ void pushback(long x1,long y1,long &x2,long &y2,
 }
 
 
-/* int setback_intersect(long x1,long y1,long &x2,long &y2,
-		     long xp1, long yp1, long xp2, long yp2)
+/* int setback_intersect(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
+		     int32_t xp1, int32_t yp1, int32_t xp2, int32_t yp2)
 {
-  long mx1,my1,b1,mx2,my2,b2,side1,side2,tx2,ty2;
+  int32_t mx1,my1,b1,mx2,my2,b2,side1,side2,tx2,ty2;
   my1=(y2-y1);
   if (!my1)                  // is the first line strait across?
   {
@@ -109,14 +109,14 @@ void pushback(long x1,long y1,long &x2,long &y2,
         {
           if (abs(mx1)>abs(my1))
           {
-            long ae_bd=my1*mx2-mx1*my2;
+            int32_t ae_bd=my1*mx2-mx1*my2;
             CONDITION(ae_bd,"line intersect fuck up");
             tx2=(mx1*mx2*(b2-b1))/ae_bd+xadd;
             ty2=my1*tx2/mx1+b1;
           }
           else
           {
-            long db_ea=(my2*mx1-mx2*my1);
+            int32_t db_ea=(my2*mx1-mx2*my1);
             CONDITION(db_ea,"line intersect fuck up");
             ty2=(mx1*b1*my2-my1*mx2*b2)/db_ea+yadd;
             tx2=mx1*(ty2-b1)/my1;
@@ -136,15 +136,15 @@ void pushback(long x1,long y1,long &x2,long &y2,
 } */
 
 
-int setback_intersect(long x1,long y1,long &x2,long &y2,
-		      long xp1, long yp1, long xp2, long yp2, 
-                     long inside)  // which side is inside the polygon? (0 always setback)
+int setback_intersect(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
+		      int32_t xp1, int32_t yp1, int32_t xp2, int32_t yp2, 
+                     int32_t inside)  // which side is inside the polygon? (0 always setback)
 {
   // the line equations will be put in the form
   // x(y2-y1)+y(x1-x2)-x1*y2+x2*y1=0
   //     A        B        C  
 
-  long a1,b1,c1,a2,b2,c2,r1,r2;              
+  int32_t a1,b1,c1,a2,b2,c2,r1,r2;              
 
   a1=y2-y1;        
   b1=x1-x2;        
@@ -156,8 +156,8 @@ int setback_intersect(long x1,long y1,long &x2,long &y2,
     r1=xp1; xp1=xp2; xp2=r1;
   } 
 
-  long xdiff,ydiff;
-/*  long xdiff=abs(xp1-xp2),ydiff=yp1-yp2;  
+  int32_t xdiff,ydiff;
+/*  int32_t xdiff=abs(xp1-xp2),ydiff=yp1-yp2;  
   if (xdiff>=ydiff)                              // increment the endpoints 
     if (xp2<xp1) { xp2--; xp1++; }  				 
     else { xp2++; xp1--; } 
@@ -186,7 +186,7 @@ int setback_intersect(long x1,long y1,long &x2,long &y2,
            (xp1>=xp2 && ((r2^inside)<0)) ||
 	   inside==0 || r2==0) 
       { 
-	long ae=a1*b2,bd=b1*a2;	
+	int32_t ae=a1*b2,bd=b1*a2;	
 	if (ae!=bd)         // co-linear returns 0
 	{
 	  x2=(b1*c2-b2*c1)/(ae-bd);

@@ -45,7 +45,7 @@ extern int morph_sel_frame_color;
 
 extern char **start_argv;
 extern int start_argc;
-extern long current_vxadd,current_vyadd;
+extern int32_t current_vxadd,current_vyadd;
 extern int frame_panic,massive_frame_panic;
 extern int demo_start,idle_ticks;
 
@@ -57,7 +57,7 @@ class game
   int bright_color,med_color,dark_color,     // for boundaries and windows, etc
       morph_bright_color,morph_med_color,morph_dark_color;
 
-  long last_time,fps;
+  int32_t last_time,fps;
   char mapname[100],command[200],help_text[200];
   int refresh,mousex,mousey,help_text_frames;
   int has_joystick,no_delay;
@@ -92,14 +92,14 @@ public :
                            return cash.foret(foretiles[BLACK]); else 
 			   return cash.foret(foretiles[x]); }
 
-  void ftile_on(int screenx, int screeny, long &x, long &y);
-  void btile_on(int screenx, int screeny, long &x, long &y);
+  void ftile_on(int screenx, int screeny, int32_t &x, int32_t &y);
+  void btile_on(int screenx, int screeny, int32_t &x, int32_t &y);
   void toggle_delay();
   void set_delay(int on) { no_delay=!on; }
   void pan(int xv, int yv);
 
-  void mouse_to_game(long x, long y, long &gamex, long &gamey, view *v=NULL);
-  void game_to_mouse(long gamex, long gamey, view *which, long &x, long &y);
+  void mouse_to_game(int32_t x, int32_t y, int32_t &gamex, int32_t &gamey, view *v=NULL);
+  void game_to_mouse(int32_t gamex, int32_t gamey, view *which, int32_t &x, int32_t &y);
   view *view_in(int mousex, int mousey);
 
   int calc_speed();
@@ -138,7 +138,7 @@ public :
   void set_state(int new_state);
   int game_over();
   void grow_views(int amount);
-  void play_sound(int id, int vol, long x, long y);
+  void play_sound(int id, int vol, int32_t x, int32_t y);
   void request_level_load(char *name);
   void request_end();
   ~game();

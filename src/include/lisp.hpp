@@ -129,7 +129,7 @@ void use_user_space(void *addr, long size);
 #define item_type(c) ((c) ? *((ltype *)c) : (ltype)L_CONS_CELL)
 void *lget_array_element(void *a, long x);
 void *lpointer_value(void *lpointer);
-long lnumber_value(void *lnumber);
+int32_t lnumber_value(void *lnumber);
 char *lstring_value(void *lstring);
 unsigned short lcharacter_value(void *c);
 long lfixed_point_value(void *c);

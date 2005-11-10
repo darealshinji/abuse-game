@@ -57,8 +57,8 @@ window_manager *eh=NULL;
 int dev,shift_down=SHIFT_DOWN_DEFAULT,shift_right=SHIFT_RIGHT_DEFAULT;
 double sum_diffs=1,total_diffs=12;
 int total_active=0;
-long map_xoff=0,map_yoff=0;
-long current_vxadd,current_vyadd;
+int32_t map_xoff=0,map_yoff=0;
+int32_t current_vxadd,current_vyadd;
 int frame_panic=0,massive_frame_panic=0;
 int demo_start=0,idle_ticks=0;
 int req_end=0;
@@ -135,7 +135,7 @@ void handle_no_space()
   }
 }
 
-void game::play_sound(int id, int vol, long x, long y)
+void game::play_sound(int id, int vol, int32_t x, int32_t y)
 {
 	if( sound_avail & SFX_INITIALIZED )
 	{
@@ -144,13 +144,13 @@ void game::play_sound(int id, int vol, long x, long y)
 		if( !player_list )
 			return;
 
-		ulong mdist = 0xffffffff;
+		uint32_t mdist = 0xffffffff;
 		view *cd = NULL;
 		for( view *f = player_list; f ; f = f->next )
 		{
 			if( f->local_player() )
 			{
-				long cx = abs(f->x_center()-x),cy = abs(f->y_center()-y), d;
+				int32_t cx = abs(f->x_center()-x),cy = abs(f->y_center()-y), d;
 				if( cx < cy )
 					d = cx + cy - ( cx >> 1 );
 				else
@@ -276,7 +276,7 @@ int playing_state(int state)
   else return 0;
 }
 
-void game::ftile_on(int screenx, int screeny, long &x, long &y)
+void game::ftile_on(int screenx, int screeny, int32_t &x, int32_t &y)
 {
   mouse_to_game(screenx,screeny,x,y);
   x/=ftile_width();
@@ -284,8 +284,8 @@ void game::ftile_on(int screenx, int screeny, long &x, long &y)
 /*  view *f=view_in(screenx,screeny);
   if (f)
   {
-    x=((long)(screenx)-(long)f->cx1+f->xoff())/(long)f_wid;
-    y=((long)(screeny)-(long)f->cy1+f->yoff())/(long)f_hi;
+    x=((int32_t)(screenx)-(int32_t)f->cx1+f->xoff())/(int32_t)f_wid;
+    y=((int32_t)(screeny)-(int32_t)f->cy1+f->yoff())/(int32_t)f_hi;
   }
   else
   {
@@ -294,13 +294,13 @@ void game::ftile_on(int screenx, int screeny, long &x, long &y)
   }*/
 }
 
-void game::btile_on(int screenx, int screeny, long &x, long &y)
+void game::btile_on(int screenx, int screeny, int32_t &x, int32_t &y)
 {
   view *f=view_in(screenx,screeny);
   if (f)
   {
-    x=((long)(screenx)-(long)f->cx1+f->xoff()*bg_xmul/bg_xdiv)/(long)b_wid; 
-    y=((long)(screeny)-(long)f->cy1+f->yoff()*bg_ymul/bg_ydiv)/(long)b_hi;
+    x=((int32_t)(screenx)-(int32_t)f->cx1+f->xoff()*bg_xmul/bg_xdiv)/(int32_t)b_wid; 
+    y=((int32_t)(screeny)-(int32_t)f->cy1+f->yoff()*bg_ymul/bg_ydiv)/(int32_t)b_hi;
   }
   else
   {
@@ -310,7 +310,7 @@ void game::btile_on(int screenx, int screeny, long &x, long &y)
 }
 
 
-void game::mouse_to_game(long x, long y, long &gamex, long &gamey, view *f)
+void game::mouse_to_game(int32_t x, int32_t y, int32_t &gamex, int32_t &gamey, view *f)
 {
   if (!f)
   {
@@ -323,23 +323,23 @@ void game::mouse_to_game(long x, long y, long &gamex, long &gamey, view *f)
 
       if (dev&MAP_MODE)
       {
-	gamex=((x-(long)f->cx1)*ftile_width()/AUTOTILE_WIDTH+map_xoff*ftile_width());
-	gamey=((y-(long)f->cy1)*ftile_height()/AUTOTILE_HEIGHT+map_yoff*ftile_height());
+	gamex=((x-(int32_t)f->cx1)*ftile_width()/AUTOTILE_WIDTH+map_xoff*ftile_width());
+	gamey=((y-(int32_t)f->cy1)*ftile_height()/AUTOTILE_HEIGHT+map_yoff*ftile_height());
       } else
       {
-	gamex=(x-(long)f->cx1+f->xoff());
-	gamey=(y-(long)f->cy1+f->yoff());
+	gamex=(x-(int32_t)f->cx1+f->xoff());
+	gamey=(y-(int32_t)f->cy1+f->yoff());
       }
 
   }
 
 }
 
-void game::game_to_mouse(long gamex, long gamey, view *which, long &x, long &y)
+void game::game_to_mouse(int32_t gamex, int32_t gamey, view *which, int32_t &x, int32_t &y)
 {
   if (dev&MAP_MODE)
   {
-    long x1,y1;
+    int32_t x1,y1;
     if (dev&EDIT_MODE)
     {
       x1=map_xoff;
@@ -756,7 +756,7 @@ void game::draw_map(view *v, int interpolate)
     return ;
   }
 
-  long old_cx1=0,old_cy1=0,old_cx2=0,old_cy2=0;   // if we do a small render, we need to restore these
+  int32_t old_cx1=0,old_cy1=0,old_cx2=0,old_cy2=0;   // if we do a small render, we need to restore these
   image *old_screen=NULL;
   if (small_render && (dev&DRAW_LIGHTS))  // cannot do this if we skip lighting
   {
@@ -777,10 +777,10 @@ void game::draw_map(view *v, int interpolate)
 
 
 
-//  long max_xoff=(current_level->foreground_width()-1)*ftile_width()-(v->cx2-v->cx1+1);
-//  long max_yoff=(current_level->foreground_height()-1)*ftile_height()-(v->cy2-v->cy1+1); 
+//  int32_t max_xoff=(current_level->foreground_width()-1)*ftile_width()-(v->cx2-v->cx1+1);
+//  int32_t max_yoff=(current_level->foreground_height()-1)*ftile_height()-(v->cy2-v->cy1+1); 
 
-  long xoff,yoff;
+  int32_t xoff,yoff;
   if (interpolate)
   {
     xoff=v->interpolated_xoff();
@@ -802,8 +802,8 @@ void game::draw_map(view *v, int interpolate)
   nxoff=xoff*bg_xmul/bg_xdiv;
   nyoff=yoff*bg_ymul/bg_ydiv;
 
-//  long max_bg_xoff=(current_level->background_width())*btile_width()-(v->cx2-v->cx1+1);
-//  long max_bg_yoff=(current_level->background_height())*btile_height()-(v->cy2-v->cy1+1);
+//  int32_t max_bg_xoff=(current_level->background_width())*btile_width()-(v->cx2-v->cx1+1);
+//  int32_t max_bg_yoff=(current_level->background_height())*btile_height()-(v->cy2-v->cy1+1);
 //  if (nxoff>max_bg_xoff) nxoff=max_xoff;
 //  if (nyoff>max_bg_yoff) nyoff=max_yoff;  
   
@@ -985,7 +985,7 @@ void game::draw_map(view *v, int interpolate)
 //  if (!(dev&EDIT_MODE))
 //    server_check();
 
-  long ro=rand_on;
+  int32_t ro=rand_on;
   if (dev & DRAW_PEOPLE_LAYER)
   {
     if (interpolate)
@@ -1666,7 +1666,7 @@ int game::calc_speed()
 		if (avg_fps>15 && ((dev&EDIT_MODE)==0 || need_delay))
 		{
 			frame_panic = 0;
-			long stime=(long)((1/15.0-1.0/possible_fps)*1000.0); 
+			int32_t stime=(int32_t)((1/15.0-1.0/possible_fps)*1000.0); 
 			if (stime>0 && !no_delay)
 			{
 				milli_wait(stime);
@@ -2574,7 +2574,7 @@ int main(int argc, char **argv)
 
 	fprintf(stderr,"Mac Options: ");
 	xres = 320; yres = 200;
-	GetKeys((unsigned long*)&km);
+	GetKeys((uint32_t*)&km);
 	if ((km[ 0x3a >>3] >> (0x3a & 7)) &1 != 0)
 	{
 		dev|=EDIT_MODE;    

@@ -23,20 +23,21 @@
 #include <sys/stat.h>
 #endif
 
+#include <limits.h>
 #include <time.h>
 
 level *current_level;
 
 game_object *level::attacker(game_object *who)
 { 
-  long d=0x7fffffff;
+  int32_t d=0x7fffffff;
   game_object *c=NULL;
   view *f=the_game->first_view;
   for (;f;f=f->next)
   {
     if (f->focus)
     {
-      long tmp_d=abs(f->focus->x-who->x)+abs(f->focus->y-who->y);
+      int32_t tmp_d=abs(f->focus->x-who->x)+abs(f->focus->y-who->y);
       if (tmp_d<d)
       {
 	d=tmp_d;
@@ -197,7 +198,7 @@ void level::pull_actives(game_object *o, game_object *&last_active, int &t)
   }
 }
 
-int level::add_actives(long x1, long y1, long x2, long y2)
+int level::add_actives(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 {
   int t=0;
   game_object *last_active=NULL;
@@ -209,7 +210,7 @@ int level::add_actives(long x1, long y1, long x2, long y2)
   {    
     if (!o->active)
     {
-      long xr=figures[o->otype]->rangex,
+      int32_t xr=figures[o->otype]->rangex,
            yr=figures[o->otype]->rangey;
 
       if (o->x+xr>=x1 && o->x-xr<=x2 && o->y+yr>=y1 && o->y-yr<=y2)
@@ -241,7 +242,7 @@ int level::add_actives(long x1, long y1, long x2, long y2)
 }
 
 
-int level::add_drawables(long x1, long y1, long x2, long y2)
+int level::add_drawables(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 {
   int t=0,ft=0;
   game_object *last_active=NULL;
@@ -255,7 +256,7 @@ int level::add_drawables(long x1, long y1, long x2, long y2)
   {    
     if (ft || !o->active)
     {
-      long xr=figures[o->otype]->draw_rangex,
+      int32_t xr=figures[o->otype]->draw_rangex,
       yr=figures[o->otype]->draw_rangey;
 
       if (o->x+xr>=x1 && o->x-xr<=x2 && o->y+yr>=y1 && o->y-yr<=y2)
@@ -321,7 +322,7 @@ view *level::make_view_list(int nplayers)
 
 void level::wall_push()
 {
-  long sx1,sy1,sx2,sy2,xv,yv;
+  int32_t sx1,sy1,sx2,sy2,xv,yv;
   game_object *o=first_active;
   for (;o;o=o->next_active)
   {
@@ -361,7 +362,7 @@ void level::try_pushback(game_object *subject,game_object *target)
     int b1=subject->push_range(),b2=target->push_range();
     if (abs(subject->x-target->x)<b1+b2)
     {
-      long tmove=b1+b2-abs(subject->x-target->x),xv,yv=0,xv2;
+      int32_t tmove=b1+b2-abs(subject->x-target->x),xv,yv=0,xv2;
       if (subject->x>target->x)
         xv=tmove/2;
       else xv=-tmove/2;
@@ -381,7 +382,7 @@ void level::try_pushback(game_object *subject,game_object *target)
 void level::check_collisions()
 {
   game_object *target,*reciever=NULL;
-  long sx1,sy1,sx2,sy2,tx1,ty1,tx2,ty2,hitx,hity,
+  int32_t sx1,sy1,sx2,sy2,tx1,ty1,tx2,ty2,hitx,hity,
       s_centerx,t_centerx;
 
   for (game_object *subject=first_active;subject;subject=subject->next_active)
@@ -415,7 +416,7 @@ void level::check_collisions()
 	    {
 	      for (t_dat=t_damage->data,j=(int)t_damage->tot-1;j>0 && !hit;j--)
 	      {
-		long x1,y1,x2,y2,          // define the two line segments to check
+		int32_t x1,y1,x2,y2,          // define the two line segments to check
 		xp1,yp1,xp2,yp2;
 
 		xp1=target->x+target->tx(*t_dat);  t_dat++;	      
@@ -458,10 +459,10 @@ void level::check_collisions()
 }
 */
 
-game_object *level::boundary_setback(game_object *subject, long x1, long y1, long &x2, long &y2)
+game_object *level::boundary_setback(game_object *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2)
 {
   game_object *l=NULL;
-  long tx1,ty1,tx2,ty2,t_centerx;
+  int32_t tx1,ty1,tx2,ty2,t_centerx;
   game_object *target=first_active;
   game_object **blist=block_list;
   int t=block_total;
@@ -484,10 +485,10 @@ game_object *level::boundary_setback(game_object *subject, long x1, long y1, lon
 	int iter=t_damage->tot-1;
 	while(iter-->0)
 	{
-	  long xp1=target->x+target->tx(*t_dat);  t_dat++;	      
-	  long yp1=target->y+target->ty(*t_dat);  t_dat++;
-	  long xp2=target->x+target->tx(*t_dat); 
-	  long yp2=target->y+target->ty(t_dat[1]); 
+	  int32_t xp1=target->x+target->tx(*t_dat);  t_dat++;	      
+	  int32_t yp1=target->y+target->ty(*t_dat);  t_dat++;
+	  int32_t xp2=target->x+target->tx(*t_dat); 
+	  int32_t yp2=target->y+target->ty(t_dat[1]); 
 
 	  // now check to see if (x1,y1-x2,y2) intercest with (xp1,yp1-xp2,yp2)
 	  if (*ins)
@@ -510,10 +511,10 @@ game_object *level::boundary_setback(game_object *subject, long x1, long y1, lon
 }
 
 
-game_object *level::all_boundary_setback(game_object *subject, long x1, long y1, long &x2, long &y2)
+game_object *level::all_boundary_setback(game_object *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2)
 {
   game_object *l=NULL;
-  long tx1,ty1,tx2,ty2,t_centerx;
+  int32_t tx1,ty1,tx2,ty2,t_centerx;
   game_object *target=first_active;
   game_object **blist=all_block_list;
   int t=all_block_total;
@@ -536,10 +537,10 @@ game_object *level::all_boundary_setback(game_object *subject, long x1, long y1,
 	int iter=t_damage->tot-1;
 	while(iter-->0)
 	{
-	  long xp1=target->x+target->tx(*t_dat);  t_dat++;	      
-	  long yp1=target->y+target->ty(*t_dat);  t_dat++;
-	  long xp2=target->x+target->tx(*t_dat); 
-	  long yp2=target->y+target->ty(t_dat[1]); 
+	  int32_t xp1=target->x+target->tx(*t_dat);  t_dat++;	      
+	  int32_t yp1=target->y+target->ty(*t_dat);  t_dat++;
+	  int32_t xp2=target->x+target->tx(*t_dat); 
+	  int32_t yp2=target->y+target->ty(t_dat[1]); 
 
 	  // now check to see if (x1,y1-x2,y2) intercest with (xp1,yp1-xp2,yp2)
 	  if (*ins)
@@ -565,7 +566,7 @@ game_object *level::all_boundary_setback(game_object *subject, long x1, long y1,
 
 void level::interpolate_draw_objects(view *v)
 {
-  long old_x,old_y;
+  int32_t old_x,old_y;
   current_view=v;
   
   game_object *o=first_active;
@@ -606,7 +607,7 @@ int level::tick()
   if (current_demo_mode()==DEMO_PLAY)
   {
     if (!rcheck) rcheck=open_file("rcheck","rb");
-    long x=rcheck->read_long();
+    int32_t x=rcheck->read_long();
     if (x!=rand_on)
       dprintf("off!\n");
   } else if (current_demo_mode()==DEMO_RECORD)
@@ -644,11 +645,11 @@ int level::tick()
       if (c)
       {      
 	area_controller *a,*smallest=NULL;
-	long smallest_size=0xfffffff;
+	int32_t smallest_size=0xffffffff;
 	for (a=area_list;a;a=a->next)
 	  if (o->x>=a->x && o->y>=a->y && o->x<=a->x+a->w && o->y<=a->y+a->h)
 	  {
-	    long size=a->w*a->h;
+	    int32_t size=a->w*a->h;
 	    if (size<smallest_size)
 	    {
 	      smallest=a;
@@ -692,7 +693,7 @@ int level::tick()
 
 	if (o->otype!=current_start_type)
 	{
-	  long fmp=o->fmp();      
+	  int32_t fmp=o->fmp();      
 	  int reduce=figures[o->otype]->morph_power;
 	  if (reduce)
 	  {
@@ -766,7 +767,7 @@ void level::set_tick_counter(ulong x)
 
 void level::draw_areas(view *v)
 {
-  long sx1,sy1,sx2,sy2;
+  int32_t sx1,sy1,sx2,sy2;
   area_controller *a=area_list;
   for (;a;a=a->next)
   {
@@ -806,7 +807,7 @@ void level::draw_objects(view *v)
   clear_tmp();
 }  
 
-void calc_bgsize(unsigned short fgw, unsigned short  fgh, unsigned short  &bgw, unsigned short  &bgh)
+void calc_bgsize(uint16_t fgw, uint16_t  fgh, uint16_t  &bgw, uint16_t  &bgh)
 {
   bgw=fgw/ASPECT+8;
   bgh=fgh/ASPECT+8;  
@@ -821,17 +822,17 @@ void level::set_size(int w, int h)
     return ; 
   }
 
-  unsigned short *new_fg,*new_bg;
-  new_fg=(unsigned short *)jmalloc(w*h*sizeof(short),"Map fg : resized");
-  memset(new_fg,0,w*h*sizeof(short));
+  uint16_t *new_fg,*new_bg;
+  new_fg=(uint16_t *)jmalloc(w*h*sizeof(int16_t),"Map fg : resized");
+  memset(new_fg,0,w*h*sizeof(int16_t));
 
   int x,y,miny=(h<fg_height)? h : fg_height,minx=(w<fg_width)? w : fg_width;
   
-  unsigned short nbw,nbh;
+  uint16_t nbw,nbh;
   calc_bgsize(w,h,nbw,nbh);
   
-  new_bg=(unsigned short *)jmalloc((int)nbw*(int)nbh*sizeof(short),"map bg : resized");
-  memset(new_bg,0,(int)nbw*(int)nbh*sizeof(short));
+  new_bg=(uint16_t *)jmalloc((int)nbw*(int)nbh*sizeof(int16_t),"map bg : resized");
+  memset(new_bg,0,(int)nbw*(int)nbh*sizeof(int16_t));
 
   for (y=0;y<miny;y++)
     for (x=0;x<minx;x++)
@@ -884,8 +885,8 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
   {
     fp->seek(se->offset,0);
     /******************************* Read debug info ******************************/
-    short old_tot=fp->read_short();  
-    unsigned short *o_remap=(unsigned short *)jmalloc(old_tot*2,"obj remap array");    
+    int16_t old_tot=fp->read_short();  
+    uint16_t *o_remap=(uint16_t *)jmalloc(old_tot*2,"obj remap array");    
     char old_name[150];      
     for (i=0;i<old_tot;i++)
     {
@@ -1016,13 +1017,13 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
   else if (se)
   {
     fp->seek(se->offset,0);
-    short old_tot=fp->read_short();
+    int16_t old_tot=fp->read_short();
     se=sd->find("describe_names");
     if (!se || !old_tot)
       return ;
 
-    unsigned short *o_remap=(unsigned short *)jmalloc(old_tot*2,"obj remap array");    
-    unsigned short *o_backmap=(unsigned short *)jmalloc(total_objects*2,"obj remap array");    
+    uint16_t *o_remap=(uint16_t *)jmalloc(old_tot*2,"obj remap array");    
+    uint16_t *o_backmap=(uint16_t *)jmalloc(total_objects*2,"obj remap array");    
     memset(o_backmap,0xff,total_objects*2);
     char old_name[150];      
     for (i=0;i<old_tot;i++)
@@ -1040,17 +1041,17 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
 
     se=sd->find("describe_states");
     if (!se) { jfree(o_remap); jfree(o_backmap); return ; }
-    short **s_remap=(short **)jmalloc(old_tot*sizeof(short *),"big state remap array");
-    short *s_remap_totals=(short *)jmalloc(old_tot*sizeof(short),"big state rmp totals");
+    int16_t **s_remap=(int16_t **)jmalloc(old_tot*sizeof(int16_t *),"big state remap array");
+    int16_t *s_remap_totals=(int16_t *)jmalloc(old_tot*sizeof(int16_t),"big state rmp totals");
     fp->seek(se->offset,0);
     int i=0;
     for (;i<old_tot;i++)
     {
-      short t=fp->read_short();
+      int16_t t=fp->read_short();
       s_remap_totals[i]=t;
       if (t)
       {
-        s_remap[i]=(short *)jmalloc(t*sizeof(short),"state remap");
+        s_remap[i]=(int16_t *)jmalloc(t*sizeof(int16_t),"state remap");
 	int j=0;
 	for (;j<t;j++)
 	  *(s_remap[i]+j)=stopped;    // if no remap found, then go to stopped state
@@ -1075,25 +1076,25 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
       }
     }
 
-    short **v_remap=NULL;
-    short *v_remap_totals=NULL;
+    int16_t **v_remap=NULL;
+    int16_t *v_remap_totals=NULL;
     int load_vars=1;
     se=sd->find("describe_lvars");
     if (se)
     {
-      v_remap=(short **)jmalloc(old_tot*sizeof(short *),"big var remap array");
-      v_remap_totals=(short *)jmalloc(old_tot*sizeof(short),"big var rmp totals");
+      v_remap=(int16_t **)jmalloc(old_tot*sizeof(int16_t *),"big var remap array");
+      v_remap_totals=(int16_t *)jmalloc(old_tot*sizeof(int16_t),"big var rmp totals");
 
       fp->seek(se->offset,0);
       int i=0;
       for (;i<old_tot;i++)
       {
-	short t=fp->read_short();
+	int16_t t=fp->read_short();
 	v_remap_totals[i]=t;
 	if (t)
 	{
-	  v_remap[i]=(short *)jmalloc(t*sizeof(short),"var remap");
-	  memset(v_remap[i],0xff,t*sizeof(short));
+	  v_remap[i]=(int16_t *)jmalloc(t*sizeof(int16_t),"var remap");
+	  memset(v_remap[i],0xff,t*sizeof(int16_t));
 	} else { v_remap[i]=NULL; }
 	int j=0;
 	for (;j<t;j++)
@@ -1171,14 +1172,14 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
 	    game_object *o=first;
 	    for (;o && !abort;o=o->next)
 	    {
-	      short ot=fp->read_short();
+	      int16_t ot=fp->read_short();
 	      int k=0;
 	      for (;k<ot;k++)
 	      {
 		if (fp->read_byte()!=RC_L) abort=1;
 		else
 		{
-		  long v=fp->read_long();
+		  int32_t v=fp->read_long();
 		  if (o->otype!=0xffff)     // non-exstant object
 		  {
 		    int remap=*(v_remap[o_backmap[o->otype]]+k);
@@ -1308,10 +1309,10 @@ level::level(spec_directory *sd, bFILE *fp, char *lev_name)
     fp->seek(e->offset,0);
     fg_width=fp->read_long();
     fg_height=fp->read_long();
-    map_fg=(unsigned short *)jmalloc(2*fg_width*fg_height,"Map fg : loaded");
+    map_fg=(uint16_t *)jmalloc(2*fg_width*fg_height,"Map fg : loaded");
     fp->read((char *)map_fg,2*fg_width*fg_height);
     int t=fg_width*fg_height;
-    unsigned short *map=map_fg;
+    uint16_t *map=map_fg;
     while (t) { *map=lstl(*map); map++; t--; }
   } else
   {
@@ -1326,10 +1327,10 @@ level::level(spec_directory *sd, bFILE *fp, char *lev_name)
     fp->seek(e->offset,0);
     bg_width=fp->read_long();
     bg_height=fp->read_long();
-    map_bg=(unsigned short *)jmalloc(2*bg_width*bg_height,"Map bg : loaded");
+    map_bg=(uint16_t *)jmalloc(2*bg_width*bg_height,"Map bg : loaded");
     fp->read((char *)map_bg,2*bg_width*bg_height);
     int t=bg_width*bg_height;
-    unsigned short *map=map_bg;
+    uint16_t *map=map_bg;
     while (t) { *map=lstl(*map); map++; t--; } 
   } else
   {
@@ -1341,7 +1342,7 @@ level::level(spec_directory *sd, bFILE *fp, char *lev_name)
   {
     fg_width=bg_width;
     fg_height=bg_height;
-    map_fg=(unsigned short *)jmalloc(2*fg_width*fg_height,"Map fg : loaded");
+    map_fg=(uint16_t *)jmalloc(2*fg_width*fg_height,"Map fg : loaded");
     memset(map_fg,0,2*fg_width*fg_height);
   }
 
@@ -1349,14 +1350,14 @@ level::level(spec_directory *sd, bFILE *fp, char *lev_name)
   {
     bg_width=fg_width/8+8;
     bg_height=fg_height/8+8;
-    map_bg=(unsigned short *)jmalloc(2*bg_width*bg_height,"Map bg : loaded");
+    map_bg=(uint16_t *)jmalloc(2*bg_width*bg_height,"Map bg : loaded");
     memset(map_bg,0,2*bg_width*bg_height);
   }
   stat_man->update(10);
 
   /***************** Check map for non exsistant tiles **************************/
-  long i,w;
-  unsigned short *m;  
+  int32_t i,w;
+  uint16_t *m;  
   spec_entry *load_all=sd->find("player_info");
   for (i=0,w=fg_width*fg_height,m=map_fg;i<w;i++,m++)
   {
@@ -1568,10 +1569,10 @@ bFILE *level::create_dir(char *filename, int save_all,
 
  
 
-  // how many objects are we goint to save, use a long to specify how many
+  // how many objects are we goint to save, use a int32_t to specify how many
   sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"object_list",NULL,4,0)); 
   
-  long t=0;
+  int32_t t=0;
   object_node *o=save_list;
   for (;o;o=o->next)
     t++;
@@ -1653,7 +1654,7 @@ void level::write_thumb_nail(bFILE *fp, image *im)
 
 void level::write_player_info(bFILE *fp, object_node *save_list)
 {
-  long t=0;
+  int32_t t=0;
   view *v=player_list;
   for (;v;v=v->next) t++; 
   fp->write_long(t);
@@ -1724,7 +1725,7 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
       delete v;
     }
 
-    long total_players=fp->read_long();
+    int32_t total_players=fp->read_long();
     view *last=NULL;
     int i=0;
     for (;i<total_players;i++)    
@@ -1774,13 +1775,13 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
       fp->seek(se->offset,0);
       if (fp->read_byte()==RC_L)
       {
-	long m=fp->read_long();  // read how many weapons exsisted when last saved
+	int32_t m=fp->read_long();  // read how many weapons exsisted when last saved
 	int i;
 	for (v=player_list;v;v=v->next)	  
 	{
 	  for (i=0;i<m;i++)
 	  {
-	    long x=fp->read_long();
+	    int32_t x=fp->read_long();
 	    if (i<total_weapons)
 	    {
 	      v->weapons[i]=x;
@@ -1793,8 +1794,8 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
     { 
       for (v=player_list;v;v=v->next)	  
       {
-	memset(v->last_weapons,0xff,total_weapons*sizeof(long));
-	memset(v->weapons,0xff,total_weapons*sizeof(long));
+	memset(v->last_weapons,0xff,total_weapons*sizeof(int32_t));
+	memset(v->weapons,0xff,total_weapons*sizeof(int32_t));
       }
     }
 
@@ -1901,7 +1902,7 @@ void level::write_objects(bFILE *fp, object_node *save_list)
     }
   }
   
-  long t=0;
+  int32_t t=0;
   object_node *o=save_list;
   for (;o;o=o->next) t++;
   fp->write_long(t);
@@ -1918,7 +1919,7 @@ void level::write_objects(bFILE *fp, object_node *save_list)
     fp->write_short(figures[o->me->otype]->tv);
     for (i=0;i<figures[o->me->otype]->tv;i++) 
     {
-      fp->write_byte(RC_L);                           // for now the only type allowed is long
+      fp->write_byte(RC_L);                           // for now the only type allowed is int32_t
       fp->write_long(o->me->lvars[i]);
     }
   }
@@ -1943,17 +1944,17 @@ void level::write_objects(bFILE *fp, object_node *save_list)
 }
 
 
-long level::total_object_links(object_node *list)
+int32_t level::total_object_links(object_node *list)
 {
-  long tl=0;
+  int32_t tl=0;
   for (object_node *o=list;o;o=o->next)
     tl+=o->me->total_objects();
   return tl;
 }
 
-long level::total_light_links(object_node *list)
+int32_t level::total_light_links(object_node *list)
 {
-  long tl=0;
+  int32_t tl=0;
   for (object_node *o=list;o;o=o->next)
     tl+=o->me->total_lights();
   return tl;
@@ -1973,11 +1974,11 @@ void level::write_links(bFILE *fp, object_node *save_list, object_node *exclude_
     for (;i<o->me->total_objects();i++)
     {
       fp->write_long(x);
-      long x=object_to_number_in_list(o->me->get_object(i),save_list); 
+      int32_t x=object_to_number_in_list(o->me->get_object(i),save_list); 
       if (x)
         fp->write_long(x);
       else                            // save links to excluded items as negative
-        fp->write_long((long)(-(object_to_number_in_list(o->me,exclude_list))));
+        fp->write_long((int32_t)(-(object_to_number_in_list(o->me,exclude_list))));
     }
   }
 
@@ -2007,12 +2008,12 @@ void level::load_links(bFILE *fp, spec_directory *sd,
     fp->seek(se->offset,0);
     if (fp->read_byte()==RC_L)
     {
-      long t=fp->read_long();
+      int32_t t=fp->read_long();
       while (t)
       {
-	long x1=fp->read_long();
+	int32_t x1=fp->read_long();
 	CONDITION(x1>=0,"expected x1 for object link to be > 0\n");
-	long x2=fp->read_long();
+	int32_t x2=fp->read_long();
 	game_object *p,*q=number_to_object_in_list(x1,save_list);
 	if (x2>0)
 	  p=number_to_object_in_list(x2,save_list);
@@ -2032,11 +2033,11 @@ void level::load_links(bFILE *fp, spec_directory *sd,
     fp->seek(se->offset,0);
     if (fp->read_byte()==RC_L)
     {
-      long t=fp->read_long();
+      int32_t t=fp->read_long();
       while (t)
       {
-	long x1=fp->read_long();
-	long x2=fp->read_long();
+	int32_t x1=fp->read_long();
+	int32_t x2=fp->read_long();
 	game_object *p=number_to_object_in_list(x1,save_list);
 	if (p)
 	  p->add_light(number_to_light(x2));
@@ -2106,11 +2107,11 @@ void level::load_options(spec_directory *sd, bFILE *fp)
     if (fp->read_byte()==RC_L)
     {
       area_controller *l=NULL,*p;
-      long ta=fp->read_long();
+      int32_t ta=fp->read_long();
       int i=0;
       for (;i<ta;i++)
       {
-	long x,y,w,h;
+	int32_t x,y,w,h;
 	x=fp->read_long();
 	y=fp->read_long();
 	w=fp->read_long();
@@ -2202,7 +2203,7 @@ int level::save(char *filename, int save_all)
 				dprintf("unable to open backup file %s\n", bkname );
 			else
 			{
-				long size = fp->file_size();
+				int32_t size = fp->file_size();
 				uchar *buf = (uchar *)jmalloc(0x1000,"copy buf");
 				int tr = 1;
 				while( size && tr )
@@ -2366,13 +2367,13 @@ level::level(int width, int height, char *name)
   fg_height=height;
   calc_bgsize(fg_width,fg_height,bg_width,bg_height);
   
-  map_bg=(unsigned short *)jmalloc(sizeof(short)*bg_width*bg_height,"map bg");
-  map_fg=(unsigned short *)jmalloc(sizeof(short)*fg_width*fg_height,"map fg");
+  map_bg=(uint16_t *)jmalloc(sizeof(int16_t)*bg_width*bg_height,"map bg");
+  map_fg=(uint16_t *)jmalloc(sizeof(int16_t)*fg_width*fg_height,"map fg");
 
 
 
-  memset(map_bg,0,sizeof(short)*bg_width*bg_height);
-  memset(map_fg,0,sizeof(short)*fg_width*fg_height);
+  memset(map_bg,0,sizeof(int16_t)*bg_width*bg_height);
+  memset(map_fg,0,sizeof(int16_t)*fg_width*fg_height);
 
   int i;  
   for (i=0;i<fg_width;i++)
@@ -2575,9 +2576,9 @@ game_object *level::find_self(game_object *me)
   return me;
 }
 
-game_object *level::find_object(long x, long y)
+game_object *level::find_object(int32_t x, int32_t y)
 {
-  long x1,y1,x2,y2;  
+  int32_t x1,y1,x2,y2;  
   game_object *o=first;
   for (;o;o=o->next)
   {
@@ -2588,23 +2589,23 @@ game_object *level::find_object(long x, long y)
   return NULL; 
 }
 
-long last_tile_hit_x,last_tile_hit_y;
+int32_t last_tile_hit_x,last_tile_hit_y;
 
 #define remapx(x) (x==0 ? -1 : x==tl-1 ? tl+1 : x)
 #define remapy(y) (y==0 ? -1 : y==th-1 ? th+1 : y)
 
-void level::foreground_intersect(long x1, long y1, long &x2, long &y2)
+void level::foreground_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y2)
 {
 /*  if (x1==x2)
   { vforeground_intersect(x1,y1,y2);
     return ;
   }  */
 
-  long tl=the_game->ftile_width(),th=the_game->ftile_height(),
+  int32_t tl=the_game->ftile_width(),th=the_game->ftile_height(),
     j,
     xp1,yp1,xp2,yp2,    // starting and ending points of block line segment 
     swap;               // temp var
-  long blockx1,blocky1,blockx2,blocky2,block,bx,by;
+  int32_t blockx1,blocky1,blockx2,blocky2,block,bx,by;
   point_list *block_list;
   unsigned char *bdat;
 
@@ -2641,7 +2642,7 @@ void level::foreground_intersect(long x1, long y1, long &x2, long &y2)
         unsigned char total=block_list->tot;
         bdat=block_list->data;
         unsigned char *ins=f->points->inside;
-	long xo=bx*tl,yo=by*th;
+	int32_t xo=bx*tl,yo=by*th;
         for (j=0;j<total-1;j++,ins++)
         {
           // find the starting and ending points for this segment
@@ -2655,7 +2656,7 @@ void level::foreground_intersect(long x1, long y1, long &x2, long &y2)
 	  yp2=yo+remapy(bdat[1]);
 
 
-	  long ox2=x2,oy2=y2;
+	  int32_t ox2=x2,oy2=y2;
           if (*ins)	  
             setback_intersect(x1,y1,x2,y2,xp1,yp1,xp2,yp2,1); 
           else
@@ -2673,12 +2674,12 @@ void level::foreground_intersect(long x1, long y1, long &x2, long &y2)
 }
 
 
-void level::vforeground_intersect(long x1, long y1, long &y2)
+void level::vforeground_intersect(int32_t x1, int32_t y1, int32_t &y2)
 {
-  long tl=f_wid,th=f_hi,
+  int32_t tl=f_wid,th=f_hi,
     j,
     xp1,yp1,xp2,yp2;    // starting and ending points of block line segment temp var
-  long blocky1,blocky2,block,bx,by,checkx;
+  int32_t blocky1,blocky2,block,bx,by,checkx;
   point_list *block_list;
   unsigned char *bdat;
 
@@ -2716,7 +2717,7 @@ void level::vforeground_intersect(long x1, long y1, long &y2)
     bdat=block_list->data;
     unsigned char *ins=f->points->inside;
 
-//    long xo=bx*tl,yo=by*th;
+//    int32_t xo=bx*tl,yo=by*th;
     for (j=0;j<total-1;j++,ins++)
     {
       // find the starting and ending points for this segment
@@ -2730,7 +2731,7 @@ void level::vforeground_intersect(long x1, long y1, long &y2)
       yp2=remapy(bdat[1]);
 
 
-      long oy2=y2;
+      int32_t oy2=y2;
       if (*ins)	  
         setback_intersect(checkx,y1,checkx,y2,xp1,yp1,xp2,yp2,1); 
       else
@@ -2747,7 +2748,7 @@ void level::vforeground_intersect(long x1, long y1, long &y2)
 
 
 
-void level::send_signal(long signal)
+void level::send_signal(int32_t signal)
 {
   if (signal)   // signal 0 is never sent!
   {
@@ -2760,7 +2761,7 @@ void level::send_signal(long signal)
 
 int level::crush(game_object *by_who, int xamount, int yamount)
 {
-  long xv,yv,crushed=0;  
+  int32_t xv,yv,crushed=0;  
   game_object *o=first_active;
   for (;o;o=o->next_active)
   {
@@ -2797,14 +2798,14 @@ int level::crush(game_object *by_who, int xamount, int yamount)
 int level::platform_push(game_object *by_who, int xamount, int yamount)
 {
   int failed=0;
-  long xv,yv;
+  int32_t xv,yv;
   game_object *o=first_active;
   for (;o;o=o->next_active)  
   {
     if (o->is_playable() && o->state!=dieing && o->state!=dead)  
     {      
       // check to see if the platform is going up and will run into us.      
-      long tvx,tvy;
+      int32_t tvx,tvy;
       if (yamount<0)
       {
 	tvx=-xamount;
@@ -2847,7 +2848,7 @@ int level::platform_push(game_object *by_who, int xamount, int yamount)
 
 int level::push_characters(game_object *by_who, int xamount, int yamount)
 {
-  long xv,yv;
+  int32_t xv,yv;
   int failed=0;
   game_object *o=first_active;
   for (;o;o=o->next_active)  
@@ -2856,7 +2857,7 @@ int level::push_characters(game_object *by_who, int xamount, int yamount)
     {      
       xv=-xamount;    
       yv=-yamount;
-      long tvx,tvy;
+      int32_t tvx,tvy;
       if (xv>0) tvx=xv+1; else if (xv<0) tvx=xv-1; else tvx=0;
       if (yv>0) tvy=yv+1; else if (yv<0) tvx=yv-1; else tvy=0;
       if (o->try_move(o->x+xamount,o->y+yamount,tvx,tvy,3)==by_who)
@@ -2876,7 +2877,7 @@ int level::push_characters(game_object *by_who, int xamount, int yamount)
 
 game_object *level::find_xrange(int x, int y, int type, int xd)
 {
-  long find_ydist=100000;
+  int32_t find_ydist=100000;
   game_object *find=NULL;
   game_object *o=first_active;
   for (;o;o=o->next_active)  
@@ -2899,7 +2900,7 @@ game_object *level::find_xrange(int x, int y, int type, int xd)
 
 game_object *level::find_xclosest(int x, int y, int type, game_object *who)
 {
-  long find_ydist=100000,find_xdist=0xffffff;
+  int32_t find_ydist=100000,find_xdist=0xffffff;
   game_object *find=NULL;
   game_object *o=first_active;
   for (;o;o=o->next_active)  
@@ -2929,7 +2930,7 @@ game_object *level::find_xclosest(int x, int y, int type, game_object *who)
 
 game_object *level::find_closest(int x, int y, int type, game_object *who)
 {
-  long find_dist=100000;
+  int32_t find_dist=100000;
   game_object *find=NULL;
   game_object *o=first_active;
   for (;o;o=o->next_active)  
@@ -2984,7 +2985,7 @@ game_object *level::find_type(int type, int skip)
   return l;
 }
 
-void level::hurt_radius(long x, long y,long r, long m, game_object *from, game_object *exclude, 
+void level::hurt_radius(int32_t x, int32_t y,int32_t r, int32_t m, game_object *from, game_object *exclude, 
 			int max_push)
 {
   if (r<1) return ;   // avoid dev vy zero
@@ -2993,8 +2994,8 @@ void level::hurt_radius(long x, long y,long r, long m, game_object *from, game_o
   {
     if (o!=exclude && o->hurtable())
     {
-      long y1=o->y,y2=o->y-o->picture()->height();
-      long cx=abs(o->x-x),cy1=abs(y1-y),d1,d2,cy2=abs(y2-y);
+      int32_t y1=o->y,y2=o->y-o->picture()->height();
+      int32_t cx=abs(o->x-x),cy1=abs(y1-y),d1,d2,cy2=abs(y2-y);
       if (cx<cy1)
         d1=cx+cy1-(cx>>1);
       else d1=cx+cy1-(cy1>>1);
@@ -3055,7 +3056,7 @@ game_object *level::get_random_start(int min_player_dist, view *exclude)
     { 
       if (v!=exclude)
       {
-	long cx=abs(v->x_center()-o->x),cy=abs(v->y_center()-o->y),d;
+	int32_t cx=abs(v->x_center()-o->x),cy=abs(v->y_center()-o->y),d;
 	if (cx<cy)
           d=cx+cy-(cx>>1);
 	else d=cx+cy-(cy>>1);
@@ -3151,15 +3152,15 @@ void level::add_all_block(game_object *who)
 }
 
 
-game_object *level::find_object_in_area(long x, long y, long x1, long y1, long x2, long y2,
+game_object *level::find_object_in_area(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
 				     Cell *list, game_object *exclude)
 {
   game_object *closest=NULL;
-  long closest_distance=0xfffffff,distance,xo,yo;
+  int32_t closest_distance=0xfffffff,distance,xo,yo;
   game_object *o=first_active;
   for (;o;o=o->next_active)
   {
-    long xp1,yp1,xp2,yp2;
+    int32_t xp1,yp1,xp2,yp2;
     o->picture_space(xp1,yp1,xp2,yp2);
 
 
@@ -3187,15 +3188,15 @@ game_object *level::find_object_in_area(long x, long y, long x1, long y1, long x
 
 
 
-game_object *level::find_object_in_angle(long x, long y, long start_angle, long end_angle,
+game_object *level::find_object_in_angle(int32_t x, int32_t y, int32_t start_angle, int32_t end_angle,
 				    void *list, game_object *exclude)
 {
   game_object *closest=NULL;
-  long closest_distance=0xfffffff,distance,xo,yo;
+  int32_t closest_distance=0xfffffff,distance,xo,yo;
   game_object *o=first_active;
   for (;o;o=o->next_active)
   {
-    long angle=lisp_atan2(o->y-y,o->x-x);
+    int32_t angle=lisp_atan2(o->y-y,o->x-x);
     if (((start_angle<=end_angle && (angle>=start_angle && angle<=end_angle))
 	|| (start_angle>end_angle && (angle>=start_angle || angle<=end_angle)))
 	&& o!=exclude)
@@ -3249,15 +3250,15 @@ void level::write_object_info(char *filename)
     game_object *o=first;
     for (;o;o=o->next)
     {
-      fprintf(fp,"%3d %s %4ld %4ld %4ld %4ld %04d\n",i++,object_names[o->otype],o->x,o->y,
-	      o->xvel(),o->yvel(),o->current_frame);
+      fprintf(fp,"%3d %s %4ld %4ld %4ld %4ld %04d\n",i++,object_names[o->otype],(long)o->x,(long)o->y,
+	      (long)o->xvel(),(long)o->yvel(),o->current_frame);
     }
     fclose(fp);
   }
 }
 
 
-area_controller::area_controller(long X, long Y, long W, long H, area_controller *Next)
+area_controller::area_controller(int32_t X, int32_t Y, int32_t W, int32_t H, area_controller *Next)
 { 
   x=X; y=Y; w=W; h=H; 
   next=Next; active=0; 
