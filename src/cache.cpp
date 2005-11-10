@@ -862,12 +862,11 @@ long cache_list::reg_lisp_block(Cell *block)
     {
       if (cache_read_file)
       {
-				delete cache_read_file;
-				cache_read_file=NULL;
-			
-				cache_file=new jFILE(lfname,"ab");	
-      } else cache_file=new jFILE(lfname,"wb");	 // first time we opened
+	delete cache_read_file;
+	cache_read_file=NULL;
 
+	cache_file=new jFILE(lfname,"ab");	
+      } else cache_file=new jFILE(lfname,"wb");	 // first time we opened
     }
     if (cache_file->open_failure()) 
     { 
