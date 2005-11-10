@@ -202,7 +202,7 @@ void calc_light_table(palette *pal)
 	}
 
 	char *lightpath;
-	lightpath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 9, "lightpath" );
+	lightpath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 9 + 1, "lightpath" );
 	sprintf( lightpath, "%slight.tbl", get_save_filename_prefix() );
 
 	bFILE *fp=open_file( lightpath, "rb" );
