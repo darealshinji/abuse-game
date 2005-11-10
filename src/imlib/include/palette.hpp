@@ -27,7 +27,7 @@ public :
   palette(bFILE *fp);
   void set(int x, unsigned char red, unsigned char green, unsigned char blue);
   void get(int x, unsigned char &red, unsigned char &green, unsigned char &blue);
-  long getquad(int x);
+  uint32_t getquad(int x);
   unsigned int red(int x) { return pal[x].red; }
   unsigned int green(int x) { return pal[x].green; }
   unsigned int blue(int x) { return pal[x].blue; }
