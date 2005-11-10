@@ -11,6 +11,7 @@ class status_manager
   virtual void update(int percentage) = 0;
   virtual void pop() = 0;
   virtual void force_display() { ; }
+  virtual ~status_manager() {}
 } ;
 
 
