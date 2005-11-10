@@ -10,6 +10,7 @@ class visual_object
   virtual void draw(image *screen, int x, int y, window_manager *wm, filter *f) = 0;
   virtual int width(window_manager *wm) = 0;
   virtual int height(window_manager *wm) = 0;
+  virtual ~visual_object() {}
 } ;
 
 
