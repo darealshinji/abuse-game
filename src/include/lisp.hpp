@@ -1,6 +1,8 @@
 #ifndef __LISP_HPP_
 #define __LISP_HPP_
 
+#include <stdint.h>
+
 #include "lisp_opt.hpp"
 
 #ifdef L_PROFILE
@@ -34,7 +36,7 @@ enum { L_BAD_CELL,   // error catching type
        L_OBJECT_VAR, L_1D_ARRAY,
        L_FIXED_POINT, L_COLLECTED_OBJECT };
 
-typedef long ltype;    // make sure structures aren't packed differently on various compiler
+typedef uint64_t ltype;    // make sure structures aren't packed differently on various compiler
                        // and sure that word, etc are word alligned
 
 struct lisp_object_var
@@ -82,7 +84,7 @@ struct lisp_user_function
 {
   ltype type;
 #ifndef NO_LIBS
-  long alist,blist;      // id for cached blocks
+  intptr_t alist,blist;      // id for cached blocks
 #else
   void *arg_list,*block_list;
 #endif
@@ -103,8 +105,8 @@ struct lisp_string
 struct lisp_character
 {
   ltype type;
-  short pad;
-  unsigned short ch;
+  int16_t pad;
+  uint16_t ch;
 } ;
 
 struct lisp_pointer
@@ -117,7 +119,7 @@ struct lisp_pointer
 struct lisp_fixed_point
 {
   ltype type;
-  long x;
+  int32_t x;
 } ;
 
 
@@ -155,7 +157,7 @@ void resize_perm(int new_size);
 lisp_symbol *make_find_symbol(char *name);
 
 void push_onto_list(void *object, void *&list);
-lisp_symbol *add_c_object(void *symbol, short number);
+lisp_symbol *add_c_object(void *symbol, int16_t number);
 lisp_symbol *add_c_function(char *name, short min_args, short max_args, short number);
 lisp_symbol *add_c_bool_fun(char *name, short min_args, short max_args, short number);
 lisp_symbol *add_lisp_function(char *name, short min_args, short max_args, short number);
@@ -166,13 +168,13 @@ void print_trace_stack(int max_levels);
 
 lisp_number *new_lisp_number(long num);
 lisp_pointer *new_lisp_pointer(void *addr);
-lisp_character *new_lisp_character(unsigned short ch);
+lisp_character *new_lisp_character(uint16_t ch);
 lisp_string *new_lisp_string(char *string);
 lisp_string *new_lisp_string(char *string, int length);
-lisp_string *new_lisp_string(long length);
-lisp_fixed_point *new_lisp_fixed_point(long x);
-lisp_object_var *new_lisp_object_var(short number);
-lisp_1d_array   *new_lisp_1d_array(unsigned short size, void *rest);
+lisp_string *new_lisp_string(int length);
+lisp_fixed_point *new_lisp_fixed_point(int32_t x);
+lisp_object_var *new_lisp_object_var(int16_t number);
+lisp_1d_array   *new_lisp_1d_array(int size, void *rest);
 lisp_sys_function *new_lisp_sys_function(int min_args, int max_args, int fun_number);
 lisp_sys_function *new_lisp_c_function(int min_args, int max_args, int fun_number);
 lisp_sys_function *new_lisp_c_bool(int min_args, int max_args, int fun_number);
@@ -180,7 +182,7 @@ lisp_sys_function *new_lisp_c_bool(int min_args, int max_args, int fun_number);
 #ifdef NO_LIBS
 lisp_user_function *new_lisp_user_function(void *arg_list, void *block_list);
 #else
-lisp_user_function *new_lisp_user_function(long arg_list, long block_list);
+lisp_user_function *new_lisp_user_function(intptr_t arg_list, intptr_t block_list);
 #endif
 
 lisp_sys_function *new_user_lisp_function(int min_args, int max_args, int fun_number);

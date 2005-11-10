@@ -111,7 +111,7 @@ int sound_init( int argc, char **argv )
 
 	// Check for the sfx directory, disable sound if we can't find it.
 	datadir = get_filename_prefix();
-	sfxdir = (char *)jmalloc( strlen( datadir ) + 6, "sfxdir" );
+	sfxdir = (char *)jmalloc( strlen( datadir ) + 5 + 1, "sfxdir" );
 	sprintf( sfxdir, "%s/sfx/", datadir );
 	if( (fd = fopen( sfxdir,"r" )) == NULL )
 	{
