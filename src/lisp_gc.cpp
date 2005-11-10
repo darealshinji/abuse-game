@@ -240,6 +240,8 @@ static void collect_stacks()
 
 void collect_space(int which_space) // should be tmp or permenant
 {
+  return; /* XXX */
+
   int old_space=current_space;
   cstart=(uint8_t *)space[which_space];
   cend=(uint8_t *)free_space[which_space];
