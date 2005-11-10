@@ -1421,7 +1421,7 @@ game::game(int argc, char **argv)
 
 //	ProfilerInit(collectDetailed, bestTimeBase, 2000, 200); //prof
 	char *fastpath;
-	fastpath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 13, "fastpath" );
+	fastpath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 12 + 1, "fastpath" );
 	sprintf( fastpath, "%sfastload.dat", get_save_filename_prefix() );
 	fast_load_start_recording( fastpath );
 	load_data(argc,argv);  
