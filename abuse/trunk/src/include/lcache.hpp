@@ -5,7 +5,7 @@
 #ifdef SCADALISP
 #define can_cache_lisp() 0
 #else
-#define can_cache_lisp() 1
+#define can_cache_lisp() 0 /* XXX */
 #endif
 
 long block_size(Cell *level);              // return number of bytes to save this block of code
