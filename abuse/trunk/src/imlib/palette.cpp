@@ -88,13 +88,13 @@ int palette::find_color(unsigned char r, unsigned char g, unsigned char b)
   return find;
 }
 
-long palette::getquad(int x)
+uint32_t palette::getquad(int x)
 { char entry[4];
   entry[3]=0;
   entry[2]=pal[x].red;
   entry[1]=pal[x].green;
   entry[0]=pal[x].blue;
-  return *((long *)entry);
+  return *((uint32_t *)entry);
 }
 
 
@@ -522,12 +522,16 @@ palette *last_loaded()
 
 void palette::fade_to(int total_fades, int fade_on, int dest_r, int dest_g, int dest_b)
 {
-  unsigned char *sl=(unsigned char *)addr();
-  int i;  
+  uint8_t *sl=(uint8_t *)addr();
+  uint8_t x;
+  int i;
   for (i=0;i<ncolors;i++)
   {
-    *(sl++)=(( dest_r-(int)*sl)*fade_on/total_fades+*sl);
-    *(sl++)=(( dest_g-(int)*sl)*fade_on/total_fades+*sl);
-    *(sl++)=(( dest_b-(int)*sl)*fade_on/total_fades+*sl);    
+    x=(( dest_r-(int)*sl)*fade_on/total_fades+*sl);
+    *(sl++)=x;
+    x=(( dest_g-(int)*sl)*fade_on/total_fades+*sl);
+    *(sl++)=x;
+    x=(( dest_b-(int)*sl)*fade_on/total_fades+*sl);    
+    *(sl++)=x;
   }  
 }
