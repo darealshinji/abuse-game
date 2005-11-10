@@ -35,7 +35,7 @@ long block_size(Cell *level)  // return size needed to recreate this block
     { ret=sizeof(lisp_pointer); }
     else ret=0;
   }
-#ifdef WORD_ALLIGN
+#ifdef WORD_ALIGN
   return (ret+3)&(~3);
 #else
   return ret;

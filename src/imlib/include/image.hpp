@@ -118,7 +118,7 @@ public :
   int16_t  height             () { return (int16_t)h; }
   void     scroll             (int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, int16_t yd);
   void     fill_image         (image *screen, int16_t x1, int16_t y1, int16_t x2, int16_t y2, 
-			      int16_t allign=1);
+			      int16_t align=1);
   void     put_image          (image *screen, int16_t x, int16_t y, char transparent=0);
   void     put_part           (image *screen, int16_t x, int16_t y, int16_t x1, int16_t y1, 
 				     int16_t x2, int16_t y2, char transparent=0);

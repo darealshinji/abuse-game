@@ -416,7 +416,7 @@ void image::put_image(image *screen, int16_t x, int16_t y, char transparent)
   }
 }
 
-void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t allign)
+void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t align)
 {
   int16_t i,j,w,xx,start,xl,starty;
   uint8_t *pg1,*pg2;
@@ -438,7 +438,7 @@ void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_
     return ;
   screen->add_dirty(x1,y1,x2,y2);
   w=width();
-  if (allign)
+  if (align)
   {
     start=x1%w;
     starty=y1%height();
