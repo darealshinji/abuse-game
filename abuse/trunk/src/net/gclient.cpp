@@ -37,7 +37,7 @@ int game_client::process_server_command()
 
       if (tick==base->packet.tick_received() && !wait_local_input)    // asking for this tick?  make sure is collected
       {
-	fprintf(stderr,"resending client packet %d to server\n");
+	fprintf(stderr,"resending client packet %d to server\n",base->packet.tick_received());
 	net_packet *pack=&base->packet;
 	game_sock->write(pack->data,pack->packet_size()+pack->packet_prefix_size(),server_data_port); 
 
