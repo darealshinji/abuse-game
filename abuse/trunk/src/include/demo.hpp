@@ -33,7 +33,7 @@ extern int event_waiting(window_manager *wm);
 
 
 
-extern int last_demo_mx,last_demo_my,last_demo_mbut;
+extern int32_t last_demo_mx,last_demo_my,last_demo_mbut;
 //extern ulong demo_tick_on;
 #endif
 

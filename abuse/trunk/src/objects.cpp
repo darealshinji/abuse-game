@@ -81,7 +81,7 @@ obj_desc object_descriptions[TOTAL_OBJECT_VARS]={
 
 			      };
   
-long game_object::get_var_by_name(char *name, int &error)
+int32_t game_object::get_var_by_name(char *name, int &error)
 {
   error=0;
   int i=0;
@@ -111,7 +111,7 @@ long game_object::get_var_by_name(char *name, int &error)
   return 0;
 }
 
-int game_object::set_var_by_name(char *name, long value)
+int game_object::set_var_by_name(char *name, int32_t value)
 {
   int i=0;
   for (;i<TOTAL_OBJECT_VARS;i++)
@@ -143,7 +143,7 @@ int simple_object::var_type(int x)
 }
 
 
-void simple_object::set_var(int xx, ulong v)
+void simple_object::set_var(int xx, uint32_t v)
 {
   switch (xx)
   {
@@ -183,7 +183,7 @@ void simple_object::set_var(int xx, ulong v)
   }
 }
 
-long simple_object::get_var(int xx)
+int32_t simple_object::get_var(int xx)
 {
   switch (xx)
   {
@@ -369,13 +369,13 @@ void game_object::morph_into(int type, void (*stat_fun)(int), int anneal, int fr
 
 void game_object::draw_above(view *v)
 {
-  long x1,y1,x2,y2,sy1,sy2,sx,i;
+  int32_t x1,y1,x2,y2,sy1,sy2,sx,i;
   picture_space(x1,y1,x2,y2);    
 
   the_game->game_to_mouse(x1,y1,v,sx,sy2);
   if (sy2>=v->cy1)
   {
-    long draw_to=y1-(sy2-v->cy1),tmp=x;
+    int32_t draw_to=y1-(sy2-v->cy1),tmp=x;
     current_level->foreground_intersect(x,y1,tmp,draw_to);     
     the_game->game_to_mouse(x1,draw_to,v,i,sy1);     // calculate sy1
 
@@ -455,8 +455,8 @@ void game_object::do_flinch(game_object *from)
 }
 
    
-void game_object::do_damage(int amount, game_object *from, long hitx, long hity, 
-			    long push_xvel, long push_yvel) 
+void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t hity, 
+			    int32_t push_xvel, int32_t push_yvel) 
 {
 
   void *d=figures[otype]->get_fun(OFUN_DAMAGE);  
@@ -526,8 +526,8 @@ void game_object::do_damage(int amount, game_object *from, long hitx, long hity,
 #endif
 }
 
-void game_object::damage_fun(int amount, game_object *from, long hitx, long hity, 
-			    long push_xvel, long push_yvel) 
+void game_object::damage_fun(int amount, game_object *from, int32_t hitx, int32_t hity, 
+			    int32_t push_xvel, int32_t push_yvel) 
 { 
   if (!hurtable() || !alive()) return ;
 
@@ -568,7 +568,7 @@ int game_object::facing_attacker(int attackerx)
 }
 
 
-void game_object::picture_space(long &x1, long &y1,long &x2, long &y2)
+void game_object::picture_space(int32_t &x1, int32_t &y1,int32_t &x2, int32_t &y2)
 {
   int xc=x_center(),w=picture()->width(),h=picture()->height();  
   if (direction>0)
@@ -604,7 +604,7 @@ int game_object::next_picture()
 }
 
 
-long game_object::x_center()
+int32_t game_object::x_center()
 {
   return current_sequence()->x_center(current_frame);   
 }
@@ -747,12 +747,12 @@ void game_object::drawer()
   }
 }
 
-game_object *game_object::try_move(long x, long y, long &xv, long &yv, int checks)
+game_object *game_object::try_move(int32_t x, int32_t y, int32_t &xv, int32_t &yv, int checks)
 {
   if (xv || yv)  // make sure they are suggesting movement
   {    
     game_object *who1=NULL,*who2=NULL;      // who did we intersect?  
-    long x2,y2,h;  
+    int32_t x2,y2,h;  
 
     if (checks&1)
     {      
@@ -790,7 +790,7 @@ game_object *game_object::try_move(long x, long y, long &xv, long &yv, int check
 
 void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
 {
-  long ret=0;
+  int32_t ret=0;
   if (hp()<=0)
   {
     if (state!=dead)
@@ -815,8 +815,8 @@ void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
     } 
   }
 
-  long fxv=sfxvel()+sfxacel(),fyv=sfyvel()+sfyacel();
-  long xv=xvel()+xacel()+(fxv>>8),yv=yvel()+yacel()+(fyv>>8);
+  int32_t fxv=sfxvel()+sfxacel(),fyv=sfyvel()+sfyacel();
+  int32_t xv=xvel()+xacel()+(fxv>>8),yv=yvel()+yacel()+(fyv>>8);
 
   if (xv!=xvel() || yv!=yvel())   // only store vel's if changed so we don't increase object size
   {
@@ -833,13 +833,13 @@ void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
  
   if (fxv || fyv || xv || yv)   // don't even try if there is no velocity
   {
-    long ffx=fx()+sfxvel(),ffy=fy()+sfyvel();
-    long nxv=xvel()+(ffx>>8);
-    long nyv=yvel()+(ffy>>8);
+    int32_t ffx=fx()+sfxvel(),ffy=fy()+sfyvel();
+    int32_t nxv=xvel()+(ffx>>8);
+    int32_t nyv=yvel()+(ffy>>8);
     set_fx(ffx&0xff);
     set_fy(ffy&0xff);
     
-    long old_nxv=nxv,old_nyv=nyv;
+    int32_t old_nxv=nxv,old_nyv=nyv;
     game_object *hit_object=try_move(x,y,nxv,nyv,3);   // now find out what velocity is safe to use
     
 /*    if (get_cflag(CFLAG_STOPPABLE))
@@ -852,7 +852,7 @@ void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
     y+=nyv;
     if (old_nxv!=nxv || old_nyv!=nyv)
     {
-      long lx=last_tile_hit_x,ly=last_tile_hit_y;
+      int32_t lx=last_tile_hit_x,ly=last_tile_hit_y;
       stop();
       if (old_nxv==0)
       {
@@ -864,7 +864,7 @@ void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
 	else if (old_nxv<0) ret|=BLOCKED_LEFT;
       } else
       {
-	long tx=(old_nxv>0 ? 1 : -1),ty=0;
+	int32_t tx=(old_nxv>0 ? 1 : -1),ty=0;
 	try_move(x,y,tx,ty,3);
 	if (!tx) 	
 	  ret|=(old_nxv>0 ? BLOCKED_RIGHT : BLOCKED_LEFT);	
@@ -905,7 +905,7 @@ int game_object::tick()      // returns blocked status
 {
   int blocked=0;
 
-  long xt=0,yt=2;
+  int32_t xt=0,yt=2;
   try_move(x,y-2,xt,yt,1);    // make sure we are not falling through the floor
   y=y-2+yt;
   
@@ -925,12 +925,12 @@ int game_object::tick()      // returns blocked status
   }
   
   // first let's move the guy acording to his physics
-  long xa=xacel(),ya=yacel(),fxa=sfxacel(),fya=sfyacel();
+  int32_t xa=xacel(),ya=yacel(),fxa=sfxacel(),fya=sfyacel();
   if (xa || ya || fxa || fya)
   {
     int fxv=sfxvel(),fyv=sfyvel();
     fxv+=fxa;  fyv+=fya;    
-    long xv=xvel()+xa+(fxv>>8); 
+    int32_t xv=xvel()+xa+(fxv>>8); 
     set_xvel(xvel()+xa+(fxv>>8));
     set_yvel(yvel()+ya+(fyv>>8));
     set_fxvel(fxv&0xff);
@@ -938,14 +938,14 @@ int game_object::tick()      // returns blocked status
   }
   
   // check to see if this advancement causes him to collide with objects
-  long old_vy=yvel(),old_vx=xvel();  // save the correct veloicties
+  int32_t old_vy=yvel(),old_vx=xvel();  // save the correct veloicties
 
   if (old_vx || old_vy)
   {
     int up=0;
     if (yvel()<=0)  // if we are going up or a strait across check up and down
     up=2;
-    long xv=xvel(),yv=yvel();
+    int32_t xv=xvel(),yv=yvel();
     game_object *h=try_move(x,y,xv,yv,1|up);       // now find out what velocity is safe to use
     set_xvel(xv);
     set_yvel(yv);
@@ -958,7 +958,7 @@ int game_object::tick()      // returns blocked status
     {          
       if (gravity())                         // was he going up or down?
       {	                       
-	long fall_xv=0,old_fall_vy,fall_vy;
+	int32_t fall_xv=0,old_fall_vy,fall_vy;
 	old_fall_vy=fall_vy=old_vy-yvel();             // make sure he gets all of his yvel
 	try_move(x,y,fall_xv,fall_vy,1|up);
 	if (old_vy>0 && fall_vy<old_fall_vy)       // he was trying to fall, but he hit the ground
@@ -1000,7 +1000,7 @@ int game_object::tick()      // returns blocked status
 	{
 	  if (old_vy!=0)
 	  {
-	    long testx=old_vx<0 ? -1 : 1,testy=0;    // see if we were stopped left/right
+	    int32_t testx=old_vx<0 ? -1 : 1,testy=0;    // see if we were stopped left/right
                                                      // or just up down
 	    try_move(x,y,testx,testy,1|up);
 	    if (testx==0)                           // blocked left/right, set flag
@@ -1031,9 +1031,9 @@ int game_object::tick()      // returns blocked status
       }    
       else                  // see if we can make him 'climb' the hill
       {
-	long ox=x,oy=y;       // rember orginal position in case climb doesn't work
+	int32_t ox=x,oy=y;       // rember orginal position in case climb doesn't work
 
-	long climb_xvel=0,climb_yvel=-5;	    // try to move up one pixel to step over the 
+	int32_t climb_xvel=0,climb_yvel=-5;	    // try to move up one pixel to step over the 
 	try_move(x,y,climb_xvel,climb_yvel,3);  // jutting polygon line
 	y+=climb_yvel;
 
@@ -1081,7 +1081,7 @@ int game_object::tick()      // returns blocked status
      
   if (yacel()==0 && !gravity())       // he is not falling, make sure he can't
   {
-    long nvx=0,nvy=yvel()+12;  // check three pixels below for ground
+    int32_t nvx=0,nvy=yvel()+12;  // check three pixels below for ground
     try_move(x,y,nvx,nvy,1); 
     if (nvy>11)                    // if he falls more than 2 pixels, then he falls
     {
@@ -1116,9 +1116,9 @@ void game_object::frame_advance()
   int ad=current_sequence()->get_advance(current_frame);
   if (ad && current_level)
   {
-    long xv;
+    int32_t xv;
     if (direction>0) xv=ad; else xv=-ad;
-    long yv=0;
+    int32_t yv=0;
     try_move(x,y,xv,yv,3);
     x+=xv;
   }   
@@ -1138,7 +1138,7 @@ void game_object::set_state(character_state s, int frame_direction)
 }
 
 
-game_object *create(int type, long x, long y, int skip_constructor, int aitype)
+game_object *create(int type, int32_t x, int32_t y, int skip_constructor, int aitype)
 {
   game_object *g=new game_object(type,skip_constructor);
   g->x=x; g->y=y; g->last_x=x; g->last_y=y;
@@ -1298,7 +1298,7 @@ int game_object::mover(int cx, int cy, int button)  // return false if the route
   }         // not pressing left or right, so slow down or stop
   else if (!gravity() && state!=start_run_jump)
   {    
-    long stop_acel;
+    int32_t stop_acel;
     if (xvel()<0)                                    // he was going left
     {
       stop_acel=get_ability(type(),stop_accel);    // find out how fast he can slow down
@@ -1447,21 +1447,21 @@ game_object *game_object::bmove(int &whit, game_object *exclude)
 {
 
   // first let's move the guy acording to his physics
-  long xa=xacel(),ya=yacel(),fxa=sfxacel(),fya=sfyacel();
+  int32_t xa=xacel(),ya=yacel(),fxa=sfxacel(),fya=sfyacel();
   if (xa || ya || fxa || fya)
   {
     int fxv=sfxvel(),fyv=sfyvel();
     fxv+=fxa;  fyv+=fya;    
-    long xv=xvel()+xa+(fxv>>8); 
+    int32_t xv=xvel()+xa+(fxv>>8); 
     set_xvel(xvel()+xa+(fxv>>8));
     set_yvel(yvel()+ya+(fyv>>8));
     set_fxvel(fxv&0xff);
     set_fyvel(fyv&0xff);
   }
   
-  long ox2,oy2;
+  int32_t ox2,oy2;
 
-  long nx=x+xvel(),nfx=fx()+fxvel(),ny=y+yvel(),nfy=fy()+fyvel();
+  int32_t nx=x+xvel(),nfx=fx()+fxvel(),ny=y+yvel(),nfy=fy()+fyvel();
   nx+=nfx>>8;
   ny+=nfy>>8;
  
@@ -1505,7 +1505,7 @@ int object_to_number_in_list(game_object *who, object_node *list)
   return 0;
 }
 
-game_object *number_to_object_in_list(long x, object_node *list)
+game_object *number_to_object_in_list(int32_t x, object_node *list)
 {
   if (!x) return NULL; x--;
   while (x && list) { list=list->next; x--; }
@@ -1525,9 +1525,9 @@ void delete_object_list(object_node *first)
 }
 
 
-long object_list_length(object_node *list)
+int32_t object_list_length(object_node *list)
 {
-  long x=0;
+  int32_t x=0;
   while (list) { list=list->next; x++; }
   return x;
   
@@ -1542,7 +1542,7 @@ game_object::game_object(int Type, int load)
     int t=figures[Type]->tv;
     if (t)
     {
-      lvars=(long *)jmalloc(t*4,"object vars");
+      lvars=(int32_t *)jmalloc(t*4,"object vars");
       memset(lvars,0,t*4);
     }
     else lvars=NULL;
@@ -1555,7 +1555,7 @@ game_object::game_object(int Type, int load)
 
 int game_object::reduced_state()
 {
-  long x=0;
+  int32_t x=0;
   for (int i=0;i<figures[otype]->ts;i++)
   {
     if (i==state) return x;
@@ -1606,7 +1606,7 @@ void game_object::change_type(int new_type)
     int t=figures[new_type]->tv;
     if (t)
     {
-      lvars=(long *)jmalloc(t*4,"object vars");
+      lvars=(int32_t *)jmalloc(t*4,"object vars");
       memset(lvars,0,t*4);
     }
     else lvars=NULL;

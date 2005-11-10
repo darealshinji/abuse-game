@@ -16,9 +16,9 @@ enum {  ANT_need_to_dodge,     // ant vars
 
 void *ant_ai();
 
-int can_see(game_object *o, long x1, long y1, long x2, long y2)
+int can_see(game_object *o, int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 {
-  long nx2=x2,ny2=y2;
+  int32_t nx2=x2,ny2=y2;
   current_level->foreground_intersect(x1,y1,x2,y2);
   if (x2!=nx2 || y2!=ny2) return 0;
 
@@ -94,8 +94,8 @@ static int can_hit_player(game_object *o, game_object *b)
 
 static void fire_at_player(game_object *o, game_object *b)
 {
-  long firex=o->x+(o->direction>0?15:-15),firey=o->y-15,
-       playerx=b->x+b->xvel()*8,playery=b->y-15+b->yvel()*2;
+  int32_t firex=o->x+(o->direction>0?15:-15),firey=o->y-15,
+          playerx=b->x+b->xvel()*8,playery=b->y-15+b->yvel()*2;
   if (can_see(o,o->x,o->y,firex,firey) && can_see(o,firex,firey,playerx,playery))
   {
     int angle=lisp_atan2(firey-playery,playerx-firex);
@@ -223,7 +223,7 @@ void *ant_ai()
     {
       if (!o->next_picture())
       {
-	long xv=0,yv=2;
+	int32_t xv=0,yv=2;
 	o->try_move(o->x,o->y,xv,yv,1);
 	if (yv!=0)
 	{
@@ -263,8 +263,8 @@ void *ant_ai()
 	    o->set_aistate(ANT_JUMP);
 	  else 
 	  {
-	    long xm=o->direction>0 ? get_ability(o->otype,run_top_speed) : -get_ability(o->otype,run_top_speed);
-	    long ym=0,new_xm=xm;
+	    int32_t xm=o->direction>0 ? get_ability(o->otype,run_top_speed) : -get_ability(o->otype,run_top_speed);
+	    int32_t ym=0,new_xm=xm;
 	    if (o->state!=running) o->set_state(running);
 
 	    o->try_move(o->x,o->y,new_xm,ym,3);
@@ -348,7 +348,7 @@ void *ant_ai()
       o->set_state((character_state)S_jump_up);
 //      o->set_yvel(o->yvel()+1);
       o->set_xacel(0);
-      long xv=0,yv=o->yvel();
+      int32_t xv=0,yv=o->yvel();
       o->y-=31;
       o->try_move(o->x,o->y,xv,yv,1);
       o->y+=31+yv;

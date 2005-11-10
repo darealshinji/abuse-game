@@ -25,7 +25,7 @@ class simple_object
   schar Fade_dir;
   uchar Fade_count,Fade_max;
   uchar Flags,grav_on,targetable_on;
-  long Xvel,Yvel,Xacel,Yacel;
+  int32_t Xvel,Yvel,Xacel,Yacel;
   uchar Fx,Fy,Fxvel,Fyvel,Fxacel,Fyacel;
   uchar Aitype;
   ushort Aistate,Aistate_time;
@@ -42,12 +42,12 @@ class simple_object
   int total_vars();
   char *var_name(int x);
   int   var_type(int x);
-  void set_var(int x, ulong v);
-  long get_var(int x);
+  void set_var(int x, uint32_t v);
+  int32_t get_var(int x);
 
   // leave these public, so I don't have monster code changes.
   simple_object();
-  long x,y,
+  int32_t x,y,
        last_x,last_y;              // used for frame interpolation on fast machines
   schar direction,active;
   ushort otype;
@@ -60,10 +60,10 @@ class simple_object
 
   int keep_ai_info()         { return 1; }
   uchar flags()              { return Flags; }
-  long xvel()                { return Xvel; }
-  long yvel()                { return Yvel; }
-  long xacel()               { return Xacel; }
-  long yacel()               { return Yacel; }
+  int32_t xvel()             { return Xvel; }
+  int32_t yvel()             { return Yvel; }
+  int32_t xacel()            { return Xacel; }
+  int32_t yacel()            { return Yacel; }
 
   uchar fx()                 { return Fx; }
   uchar fy()                 { return Fy; }
@@ -101,10 +101,10 @@ class simple_object
 
   void set_targetable(uchar x)    { targetable_on=x; }
   void set_flags(uchar f)         { Flags=f; }
-  void set_xvel(long xv)          { Xvel=xv; }
-  void set_yvel(long yv)          { Yvel=yv; }
-  void set_xacel(long xa)         { Xacel=xa; }
-  void set_yacel(long ya)         { Yacel=ya; }
+  void set_xvel(int32_t xv)       { Xvel=xv; }
+  void set_yvel(int32_t yv)       { Yvel=yv; }
+  void set_xacel(int32_t xa)      { Xacel=xa; }
+  void set_yacel(int32_t ya)      { Yacel=ya; }
   void set_fx(uchar x)            { Fx=x; }
   void set_fy(uchar y)            { Fy=y; }
   void set_fxvel(uchar xv)        { Fxvel=abs(xv); }

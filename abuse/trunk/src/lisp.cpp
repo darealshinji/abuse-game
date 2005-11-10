@@ -498,7 +498,7 @@ void *lpointer_value(void *lpointer)
   return ((lisp_pointer *)lpointer)->addr;  
 }
 
-long lnumber_value(void *lnumber)
+int32_t lnumber_value(void *lnumber)
 {
   switch (item_type(lnumber))
   {
@@ -2807,8 +2807,8 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       else return NULL; } break;
     case 85 :  // num2str
     {
-      char str[10];
-      sprintf(str,"%ld",lnumber_value(eval(CAR(arg_list))));
+      char str[20];
+      sprintf(str,"%ld",(long int)lnumber_value(eval(CAR(arg_list))));
       ret=new_lisp_string(str);
     } break;
     case 86 : // nconc

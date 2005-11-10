@@ -26,14 +26,14 @@
 class area_controller
 {
   public :
-  long x,y,w,h,active;
-  long ambient,view_xoff,view_yoff;
-  long ambient_speed, view_xoff_speed,view_yoff_speed;
+  int32_t x,y,w,h,active;
+  int32_t ambient,view_xoff,view_yoff;
+  int32_t ambient_speed, view_xoff_speed,view_yoff_speed;
   area_controller *next;
-  area_controller(long X, long Y, long W, long H, area_controller *Next);
+  area_controller(int32_t X, int32_t Y, int32_t W, int32_t H, area_controller *Next);
 } ;
 
-extern long last_tile_hit_x,last_tile_hit_y;
+extern int32_t last_tile_hit_x,last_tile_hit_y;
 extern int dev;
 class level        // contain map info and objects
 {
@@ -42,7 +42,7 @@ class level        // contain map info and objects
 	         bg_width,bg_height,
 	         fg_width,fg_height;  
   char *Name,*first_name;
-  long total_objs;
+  int32_t total_objs;
   game_object *first,*first_active,*last;
 
   game_object **attack_list;                // list of characters for tick which can attack someone
@@ -103,7 +103,7 @@ public :
 					  }
   void mark_seen(int x, int y) { CHECK(x>=0 && y>=0 && x<fg_width && y<fg_height);
 					  (*(map_fg+x+y*fg_width))|=0x8000; }
-  void clear_fg(long x, long y) { *(map_fg+x+y*fg_width)&=0x7fff; }
+  void clear_fg(int32_t x, int32_t y) { *(map_fg+x+y*fg_width)&=0x7fff; }
 
   unsigned short *get_fgline(int y) { CHECK(y>=0 && y<fg_height); return map_fg+y*fg_width; }
   unsigned short *get_bgline(int y) { CHECK(y>=0 && y<bg_height); return map_bg+y*bg_width; }
@@ -140,24 +140,24 @@ public :
 
   void unactivate_all();
   // forms all the objects in processing range into a linked list
-  int add_actives(long x1, long y1, long x2, long y2);  //returns total added
+  int add_actives(int32_t x1, int32_t y1, int32_t x2, int32_t y2);  //returns total added
   void pull_actives(game_object *o, game_object *&last_active, int &t);
-  int add_drawables(long x1, long y1, long x2, long y2);  //returns total added
+  int add_drawables(int32_t x1, int32_t y1, int32_t x2, int32_t y2);  //returns total added
 
-  game_object *find_object(long x, long y);
+  game_object *find_object(int32_t x, int32_t y);
 
-  game_object *damage_intersect(long x1, long y1, long &x2, long &y2, game_object *exclude);
-  game_object *boundary_setback(game_object *subject, long x1, long y1, long &x2, long &y2);
-  game_object *all_boundary_setback(game_object *subject, long x1, long y1, long &x2, long &y2);
+  game_object *damage_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y2, game_object *exclude);
+  game_object *boundary_setback(game_object *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2);
+  game_object *all_boundary_setback(game_object *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2);
   int crush(game_object *by_who, int xamount, int yamount);
   int push_characters(game_object *by_who, int xamount, int yamount);  // return 0 if fail on any.
   int platform_push(game_object *by_who, int xamount, int yamount);
-  void foreground_intersect(long x1, long y1, long &x2, long &y2);
-  void vforeground_intersect(long x1, long y1, long &y2);
+  void foreground_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y2);
+  void vforeground_intersect(int32_t x1, int32_t y1, int32_t &y2);
 
-  void hurt_radius(long x, long y,long r, long m, game_object *from, game_object *exclude,
+  void hurt_radius(int32_t x, int32_t y,int32_t r, int32_t m, game_object *from, game_object *exclude,
 		   int max_push);
-  void send_signal(long signal);
+  void send_signal(int32_t signal);
   void next_focus();
   void to_front(game_object *o);
   void to_back(game_object *o);
@@ -181,11 +181,11 @@ public :
   bFILE *create_dir(char *filename, int save_all,
 		    object_node *save_list, object_node *exclude_list);
   view *make_view_list(int nplayers);
-  long total_light_links(object_node *list);
-  long total_object_links(object_node *save_list);
-  game_object *find_object_in_area(long x, long y, long x1, long y1, 
-				   long x2, long y2, Cell *list, game_object *exclude);
-  game_object *find_object_in_angle(long x, long y, long start_angle, long end_angle,
+  int32_t total_light_links(object_node *list);
+  int32_t total_object_links(object_node *save_list);
+  game_object *find_object_in_area(int32_t x, int32_t y, int32_t x1, int32_t y1, 
+				   int32_t x2, int32_t y2, Cell *list, game_object *exclude);
+  game_object *find_object_in_angle(int32_t x, int32_t y, int32_t start_angle, int32_t end_angle,
 				    void *list, game_object *exclude);
   object_node *make_not_list(object_node *list);
   int load_player_info(bFILE *fp, spec_directory *sd, object_node *save_list);

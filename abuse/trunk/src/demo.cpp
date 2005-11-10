@@ -106,7 +106,7 @@ void demo_manager::do_inputs()
       if (get_packet(buf,size))              // get starting inputs
       {
         process_packet_commands(buf,size);      
-	long mx,my;
+	int32_t mx,my;
 	the_game->game_to_mouse(player_list->pointer_x,player_list->pointer_y,player_list,mx,my);
 	eh->set_mouse_position(small_render ? mx*2 : mx, small_render ? my*2 : my);
       }

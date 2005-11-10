@@ -47,7 +47,7 @@ class game_object : public simple_object
   sequence *current_sequence() { return figures[otype]->get_sequence(state); }
 public :
   game_object *next,*next_active;
-  long *lvars;
+  int32_t *lvars;
 
   int size();
   int decide();        // returns 0 if you want to be deleted
@@ -71,8 +71,8 @@ public :
 
   void drawer();
   void draw_above(view *v);
-  void do_damage(int amount, game_object *from, long hitx, long hity, long push_xvel, long push_yvel);
-  void damage_fun(int amount, game_object *from, long hitx, long hity, long push_xvel, long push_yvel);
+  void do_damage(int amount, game_object *from, int32_t hitx, int32_t hity, int32_t push_xvel, int32_t push_yvel);
+  void damage_fun(int amount, game_object *from, int32_t hitx, int32_t hity, int32_t push_xvel, int32_t push_yvel);
 
 
   void note_attack(game_object *whom);
@@ -93,14 +93,14 @@ public :
   void set_state(character_state s, int frame_direction=1);
   int has_sequence(character_state s) { return figures[otype]->has_sequence(s); }
 
-  game_object *try_move(long x, long y, long &xv, long &yv, int checks);  // 1=down,2=up,3=both
+  game_object *try_move(int32_t x, int32_t y, int32_t &xv, int32_t &yv, int checks);  // 1=down,2=up,3=both
   game_object *bmove(int &whit, game_object *exclude);  // ballestic move, return hit object, 
                                                         // or NULL (whit is 1 if hit wall)
   trans_image *picture() { return current_sequence()->get_frame(current_frame,direction); }
 												    
   int next_picture();
-  long x_center();  
-  long height();
+  int32_t x_center();  
+  int32_t height();
 
   void stop_acel() { set_xacel(0);  set_yacel(0); set_fxacel(0); set_fyacel(0); }
   void stop_vel() {  set_xvel(0);   set_yvel(0); set_fxvel(0);  set_fyvel(0); }
@@ -114,7 +114,7 @@ public :
   int mover(int cx, int cy, int button);
   figure *current_figure() { return current_sequence()->get_figure(current_frame); }
   int total_frames() { return current_sequence()->length(); }
-  void picture_space(long &x1, long &y1,long &x2, long &y2);
+  void picture_space(int32_t &x1, int32_t &y1,int32_t &x2, int32_t &y2);
   int tx(int x) { if (direction>0) return x-x_center(); else return x_center()-x; }
   int ty(int y) { return y-picture()->height()+1; }
   void defaults();
@@ -133,8 +133,8 @@ public :
   void reload_notify();
 
   void change_type(int new_type);
-  int set_var_by_name(char *name, long value);
-  long get_var_by_name(char *name, int &error);
+  int set_var_by_name(char *name, int32_t value);
+  int32_t get_var_by_name(char *name, int &error);
   game_object *copy();
   void change_aitype(int new_type);
   ~game_object();
@@ -150,12 +150,12 @@ class object_node  // used to create various list of objects
 
 extern game_object *current_object;
 extern view *current_view;
-game_object *create(int type, long x, long y, int skip_constructor=0, int aitype=0);
+game_object *create(int type, int32_t x, int32_t y, int skip_constructor=0, int aitype=0);
 int base_size();
 
 void delete_object_list(object_node *first);
 int          object_to_number_in_list(game_object *who, object_node *list);
-game_object *number_to_object_in_list(long x, object_node *list);
+game_object *number_to_object_in_list(int32_t x, object_node *list);
 
 
 #endif

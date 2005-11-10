@@ -95,7 +95,7 @@ int view::weapon_total(int type)
 }
 
 
-long view::xoff()
+int32_t view::xoff()
 {
   if (focus)
   {
@@ -105,7 +105,7 @@ long view::xoff()
   } else return pan_x;
 }
 
-long view::interpolated_xoff()
+int32_t view::interpolated_xoff()
 {
   if (focus)
   {
@@ -116,7 +116,7 @@ long view::interpolated_xoff()
 }
 
 
-long view::yoff()
+int32_t view::yoff()
 {
   if (focus)
   {
@@ -127,7 +127,7 @@ long view::yoff()
 }
 
 
-long view::interpolated_yoff()
+int32_t view::interpolated_yoff()
 {
   if (focus)
   {
@@ -248,10 +248,10 @@ view::view(game_object *Focus, view *Next, int number)
 
   if (total_weapons)
   {
-    weapons=(long *)jmalloc(total_weapons*sizeof(long),"weapon array");
-    last_weapons=(long *)jmalloc(total_weapons*sizeof(long),"last weapon array");
-    memset(weapons,0xff,total_weapons*sizeof(long));   // set all to -1
-    memset(last_weapons,0xff,total_weapons*sizeof(long));   // set all to -1  
+    weapons=(int32_t *)jmalloc(total_weapons*sizeof(int32_t),"weapon array");
+    last_weapons=(int32_t *)jmalloc(total_weapons*sizeof(int32_t),"last weapon array");
+    memset(weapons,0xff,total_weapons*sizeof(int32_t));   // set all to -1
+    memset(last_weapons,0xff,total_weapons*sizeof(int32_t));   // set all to -1  
   }
 
   if (total_weapons)
@@ -261,7 +261,7 @@ view::view(game_object *Focus, view *Next, int number)
   sbar.need_refresh();
 }
 
-long view::x_center() 
+int32_t view::x_center() 
 {
   if (!focus)
     return (cx1+cx2)/2;
@@ -269,7 +269,7 @@ long view::x_center()
     return focus->x; 
 }   
 
-long view::y_center() 
+int32_t view::y_center() 
 { 
   if (!focus)
     return (cy1+cy2)/2;
@@ -320,7 +320,7 @@ ushort make_sync()
 void view::get_input()
 {
 	int sug_x,sug_y,sug_b1,sug_b2,sug_b3,sug_b4;
-	long sug_px,sug_py;
+	int32_t sug_px,sug_py;
 
 // NOTE:(AK) I have commented this out so we don't use the lisp
 //		file "input.lsp" to get our key mappings.
@@ -351,9 +351,9 @@ void view::get_input()
 			sug_b4 = 1;
 		else sug_b4 = 0;
 
-		long bx = lnumber_value( CAR( ret ) );
+		int32_t bx = lnumber_value( CAR( ret ) );
 		ret = CDR( ret );
-		long by = lnumber_value( CAR( ret ) );
+		int32_t by = lnumber_value( CAR( ret ) );
 		ret = CDR( ret );
 		the_game->mouse_to_game( bx, by, sug_px, sug_py, this );
 
@@ -479,7 +479,7 @@ int view::process_input(char cmd, uchar *&pk)   // return 0 if something went wr
     } break;
     case SCMD_VIEW_RESIZE :
     { 
-      long x[8];
+      int32_t x[8];
       memcpy(x,pk,8*4);  pk+=8*4;
       cx1=lltl(x[0]);
       cy1=lltl(x[1]);
@@ -502,7 +502,7 @@ int view::process_input(char cmd, uchar *&pk)   // return 0 if something went wr
     }
     case SCMD_WEAPON_CHANGE :
     {
-      long x;
+      int32_t x;
       memcpy(&x,pk,4);  pk+=4;
       current_weapon=lltl(x);
 
@@ -817,7 +817,7 @@ int total_local_players()
 }
 
 
-void view::resize_view(long Cx1, long Cy1, long Cx2, long Cy2)
+void view::resize_view(int32_t Cx1, int32_t Cy1, int32_t Cx2, int32_t Cy2)
 {
   if (cx1!=Cx1 || cx2!=Cx2 || cy1!=Cy1 || cy2!=Cy2)
   {
@@ -857,8 +857,8 @@ void view::reset_player()
       dprintf("reset position to %d %d\n",start->x,start->y);
     } 
     focus->set_state(stopped);
-    memset(weapons,0xff,total_weapons*sizeof(long));   
-    memset(last_weapons,0xff,total_weapons*sizeof(long));   
+    memset(weapons,0xff,total_weapons*sizeof(int32_t));   
+    memset(last_weapons,0xff,total_weapons*sizeof(int32_t));   
 
     shift_down=SHIFT_DOWN_DEFAULT;
     shift_right=SHIFT_RIGHT_DEFAULT;
@@ -979,7 +979,7 @@ int total_view_vars()
 char *get_view_var_name(int num)
 { return vv_names[num]; }
 
-long view::get_view_var_value(int num)
+int32_t view::get_view_var_value(int num)
 {
   switch (num)
   {
@@ -1034,7 +1034,7 @@ long view::get_view_var_value(int num)
 
 
 
-long view::set_view_var_value(int num, long x)
+int32_t view::set_view_var_value(int num, int32_t x)
 {
   switch (num)
   {
@@ -1146,7 +1146,7 @@ void view::configure_for_area(area_controller *a)
 
 void process_packet_commands(uchar *pk, int size)
 {
-  long sync_short=-1;
+  int32_t sync_short=-1;
 
   if (!size) return ;
   pk[size]=SCMD_END_OF_PACKET;

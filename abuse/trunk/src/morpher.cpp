@@ -7,7 +7,7 @@ void morph_char::draw(game_object *who, view *v)
 {
   if (fleft)
   {
-    long rx,ry;
+    int32_t rx,ry;
     the_game->game_to_mouse(who->x-(cx>>16),who->y-(cy>>16),v,rx,ry);
     mor->show(screen,rx,ry,color_table,pal,1000);
     cx+=dcx;
