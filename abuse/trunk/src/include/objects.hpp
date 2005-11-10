@@ -27,9 +27,9 @@ extern int total_objects;
 
 
 
-#define RC_C 0
-#define RC_S 1
-#define RC_L 2
+#define RC_8 0
+#define RC_16 1
+#define RC_32 2
 
 
 

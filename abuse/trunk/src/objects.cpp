@@ -45,39 +45,39 @@ int simple_object::total_vars() { return TOTAL_OBJECT_VARS; }
 
 
 obj_desc object_descriptions[TOTAL_OBJECT_VARS]={
-				{"fade_dir",      RC_C },
-				{"frame_dir",     RC_C },
-				{"direction",     RC_C },
-				{"gravity_on",    RC_C },
-				{"fade_count",    RC_C },
+				{"fade_dir",      RC_8 },
+				{"frame_dir",     RC_8 },
+				{"direction",     RC_8 },
+				{"gravity_on",    RC_8 },
+				{"fade_count",    RC_8 },
 
-				{"fade_max",      RC_C },
-				{"active",        RC_C },
-				{"flags",         RC_C },
-				{"aitype",        RC_C },
-				{"xvel",          RC_L },
+				{"fade_max",      RC_8 },
+				{"active",        RC_8 },
+				{"flags",         RC_8 },
+				{"aitype",        RC_8 },
+				{"xvel",          RC_32 },
 
-				{"fxvel",         RC_C },
-				{"yvel",          RC_L },
-				{"fyvel",         RC_C },
-				{"xacel",         RC_L },
-				{"fxacel",        RC_C },
+				{"fxvel",         RC_8 },
+				{"yvel",          RC_32 },
+				{"fyvel",         RC_8 },
+				{"xacel",         RC_32 },
+				{"fxacel",        RC_8 },
 
-				{"yacel",         RC_L },
-				{"fyacel",        RC_C },
-				{"x",             RC_L },
-				{"fx",            RC_C },
-				{"y",             RC_L },
+				{"yacel",         RC_32 },
+				{"fyacel",        RC_8 },
+				{"x",             RC_32 },
+				{"fx",            RC_8 },
+				{"y",             RC_32 },
 
-				{"fy",            RC_C },
-				{"hp",            RC_S },
-				{"mp",            RC_S },
-				{"fmp",           RC_S },
-				{"cur_frame",     RC_S },
+				{"fy",            RC_8 },
+				{"hp",            RC_16 },
+				{"mp",            RC_16 },
+				{"fmp",           RC_16 },
+				{"cur_frame",     RC_16 },
 
-				{"aistate",       RC_S },
-				{"aistate_time",  RC_S },
-				{"targetable",    RC_C }
+				{"aistate",       RC_16 },
+				{"aistate_time",  RC_16 },
+				{"targetable",    RC_8 }
 
 			      };
   
@@ -233,11 +233,11 @@ int RC_type_size(int type)
 {
   switch (type)
   {
-    case RC_C : 
+    case RC_8 : 
     { return 1; } break;
-    case RC_S : 
+    case RC_16 : 
     { return 2; } break;
-    case RC_L : 
+    case RC_32 : 
     { return 4; } break;
   }		
   CHECK(0);
