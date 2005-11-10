@@ -74,7 +74,7 @@ static void *collect_array(void *x)
   return a;
 }
 
-static uchar *cstart,*cend,*collected_start,*collected_end;
+static uint8_t *cstart,*cend,*collected_start,*collected_end;
 
 inline void *collect_cons_cell(void *x)
 {
@@ -106,7 +106,7 @@ static void *collect_object(void *x)
 {
   void *ret=x;
 
-  if (((uchar *)x)>=cstart && ((uchar *)x)<cend)
+  if (((uint8_t *)x)>=cstart && ((uint8_t *)x)<cend)
   {
     switch (item_type(x))
     {
@@ -187,7 +187,7 @@ static void *collect_object(void *x)
     }
     ((lisp_collected_object *)x)->type=L_COLLECTED_OBJECT;
     ((lisp_collected_object *)x)->new_reference=ret;
-  } else if ((uchar *)x<collected_start || (uchar *)x>=collected_end)  
+  } else if ((uint8_t *)x<collected_start || (uint8_t *)x>=collected_end)  
   {
     if (item_type(x)==L_CONS_CELL) // still need to remap cons_cells outside of space
     {
@@ -241,16 +241,16 @@ static void collect_stacks()
 void collect_space(int which_space) // should be tmp or permenant
 {
   int old_space=current_space;
-  cstart=(uchar *)space[which_space];
-  cend=(uchar *)free_space[which_space];
+  cstart=(uint8_t *)space[which_space];
+  cend=(uint8_t *)free_space[which_space];
 
   space_size[GC_SPACE]=space_size[which_space];
   void *new_space=jmalloc(space_size[GC_SPACE],"collect lisp space");
   current_space=GC_SPACE;
   free_space[GC_SPACE]=space[GC_SPACE]=(char *)new_space;
 
-  collected_start=(uchar *)new_space;
-  collected_end=(((uchar *)new_space)+space_size[GC_SPACE]);
+  collected_start=(uint8_t *)new_space;
+  collected_end=(((uint8_t *)new_space)+space_size[GC_SPACE]);
 
   collect_symbols(lsym_root);
   collect_stacks();
@@ -260,7 +260,7 @@ void collect_space(int which_space) // should be tmp or permenant
 
   space[which_space]=(char *)new_space;
   free_space[which_space]=((char *)new_space)+
-         (((uchar *)free_space[GC_SPACE])-((uchar *)space[GC_SPACE]));
+         (((uint8_t *)free_space[GC_SPACE])-((uint8_t *)space[GC_SPACE]));
   current_space=old_space;
 }
 

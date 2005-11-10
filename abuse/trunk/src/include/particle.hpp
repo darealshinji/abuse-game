@@ -16,7 +16,7 @@ void free_pframes();
 struct part
 {
   short x,y;
-  uchar color;
+  uint8_t color;
 } ;
 
 class part_frame

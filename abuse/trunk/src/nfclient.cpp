@@ -73,11 +73,11 @@ nfs_file::nfs_file(char *filename, char *mode)
     }
 
     int remote_file_num=net_crcs->get_filenumber(local_filename);
-    ulong remote_crc=net_crcs->get_crc(remote_file_num,fail2);
+    uint32_t remote_crc=net_crcs->get_crc(remote_file_num,fail2);
     if (!fail2)
     {   
       int local_file_num=crc_man.get_filenumber(local_filename);
-      ulong local_crc=crc_man.get_crc(local_file_num,fail1);
+      uint32_t local_crc=crc_man.get_crc(local_file_num,fail1);
       if (fail1)
       {
 	bFILE *fp=new jFILE(local_filename,"rb");      

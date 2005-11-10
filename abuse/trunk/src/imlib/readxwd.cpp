@@ -105,9 +105,8 @@ short *shortP;
 long *longP;
 
 
-int bs_int(int s);
-long bs_long(long s);
-short bs_short(short s );
+int32_t bs_int32(int32_t s);
+int16_t bs_int16(int16_t s );
 
 
 HBITMAP getinit(FILE *file, palette *&pal, int *padrightP, int &xres, int &yres);)
@@ -324,7 +323,7 @@ int getpixnum(FILE *file)
 }
 
 
-short bs_short(short s )
+short bs_int16(short s )
 {
   short ss;
   unsigned char *bp, t;
@@ -337,13 +336,13 @@ short bs_short(short s )
   return ss;
 }
 
-int bs_int(int i )
+int32_t bs_int32(int32_t l )
 {
-  int ii;
-  unsigned char *bp, t;
+  int32_t ii;
+  uint8_t *bp, t;
 
   ii = i;
-  bp = (unsigned char *) &ii;
+  bp = (uint8_t *) &ii;
   t = bp[0];
   bp[0] = bp[3];
   bp[3] = t;
@@ -351,11 +350,6 @@ int bs_int(int i )
   bp[1] = bp[2];
   bp[2] = t;
   return ii;
-}
-
-long bs_long(long l )
-{
-  return bs_int( l );
 }
 
 struct BMP_header
@@ -373,7 +367,7 @@ void write_bmp(image *im, palette *pal, char *filename)
 {
   FILE *fp;
   int i,bytes;
-  unsigned char pal_quad[4];
+  uint8_t pal_quad[4];
 //  fp=fopen("d:\\windows\\256color.bmp","rb");
 //  fread(&bmp,1,sizeof(bmp),fp);
 //  fclose(fp);
@@ -410,9 +404,9 @@ void write_bmp(image *im, palette *pal, char *filename)
 image *image24(image *im, palette *pal, int rev)
 {
   image *ni;
-  unsigned char *sl1,*sl2;
+  uint8_t *sl1,*sl2;
   int i,x;
-  unsigned char r,g,b;
+  uint8_t r,g,b;
   printf("Creating image size (%d, %d)\n",im->width()*3,im->height());
   ni=new image(im->width()*3,im->height());
   printf("Image created\n");
@@ -428,7 +422,7 @@ image *image24(image *im, palette *pal, int rev)
   return ni;
 }
 
-unsigned char addb(int n1, int n2)
+uint8_t addb(int n1, int n2)
 { int n3;
   n3=n1+n2;
   return n3>255 ? 255 : (n3<0 ? 0 : n3);
@@ -440,7 +434,7 @@ unsigned char addb(int n1, int n2)
 image *color_dither(image *im, palette *pal, int rev)
 {
   image *i24;
-  unsigned char min[3],max[3],mid[3],*ad,*sl,*sl2,crimp;
+  uint8_t min[3],max[3],mid[3],*ad,*sl,*sl2,crimp;
   int i,j,x,y,delta;
   (void *)ad=pal->addr();
 
@@ -522,10 +516,10 @@ void deskjet_print(int argc, char **argv)
       display=0,bad=0,bmp=0,land=0,ch,xo=0,yo=0;
   image *im,*i24;
   palette *pal;
-  unsigned char *sl;
+  uint8_t *sl;
   FILE *fp;
   char def_name[10],*dev_name,*fname=NULL;
-  unsigned char cp[500],mp[500],yp[500],kp[500];
+  uint8_t cp[500],mp[500],yp[500],kp[500];
   strcpy(def_name,"\\dev\\lp");  // set the default output device to /dev/lp
 		// since we are in vpix, however we will use the backslash
   dev_name=def_name; rev=0;

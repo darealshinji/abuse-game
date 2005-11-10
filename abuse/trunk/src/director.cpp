@@ -24,7 +24,7 @@ extern unsigned char *white_light;
 
 
 
-int text_draw(int y, int x1, int y1, int x2, int y2, char *buf, JCFont *font, uchar *cmap, char color)
+int text_draw(int y, int x1, int y1, int x2, int y2, char *buf, JCFont *font, uint8_t *cmap, char color)
 {
   short cx1,cy1,cx2,cy2,word_size,word_len;
   screen->get_clip(cx1,cy1,cx2,cy2);

@@ -182,7 +182,7 @@ void calc_light_table(palette *pal)
   if (fp.open_failure()) recalc=1;
   else
   {
-    if (fp.read_short()!=calc_crc((unsigned char *)pal->addr(),768))
+    if (fp.read_uint16()!=calc_crc((unsigned char *)pal->addr(),768))
       recalc=1;
     else
     {
@@ -272,7 +272,7 @@ void calc_light_table(palette *pal)
    
 
     jFILE f("light.tbl","wb");
-    f.write_short(calc_crc((unsigned char *)pal->addr(),768));
+    f.write_uint16(calc_crc((unsigned char *)pal->addr(),768));
     f.write(white_light,256*64);
     f.write(green_light,256*64);
     for (int i=0;i<TTINTS;i++)
@@ -779,17 +779,17 @@ void write_lights(jFILE *fp)
 {
   int t=0;
   for (light_source *f=first_light_source;f;f=f->next) t++;
-  fp->write_long(t);
-  fp->write_long(min_light_level);
+  fp->write_uint32(t);
+  fp->write_uint32(min_light_level);
   for (f=first_light_source;f;f=f->next)
   {
-    fp->write_long(f->x);
-    fp->write_long(f->y);
-    fp->write_long(f->xshift);
-    fp->write_long(f->yshift);
-    fp->write_long(f->inner_radius);
-    fp->write_long(f->outer_radius);
-    fp->write_byte(f->type);
+    fp->write_uint32(f->x);
+    fp->write_uint32(f->y);
+    fp->write_uint32(f->xshift);
+    fp->write_uint32(f->yshift);
+    fp->write_uint32(f->inner_radius);
+    fp->write_uint32(f->outer_radius);
+    fp->write_uint8(f->type);
   }
 }
 
@@ -799,19 +799,19 @@ int send_lights(net_descriptor *os)
   packet pk;
   int t=0;
   for (light_source *f=first_light_source;f;f=f->next) t++;
-  pk.write_long(t);
-  pk.write_short(min_light_level);
+  pk.write_uint32(t);
+  pk.write_uint16(min_light_level);
   if (!os->send(pk)) return 0;
   for (f=first_light_source;f;f=f->next)
   {
     pk.reset();
-    pk.write_long(f->x);
-    pk.write_long(f->y);
-    pk.write_long(f->xshift);
-    pk.write_long(f->yshift);
-    pk.write_long(f->inner_radius);
-    pk.write_long(f->outer_radius);
-    pk.write_long(f->type);
+    pk.write_uint32(f->x);
+    pk.write_uint32(f->y);
+    pk.write_uint32(f->xshift);
+    pk.write_uint32(f->yshift);
+    pk.write_uint32(f->inner_radius);
+    pk.write_uint32(f->outer_radius);
+    pk.write_uint32(f->type);
     if (!os->send(pk)) return 0;   
   }
   return 1;
@@ -825,19 +825,19 @@ void read_lights(spec_directory *sd, jFILE *fp, char *level_name)
   if (se)
   {
     fp->seek(se->offset,SEEK_SET);
-    long t=fp->read_long();
-    min_light_level=fp->read_long();
+    long t=fp->read_uint32();
+    min_light_level=fp->read_uint32();
     light_source *last;
     while (t)
     {
       t--;
-      long x=fp->read_long();
-      long y=fp->read_long();
-      long xshift=fp->read_long();
-      long yshift=fp->read_long();
-      long ir=fp->read_long();
-      long ora=fp->read_long();
-      long ty=fp->read_byte();
+      long x=fp->read_uint32();
+      long y=fp->read_uint32();
+      long xshift=fp->read_uint32();
+      long yshift=fp->read_uint32();
+      long ir=fp->read_uint32();
+      long ora=fp->read_uint32();
+      long ty=fp->read_uint8();
 
       light_source *p=new light_source(ty,x,y,ir,ora,xshift,yshift,NULL);
       

@@ -1,7 +1,7 @@
 #include "transp.hpp"
 
 
-void transp_put(image *im, image *screen, uchar *table, int x, int y)
+void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
 {
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);
@@ -31,13 +31,13 @@ void transp_put(image *im, image *screen, uchar *table, int x, int y)
   int ye=ys+yl;
   int xe=xs+xl;
 
-  uchar *isl=im->scan_line(ys)+xs;
-  uchar *ssl=screen->scan_line(y)+x;
+  uint8_t *isl=im->scan_line(ys)+xs;
+  uint8_t *ssl=screen->scan_line(y)+x;
   int iw=im->width(),sw=screen->width();
 
   for (int iy=ys;iy<ye;iy++,y++,isl+=iw,ssl+=sw)
   {
-    uchar *s=ssl,*i=isl;
+    uint8_t *s=ssl,*i=isl;
     for (int ix=xs;ix<xe;ix++,s++,i++)
     {
       if (*i)
@@ -49,7 +49,7 @@ void transp_put(image *im, image *screen, uchar *table, int x, int y)
 
 
 /*
-void transp_put(image *im, image *screen, uchar *table, int x, int y)
+void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
 {
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);
@@ -79,13 +79,13 @@ void transp_put(image *im, image *screen, uchar *table, int x, int y)
   int ye=ys+yl;
   int xe=xs+xl;
 
-  uchar *isl=im->scan_line(ys)+xs;
-  uchar *ssl=screen->scan_line(y)+x;
+  uint8_t *isl=im->scan_line(ys)+xs;
+  uint8_t *ssl=screen->scan_line(y)+x;
   int iw=im->width(),sw=screen->width();
 
   for (int iy=ys;iy<ye;iy++,y++,isl+=iw,ssl+=sw)
   {
-    uchar *s=ssl,*i=isl;
+    uint8_t *s=ssl,*i=isl;
     for (int ix=xs;ix<xe;ix++,s++,i++)
       *s=table[((*i)<<8)|(*s)];
   }        

@@ -4,24 +4,24 @@
 class packet
 {
   public :
-  uchar *buf;
-  long buf_size,ro,wo,rend;
+  uint8_t *buf;
+  int32_t buf_size,ro,wo,rend;
   int pre_size;
   void make_bigger(int max);
 
   int get_read_position() { return ro; }
   void set_read_position(int x) { ro=x; }
-  int read(uchar *buffer, int size);
-  int write(uchar *buffer, int size);
+  int read(uint8_t *buffer, int size);
+  int write(uint8_t *buffer, int size);
   int eop() { return ro>=rend; }
   void reset();
   packet(int prefix_size=2);
   void get_string(char *st, int len);
-  int advance(long offset);
+  int advance(int32_t offset);
 
-  void write_long(ulong x);      // writes can't fail...
-  void write_short(ushort x);
-  void write_byte(uchar x);
+  void write_uint32(uint32_t x);      // writes can't fail...
+  void write_uint16(uint16_t x);
+  void write_uint8(uint8_t x);
   void insert_into(packet &pk);
   int size() { return rend-pre_size; }
   ~packet();

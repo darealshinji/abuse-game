@@ -209,7 +209,7 @@ int NF_set_file_server(net_address *addr)
     net_socket *sock=prot->connect_to_server(addr,net_socket::SOCKET_SECURE);
 
     if (!sock) { printf("set_file_server::connect failed\n"); return 0; }
-    uchar cmd=CLIENT_CRC_WAITER;
+    uint8_t cmd=CLIENT_CRC_WAITER;
     if ( (sock->write(&cmd,1)!=1 && printf("set_file_server::writefailed\n")) ||
 	 (sock->read(&cmd,1)!=1  && printf("set_file_server::read failed\n")))        // wait for confirmation that crc's are written
     { delete sock; return 0; }
@@ -290,7 +290,7 @@ void service_net_request()
 				net_socket *new_sock=comm_sock->accept(addr);	
 				if (new_sock)
 				{
-				  uchar client_type;
+				  uint8_t client_type;
 				  if (new_sock->read(&client_type,1)!=1)
 				  {
 				    delete addr;	
@@ -315,7 +315,7 @@ void service_net_request()
 				      } break;
 				      case CLIENT_LSF_WAITER :          // wants to know which .lsp file to start with
 				      {
-								uchar len=strlen(lsf);
+								uint8_t len=strlen(lsf);
 								new_sock->write(&len,1);
 								new_sock->write(lsf,len);
 								delete new_sock;
@@ -351,8 +351,8 @@ int get_remote_lsf(net_address *addr, char *filename)  // filename should be 256
     net_socket *sock=prot->connect_to_server(addr,net_socket::SOCKET_SECURE);
     if (!sock) return 0;
 
-    uchar ctype=CLIENT_LSF_WAITER;
-    uchar len;
+    uint8_t ctype=CLIENT_LSF_WAITER;
+    uint8_t len;
 
     if (sock->write(&ctype,1)!=1 ||
 				sock->read(&len,1)!=1 || len==0 ||
@@ -390,10 +390,10 @@ int request_server_entry()
       return 0;
     }
 
-    uchar ctype=CLIENT_ABUSE;
-    ushort port=lstl(main_net_cfg->port+1),cnum;
+    uint8_t ctype=CLIENT_ABUSE;
+    uint16_t port=lstl(main_net_cfg->port+1),cnum;
 
-    uchar reg;
+    uint8_t reg;
     if (sock->write(&ctype,1)!=1 ||   // send server out game port
 				sock->read(&reg,1)!=1)        // is remote engine registered?
     { delete sock; return 0; }
@@ -426,7 +426,7 @@ int request_server_entry()
     if (get_login())
       strcpy(uname,get_login());
     else strcpy(uname,"unknown");
-    uchar len=strlen(uname)+1;
+    uint8_t len=strlen(uname)+1;
     short nkills;
 
     if (sock->write(&len,1)!=1 ||

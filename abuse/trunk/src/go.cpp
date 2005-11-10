@@ -59,7 +59,7 @@ elcontrol::elcontrol(long X, long Y)
 elcontrol::elcontrol(FILE *fp, unsigned char *state_remap)
 {
   load(fp,state_remap);
-  allow_dir=read_short(fp);
+  allow_dir=read_uint16(fp);
 }
 
 
@@ -117,15 +117,15 @@ int elevator::size()
 elevator::elevator(FILE *fp, unsigned char *state_remap)
 {
   load(fp,state_remap);  
-  dir=read_short(fp);  
-  speed=read_short(fp);  
+  dir=read_uint16(fp);  
+  speed=read_uint16(fp);  
 }
 
 void elevator::save(FILE *fp) 
 { 
   game_object::save(fp); 
-  write_short(fp,dir);    
-  write_short(fp,speed);    
+  write_uint16(fp,dir);    
+  write_uint16(fp,speed);    
 }
 
 
@@ -267,23 +267,23 @@ int sensor::size()
 
 void sensor::save(FILE *fp) 
 { game_object::save(fp); 
-  write_short(fp,xrange);
-  write_short(fp,yrange);
-  write_short(fp,signal);  
+  write_uint16(fp,xrange);
+  write_uint16(fp,yrange);
+  write_uint16(fp,signal);  
 
-  write_byte(fp,strlen(aname())+1);
+  write_uint8(fp,strlen(aname())+1);
   fwrite(aname(),strlen(aname())+1,1,fp);  
 }
 
 sensor::sensor(FILE *fp, unsigned char *state_remap)
 {
   load(fp,state_remap);
-  xrange=read_short(fp);
-  yrange=read_short(fp);
-  signal=read_short(fp);  
+  xrange=read_uint16(fp);
+  yrange=read_uint16(fp);
+  signal=read_uint16(fp);  
 
   char name[200];
-  fread(name,read_byte(fp),1,fp);
+  fread(name,read_uint8(fp),1,fp);
   get_activate(name);
 }
 

@@ -27,11 +27,8 @@ extern char lsf[256];
 #define DIN_NAME "/tmp/.abuse_ndrv_out"   // opposite of driver's in/out
 #define DOUT_NAME "/tmp/.abuse_ndrv_in"
 
-#define uchar unsigned char
-#define ushort unsigned short
-
-#define real2shm(type,ptr) (ptr==NULL ? NULL : ((type *)((char *)(ptr)-(char *)base)))
-#define shm2real(type,ptr) (ptr==NULL ? NULL : ((type *)((long)(ptr)+(long)(base))))
+#define real2shm(type,ptr) (ptr==NULL ? NULL : ((type *)((uint8_t *)(ptr)-(uint8_t *)base)))
+#define shm2real(type,ptr) (ptr==NULL ? NULL : ((type *)((intptr_t)(ptr)+(intptr_t)(base))))
 
 #ifdef __sgi
 #define next_process() sginap(0)
@@ -191,11 +188,11 @@ int NF_open_file(char *filename, char *mode)
     if (write(net_out_fd,filename,cm[1])!=cm[1])  { kill_net(); return -1; }
     if (write(net_out_fd,mode,cm[2])!=cm[2])  { kill_net(); return -1; }
 
-    uchar file_type;
+    uint8_t file_type;
     if (read(net_in_fd,&file_type,1)!=1)  { kill_net(); return -1; }    
     if (file_type==NF_OPEN_LOCAL_FILE) 
     {
-      uchar name_size;
+      uint8_t name_size;
       if (read(net_in_fd,&name_size,1)!=1)  { kill_net(); return -1; }          
       int size=read(net_in_fd,filename,name_size);
       if (size!=name_size)  { kill_net(); return -1; }    
@@ -210,7 +207,7 @@ int NF_open_file(char *filename, char *mode)
   } else return -2;          // return open local
 }
 
-long NF_close(int fd)
+int32_t NF_close(int fd)
 {
   if (net_installed)
   {
@@ -224,7 +221,7 @@ long NF_close(int fd)
 }
 
 
-long NF_read(int fd, void *buf, long size)
+int32_t NF_read(int fd, void *buf, int32_t size)
 {
   if (net_installed && size)
   {
@@ -234,8 +231,8 @@ long NF_read(int fd, void *buf, long size)
     if (write(net_out_fd,&fd,sizeof(fd))!=sizeof(fd)) { kill_net(); return 0; }
     if (write(net_out_fd,&size,sizeof(size))!=sizeof(size)) { kill_net(); return 0; }
 
-    long total_read=0;
-    ushort t=0xffff;
+    int32_t total_read=0;
+    uint16_t t=0xffff;
     while (size && t>=READ_PACKET_SIZE-2)
     {
       if (read(net_in_fd,&t,sizeof(t))!=sizeof(t))  { kill_net(); return 0; }      
@@ -252,33 +249,33 @@ long NF_read(int fd, void *buf, long size)
 }
 
 
-long NF_filelength(int fd)
+int32_t NF_filelength(int fd)
 {
   if (net_installed)
   {
     char cm=NFCMD_SIZE;
     if (write(net_out_fd,&cm,1)!=1) { kill_net(); return 0; }
     if (write(net_out_fd,&fd,sizeof(fd))!=sizeof(fd)) { kill_net(); return 0; }
-    long size;
+    int32_t size;
     if (read(net_in_fd,&size,sizeof(size))!=sizeof(size))  { kill_net(); return 0; }
     return size;
   } else return 0;  
 }
 
-long NF_tell(int fd)
+int32_t NF_tell(int fd)
 {
   if (net_installed)
   {
     char cm=NFCMD_TELL;
     if (write(net_out_fd,&cm,1)!=1) { kill_net(); return 0; }
     if (write(net_out_fd,&fd,sizeof(fd))!=sizeof(fd)) { kill_net(); return 0; }
-    long offset;
+    int32_t offset;
     if (read(net_in_fd,&offset,sizeof(offset))!=sizeof(offset))  { kill_net(); return 0; }
     return offset;
   } else return 0;  
 }
 
-long NF_seek(int fd, long offset)
+int32_t NF_seek(int fd, int32_t offset)
 {
   if (net_installed)
   {
@@ -287,7 +284,7 @@ long NF_seek(int fd, long offset)
     if (write(net_out_fd,&fd,sizeof(fd))!=sizeof(fd)) { kill_net(); return 0; }
     if (write(net_out_fd,&offset,sizeof(offset))!=sizeof(offset)) { kill_net(); return 0; }
 
-    long offset;
+    int32_t offset;
     if (read(net_in_fd,&offset,sizeof(offset))!=sizeof(offset))  { kill_net(); return 0; }
     return offset;
   } else return 0;  
@@ -321,7 +318,7 @@ void service_net_request()
 	  base->calc_crcs=0;
 	  base->mem_lock=0;
 
-	  uchar cmd=NFCMD_CRCS_CALCED;
+	  uint8_t cmd=NFCMD_CRCS_CALCED;
 	  if (write(net_out_fd,&cmd,1)!=1) { kill_net(); return ; }
 	} else base->mem_lock=0;
       }
@@ -331,7 +328,7 @@ void service_net_request()
 	{
 	  base->get_lsf=0;
 	  base->mem_lock=0;
-	  uchar c[2]={NFCMD_PROCESS_LSF,strlen(lsf)+1};
+	  uint8_t c[2]={NFCMD_PROCESS_LSF,strlen(lsf)+1};
 	  if (write(net_out_fd,&c,2)!=2) { kill_net(); return ; }
 	  if (write(net_out_fd,lsf,c[1])!=c[1]) { kill_net(); return ; }
 	} else base->mem_lock=0;
@@ -345,10 +342,10 @@ int get_remote_lsf(char *name, char *filename)  // filename should be 256 bytes
 {
   if (net_installed)
   {
-    uchar cm[2]={NFCMD_REQUEST_LSF,strlen(name)+1};
+    uint8_t cm[2]={NFCMD_REQUEST_LSF,strlen(name)+1};
     if (write(net_out_fd,cm,2)!=2) { kill_net(); return 0; }
     if (write(net_out_fd,name,cm[1])!=cm[1]) { kill_net(); return 0; }
-    uchar size;
+    uint8_t size;
     if (read(net_in_fd,&size,1)!=1) { kill_net(); return 0; }
     if (size==0) return 0;
     if (read(net_in_fd,filename,size)!=size) { kill_net(); return 0; }
@@ -361,10 +358,10 @@ int request_server_entry()
   if (net_installed)
   {
     if (!net_server) return 0;
-    uchar cm[2]={NFCMD_REQUEST_ENTRY,strlen(net_server)+1};
+    uint8_t cm[2]={NFCMD_REQUEST_ENTRY,strlen(net_server)+1};
     if (write(net_out_fd,cm,2)!=2) { kill_net(); return 0; }
     if (write(net_out_fd,net_server,cm[1])!=cm[1]) { kill_net(); return 0; }
-    ushort cnum;  // client number
+    uint16_t cnum;  // client number
     if (read(net_in_fd,&cnum,2)!=2) { kill_net(); return 0; } 
     if (cnum==0) return 0;
     local_client_number=cnum;
@@ -377,7 +374,7 @@ int reload_start()
 {
   if (net_installed)
   {
-    uchar cmd=NFCMD_RELOAD_START;
+    uint8_t cmd=NFCMD_RELOAD_START;
     if (write(net_out_fd,&cmd,1)!=1) { kill_net(); return 0; } 
     if (read(net_in_fd,&cmd,1)!=1) { kill_net(); return 0; } 
     return cmd;
@@ -389,7 +386,7 @@ int reload_end()
 {
   if (net_installed)
   {
-    uchar cmd=NFCMD_RELOAD_END;
+    uint8_t cmd=NFCMD_RELOAD_END;
     if (write(net_out_fd,&cmd,1)!=1) { kill_net(); return 0; } 
     if (read(net_in_fd,&cmd,1)!=1) { kill_net(); return 0; } 
     return cmd;
@@ -504,9 +501,9 @@ void send_local_request()
   if (net_installed)
   {
     if (base->join_list)
-      base->packet.write_byte(SCMD_RELOAD);
+      base->packet.write_uint8(SCMD_RELOAD);
 
-    uchar cmd=NFCMD_SEND_INPUT;
+    uint8_t cmd=NFCMD_SEND_INPUT;
 
     if (write(net_out_fd,&cmd,1)!=1) { kill_net(); return ; }    
     if (read(net_in_fd,&cmd,1)!=1) { kill_net(); return ; }    
@@ -518,7 +515,7 @@ void kill_slackers()
 {
   if (net_installed)
   {
-    uchar cmd=NFCMD_KILL_SLACKERS;
+    uint8_t cmd=NFCMD_KILL_SLACKERS;
     if (write(net_out_fd,&cmd,1)!=1) { kill_net(); return ; }    
     if (read(net_in_fd,&cmd,1)!=1) { kill_net(); return ; }        
   }
@@ -549,7 +546,7 @@ int get_inputs_from_server(unsigned char *buf)
       if ((((now.tv_sec-start.tv_sec)*100)+(now.tv_usec-start.tv_usec)/10000)>20)
       {
 //	fprintf(stderr,"receive timeout %d\n",(((now.tv_sec-start.tv_sec)*100)+(now.tv_usec-start.tv_usec)/10000));
-	uchar cmd=NFCMD_INPUT_MISSING;
+	uint8_t cmd=NFCMD_INPUT_MISSING;
 	if (write(net_out_fd,&cmd,1)!=1) { kill_net(); return  0; }    
 	if (read(net_in_fd,&cmd,1)!=1) { kill_net(); return 0; }     // block, so net driver can request input
 	gettimeofday(&start,NULL);
@@ -623,7 +620,7 @@ void server_check()       // read a byte from the net driver, causing the OS to 
     { close(net_out_fd); close(net_in_fd); net_installed=0; kill_net(); }
     else
     {
-      uchar cmd=NFCMD_BLOCK;
+      uint8_t cmd=NFCMD_BLOCK;
       if (write(net_out_fd,&cmd,1)!=1) { kill_net(); return ; }    
       if (base->input_state==INPUT_NET_DEAD)
       { close(net_out_fd); close(net_in_fd); net_installed=0; kill_net(); }
@@ -643,7 +640,7 @@ int become_server()
 {
   if (net_installed)
   {
-    uchar cmd=NFCMD_BECOME_SERVER;
+    uint8_t cmd=NFCMD_BECOME_SERVER;
     if (write(net_out_fd,&cmd,1)!=1) { kill_net(); return 0; } 
     if (read(net_in_fd,&cmd,1)!=1) { kill_net(); return 0; }     
     

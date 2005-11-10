@@ -140,9 +140,9 @@ class ipx_net_socket : public net_socket
     
     void add_to_packet(void *buf, int size);
 
-    void write_byte(unsigned char x) { add_to_packet(&x,1); }
-    void write_short(unsigned short x) { x=lstl(x); add_to_packet(&x,2); }
-    void write_long(unsigned long x) { x=lltl(x); add_to_packet(&x,4); }
+    void write_uint8(uint8_t x) { add_to_packet(&x,1); }
+    void write_uint16(uint16_t x) { x=lstl(x); add_to_packet(&x,2); }
+    void write_uint32(uint32_t x) { x=lltl(x); add_to_packet(&x,4); }
 
 
   } *pk;

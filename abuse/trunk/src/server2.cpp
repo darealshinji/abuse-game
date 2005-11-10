@@ -129,11 +129,11 @@ void game_server::send_inputs()            // pass collected inputs to all non-l
 /*  client_descriptor *last=NULL;
   if (sync_check)
   {
-    next_out.write_byte(SCMD_SYNC);
-    next_out.write_long(make_sync_long());
+    next_out.write_uint8(SCMD_SYNC);
+    next_out.write_uint32(make_sync_uint32());
   }
     
-  next_out.write_byte(SCMD_END_OF_PACKET);        // so clients knows when to stop reading
+  next_out.write_uint8(SCMD_END_OF_PACKET);        // so clients knows when to stop reading
 
   for (client_descriptor *p=client_list;p;)
   {
@@ -210,14 +210,14 @@ void game_server::join_new_players()
   {
     packet pk;
     current_level->save("netstart.spe",1);
-    printf("%d sync for save\n",make_sync_long());
+    printf("%d sync for save\n",make_sync_uint32());
 
     client_descriptor *last=NULL;
     for (p=client_list;p;p=p->next)
     {
       if (p->player)
       {
-	pk.write_byte(SCMD_JOIN_START);
+	pk.write_uint8(SCMD_JOIN_START);
 	int error=!p->connection->send(pk);
 	if (!error)
 	{

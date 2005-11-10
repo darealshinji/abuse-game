@@ -3,7 +3,7 @@
 #define HS_ICON_H 8
 
 
-unsigned char hs_left_arrow[10*8]={
+uint8_t hs_left_arrow[10*8]={
     0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,
     0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1,
@@ -12,7 +12,7 @@ unsigned char hs_left_arrow[10*8]={
     2, 0, 0, 0, 0};
 
 
-unsigned char hs_right_arrow[10*8]={
+uint8_t hs_right_arrow[10*8]={
     0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1,
@@ -21,7 +21,7 @@ unsigned char hs_right_arrow[10*8]={
     1, 1, 0, 0, 0};
 
 
-unsigned char vs_up_arrow[8*10]={
+uint8_t vs_up_arrow[8*10]={
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 0,
     0, 0, 0, 1, 1, 1, 1, 2, 0, 0, 1, 2, 1, 1, 2,
     1, 2, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0, 1, 1,
@@ -30,7 +30,7 @@ unsigned char vs_up_arrow[8*10]={
     0, 2, 2, 0, 0};
 
 
-unsigned char vs_down_arrow[8*10]={
+uint8_t vs_down_arrow[8*10]={
     0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 1, 1, 2, 0,
     0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0, 1, 1, 2,
     0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0, 1, 1,
@@ -38,11 +38,11 @@ unsigned char vs_down_arrow[8*10]={
     1, 1, 2, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0};
 
-void show_icon(image *screen, window_manager *wm, int x, int y, int icw, int ich, unsigned char *buf)
+void show_icon(image *screen, window_manager *wm, int x, int y, int icw, int ich, uint8_t *buf)
 {
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);
-  unsigned char remap[3];
+  uint8_t remap[3];
   remap[0]=wm->medium_color();
   remap[1]=wm->bright_color();
   remap[2]=wm->dark_color();
@@ -51,7 +51,7 @@ void show_icon(image *screen, window_manager *wm, int x, int y, int icw, int ich
   {
     if (y>=cy1 && y<=cy2)
     {
-      unsigned char *sl=screen->scan_line(y)+x;
+      uint8_t *sl=screen->scan_line(y)+x;
       for (int xc=icw,xo=x;xc;xc--,xo++,sl++,buf++)
       {
 	if (xo>=cx1 && xo<=cx2)
@@ -87,13 +87,13 @@ void scroller::dragger_area(int &x1, int &y1, int &x2, int &y2)
 int scroller::bh() { if (vert) return 15; else return 13; }
 int scroller::bw() { if (vert) return 12; else return 14; }
 
-unsigned char *scroller::b1()
+uint8_t *scroller::b1()
 {
   if (vert) return vs_up_arrow;
   else return hs_left_arrow;
 }
 
-unsigned char *scroller::b2()
+uint8_t *scroller::b2()
 {
   if (vert) return vs_down_arrow;
   else return hs_right_arrow;
@@ -552,7 +552,7 @@ void spicker::reconfigure()
     sx=t-1;
   if (m)
   {
-    select=(uchar *)jmalloc((t+7)/8,"selection bit array");
+    select=(uint8_t *)jmalloc((t+7)/8,"selection bit array");
     memset(select,0,(t+7)/8);
   } else cur_sel=0;
 }

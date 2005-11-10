@@ -109,8 +109,8 @@ void game_server::check_collection_complete()
     {
       if (c->delete_me())
       {
-	base->packet.write_byte(SCMD_DELETE_CLIENT);
-	base->packet.write_byte(c->client_id);
+	base->packet.write_uint8(SCMD_DELETE_CLIENT);
+	base->packet.write_uint8(c->client_id);
 	if (c->wait_reload())
 	{
 	  c->set_wait_reload(0);
@@ -179,13 +179,13 @@ void game_server::check_reload_wait()
 
 int game_server::process_client_command(player_client *c)
 {
-  uchar cmd;
+  uint8_t cmd;
   if (c->comm->read(&cmd,1)!=1) return 0;
   switch (cmd)
   {
     case CLCMD_REQUEST_RESEND :
     {
-      uchar tick;
+      uint8_t tick;
       if (c->comm->read(&tick,1)!=1) return 0;
 
       fprintf(stderr,"request for resend tick %d (game cur=%d, pack=%d, last=%d)\n",
@@ -243,7 +243,7 @@ int game_server::process_net()
       // make sure we got a complete packet and the packet was not a previous game tick packet
       if (bytes_received==use->packet_size()+use->packet_prefix_size())
       {
-	unsigned short rec_crc=use->get_checksum();
+	uint16_t rec_crc=use->get_checksum();
 	if (rec_crc==use->calc_checksum())
 	{
 	  player_client *f=player_list,*found=NULL;
@@ -350,7 +350,7 @@ int game_server::start_reload()
   {
     if (!c->delete_me() && c->need_reload_start_ok())    // if the client is already waiting for reload state to start, send ok
     {
-      uchar cmd=CLCMD_RELOAD_START;
+      uint8_t cmd=CLCMD_RELOAD_START;
       if (c->comm->write(&cmd,1)!=1) { c->set_delete_me(1); }
       c->set_need_reload_start_ok(0);
     }
@@ -374,19 +374,19 @@ int game_server::add_client(int type, net_socket *sock, net_address *from)
 	{
 		if( total_players() >= main_net_cfg->max_players )
 		{
-			uchar too_many = 2;
+			uint8_t too_many = 2;
 			sock->write( &too_many, 1 );
 			return 0;
 		}
 
-		uchar reg = registered ? 1 : 0;
+		uint8_t reg = registered ? 1 : 0;
 		if( sock->write( &reg, 1 ) != 1 )
 			return 0;
 
-		ushort our_port = lstl( main_net_cfg->port + 1 ), cport;
+		uint16_t our_port = lstl( main_net_cfg->port + 1 ), cport;
 		char name[256];
-		uchar len;
-		short nkills=lstl(main_net_cfg->kills);
+		uint8_t len;
+		int16_t nkills=lstl(main_net_cfg->kills);
 
 		if( sock->read(&len,1)!=1 ||
 			sock->read(name,len)!=len ||
@@ -419,7 +419,7 @@ int game_server::add_client(int type, net_socket *sock, net_address *from)
 
 		from->set_port( cport );
 
-		ushort client_id = lstl( f );
+		uint16_t client_id = lstl( f );
 		if( sock->write( &client_id, 2 ) != 2 )
 		{
 			return 0;

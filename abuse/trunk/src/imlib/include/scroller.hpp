@@ -50,7 +50,7 @@ class spicker : public scroller
 {
   protected :
   int r,c,m,last_sel,cur_sel;
-  uchar *select;
+  uint8_t *select;
   public :
   spicker(int X, int Y, int ID, int Rows, int Cols, int Vert, int MultiSelect, ifield *Next);
   int vis() { if (vert) return r; else return c; }

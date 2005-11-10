@@ -404,7 +404,7 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
   if (y+new_height>cy2)
     new_height-=y+new_height-cy2;
   
-  uchar d;
+  uint8_t d;
   for (iy=iy_start;new_height>0;new_height--,y++,iy+=ystep)
   {
     sl1=im->scan_line(iy>>16);
@@ -567,7 +567,7 @@ void dev_controll::update_memprof()
     jfree(st);
     jfree(ch);
     char buf[100];
-    sprintf(buf,"%8ld %8ld",j_allocated(),j_available());
+    sprintf(buf,"%8ld %8ld",(long int)j_allocated(),(long int)j_available());
     eh->font()->put_string(memprof->screen,memprof->x1(),memprof->y2()-eh->font()->height(),buf);
 
   }

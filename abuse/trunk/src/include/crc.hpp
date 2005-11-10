@@ -3,8 +3,8 @@
 #include "specs.hpp"
 #include "macs.hpp"
 
-unsigned short calc_crc(unsigned char *buf, long len);
-ulong crc_file(bFILE *fp);
+uint16_t calc_crc(uint8_t *buf, int len);
+uint32_t crc_file(bFILE *fp);
 
 
 #endif

@@ -13,11 +13,11 @@ image *load_targa(char *filename, palette *pal)
     return 0;
   }
   
-  unsigned char id,color_map,im_type;
+  uint8_t id,color_map,im_type;
 
-  id=fp->read_byte();
-  color_map=fp->read_byte();
-  im_type=fp->read_byte();
+  id=fp->read_uint8();
+  color_map=fp->read_uint8();
+  im_type=fp->read_uint8();
 
   if (color_map!=0)
   {
@@ -31,18 +31,18 @@ image *load_targa(char *filename, palette *pal)
     return 0;
   }
 
-  fp->read_short();
-  fp->read_short();
-  fp->read_byte();
+  fp->read_uint16();
+  fp->read_uint16();
+  fp->read_uint8();
 
-  fp->read_short();
-  fp->read_short();
+  fp->read_uint16();
+  fp->read_uint16();
 
 
-  int w=fp->read_short();
-  int h=fp->read_short();
-  unsigned char bpp=fp->read_byte();
-  unsigned char im_des=fp->read_byte();
+  int w=fp->read_uint16();
+  int h=fp->read_uint16();
+  uint8_t bpp=fp->read_uint8();
+  uint8_t im_des=fp->read_uint8();
 
   if (bpp!=32)
   {
@@ -53,8 +53,8 @@ image *load_targa(char *filename, palette *pal)
   image *im=new image(w,h);
 
   int x,y;
-  unsigned char ctrl;
-  unsigned char bgra[4],*sl,c,lr=0,lg=0,lb=0,ll=0,lc=0;
+  uint8_t ctrl;
+  uint8_t bgra[4],*sl,c,lr=0,lg=0,lb=0,ll=0,lc=0;
   
   
   
@@ -67,7 +67,7 @@ image *load_targa(char *filename, palette *pal)
 
       for (x=0;x<w;)
       {
-        ctrl=fp->read_byte();
+        ctrl=fp->read_uint8();
         if (ctrl&0x80)
         {
           fp->read(bgra,4);

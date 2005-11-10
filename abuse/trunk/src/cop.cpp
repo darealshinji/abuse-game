@@ -796,14 +796,14 @@ void *bottom_draw()
     o->lvars[b_ramp]=b;
 
     palette *p=pal->copy();
-    uchar *addr=(uchar *)p->addr();
+    uint8_t *addr=(uint8_t *)p->addr();
     int ra,ga,ba;
     
     for (int i=0;i<256;i++)
     {
-      ra=(int)*addr+r; if (ra>255) ra=255; else if (ra<0) r=0; *addr=(uchar)ra; addr++;
-      ga=(int)*addr+g; if (ga>255) ga=255; else if (ga<0) g=0; *addr=(uchar)ga; addr++;
-      ba=(int)*addr+b; if (ba>255) ba=255; else if (ba<0) b=0; *addr=(uchar)ba; addr++;
+      ra=(int)*addr+r; if (ra>255) ra=255; else if (ra<0) r=0; *addr=(uint8_t)ra; addr++;
+      ga=(int)*addr+g; if (ga>255) ga=255; else if (ga<0) g=0; *addr=(uint8_t)ga; addr++;
+      ba=(int)*addr+b; if (ba>255) ba=255; else if (ba<0) b=0; *addr=(uint8_t)ba; addr++;
     }
     p->load();
     delete p;

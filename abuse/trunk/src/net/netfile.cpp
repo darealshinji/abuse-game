@@ -100,8 +100,8 @@ int nfs_client::send_read()   // return 0 if failure on socket, not failure to r
     if (FD_ISSET(socket_fd,&write_check))            // ready to write?
     {
       char buf[READ_PACKET_SIZE];   
-      short read_total;
-      short actual;
+      int16_t read_total;
+      int16_t actual;
 
       do
       {      
@@ -159,7 +159,7 @@ int process_nfs_command(nfs_client *c)
   {
     case NFCMD_READ :
     {
-      long size;
+      int32_t size;
       if (read(c->socket_fd,&size,sizeof(size))!=sizeof(size)) return 0;
       size=lltl(size);
 
@@ -172,7 +172,7 @@ int process_nfs_command(nfs_client *c)
     } break;
     case NFCMD_SEEK :
     {
-      long offset;
+      int32_t offset;
       if (read(c->socket_fd,&offset,sizeof(offset))!=sizeof(offset)) return 0;
       offset=lltl(offset);
       offset=lseek(c->file_fd,offset,0);
@@ -182,7 +182,7 @@ int process_nfs_command(nfs_client *c)
     } break;
     case NFCMD_TELL :
     {
-      long offset=lseek(c->file_fd,0,SEEK_CUR);
+      int32_t offset=lseek(c->file_fd,0,SEEK_CUR);
       offset=lltl(offset);
       if (write(c->socket_fd,&offset,sizeof(offset))!=sizeof(offset)) return 0;
       return 1;
@@ -199,7 +199,7 @@ int process_nfs_command(nfs_client *c)
 
 void add_nfs_client(int fd)
 {
-  uchar size[2];
+  uint8_t size[2];
   char filename[300],mode[20],*mp;
   if (read(fd,size,2)!=2) { close(fd); return ; }
   if (read(fd,filename,size[0])!=size[0]) { close(fd); return ; }
@@ -228,15 +228,15 @@ void add_nfs_client(int fd)
     f=-1;  // make sure this is -1
   }
 
-  long ret=lltl(f);
+  int32_t ret=lltl(f);
   if (write(fd,&ret,sizeof(ret))!=sizeof(ret)) { close(fd); return ; }
 
   if (f<0)    // no file, sorry
     close(fd);
   else
   {
-    long cur_pos=lseek(f,0,SEEK_CUR);
-    long size=lseek(f,0,SEEK_END);
+    int32_t cur_pos=lseek(f,0,SEEK_CUR);
+    int32_t size=lseek(f,0,SEEK_END);
     lseek(f,cur_pos,SEEK_SET);
     size=lltl(size);
     if (write(fd,&size,sizeof(size))!=sizeof(size)) {  close(f); close(fd); return ; }
@@ -252,7 +252,7 @@ void remote_file::r_close(char *reason)
     fprintf(stderr,"remote_file : %s\n",reason);
   if (socket_fd>=0) 
   {
-    uchar cmd=NFCMD_CLOSE;
+    uint8_t cmd=NFCMD_CLOSE;
     write(socket_fd,&cmd,1);
     close(socket_fd); 
   }
@@ -271,21 +271,21 @@ remote_file::remote_file(char *filename, char *mode, remote_file *Next)
     return ;
   }
 
-  uchar sizes[3]={CLIENT_NFS,strlen(filename)+1,strlen(mode)+1};
+  uint8_t sizes[3]={CLIENT_NFS,strlen(filename)+1,strlen(mode)+1};
   if (write(socket_fd,sizes,3)!=3) { r_close("could not send open info"); return ; }
   if (write(socket_fd,filename,sizes[1])!=sizes[1]) { r_close("could not send filename"); return ; }
   if (write(socket_fd,mode,sizes[2])!=sizes[2]) { r_close("could not send mode"); return ; }
 
-  long remote_file_fd;
+  int32_t remote_file_fd;
   if (read(socket_fd,&remote_file_fd,sizeof(remote_file_fd))!=sizeof(remote_file_fd)) 
   { r_close("could not read remote fd"); return ; }   
   remote_file_fd=lltl(remote_file_fd);
   if (remote_file_fd<0) { r_close("remote fd is bad"); return ; }
 
   if (read(socket_fd,&size,sizeof(size))!=sizeof(size)) { r_close("could not read remote filesize"); return ; } 
-//  ulong remote_crc;
+//  uint32_t remote_crc;
 //  if (read(socket_fd,&remote_crc,sizeof(remote_crc))!=sizeof(remote_crc)) { r_close("could not read remote checksum"); return ; }
-//  ulong local_crc=
+//  uint32_t local_crc=
 
   size=lltl(size);
 }
@@ -294,17 +294,17 @@ int remote_file::unbuffered_read(int out_fd, size_t count)
 {
   if (socket_fd>=0 && count)
   {
-    uchar cmd=NFCMD_READ;
+    uint8_t cmd=NFCMD_READ;
     if (write(socket_fd,&cmd,sizeof(cmd))!=sizeof(cmd)) { r_close("read : could not send command"); return 0; }
 
-    long rsize=lltl(count);
+    int32_t rsize=lltl(count);
     if (write(socket_fd,&rsize,sizeof(rsize))!=sizeof(rsize)) { r_close("read : could not send size"); return 0; }
 
-    long total_read=0,total;
+    int32_t total_read=0,total;
     char buf[READ_PACKET_SIZE];
-    ushort size;
+    uint16_t size;
 
-    ushort packet_size;    
+    uint16_t packet_size;    
     do
     {
       if (read(socket_fd,&packet_size,sizeof(packet_size))!=sizeof(packet_size)) 
@@ -314,7 +314,7 @@ int remote_file::unbuffered_read(int out_fd, size_t count)
       }
       packet_size=lstl(packet_size);
 
-      ushort size_read=read(socket_fd,buf+2,packet_size);   
+      uint16_t size_read=read(socket_fd,buf+2,packet_size);   
 
       if (size_read!=packet_size) 
       { 
@@ -325,7 +325,7 @@ int remote_file::unbuffered_read(int out_fd, size_t count)
 	}
       }
 
-      *((short *)buf)=packet_size;
+      *((int16_t *)buf)=packet_size;
       if (write(out_fd,buf,packet_size+2)!=packet_size+2) comm_failed();
 
       total_read+=packet_size;
@@ -340,24 +340,24 @@ int remote_file::unbuffered_tell()   // ask server where the offset of the file 
 {
   if (socket_fd>=0)
   {
-    uchar cmd=NFCMD_TELL;
+    uint8_t cmd=NFCMD_TELL;
     if (write(socket_fd,&cmd,sizeof(cmd))!=sizeof(cmd)) { r_close("tell : could not send command"); return 0; }
 
-    long offset;
+    int32_t offset;
     if (read(socket_fd,&offset,sizeof(offset))!=sizeof(offset)) { r_close("tell : could not read offset"); return 0; }    
     return lltl(offset);
   }    
   return 0;
 }
 
-int remote_file::unbuffered_seek(long offset)  // tell server to seek to a spot in a file
+int remote_file::unbuffered_seek(int32_t offset)  // tell server to seek to a spot in a file
 {
   if (socket_fd>=0)
   {
-    uchar cmd=NFCMD_SEEK;
+    uint8_t cmd=NFCMD_SEEK;
     if (write(socket_fd,&cmd,sizeof(cmd))!=sizeof(cmd)) { r_close("seek : could not send command"); return 0; }
 
-    long off=lltl(offset);
+    int32_t off=lltl(offset);
     if (write(socket_fd,&off,sizeof(off))!=sizeof(off)) { r_close("seek : could not send offset"); return 0; }
 
     if (read(socket_fd,&offset,sizeof(offset))!=sizeof(offset)) { r_close("seek : could not read offset"); return 0; }    
@@ -449,7 +449,7 @@ int fetch_crcs(char *server)
     return 0;
   }
 
-  uchar cmd=CLIENT_CRC_WAITER;
+  uint8_t cmd=CLIENT_CRC_WAITER;
   if (write(socket_fd,&cmd,1)!=1)  { close(socket_fd); return 0; }
   if (read(socket_fd,&cmd,1)!=1)  { close(socket_fd); return 0; }
   close(socket_fd);

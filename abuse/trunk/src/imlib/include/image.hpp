@@ -18,10 +18,10 @@ extern char  *imerr_messages[];  // correspond to imERRORS
 #define imWRITE_ERROR          7
 #define imMAX_ERROR 	       7
 
-short current_error();
+int16_t current_error();
 void clear_errors();
-void set_error(short x);
-short last_error();
+void set_error(int16_t x);
+int16_t last_error();
 void make_block(size_t size);
 void image_init();
 void image_uninit();
@@ -29,9 +29,9 @@ extern linked_list image_list;
 
 typedef struct image_color_t
 {
-	unsigned short r;
-	unsigned short g;
-	unsigned short b;
+	uint16_t r;
+	uint16_t g;
+	uint16_t b;
 } image_color;
 
 class filter;
@@ -40,44 +40,44 @@ class filter;
 class dirty_rect : public linked_node
 {
 public :
-  short dx1,dy1,dx2,dy2;
-  dirty_rect(short x1, short y1, short x2, short y2)
+  int16_t dx1,dy1,dx2,dy2;
+  dirty_rect(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
   { dx1=x1; dy1=y1; dx2=x2; dy2=y2; 
     if (x2<x1 || y2<y1) 
       printf("add inccorect dirty\n");
   }
-  virtual short compare(void *n1, short field)
+  virtual int16_t compare(void *n1, int16_t field)
   { return ((dirty_rect *)n1)->dy1>dy1; }
 } ;
 
 class image_descriptor
 {
-  short l,h;
-  short clipx1, clipy1, clipx2, clipy2;
+  int16_t l,h;
+  int16_t clipx1, clipy1, clipx2, clipy2;
 public :  
-  unsigned char keep_dirt,
-	        static_mem;      // if this flag is set then don't free memory on exit
+  uint8_t keep_dirt,
+	  static_mem;      // if this flag is set then don't free memory on exit
   
   linked_list dirties;
   void *extended_descriptor;              // type depends on current system
 
-  image_descriptor(short length, short height,
+  image_descriptor(int16_t length, int16_t height,
 		  int keep_dirties=1, int static_memory=0);
-  short bound_x1(short x1)  { return x1<clipx1 ? clipx1 : x1; }
-  short bound_y1(short y1)  { return y1<clipy1 ? clipy1 : y1; }
-  short bound_x2(short x2)  { return x2>clipx2 ? clipx2 : x2; }
-  short bound_y2(short y2)  { return y2>clipy2 ? clipy2 : y2; }
-  short x1_clip() { return clipx1; }
-  short y1_clip() { return clipy1; }
-  short x2_clip() { return clipx2; }
-  short y2_clip() { return clipy2; }
-  void dirty_area(short x1, short y1, short x2, short y2) { ;}
-  void clean_area(short x1, short y1, short x2, short y2) { ; }
+  int16_t bound_x1(int16_t x1)  { return x1<clipx1 ? clipx1 : x1; }
+  int16_t bound_y1(int16_t y1)  { return y1<clipy1 ? clipy1 : y1; }
+  int16_t bound_x2(int16_t x2)  { return x2>clipx2 ? clipx2 : x2; }
+  int16_t bound_y2(int16_t y2)  { return y2>clipy2 ? clipy2 : y2; }
+  int16_t x1_clip() { return clipx1; }
+  int16_t y1_clip() { return clipy1; }
+  int16_t x2_clip() { return clipx2; }
+  int16_t y2_clip() { return clipy2; }
+  void dirty_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2) { ;}
+  void clean_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2) { ; }
   void clear_dirties();
-  short get_dirty_area(short &x1, short &y1, short &x2, short &y2) { return 0; }
-  void get_clip(short &x1, short &y1, short &x2, short &y2)
+  int16_t get_dirty_area(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2) { return 0; }
+  void get_clip(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2)
     { x1=clipx1; y1=clipy1; x2=clipx2; y2=clipy2; }
-  void set_clip(short x1, short y1, short x2, short y2)
+  void set_clip(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
     { if (x2<x1) x2=x1;
       if (y2<y1) y2=y1;
       if (x1<0) clipx1=0; else clipx1=x1;
@@ -88,75 +88,75 @@ public :
   void reduce_dirties();
   void add_dirty(int x1, int y1, int x2, int y2);
   void delete_dirty(int x1, int y1, int x2, int y2);
-  void resize(short length, short height)
+  void resize(int16_t length, int16_t height)
    { l=length; h=height; clipx1=0; clipy1=0; clipx2=l-1; clipy2=h-1; }
 } ;
 
 class image : public linked_node
 { 
-  unsigned char *data;
-  short w,h;
-  void make_page(short width, short height, unsigned char *page_buffer);
+  uint8_t *data;
+  int16_t w,h;
+  void make_page(int16_t width, int16_t height, uint8_t *page_buffer);
   void delete_page();
 public :
   image_descriptor *special;
   image(spec_entry *e, bFILE *fp);
   image(bFILE *fp);
-  image(short width, short height,                 // required
-	unsigned char *page_buffer=NULL,
-	short create_descriptor=0);        // 0=no, 1=yes, 2=yes & keep dirties
-  unsigned char  pixel              (short x, short y);
-  void           putpixel           (short x, short y, char color);
-  unsigned char *scan_line          (short y) { return data+y*w; }
-  unsigned char *next_line          (short lasty, unsigned char *last_scan) 
+  image(int16_t width, int16_t height,                 // required
+	uint8_t *page_buffer=NULL,
+	int16_t create_descriptor=0);        // 0=no, 1=yes, 2=yes & keep dirties
+  uint8_t  pixel              (int16_t x, int16_t y);
+  void     putpixel           (int16_t x, int16_t y, char color);
+  uint8_t *scan_line          (int16_t y) { return data+y*w; }
+  uint8_t *next_line          (int16_t lasty, uint8_t *last_scan) 
                                     { return last_scan+w; }          
-  long           total_pixels       (unsigned char background=0);
-  image         *copy               ();    // makes a copy of an image
-  void           clear              (short color=-1);  // -1 is background color
-  void           to_24bit           (palette &pal);
-  short          width              () { return (short)w; }
-  short          height             () { return (short)h; }
-  void           scroll             (short x1, short y1, short x2, short y2, short xd, short yd);
-  void           fill_image         (image *screen, short x1, short y1, short x2, short y2, 
-				     short allign=1);
-  void           put_image          (image *screen, short x, short y, char transparent=0);
-  void           put_part           (image *screen, short x, short y, short x1, short y1, 
-				     short x2, short y2, char transparent=0);
-  void           put_part_xrev      (image *screen, short x, short y, short x1, short y1, 
-				     short x2, short y2, char transparent=0);
-  void           put_part_masked    (image *screen, image *mask, short x, short y, 
-				     short maskx, short masky, short x1, short y1, short x2, short y2);
-  image         *copy_part_dithered (short x1, short y1, short x2, short y2);
-  void           bar                (short x1, short y1, short x2, short y2, unsigned char color);
-  void           xor_bar            (short x1, short y1, short x2, short y2, unsigned char color);
-  void 	         wiget_bar          (short x1, short y1, short x2, short y2, 
-				     unsigned char light, unsigned char med, unsigned char dark);
-  void           line               (short x1, short y1, short x2, short y2, unsigned char color);
-  void           rectangle          (short x1, short y1, short x2, short y2, unsigned char color);
-  void           burn_led           (short x, short y, long num, short color, short scale=1);
-  void           set_clip           (short x1, short y1, short x2, short y2);
-  void           get_clip           (short &x1,short &y1,short &x2,short &y2);
-  void           in_clip            (short x1, short y1, short x2, short y2);
+  int32_t  total_pixels       (uint8_t background=0);
+  image    *copy               ();    // makes a copy of an image
+  void     clear              (int16_t color=-1);  // -1 is background color
+  void     to_24bit           (palette &pal);
+  int16_t  width              () { return (int16_t)w; }
+  int16_t  height             () { return (int16_t)h; }
+  void     scroll             (int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, int16_t yd);
+  void     fill_image         (image *screen, int16_t x1, int16_t y1, int16_t x2, int16_t y2, 
+			      int16_t allign=1);
+  void     put_image          (image *screen, int16_t x, int16_t y, char transparent=0);
+  void     put_part           (image *screen, int16_t x, int16_t y, int16_t x1, int16_t y1, 
+				     int16_t x2, int16_t y2, char transparent=0);
+  void     put_part_xrev      (image *screen, int16_t x, int16_t y, int16_t x1, int16_t y1, 
+				     int16_t x2, int16_t y2, char transparent=0);
+  void     put_part_masked    (image *screen, image *mask, int16_t x, int16_t y, 
+				     int16_t maskx, int16_t masky, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+  image    *copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+  void     bar                (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
+  void     xor_bar            (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
+  void 	   wiget_bar          (int16_t x1, int16_t y1, int16_t x2, int16_t y2, 
+				     uint8_t light, uint8_t med, uint8_t dark);
+  void     line               (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
+  void     rectangle          (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
+  void     burn_led           (int16_t x, int16_t y, int32_t num, int16_t color, int16_t scale=1);
+  void     set_clip           (int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+  void     get_clip           (int16_t &x1,int16_t &y1,int16_t &x2,int16_t &y2);
+  void     in_clip            (int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
-  void           dirt_off           () { if (special && special->keep_dirt) special->keep_dirt=0; }
-  void           dirt_on            () { if (special) special->keep_dirt=1; }
+  void     dirt_off           () { if (special && special->keep_dirt) special->keep_dirt=0; }
+  void     dirt_on            () { if (special) special->keep_dirt=1; }
 
-  void           add_dirty          (int x1, int y1, int x2, int y2) 
+  void     add_dirty          (int x1, int y1, int x2, int y2) 
                                     { if (special) special->add_dirty(x1,y1,x2,y2); }
-  void           delete_dirty       (int x1, int y1, int x2, int y2) 
+  void     delete_dirty       (int x1, int y1, int x2, int y2) 
                                     { if (special) special->delete_dirty(x1,y1,x2,y2); }
-  void           clear_dirties      () { if (special) special->clear_dirties(); }
-  void           dither             (palette *pal); // use a b&w palette!
-  void           resize             (short new_width, short new_height);
-  void           change_size        (short new_width, short new_height, unsigned char *page=NULL);
-  void           flood_fill         (short x, short y, unsigned char color);
-  image         *create_smooth      (short smoothness=1); // 0 no smoothness
-  void           unpack_scanline    (short line, char bitsperpixel=1);
-  unsigned char  brightest_color    (palette *pal);
-  void           flip_x	  	    ();
-  void           flip_y             ();
-  void           make_color         (unsigned char color);
-  unsigned char  darkest_color      (palette *pal, short noblack=0);
+  void     clear_dirties      () { if (special) special->clear_dirties(); }
+  void     dither             (palette *pal); // use a b&w palette!
+  void     resize             (int16_t new_width, int16_t new_height);
+  void     change_size        (int16_t new_width, int16_t new_height, uint8_t *page=NULL);
+  void     flood_fill         (int16_t x, int16_t y, uint8_t color);
+  image    *create_smooth     (int16_t smoothness=1); // 0 no smoothness
+  void     unpack_scanline    (int16_t line, char bitsperpixel=1);
+  uint8_t  brightest_color    (palette *pal);
+  void     flip_x	      ();
+  void     flip_y             ();
+  void     make_color         (uint8_t color);
+  uint8_t  darkest_color      (palette *pal, int16_t noblack=0);
 
   ~image();
 } ;

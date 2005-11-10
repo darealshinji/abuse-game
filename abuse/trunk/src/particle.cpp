@@ -104,20 +104,20 @@ part_sequence::part_sequence(void *args)
 
 part_frame::part_frame(bFILE *fp)
 {
-  t=fp->read_long();
+  t=fp->read_uint32();
   data=(part *)jmalloc(sizeof(part)*t,"particle frame");
   x1=y1=100000; x2=y2=-100000;
   for (int i=0;i<t;i++)
   {
-    short x=fp->read_short();
-    short y=fp->read_short();
+    int16_t x=fp->read_uint16();
+    int16_t y=fp->read_uint16();
     if (x<x1) x1=x;
     if (y<y1) y1=y;
     if (x>x2) x2=x;
     if (y>y2) y2=x;
     data[i].x=x;
     data[i].y=y;   
-    data[i].color=fp->read_byte(); 
+    data[i].color=fp->read_uint8(); 
   }
 }
 
@@ -155,7 +155,7 @@ void draw_panims(view *v)
 
 void part_frame::draw(image *screen, int x, int y, int dir)
 {
-  short cx1,cy1,cx2,cy2;
+  int16_t cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);
   if (x+x1>cx2 || x+x2<cx1 || y+y1>cy2 || y+y2<cy1) return ;
 
@@ -195,7 +195,7 @@ void part_frame::draw(image *screen, int x, int y, int dir)
 
 void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
 {
-	short cx1, cy1, cx2, cy2;
+	int16_t cx1, cy1, cx2, cy2;
 	screen->get_clip( cx1, cy1, cx2, cy2 );
 
 	int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
@@ -222,7 +222,7 @@ void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
 
 void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
 {
-	short cx1, cy1, cx2, cy2;
+	int16_t cx1, cy1, cx2, cy2;
 	screen->get_clip( cx1, cy1, cx2, cy2 );
 
 	int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
@@ -233,7 +233,7 @@ void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
 	s = ( 15 - s );
 
 	int w = screen->width();
-	uchar *addr;
+	uint8_t *addr;
 
 	while( t-- )
 	{

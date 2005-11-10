@@ -11,7 +11,7 @@ palette *lastl=NULL;
 
 palette::palette(bFILE *fp)
 {
-  ncolors=fp->read_short();
+  ncolors=fp->read_uint16();
   pal=(color *)jmalloc(sizeof(color)*ncolors,"palette");
   usd=(unsigned char *)jmalloc(ncolors/8+1,"palette used array");
   set_all_unused();
@@ -22,7 +22,7 @@ palette::palette(bFILE *fp)
 palette::palette(spec_entry *e, bFILE *fp)
 {
   fp->seek(e->offset,0);
-  ncolors=fp->read_short();
+  ncolors=fp->read_uint16();
   pal=(color *)jmalloc(sizeof(color)*ncolors,"palette");
   usd=(unsigned char *)jmalloc(ncolors/8+1,"palette used array");
   set_all_unused();
@@ -37,7 +37,7 @@ int palette::size()
 
 int palette::write(bFILE *fp)
 {
-  fp->write_short(ncolors);
+  fp->write_uint16(ncolors);
   return fp->write(pal,sizeof(color)*ncolors)==ncolors;
 }
 

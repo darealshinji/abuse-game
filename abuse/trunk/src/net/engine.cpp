@@ -245,7 +245,7 @@ main(int argc, char **argv)
       comm_failed();
 
     // wait for engine to ack it has attached
-    uchar ack=0;
+    uint8_t ack=0;
     if (read(driver_in_fd,&ack,1)!=1 || ack!=1)
       comm_failed();
   }
@@ -466,9 +466,9 @@ int get_lsf(char *name)  // contact remot host and ask for lisp startup file fil
   char *name_start=name;
   int fd=connect_to_server(name);
   if (fd<0) return 0;
-  uchar ctype=CLIENT_LSF_WAITER;
+  uint8_t ctype=CLIENT_LSF_WAITER;
   if (write(fd,&ctype,1)!=1) { close(fd); return 0; } 
-  uchar len;
+  uint8_t len;
   if (read(fd,&len,1)!=1 || len==0) { close(fd); return 0; }
   if (read(fd,name_start,len)!=len) { close(fd); return 0; }
   close(fd);
@@ -481,18 +481,18 @@ int join_game(char *server_name)   // ask remote server for entry into game
   strcpy(sn_start,server_name);
 
   int fd=connect_to_server(server_name);
-  uchar ctype=CLIENT_ABUSE;
+  uint8_t ctype=CLIENT_ABUSE;
   if (write(fd,&ctype,1)!=1) { close(fd); return 0; } 
 
   // send server out game port
-  ushort port=lstl(packet_port);
+  uint16_t port=lstl(packet_port);
   if (write(fd,&port,2)!=2) { close(fd); return 0; }
 
   // read server's game port
   if (read(fd,&port,2)!=2) { close(fd); return 0; }
   port=lstl(port);
 
-  ushort cnum;
+  uint16_t cnum;
   if (read(fd,&cnum,2)!=2 || cnum==0) { close(fd); return 0; }
   cnum=lstl(cnum);
 
@@ -515,13 +515,13 @@ void join_new_players()  // during this section we are giving mem_lock by engine
   {
     if (!c->has_joined)
     {
-      ushort cnum=lstl(c->client_id);
+      uint16_t cnum=lstl(c->client_id);
       if (write(c->socket_fd,&cnum,2)!=2) { c->delete_me=1; }
       c->wait_reload=1;
       c->has_joined=1;
     } else if (!c->delete_me)
     {
-      uchar reload=CLCMD_RELOAD;
+      uint8_t reload=CLCMD_RELOAD;
       if (write(c->socket_fd,&reload,1)!=1) { c->delete_me=1; }
       c->wait_reload=1;
     }
@@ -581,7 +581,7 @@ void get_input_from_server()
 
 void process_engine_command()
 {
-  uchar cmd;
+  uint8_t cmd;
   if (read(driver_in_fd,&cmd,1)!=1) { mdie("could not read command from engine"); }
   switch (cmd)
   {
@@ -643,7 +643,7 @@ void process_engine_command()
     {
       if (game_server_fd>0)
       {
-	uchar ok=CLCMD_RELOADED;
+	uint8_t ok=CLCMD_RELOADED;
         if (!write(game_server_fd,&ok,1)) { mdie("could not send join_ok msg"); }	
 	next_process();
       }
@@ -656,19 +656,19 @@ void process_engine_command()
 
     case NFCMD_REQUEST_ENTRY :
     {
-      uchar len;
+      uint8_t len;
       char name[256];
       if (read(driver_in_fd,&len,1)!=1) { mdie("could not read server name length"); }
       if (read(driver_in_fd,name,len)!=len) { mdie("could not read server name"); }
       strcpy(net_server,name);
-      ushort success=join_game(name);
+      uint16_t success=join_game(name);
       if (write(driver_out_fd,&success,2)!=2) mdie("cound not send lsf read failure");      
       next_process();
     } break;
 
     case NFCMD_REQUEST_LSF :
     {
-      uchar len;
+      uint8_t len;
       char name[256];
       if (read(driver_in_fd,&len,1)!=1) { mdie("could not read lsf name length"); }
       if (read(driver_in_fd,name,len)!=len) { mdie("could not read lsf name"); }
@@ -687,14 +687,14 @@ void process_engine_command()
 
     case NFCMD_PROCESS_LSF :
     {
-      uchar len,name[256];
+      uint8_t len,name[256];
       if (read(driver_in_fd,&len,1)!=1) { mdie("could not read lsf name length"); }
       if (read(driver_in_fd,name,len)!=len) { mdie("could not read lsf name"); }
       while (lsf_wait_list)
       {
 	lsf_waiter *c=lsf_wait_list;
 	lsf_wait_list=lsf_wait_list->next;
-	uchar status=1;
+	uint8_t status=1;
 	write(c->socket_fd,&len,1);
 	write(c->socket_fd,name,len);
 	delete c;
@@ -708,7 +708,7 @@ void process_engine_command()
       {
 	crc_waiter *c=crc_wait_list;
 	crc_wait_list=crc_wait_list->next;
-	uchar status=1;
+	uint8_t status=1;
 	write(c->socket_fd,&status,1);
 	delete c;
       }
@@ -717,7 +717,7 @@ void process_engine_command()
 
     case NFCMD_SET_FS :
     {
-      uchar size;
+      uint8_t size;
       char sn[256];
       if (read(driver_in_fd,&size,1)!=1) mdie("could not read filename length");
       if (read(driver_in_fd,sn,size)!=size) mdie("could not read server name");
@@ -729,7 +729,7 @@ void process_engine_command()
 
     case NFCMD_OPEN :
     {
-      uchar size[2];
+      uint8_t size[2];
       char filename[300],mode[20],*fn;
       fn=filename;
       if (read(driver_in_fd,size,2)!=2) mdie("could not read fd on open");
@@ -739,7 +739,7 @@ void process_engine_command()
       int fd=open_file(fn,mode);
       if (fd==-2)
       {
-	uchar st[2];
+	uint8_t st[2];
 	st[0]=NF_OPEN_LOCAL_FILE;
 	st[1]=strlen(fn)+1;
 	if (write(driver_out_fd,st,2)!=2) comm_failed();
@@ -749,11 +749,11 @@ void process_engine_command()
 	if (size!=st[1]) comm_failed();
       } else if (fd==-1)
       {
-	uchar st=NF_OPEN_FAILED;
+	uint8_t st=NF_OPEN_FAILED;
 	if (write(driver_out_fd,&st,1)!=1) comm_failed(); 
       } else
       {
-	uchar st=NF_OPEN_REMOTE_FILE;
+	uint8_t st=NF_OPEN_REMOTE_FILE;
 	if (write(driver_out_fd,&st,1)!=1) comm_failed(); 	
 	if (write(driver_out_fd,&fd,sizeof(fd))!=sizeof(fd)) comm_failed(); 	
       }
@@ -777,7 +777,7 @@ void process_engine_command()
 	{ 
 	  unlink_remote_file(rf);
 	  delete rf; 
-	  uchar st=1;
+	  uint8_t st=1;
 	  if (write(driver_out_fd,&st,1)!=1) comm_failed(); 	
 	} break;
 	case NFCMD_SIZE  :
@@ -813,7 +813,7 @@ void process_engine_command()
 
 int process_client_command(client *c)
 {
-  uchar cmd;
+  uint8_t cmd;
   if (read(c->socket_fd,&cmd,1)!=1) return 0;
   switch (cmd)
   {
@@ -828,7 +828,7 @@ int process_client_command(client *c)
     } break;
     case CLCMD_REQUEST_RESEND :
     {
-      uchar tick;
+      uint8_t tick;
       if (read(c->socket_fd,&tick,1)!=1) return 0;
 
 
@@ -877,11 +877,11 @@ int join_game_client(int client_id)
 
 int add_game_client(int fd, sockaddr *from)     // returns false if could not join client
 {  
-  ushort port;
+  uint16_t port;
   if (read(fd,&port,2)!=2) { close(fd);  return 0; }
   port=lstl(port);
 
-  ushort pport=lstl(packet_port);
+  uint16_t pport=lstl(packet_port);
   if (write(fd,&pport,2)!=2) { close(fd);  return 0; }  
 
 
@@ -892,7 +892,7 @@ int add_game_client(int fd, sockaddr *from)     // returns false if could not jo
 
   if (f===-1) { close(fd); return 0; }
 
-  ushort client_id=lstl(f);
+  uint16_t client_id=lstl(f);
   if (write(fd,&client_id,2)!=2) { close(fd);  return 0; }    
 
 
@@ -1123,7 +1123,7 @@ void net_watch()
 	}
       } else if (FD_ISSET(game_server_fd,&read_set))
       {
-	uchar cmd;
+	uint8_t cmd;
 	if (read(game_server_fd,&cmd,1)!=1) { mdie("unable to read command from server"); }
 	switch (cmd)
 	{
@@ -1133,7 +1133,7 @@ void net_watch()
 	  } break;
 	  case CLCMD_REQUEST_RESEND :
 	  {
-	    uchar tick;
+	    uint8_t tick;
 	    if (read(game_server_fd,&tick,1)!=1) { mdie("unable to read resend tick from server"); }
 
 	    fprintf(stderr,"request for resend tick %d (game cur=%d, pack=%d, last=%d)\n",

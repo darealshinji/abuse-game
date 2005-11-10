@@ -5,10 +5,10 @@
 
 extern int total_objects;
 
-uchar *bad_guy_array=NULL;    // list flaging each character saying they are a bad bug or not
+uint8_t *bad_guy_array=NULL;  // list flaging each character saying they are a bad bug or not
                               // mainly used by the rocket to find targets
 
-long S_fall_start,S_falling,S_landing,S_pounce_wait,
+int32_t S_fall_start,S_falling,S_landing,S_pounce_wait,
      S_turn_around,S_fire_wait,S_ceil_fire,S_top_walk,
      S_blown_back_dead,S_jump_up,S_hiding,S_weapon_fire,
      S_hanging,S_blocking,S_rotate,S_climbing,S_climb_off,
@@ -27,7 +27,7 @@ long S_fall_start,S_falling,S_landing,S_pounce_wait,
 
 int compile_error=0;
 
-long c_state(char *name)
+int32_t c_state(char *name)
 {
   void *sym=find_symbol(name);
   if (sym)
@@ -113,11 +113,11 @@ void compiled_init()
   if (b && DEFINEDP(symbol_value(b)))
   {
     b=symbol_value(b);
-    bad_guy_array=(uchar *)jmalloc(total_objects,"bad_guy_array");
+    bad_guy_array=(uint8_t *)jmalloc(total_objects,"bad_guy_array");
     memset(bad_guy_array,0,total_objects);
     while (b)
     {
-      long x=lnumber_value(CAR(b));
+      int32_t x=lnumber_value(CAR(b));
       if (x>=0 && x<total_objects)
         bad_guy_array[x]=1;
       else { lbreak("objetc number out of range %d\n",x); }

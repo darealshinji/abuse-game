@@ -7,12 +7,12 @@
 #include "crc.hpp"
 
 #define TTINTS 9
-extern uchar *tints[TTINTS];
-extern unsigned char *white_light,*white_light_initial,*green_light,*trans_table;
-extern short ambient_ramp;
+extern uint8_t *tints[TTINTS];
+extern uint8_t *white_light,*white_light_initial,*green_light,*trans_table;
+extern int16_t ambient_ramp;
 #define REVERSE_GREEN_TINT 8
 
-extern short shutdown_lighting_value,shutdown_lighting;
+extern int16_t shutdown_lighting_value,shutdown_lighting;
 
 class light_source
 {
@@ -62,8 +62,8 @@ void read_lights(spec_directory *sd, bFILE *fp, char *level_name);
 void delete_patch_list(light_patch *first);
 light_patch *find_patch(int screenx, int screeny, light_patch *list);
 int calc_light_value(int32_t x, int32_t y, light_patch *which);			       
-void light_screen(image *sc, int32_t screenx, int32_t screeny, uchar *light_lookup, ushort ambient);
-void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uchar *light_lookup, ushort ambient,
+void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient);
+void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient,
 			 image *out, int32_t out_x, int32_t out_y);
 
 void calc_light_table(palette *pal);

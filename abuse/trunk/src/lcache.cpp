@@ -47,25 +47,25 @@ long block_size(Cell *level)  // return size needed to recreate this block
 void write_level(bFILE *fp, Cell *level)
 {
   int type=item_type(level);
-  fp->write_byte(type);
+  fp->write_uint8(type);
 
 
   switch (type)
   {
     case L_NUMBER :
-    { fp->write_long(lnumber_value(level)); } break;
+    { fp->write_uint32(lnumber_value(level)); } break;
     case L_CHARACTER :
-    { fp->write_short(lcharacter_value(level)); } break;
+    { fp->write_uint16(lcharacter_value(level)); } break;
     case L_STRING :
     { long l=strlen(lstring_value(level))+1;
-      fp->write_long(l);
+      fp->write_uint32(l);
       fp->write(lstring_value(level),l); 
     } break;
     case L_SYMBOL :
-    { fp->write_long((long)level); } break;
+    { fp->write_uint32((long)level); } break;
     case L_CONS_CELL :
     {
-      if (!level) fp->write_long(0);
+      if (!level) fp->write_uint32(0);
       else
       {
 	long t=0;
@@ -73,10 +73,10 @@ void write_level(bFILE *fp, Cell *level)
 	for (;b && item_type(b)==L_CONS_CELL;b=CDR(b)) t++;
 	if (b) 
 	{
-	  fp->write_long(-t);      // negative number means dotted list
+	  fp->write_uint32(-t);      // negative number means dotted list
 	  write_level(fp,b);       // save end of dotted list     
 	}
-	else fp->write_long(t);
+	else fp->write_uint32(t);
 
 	for (b=level;b && item_type(b)==L_CONS_CELL;b=CDR(b))    
 	  write_level(fp,CAR(b));
@@ -87,24 +87,24 @@ void write_level(bFILE *fp, Cell *level)
 
 Cell *load_block(bFILE *fp)
 {
-  int type=fp->read_byte();
+  int type=fp->read_uint8();
   switch (type)
   {   
     case L_NUMBER :
-    { return new_lisp_number(fp->read_long()); } break;
+    { return new_lisp_number(fp->read_uint32()); } break;
     case L_CHARACTER :
-    { return new_lisp_character(fp->read_short()); } break;
+    { return new_lisp_character(fp->read_uint16()); } break;
     case L_STRING :
-    { long l=fp->read_long();
+    { long l=fp->read_uint32();
       lisp_string *s=new_lisp_string(l);
       fp->read(lstring_value(s),l);
       return s;
     } break;
     case L_SYMBOL :
-    { return (void *)fp->read_long(); } break;
+    { return (void *)fp->read_uint32(); } break;
     case L_CONS_CELL :
     {
-      long t=fp->read_long();
+      long t=fp->read_uint32();
       if (!t) return NULL;
       else
       {

@@ -22,18 +22,18 @@ class light_source;
 class simple_object
 {
   public :
-  schar Fade_dir;
-  uchar Fade_count,Fade_max;
-  uchar Flags,grav_on,targetable_on;
+  int8_t Fade_dir;
+  uint8_t Fade_count,Fade_max;
+  uint8_t Flags,grav_on,targetable_on;
   int32_t Xvel,Yvel,Xacel,Yacel;
-  uchar Fx,Fy,Fxvel,Fyvel,Fxacel,Fyacel;
-  uchar Aitype;
-  ushort Aistate,Aistate_time;
-  unsigned short Hp,Mp,Fmp;
-  schar Frame_dir;        
+  uint8_t Fx,Fy,Fxvel,Fyvel,Fxacel,Fyacel;
+  uint8_t Aitype;
+  uint16_t Aistate,Aistate_time;
+  uint16_t Hp,Mp,Fmp;
+  int8_t Frame_dir;        
 
 
-  uchar tobjs,tlights;
+  uint8_t tobjs,tlights;
   game_object **objs,*link;
   light_source **lights;
 
@@ -49,8 +49,8 @@ class simple_object
   simple_object();
   int32_t x,y,
        last_x,last_y;              // used for frame interpolation on fast machines
-  schar direction,active;
-  ushort otype;
+  int8_t direction,active;
+  uint16_t otype;
   character_state state;
   short current_frame;
 
@@ -59,38 +59,38 @@ class simple_object
   int floating()             { return flags()&FLOATING_FLAG; }
 
   int keep_ai_info()         { return 1; }
-  uchar flags()              { return Flags; }
+  uint8_t flags()            { return Flags; }
   int32_t xvel()             { return Xvel; }
   int32_t yvel()             { return Yvel; }
   int32_t xacel()            { return Xacel; }
   int32_t yacel()            { return Yacel; }
 
-  uchar fx()                 { return Fx; }
-  uchar fy()                 { return Fy; }
-  uchar fxvel()              { return Fxvel; }
-  uchar fyvel()              { return Fyvel; }
-  uchar fxacel()             { return Fxacel; }
-  uchar fyacel()             { return Fyacel; }
+  uint8_t fx()               { return Fx; }
+  uint8_t fy()               { return Fy; }
+  uint8_t fxvel()            { return Fxvel; }
+  uint8_t fyvel()            { return Fyvel; }
+  uint8_t fxacel()           { return Fxacel; }
+  uint8_t fyacel()           { return Fyacel; }
 
-  uchar sfx()                { return Fx; }  // x & y should always be positive
-  uchar sfy()                { return Fy; }
-  uchar sfxvel()             { if (Xvel>=0) return Fxvel; else return -Fxvel; }
-  uchar sfyvel()             { if (Yvel>=0) return Fyvel; else return -Fyvel; }
-  uchar sfxacel()            { if (Xacel>=0) return Fxacel; else return -Fxacel; }
-  uchar sfyacel()            { if (Yacel>=0) return Fyacel; else return -Fyacel; }
+  uint8_t sfx()              { return Fx; }  // x & y should always be positive
+  uint8_t sfy()              { return Fy; }
+  uint8_t sfxvel()           { if (Xvel>=0) return Fxvel; else return -Fxvel; }
+  uint8_t sfyvel()           { if (Yvel>=0) return Fyvel; else return -Fyvel; }
+  uint8_t sfxacel()          { if (Xacel>=0) return Fxacel; else return -Fxacel; }
+  uint8_t sfyacel()          { if (Yacel>=0) return Fyacel; else return -Fyacel; }
 
-  uchar aitype()             { return Aitype; }
-  ushort aistate()           { return Aistate; }
-  ushort aistate_time()      { return Aistate_time; }
-  ushort hp()                { return Hp;         }
-  ushort mp()                { return Mp;         }
-  ushort fmp()               { return Fmp;        }
-  schar fade_dir()           { return Fade_dir;   }
-  schar frame_dir()          { return Frame_dir;  }
-  uchar fade_count()         { return Fade_count; }
-  uchar fade_max()           { return Fade_max;   }
-  uchar total_objects()      { return tobjs;      }
-  uchar total_lights()       { return tlights;    }
+  uint8_t aitype()           { return Aitype; }
+  uint16_t aistate()         { return Aistate; }
+  uint16_t aistate_time()    { return Aistate_time; }
+  uint16_t hp()              { return Hp;         }
+  uint16_t mp()              { return Mp;         }
+  uint16_t fmp()             { return Fmp;        }
+  int8_t fade_dir()          { return Fade_dir;   }
+  int8_t frame_dir()         { return Frame_dir;  }
+  uint8_t fade_count()       { return Fade_count; }
+  uint8_t fade_max()         { return Fade_max;   }
+  uint8_t total_objects()    { return tobjs;      }
+  uint8_t total_lights()     { return tlights;    }
 
   morph_char *morph_status()     { return mc; }
   light_source *get_light(int x)     
@@ -99,32 +99,32 @@ class simple_object
   { if (x>=tobjs) { lbreak("bad x for object\n"); exit(0); } return objs[x]; }
   view *controller()             { return Controller; }
 
-  void set_targetable(uchar x)    { targetable_on=x; }
-  void set_flags(uchar f)         { Flags=f; }
+  void set_targetable(uint8_t x)  { targetable_on=x; }
+  void set_flags(uint8_t f)       { Flags=f; }
   void set_xvel(int32_t xv)       { Xvel=xv; }
   void set_yvel(int32_t yv)       { Yvel=yv; }
   void set_xacel(int32_t xa)      { Xacel=xa; }
   void set_yacel(int32_t ya)      { Yacel=ya; }
-  void set_fx(uchar x)            { Fx=x; }
-  void set_fy(uchar y)            { Fy=y; }
-  void set_fxvel(uchar xv)        { Fxvel=abs(xv); }
-  void set_fyvel(uchar yv)        { Fyvel=abs(yv); }
-  void set_fxacel(uchar xa)       { Fxacel=abs(xa); }
-  void set_fyacel(uchar ya)       { Fyacel=abs(ya); }
-  void set_aitype(uchar t)        { Aitype=t; }
-  void set_aistate(ushort s)      { Aistate=s; }
-  void set_aistate_time(ushort t) { Aistate_time=t; }
-  void set_hp(ushort h)           { Hp=h; }
-  void set_mp(ushort m)           { Mp=m; }
-  void set_fmp(ushort m)          { Fmp=m; }
+  void set_fx(uint8_t x)          { Fx=x; }
+  void set_fy(uint8_t y)          { Fy=y; }
+  void set_fxvel(uint8_t xv)      { Fxvel=abs(xv); }
+  void set_fyvel(uint8_t yv)      { Fyvel=abs(yv); }
+  void set_fxacel(uint8_t xa)     { Fxacel=abs(xa); }
+  void set_fyacel(uint8_t ya)     { Fyacel=abs(ya); }
+  void set_aitype(uint8_t t)      { Aitype=t; }
+  void set_aistate(uint16_t s)      { Aistate=s; }
+  void set_aistate_time(uint16_t t) { Aistate_time=t; }
+  void set_hp(uint16_t h)           { Hp=h; }
+  void set_mp(uint16_t m)           { Mp=m; }
+  void set_fmp(uint16_t m)          { Fmp=m; }
 
 
 
-  void set_fade_count(uchar f)          { Fade_count=f; }
-  void set_fade_max(uchar m)            { Fade_max=m;  }
-  void set_fade_dir(schar d)            { Fade_dir=d; }
+  void set_fade_count(uint8_t f)        { Fade_count=f; }
+  void set_fade_max(uint8_t m)          { Fade_max=m;  }
+  void set_fade_dir(int8_t d)            { Fade_dir=d; }
 
-  void set_frame_dir(schar d)           { Frame_dir=d; }
+  void set_frame_dir(int8_t d)           { Frame_dir=d; }
   void add_light(light_source *ls);
   void add_object(game_object *o);
 

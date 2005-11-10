@@ -22,10 +22,10 @@ class level;
 struct cache_item
 {
   void *data;
-  long last_access;   
-  unsigned char type;
-  short file_number;
-  long offset;
+  int32_t last_access;   
+  uint8_t type;
+  int16_t file_number;
+  int32_t offset;
 } ;
 
 
@@ -34,7 +34,7 @@ class crced_file
 {
   public :
   int crc_calculated;
-  ulong crc;
+  uint32_t crc;
   char *filename;
   crced_file(char *name);
   ~crced_file();
@@ -47,9 +47,9 @@ class crc_manager  // stores crc for each file open so redundant calculations ar
   public :
   crc_manager();
   int get_filenumber(char *filename);
-  ulong get_crc(long filenumber, int &failed);
-  void set_crc(long filenumber, ulong crc);
-  char *get_filename(long filenumber);
+  uint32_t get_crc(int32_t filenumber, int &failed);
+  void set_crc(int32_t filenumber, uint32_t crc);
+  char *get_filename(int32_t filenumber);
   void clean_up();
   int total_filenames() { return total_files; }
   int write_crc_file(char *filename);
@@ -61,17 +61,17 @@ class crc_manager  // stores crc for each file open so redundant calculations ar
 class cache_list
 {
   cache_item *list;
-  long total,last_registered,last_access,poll_start_access;
-  short last_file;           // for speed leave the last file accessed open
+  int32_t total,last_registered,last_access,poll_start_access;
+  int16_t last_file;           // for speed leave the last file accessed open
 
   bFILE *fp,*cache_file,*cache_read_file;
   spec_directory *last_dir;
-  long last_offset;          // store the last offset so we don't have to seek if
+  int32_t last_offset;          // store the last offset so we don't have to seek if
                              // we don't need to
   
 
-  short lcache_number;
-  long alloc_id();
+  int16_t lcache_number;
+  int32_t alloc_id();
   void locate(cache_item *i, int local_only=0);    // set up file and offset for this item
   void normalize();
   void unmalloc(cache_item *i);
@@ -86,9 +86,9 @@ public :
   void free_oldest();
   int in_use() { if (used) { used=0; return 1; } else return 0; }
   int full() { if (ful) { ful=0; return 1; } else return 0; }
-  long reg_object(char *filename, void *object, int type, int rm_dups);      // lisp object
-  long reg(char *filename, char *name, int type=-1, int rm_dups=0);          // returns id to item
-  long reg_lisp_block(Cell *block);
+  int32_t reg_object(char *filename, void *object, int type, int rm_dups);      // lisp object
+  int32_t reg(char *filename, char *name, int type=-1, int rm_dups=0);          // returns id to item
+  int32_t reg_lisp_block(Cell *block);
   int loaded(int id);
   void unreg(int id);
   void note_need(int id);
@@ -113,7 +113,7 @@ public :
   int offset_compare(int a, int b);
 
   void load_cache_prof_info(char *filename, level *lev);
-  int search(int *sarray, ushort filenum, long offset);  // sarray is a index table sorted by offset/filenum
+  int search(int *sarray, uint16_t filenum, int32_t offset);  // sarray is a index table sorted by offset/filenum
 
   void show_accessed();
   void empty();

@@ -594,57 +594,57 @@ int jFILE::unbuffered_seek(long offset, int whence) // whence=SEEK_SET, SEEK_CUR
 }
 
 
-uint8_t bFILE::read_byte()
+uint8_t bFILE::read_uint8()
 { uint8_t x;
   read(&x,1);
   return x;
 }
 
-uint16_t bFILE::read_short()
+uint16_t bFILE::read_uint16()
 { 
   uint16_t x;
   read(&x,2); 
-  return int_to_local(x);
+  return uint16_to_local(x);
 }
 
 
-uint32_t bFILE::read_long()
+uint32_t bFILE::read_uint32()
 { 
   uint32_t x;
   read(&x,4); 
-  return long_to_local(x);
+  return uint32_to_local(x);
 }
 
-void bFILE::write_byte(uint8_t x)
+void bFILE::write_uint8(uint8_t x)
 {
   write(&x,1);
 }
 
-void bFILE::write_short(uint16_t x)
+void bFILE::write_uint16(uint16_t x)
 { 
-  x=int_to_local(x);
+  x=uint16_to_local(x);
   write(&x,2);
 }
 
 
-void bFILE::write_long(uint32_t x)
+void bFILE::write_uint32(uint32_t x)
 {
-  x=long_to_local(x);
+  x=uint32_to_local(x);
   write(&x,4);
 }
 
 void bFILE::write_double(double x)
 {
   double a;
-  write_long((long)(modf(x,&a)*(double)(1<<32-1)));
-  write_long((long)a);
+  write_uint32((long)(modf(x,&a)*(double)(1<<32-1)));
+  write_uint32((long)a);
 }
 
 double bFILE::read_double()
 {
   long a,b;
-  a=read_long();
-  b=read_long();
+  a=read_uint32();
+  b=read_uint32();
   return (double)b+a/(double)(1<<32-1);
 }
 
@@ -761,7 +761,7 @@ void spec_directory::startup(bFILE *fp)
   size=0;
   if (!strcmp(buf,SPEC_SIGNATURE))
   {    
-    total=fp->read_short();   
+    total=fp->read_uint16();   
     entries=(spec_entry **)jmalloc(sizeof(spec_entry *)*total,"spec_directory::entries");
     long start=fp->tell();
 
@@ -792,8 +792,8 @@ void spec_directory::startup(bFILE *fp)
       fp->read(se->name,len);
       fp->read(&flags,1); 
 
-      se->size=fp->read_long();
-      se->offset=fp->read_long();
+      se->size=fp->read_uint32();
+      se->offset=fp->read_uint32();
       dp+=((sizeof(spec_entry)+len)+3)&(~3);
     }
   }
@@ -879,7 +879,7 @@ int spec_directory::write(bFILE *fp)
   strcpy(sig,SPEC_SIGNATURE);
 
   if (fp->write(sig,sizeof(sig))!=sizeof(sig))    return 0;
-  fp->write_short(total);
+  fp->write_uint16(total);
 
 
   int i;
@@ -890,9 +890,9 @@ int spec_directory::write(bFILE *fp)
     flags=0;
     if (fp->write(&flags,1)!=1)                     return 0; 
 
-    data_size=long_to_intel((*e)->size); 
+    data_size=uint32_to_intel((*e)->size); 
     if (fp->write((char *)&data_size,4)!=4)              return 0; 
-    offset=long_to_intel((*e)->offset);
+    offset=uint32_to_intel((*e)->offset);
     if (fp->write((char *)&offset,4)!=4)                  return 0; 
 
   }
@@ -912,58 +912,58 @@ jFILE *spec_directory::write(char *filename)
 
 }
 
-uint16_t read_short(FILE *fp)
+uint16_t read_uint16(FILE *fp)
 {
   uint16_t x;
   fread(&x,1,2,fp); 
-  return int_to_local(x);
+  return uint16_to_local(x);
 }
 
-uint32_t read_long(FILE *fp)
+uint32_t read_uint32(FILE *fp)
 {
   uint32_t x;
   fread(&x,1,4,fp);
-  return long_to_local(x);
+  return uint32_to_local(x);
 }
-void write_short(FILE *fp, uint16_t x)
+void write_uint16(FILE *fp, uint16_t x)
 {
-  x=int_to_local(x);
+  x=uint16_to_local(x);
   fwrite(&x,1,2,fp);
 }
 
-void write_long(FILE *fp, uint32_t x)
+void write_uint32(FILE *fp, uint32_t x)
 {
-  x=long_to_local(x);
+  x=uint32_to_local(x);
   fwrite(&x,1,4,fp);
 }
 
-uint8_t read_byte(FILE *fp) { return fgetc(fp)&0xff; }
-void write_byte(FILE *fp, uint8_t x) { fputc((unsigned char)x,fp); }
+uint8_t read_uint8(FILE *fp) { return fgetc(fp)&0xff; }
+void write_uint8(FILE *fp, uint8_t x) { fputc((unsigned char)x,fp); }
 
-uint32_t read_other_long(FILE *fp)
+uint32_t read_other_int32(FILE *fp)
 {
   uint32_t x;
   fread(&x,1,4,fp);
-  return big_long_to_local(x);
+  return big_uint32_to_local(x);
 }
 
-uint16_t read_other_short(FILE *fp)
+uint16_t read_other_uint16(FILE *fp)
 {
   uint16_t x;
   fread(&x,1,2,fp);
-  return big_short_to_local(x);
+  return big_uint16_to_local(x);
 }
 
 
-void write_other_short(FILE *fp, uint16_t x)
+void write_other_uint16(FILE *fp, uint16_t x)
 {
-  x=big_short_to_local(x);
+  x=big_uint16_to_local(x);
   fwrite(&x,1,2,fp);
 }
 
-void write_other_long(FILE *fp, uint32_t x)
+void write_other_int32(FILE *fp, uint32_t x)
 {
-  x=big_long_to_local(x);
+  x=big_uint32_to_local(x);
   fwrite(&x,1,4,fp);
 }
 

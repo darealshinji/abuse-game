@@ -19,8 +19,8 @@
 #include "jdir.hpp"
 #include "netcfg.hpp"
 
-extern uchar major_version;
-extern uchar minor_version;
+extern uint8_t major_version;
+extern uint8_t minor_version;
 extern int has_joystick;
 
 // the following are references to lisp symbols
@@ -59,7 +59,7 @@ void        *l_statbar_ammo_x,*l_statbar_ammo_y,
 	    *l_statbar_health_bg_color,
 
 	    *l_statbar_logo_x,*l_statbar_logo_y;
-uchar chatting_enabled=0; 
+uint8_t chatting_enabled=0; 
 
 extern void scatter_line(int x1, int y1, int x2, int y2, int c, int s);
 extern void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s);
@@ -1908,16 +1908,16 @@ long c_caller(long number, void *args)
     case 228 :
     {
       palette *p=pal->copy();
-      uchar *addr=(uchar *)p->addr();
+      uint8_t *addr=(uint8_t *)p->addr();
       int r,g,b;
       int ra=lnumber_value(CAR(args)); args=CDR(args);
       int ga=lnumber_value(CAR(args)); args=CDR(args);
       int ba=lnumber_value(CAR(args));
       for (int i=0;i<256;i++)
       {
-	r=(int)*addr+ra; if (r>255) r=255; else if (r<0) r=0; *addr=(uchar)r; addr++;
-	g=(int)*addr+ga; if (g>255) g=255; else if (g<0) g=0; *addr=(uchar)g; addr++;
-	b=(int)*addr+ba; if (b>255) b=255; else if (b<0) b=0; *addr=(uchar)b; addr++;
+	r=(int)*addr+ra; if (r>255) r=255; else if (r<0) r=0; *addr=(uint8_t)r; addr++;
+	g=(int)*addr+ga; if (g>255) g=255; else if (g<0) g=0; *addr=(uint8_t)g; addr++;
+	b=(int)*addr+ba; if (b>255) b=255; else if (b<0) b=0; *addr=(uint8_t)b; addr++;
       }
       p->load();
       delete p;

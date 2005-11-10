@@ -507,7 +507,7 @@ int32_t lnumber_value(void *lnumber)
     case L_FIXED_POINT :
       return (((lisp_fixed_point *)lnumber)->x)>>16;
     case L_STRING :
-      return (uchar)*lstring_value(lnumber);
+      return (uint8_t)*lstring_value(lnumber);
     case L_CHARACTER :
       return lcharacter_value(lnumber);
     default :
@@ -1306,16 +1306,16 @@ static void lprint_string(char *st)
       {
 	s++;
 	if (*s=='n')
-	  current_print_file->write_byte('\n');
+	  current_print_file->write_uint8('\n');
 	else if (*s=='r')
-	  current_print_file->write_byte('\r');
+	  current_print_file->write_uint8('\r');
 	else if (*s=='t')
-	  current_print_file->write_byte('\t');
+	  current_print_file->write_uint8('\t');
 	else if (*s=='\\')
-	  current_print_file->write_byte('\\');
+	  current_print_file->write_uint8('\\');
       }
       else*/
-        current_print_file->write_byte(*s);
+        current_print_file->write_uint8(*s);
     }
   }
   else
@@ -1403,7 +1403,7 @@ void lprint(void *i)
       {
 				if (current_print_file)
 				{
-				  uchar ch=((lisp_character *)i)->ch;
+				  uint8_t ch=((lisp_character *)i)->ch;
 				  current_print_file->write(&ch,1);
 				} else
 				{

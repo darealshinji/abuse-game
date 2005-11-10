@@ -171,7 +171,7 @@ color_filter::color_filter(palette *pal, int color_bits, void (*stat_fun)(int))
 color_filter::color_filter(spec_entry *e, bFILE *fp)
 {
   fp->seek(e->offset,0);
-  fp->read_short();
+  fp->read_uint16();
   int colors=32;
   color_table=(unsigned char *)jmalloc(colors*colors*colors,"color_filter : loaded");
   fp->read(color_table,colors*colors*colors);
@@ -186,7 +186,7 @@ int color_filter::size()
 int color_filter::write(bFILE *fp)
 {
   int colors=32;
-  fp->write_short(colors);
+  fp->write_uint16(colors);
   return fp->write(color_table,colors*colors*colors)==colors*colors*colors;
 }
 
@@ -219,8 +219,8 @@ void filter::put_image(image *screen, image *im, short x, short y, char transpar
 
   screen->add_dirty(x,y,x+xl-1,y+yl-1);
 
-  uchar *pg1=screen->scan_line(y),*source,*dest;
-  uchar *pg2=im->scan_line(y1);
+  uint8_t *pg1=screen->scan_line(y),*source,*dest;
+  uint8_t *pg2=im->scan_line(y1);
   int i;
   for (int j=0;j<yl;j++)        
   {

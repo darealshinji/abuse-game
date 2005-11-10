@@ -4,7 +4,7 @@ spec_directory_cache sd_cache;
 
 void spec_directory_cache::load(bFILE *fp)
 {
-  short tfn=fp->read_short();
+  short tfn=fp->read_uint16();
   int i;
   unsigned char len;
   char fn[256];
@@ -23,7 +23,7 @@ void spec_directory_cache::save(bFILE *fp)
   filename_node *f=fn_list;
   for (;f;f=f->next)
     total++;
-  fp->write_short(total);
+  fp->write_uint16(total);
   for (f=fn_list;f;f=f->next)
   {
     unsigned char len=strlen(f->filename())+1;

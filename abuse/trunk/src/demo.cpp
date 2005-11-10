@@ -61,17 +61,17 @@ int demo_manager::start_recording(char *filename)
 
   the_game->load_level(name);
   record_file->write((void *)"DEMO,VERSION:2",14);
-  record_file->write_byte(strlen(name)+1);
+  record_file->write_uint8(strlen(name)+1);
   record_file->write(name,strlen(name)+1);
   
   
   if (DEFINEDP(symbol_value(l_difficulty)))
   {
-    if (symbol_value(l_difficulty)==l_easy) record_file->write_byte(0);
-    else if (symbol_value(l_difficulty)==l_medium) record_file->write_byte(1);
-    else if (symbol_value(l_difficulty)==l_hard) record_file->write_byte(2);
-    else record_file->write_byte(3);
-  } else record_file->write_byte(3);
+    if (symbol_value(l_difficulty)==l_easy) record_file->write_uint8(0);
+    else if (symbol_value(l_difficulty)==l_medium) record_file->write_uint8(1);
+    else if (symbol_value(l_difficulty)==l_hard) record_file->write_uint8(2);
+    else record_file->write_uint8(3);
+  } else record_file->write_uint8(3);
   
 
   state=RECORDING;
@@ -93,15 +93,15 @@ void demo_manager::do_inputs()
         if (p->local_player())
           p->get_input();
 
-      base->packet.write_byte(SCMD_SYNC);
-      base->packet.write_short(make_sync());
+      base->packet.write_uint8(SCMD_SYNC);
+      base->packet.write_uint16(make_sync());
       demo_man.save_packet(base->packet.packet_data(),base->packet.packet_size());
       process_packet_commands(base->packet.packet_data(),base->packet.packet_size());
 
     } break;
     case PLAYING :
     {
-      uchar buf[1500];
+      uint8_t buf[1500];
       int size;
       if (get_packet(buf,size))              // get starting inputs
       {
@@ -137,7 +137,7 @@ void demo_manager::reset_game()
 
 int demo_manager::start_playing(char *filename)
 {
-  uchar sig[15];
+  uint8_t sig[15];
   record_file=open_file(filename,"rb");
   if (record_file->open_failure()) { delete record_file; return 0; }  
   char name[100],nsize,diff;
@@ -231,7 +231,7 @@ int demo_manager::save_packet(void *packet, int packet_size)   // returns non 0 
 {
   if (state==RECORDING)
   {
-    ushort ps=lstl(packet_size);
+    uint16_t ps=lstl(packet_size);
     if (record_file->write(&ps,2)!=2 ||
 	record_file->write(packet,packet_size)!=packet_size)
     {
@@ -246,7 +246,7 @@ int demo_manager::get_packet(void *packet, int &packet_size)   // returns non 0 
 {
   if (state==PLAYING)
   {
-    ushort ps;
+    uint16_t ps;
     if (record_file->read(&ps,2)!=2)
     {
       set_state(NORMAL);

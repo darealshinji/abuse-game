@@ -4,25 +4,25 @@
 #include <string.h>
 
 
-int packet::advance(long offset)
+int packet::advance(int32_t offset)
 {
   ro+=offset;
   return ro<=rend;
 }
 
-void packet::write_long(ulong x)
+void packet::write_uint32(uint32_t x)
 {
   x=lltl(x);
-  write((uchar *)&x,4);
+  write((uint8_t *)&x,4);
 }
 
-void packet::write_short(ushort x)
+void packet::write_uint16(uint16_t x)
 {
   x=lstl(x);
-  write((uchar *)&x,2);
+  write((uint8_t *)&x,2);
 }
 
-void packet::write_byte(uchar x)
+void packet::write_uint8(uint8_t x)
 {
   write(&x,1);
 }
@@ -40,7 +40,7 @@ packet::packet(int prefix_size)
 #endif
 
   buf_size=1000;
-  buf=(uchar *)jmalloc(buf_size,"packet buffer");
+  buf=(uint8_t *)jmalloc(buf_size,"packet buffer");
   reset(); 
 
 #ifdef MANAGE_MEM
@@ -71,11 +71,11 @@ void packet::make_bigger(int max)
   if (buf_size<max)
   {
     buf_size=max;
-    buf=(uchar *)jrealloc(buf,max,"packet buffer"); 
+    buf=(uint8_t *)jrealloc(buf,max,"packet buffer"); 
   }
 }
 
-int packet::read(uchar *buffer, int size)
+int packet::read(uint8_t *buffer, int size)
 {
   if (size>rend-ro)
     size=rend-ro;
@@ -89,7 +89,7 @@ int packet::read(uchar *buffer, int size)
 }
 
 
-int packet::write(uchar *buffer, int size)
+int packet::write(uint8_t *buffer, int size)
 {
   if (size>buf_size-wo)
     make_bigger(wo+size);

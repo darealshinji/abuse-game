@@ -4,15 +4,11 @@
 #define jmalloc(x,y) malloc(x)
 #define jrealloc(x,y,z) realloc(x,y)
 #define jfree(x) free(x)
-#define uchar  unsigned char
-#define schar  signed char
-#define sshort signed short
 
 #ifdef __sgi
 #include <sys/bsd_types.h>
 #else
-#define ulong  unsigned long
-#define ushort unsigned short
+#include <stdint.h>
 #endif
 
 class bFILE

@@ -48,7 +48,7 @@ void server::remove_from_server(view *f)  // should only be called from client s
   if (f->connect)
   {
     packet pk;
-    uchar cmd=SCMD_QUIT;    // send quit command to server
+    uint8_t cmd=SCMD_QUIT;    // send quit command to server
     pk.write(&cmd,1);
     send_pkt(f->connect,pk);
     delete f->connect;
@@ -156,9 +156,9 @@ void server::tick()
   collect_inputs();
 }
 
-ulong make_sync_long()
+uint32_t make_sync_uint32()
 {
-  ulong x=0;
+  uint32_t x=0;
   for (view *v=player_list;v;v=v->next)
   {
     x^=v->focus->x;
@@ -167,7 +167,7 @@ ulong make_sync_long()
   return x^rand_on;
 }
 
-int server::process_command(view *f, uchar command, packet &pk)
+int server::process_command(view *f, uint8_t command, packet &pk)
 {
   switch (command)
   {
@@ -179,8 +179,8 @@ int server::process_command(view *f, uchar command, packet &pk)
 
     case SCMD_VIEW_RESIZE :                          // change view area
     {
-      ulong view_size[8];          
-      if (pk.read((uchar *)view_size,8*4)!=8*4)
+      uint32_t view_size[8];          
+      if (pk.read((uint8_t *)view_size,8*4)!=8*4)
       return 0;
       else
       {
@@ -192,19 +192,19 @@ int server::process_command(view *f, uchar command, packet &pk)
 	f->suggest.send_view=0;
 	if (is_server)                  // if we are a server, tell everybody about this.
 	{
-	  uchar cmd=SCMD_VIEW_RESIZE;
-	  next_out.write((uchar *)&cmd,1);
-	  ushort pn=lstl(f->player_number);
-	  next_out.write((uchar *)&pn,2);
-	  next_out.write((uchar *)view_size,8*4);
+	  uint8_t cmd=SCMD_VIEW_RESIZE;
+	  next_out.write((uint8_t *)&cmd,1);
+	  uint16_t pn=lstl(f->player_number);
+	  next_out.write((uint8_t *)&pn,2);
+	  next_out.write((uint8_t *)view_size,8*4);
 	}
       }	      
     } break;
 
     case SCMD_WEAPON_CHANGE :                          // change weapon
     {
-      ulong new_weap;
-      if (pk.read((uchar *)&new_weap,4)!=4)
+      uint32_t new_weap;
+      if (pk.read((uint8_t *)&new_weap,4)!=4)
         return 0;
       else
       {
@@ -212,11 +212,11 @@ int server::process_command(view *f, uchar command, packet &pk)
 	f->suggest.send_weapon_change=0;
 	if (is_server)                      // if we are a server, tell everybody about this.
 	{
-	  uchar cmd=SCMD_WEAPON_CHANGE;
-	  next_out.write((uchar *)&cmd,1);
-	  ushort pn=lstl(f->player_number);
-	  next_out.write((uchar *)&pn,2);
-	  next_out.write((uchar *)&new_weap,4);
+	  uint8_t cmd=SCMD_WEAPON_CHANGE;
+	  next_out.write((uint8_t *)&cmd,1);
+	  uint16_t pn=lstl(f->player_number);
+	  next_out.write((uint8_t *)&pn,2);
+	  next_out.write((uint8_t *)&new_weap,4);
 	}
       }	      
     } break;
@@ -225,7 +225,7 @@ int server::process_command(view *f, uchar command, packet &pk)
     case SCMD_SET_INPUT :                        // set the input from this player
     {
       signed char inp[5];
-      if (pk.read((uchar *)inp,5)!=5)
+      if (pk.read((uint8_t *)inp,5)!=5)
         return 0;
       else		
         f->set_input(inp[0],inp[1],inp[2],inp[3],inp[4]);		
@@ -243,12 +243,12 @@ int server::process_command(view *f, uchar command, packet &pk)
     } break;
     case SCMD_SYNC :
     {
-      ulong x;
-      if (pk.read((uchar *)&x,4)!=4)
+      uint32_t x;
+      if (pk.read((uint8_t *)&x,4)!=4)
         return 0;
       else 
       {
-	ulong s=make_sync_long();
+	uint32_t s=make_sync_uint32();
 	if (lltl(x)!=s)
 	  printf("Out of sync, %x!=%x\n",lltl(x),s);
 	return 1;
@@ -265,18 +265,18 @@ void server::add_change_log(view *f, packet &pk, int number)
 {
   if (f->view_changed())
   {
-    uchar cmd=SCMD_VIEW_RESIZE;
+    uint8_t cmd=SCMD_VIEW_RESIZE;
     pk.write(&cmd,1);
     if (number)
     {
-      ushort pn=lstl(f->player_number);
-      pk.write((uchar *)&pn,2);
+      uint16_t pn=lstl(f->player_number);
+      pk.write((uint8_t *)&pn,2);
       dprintf("Server : %s resized view %d %d %d %d\n",f->name,
 	      f->suggest.cx1,f->suggest.cy1,f->suggest.cx2,f->suggest.cy2);
       f->resize_view(f->suggest.cx1,f->suggest.cy1,f->suggest.cx2,f->suggest.cy2);
       f->suggest.send_view=0;
     } else dprintf("sending resize to server\n");
-    ulong view_size[8];          	  
+    uint32_t view_size[8];          	  
     view_size[0]=lltl(f->suggest.cx1);
     view_size[1]=lltl(f->suggest.cy1);
     view_size[2]=lltl(f->suggest.cx2);
@@ -285,23 +285,23 @@ void server::add_change_log(view *f, packet &pk, int number)
     view_size[5]=lltl(f->suggest.pan_y);
     view_size[6]=lltl(f->suggest.shift_down);
     view_size[7]=lltl(f->suggest.shift_right);
-    pk.write((uchar *)view_size,8*4);
+    pk.write((uint8_t *)view_size,8*4);
   }
 
   if (f->weapon_changed())
   {
-    uchar cmd=SCMD_WEAPON_CHANGE;
+    uint8_t cmd=SCMD_WEAPON_CHANGE;
     pk.write(&cmd,1);
     if (number)
     {
-      ushort pn=lstl(f->player_number);
-      pk.write((uchar *)&pn,2);
+      uint16_t pn=lstl(f->player_number);
+      pk.write((uint8_t *)&pn,2);
       dprintf("Server : %s change weapon to %d\n",f->name,f->suggest.new_weapon);
       f->current_weapon=f->suggest.new_weapon;
       f->suggest.send_weapon_change=0;
     } else dprintf("sending resize to server\n");
-    ulong nw=lltl(f->suggest.new_weapon);
-    pk.write((uchar *)&nw,4);
+    uint32_t nw=lltl(f->suggest.new_weapon);
+    pk.write((uint8_t *)&nw,4);
   }
 }
 
@@ -316,7 +316,7 @@ int server::send_inputs(view *f)
   inp[3]=f->b1_suggestion;
   inp[4]=f->b2_suggestion;
   inp[5]=f->b3_suggestion;
-  if (pk.write((uchar *)inp,6)!=6)
+  if (pk.write((uint8_t *)inp,6)!=6)
     return 0;
   if (!send_pkt(f->connect,pk))
     return 0;
@@ -339,8 +339,8 @@ void server::collect_inputs()
 	{
 	  while (!pk.eop())
 	  {
-	    uchar cmd;
-	    if (pk.read((uchar *)&cmd,1)==1)
+	    uint8_t cmd;
+	    if (pk.read((uint8_t *)&cmd,1)==1)
 	      if (!process_command(f,cmd,pk))
 	      { remove_player(f); f=NULL; }
 	  }
@@ -397,9 +397,9 @@ void server::distribute_changes()
   for (view *f=player_list;f;f=f->next)
   {   
     cmd=SCMD_SET_INPUT;
-    next_out.write((uchar *)&cmd,1);
-    ushort pn=lstl(f->player_number);
-    next_out.write((uchar *)&pn,2);
+    next_out.write((uint8_t *)&cmd,1);
+    uint16_t pn=lstl(f->player_number);
+    next_out.write((uint8_t *)&pn,2);
 
     signed char inp[5];
     inp[0]=f->x_suggestion;
@@ -407,15 +407,15 @@ void server::distribute_changes()
     inp[2]=f->b1_suggestion;
     inp[3]=f->b2_suggestion;
     inp[4]=f->b3_suggestion;
-    next_out.write((uchar *)inp,5);
+    next_out.write((uint8_t *)inp,5);
   }
 
   if (sync_check)
   {
     cmd=SCMD_SYNC;
-    ulong x=lltl(make_sync_long());
-    next_out.write((uchar *)&cmd,1);  
-    next_out.write((uchar *)&x,4);  
+    uint32_t x=lltl(make_sync_uint32());
+    next_out.write((uint8_t *)&cmd,1);  
+    next_out.write((uint8_t *)&x,4);  
   }
 
   for (f=player_list;f;)  
@@ -437,7 +437,7 @@ void server::check_for_new_players()
     if (nd)
     {
       packet pk;
-//      pk.write_long(file_server->get_port());      
+//      pk.write_uint32(file_server->get_port());      
       if (!send_pkt(nd,pk))
       {
 	printf("error writing to connection\n");
@@ -457,8 +457,8 @@ void server::check_for_new_players()
 	pk.get_string(name,100);
 	printf("Joined by player %s\n",name);
 	pk.reset();
-	uchar ok=1;
-	pk.write((uchar *)&ok,1);      // write ok to join
+	uint8_t ok=1;
+	pk.write((uint8_t *)&ok,1);      // write ok to join
 	send_pkt(nd,pk);
 
 	/**************** Read suggested view size from client ****/
@@ -467,11 +467,11 @@ void server::check_for_new_players()
 	  printf("error reading view info from connection\n");
 	  return ;	
 	}	
-	long cx1,cy1,cx2,cy2;
-	if (pk.read((uchar *)&cx1,4)!=4) return ;  cx1=lltl(cx1); 
-	if (pk.read((uchar *)&cy1,4)!=4) return ;  cy1=lltl(cy1); 
-	if (pk.read((uchar *)&cx2,4)!=4) return ;  cx2=lltl(cx2); 
-	if (pk.read((uchar *)&cy2,4)!=4) return ;  cy2=lltl(cy2); 
+	int32_t cx1,cy1,cx2,cy2;
+	if (pk.read((uint8_t *)&cx1,4)!=4) return ;  cx1=lltl(cx1); 
+	if (pk.read((uint8_t *)&cy1,4)!=4) return ;  cy1=lltl(cy1); 
+	if (pk.read((uint8_t *)&cx2,4)!=4) return ;  cx2=lltl(cx2); 
+	if (pk.read((uint8_t *)&cy2,4)!=4) return ;  cy2=lltl(cy2); 
 
 	/**************** Create the player  *******************/
 	for (view *f=player_list;f && f->next;f=f->next);      // find last player, add one for pn
@@ -500,17 +500,17 @@ void server::check_for_new_players()
 
 	if (current_level->send(nd))
 	{	
-	  uchar cmd=SCMD_ADD_VIEW;
-	  next_out.write((uchar *)&cmd,1);
+	  uint8_t cmd=SCMD_ADD_VIEW;
+	  next_out.write((uint8_t *)&cmd,1);
 	  v->write_packet(next_out);
 
 
 	  /********** Send all of the views to the player **********/ 
 	  pk.reset();
-	  ushort tv=0;
+	  uint16_t tv=0;
 	  for (f=player_list;f;f=f->next) tv++;
 	  tv=lstl(tv);
-	  pk.write((uchar *)&tv,2);
+	  pk.write((uint8_t *)&tv,2);
 	  if (!send_pkt(nd,pk)) return ;
 
 	  for (f=player_list;f;f=f->next)
@@ -521,9 +521,9 @@ void server::check_for_new_players()
 	  }
 
 	  pk.reset();
-	  ushort r=lstl(rand_on);
-	  pk.write((uchar *)&r,2);       // write current random seed
-	  pk.write((uchar *)rtable,1024*2);
+	  uint16_t r=lstl(rand_on);
+	  pk.write((uint8_t *)&r,2);       // write current random seed
+	  pk.write((uint8_t *)rtable,1024*2);
 	  send_pkt(nd,pk);
 
 	}
@@ -542,8 +542,8 @@ int server::join_game(out_socket *os, char *name, char *server_name)
 
   if (!get_pkt(os,pk))                  // read join status packet, 0 means we can't join
   { fputs(re,stderr); exit(0); }
-  long nfs_port;
-  if (pk.read((uchar *)&nfs_port,4)!=4)
+  int32_t nfs_port;
+  if (pk.read((uint8_t *)&nfs_port,4)!=4)
   { fputs(re,stderr); exit(0); }
 
 //  connect_to_nfs_server(server_name,lltl(nfs_port));
@@ -551,7 +551,7 @@ int server::join_game(out_socket *os, char *name, char *server_name)
 
 
 
-  pk.write((uchar *)name,strlen(name)+1);  // send or name and see if it's ok to join in
+  pk.write((uint8_t *)name,strlen(name)+1);  // send or name and see if it's ok to join in
   if (!send_pkt(os,pk))
   {    
     printf("Unable to write to server\n");
@@ -561,8 +561,8 @@ int server::join_game(out_socket *os, char *name, char *server_name)
   if (!get_pkt(os,pk))                  // read join status packet, 0 means we can't join
   { fputs(re,stderr); exit(0); }
   
-  uchar stat;
-  if (pk.read((uchar *)&stat,1)!=1)
+  uint8_t stat;
+  if (pk.read((uint8_t *)&stat,1)!=1)
   { fputs(re,stderr); exit(0); }
 
   if (stat==0)
@@ -575,8 +575,8 @@ int server::join_game(out_socket *os, char *name, char *server_name)
   if (current_level)
     delete current_level;
 
-  long vs[4]={lltl(320/2-155),lltl(200/2-95),lltl(320/2+155),lltl(200/2+70)};
-  pk.write((uchar *)vs,4*4);
+  int32_t vs[4]={lltl(320/2-155),lltl(200/2-95),lltl(320/2+155),lltl(200/2+70)};
+  pk.write((uint8_t *)vs,4*4);
   if (!send_pkt(os,pk))   { printf("Unable to write to server\n"); exit(0);  }
   
 
@@ -592,8 +592,8 @@ int server::join_game(out_socket *os, char *name, char *server_name)
     printf("Unable to read views from server\n");
     exit(0);
   }
-  ushort tv;
-  if (pk.read((uchar *)&tv,2)!=2)
+  uint16_t tv;
+  if (pk.read((uint8_t *)&tv,2)!=2)
   { fputs(re,stderr); exit(0); }
   tv=lstl(tv);
   view *last=NULL;
@@ -614,14 +614,14 @@ int server::join_game(out_socket *os, char *name, char *server_name)
   }   
 
   if (!get_pkt(os,pk)) { fputs(re,stderr); exit(0); }
-  if (pk.read((uchar *)&rand_on,2)!=2)    // read the current random seed used by the server.
+  if (pk.read((uint8_t *)&rand_on,2)!=2)    // read the current random seed used by the server.
   { fputs(re,stderr); exit(0); }
   rand_on=lstl(rand_on);
-  ushort *rtab=(ushort *)jmalloc(1024*2,"tmp rtab");
-  if (!pk.read((uchar *)rtab,1024*2)) { fputs(re,stderr); exit(0); }  // read the rand table
+  uint16_t *rtab=(uint16_t *)jmalloc(1024*2,"tmp rtab");
+  if (!pk.read((uint8_t *)rtab,1024*2)) { fputs(re,stderr); exit(0); }  // read the rand table
 
   for (int j=0;j<1024*2;j++)
-    if (((uchar *)rtab)[j]!=((uchar *)rtable)[j])
+    if (((uint8_t *)rtab)[j]!=((uint8_t *)rtable)[j])
     { printf("rtables differ on byte %d\n",j); exit(0); }
     
   jfree(rtab);
@@ -646,10 +646,10 @@ int server::join_game(out_socket *os, char *name, char *server_name)
 
 void server::remove_player(view *f)
 {
-  uchar cmd=SCMD_REMOVE_VIEW;
-  next_out.write((uchar *)&cmd,1);
-  ushort pn=lstl(f->player_number);
-  next_out.write((uchar *)&pn,2);
+  uint8_t cmd=SCMD_REMOVE_VIEW;
+  next_out.write((uint8_t *)&cmd,1);
+  uint16_t pn=lstl(f->player_number);
+  next_out.write((uint8_t *)&pn,2);
   if (f==player_list)
     player_list=player_list->next;
   else
@@ -668,15 +668,15 @@ void server::remove_player(view *f)
 {
 
 	  cmd=SCMD_ADD_VIEW;
-	  next_out.write((uchar *)&cmd,1);
+	  next_out.write((uint8_t *)&cmd,1);
 
-    ushort pn=lstl(new_player->player_number);
-    next_out.write((uchar *)&pn,2);
-    ushort type=lstlli(new_player->focus->otype);
-    next_out.write((uchar *)&type,2);
-    ulong x=lltl(new_player->focus->x),y=lltl(new_player->focus->y);
-    next_out.write((uchar *)&x,4);
-    next_out.write((uchar *)&y,4);    
+    uint16_t pn=lstl(new_player->player_number);
+    next_out.write((uint8_t *)&pn,2);
+    uint16_t type=lstlli(new_player->focus->otype);
+    next_out.write((uint8_t *)&type,2);
+    uint32_t x=lltl(new_player->focus->x),y=lltl(new_player->focus->y);
+    next_out.write((uint8_t *)&x,4);
+    next_out.write((uint8_t *)&y,4);    
   }*/
 
 
@@ -684,8 +684,8 @@ void server::remove_player(view *f)
 #define TOT_VIEW_VARS 32
 view *server::add_view(packet &pk)
 {
-  ulong x[TOT_VIEW_VARS];
-  if (!pk.read((uchar *)x,TOT_VIEW_VARS*4)) return NULL;
+  uint32_t x[TOT_VIEW_VARS];
+  if (!pk.read((uint8_t *)x,TOT_VIEW_VARS*4)) return NULL;
   for (int i=0;i<TOT_VIEW_VARS;i++) x[i]=lltl(x[i]);
   int skip=0;
   for (view *f=player_list;f;f=f->next)
@@ -720,7 +720,7 @@ view *server::add_view(packet &pk)
     v->last_ammo=x[22];  v->last_type=x[23]; v->visor_time=x[28]; v->current_weapon=x[29];
     v->secrets=x[30];    v->kills=x[31];
 
-    pk.read((uchar *)v->weapons,total_objects*4);
+    pk.read((uint8_t *)v->weapons,total_objects*4);
     pk.get_string(v->name,100);
 
 
@@ -740,7 +740,7 @@ int server::client_do_packet(packet &pk)
   int er=0;
   while (!pk.eop() && !er)
   {
-    uchar cmd;
+    uint8_t cmd;
     if (pk.read(&cmd,1)!=1)
       er=1;
     else
@@ -749,8 +749,8 @@ int server::client_do_packet(packet &pk)
       int fail=0;
       if (cmd!=SCMD_ADD_VIEW && cmd!=SCMD_SYNC)
       {	
-	ushort player;
-	if (pk.read((uchar *)&player,2)!=2)
+	uint16_t player;
+	if (pk.read((uint8_t *)&player,2)!=2)
 	  er=1;
 	player=lstl(player);
 	for (f=player_list;f && f->player_number!=player;f=f->next);

@@ -252,9 +252,9 @@ void net_configuration::error(char *message)
   ns->put_image(screen,x,y);
   JCFont *fnt=eh->font();
 
-  uchar *remap=white_light+30*256;
+  uint8_t *remap=white_light+30*256;
 
-  uchar *sl=screen->scan_line(0);
+  uint8_t *sl=screen->scan_line(0);
   int xx=screen->width()*screen->height();
   for (;xx;xx--,sl++) *sl=remap[*sl];
 
