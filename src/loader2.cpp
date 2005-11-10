@@ -285,7 +285,7 @@ void load_data(int argc, char **argv)
 
 # if 0
 	char *cachepath;
-	cachepath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 12, "cachepath" );
+	cachepath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 12 + 1, "cachepath" );
 	sprintf( cachepath, "%ssd_cache.tmp", get_save_filename_prefix() );
 
 	bFILE *load = open_file( cachepath, "rb" );
