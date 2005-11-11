@@ -149,22 +149,7 @@ void event_handler::get_event( event &ev )
 			{
 				case SDL_QUIT:
 				{
-					if( the_game->state == RUN_STATE )
-					{
-						// We're in the actual game so just confirm the user
-						// wishes to quit and exit the game.
-						if( confirm_quit() )
-						{
-							the_game->end_session();
-						}
-					}
-					else
-					{
-						// We're at the menu screen so simluate the user
-						// pressing the ESC key.
-						ev.type = EV_KEY;
-						ev.key = JK_ESC;
-					}
+					exit(0);
 					break;
 				}
 				case SDL_MOUSEBUTTONUP:
