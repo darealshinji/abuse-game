@@ -14,16 +14,22 @@ template<class T> class grow_stack        // stack does not shrink
   public :
   T **sdata;
   long son;
+  long smax;
 
-  grow_stack(int max_size) { sdata=(T **)jmalloc(max_size,"pointer stack");  son=0; }
+  grow_stack(int max_size) {
+    smax=max_size;
+    son=0;
+    sdata=(T **)jmalloc(sizeof(T *)*smax,"pointer stack");
+  }
   void push(T *data) 
   {
+    if (son>=smax) { lbreak("stack overflow (%ld)\n",smax); exit(1); }
     sdata[son]=data;
     son++;
   }
    
   T *pop(long total) 
-  { if (total>son) { lbreak("stack underflow\n"); exit(0); }
+  { if (total>son) { lbreak("stack underflow\n"); exit(1); }
     son-=total;
     return sdata[son];
   }
