@@ -44,7 +44,7 @@ public:
   //{{{
   {
     if (who->protocol_type()==IP &&
-        !memcmp(&addr.sin_addr,& ((ip_address *)who)->addr.sin_addr,sizeof(addr.sin_addr)))
+        !memcmp(&addr.sin_addr,& ((ip_address const *)who)->addr.sin_addr,sizeof(addr.sin_addr)))
       return 1;
     else return 0;
   }

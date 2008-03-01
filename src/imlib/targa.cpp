@@ -42,7 +42,7 @@ image *load_targa(char *filename, palette *pal)
   int w=fp->read_uint16();
   int h=fp->read_uint16();
   uint8_t bpp=fp->read_uint8();
-  uint8_t im_des=fp->read_uint8();
+  fp->read_uint8(); // im_des
 
   if (bpp!=32)
   {

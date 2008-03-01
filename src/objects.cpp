@@ -267,7 +267,7 @@ void game_object::next_sequence()
 	{
 		current_object = this;
 		void *m = mark_heap( TMP_SPACE );
-		void *ret = eval_function( (lisp_symbol *)ns, NULL );
+		(void)eval_function( (lisp_symbol *)ns, NULL );
 		restore_heap( m, TMP_SPACE );
 	}
 	else
@@ -733,7 +733,7 @@ void game_object::drawer()
   }
   else
   {
-    view *v=controller();
+    //view *v=controller();
 
     if (fade_count())      
       draw_trans(fade_count(),fade_max());
@@ -930,7 +930,7 @@ int game_object::tick()      // returns blocked status
   {
     int fxv=sfxvel(),fyv=sfyvel();
     fxv+=fxa;  fyv+=fya;    
-    int32_t xv=xvel()+xa+(fxv>>8); 
+    //int32_t xv=xvel()+xa+(fxv>>8); 
     set_xvel(xvel()+xa+(fxv>>8));
     set_yvel(yvel()+ya+(fyv>>8));
     set_fxvel(fxv&0xff);
@@ -1452,7 +1452,7 @@ game_object *game_object::bmove(int &whit, game_object *exclude)
   {
     int fxv=sfxvel(),fyv=sfyvel();
     fxv+=fxa;  fyv+=fya;    
-    int32_t xv=xvel()+xa+(fxv>>8); 
+    //int32_t xv=xvel()+xa+(fxv>>8); 
     set_xvel(xvel()+xa+(fxv>>8));
     set_yvel(yvel()+ya+(fyv>>8));
     set_fxvel(fxv&0xff);

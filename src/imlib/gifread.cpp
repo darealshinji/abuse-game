@@ -13,7 +13,7 @@
 #include "macs.hpp"
 
 
-struct {
+struct GifScreen {
 	uint16_t	Width;
 	uint16_t	Height;
 	uint8_t 	ColorMap[3][256];
@@ -23,12 +23,12 @@ struct {
 	uint16_t	AspectRatio;
 } GifScreen;
 
-struct {
+struct gif_screen {
   uint16_t w,h;
   uint8_t color_info,background,reserved;
 } gif_screen;
 
-struct {
+struct gif_image {
   uint16_t xoff,yoff,w,h;
   uint8_t color_info;
 } gif_image;

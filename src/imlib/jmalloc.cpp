@@ -202,7 +202,8 @@ void block_manager::report(FILE *fp)
   memory_node *f=sfirst;
   for (;f;f=f->next,i++)
   {    
-    fprintf(fp,"%4d   %p (%d) %4d      ",i,f,((char *)f-(char *)sfirst),f->size);
+    fprintf(fp, "%4d   %p (%ld) %4ld      ",
+            i, f, (long int)((char *)f - (char *)sfirst), (long int)f->size);
 #ifdef MEM_CHECK
     if (f->size>0)
       fprintf(fp,"%s",f->name);
@@ -235,7 +236,7 @@ void block_manager::report(FILE *fp)
   }
 
 
-  fprintf(fp,"************** CACHE SPACE ******************\n",block_size);
+  fprintf(fp,"************** CACHE SPACE %i ******************\n", block_size);
   i=0;
   for (f=cfirst;f;f=f->next,i++)
   {    
@@ -689,12 +690,14 @@ static char const *not_enough_total_memory_message =
     "                 run this program.\n"
     "    DOS users  : Remove any TSR's and device drivers you can.\n"
     "    UNIX users : Do you have a swapfile/partition setup?\n";
+#ifdef __WATCOMC__
 static char const *not_enough_low_memory_message =
     "Memory Manager : Not enough low memory available (%d : need %d)\n"
     "  Suggestions...\n"
     "    - make a boot disk\n"
     "    - remove TSRs & drivers not needed by ABUSE\n"
     "    - add memory to your system\n";
+#endif
 
 void jmalloc_init(int32_t min_size)
 {

@@ -130,7 +130,7 @@ void property_manager::save(char const *filename)
       if (i->def_str)
         fprintf(fp,"\"%s\"\n",i->def_str);
       else
-        fprintf(fp,"%g\n",i->def_num);      
+        fprintf(fp,"%d\n",i->def_num);      
     }
     fclose(fp);
   }
