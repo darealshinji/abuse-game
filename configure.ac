@@ -41,6 +41,11 @@ AM_PATH_SDL($SDL_VERSION, :,
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS $X_LIBS -L/usr/lib"
 
+# Optimizations
+CPPFLAGS="${CPPFLAGS} -g -O2 -fno-strength-reduce -fomit-frame-pointer"
+# Code qui fait des warnings == code de porc == deux baffes dans ta gueule
+CPPFLAGS="${CPPFLAGS} -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Wstrict-prototypes -Wshadow -Waggregate-return -Wmissing-prototypes -Wnested-externs -Wsign-compare"
+
 dnl Checks for header files
 AC_HEADER_DIRENT
 AC_HEADER_STDC
