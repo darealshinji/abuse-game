@@ -210,7 +210,6 @@ void calc_light_table(palette *pal)
 	if( fp->open_failure() )
 	{
 		recalc = 1;
-		delete fp;
 	}
 	else
 	{
@@ -226,8 +225,9 @@ void calc_light_table(palette *pal)
 //			trans_table=(uint8_t *)jmalloc(256*256,"transparency table");
 //			fp.read(trans_table,256*256);
 		}
-		delete fp;
 	}
+	delete fp;
+	fp = NULL;
 
 	if( recalc )
 	{
@@ -348,7 +348,7 @@ void calc_light_table(palette *pal)
 //      f->write(green_light,256*64);
 			for (int i=0;i<TTINTS;i++)
 				f->write(tints[i],256);
-			fp->write(bright_tint,256);
+			f->write(bright_tint,256);
 //    f.write(trans_table,256*256);
 		}
 		delete f;
