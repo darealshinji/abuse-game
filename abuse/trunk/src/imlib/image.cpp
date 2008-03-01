@@ -12,14 +12,18 @@
 #include <stdlib.h>
 
 extern uint8_t current_background;
-char *imerr_messages[]={"No error",
-      		 	"Error occured while reading",
-			"Incorrect file type",
-			"File is corrupted",
-		 	"File not found",
-			"Memory allocation trouble",
-			"Operation/file type not supported",
-			"Error occured while writing, (disk full?)"};
+
+char const *imerr_messages[] =
+{
+    "No error",
+    "Error occured while reading",
+    "Incorrect file type",
+    "File is corrupted",
+    "File not found",
+    "Memory allocation trouble",
+    "Operation/file type not supported",
+    "Error occured while writing, (disk full?)"
+};
 			
                          
 int16_t imerror=0;

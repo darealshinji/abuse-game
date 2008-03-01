@@ -34,7 +34,7 @@ void spec_directory_cache::save(bFILE *fp)
 }
 
 
-spec_directory *spec_directory_cache::get_spec_directory(char *filename, bFILE *fp)
+spec_directory *spec_directory_cache::get_spec_directory(char const *filename, bFILE *fp)
 {
   filename_node **parent=0,*p=fn_root;
   while (p)

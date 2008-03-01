@@ -221,7 +221,7 @@ void load_tiles(Cell *file_list)
 // now load them up
   for (fl=file_list;!NILP(fl);fl=lcdr(fl))
   {
-    char *fn=lstring_value(lcar(fl));
+    char const *fn=lstring_value(lcar(fl));
     fp=open_file(fn,"rb");
     if (!fp->open_failure()) 
     {
@@ -320,7 +320,8 @@ void load_data(int argc, char **argv)
     dprintf("Unable to get remote lsf from %s\n",net_server);
     exit(0);
   }
-  char prog[100],*cs;
+  char prog[100];
+  char const *cs;
 
   c_mouse1=cash.reg("art/dev.spe","c_mouse1",SPEC_IMAGE,0);
   c_mouse2=cash.reg("art/dev.spe","c_mouse2",SPEC_IMAGE,0);
@@ -354,7 +355,7 @@ void load_data(int argc, char **argv)
   delete tmp_image;
 
 
-  char *ff;
+  char const *ff;
   if (DEFINEDP(symbol_value(make_find_symbol("frame_file"))))
     ff=lstring_value(symbol_value(make_find_symbol("frame_file")));
   else

@@ -11,7 +11,7 @@ class text_status_node
   text_status_node *next;
   visual_object *show;
   int last_update;
-  text_status_node(char *Name, visual_object *Show, text_status_node *Next) 
+  text_status_node(char const *Name, visual_object *Show, text_status_node *Next) 
   { name=strcpy((char *)jmalloc(strlen(Name)+1,"status name"),Name); 
     show=Show;
     next=Next; 
@@ -28,7 +28,7 @@ text_status_manager::text_status_manager()
   level=0; 
 }
 
-void text_status_manager::push(char *name, visual_object *show)
+void text_status_manager::push(char const *name, visual_object *show)
 {
   level++;
   first=new text_status_node(name,show,first);  

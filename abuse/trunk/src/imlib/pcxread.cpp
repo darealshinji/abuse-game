@@ -55,7 +55,7 @@ int write_PCX_header(FILE *fp)
 
 
 
-PCX_type PCX_file_type(char *filename)
+PCX_type PCX_file_type(char const *filename)
 {
   FILE *fp=fopen(filename,"rb");  
   if (!fp)
@@ -107,7 +107,7 @@ void read_PCX_line(FILE *fp, unsigned char *start, short skip, int width)
 }
 
 
-image24 *read_PCX24(char *filename)
+image24 *read_PCX24(char const *filename)
 {
   if (PCX_file_type(filename)!=PCX_24) return NULL;  
   FILE *fp=fopen(filename,"rb");
@@ -125,7 +125,7 @@ image24 *read_PCX24(char *filename)
   return im;  
 }
 
-image *read_PCX(char *filename, palette *&pal)
+image *read_PCX(char const *filename, palette *&pal)
 {
   if (PCX_file_type(filename)!=PCX_8) return NULL;  
   FILE *fp=fopen(filename,"rb");
@@ -151,7 +151,7 @@ image *read_PCX(char *filename, palette *&pal)
   return im;  
 }  
 
-void write_PCX(image *im, palette *pal, char *filename)
+void write_PCX(image *im, palette *pal, char const *filename)
 {
   FILE *fp=fopen(filename,"wb");
   if (!fp) 

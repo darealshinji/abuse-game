@@ -81,7 +81,7 @@ typedef Cell	lisp_symbol;
 
 void lisp_init (long a, long b);
 void lisp_uninit (void);
-char* lstring_value (void* x);
+char * lstring_value (void* x);
 long lnumber_value (void* x);
 char lcharacter_value (void* x);
 Cell* new_lisp_number (long x);

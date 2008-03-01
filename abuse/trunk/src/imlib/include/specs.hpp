@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-extern char *spec_types[];
+extern char const *spec_types[];
 
 #define SPEC_INVALID_TYPE    0
 #define SPEC_COLOR_TABLE     1
@@ -60,11 +60,11 @@ extern char *spec_types[];
               4        offset 
 */
 
-void set_spec_main_file(char *filename, int search_order=SPEC_SEARCH_OUTSIDE_INSIDE);
+void set_spec_main_file(char const *filename, int search_order=SPEC_SEARCH_OUTSIDE_INSIDE);
 
-void set_filename_prefix(char *prefix);
+void set_filename_prefix(char const *prefix);
 char *get_filename_prefix();
-void set_save_filename_prefix(char *prefix);
+void set_save_filename_prefix(char const *prefix);
 char *get_save_filename_prefix();
 #define JFILE_CLONED 1
 
@@ -77,7 +77,7 @@ class bFILE     // base file type which other files should be derived from (jFIL
   int flush_writes();                             // returns 0 on failure, else # of bytes written
 
   virtual int unbuffered_read(void *buf, size_t count)  = 0;
-  virtual int unbuffered_write(void *buf, size_t count) = 0;
+  virtual int unbuffered_write(void const *buf, size_t count) = 0;
   virtual int unbuffered_tell()                         = 0;
   virtual int unbuffered_seek(long offset, int whence)  = 0;   // whence=SEEK_SET, SEEK_CUR,
                                                                // SEEK_END, ret=0=success
@@ -86,9 +86,9 @@ class bFILE     // base file type which other files should be derived from (jFIL
   public :
   bFILE();
   virtual int open_failure() = 0;
-  int read(void *buf, size_t count);       // returns number of bytes read, calls unbuffer_read
-  int write(void *buf, size_t count);      // returns number of bytes written
-  int seek(long offset, int whence);       // whence=SEEK_SET, SEEK_CUR, SEEK_END, ret=0=success
+  int read(void *buf, size_t count);        // returns number of bytes read, calls unbuffer_read
+  int write(void const *buf, size_t count); // returns number of bytes written
+  int seek(long offset, int whence);        // whence=SEEK_SET, SEEK_CUR, SEEK_END, ret=0=success
   int tell();
   virtual int file_size() = 0;
 
@@ -120,14 +120,14 @@ class jFILE : public bFILE     // this file type will use virtual opens inside o
 public :
 	int get_fd() const { return fd; }
 
-  void open_internal(char *filename, char *mode, int flags);
-  void open_external(char *filename, char *mode, int flags);
+  void open_internal(char const *filename, char const *mode, int flags);
+  void open_external(char const *filename, char const *mode, int flags);
 
-  jFILE(char *filename, char *access_string);      // same as fopen parameters
+  jFILE(char const *filename, char const *access_string);      // same as fopen parameters
   jFILE(FILE *file_pointer);                      // assumes fp is at begining of file
   virtual int open_failure() { return fd<0; }
   virtual int unbuffered_read(void *buf, size_t count);       // returns number of bytes read
-  virtual int unbuffered_write(void *buf, size_t count);     // returns number of bytes written
+  virtual int unbuffered_write(void const *buf, size_t count);     // returns number of bytes written
   virtual int unbuffered_seek(long offset, int whence);      // whence=SEEK_SET, SEEK_CUR, 
                                                              // SEEK_END, ret=0=success
   virtual int unbuffered_tell();
@@ -143,8 +143,8 @@ public :
   unsigned char type;
   
   spec_entry(unsigned char spec_type,
-             char *object_name,
-             char *link_filename,
+             char const *object_name,
+             char const *link_filename,
              unsigned long data_size,
              unsigned long data_offset)
   { type=spec_type;
@@ -169,10 +169,10 @@ public :
   spec_directory(FILE *fp);
   spec_directory(bFILE *fp);
   spec_directory();
-  spec_entry *find(char *name);
-  spec_entry *find(char *name, int type);
+  spec_entry *find(char const *name);
+  spec_entry *find(char const *name, int type);
   spec_entry *find(int type);
-  long find_number(char*name);
+  long find_number(char const *name);
   long find_number(int type);
   void remove(spec_entry *e);
   void add_by_hand(spec_entry *e);
@@ -180,7 +180,7 @@ public :
   long data_start_offset();  // returns the firsyt offset past directory items
   long data_end_offset();    // this should be the end of the file
   long type_total(int type);
-  jFILE *write(char *filename); 
+  jFILE *write(char const *filename); 
   int    write(bFILE *fp); 
   void print();
   void delete_entries();   // if the directory was created by hand instead of by file
@@ -206,9 +206,9 @@ void write_other_uint32(FILE *fp, uint32_t x);
 void write_uint8(FILE *fp, uint8_t x);
 
 void set_spec_main_file(char *filename, int Search_order);
-void set_file_opener(bFILE *(*open_fun)(char *, char *));
+void set_file_opener(bFILE *(*open_fun)(char const *, char const *));
 void set_no_space_handler(void (*handle_fun)());
-bFILE *open_file(char *filename, char *mode);
+bFILE *open_file(char const *filename, char const *mode);
 #endif
 
 

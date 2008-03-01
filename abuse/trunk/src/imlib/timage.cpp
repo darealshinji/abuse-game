@@ -50,7 +50,7 @@ image *trans_image::make_image()
   return im;
 }
 
-trans_image::trans_image(image *im, char *name)
+trans_image::trans_image(image *im, char const *name)
 {
   int size=0,x,y;
   uint8_t *sl,*datap,*marker; 

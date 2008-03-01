@@ -1263,7 +1263,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
   
 }
 
-level::level(spec_directory *sd, bFILE *fp, char *lev_name)
+level::level(spec_directory *sd, bFILE *fp, char const *lev_name)
 {
   spec_entry *e;
   area_list=NULL;
@@ -1743,7 +1743,7 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
     
     for (i=0;i<total_view_vars();i++)
     {
-      char *find_name=get_view_var_name(i);
+      char const *find_name = get_view_var_name(i);
       se=sd->find(find_name);
 
       if (se)
@@ -2185,7 +2185,7 @@ void level::load_cache_info(spec_directory *sd, bFILE *fp)
 }
 
 
-int level::save(char *filename, int save_all)
+int level::save(char const *filename, int save_all)
 {
 	char name[255], bkname[255];
 
@@ -2339,7 +2339,7 @@ int level::save(char *filename, int save_all)
 	return 1;
 }
 
-level::level(int width, int height, char *name)
+level::level(int width, int height, char const *name)
 {
   the_game->need_refresh();
   area_list=NULL;
@@ -3238,8 +3238,6 @@ object_node *level::make_not_list(object_node *list)
   }
   return f;
 }
-
-FILE *open_FILE(char *filename, char *mode);
 
 void level::write_object_info(char *filename)
 {

@@ -59,7 +59,7 @@ int unix_fd::read(void *buf, int size, net_address **addr)
 }
 //}}}///////////////////////////////////
 
-int unix_fd::write(void *buf, int size, net_address *addr)
+int unix_fd::write(void const *buf, int size, net_address *addr)
 //{{{
 { 
   if (addr) fprintf(stderr,"Cannot change address for this socket type\n");
@@ -119,8 +119,9 @@ net_address *tcpip_protocol::get_local_address()
 	  }
 	}  
 
-  char tmp[4],*np;
-	sockaddr_in host;
+  char tmp[4];
+  char const *np;
+  sockaddr_in host;
   
   np = my_name;
   for (int i=0; i<4; i++)
@@ -149,15 +150,16 @@ net_address *tcpip_protocol::get_local_address()
 }
 //}}}///////////////////////////////////
 
-net_address *tcpip_protocol::get_node_address(char *&server_name, 
+net_address *tcpip_protocol::get_node_address(char const *&server_name, 
 																							int def_port, int force_port)
 //{{{
 {
-  sockaddr_in host;
+    sockaddr_in host;
 
-	if (server_name[0]>='0' && server_name[0]<='9')
-	{
-	  char tmp[4],*np;
+    if (server_name[0]>='0' && server_name[0]<='9')
+    {
+        char tmp[4];
+        char const *np;
 	  
 	  np = server_name;
 	  for (int i=0; i<4; i++)
@@ -192,7 +194,7 @@ net_address *tcpip_protocol::get_node_address(char *&server_name,
 	}
 	else
 	{
-	  char name[256],*np;
+	  char name[256], *np;
 
 	  np=name;
 	  while (*server_name && *server_name!=':' && *server_name!='/')

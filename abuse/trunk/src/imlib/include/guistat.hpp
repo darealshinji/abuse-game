@@ -13,11 +13,11 @@ class gui_status_manager : public status_manager
   public :   
   gui_status_node *first;
   gui_status_manager(window_manager *WM);
-  virtual void push(char *name, visual_object *show);
+  virtual void push(char const *name, visual_object *show);
   virtual void update(int percentage);
   virtual void pop();
   void draw_bar(gui_status_node *whom, int perc);
-  void set_window_title(char *name) { strncpy(title,name,39); }
+  void set_window_title(char const *name) { strncpy(title,name,39); }
   virtual void force_display();
 } ;
 

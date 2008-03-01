@@ -19,30 +19,32 @@
 extern char *macify_name(char *s);
 #endif
 
-char *spec_types[]={"Invalid type",             // 0
-                    "Color table",              // 1
-                    "Palette",                  // 2
-                    "Invalid Type",             // 3
-                    "Image",                    // 4
-                    "Fore Tile",
-                    "Back Tile",
-                    "Character",
-                    "8 Morph",
-                    "16 Morph",
-                    "Grue objs",
-                    "Extern WAV",
-                    "DMX MUS",
-                    "Patched morph",
-                    "Normal file",
-                    "Compress1 file",
-                    "Vector Image",
-                    "Light list",
-                    "Grue fgmap",
-                    "Grue bgmap",
-                    "Data array",
-                    "Character2",
-                    "Particle",
-                    "Extern lcache"
+char const *spec_types[] =
+{
+    "Invalid type", // 0
+    "Color table",  // 1
+    "Palette",      // 2
+    "Invalid Type", // 3
+    "Image",        // 4
+    "Fore Tile",
+    "Back Tile",
+    "Character",
+    "8 Morph",
+    "16 Morph",
+    "Grue objs",
+    "Extern WAV",
+    "DMX MUS",
+    "Patched morph",
+    "Normal file",
+    "Compress1 file",
+    "Vector Image",
+    "Light list",
+    "Grue fgmap",
+    "Grue bgmap",
+    "Data array",
+    "Character2",
+    "Particle",
+    "Extern lcache"
 };
 
 
@@ -60,7 +62,7 @@ static spec_directory spec_main_sd;
 static int fast_load_fd = -1;
 static int fast_load_mode = 0;
 
-void set_filename_prefix(char *prefix)
+void set_filename_prefix(char const *prefix)
 {
 	if( spec_prefix )
 	{
@@ -89,7 +91,7 @@ char *get_filename_prefix()
 }
 
 
-void set_save_filename_prefix(char *save_prefix)
+void set_save_filename_prefix(char const *save_prefix)
 {
 	if( save_spec_prefix )
 	{
@@ -196,7 +198,7 @@ int bFILE::read(void *buf, size_t count)       // returns number of bytes read, 
 }
 
 
-int bFILE::write(void *buf, size_t count)      // returns number of bytes written
+int bFILE::write(void const *buf, size_t count)      // returns number of bytes written
 { 
   if (allow_write_buffering())
   {
@@ -262,7 +264,7 @@ void bFILE::set_read_buffer_size(long size)
   rbuf=(unsigned char *)jmalloc(rbuf_size,"File buffer");
 }
 
-void set_spec_main_file(char *filename, int Search_order)
+void set_spec_main_file(char const *filename, int Search_order)
 {
   dprintf("Specs : main file set to %s\n",filename);
   strcpy(spec_main_file,filename);
@@ -318,7 +320,7 @@ jFILE::jFILE(FILE *file_pointer)                       // assumes fp is at begin
   flags=JFILE_CLONED;
 }
 
-void jFILE::open_external(char *filename, char *mode, int flags)
+void jFILE::open_external(char const *filename, char const *mode, int flags)
 {
   int skip_size=0;
   char tmp_name[200];
@@ -375,7 +377,7 @@ class null_file : public bFILE     // this file type will use virtual opens insi
   public :
   virtual int open_failure() { return 1; }
   virtual int unbuffered_read(void *buf, size_t count)   { return 0; }
-  virtual int unbuffered_write(void *buf, size_t count)  { return 0; }
+  virtual int unbuffered_write(void const *buf, size_t count)  { return 0; }
   virtual int unbuffered_seek(long offset, int whence)   { return 0; }
 
   virtual int unbuffered_tell() { return 0; }
@@ -384,15 +386,15 @@ class null_file : public bFILE     // this file type will use virtual opens insi
 } ; 
 
 
-static bFILE *(*open_file_fun)(char *,char *)=NULL;
-int (*verify_file_fun)(char *,char *)=NULL;
+static bFILE *(*open_file_fun)(char const *,char const *)=NULL;
+int (*verify_file_fun)(char const *,char const *)=NULL;
 
-void set_file_opener(bFILE *(*open_fun)(char *, char *))
+void set_file_opener(bFILE *(*open_fun)(char const *, char const *))
 {
   open_file_fun=open_fun;
 }
 
-bFILE *open_file(char *filename, char *mode)
+bFILE *open_file(char const *filename, char const *mode)
 {
   if (!verify_file_fun || verify_file_fun(filename,mode))
   {
@@ -402,10 +404,10 @@ bFILE *open_file(char *filename, char *mode)
   } else return new null_file;
 }
 
-void jFILE::open_internal(char *filename, char *mode, int flags)
+void jFILE::open_internal(char const *filename, char const *mode, int flags)
 {
   int wr=0;
-  for (char *s=mode;*s;s++) 
+  for (char const *s=mode;*s;s++) 
     if (toupper(*s)=='A' || toupper(*s)=='W')
       wr=1;
 
@@ -433,10 +435,10 @@ void jFILE::open_internal(char *filename, char *mode, int flags)
   }
 }
 
-jFILE::jFILE(char *filename, char *access_string)      // same as fopen parameters
+jFILE::jFILE(char const *filename, char const *access_string)      // same as fopen parameters
 {
  flags=access=0;  
- char *s=access_string;
+ char const *s=access_string;
   for (;*s;s++) 
     if (toupper(*s)=='R') access=O_RDONLY;
 
@@ -539,7 +541,7 @@ int jFILE::unbuffered_read(void *buf, size_t count)
 	return len;
 }
 
-int jFILE::unbuffered_write(void *buf, size_t count)
+int jFILE::unbuffered_write(void const *buf, size_t count)
 {
   long ret = ::write(fd,(char*)buf,count);
 	current_offset += ret;
@@ -683,7 +685,7 @@ void spec_directory::calc_offsets()
   }
 }
 
-spec_entry *spec_directory::find(char *name, int type)
+spec_entry *spec_directory::find(char const *name, int type)
 {
   int i;
   spec_entry **e;
@@ -693,7 +695,7 @@ spec_entry *spec_directory::find(char *name, int type)
   return NULL;
 }
 
-spec_entry *spec_directory::find(char *name)
+spec_entry *spec_directory::find(char const *name)
 {
   int i;
   spec_entry **e;
@@ -703,7 +705,7 @@ spec_entry *spec_directory::find(char *name)
   return NULL;
 }
 
-long spec_directory::find_number(char *name)
+long spec_directory::find_number(char const *name)
 {
   int i;
   spec_entry **e;
@@ -841,7 +843,7 @@ spec_directory::spec_directory(char *filename)
   } else printf("NULL filename to spec_directory::spec_directory\n");
 }*/
 
-int write_string(bFILE *fp, char *st)
+int write_string(bFILE *fp, char const *st)
 {
   unsigned char length=strlen(st)+1;
   if (fp->write(&length,1)!=1) return 0;
@@ -899,7 +901,7 @@ int spec_directory::write(bFILE *fp)
   return 1; 
 }
 
-jFILE *spec_directory::write(char *filename)
+jFILE *spec_directory::write(char const *filename)
 {
   jFILE *fp;
   fp=new jFILE(filename,"wb");
@@ -1004,7 +1006,7 @@ void spec_directory::delete_entries()   // if the directory was created by hand 
 }
 
 
-void note_open_fd(int fd, char *str)
+void note_open_fd(int fd, char const *str)
 {
   total_files_open++;
 }

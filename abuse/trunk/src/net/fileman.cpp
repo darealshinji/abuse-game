@@ -268,7 +268,7 @@ void file_manager::add_nfs_client(net_socket *sock)
 
 
 
-void file_manager::remote_file::r_close(char *reason) 
+void file_manager::remote_file::r_close(char const *reason) 
 { 
 //  if (reason) fprintf(stderr,"remote_file : %s\n",reason);
 
@@ -280,7 +280,7 @@ void file_manager::remote_file::r_close(char *reason)
 
 }
 
-file_manager::remote_file::remote_file(net_socket *sock, char *filename, char *mode, remote_file *Next) : sock(sock)
+file_manager::remote_file::remote_file(net_socket *sock, char const *filename, char const *mode, remote_file *Next) : sock(sock)
 {
   next=Next;
   open_local=0;
@@ -381,7 +381,7 @@ int32_t file_manager::remote_file::unbuffered_seek(int32_t offset)  // tell serv
 file_manager::remote_file::~remote_file()
 { r_close(NULL); }
 
-int file_manager::rf_open_file(char *&filename, char *mode)
+int file_manager::rf_open_file(char const *&filename, char const *mode)
 {
   net_address *fs_server_addr=NULL;
 

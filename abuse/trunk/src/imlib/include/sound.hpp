@@ -27,8 +27,8 @@ class song
   unsigned char *data;
   unsigned long song_id;
 public :
-  char *name() { return Name; }
-  song(char *filename);
+  char const *name() { return Name; }
+  song(char const *filename);
   void play(unsigned char volume=127);
   void stop(long fadeout_time=0);                                        // time in ms
   int playing();

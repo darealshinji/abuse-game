@@ -13,7 +13,7 @@ class console
   char *name;
   public :
 
-  console(window_manager *WM, JCFont *font, int width, int height, char *Name);
+  console(window_manager *WM, JCFont *font, int width, int height, char const *Name);
   int showing() { return con_win!=NULL; }
   void show();
   void hide();
@@ -25,10 +25,10 @@ class console
   int wx() { return con_win->x1(); }
   int wy() { return con_win->y1(); }
   void draw_cursor();
-  void put_string(char *st);
+  void put_string(char const *st);
   void draw_char(int x, int y, char ch);
   void toggle() { if (con_win) hide(); else show(); }
-  void print_f(const char *format, ...);
+  void print_f(char const *format, ...);
   ~console();
 } ;
 
@@ -36,11 +36,11 @@ class shell_term : public console
 {
   char shcmd[300];
   public :
-  shell_term(window_manager *WM, JCFont *font, int width, int height, char *Name);
+  shell_term(window_manager *WM, JCFont *font, int width, int height, char const *Name);
   virtual ~shell_term() {};
   int handle_event(event &ev, window_manager *wm);
   virtual void prompt();
-  virtual void execute(char *st);
+  virtual void execute(char const *st);
 } ;
 
 #endif

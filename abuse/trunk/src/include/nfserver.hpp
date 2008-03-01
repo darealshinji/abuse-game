@@ -14,10 +14,10 @@ void server_check();
 void remove_client(int client_number);
 
 int net_start();
-bFILE *open_nfs_file(char *filename,char *mode);
+bFILE *open_nfs_file(char const *filename, char const *mode);
 
 int net_init(int argc, char **argv);
-int NF_open_file(char *filename, char *mode);
+int NF_open_file(char const *filename, char const *mode);
 long NF_close(int fd);
 long NF_read(int fd, void *buf, long size);
 long NF_filelength(int fd);
@@ -29,7 +29,7 @@ int request_server_entry();
 int server_entry_continue();
 void net_reload();
 void read_new_views();
-int set_file_server(char *name);
+int set_file_server(char const *name);
 int set_file_server(net_address *addr);
 
 int join_remote_game(char *name);

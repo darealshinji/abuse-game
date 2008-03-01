@@ -1,6 +1,6 @@
 #include "lisp.hpp"
 
-char *lang_string(char *symbol)
+char const *lang_string(char const *symbol)
 {
   void *v=find_symbol(symbol);
   if (!v || !DEFINEDP(symbol_value(v))) return "Language symbol missing!";

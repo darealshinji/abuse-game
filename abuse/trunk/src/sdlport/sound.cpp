@@ -277,7 +277,7 @@ void sound_effect::play( int volume, int pitch, int panpot )
 // I tried using SDL_mixer to do this, but with no success.
 //
 
-song::song( char * filename )
+song::song( char const * filename )
 {
 	data = NULL;
 	Name = strcpy((char *)jmalloc( strlen( filename ) + 1, "song name" ), filename );

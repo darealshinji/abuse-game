@@ -41,7 +41,8 @@ void lprint(void *i);
 
 int current_space;  // normally set to TMP_SPACE, unless compiling or other needs 
 
-inline int streq(char *s1, char *s2)   // when you don't need as much as strcmp, this is faster...
+// when you don't need as much as strcmp, this is faster...
+inline int streq(char const *s1, char const *s2)
 {
   while (*s1)
   {
@@ -97,7 +98,7 @@ void print_trace_stack(int max_levels)
   where_print(max_levels);
 }
 
-void lbreak(const char *format, ...)
+void lbreak(char const *format, ...)
 {
   break_level++;
   bFILE *old_file=current_print_file;
@@ -135,7 +136,7 @@ void lbreak(const char *format, ...)
     }
     else
     {
-      char *s=st;
+      char const *s=st;
       do
       {
 				void *prog=compile(s);
@@ -150,7 +151,7 @@ void lbreak(const char *format, ...)
   break_level--;
 }
 
-void need_perm_space(char *why)
+void need_perm_space(char const *why)
 {
   if (current_space!=PERM_SPACE && current_space!=GC_SPACE)
   {  
@@ -298,7 +299,7 @@ struct lisp_character *new_lisp_character(uint16_t ch)
   return c;
 }
 
-struct lisp_string *new_lisp_string(char *string)
+struct lisp_string *new_lisp_string(char const *string)
 {
   int size=sizeof(lisp_string)+strlen(string)+1;
   if (size<8) size=8;
@@ -310,7 +311,7 @@ struct lisp_string *new_lisp_string(char *string)
   return s;
 }
 
-struct lisp_string *new_lisp_string(char *string, int length)
+struct lisp_string *new_lisp_string(char const *string, int length)
 {
   int size=sizeof(lisp_string)+length+1;
   if (size<8) size=8;
@@ -450,7 +451,7 @@ cons_cell *new_cons_cell()
 }
 
 
-char *lerror(char *loc, char *cause)
+char *lerror(char const *loc, char const *cause)
 {
   int lines;
   if (loc)
@@ -779,7 +780,7 @@ long lisp_atan2(long dy, long dx)
 
 
 /*
-lisp_symbol *find_symbol(char *name)
+lisp_symbol *find_symbol(char const *name)
 {
   cons_cell *cs;
   for (cs=(cons_cell *)symbol_list;cs;cs=(cons_cell *)CDR(cs))
@@ -791,7 +792,7 @@ lisp_symbol *find_symbol(char *name)
 }
 
 
-lisp_symbol *make_find_symbol(char *name)    // find a symbol, if it doesn't exsist it is created
+lisp_symbol *make_find_symbol(char const *name)    // find a symbol, if it doesn't exsist it is created
 {
   lisp_symbol *s=find_symbol(name);
   if (s) return s;
@@ -813,7 +814,7 @@ lisp_symbol *make_find_symbol(char *name)    // find a symbol, if it doesn't exs
 
 */
 
-lisp_symbol *find_symbol(char *name)
+lisp_symbol *find_symbol(char const *name)
 {
   lisp_symbol *p=lsym_root;
   while (p)
@@ -828,7 +829,7 @@ lisp_symbol *find_symbol(char *name)
 
 
 
-lisp_symbol *make_find_symbol(char *name)
+lisp_symbol *make_find_symbol(char const *name)
 {
   lisp_symbol *p=lsym_root;
   lisp_symbol **parent=&lsym_root;
@@ -991,7 +992,7 @@ void set_variable_value(void *symbol, void *value)
   ((lisp_symbol *) symbol)->value=value;
 }
 
-lisp_symbol *add_sys_function(char *name, short min_args, short max_args, short number)
+lisp_symbol *add_sys_function(char const *name, short min_args, short max_args, short number)
 {
   need_perm_space("add_sys_function");
   lisp_symbol *s=make_find_symbol(name);
@@ -1017,7 +1018,7 @@ lisp_symbol *add_c_object(void *symbol, int16_t number)
   return NULL;
 }
 
-lisp_symbol *add_c_function(char *name, short min_args, short max_args, short number)
+lisp_symbol *add_c_function(char const *name, short min_args, short max_args, short number)
 {
   total_user_functions++;
   need_perm_space("add_c_function");
@@ -1031,7 +1032,7 @@ lisp_symbol *add_c_function(char *name, short min_args, short max_args, short nu
   return s;
 }
 
-lisp_symbol *add_c_bool_fun(char *name, short min_args, short max_args, short number)
+lisp_symbol *add_c_bool_fun(char const *name, short min_args, short max_args, short number)
 {
   total_user_functions++;
   need_perm_space("add_c_bool_fun");
@@ -1046,7 +1047,7 @@ lisp_symbol *add_c_bool_fun(char *name, short min_args, short max_args, short nu
 }
 
 
-lisp_symbol *add_lisp_function(char *name, short min_args, short max_args, short number)
+lisp_symbol *add_lisp_function(char const *name, short min_args, short max_args, short number)
 {
   total_user_functions++;
   need_perm_space("add_c_bool_fun");
@@ -1060,7 +1061,7 @@ lisp_symbol *add_lisp_function(char *name, short min_args, short max_args, short
   return s;
 }
 
-void skip_c_comment(char *&s)
+void skip_c_comment(char const *&s)
 {
   s+=2;
   while (*s && (*s!='*' || *(s+1)!='/'))
@@ -1072,7 +1073,7 @@ void skip_c_comment(char *&s)
   if (*s) s+=2;
 }
 
-long str_token_len(char *st)
+long str_token_len(char const *st)
 {
   long x=1;
   while (*st && (*st!='"' || st[1]=='"'))
@@ -1083,7 +1084,7 @@ long str_token_len(char *st)
   return x;
 }
 
-int read_ltoken(char *&s, char *buffer)
+int read_ltoken(char const *&s, char *buffer)
 {
   // skip space
   while (*s==' ' || *s=='\t' || *s=='\n' || *s=='\r' || *s==26) s++;
@@ -1126,7 +1127,7 @@ int read_ltoken(char *&s, char *buffer)
 
 char n[MAX_LISP_TOKEN_LEN];  // assume all tokens will be < 200 characters
 
-int end_of_program(char *s)
+int end_of_program(char const *s)
 {
   return !read_ltoken(s,n);
 }
@@ -1143,7 +1144,7 @@ void push_onto_list(void *object, void *&list)
 
 void *comp_optimize(void *list);
 
-void *compile(char *&s)
+void *compile(char const *&s)
 {
   void *ret=NULL;
   if (!read_ltoken(s,n))
@@ -1197,7 +1198,7 @@ void *compile(char *&s)
     int done=0;
     do
     {
-      char *tmp=s;
+      char const *tmp=s;
       if (!read_ltoken(tmp,n))           // check for the end of the list
         lerror(NULL,"unexpected end of program");
       if (n[0]==')') 
@@ -1298,11 +1299,11 @@ void *compile(char *&s)
 }
 
 
-static void lprint_string(char *st)
+static void lprint_string(char const *st)
 {
   if (current_print_file)
   {
-    for (char *s=st;*s;s++) 
+    for (char const *s=st;*s;s++) 
     {
 /*      if (*s=='\\') 
       {
@@ -2434,7 +2435,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
 				fp->read(s,l);
 				s[l]=0;
 				delete fp;
-				char *cs=s;
+				char const *cs=s;
 			#ifndef NO_LIBS
 				char msg[100];
 				sprintf(msg,"(load \"%s\")",st);
@@ -3096,37 +3097,39 @@ void *eval(void *prog)
 }
 
 #define TOTAL_SYS_FUNCS 99
-                                 //  0      1    2       3       4      5      6      7
-char *sys_funcs[TOTAL_SYS_FUNCS]={"print","car","cdr","length","list","cons","quote","eq",
-				// 8   9   10    11       12          13     14      15      16
-				  "+","-","if","setf","symbol-list","assoc","null","acons","pairlis",
-				// 17     18     19     20     21     22    23      24
-				  "let","defun","atom","not", "and", "or","progn","equal",
-				// 25               26          27       28  29   30     31
-				  "concatenate","char-code","code-char","*","/","cond","select",
-				// 32            33         34     35    36    37        
-				  "function", "mapcar", "funcall", ">", "<", "tmp-space",
-				//   38              39        40       41         42
-				  "perm-space","symbol-name","trace","untrace","digstr",
-				//   43            44   45    46    47  48       49
-				  "compile-file","abs","min","max",">=","<=","backquote",
-				//  50      51      52         53           54    55     56
-				  "comma","nth","resize-tmp","resize-perm","cos","sin","atan2",
-				  // 57       58     59     60     61   62              63
-                                  "enum", "quit","eval","break","mod","write_profile","setq",
-				  // 64    65          66      67       68        69        70
-				  "for", "open_file","load","bit-and","bit-or","bit-xor","make-array",
-				  // 71      72          73          74        75      76
-				  "aref","if-1progn","if-2progn","if-12progn","eq0","preport",
-				  // 77     78         79        80       81     82     83
-				  "search","elt",    "listp", "numberp", "do",  "gc", "schar",
-				  // 84       85        86      87      88        89    90
-				  "symbolp","num2str","nconc","first","second","third","fourth",
-				  // 91       92       93       94       95      96
-				  "fifth", "sixth", "seventh","eighth","ninth","tenth",
-				  "substr",       // 97
-				  "local_load"    // 98, filename
-				};
+char const *sys_funcs[TOTAL_SYS_FUNCS] =
+{
+    //  0      1    2       3       4      5      6      7
+    "print","car","cdr","length","list","cons","quote","eq",
+    // 8   9   10    11       12          13     14      15      16
+    "+","-","if","setf","symbol-list","assoc","null","acons","pairlis",
+    // 17     18     19     20     21     22    23      24
+    "let","defun","atom","not", "and", "or","progn","equal",
+    // 25               26          27       28  29   30     31
+    "concatenate","char-code","code-char","*","/","cond","select",
+    // 32            33         34     35    36    37        
+    "function", "mapcar", "funcall", ">", "<", "tmp-space",
+    //   38              39        40       41         42
+    "perm-space","symbol-name","trace","untrace","digstr",
+    //   43            44   45    46    47  48       49
+    "compile-file","abs","min","max",">=","<=","backquote",
+    //  50      51      52         53           54    55     56
+    "comma","nth","resize-tmp","resize-perm","cos","sin","atan2",
+    // 57       58     59     60     61   62              63
+    "enum", "quit","eval","break","mod","write_profile","setq",
+    // 64    65          66      67       68        69        70
+    "for", "open_file","load","bit-and","bit-or","bit-xor","make-array",
+    // 71      72          73          74        75      76
+    "aref","if-1progn","if-2progn","if-12progn","eq0","preport",
+    // 77     78         79        80       81     82     83
+    "search","elt",    "listp", "numberp", "do",  "gc", "schar",
+    // 84       85        86      87      88        89    90
+    "symbolp","num2str","nconc","first","second","third","fourth",
+    // 91       92       93       94       95      96
+    "fifth", "sixth", "seventh","eighth","ninth","tenth",
+    "substr",       // 97
+    "local_load"    // 98, filename
+};
 
 /* select, digistr, load-file are not a common lisp functions! */
 

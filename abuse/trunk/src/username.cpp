@@ -1,7 +1,7 @@
 #ifdef __WATCOMC__
-char *get_username() { return "DOS user"; }
+char const *get_username() { return "DOS user"; }
 #elif (defined(__APPLE__) && !defined(__MACH__))
-char *get_username() { return "Mac user"; }
+char const *get_username() { return "Mac user"; }
 #else
   
 #include	<stdio.h>
@@ -9,10 +9,10 @@ char *get_username() { return "Mac user"; }
 #include	<sys/types.h>
 #include        <unistd.h>
 
-char *get_username()
+char const *get_username()
 {
-  struct passwd		*pw;
-  char			*name;
+  struct passwd *pw;
+  char const *name;
 
   if (!(name = getlogin()))
   {

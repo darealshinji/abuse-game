@@ -197,7 +197,7 @@ void button::area(int &x1, int &y1, int &x2, int &y2, window_manager *wm)
 }
 
 
-button::button(int X, int Y, int ID, char *Text, ifield *Next)
+button::button(int X, int Y, int ID, char const *Text, ifield *Next)
 {  
   x=X; y=Y; id=ID; 
   act_id=-1;
@@ -224,7 +224,7 @@ button::button(int X, int Y, int ID, image *Depressed, image *Pressed, image *ac
 }
 
 
-void text_field::change_data(char *new_data, int new_cursor, // cursor==-1, does not change it.
+void text_field::change_data(char const *new_data, int new_cursor, // cursor==-1, does not change it.
 			     int active, image *screen, window_manager *wm)
 {
   if (strlen(format)<strlen(new_data))
@@ -316,8 +316,8 @@ void text_field::area(int &x1, int &y1, int &x2, int &y2, window_manager *wm)
   y2=yend(wm);
 }
 
-text_field::text_field(int X, int Y, int ID, char *Prompt, char *Format, 
-                                                     char *Data, ifield *Next)
+text_field::text_field(int X, int Y, int ID, char const *Prompt,
+                       char const *Format, char const *Data, ifield *Next)
 {
   int slen=(strlen(Format)>strlen(Data) ? strlen(Format) : strlen(Data));
 
@@ -330,8 +330,8 @@ text_field::text_field(int X, int Y, int ID, char *Prompt, char *Format,
   next=Next;
 }
 
-text_field::text_field(int X, int Y, int ID, char *Prompt, char *Format, 
-                               double Data, ifield *Next)
+text_field::text_field(int X, int Y, int ID, char const *Prompt,
+                       char const *Format, double Data, ifield *Next)
 {
   char num[20];
   sprintf(num,"%g",Data);  
@@ -445,11 +445,11 @@ void text_field::draw_cur(int color, image *screen, window_manager *wm)
 
 
 
-info_field::info_field(int X, int Y, int ID, char *info, ifield *Next)
+info_field::info_field(int X, int Y, int ID, char const *info, ifield *Next)
 {
-  x=X; y=Y; id=ID; next=Next;
-  text=strcpy((char *)jmalloc(strlen(info)+1,"info_field"),info);
-  w=-1;
+  x = X; y = Y; id = ID; next = Next;
+  text = strcpy((char *)jmalloc(strlen(info)+1,"info_field"), info);
+  w = -1;
 }
 
 
@@ -477,7 +477,7 @@ void info_field::area(int &x1, int &y1, int &x2, int &y2, window_manager *wm)
   y2=y+h;
 }
 
-void info_field::put_para(image *screen, char *st, int dx, int dy, 
+void info_field::put_para(image *screen, char const *st, int dx, int dy, 
 			  int xspace, int yspace, JCFont *font, int color)
 {
   int ox=dx;

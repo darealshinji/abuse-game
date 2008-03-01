@@ -12,7 +12,7 @@ class gui_status_node
   window_manager *wm;
   int last_update;
   time_marker last_time;
-  gui_status_node(char *Name, visual_object *Show, window_manager *WM, gui_status_node *Next) 
+  gui_status_node(char const *Name, visual_object *Show, window_manager *WM, gui_status_node *Next) 
   { name=strcpy((char *)jmalloc(strlen(Name)+1,"status name"),Name); 
     show=Show;
     next=Next; 
@@ -59,7 +59,7 @@ void gui_status_manager::draw_bar(gui_status_node *whom, int perc)
 #pragma global_optimizer reset
 #endif
 
-void gui_status_manager::push(char *name, visual_object *show)
+void gui_status_manager::push(char const *name, visual_object *show)
 {
   first=new gui_status_node(name,show,wm,first);  
 }

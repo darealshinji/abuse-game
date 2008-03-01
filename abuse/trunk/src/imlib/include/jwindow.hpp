@@ -83,7 +83,7 @@ public :
   image *screen;
   input_manager *inm;
   void *local_info;     // pointer to info block for local system (may support windows)
-  jwindow(int X, int Y, int L, int H, window_manager *wm, ifield *fields, char *Name=NULL);
+  jwindow(int X, int Y, int L, int H, window_manager *wm, ifield *fields, char const *Name=NULL);
   void redraw(int hi, int med, int low, JCFont *fnt);
   void resize(int L, int H);
   void clear(int color=0) { screen->bar(x1(),y1(),x2(),y2(),color); }
@@ -115,7 +115,7 @@ public :
 
   window_manager(image *Screen, palette *Pal, int Hi, int Med, int Low, JCFont *Font); 
 
-  jwindow *new_window(int x, int y, int l, int h, ifield *fields=NULL, char *Name=NULL);
+  jwindow *new_window(int x, int y, int l, int h, ifield *fields=NULL, char const *Name=NULL);
   void set_frame_font(JCFont *fnt) { wframe_fnt=fnt; }
   JCFont *frame_font() { return wframe_fnt; }
   void close_window(jwindow *j);

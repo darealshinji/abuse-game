@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "menu.hpp"
 #include "lisp.hpp"
 #include "game.hpp"
@@ -15,7 +17,6 @@
 #include "loadgame.hpp"
 #include "scroller.hpp"
 #include "netcfg.hpp"
-#include <math.h>
 #include "sock.hpp"
 
 extern net_protocol *prot;
@@ -297,7 +298,7 @@ static void create_volume_window()
   volume_window=NULL; */
 
 
-  char *ff="art/frame.spe";
+  char const *ff = "art/frame.spe";
   int t=SPEC_IMAGE;
   int u_u=cash.reg(ff,"u_u",t,1),
       u_d=cash.reg(ff,"u_u",t,1),
@@ -348,7 +349,7 @@ static void create_volume_window()
 	    sfx_volume+=16;
 	    if (sfx_volume>127) sfx_volume=127;
 	    draw_sfx_vol(slider);
-	    char *s="sfx/ambtech1.wav";
+	    char const *s = "sfx/ambtech1.wav";
 	    if (sound_avail&SFX_INITIALIZED) 
 	      cash.sfx(cash.reg(s,s,SPEC_EXTERN_SFX,1))->play(sfx_volume);
 	  }
@@ -359,7 +360,7 @@ static void create_volume_window()
 	    sfx_volume-=16;
 	    if (sfx_volume<0) sfx_volume=0;
 	    draw_sfx_vol(slider);
-	    char *s="sfx/ambtech1.wav";
+	    char const *s = "sfx/ambtech1.wav";
 	    if (sound_avail&SFX_INITIALIZED) 
 	      cash.sfx(cash.reg(s,s,SPEC_EXTERN_SFX,1))->play(sfx_volume);
 	  }
@@ -392,8 +393,6 @@ static void create_volume_window()
   } while (volume_window);
 }
 
-
-FILE *open_FILE(char *filename, char *mode);
 
 void save_difficulty()
 {
@@ -432,7 +431,7 @@ void show_sell(int abortable)
     current_space=PERM_SPACE;
 //    char *prog="((\"art/help.spe\" . \"sell2\")(\"art/help.spe\" . \"sell4\")(\"art/help.spe\" . \"sell3\")(\"art/endgame.spe\" . \"credit\"))";
 //    char *prog="((\"art/endgame.spe\" . \"credit\") (\"art/help.spe\" . \"sell6\"))";
-    char *prog="((\"art/endgame.spe\" . \"credit\"))";
+    char const *prog="((\"art/endgame.spe\" . \"credit\"))";
     set_symbol_value(ss,compile(prog));
     current_space=sp;
   }
@@ -579,10 +578,10 @@ void menu_handler(event &ev, input_manager *inm)
 
 void *current_demo=NULL;
 
-static ico_button *load_icon(int num, int id, int x, int y, int &h, ifield *next, char *key)
+static ico_button *load_icon(int num, int id, int x, int y, int &h, ifield *next, char const *key)
 {
   char name[20];
-  char *base="newi";
+  char const *base = "newi";
   int a,b,c;
   sprintf(name,"%s%04d.pcx",base,num*3+1);
   a=cash.reg("art/icons.spe",name,SPEC_IMAGE,1);

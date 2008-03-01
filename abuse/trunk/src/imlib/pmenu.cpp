@@ -44,7 +44,7 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen, window_manager *wma
   
 }
 
-pmenu_item::pmenu_item(int ID, char *Name, char *on_off_flag, int Hotkey, pmenu_item *Next)
+pmenu_item::pmenu_item(int ID, char const *Name, char const *on_off_flag, int Hotkey, pmenu_item *Next)
 { 
   xp=-1;
   id=ID; 
@@ -57,7 +57,7 @@ pmenu_item::pmenu_item(int ID, char *Name, char *on_off_flag, int Hotkey, pmenu_
   sub=NULL;
 }
 
-pmenu_item::pmenu_item(char *Name, psub_menu *Sub, pmenu_item *Next, int xpos)
+pmenu_item::pmenu_item(char const *Name, psub_menu *Sub, pmenu_item *Next, int xpos)
 {
   xp=xpos;
   id=0; hotkey=-1;

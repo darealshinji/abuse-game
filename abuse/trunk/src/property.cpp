@@ -1,8 +1,10 @@
+#include <stdio.h>
+#include <string.h>
+
 #include "property.hpp"
 #include "jmalloc.hpp"
-#include <stdio.h>
 #include "dprint.hpp"
-#include <string.h>
+#include "game.hpp"
 
 class property
 {
@@ -10,14 +12,14 @@ class property
   char *name;
   char *def_str;
   int def_num;
-  property(char *Name, int Def)
+  property(char const *Name, int Def)
   { name=strcpy((char *)jmalloc(strlen(Name)+1,"Property Name"),Name);
     def_num=Def;
     def_str=NULL;
     next=NULL;
   }
 
-  property(char *Name, char *Def)
+  property(char const *Name, char const *Def)
   { name=strcpy((char *)jmalloc(strlen(Name)+1,"Property Name"),Name);
     def_str=strcpy((char *)jmalloc(strlen(Def)+1,"Property text"),Def);
     next=NULL;
@@ -32,7 +34,7 @@ class property
     def_num=x;
   }
 
-  void set(char *x)
+  void set(char const *x)
   {
     if (def_str) 
     { 
@@ -51,7 +53,7 @@ class property
   property *next;
 } ;
 
-property *property_manager::find(char *name)
+property *property_manager::find(char const *name)
 {
   for (property *i=first;i;i=i->next)  
     if (!strcmp(i->name,name)) 
@@ -70,7 +72,7 @@ property_manager::~property_manager()
   }
 }
 
-int property_manager::get(char *name, int def)
+int property_manager::get(char const *name, int def)
 {
   property *f=find(name);
   if (!f || f->def_str) 
@@ -79,7 +81,7 @@ int property_manager::get(char *name, int def)
 }
 
 
-char *property_manager::get(char *name,char *def)
+char const *property_manager::get(char const *name,char const *def)
 {
   property *f=find(name);
   if (!f || !f->def_str) 
@@ -88,7 +90,7 @@ char *property_manager::get(char *name,char *def)
 }
 
 
-void property_manager::set(char *name, double def)
+void property_manager::set(char const *name, double def)
 {
   property *f=find(name);
   if (f)
@@ -101,7 +103,7 @@ void property_manager::set(char *name, double def)
   }  
 }
 
-void property_manager::set(char *name, char *def)
+void property_manager::set(char const *name, char const *def)
 {
   property *f=find(name);
   if (f)
@@ -115,9 +117,7 @@ void property_manager::set(char *name, char *def)
 }
 
 
-FILE *open_FILE(char *filename, char *mode);
-
-void property_manager::save(char *filename)
+void property_manager::save(char const *filename)
 {
   FILE *fp=open_FILE(filename,"wb");
   if (!fp)
@@ -137,7 +137,7 @@ void property_manager::save(char *filename)
 }
 
 
-void property_manager::load(char *filename)
+void property_manager::load(char const *filename)
 {
   char buf[100],*c1,*c2,name[100],str[100];
   FILE *fp=open_FILE(filename,"rb");

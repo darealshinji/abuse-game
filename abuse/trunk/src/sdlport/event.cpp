@@ -18,7 +18,7 @@
 #include "game.hpp"
 
 extern int confirm_quit();
-extern int get_key_binding( char *dir, int i );
+extern int get_key_binding( char const *dir, int i );
 extern int mouse_xscale, mouse_yscale;
 short mouse_buttons[5] = { 0, 0, 0, 0, 0 };
 

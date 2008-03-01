@@ -1,8 +1,7 @@
 #include "cache.hpp"
 #include "gui.hpp"
+#include "dev.hpp"
 #include "loader2.hpp"
-
-extern char *symbol_str(char *name);
 
 void ico_button::set_act_id(int id)
 {
@@ -127,7 +126,7 @@ void ico_button::area(int &x1, int &y1, int &x2, int &y2, window_manager *wm)
   y2=y+cash.img(u)->height()-1;
 }
 
-ico_button::ico_button(int X, int Y, int ID, int Up, int down, int upa, int downa, ifield *Next, int act_id, char *help_key)
+ico_button::ico_button(int X, int Y, int ID, int Up, int down, int upa, int downa, ifield *Next, int act_id, char const *help_key)
 {
   if (help_key)
   {

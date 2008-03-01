@@ -14,7 +14,7 @@ extern image *small_render;
 void dev_init(int argc, char **argv);
 void dev_cleanup();
 void toggle_edit_mode();
-char *symbol_str(char *name);
+char const *symbol_str(char const *name);
 
 class pal_win
 {
@@ -84,12 +84,12 @@ public :
   void toggle_show_menu();
   void toggle_light_window();
   void toggle_search_window();
-  void show_char_mem(char *name);
+  void show_char_mem(char const *name);
   void close_oedit_window();
   void show_mem();
   dev_controll();
   void handle_event(event &ev);
-  void do_command(char *st, event &ev);
+  void do_command(char const *st, event &ev);
   int is_pal_win(jwindow *win);
   void dev_draw(view *v);
   void load_stuff();

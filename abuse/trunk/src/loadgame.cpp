@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "specs.hpp"
 #include "jwindow.hpp"
 #include "id.hpp"
@@ -7,17 +9,16 @@
 #include "dprint.hpp"
 #include "cache.hpp"
 #include "gui.hpp"
+#include "dev.hpp"
 #include "id.hpp"
 #include "demo.hpp"
 #include "game.hpp"
-#include <string.h>
 
 extern void *save_order;         // load from "saveordr.lsp", contains a list ordering the save games
 
 extern JCFont *console_font;
 
 extern window_manager *eh;
-extern char *symbol_str(char *name);
 
 #define MAX_SAVE_GAMES 5
 int last_save_game_number=0;
@@ -63,8 +64,6 @@ jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
 
   return eh->new_window(mx,yres/2-(WINDOW_FRAME_TOP+ih*5)/2,-1,-1,buts[0]);
 }
-
-FILE *open_FILE(char *filename, char *mode);
 
 int get_save_spot()
 {
@@ -140,7 +139,7 @@ int show_load_icon()
 	return 0;
 }
 
-int load_game(int show_all, char *title)   // return 0 if the player escapes, else return the number of the game to load
+int load_game(int show_all, char const *title)   // return 0 if the player escapes, else return the number of the game to load
 {
 	int total_saved=0;
 	image *thumb_nails[MAX_SAVE_GAMES];

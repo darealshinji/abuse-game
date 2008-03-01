@@ -49,6 +49,8 @@ extern int32_t current_vxadd,current_vyadd;
 extern int frame_panic,massive_frame_panic;
 extern int demo_start,idle_ticks;
 
+extern FILE *open_FILE(char const *filename, char const *mode);
+
 class game
 {
   JCFont *fnt;
@@ -79,7 +81,7 @@ public :
 
   game(int argc, char **argv);
   void step();
-  void show_help(char *st);
+  void show_help(char const *st);
   void draw_value(image *screen, int x, int y, int w, int h, int val, int max);
   unsigned char get_color(int x) { return x; }
   int done();
@@ -119,7 +121,7 @@ public :
 
 
   int in_area(event &ev, int x1, int y1, int x2, int y2);
-  void load_level(char *name);
+  void load_level(char const *name);
   void set_level(level *nl);
   void show_time();
   tile_type get_map_bg(int x, int y) { return current_level->get_bg(x,y); }

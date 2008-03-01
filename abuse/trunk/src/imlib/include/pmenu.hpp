@@ -10,13 +10,14 @@ class pmenu_item
 {
   int hotkey;
 public :
-  char *n,*on_off;
+  char *n;
+  char const *on_off;
   psub_menu *sub;
 
   int id,xp;
   pmenu_item *next;
-  pmenu_item(int ID, char *name, char *on_off_flag, int Hotkey, pmenu_item *Next);
-  pmenu_item(char *Name, psub_menu *Sub, pmenu_item *Next, int xpos=-1);
+  pmenu_item(int ID, char const *name, char const *on_off_flag, int Hotkey, pmenu_item *Next);
+  pmenu_item(char const *Name, psub_menu *Sub, pmenu_item *Next, int xpos=-1);
   char *name() { return n; }
   pmenu_item *find_id(int search_id);
   pmenu_item *find_key(int key);

@@ -44,7 +44,7 @@ extern unsigned char fnt6x13[192*104];
 
 
 
-int get_option(char *name);
+int get_option(char const *name);
 
 JCFont *cfg_font;
 
@@ -53,7 +53,6 @@ static  int highest_help=0;
 
 extern int jmalloc_max_size;
 
-FILE *open_FILE(char *filename, char *mode);
 void setup(int argc, char **argv)
 {
 
