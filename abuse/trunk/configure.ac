@@ -1,14 +1,10 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(abuse.lsp)
+AC_INIT(abuse, 0.7.0)
+AC_CONFIG_AUX_DIR(.auto)
+AM_INIT_AUTOMAKE
 
 dnl Version information
-ABUSE_SDL_MAJOR=0
-ABUSE_SDL_MINOR=7
-ABUSE_SDL_PATCH=0
-VERSION="$ABUSE_SDL_MAJOR.$ABUSE_SDL_MINOR.$ABUSE_SDL_PATCH"
-
-dnl Automake init
-AM_INIT_AUTOMAKE(Abuse-SDL, $VERSION)
+VERSION="0.7.0"
 
 dnl Checks for programs.
 AC_PROG_LIBTOOL
