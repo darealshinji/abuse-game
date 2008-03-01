@@ -118,7 +118,7 @@ void process_packet_commands(uint8_t *pk, int size);
 
 object_node *make_player_onodes(int player_num=-1);
 int total_view_vars();
-char *get_view_var_name(int num);
+char const *get_view_var_name(int num);
 ushort make_sync();
 
 #endif

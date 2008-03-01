@@ -13,7 +13,7 @@
 class boundary : public point_list      //  a list of points with 
 {
 public :  
-  boundary(bFILE *fp,char *er_name);
+  boundary(bFILE *fp,char const *er_name);
   uint8_t *inside;     // tells which side of the line is on the inside
   boundary(boundary *p);      // flips the *inside list
   ~boundary() { if (tot) jfree(inside); }

@@ -67,7 +67,7 @@ extern void show_end();
 
 extern int registered;
 
-view *lget_view(void *arg, char *msg)
+static view *lget_view(void *arg, char const *msg)
 {
   game_object *o=(game_object *)lpointer_value(arg);
   view *c=o->controller();
@@ -80,8 +80,8 @@ view *lget_view(void *arg, char *msg)
   return c;
 }
 
-extern int get_option(char *name);
-extern void set_login(char *name);
+extern int get_option(char const *name);
+extern void set_login(char const *name);
 
 void clisp_init()                            // call by lisp_init, defines symbols and functions
                                              // to irnterface with c

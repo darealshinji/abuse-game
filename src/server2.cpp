@@ -8,7 +8,7 @@
 #include "level.hpp"
 #include "dev.hpp"
 
-char *get_username();
+extern char const *get_username();
 int start_running=0;
 
 class client_descriptor

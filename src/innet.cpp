@@ -11,12 +11,14 @@ of a abuse and therefore is a bit simpler.
 
 
 */
+#include <stdio.h>
+
 #include "demo.hpp"
 #include "macs.hpp"
 #include "specs.hpp"
 #include "level.hpp"
 #include "game.hpp"
-#include <stdio.h>
+#include "dev.hpp"
 #include "timing.hpp"
 #include "fileman.hpp"
 #include "netface.hpp"
@@ -25,8 +27,6 @@ of a abuse and therefore is a bit simpler.
 #include "gclient.hpp"
 #include "dprint.hpp"
 #include "netcfg.hpp"
-
-extern char *symbol_str(char *name);
 
 #ifdef __WATCOMC__
 #define getlogin() "DOS user"
@@ -43,7 +43,7 @@ game_handler *game_face=NULL;
 int local_client_number=0;        // 0 is the server
 join_struct *join_array=NULL;      // points to an array of possible joining clients
 extern char *get_login();
-extern void set_login(char *name);
+extern void set_login(char const *name);
 
 
 int net_init(int argc, char **argv)
@@ -144,7 +144,7 @@ int net_init(int argc, char **argv)
 	if (main_net_cfg->state==net_configuration::CLIENT)
 	{
 		dprintf("Attempting to locate server %s, please wait\n",main_net_cfg->server_name);
-		char *sn=main_net_cfg->server_name;
+		char const *sn=main_net_cfg->server_name;
 		net_server=prot->get_node_address(sn,DEFAULT_COMM_PORT,0);
 		if (!net_server)
 		{
@@ -218,7 +218,7 @@ int NF_set_file_server(net_address *addr)
   } else return 0;
 }
 
-int NF_set_file_server(char *name)
+int NF_set_file_server(char const *name)
 {
   if (prot)
   {
@@ -233,7 +233,7 @@ int NF_set_file_server(char *name)
 }
 
 
-int NF_open_file(char *filename, char *mode)
+int NF_open_file(char const *filename, char const *mode)
 {
   if (prot)
     return fman->rf_open_file(filename,mode);

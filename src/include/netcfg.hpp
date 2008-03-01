@@ -23,9 +23,9 @@ class net_configuration
 
   net_configuration();
   int input();   // pulls up dialog box and input fileds
-  void cfg_error(char *msg);
+  void cfg_error(char const *msg);
   int confirm_inputs(jwindow *j, int server);
-  void error(char *message);
+  void error(char const *message);
   int confirm_inputs(input_manager *i, int server);
   ifield *center_ifield(ifield *i,int x1, int x2, ifield *place_below);
   int get_options(int server);

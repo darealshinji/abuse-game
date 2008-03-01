@@ -28,7 +28,7 @@ class net_socket
   virtual int error()                                              = 0;
   virtual int ready_to_read()                                      = 0;
   virtual int ready_to_write()                                     = 0;
-  virtual int write(void *buf, int size, net_address *addr=0)   = 0;
+  virtual int write(void const *buf, int size, net_address *addr=0)   = 0;
   virtual int read(void *buf, int size, net_address **addr=0)      = 0;
   virtual int get_fd()                                             = 0;
   virtual ~net_socket()              { ; }
@@ -65,15 +65,15 @@ public :
   net_protocol *next;
 
   virtual net_address *get_local_address() = 0;
-  virtual net_address *get_node_address(char *&server_name, int def_port, int force_port) = 0;
+  virtual net_address *get_node_address(char const *&server_name, int def_port, int force_port) = 0;
   virtual net_socket *connect_to_server(net_address *addr, 
 					net_socket::socket_type sock_type=net_socket::SOCKET_SECURE) =0;
   virtual net_socket *create_listen_socket(int port, net_socket::socket_type sock_type) = 0;
   virtual int installed() = 0;
-  virtual char *name() = 0;
+  virtual char const *name() = 0;
   virtual int select(int block) = 0;          // return # of sockets available for read & writing
   virtual void cleanup() { ; }                // should do any needed pre-exit cleanup stuff
-  net_socket *connect_to_server(char *&server_name, int port, int force_port=0, 
+  net_socket *connect_to_server(char const *&server_name, int port, int force_port=0, 
 				net_socket::socket_type sock_type=net_socket::SOCKET_SECURE); 
 
 	// Notification methods

@@ -82,7 +82,7 @@ extern char *macify_name(char *s);
 #include "tcpip.hpp"
 tcpip_protocol tcpip;
 
-FILE *open_FILE(char *filename, char *mode)
+FILE *open_FILE(char const *filename, char const *mode)
 {
 /*  char *prefix=get_filename_prefix() ? get_filename_prefix() : "",*c;
   
@@ -108,10 +108,11 @@ FILE *open_FILE(char *filename, char *mode)
 
 void handle_no_space()
 {
-  char *no_space_msg= "\nYou are out of disk space or the game\n"
-                      "was unable to write to disk for some reason\n"
-                      "The game cannot continue, please check this out\n"
-                      "and try again.\n";
+  char const *no_space_msg =
+      "\nYou are out of disk space or the game\n"
+      "was unable to write to disk for some reason\n"
+      "The game cannot continue, please check this out\n"
+      "and try again.\n";
   if (eh)
   {
     jwindow *no_space=eh->new_window(0,0,-1,-1,
@@ -187,7 +188,7 @@ void game::play_sound(int id, int vol, int32_t x, int32_t y)
 	}
 }
 
-int get_option( char *name )
+int get_option(char const *name)
 {
 	int i;
 	for( i = 1; i < start_argc; i++ )
@@ -504,7 +505,7 @@ void game::menu_select(event &ev)
 }
 
 
-void game::show_help(char *st)
+void game::show_help(char const *st)
 {
   strcpy(help_text,st);
   help_text_frames=0;  
@@ -525,7 +526,7 @@ void game::set_level(level *nl)
   current_level=nl;
 }
 
-void game::load_level(char *name)
+void game::load_level(char const *name)
 {
   if (current_level) 
     delete current_level;
@@ -1247,7 +1248,7 @@ void fade_out(int steps)
   pal->load();
 }
 
-int text_draw(int y, int x1, int y1, int x2, int y2, char *buf, JCFont *font, uint8_t *cmap, char color);
+int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *font, uint8_t *cmap, char color);
 
 void do_title()
 {
@@ -2223,7 +2224,7 @@ void game::draw(int scene_mode)
 
 	if( scene_mode )
 	{
-		char *helpstr = "ARROW KEYS CHANGE TEXT SPEED";
+		char const *helpstr = "ARROW KEYS CHANGE TEXT SPEED";
 		eh->font()->put_string(screen,screen->width()/2-(eh->font()->width()*strlen(helpstr))/2+1,
 			screen->height()-eh->font()->height()-5+1,helpstr,eh->dark_color());
 		eh->font()->put_string(screen,screen->width()/2-(eh->font()->width()*strlen(helpstr))/2,
@@ -2369,8 +2370,8 @@ void check_for_upgrade(int argc, char **argv)
     if (!strcmp(argv[i],"-upgrade"))
     {
       lisp_init(0xf000,0x30000);
-      char *prog="(load \"lisp/upgrade.lsp\")",*cs;
-      cs=prog;
+      char const *prog="(load \"lisp/upgrade.lsp\")";
+      char const *cs = prog;
       if (!eval(compile(cs)))
 	printf("file does not exists : lisp/upgrade.lsp, cannot upgrade\n");
 
@@ -2385,7 +2386,7 @@ void check_for_lisp(int argc, char **argv)
 		if( !strcmp( argv[i], "-lisp" ) )
 		{
 			lisp_init(0xf000,0x30000);
-			char *eof_char = "CTRL-D";
+			char const *eof_char = "CTRL-D";
 			fprintf(stderr,
 					" CLIVE (C) 1995 Jonathan Clark, all rights reserved\n"
 					"   (C LISP interpreter and various extentions)\n"
@@ -2394,8 +2395,8 @@ void check_for_lisp(int argc, char **argv)
 			while (!feof(stdin))
 			{
 				fprintf(stderr,"Lisp> ");
-				char *l=get_line(0);
-				char *s=l;
+				char *l = get_line(0);
+				char const *s = l;
 				while (*s)
 				{
 					void *prog=compile(s);

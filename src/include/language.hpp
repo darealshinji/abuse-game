@@ -1,1 +1,1 @@
-char *lang_string(char *symbol);
+char const *lang_string(char const *symbol);

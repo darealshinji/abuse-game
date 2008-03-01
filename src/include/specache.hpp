@@ -13,7 +13,7 @@ class spec_directory_cache
     char *fn;
     spec_directory *sd;
     char *filename() { return fn; }
-    filename_node(char *filename, spec_directory *dir)
+    filename_node(char const *filename, spec_directory *dir)
     {
       fn=(char *)memcpy(jmalloc(strlen(filename)+1,"spec_dir cache"),filename,strlen(filename)+1);
       sd=dir;
@@ -24,7 +24,7 @@ class spec_directory_cache
   void clear(filename_node *f); // private recursive member  
   long size;
   public :
-  spec_directory *get_spec_directory(char *filename, bFILE *fp=NULL);
+  spec_directory *get_spec_directory(char const *filename, bFILE *fp=NULL);
   spec_directory_cache() { fn_root=0; size=0; }
   void clear();                             // frees up all allocated memory
   void load(bFILE *fp);

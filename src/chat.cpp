@@ -1,6 +1,5 @@
 #include "chat.hpp"
-
-extern char *symbol_str(char *name);
+#include "dev.hpp"
 
 chat_console::chat_console(window_manager *WM, JCFont *font, int width, int height) :
   console(WM,font,width,height<4 ? 4 : height,symbol_str("CHAT"))

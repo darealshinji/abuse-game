@@ -36,7 +36,7 @@ class crced_file
   int crc_calculated;
   uint32_t crc;
   char *filename;
-  crced_file(char *name);
+  crced_file(char const *name);
   ~crced_file();
 } ;
 
@@ -46,14 +46,14 @@ class crc_manager  // stores crc for each file open so redundant calculations ar
   crced_file **files;
   public :
   crc_manager();
-  int get_filenumber(char *filename);
+  int get_filenumber(char const *filename);
   uint32_t get_crc(int32_t filenumber, int &failed);
   void set_crc(int32_t filenumber, uint32_t crc);
   char *get_filename(int32_t filenumber);
   void clean_up();
   int total_filenames() { return total_files; }
-  int write_crc_file(char *filename);
-  int load_crc_file(char *filename);
+  int write_crc_file(char const *filename);
+  int load_crc_file(char const *filename);
 } ;
 
 
@@ -86,8 +86,8 @@ public :
   void free_oldest();
   int in_use() { if (used) { used=0; return 1; } else return 0; }
   int full() { if (ful) { ful=0; return 1; } else return 0; }
-  int32_t reg_object(char *filename, void *object, int type, int rm_dups);      // lisp object
-  int32_t reg(char *filename, char *name, int type=-1, int rm_dups=0);          // returns id to item
+  int32_t reg_object(char const *filename, void *object, int type, int rm_dups);      // lisp object
+  int32_t reg(char const *filename, char const *name, int type=-1, int rm_dups=0);          // returns id to item
   int32_t reg_lisp_block(Cell *block);
   int loaded(int id);
   void unreg(int id);

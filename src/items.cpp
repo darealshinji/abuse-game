@@ -5,7 +5,7 @@
 
 extern palette *pal;
 
-boundary::boundary(bFILE *fp, char *er_name) : point_list(fp)
+boundary::boundary(bFILE *fp, char const *er_name) : point_list(fp)
 {
   int x1,y1,x2,y2,checkx,checky,i;  
   if (tot)

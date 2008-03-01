@@ -36,7 +36,7 @@ extern char lsf[256];
 #define next_process() usleep(1)
 #endif
 
-extern int crc_man_write_crc_file(char *filename);
+extern int crc_man_write_crc_file(char const *filename);
 int net_installed=0,net_out_fd,net_in_fd;
 int net_child=-1;
 int local_client_number=0;
@@ -179,7 +179,7 @@ int NF_set_file_server(char *name)
   } else return 0; 
 }
 
-int NF_open_file(char *filename, char *mode)
+int NF_open_file(char const *filename, char const *mode)
 {
   if (net_installed)
   {

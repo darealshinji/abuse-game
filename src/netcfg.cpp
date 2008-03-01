@@ -5,11 +5,12 @@
 #include "timing.hpp"
 #include "light.hpp"
 
+#include "dev.hpp"
+
 extern char *get_login();
 extern window_manager *eh;
 net_configuration *main_net_cfg=NULL;
 extern char lsf[256];
-char *symbol_str(char *name);
 
 extern net_protocol *prot;
 
@@ -36,7 +37,7 @@ enum { NET_OK=1, NET_CANCEL, NET_SERVER_NAME, NET_NAME, NET_PORT, NET_SERVER_POR
        LVL_2,LVL_4,LVL_8,LEVEL_BOX } ;
 
 
-void net_configuration::cfg_error(char *msg)
+void net_configuration::cfg_error(char const *msg)
 {
   jwindow *j=eh->new_window(-1,0,-1,-1,new info_field(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP,0,msg,
       new button(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP+30,CFG_ERR_OK,symbol_str("ok_button"),NULL)),symbol_str("input_error"));
@@ -242,7 +243,7 @@ extern int start_running,demo_start,start_edit;
 */
 
 
-void net_configuration::error(char *message)
+void net_configuration::error(char const *message)
 {
   image *screen_backup=screen->copy();
 
@@ -266,7 +267,7 @@ void net_configuration::error(char *message)
 
   
   {   
-    char *ok=symbol_str("ok_button");
+    char const *ok = symbol_str("ok_button");
 
     int bx=x+ns_w/2-strlen(ok)*fnt->width()/2-3,
       by=y+ns_h/2+fnt->height()*3;
@@ -434,7 +435,7 @@ int net_configuration::input()   // pulls up dialog box and input fileds
   int ns_w=ns->width(),ns_h=ns->height();
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
   ns->put_image(screen,x,y);
-  char *nw_s=symbol_str("Networking");
+  char const *nw_s = symbol_str("Networking");
   JCFont *fnt=eh->font();
 
 
@@ -442,7 +443,7 @@ int net_configuration::input()   // pulls up dialog box and input fileds
       nw_s,eh->medium_color());
   {
 
-    char *server_str=symbol_str("server");
+    char const *server_str = symbol_str("server");
     button *sb=new button(x+40,y+ns_h-23-fnt->height(),NET_SERVER,server_str,NULL);
 
     if (main_net_cfg && (main_net_cfg->state==CLIENT || main_net_cfg->state==SERVER))

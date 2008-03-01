@@ -108,8 +108,10 @@ file_picker::file_picker(int X, int Y, int ID, int Rows, ifield *Next)
   reconfigure();  
 }
 
-jwindow *file_dialog(window_manager *wm, char *prompt, char *def,
-		     int ok_id, char *ok_name, int cancel_id, char *cancel_name, char *FILENAME_str, int filename_id)
+jwindow *file_dialog(window_manager *wm, char const *prompt, char const *def,
+		     int ok_id, char const *ok_name, int cancel_id,
+                     char const *cancel_name, char const *FILENAME_str,
+                     int filename_id)
 {
   int wl=WINDOW_FRAME_LEFT,wh=WINDOW_FRAME_TOP;
   int wh2=wh+5+wm->font()->height()+5;

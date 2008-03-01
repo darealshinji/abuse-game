@@ -18,7 +18,7 @@
 #define SHIFT_DOWN_DEFAULT 15
 #define SHIFT_RIGHT_DEFAULT 0
 
-extern int get_key_binding( char *dir, int i );
+extern int get_key_binding( char const *dir, int i );
 extern window_manager *eh;
 view *player_list=NULL;
 int morph_sel_frame_color;
@@ -183,7 +183,7 @@ char *get_login()
 
 #endif
 
-void set_login(char *name)
+void set_login(char const *name)
 { strncpy(cur_user_name,name,20); }
 
 view::view(game_object *Focus, view *Next, int number)
@@ -949,26 +949,27 @@ enum { V_CX1, V_CY1, V_CX2, V_CY2,
 
 #define TVV (V_FREEZE_TIME+1)
 
-static char *vv_names[TVV]={
-  "view.cx1",  "view.cy1",  "view.cx2",  "view.cy2", 
-  "view.shift_down",  "view.shift_right",
-  "view.god",
-  "view.player_number",
-  "view.draw_solid",
-  "view.lives",
-  "view.current_weapon",
-  "view.x_suggestion",  "view.y_suggestion",  
-   "view.b1_suggestion",  "view.b2_suggestion",  "view.b3_suggestion",  "view.b4_suggestion",
-  "view.pan_x",  "view.pan_y",
-  "view.no_xleft",  "view.no_xright",  "view.no_ytop",  "view.no_ybottom",
-  "view.last_x",  "view.last_y",  "view.last_left",  "view.last_right",  "view.last_up",  "view.last_down", 
-  "view.last_b1",  "view.last_b2",  "view.last_b3",  "view.last_b4",
-  "view.last_hp",
-  "view.secrets",  "view.kills",  "view.tsecrets",  "view.tkills",
-  "view.ambient",
-  "view.pointer_x",  "view.pointer_y",
-  "view.last_last_x",  "view.last_last_y",
-  "view.freeze_time"
+static char const *vv_names[TVV] =
+{
+    "view.cx1",  "view.cy1",  "view.cx2",  "view.cy2", 
+    "view.shift_down",  "view.shift_right",
+    "view.god",
+    "view.player_number",
+    "view.draw_solid",
+    "view.lives",
+    "view.current_weapon",
+    "view.x_suggestion",  "view.y_suggestion",  
+    "view.b1_suggestion",  "view.b2_suggestion",  "view.b3_suggestion",  "view.b4_suggestion",
+    "view.pan_x",  "view.pan_y",
+    "view.no_xleft",  "view.no_xright",  "view.no_ytop",  "view.no_ybottom",
+    "view.last_x",  "view.last_y",  "view.last_left",  "view.last_right",  "view.last_up",  "view.last_down", 
+    "view.last_b1",  "view.last_b2",  "view.last_b3",  "view.last_b4",
+    "view.last_hp",
+    "view.secrets",  "view.kills",  "view.tsecrets",  "view.tkills",
+    "view.ambient",
+    "view.pointer_x",  "view.pointer_y",
+    "view.last_last_x",  "view.last_last_y",
+    "view.freeze_time"
 };
 
 
@@ -976,7 +977,7 @@ int total_view_vars()
 { return TVV;
 }
 
-char *get_view_var_name(int num)
+char const *get_view_var_name(int num)
 { return vv_names[num]; }
 
 int32_t view::get_view_var_value(int num)

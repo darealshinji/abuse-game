@@ -6,7 +6,7 @@
 uint8_t major_version=2;
 uint8_t minor_version=00;
 
-extern int get_option(char *name);
+extern int get_option(char const *name);
 
 #ifdef __WATCOMC__
 #include "i86.h"

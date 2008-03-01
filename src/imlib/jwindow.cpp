@@ -257,7 +257,7 @@ window_manager::window_manager(image *Screen, palette *Pal, int Hi,
   frame_suppress=0;
 }
 
-jwindow *window_manager::new_window(int x, int y, int l, int h, ifield *fields, char *Name)
+jwindow *window_manager::new_window(int x, int y, int l, int h, ifield *fields, char const *Name)
 {
   if (x>screen->width()-4) x=screen->width()-25;
   if (y>screen->height()-4) y=screen->height()-10;
@@ -338,7 +338,7 @@ void jwindow::set_moveability(int x)
   property.moveable=x;
 }
 
-jwindow::jwindow(int X, int Y, int L, int H, window_manager *wm, ifield *fields, char *Name)
+jwindow::jwindow(int X, int Y, int L, int H, window_manager *wm, ifield *fields, char const *Name)
 {
   ifield *i;
   int x1,y1,x2,y2;

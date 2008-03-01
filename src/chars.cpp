@@ -19,14 +19,16 @@ character_type **figures;
 int total_weapons=0;
 int *weapon_types=NULL;    // maps 0..total_weapons into 'real' weapon type
 
-char *state_names[MAX_STATE]= {
-			       "dead",
-                               "dieing",
-			       "stopped",
-			       "start_run_jump","run_jump","run_jump_fall","end_run_jump",
-			       "flinch_up","flinch_down",
-			       "morph_pose",
-			       "running" };
+char const *state_names[MAX_STATE] =
+{
+    "dead",
+    "dieing",
+    "stopped",
+    "start_run_jump", "run_jump", "run_jump_fall", "end_run_jump",
+    "flinch_up", "flinch_down",
+    "morph_pose",
+    "running"
+};
 
 /*			       "start_still_jump","still_jump","still_jump_fall","end_still_jump",
 
@@ -52,13 +54,20 @@ char *state_names[MAX_STATE]= {
 			     } ; */
 
 
-char *cflag_names[TOTAL_CFLAGS]={"hurt_all","is_weapon","stoppable","can_block",
-				 "hurtable","pushable","unlistable",
-			         "add_front","cached_in","need_cache_in","unactive_shield"};
-char *ofun_names[TOTAL_OFUNS]={"ai_fun","move_fun","draw_fun","map_draw_fun","damage_fun",
-			       "next_state_fun","user_fun",
-			       "constructor","reload_fun","get_cache_list_fun",
-			       "type_change_fun"};
+char const *cflag_names[TOTAL_CFLAGS] =
+{
+    "hurt_all", "is_weapon", "stoppable", "can_block",
+    "hurtable", "pushable", "unlistable",
+    "add_front", "cached_in", "need_cache_in", "unactive_shield"
+};
+
+char const *ofun_names[TOTAL_OFUNS] =
+{
+    "ai_fun", "move_fun", "draw_fun", "map_draw_fun", "damage_fun",
+    "next_state_fun", "user_fun",
+    "constructor", "reload_fun", "get_cache_list_fun",
+    "type_change_fun"
+};
 
 int character_type::add_state(void *symbol)             // returns index into seq to use
 {

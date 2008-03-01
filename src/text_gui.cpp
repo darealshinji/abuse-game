@@ -425,8 +425,8 @@ void *show_yes_no(void *t, void *msg, void *y, void *n)
   p_ref r1(t),r2(msg),r3(y),r4(n);
   t=eval(t); msg=eval(msg); y=eval(y); n=eval(n);
   int c;
-  char *yes=lstring_value(y);
-  char *no=lstring_value(n);
+  char const *yes = lstring_value(y);
+  char const *no = lstring_value(n);
   do
   {
     printf("\n\n\n\n\n%s\n\n",lstring_value(t));

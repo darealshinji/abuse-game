@@ -44,42 +44,42 @@ game_object *game_object::copy()
 int simple_object::total_vars() { return TOTAL_OBJECT_VARS; }
 
 
-obj_desc object_descriptions[TOTAL_OBJECT_VARS]={
-				{"fade_dir",      RC_8 },
-				{"frame_dir",     RC_8 },
-				{"direction",     RC_8 },
-				{"gravity_on",    RC_8 },
-				{"fade_count",    RC_8 },
+obj_desc object_descriptions[TOTAL_OBJECT_VARS] =
+{
+    {"fade_dir",      RC_8 },
+    {"frame_dir",     RC_8 },
+    {"direction",     RC_8 },
+    {"gravity_on",    RC_8 },
+    {"fade_count",    RC_8 },
 
-				{"fade_max",      RC_8 },
-				{"active",        RC_8 },
-				{"flags",         RC_8 },
-				{"aitype",        RC_8 },
-				{"xvel",          RC_32 },
+    {"fade_max",      RC_8 },
+    {"active",        RC_8 },
+    {"flags",         RC_8 },
+    {"aitype",        RC_8 },
+    {"xvel",          RC_32 },
 
-				{"fxvel",         RC_8 },
-				{"yvel",          RC_32 },
-				{"fyvel",         RC_8 },
-				{"xacel",         RC_32 },
-				{"fxacel",        RC_8 },
+    {"fxvel",         RC_8 },
+    {"yvel",          RC_32 },
+    {"fyvel",         RC_8 },
+    {"xacel",         RC_32 },
+    {"fxacel",        RC_8 },
 
-				{"yacel",         RC_32 },
-				{"fyacel",        RC_8 },
-				{"x",             RC_32 },
-				{"fx",            RC_8 },
-				{"y",             RC_32 },
+    {"yacel",         RC_32 },
+    {"fyacel",        RC_8 },
+    {"x",             RC_32 },
+    {"fx",            RC_8 },
+    {"y",             RC_32 },
 
-				{"fy",            RC_8 },
-				{"hp",            RC_16 },
-				{"mp",            RC_16 },
-				{"fmp",           RC_16 },
-				{"cur_frame",     RC_16 },
+    {"fy",            RC_8 },
+    {"hp",            RC_16 },
+    {"mp",            RC_16 },
+    {"fmp",           RC_16 },
+    {"cur_frame",     RC_16 },
 
-				{"aistate",       RC_16 },
-				{"aistate_time",  RC_16 },
-				{"targetable",    RC_8 }
-
-			      };
+    {"aistate",       RC_16 },
+    {"aistate_time",  RC_16 },
+    {"targetable",    RC_8 }
+};
   
 int32_t game_object::get_var_by_name(char *name, int &error)
 {
@@ -132,7 +132,7 @@ int game_object::set_var_by_name(char *name, int32_t value)
 }
 
 
-char *simple_object::var_name(int x)
+char const *simple_object::var_name(int x)
 {
   return object_descriptions[x].name;
 }

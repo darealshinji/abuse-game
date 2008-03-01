@@ -23,7 +23,7 @@ enum character_state {dead,
 
 
 #define MAX_STATE (running+1)
-extern char *state_names[];
+extern char const *state_names[];
 
 class named_field
 {
@@ -54,7 +54,7 @@ enum { CFLAG_HURT_ALL,            // if object hurts all characters, not just pl
        CFLAG_UNACTIVE_SHIELD      // if object is not active (i.e. link 0 aistate==0) 
                                   // then objects will not draw a damage when hitting it
      };
-extern char *cflag_names[TOTAL_CFLAGS];
+extern char const *cflag_names[TOTAL_CFLAGS];
 
 // all object functions default to NULL
 #define TOTAL_OFUNS 11
@@ -70,7 +70,7 @@ enum { OFUN_AI,                   // objects ai function called by the mover, sh
        OFUN_GET_CACHE_LIST,       // called on level load, should return list (a . b) a is character id, and b is other ids
        OFUN_CHANGE_TYPE
      } ;
-extern char *ofun_names[TOTAL_OFUNS];
+extern char const *ofun_names[TOTAL_OFUNS];
 
 
 class character_type

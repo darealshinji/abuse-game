@@ -1,3 +1,5 @@
+#include <ctype.h>
+
 #include "dev.hpp"
 #include "input.hpp"
 #include "objects.hpp"
@@ -18,7 +20,6 @@
 #include "sbar.hpp"
 #include "compiled.hpp"
 #include "chat.hpp"
-#include <ctype.h>
 
 #define make_above_tile(x) ((x)|0x4000)
 extern int registered;
@@ -27,7 +28,7 @@ char backw_on=0,forew_on=0,show_menu_on=0,ledit_on=0,pmenu_on=0,omenu_on=0,comma
      show_names=0,fg_reversed=0,
      raise_all;
 
-char *symbol_str(char *name)
+char const *symbol_str(char const *name)
 {
   void *sym=make_find_symbol(name);
   if (symbol_value(sym) && item_type(symbol_value(sym))==L_STRING)
@@ -40,7 +41,7 @@ char *symbol_str(char *name)
 
   
   char prog[50]; 
-  char *cs=prog;
+  char const *cs=prog;
   strcpy(prog,"(setq section 'game_section)\n");
   eval(compile(cs));
   strcpy(prog,"(load \"lisp/english.lsp\")\n");
@@ -108,8 +109,11 @@ int dev_del,dev_move, dev_char_left,dev_char_right,dev_back,dev_front,dev_ok,dev
     dev_lights,dev_objects,dev_ai,dev_mode_icon[DEV_MODES],
     dev_forward,dev_backward;
 
-char *dev_mode_icon_names[DEV_MODES]={"pixel_mode","pick_mode", /* "fill_mode",
-				      "line_mode","rect_mode","bar_mode", */ "area_select"};
+char const *dev_mode_icon_names[DEV_MODES] =
+{
+    "pixel_mode", "pick_mode", /* "fill_mode",
+    "line_mode","rect_mode","bar_mode", */ "area_select"
+};
 
 int dev_mode_ids[DEV_MODES]={ID_DMODE_DRAW,ID_DMODE_PICK, ID_DMODE_AREA};
 
@@ -316,7 +320,7 @@ void dev_term::execute(char *st)
 
 void load_dev_icons()
 {
-  char *artf="art/dev.spe";
+  char const *artf="art/dev.spe";
   dev_del=cash.reg(artf,"dev_del",SPEC_IMAGE,0);
   dev_move=cash.reg(artf,"dev_move",SPEC_IMAGE,0);
   dev_char_left=cash.reg(artf,"dev_char_left",SPEC_IMAGE,0);
@@ -823,7 +827,7 @@ void dev_controll::toggle_search_window()
 int open_owin=0,open_fwin=0,open_bwin=0,start_edit=0,start_nodelay=0,start_doubled=0,start_mem=0;
 
 
-int get_option(char *name);
+int get_option(char const *name);
 
 
 void dev_init(int argc, char **argv)
@@ -969,7 +973,8 @@ void dev_controll::load_stuff()
 {  
   if (dev & EDIT_MODE)
   {
-    char prog[100],*cs;
+    char prog[100];
+    char const *cs;
     strcpy(prog,"(compile-file \"edit.lsp\")");
     cs=prog;
     void *p=compile(cs);
@@ -982,9 +987,10 @@ void dev_controll::load_stuff()
 
 }
 
-void dev_controll::do_command(char *command, event &ev)
+void dev_controll::do_command(char const *command, event &ev)
 {
-  char fword[50],*st;
+  char fword[50];
+  char const *st;
   int l,h,x,y,i;
   if (command[0]=='(')            // is this a lisp command?
   {
@@ -2054,7 +2060,7 @@ void dev_controll::handle_event(event &ev)
 	{ 	
 	  if (!mess_win)
 	  {
-	    mess_win=file_dialog(eh,symbol_str("level_name"),current_level ? current_level->name() : (char *)"",
+	    mess_win=file_dialog(eh,symbol_str("level_name"),current_level ? current_level->name() : "",
 				 ID_LEVEL_LOAD_OK,symbol_str("ok_button"),ID_CANCEL,symbol_str("cancel_button"),
 				 symbol_str("FILENAME"),ID_MESS_STR1);
 	    eh->grab_focus(mess_win);
@@ -2325,7 +2331,7 @@ void dev_controll::handle_event(event &ev)
 	  sprintf(name,"(add_palette \"%s\" %d %d)",mess_win->read(ID_MESS_STR3),
 		  atoi(mess_win->read(ID_MESS_STR1)),
 		  atoi(mess_win->read(ID_MESS_STR2)));
-	  char *s=name;
+	  char const *s=name;
 	  eval(compile(s));
 	  eh->push_event(new event(ID_CANCEL,NULL));        // close window
 	} break;
@@ -3218,8 +3224,6 @@ void pal_win::save(FILE *fp)
 
 }
 
-FILE *open_FILE(char *filename, char *mode);
-
 void dev_controll::save()
 {
   FILE *fp=open_FILE("edit.lsp","w");
@@ -3369,7 +3373,7 @@ int get_char_mem(int type, int print)
   return t;
 }
 
-void dev_controll::show_char_mem(char *name)
+void dev_controll::show_char_mem(char const *name)
 {
   int find=-1;
   for (int i=0;i<total_objects;i++)
@@ -3445,9 +3449,9 @@ void dev_cleanup()
 
 struct pmi
 {
-  char *name;
+  char const *name;
   int id;
-  char *on_off;
+  char const *on_off;
   int key;
 } ;
 

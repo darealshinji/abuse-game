@@ -31,14 +31,14 @@ class file_manager
   {
     public :
     net_socket *sock;
-    void r_close(char *reason);
+    void r_close(char const *reason);
     int32_t size;   // server tells us the size of the file when we open it
     int open_local;
     remote_file *next; 
-    remote_file(net_socket *sock, char *filename, char *mode, remote_file *Next);
+    remote_file(net_socket *sock, char const *filename, char const *mode, remote_file *Next);
 
     int unbuffered_read(void *buffer, size_t count);
-    int unbuffered_write(void *buf, size_t count) { return 0; } // not supported
+    int unbuffered_write(void const *buf, size_t count) { return 0; } // not supported
     int32_t unbuffered_tell();
     int32_t unbuffered_seek(int32_t offset);
     int32_t file_size() { return size; }
@@ -62,7 +62,7 @@ class file_manager
   void add_nfs_client(net_socket *sock);
 
 
-  int rf_open_file(char *&filename, char *mode);
+  int rf_open_file(char const *&filename, char const *mode);
   int32_t rf_tell(int fd);
   int32_t rf_seek(int fd, int32_t offset);
   int rf_read(int fd, void *buffer, size_t count);

@@ -22,7 +22,7 @@ class trans_image       // transpernet image
 public :  
   short height() { return h; }
   short width() { return w; }  
-  trans_image(image *im, char *name);  // name has no meaning if MEM_CHECK is off
+  trans_image(image *im, char const *name);  // name has no meaning if MEM_CHECK is off
   void put_image(image *screen, int x, int y);   // always transparent   
 
   // if screen x & y offset already calculated save a mul

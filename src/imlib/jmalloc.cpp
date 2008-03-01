@@ -62,8 +62,8 @@ class block_manager
   uint8_t block_type;
 
   void init(void *block, int32_t Block_size, uint8_t type);
-  void *static_alloc(int32_t size, char *name);
-  void *cache_alloc(int32_t size, char *name);
+  void *static_alloc(int32_t size, char const *name);
+  void *cache_alloc(int32_t size, char const *name);
   void static_free(void *ptr);
   void cache_free(void *ptr);
   int32_t available();
@@ -324,7 +324,7 @@ void block_manager::init(void *block, int32_t Block_size, uint8_t type)
   block_type=type;
 }
 
-void *block_manager::static_alloc(int32_t size, char *name)
+void *block_manager::static_alloc(int32_t size, char const *name)
 {
   if (size<JM_SMALL_SIZE)
   {
@@ -404,7 +404,7 @@ void *block_manager::static_alloc(int32_t size, char *name)
 }
 
 
-void *block_manager::cache_alloc(int32_t size, char *name)
+void *block_manager::cache_alloc(int32_t size, char const *name)
 {
   if (size<JM_SMALL_SIZE)
   {
@@ -682,17 +682,19 @@ void jmem_cleanup(int ret, void *arg)
 { jmalloc_uninit(); }
 
  
-int jmalloc_max_size=3072000;
-int jmalloc_min_low_size=0x1000;
-char *not_enough_total_memory_message="Memory manager : Sorry you do not have enough memory available to\n"
-                                       "                 run this program.\n"
-				       "    DOS users  : Remove any TSR's and device drivers you can.\n"
-				       "    UNIX users : Do you have a swapfile/partition setup?\n";
-char *not_enough_low_memory_message="Memory Manager : Not enough low memory available (%d : need %d)\n"
-                                   "  Suggestions...\n"
-				   "    - make a boot disk\n"
-				   "    - remove TSR's  & drivers not needed by ABUSE\n"
-				   "    - add memory to your system\n";
+int jmalloc_max_size = 3072000;
+int jmalloc_min_low_size = 0x1000;
+static char const *not_enough_total_memory_message =
+    "Memory manager : Sorry you do not have enough memory available to\n"
+    "                 run this program.\n"
+    "    DOS users  : Remove any TSR's and device drivers you can.\n"
+    "    UNIX users : Do you have a swapfile/partition setup?\n";
+static char const *not_enough_low_memory_message =
+    "Memory Manager : Not enough low memory available (%d : need %d)\n"
+    "  Suggestions...\n"
+    "    - make a boot disk\n"
+    "    - remove TSRs & drivers not needed by ABUSE\n"
+    "    - add memory to your system\n";
 
 void jmalloc_init(int32_t min_size)
 {
@@ -783,7 +785,7 @@ int32_t j_allocated()
 }
 
 
-void *jmalloc(int32_t size, char *name)
+void *jmalloc(int32_t size, char const *name)
 {  
   if (!bmanage_total)
     return malloc(size);
@@ -836,7 +838,7 @@ void jfree(void *ptr)
 }
 
 
-void *jrealloc(void *ptr, int32_t size, char *name)
+void *jrealloc(void *ptr, int32_t size, char const *name)
 {  
   if (!ptr) return jmalloc(size,name);
   if (!bmanage_total) { return realloc(ptr,size); }
@@ -881,7 +883,7 @@ void dmem_report()
 }
 
 
-void mem_report(char *filename)
+void mem_report(char const *filename)
 {
 	char *reportpath;
 	reportpath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + strlen( filename ) + 1, "reportpath" );

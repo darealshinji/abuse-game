@@ -100,12 +100,12 @@ public :
 
   tcpip_protocol();
   net_address *get_local_address();
-  net_address *get_node_address(char *&server_name, int def_port, int force_port);
+  net_address *get_node_address(char const *&server_name, int def_port, int force_port);
   net_socket *connect_to_server(net_address *addr, 
         net_socket::socket_type sock_type=net_socket::SOCKET_SECURE);
   net_socket *create_listen_socket(int port, net_socket::socket_type sock_type);
   int installed() { return 1; }  // always part of unix
-  char *name() { return "UNIX generic TCPIP"; }
+  char const *name() { return "UNIX generic TCPIP"; }
   void cleanup(); 
   int select(int block);          // return # of sockets available for read & writing
   
@@ -138,7 +138,7 @@ class unix_fd : public net_socket
     select(FD_SETSIZE,NULL,&write_check,NULL,&tv);
     return FD_ISSET(fd,&write_check); 
   }
-  virtual int write(void *buf, int size, net_address *addr=NULL);
+  virtual int write(void const *buf, int size, net_address *addr=NULL);
   virtual int read(void *buf, int size, net_address **addr);
 
   virtual ~unix_fd()                            { read_unselectable();  write_unselectable(); close(fd); }
@@ -211,7 +211,7 @@ class udp_socket : public unix_fd
       tr=recv(fd,buf,size,0);
     return tr;
   }
-  virtual int write(void *buf, int size, net_address *addr=NULL)
+  virtual int write(void const *buf, int size, net_address *addr=NULL)
   {
     if (addr)
       return sendto(fd,buf,size,0,(sockaddr *)(&((ip_address *)addr)->addr),sizeof(((ip_address *)addr)->addr));

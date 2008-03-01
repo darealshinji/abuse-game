@@ -28,36 +28,37 @@ class nfs_file : public bFILE
   int nfs_fd;
   int offset;
   public :
-  nfs_file(char *filename, char *mode);
+  nfs_file(char const *filename, char const *mode);
   virtual int open_failure();
   virtual int unbuffered_read(void *buf, size_t count);       // returns number of bytes read
   int new_read(void *buf, size_t count);       // returns number of bytes read
-  virtual int unbuffered_write(void *buf, size_t count);      // returns number of bytes written
+  virtual int unbuffered_write(void const *buf, size_t count);      // returns number of bytes written
   virtual int unbuffered_seek(long offset, int whence);  // whence=SEEK_SET, SEEK_CUR, SEEK_END, ret=0=success
   virtual int unbuffered_tell();
   virtual int file_size();
   virtual ~nfs_file();
 } ;
 
-bFILE *open_nfs_file(char *filename,char *mode)
+bFILE *open_nfs_file(char const *filename, char const *mode)
 {
   return new nfs_file(filename,mode);
 }
 
 
-nfs_file::nfs_file(char *filename, char *mode)
+nfs_file::nfs_file(char const *filename, char const *mode)
 {
   local=NULL;
   nfs_fd=-1; 
 
   int local_only=0;
-  char *s=mode;
+  char const *s=mode;
   for (;*s;s++)    // check to see if writeable file, if so don't go through nfs
     if (*s=='w' || *s=='W' || *s=='a' || *s=='A') 
       local_only=1;
 
-  char name[256],*c,*f=filename;
-  c=name;
+  char name[256], *c;
+  char const *f = filename;
+  c = name;
   while (*f) { *c=*(f++); *c=toupper(*c); c++; } *c=0;
   if (strstr(name,"REGISTER"))
     local_only=1;
@@ -65,7 +66,7 @@ nfs_file::nfs_file(char *filename, char *mode)
   if (net_crcs && !local_only)
   {
     int fail1,fail2,fail3=0;
-    char *local_filename=filename;
+    char const *local_filename = filename;
     if (filename[0]=='/' && filename[1]=='/')
     { local_filename+=2;
       while (*local_filename && *local_filename!='/') local_filename++;
@@ -143,7 +144,7 @@ int nfs_file::unbuffered_read(void *buf, size_t count)      // returns number of
   else return 0;
 }
 
-int nfs_file::unbuffered_write(void *buf, size_t count)      // returns number of bytes written
+int nfs_file::unbuffered_write(void const *buf, size_t count)      // returns number of bytes written
 {
   if (local)
     return local->write(buf,count);
@@ -215,7 +216,7 @@ int set_file_server(net_address *addr)
 }
 
 
-int set_file_server(char *name)
+int set_file_server(char const *name)
 {
   if (prot)
   {

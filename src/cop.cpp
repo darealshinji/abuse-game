@@ -7,6 +7,7 @@
 #include "jrand.hpp"
 #include "clisp.hpp"
 #include "ant.hpp"
+#include "dev.hpp"
 
 enum { point_angle, fire_delay1 };
 
@@ -119,8 +120,6 @@ inline int angle_diff(int a1, int a2)
   }
   return 0;
 }
-
-extern char *symbol_str(char *name);
 
 void *top_ai()
 {
@@ -1047,7 +1046,7 @@ void *show_kills()
   for (v=player_list;v;v=v->next) tp++;
 
   int y=(y1+y2)/2-(tp+2)*fnt->height()/2,x=x1+10;
-  char *header_str=symbol_str("score_header");
+  char const *header_str = symbol_str("score_header");
   fnt->put_string(screen,x,y,header_str,eh->bright_color());
   y+=fnt->height();
 

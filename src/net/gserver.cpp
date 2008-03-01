@@ -7,6 +7,7 @@
 #include "id.hpp"
 #include "jwindow.hpp"
 #include "input.hpp"
+#include "dev.hpp"
 
 extern base_memory_struct *base;
 extern net_socket *comm_sock,*game_sock;
@@ -15,7 +16,6 @@ extern int registered;
 extern net_protocol *prot;
 extern join_struct *join_array;
 extern window_manager *eh;
-extern char *symbol_str(char *name);
 extern void service_net_request();
 
 #include <stdio.h>

@@ -6,7 +6,7 @@
 
 extern window_manager *eh;
 
-void console::put_string(char *st)
+void console::put_string(char const *st)
 {
   while (*st)
   {
@@ -62,7 +62,7 @@ console::~console()
   jfree(name);
 }
 
-console::console(window_manager *WM, JCFont *font, int width, int height, char *Name)
+console::console(window_manager *WM, JCFont *font, int width, int height, char const *Name)
 {
   wm=WM;
   con_win=NULL;
@@ -160,7 +160,7 @@ void console::print_f( const char *format, ...)
 }
 
 
-shell_term::shell_term(window_manager *WM, JCFont *font, int width, int height, char *Name) :
+shell_term::shell_term(window_manager *WM, JCFont *font, int width, int height, char const *Name) :
   console(WM,font,width,height,Name)
 {
   shcmd[0]=0;
@@ -172,7 +172,7 @@ void shell_term::prompt()
   put_string("(?=help)>");
 }
 
-void shell_term::execute(char *st)
+void shell_term::execute(char const *st)
 {
   put_string(st);
   put_string(" : unhandled\n");

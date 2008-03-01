@@ -1,12 +1,14 @@
+#include <math.h>
+
 #include "jwindow.hpp"
 #include "lisp.hpp"
+#include "game.hpp"
 #include "scroller.hpp"
 #include "id.hpp"
 #include "cache.hpp"
 #include "language.hpp"
 #include "dprint.hpp"
 #include "loader2.hpp"
-#include <math.h>
 
 extern window_manager *eh;
 extern int dev_ok;
@@ -42,8 +44,6 @@ public:
 	}
 };
 
-
-FILE *open_FILE( char *filename, char *mode );
 
 void gamma_correct(palette *&pal, int force_menu)
 {

@@ -40,8 +40,8 @@ class simple_object
   view *Controller;
   morph_char *mc;
   int total_vars();
-  char *var_name(int x);
-  int   var_type(int x);
+  char const *var_name(int x);
+  int var_type(int x);
   void set_var(int x, uint32_t v);
   int32_t get_var(int x);
 

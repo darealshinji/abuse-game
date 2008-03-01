@@ -17,13 +17,15 @@
 } ;*/
 
 
-char *ability_names[TOTAL_ABILITIES]=
-   {"start_hp","start_accel","stop_accel",
-    "jump_xvel","jump_yvel",
-    "run_top_speed","jump_top_speed",
+char const *ability_names[TOTAL_ABILITIES] =
+{
+    "start_hp", "start_accel", "stop_accel",
+    "jump_xvel", "jump_yvel",
+    "run_top_speed", "jump_top_speed",
     "tint_color",
     "push_xrange",
-    "walk_top_speed"};
+    "walk_top_speed"
+};
 
 
 long abil_def[TOTAL_ABILITIES]=

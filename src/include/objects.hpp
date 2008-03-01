@@ -36,7 +36,7 @@ extern int total_objects;
 
 
 #define TOTAL_OBJECT_VARS 28
-struct obj_desc { char *name; int type; } ;
+struct obj_desc { char const *name; int type; } ;
 extern obj_desc object_descriptions[TOTAL_OBJECT_VARS];
 int RC_type_size(int type);
 //void init_object_offsets();

@@ -10,6 +10,7 @@
 #include "level.hpp"
 #include "status.hpp"
 #include "crc.hpp"
+#include "dev.hpp"
 #include "specache.hpp"
 
 #if (defined(__MACH__) || !defined(__APPLE__))
@@ -22,18 +23,16 @@ char lfname[100]="";          // name of compiled lisp code cache file
 #define touch(x) { (x)->last_access=last_access++; \
 		   if ((x)->last_access<0) { normalize(); (x)->last_access=1; } }
 
-extern char *symbol_str(char *name);
-
 crc_manager crc_man;
 
 int past_startup=0;
 
-int crc_man_write_crc_file(char *filename)
+int crc_man_write_crc_file(char const *filename)
 {
   return crc_man.write_crc_file(filename);
 }
 
-int crc_manager::write_crc_file(char *filename)  // return 0 on failure
+int crc_manager::write_crc_file(char const *filename)  // return 0 on failure
 {
   char msg[100];
   sprintf(msg,symbol_str("calc_crc"));  // this may take some time, show the user a status indicator
@@ -86,7 +85,7 @@ int crc_manager::write_crc_file(char *filename)  // return 0 on failure
   return 1;  
 }
 
-int crc_manager::load_crc_file(char *filename)
+int crc_manager::load_crc_file(char const *filename)
 {
   bFILE *fp=open_file(filename,"rb");
   if (fp->open_failure())
@@ -125,7 +124,7 @@ crced_file::~crced_file()
   jfree(filename);
 }
 
-crced_file::crced_file(char *name) 
+crced_file::crced_file(char const *name) 
 { 
   filename=strcpy((char *)jmalloc(strlen(name)+1,"crc_file"),name);
   crc_calculated=0;
@@ -137,7 +136,7 @@ crc_manager::crc_manager()
   files=NULL;
 }
 
-int crc_manager::get_filenumber(char *filename)
+int crc_manager::get_filenumber(char const *filename)
 {
   for (int i=0;i<total_files;i++)
     if (!strcmp(filename,files[i]->filename)) return i;
@@ -659,7 +658,6 @@ void cache_cleanup(int ret, void *arg)
 { unlink(lfname); 
 }
 
-FILE *open_FILE(char *filename, char *mode);
 extern char *macify_name(char *s);
 
 void cache_list::create_lcache()
@@ -667,8 +665,8 @@ void cache_list::create_lcache()
 #ifdef WIN32
 	char *prefix="c:\\";
 #else
-	char *prefix="/tmp/";     // for UNIX store lisp cache in tmp dir
-	int flags=O_CREAT | O_RDWR;
+	char const *prefix = "/tmp/";     // for UNIX store lisp cache in tmp dir
+	int flags = O_CREAT | O_RDWR;
 #endif
 
 	int cfail = 1, num = 0;
@@ -897,7 +895,7 @@ int32_t cache_list::reg_lisp_block(Cell *block)
   return id;    
 }
 
-int32_t cache_list::reg_object(char *filename, void *object, int type, int rm_dups)
+int32_t cache_list::reg_object(char const *filename, void *object, int type, int rm_dups)
 { 
   char *name;
   if (item_type(object)==L_CONS_CELL)      // see if we got a object with a filename included
@@ -911,7 +909,7 @@ int32_t cache_list::reg_object(char *filename, void *object, int type, int rm_du
 
 extern int total_files_open;
 
-int32_t cache_list::reg(char *filename, char *name, int type, int rm_dups)
+int32_t cache_list::reg(char const *filename, char const *name, int type, int rm_dups)
 {
 	int id=alloc_id(),i,fn=crc_man.get_filenumber(filename);
 	cache_item *ci=list+id;

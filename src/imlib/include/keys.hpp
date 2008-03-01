@@ -42,7 +42,7 @@
 void key_name(int key, char *buffer);
 
 // returns a value describing a key name
-int key_value( char *buffer );
+int key_value(char const *buffer);
 
 #endif
 

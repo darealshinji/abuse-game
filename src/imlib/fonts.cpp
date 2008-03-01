@@ -16,7 +16,7 @@ void texture_font::put_char(image *screen,  int x, int y, char ch)
      ((int)ch%32)*tl+tl-1,((int)ch/32)*th+th-1,1);
 }
 
-void texture_font::put_string(image *screen, int x, int y, char *st)
+void texture_font::put_string(image *screen, int x, int y, char const *st)
 { while (*st)
   { put_char(screen,x,y,*st);
     st++;
@@ -25,7 +25,7 @@ void texture_font::put_string(image *screen, int x, int y, char *st)
 }
 
 
-void JCFont::put_string(image *screen, int x, int y, char *st, int color)
+void JCFont::put_string(image *screen, int x, int y, char const *st, int color)
 { while (*st)
   { put_char(screen,x,y,*st,color);
     st++;

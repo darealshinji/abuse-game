@@ -6,7 +6,7 @@
 #include "config.hpp"
 #include "game.hpp"
 
-extern int get_key_binding( char *dir, int i );
+extern int get_key_binding(char const *dir, int i);
 
 extern window_manager *eh;
 int key_players = 0;
@@ -36,7 +36,7 @@ int binding_for_player( int player )
 }
 
 /*
-int get_key_binding(char *dir, int i)
+int get_key_binding(char const *dir, int i)
 {
 	char tmp[100], kn[50];
 	sprintf( tmp, "player%d-%s", i, dir );
@@ -219,7 +219,7 @@ void config_cleanup()
 // Get the keycode for the string 'str'
 // Returns -1 for an invalid key code
 //
-int get_keycode( char *str )
+int get_keycode(char const *str)
 {
 	if( !str[0] )
 	{

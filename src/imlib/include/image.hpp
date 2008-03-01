@@ -8,7 +8,7 @@
 #define MAX_DIRTY 200
 #define Inew(pointer,type); { make_block(sizeof(type)); pointer=new type; }
 
-extern char  *imerr_messages[];  // correspond to imERRORS
+extern char const *imerr_messages[];  // correspond to imERRORS
 #define imREAD_ERROR 	       1
 #define imINCORRECT_FILETYPE   2
 #define imFILE_CORRUPTED       3

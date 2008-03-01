@@ -27,7 +27,7 @@ int32_t S_fall_start,S_falling,S_landing,S_pounce_wait,
 
 int compile_error=0;
 
-int32_t c_state(char *name)
+static int32_t c_state(char const *name)
 {
   void *sym=find_symbol(name);
   if (sym)

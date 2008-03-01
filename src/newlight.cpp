@@ -818,7 +818,7 @@ int send_lights(net_descriptor *os)
 }
 
 
-void read_lights(spec_directory *sd, jFILE *fp, char *level_name)
+void read_lights(spec_directory *sd, jFILE *fp, char const *level_name)
 {
   delete_all_lights();
   spec_entry *se=sd->find("lights");

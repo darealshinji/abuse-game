@@ -12,7 +12,7 @@ class texture_font
 public:
   texture_font(image *letters, image *font_pattern=NULL);
   void put_char(image *screen,  int x, int y, char ch);
-  void put_string(image *screen, int x, int y, char *st);
+  void put_string(image *screen, int x, int y, char const *st);
   int height() { return th; }
   int length() { return tl; }
   int width() { return tl; }
@@ -28,7 +28,7 @@ class JCFont
 public:
   JCFont(image *letters);
   void put_char(image *screen,  int x, int y, char ch, int color=-1);
-  void put_string(image *screen, int x, int y, char *st, int color=-1);
+  void put_string(image *screen, int x, int y, char const *st, int color=-1);
   int height() { return th; }
   int length() { return tl; }
   int width() { return tl; }

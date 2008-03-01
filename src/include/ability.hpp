@@ -16,7 +16,7 @@ enum ability
 } ;
 
 #define TOTAL_ABILITIES (walk_top_speed+1)
-extern char *ability_names[TOTAL_ABILITIES];
+extern char const *ability_names[TOTAL_ABILITIES];
 long get_ability(int who, ability a);
 long get_ability_default(ability a);
 
