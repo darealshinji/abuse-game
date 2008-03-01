@@ -1,7 +1,7 @@
-#include "dprint.hpp"
 #include <stdio.h>
-#include "macs.hpp"
 #include <string.h>
+#include "dprint.hpp"
+#include "macs.hpp"
 
 uint8_t major_version=2;
 uint8_t minor_version=00;
