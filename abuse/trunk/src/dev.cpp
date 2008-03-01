@@ -2096,7 +2096,7 @@ void dev_controll::handle_event(event &ev)
 	{
 	  if (!mess_win)
 	  {
-	    mess_win=file_dialog(eh,symbol_str("saveas_name"),current_level ? current_level->name() : (char *)"untitled.spe",
+	    mess_win=file_dialog(eh,symbol_str("saveas_name"),current_level ? current_level->name() : "untitled.spe",
 			       ID_LEVEL_SAVEAS_OK,symbol_str("ok_button"),
 				 ID_CANCEL,symbol_str("cancel_button"),
 				 symbol_str("FILENAME"),ID_MESS_STR1);

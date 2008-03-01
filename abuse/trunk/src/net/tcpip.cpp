@@ -364,12 +364,14 @@ int tcpip_protocol::handle_notification()
     int len;
     // got a notification request "broadcast"
     ip_address *addr;
+    net_address *tmp;
 
 #ifdef TCPIP_DEBUG
 		printf("Notifier: ");
 #endif
 
-    len = notifier->read(buf, 512, (net_address**)&addr);
+    len = notifier->read(buf, 512, &tmp);
+    addr = (ip_address *)tmp;
 #ifdef TCPIP_DEBUG
 		if (len>0) {
 			buf[len] = 0;
@@ -509,12 +511,14 @@ int tcpip_protocol::handle_responder()
     int len;
     // got a notification response
     ip_address *addr;
+    net_address *tmp;
 
 #ifdef TCPIP_DEBUG
 		fprintf(stderr,"Responder: ");
 #endif
 
-    len = responder->read(buf, 512, (net_address**)&addr);
+    len = responder->read(buf, 512, &tmp);
+    addr = (ip_address *)tmp;
 
 #ifdef TCPIP_DEBUG
 		if (len>0) {

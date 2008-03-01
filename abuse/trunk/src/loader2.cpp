@@ -281,9 +281,9 @@ void load_data(int argc, char **argv)
 	pal=NULL;
 	color_table=NULL;
 
+# if 0
 	int should_save_sd_cache = 0;
 
-# if 0
 	char *cachepath;
 	cachepath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 12 + 1, "cachepath" );
 	sprintf( cachepath, "%ssd_cache.tmp", get_save_filename_prefix() );

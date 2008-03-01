@@ -168,18 +168,18 @@ void view::update_scroll()
 char cur_user_name[20]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 #ifdef __WATCOMC__
-char *get_login()
+char const *get_login()
 {  if (cur_user_name[0]) return cur_user_name; else return "DOS user"; }
 
 #include <dos.h>
 #elif defined( __APPLE__ )
 
-char *get_login()
+char const *get_login()
 {  if (cur_user_name[0]) return cur_user_name; else return "Mac user"; }
 
 #else
-char *get_login()
-{  if (cur_user_name[0]) return cur_user_name; else return (getlogin() ? getlogin() : (char *)"unknown"); }
+char const *get_login()
+{  if (cur_user_name[0]) return cur_user_name; else return (getlogin() ? getlogin() : "unknown"); }
 
 #endif
 
