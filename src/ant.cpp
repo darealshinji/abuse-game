@@ -26,8 +26,6 @@ enum {  ANT_need_to_dodge,     // ant vars
 	ANT_no_see_time,
 	ANT_hide_flag };
 
-void *ant_ai();
-
 int can_see(game_object *o, int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 {
   int32_t nx2=x2,ny2=y2;
