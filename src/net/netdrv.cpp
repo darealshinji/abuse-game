@@ -468,21 +468,10 @@ int net_driver::join_server(char *server_name)   // ask remote server for entry 
   // maker sure the two games are both registered or unregistered or sync problems
   // will occur.
 
-  if (reg && !registered())
+  if (!reg)
   {
     fprintf(stderr,
-	    "Sorry, this server is running REGISTERED ABUSE and you are not.\n"
-	    "Ask the server operator to run with -share option or better yet,\n"
-	    "Buy ABUSE, registered net games are more fun because you can fly,\n"
-	    "turn invisible and have more weapons to duke it out with\n");
-    delete sock; 
-    return 0;
-  } 
-
-  if (!reg && registered())
-  {
-    fprintf(stderr,
-	    "This is server is not running the registered version of abuse, and\n"
+	    "This server is not running the registered version of abuse, and\n"
 	    "you are (thanks!).  So that there are no conflict between the two games\n"
 	    "please start with the -share option when connecting to this server\n"
 	    "example : abuse -net somewhere.someplace.net -share\n");

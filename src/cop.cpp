@@ -30,8 +30,6 @@ enum { point_angle, fire_delay1 };
 #define DFRIS    6
 #define LSABER   7
 
-extern int registered;
-
 signed char small_fire_off[24*2]=  // x & y offset from character to end of gun.
   { 17,20,     // 1
     17,23,     // 2
@@ -451,21 +449,18 @@ static void do_special_power(game_object *o, int xm, int ym, int but, game_objec
   {
     case FLY_POWER :
     {
-      if (registered)
-      {
-	game_object *cloud=create(S_CLOUD,o->x+o->direction*-10,o->y+jrand()%5);
-	if (current_level)
+      game_object *cloud=create(S_CLOUD,o->x+o->direction*-10,o->y+jrand()%5);
+      if (current_level)
         current_level->add_object(cloud);
-	o->set_state(run_jump);
-	o->set_gravity(1);
-	o->set_yacel(0);
-	if (o->yvel()>0) o->set_yvel(o->yvel()/2);
-	if (ym<0) 
+      o->set_state(run_jump);
+      o->set_gravity(1);
+      o->set_yacel(0);
+      if (o->yvel()>0) o->set_yvel(o->yvel()/2);
+      if (ym<0) 
         o->set_yvel(o->yvel()-3);
-	else
+      else
         o->set_yvel(o->yvel()-2);
-	the_game->play_sound(S_FLY_SND,32,o->x,o->y);
-      }
+      the_game->play_sound(S_FLY_SND,32,o->x,o->y);
     } break;
     case FAST_POWER :
     {
@@ -488,11 +483,8 @@ static void do_special_power(game_object *o, int xm, int ym, int but, game_objec
     } break;
     case SNEAKY_POWER :
     {
-      if (registered)
-      {
-	if (o->lvars[used_special_power]<15)
-          o->lvars[used_special_power]++;
-      }
+      if (o->lvars[used_special_power]<15)
+        o->lvars[used_special_power]++;
     } break;
   }
 }

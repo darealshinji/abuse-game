@@ -58,8 +58,6 @@ base_memory_struct local_base;
 
 net_address *net_server=NULL;
 
-extern int registered;
-
 int net_start() 
 { 
   return net_server!=NULL; 
@@ -151,7 +149,8 @@ int net_init(int argc, char **argv)
   net_out_fd=open(DOUT_NAME,O_RDWR);
 
 
-  if (write(net_out_fd,&registered,sizeof(registered))!=sizeof(registered))
+  uint8_t reg = 1;
+  if (write(net_out_fd,&reg,sizeof(reg))!=sizeof(reg))
     return 0;
 
   int shm_seg_id;

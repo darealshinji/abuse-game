@@ -33,7 +33,6 @@
 #include "chat.hpp"
 
 #define make_above_tile(x) ((x)|0x4000)
-extern int registered;
 char backw_on=0,forew_on=0,show_menu_on=0,ledit_on=0,pmenu_on=0,omenu_on=0,commandw_on=0,tbw_on=0,
      searchw_on=0,small_render_on=0,interpolate_draw=0,disable_autolight=0,fps_on=0,profile_on=0,
      show_names=0,fg_reversed=0,
@@ -854,19 +853,14 @@ void dev_init(int argc, char **argv)
   {    
     if (!strcmp(argv[i],"-edit"))
     {
-      if (!registered)
-        printf("%s\n",symbol_str("no_edit"));
-      else
+      dev|=EDIT_MODE;    
+      start_edit=1;
+      start_running=1;
+      disable_autolight=1;
+      if (get_option("-2"))
       {
-				dev|=EDIT_MODE;    
-				start_edit=1;
-				start_running=1;
-				disable_autolight=1;
-				if (get_option("-2"))
-				{
-				  printf("%s\n",symbol_str("no2"));
-				  exit(0);
-				}
+        printf("%s\n",symbol_str("no2"));
+        exit(0);
       }
     }
     else if (!strcmp(argv[i],"-fwin"))

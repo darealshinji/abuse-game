@@ -45,7 +45,6 @@ of a abuse and therefore is a bit simpler.
 base_memory_struct *base;   // points to shm_addr
 base_memory_struct local_base;
 net_address *net_server=NULL;
-extern int registered;
 net_protocol *prot=NULL;
 net_socket *comm_sock=NULL,*game_sock=NULL;
 extern char lsf[256];
@@ -65,9 +64,6 @@ int net_init(int argc, char **argv)
 
 	if (!main_net_cfg)
 		main_net_cfg=new net_configuration;
-
-	if (!registered)
-		return 0;
 
 	for (i=1;i<argc;i++)
 	{
@@ -415,17 +411,8 @@ int request_server_entry()
       return 0;
     }
 
-    // maker sure the two games are both registered or unregistered or sync problems
-    // will occur.
-
-    if (reg && !registered)
-    {
-      fprintf(stderr, "%s", symbol_str("net_not_reg"));
-      delete sock; 
-      return 0;
-    } 
-
-    if (!reg && registered)
+    // make sure the server is registered or sync problems will occur
+    if (!reg)
     {
       fprintf(stderr, "%s", symbol_str("server_not_reg"));
       delete sock;
