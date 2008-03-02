@@ -10,8 +10,9 @@
 #ifndef __LOADER_HPP_
 #define __LOADER_HPP_
 
+#include "lisp/lisp.hpp"
+
 #include "jwindow.hpp"
-#include "lisp.hpp"
 #include "sound.hpp"
 class property_manager;
 extern property_manager *prop;

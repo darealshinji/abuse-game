@@ -11,11 +11,13 @@
 #define __CASHE_HPP_
 
 #include <stdlib.h>
+
+#include "lisp/lisp.hpp"
+
 #include "specs.hpp"
 #include "items.hpp"
 #include "sound.hpp"
 #include "particle.hpp"
-#include "lisp.hpp"
 
 class level;
 /* Cache item types :

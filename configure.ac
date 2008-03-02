@@ -86,6 +86,7 @@ AC_OUTPUT([
     Makefile
     abuse.6
     src/Makefile
+    src/lisp/Makefile
     src/net/Makefile
     src/imlib/Makefile
     src/sdlport/Makefile])
