@@ -26,8 +26,6 @@
 #define JM_SMALL_SIZE 128      // above 128 bytes is considered to be a big block and no hashing is done
 int alloc_space=ALLOC_SPACE_STATIC;
 
-extern void free_up_memory();
-
 #ifdef MEM_CHECK
 intptr_t break_mem_point=0;       // can be set in debugger, break mem fun will be called when this address is allocated
 void break_mem_fun()
@@ -775,7 +773,7 @@ void jmalloc_init(int32_t min_size)
     fprintf(stderr,"Memory available : %d\n",j_available());
     if (j_available()<min_size)
     {
-      fprintf(stderr,not_enough_total_memory_message);
+      fprintf(stderr, "%s", not_enough_total_memory_message);
       exit(0);
     }
   }

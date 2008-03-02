@@ -410,7 +410,7 @@ int request_server_entry()
 
     if (reg==2)   // too many players
     {
-      fprintf(stderr,symbol_str("max_players"));
+      fprintf(stderr, "%s", symbol_str("max_players"));
       delete sock;
       return 0;
     }
@@ -420,14 +420,14 @@ int request_server_entry()
 
     if (reg && !registered)
     {
-      fprintf(stderr,symbol_str("net_not_reg"));
+      fprintf(stderr, "%s", symbol_str("net_not_reg"));
       delete sock; 
       return 0;
     } 
 
     if (!reg && registered)
     {
-      fprintf(stderr,symbol_str("server_not_reg"));
+      fprintf(stderr, "%s", symbol_str("server_not_reg"));
       delete sock;
       return 0;
     }

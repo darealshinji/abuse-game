@@ -12,9 +12,6 @@
 int get_lprop_number(void *sybol, int def);  // returns def if symbol undefined or not number type
 
 
-void push_onto_list(void *object, void *&list);
-
-
 // variables for the status bar
 extern void *l_statbar_ammo_x,*l_statbar_ammo_y,
             *l_statbar_ammo_w,*l_statbar_ammo_h,

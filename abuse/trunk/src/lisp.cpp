@@ -48,8 +48,6 @@ char *space[4],*free_space[4];
 int space_size[4],print_level=0,trace_level=0,trace_print_level=1000;
 int total_user_functions;
 
-void lprint(void *i);
-
 int current_space;  // normally set to TMP_SPACE, unless compiling or other needs 
 
 // when you don't need as much as strcmp, this is faster...
@@ -1464,8 +1462,6 @@ void lprint(void *i)
   if (!print_level && !current_print_file)
     dprintf("\n");
 }
-
-void *eval(void *prog);
 
 void *eval_sys_function(lisp_sys_function *fun, void *arg_list);
 

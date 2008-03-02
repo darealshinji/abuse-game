@@ -47,7 +47,7 @@ int crc_man_write_crc_file(char const *filename)
 int crc_manager::write_crc_file(char const *filename)  // return 0 on failure
 {
   char msg[100];
-  sprintf(msg,symbol_str("calc_crc"));  // this may take some time, show the user a status indicator
+  sprintf(msg, "%s", symbol_str("calc_crc"));  // this may take some time, show the user a status indicator
   if (stat_man) stat_man->push(msg,NULL);
 
   int i,total=0;

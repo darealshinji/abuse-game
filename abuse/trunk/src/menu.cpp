@@ -118,8 +118,6 @@ char *men_str(void *arg)
   return NULL;
 }
 
-void main_menu();
-
 int menu(void *args, JCFont *font)             // reurns -1 on esc
 {
   main_menu();

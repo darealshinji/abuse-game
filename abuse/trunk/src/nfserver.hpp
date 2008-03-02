@@ -25,7 +25,6 @@ void remove_client(int client_number);
 int net_start();
 bFILE *open_nfs_file(char const *filename, char const *mode);
 
-int net_init(int argc, char **argv);
 int NF_open_file(char const *filename, char const *mode);
 long NF_close(int fd);
 long NF_read(int fd, void *buf, long size);
