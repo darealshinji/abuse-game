@@ -358,7 +358,7 @@ void setup( int argc, char **argv )
     scale                    = 2;            // Default scale amount
 
     // Display our name and version
-    printf( "%s %s\n", PACKAGE, VERSION );
+    printf( "%s %s\n", PACKAGE_NAME, PACKAGE_VERSION );
 
     // Initialize SDL with video and audio support
     if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0 )

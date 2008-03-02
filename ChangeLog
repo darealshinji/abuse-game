@@ -1,4 +1,67 @@
 ------------------------------------------------------------------------
+r67 | sam | 2008-03-02 19:17:29 +0000 (Sun, 02 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/dev.cpp
+   M /abuse/trunk/src/gui.cpp
+
+  * Fix uninitialised class members.
+
+------------------------------------------------------------------------
+r66 | sam | 2008-03-02 18:43:35 +0000 (Sun, 02 Mar 2008) | 3 lines
+Changed paths:
+   M /abuse/trunk/osx/abuse_sdl.pbproj/project.pbxproj
+   M /abuse/trunk/src/Makefile.am
+   M /abuse/trunk/src/cache.hpp
+   M /abuse/trunk/src/chars.hpp
+   M /abuse/trunk/src/clisp.cpp
+   M /abuse/trunk/src/config.cpp
+   A /abuse/trunk/src/exitproc.hpp (from /abuse/trunk/src/imlib/exitproc.hpp:64)
+   M /abuse/trunk/src/game.cpp
+   M /abuse/trunk/src/game.hpp
+   M /abuse/trunk/src/imlib/Makefile.am
+   D /abuse/trunk/src/imlib/doscall.hpp
+   D /abuse/trunk/src/imlib/exitproc.hpp
+   D /abuse/trunk/src/imlib/jnet.hpp
+   D /abuse/trunk/src/imlib/joy.hpp
+   D /abuse/trunk/src/imlib/monoprnt.hpp
+   M /abuse/trunk/src/imlib/morph.cpp
+   M /abuse/trunk/src/imlib/morph.hpp
+   D /abuse/trunk/src/imlib/sdriver.hpp
+   D /abuse/trunk/src/imlib/sound.hpp
+   M /abuse/trunk/src/imlib/texture.cpp
+   D /abuse/trunk/src/imlib/timer.cpp
+   D /abuse/trunk/src/imlib/timer.hpp
+   D /abuse/trunk/src/isllist_bak.hpp
+   D /abuse/trunk/src/laser.hpp
+   D /abuse/trunk/src/lcaller.hpp
+   M /abuse/trunk/src/lisp
+   D /abuse/trunk/src/lmenu.hpp
+   M /abuse/trunk/src/loader2.cpp
+   M /abuse/trunk/src/loader2.hpp
+   M /abuse/trunk/src/net/Makefile.am
+   D /abuse/trunk/src/net/endian.hpp
+   M /abuse/trunk/src/objects.hpp
+   D /abuse/trunk/src/ramfile.hpp
+   M /abuse/trunk/src/sdlport/Makefile.am
+   M /abuse/trunk/src/sdlport/jnet.cpp
+   A /abuse/trunk/src/sdlport/jnet.hpp (from /abuse/trunk/src/imlib/jnet.hpp:64)
+   A /abuse/trunk/src/sdlport/joy.hpp (from /abuse/trunk/src/imlib/joy.hpp:64)
+   A /abuse/trunk/src/sdlport/sound.hpp (from /abuse/trunk/src/imlib/sound.hpp:64)
+   M /abuse/trunk/src/sdlport/video.cpp
+   M /abuse/trunk/src/seq.cpp
+   D /abuse/trunk/src/tiles.hpp
+
+  * Added the proper .h and .hpp files to _SOURCES variables. As a result,
+    "make dist" now generates a buildable tarball.
+
+------------------------------------------------------------------------
+r65 | sam | 2008-03-02 17:01:06 +0000 (Sun, 02 Mar 2008) | 2 lines
+Changed paths:
+   A /abuse/trunk/ChangeLog
+
+  * Add a temporary ChangeLog file.
+
+------------------------------------------------------------------------
 r64 | sam | 2008-03-02 16:59:29 +0000 (Sun, 02 Mar 2008) | 2 lines
 Changed paths:
    M /abuse/trunk/AUTHORS
