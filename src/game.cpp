@@ -21,10 +21,11 @@
 #   include <SDL.h>
 #endif
 
+#include "sdlport/joy.hpp"
+
 #include "game.hpp"
 #include "dev.hpp"
 #include "id.hpp"
-#include "joy.hpp"
 #include "timing.hpp"
 #include "automap.hpp"
 #include "help.hpp"
@@ -32,7 +33,6 @@
 #include "cache.hpp"
 #include "loader.hpp"
 #include "lisp.hpp"
-#include "monoprnt.hpp"
 #include "jrand.hpp"
 #include "config.hpp"
 #include "light.hpp"

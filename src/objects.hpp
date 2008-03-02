@@ -11,7 +11,7 @@
 #define _OBJECTS_HPP_
 #include "input.hpp"
 #include "chars.hpp"
-#include "sound.hpp"
+//#include "sound.hpp"
 #include "morpher.hpp"
 #include "loader2.hpp"
 #include "view.hpp"

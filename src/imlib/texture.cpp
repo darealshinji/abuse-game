@@ -15,6 +15,7 @@
 #include "video.hpp"
 #include "macs.hpp"
 #include "event.hpp"
+#include "texture.hpp"
 
 #define SHB 7
 

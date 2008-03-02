@@ -7,6 +7,8 @@
  *  Jonathan Clark.
  */
 
+/* FIXME: this file is unused */
+
 #include "config.h"
 
 #include "morph.hpp"

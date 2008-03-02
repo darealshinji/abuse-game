@@ -30,7 +30,6 @@
 #endif	/* __APPLE__ */
 #endif	/* HAVE_OPENGL */
 #include "filter.hpp"
-#include "globals.hpp"
 #include "system.h"
 #include "video.hpp"
 #include "macs.hpp"

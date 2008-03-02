@@ -19,7 +19,6 @@
 #include "event.hpp"
 #include "fonts.hpp"
 #include "loader.hpp"
-#include "monoprnt.hpp"
 #include "items.hpp"
 #include "jwindow.hpp"
 #include "filter.hpp"

@@ -11,9 +11,10 @@
 
 #include <ctype.h>
 
+#include "sdlport/joy.hpp"
+
 #include "keys.hpp"
 #include "lisp.hpp"
-#include "joy.hpp"
 #include "jwindow.hpp"
 #include "config.hpp"
 #include "game.hpp"

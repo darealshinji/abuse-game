@@ -11,9 +11,9 @@
 #define __LOADER_HPP_
 
 #include "lisp/lisp.hpp"
+#include "sdlport/sound.hpp"
 
 #include "jwindow.hpp"
-#include "sound.hpp"
 class property_manager;
 extern property_manager *prop;
 
