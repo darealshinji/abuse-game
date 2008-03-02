@@ -1,0 +1,132 @@
+15-12-2002
+	- Abuse-SDL 0.7.0 released.
+	- Added OpenGL support. (Joris Beugnies)
+	- Fixed to compile on MacOSX. (Ben Hines, Julian Mayer)
+	- Fixed window manager "Quit" events being ignored.
+	- Can specify the location of the datafiles in the abuserc now.
+	- Updated documentation regarding installation of the datafiles.
+
+04-02-2002
+	- Abuse-SDL 0.6.1 released.
+	- Fixed video blit routine, giving a large speedup. (Bob Ippolito)
+	- Fixed to compile with gcc 3.0.x.
+	- Fixed to compile on Sparc systems.(Arto Jantunen)
+
+19-01-2002
+	- Abuse-SDL 0.6.0 released.
+	- Rebuilt the make and configure scripts, including patches.(nix)
+	- gamma.lsp now stored in the ~/.abuse directory.
+	- Sound is disabled if no sound files are available.
+	- Tweaked timing routines.
+	- Improved mouse handling, should be more responsive on slower systems.
+	- The binary can now be in a different location to the datafiles. (nix)
+	- Fixed -fullscreen command-line option.
+	- Fixed pressing both mouse buttons being ignored if "Emulate3Buttons"
+		is enabled.
+	- Fixed the size of the volume settings dialog.
+	- Fixed to compile on BigEndian systems.(Arto Jantunen)
+	- Added scaling.
+	- Added a man page.
+
+14-08-2001
+	- Abuse-SDL 0.5.0 released.
+	- More 100% CPU usage fixes.(Ed Snible)
+	- More temp files (light.tbl, end.mem) are now stored in
+		the ~/.abuse/ directory.
+	- Fixed compile problems on Solaris.
+	- Fixed slight graphics corruption at the bottom of the main menu screen.
+	- Added the ability to customise the keys used in the game.
+	- Updated documentation.
+
+29-04-2001
+	- Abuse-SDL 0.4.8 released.
+	- Stopped Abuse using 100% CPU time in certain places.(Ed Snible)
+	- Fixed problem with saving games on some systems.
+	- Added missing documentation about the abuserc file.
+	- Configure script now handles the X libraries not being in ld's default
+		library path.(Arto Jantunen)
+	- Fixed compile problem when SDL isn't installed in a /SDL directory in
+		the include path.
+	- Fixed the -window_scale option to set the size of the window properly.
+		Performance when using this option is still bad.
+	- Can now use the mouse to skip the intro story.
+
+09-03-2001
+	- Abuse-SDL 0.4.7 released.
+	- Temp files (fastload.dat, level backups etc) are now stored in
+		the ~/.abuse/ directory.
+	- SDL include and library locations are now gathered from sdl-config.
+	- Fixed a crash on some systems when saving games.
+		Those who were getting this crash may not be able to save games.
+		Abuse-SDL will print out what it was trying to do in this case.
+	- Improved audio mixing when lots of sounds are playing.
+	- Toggling Grab Mouse now informs what state it is in.
+	- The numpad can now be used for movement aswell as the cursor keys.
+	- Settings can be stored in an rc file (~/.abuse/abuserc).
+
+15-02-2001
+	- Abuse-SDL 0.4.6 released.
+	- Don't even check for the existence of a sound file if sound is disabled.
+	- Added some checks to the video code to handle failure gracefully.
+	- Fixes to compile under gcc 2.96.
+	- Fixed the graphic glitches relating to the gamma window and the save
+	  game dialog.
+
+06-02-2001
+	- Abuse-SDL 0.4.5 released.
+	- Stopped loading and trying to play sound files when sound has been
+	 	disabled.
+
+05-02-2001
+	- Abuse-SDL 0.4.4 released.
+	- Adjusted the make and configure scripts.
+		Can now specify the install location with the --with-abuse-dir flag
+		to 'configure'.  Defaults to '/usr/local/bin' if not specified.
+	- Added grab-mouse support.  F12 toggles this on and off.
+	- Added screenshot support.  PRNT-SCRN key takes a screenshot.
+	- Can now toggle fullscreen during the game.  F11 toggles this on and off.
+	- Added mousewheel support for changing weapons.
+	- Savegames are now stored under ~/.abuse/
+	- Window now has it's own icon(abuse.bmp). Looks nicer in tasklists etc.
+	- Updated the AUTHORS file as it was a little out of date.
+
+21-01-2001
+	- Abuse-SDL 0.4.3 released.
+	- Fixed a problem with initialising the mouse driver.
+	- Reenabled net code.  Doesn't work very well yet.
+
+20-01-2001
+	- Abuse-SDL 0.4.2 released.
+	- Fixed to compile under gcc 2.95.2
+	- More code tidying.
+
+13-01-2001
+	- Abuse-SDL 0.4.1 released.
+	- Rebuilt the make and configure scripts.
+	- Added an icon. (abuse.png)
+	- Code tidying.
+	- Improved key and mouse handling.
+
+30-12-2000
+	- Abuse-SDL 0.4 released. (first release with source available)
+	- Fixed a _huge_ memory leak caused by the stereo sound stuff. (oops)
+	- Fixed a crash if SDL failed to initialise.
+	- Tidied up the code, makefiles and configure scripts.
+
+24-12-2000
+	- Abuse-SDL 0.3 released.
+	- Fixed palette changing when running at 8bpp.
+	- Fixed draw problem when a window was moved off the screen.
+	- Fixed sound getting choppy and eventually disappearing.
+	- Fixed an extremely rare crash when playing sounds.
+	- Added stereo sound and panning. (-mono to disable)
+	- Removed some stray debug messages that I accidently left in.
+
+13-12-2000
+	- Abuse-SDL 0.2 released.
+	- Removed dependancy on lnx_sndsrv.
+	  All sound is now handled through the SDL API.
+	- Added fullscreen and doublebuffer modes.
+
+10-11-2000
+	- Abuse-SDL 0.1 released.
