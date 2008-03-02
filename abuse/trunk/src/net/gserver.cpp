@@ -1,3 +1,23 @@
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <string.h>
+#include <signal.h>
+
 #include "system.h"
 #include "macs.hpp"
 #include "gserver.hpp"
@@ -17,16 +37,6 @@ extern net_protocol *prot;
 extern join_struct *join_array;
 extern window_manager *eh;
 extern void service_net_request();
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <string.h>
-#include <signal.h>
-
 
 game_server::game_server()
 {

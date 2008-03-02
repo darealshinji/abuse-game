@@ -1,3 +1,12 @@
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
 // linked.hpp  - linked list and linked list node classes
 // written June 2, 1992 by Jonathan Clark  (at home)
 // these classes provide the basic groundwork for any future linked list

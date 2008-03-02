@@ -1,11 +1,22 @@
-#define TYPE_CHECKING 1
-#include "bus_type.hpp"
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
 
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+
+#define TYPE_CHECKING 1
+#include "bus_type.hpp"
 
 #include "lisp.hpp"
 #include "lisp_gc.hpp"

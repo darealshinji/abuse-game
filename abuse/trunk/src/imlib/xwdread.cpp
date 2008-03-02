@@ -1,3 +1,16 @@
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
+#include <stdio.h>
+
 /* readxwd.c */
 /* This program is limited to X11 format XWD files */
 #include "filter.hpp"
@@ -8,7 +21,6 @@
 #include "video.hpp"
 #include "dos.h"
 #include "main.hpp"
-#include <stdio.h>
 #include "macs.hpp"
 #include "image24.hpp"
 

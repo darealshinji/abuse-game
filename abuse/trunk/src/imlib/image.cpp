@@ -1,15 +1,26 @@
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
+#include <math.h>
+#ifdef __DOS
+#   include <dir.h>
+#else
+#   include <unistd.h>
+#endif
+#include <stdlib.h>
+
 #include "image.hpp"
 #include "macs.hpp"
 #include "system.h"
 #include "system.h"
-
-#include <math.h>
-#ifdef __DOS
-  #include <dir.h>
-#else
-  #include <unistd.h>
-#endif
-#include <stdlib.h>
 
 extern uint8_t current_background;
 

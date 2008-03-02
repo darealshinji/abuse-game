@@ -1,5 +1,14 @@
-#include "system.h"
-#include "indian.hpp"
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -11,6 +20,8 @@
 #include <sys/fcntl.h>
 #include <fcntl.h>
 
+#include "system.h"
+#include "indian.hpp"
 
 #include "netface.hpp"
 #include "nfserver.hpp"

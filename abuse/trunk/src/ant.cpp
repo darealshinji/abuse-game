@@ -1,3 +1,16 @@
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
+#include <ctype.h>
+
 #include "ant.hpp"
 #include "lisp.hpp"
 #include "lisp_gc.hpp"
@@ -8,7 +21,6 @@
 #include "jrand.hpp"
 #include "clisp.hpp"
 #include "dev.hpp"
-#include <ctype.h>
 
 enum {  ANT_need_to_dodge,     // ant vars
 	ANT_no_see_time,

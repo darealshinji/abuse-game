@@ -1,5 +1,14 @@
-#include "lisp.hpp"
-#include "lisp_gc.hpp"
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
 #include <ctype.h>
 
 #include <unistd.h>
@@ -8,16 +17,17 @@
 #include <stdlib.h>
 
 #if defined( __WATCOMC__ )
-#include <sys\types.h>
-#include <direct.h>
-#define make_dir(dir) mkdir(dir)
+#   include <sys\types.h>
+#   include <direct.h>
+#   define make_dir(dir) mkdir(dir)
 #else
-#include <sys/stat.h>
-#define make_dir(dir) mkdir(dir,S_IRWXU | S_IRWXG | S_IRWXO)
-
-void modify_install_path(char *path) { ; }
+#   include <sys/stat.h>
+#   define make_dir(dir) mkdir(dir,S_IRWXU | S_IRWXG | S_IRWXO)
+    void modify_install_path(char *path) { ; }
 #endif
 
+#include "lisp.hpp"
+#include "lisp_gc.hpp"
 
 #ifdef __WATCOMC__
 void modify_install_path(char *path)

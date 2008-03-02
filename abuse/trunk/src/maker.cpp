@@ -1,25 +1,33 @@
-#define NO_LIBS 1
-#include <unistd.h>
-#include "lisp.c"
-#include "trig.c"
-#include "lisp_gc.c"
-#include "lisp_opt.c"
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
 
+#include "config.h"
+
+#include <unistd.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #ifdef __WATCOMC__
-#include <sys\types.h>
-#include <direct.h>
-#define make_dir(dir) mkdir(dir)
+#   include <sys\types.h>
+#   include <direct.h>
+#   define make_dir(dir) mkdir(dir)
 #else
-
-#include <sys/stat.h>
-#define make_dir(dir) mkdir(dir,511)
+#   include <sys/stat.h>
+#   define make_dir(dir) mkdir(dir,511)
 #endif
 
-
+#define NO_LIBS 1
+#include "lisp.c"
+#include "trig.c"
+#include "lisp_gc.c"
+#include "lisp_opt.c"
 
 enum { LINUX, WATCOM, AIX, SUN, SGI };
 

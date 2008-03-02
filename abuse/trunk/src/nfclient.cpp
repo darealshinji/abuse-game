@@ -1,3 +1,21 @@
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
+#if (defined(__MACH__) || !defined(__APPLE__))
+#   include <sys/types.h>
+#endif
+#include <fcntl.h>
+#include <unistd.h>
+#include <ctype.h>
+
 #include "system.h"
 #include "netface.hpp"
 
@@ -8,14 +26,6 @@
 #include "cache.hpp"
 
 #include "gserver.hpp"
-
-#if (defined(__MACH__) || !defined(__APPLE__))
-#include <sys/types.h>
-#endif
-
-#include <fcntl.h>
-#include <unistd.h>
-#include <ctype.h>
 
 void remove_client(int client_number) { ; }
 

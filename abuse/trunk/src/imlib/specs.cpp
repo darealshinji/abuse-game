@@ -1,19 +1,31 @@
-#include "image.hpp"
-#include "palette.hpp"
-#include "specs.hpp"
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <ctype.h>
 #include <fcntl.h>
+#include <math.h>
+#if (defined(__MACH__) || !defined(__APPLE__))
+#   include <sys/types.h>
+#   include <sys/stat.h>
+#endif
+
+#include "image.hpp"
+#include "palette.hpp"
+#include "specs.hpp"
 #include "system.h"
 #include "jmalloc.hpp"
-#include <math.h>
 #include "dprint.hpp"
-#if (defined(__MACH__) || !defined(__APPLE__))
-#include <sys/types.h>
-#include <sys/stat.h>
-#endif
 
 #if (defined(__APPLE__) && !defined(__MACH__))
 extern char *macify_name(char *s);

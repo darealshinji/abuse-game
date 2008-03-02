@@ -1,3 +1,23 @@
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
+#ifdef __WATCOMC__
+#   define getlogin() "DOS user"
+#   include <dos.h>
+#else
+#   include <unistd.h>
+#endif
+
+#include "nfserver.hpp"
+
 #include "server.hpp"
 #include "view.hpp"
 #include "dprint.hpp"
@@ -8,16 +28,6 @@
 #include "timing.hpp"
 //#include "nfserver.hpp"
 //#include "nfclient.hpp"
-
-#ifdef __WATCOMC__
-#define getlogin() "DOS user"
-#include <dos.h>
-#else
-#include <unistd.h>
-#endif
-
-#include "nfserver.hpp"
-
 
 //nfs_server *file_server=NULL;
 
