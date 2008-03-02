@@ -2,6 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT(abuse, 0.7.0)
 AC_CONFIG_AUX_DIR(.auto)
 AM_INIT_AUTOMAKE
+AM_CONFIG_HEADER(config.h)
 
 dnl Version information
 VERSION="0.7.0"
