@@ -1,20 +1,20 @@
 .\" Abuse-SDL is (C) 2000-2001 Anthony Kruize <trandor@labyrinth.net.au>
 .\" Abuse is (C) Dave Taylor and Jonathan Clarke
 .\"
-.TH abuse-sdl 6 Abuse-SDL Version\ @VERSION@
+.TH abuse 6 Abuse\ @VERSION@
 .SH NAME
-abuse.sdl \- An SDL port of the Abuse by Crack dot Com.
+abuse \- An SDL port of the Abuse by Crack dot Com.
 
 .SH SYNOPSIS
-.B abuse.sdl
+.B abuse
 [options]
 
 .SH DESCRIPTION
-.B Abuse-SDL
+.B Abuse
 is a port of the classic Crack dot Com side-scroller shoot-em-up Abuse.
 It uses the Simple DirectMedia Layer API to draw it's graphics and play sound.
 .PP
-.B Abuse-SDL
+.B Abuse
 has the following additional features over the original game:
 .PP
 Stereo sound with panning.
@@ -31,7 +31,7 @@ Customizable keys.
 
 
 .SH REQUIREMENTS
-.B Abuse-SDL
+.B Abuse
 requires the following:
 .IP
 SDL 1.1.6 or above.
@@ -67,14 +67,14 @@ Enable OpenGL support.
 Enable anti-aliasing. (Only with -gl)
 
 .SH CONFIGURATION
-.B Abuse-SDL
+.B Abuse
 can load it's settings from a configuration file stored in the users home
 directory. The file is located at ($HOME/.abuse/abuserc).  If either the
 directory or the configuration file don't exist they will be created
 automatically with default values.
 .LP
 The configuration file contains various settings for adjusting how
-.B Abuse-SDL
+.B Abuse
 behaves.  Except for key settings, most of the options have an equivalent
 command-line option. Lines starting with a semi-colon(;) are ignored as
 comments.
@@ -135,8 +135,8 @@ Switch to the previous available weapon.
 Switch to the next available weapon.
 
 .SH FILES
-~/.abuse/abuserc - Abuse-SDL configuration file.
+~/.abuse/abuserc - Abuse configuration file.
 
 .SH AUTHORS
 Anthony Kruize <trandor@labyrinth.net.au>
-See also the AUTHORS file included with Abuse-SDL.
+See also the AUTHORS file included with Abuse.

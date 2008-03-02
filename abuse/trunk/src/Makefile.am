@@ -2,9 +2,9 @@
 
 SUBDIRS = net imlib sdlport
 
-bin_PROGRAMS = abuse.sdl
+bin_PROGRAMS = abuse
 
-abuse_sdl_SOURCES = specache.cpp netcfg.cpp text_gui.cpp innet.cpp \
+abuse_SOURCES = specache.cpp netcfg.cpp text_gui.cpp innet.cpp \
 	chat.cpp endgame.cpp version.cpp loadgame.cpp profile.cpp \
 	cop.cpp statbar.cpp compiled.cpp ant.cpp sensor.cpp \
 	lisp_opt.cpp demo.cpp lcache.cpp lisp_gc.cpp nfclient.cpp \
@@ -16,9 +16,9 @@ abuse_sdl_SOURCES = specache.cpp netcfg.cpp text_gui.cpp innet.cpp \
 	menu.cpp director.cpp view.cpp config.cpp game.cpp light.cpp \
 	devsel.cpp crc.cpp gamma.cpp language.cpp
 
-abuse_sdl_LDADD = ./sdlport/libsdlport.a ./imlib/libimlib.a ./net/libnet.a
+abuse_LDADD = ./sdlport/libsdlport.a ./imlib/libimlib.a ./net/libnet.a
 
-abuse_sdl_DEPENDENCIES = ./sdlport/libsdlport.a ./imlib/libimlib.a ./net/libnet.a
+abuse_DEPENDENCIES = ./sdlport/libsdlport.a ./imlib/libimlib.a ./net/libnet.a
 
 INCLUDES = -I$(srcdir)/include -I$(srcdir)/imlib/include -I$(srcdir)/net/include $(SDL_CFLAGS)
 
