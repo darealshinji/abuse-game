@@ -80,7 +80,6 @@ int start_argc;
 int has_joystick=0;
 char req_name[100];
 
-int registered=0;
 extern uint8_t chatting_enabled;
 
 extern int confirm_quit();
@@ -2461,20 +2460,6 @@ extern pmenu *dev_menu;
 extern int jmalloc_max_size;
 extern int jmalloc_min_low_size;
 
-extern int (*verify_file_fun)(char *,char *);
-
-int registered_ok(char *filename, char *mode)
-{
-  if (registered) return 1;
-
-  char name[256],*c;
-  c=name;
-  while (*filename) { *c=*(filename++); *c=toupper(*c); c++; } *c=0;
-  if (strstr(name,"REGISTER"))
-    return 0;
-  else return 1;
-}
-
 void game_net_init(int argc, char **argv)
 {
   int nonet=!net_init(argc, argv);
@@ -2641,22 +2626,6 @@ int main(int argc, char **argv)
 		set_save_filename_prefix( getenv( "ABUSE_SAVE_PATH" ) );
 	}
 
-	if( !get_option( "-share" ) )
-	{
-		jFILE *fp = new jFILE( "register/micron.vcd", "rb" );
-		if( !fp->open_failure() )
-		{
-			spec_directory sd( fp );
-			if( sd.find( "Copyright (C) 1995 Crack dot Com, All Rights reserved" ) )
-			{
-				registered = 1;
-			}
-		}
-		delete fp;
-	}
-
-	verify_file_fun = registered_ok;
-
 	jrand_init();
 	jrand();		// so compiler doesn't complain
 
@@ -2728,9 +2697,7 @@ int main(int argc, char **argv)
 				delete current_level;
 				current_level=NULL;
 				
-				if (!registered)
-				share_end();
-				else show_end();
+				show_end();
 			
 				the_game->set_state(MENU_STATE);
 				req_end=0;
@@ -2779,10 +2746,7 @@ int main(int argc, char **argv)
 
     delete chat;
 
-    if (!registered)
-    show_sell(0);
-    else milli_wait(500);
-
+    milli_wait(500);
 
     if (small_render) { delete small_render; small_render=NULL; }
 

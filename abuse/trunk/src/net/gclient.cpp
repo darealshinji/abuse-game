@@ -26,7 +26,6 @@
 
 extern base_memory_struct *base;
 extern net_socket *comm_sock,*game_sock;
-extern int registered;
 extern net_protocol *prot;
 extern char lsf[256];
 extern int start_running;

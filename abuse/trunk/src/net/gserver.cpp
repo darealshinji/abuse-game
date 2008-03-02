@@ -31,7 +31,6 @@
 
 extern base_memory_struct *base;
 extern net_socket *comm_sock,*game_sock;
-extern int registered;
 
 extern net_protocol *prot;
 extern join_struct *join_array;
@@ -389,7 +388,7 @@ int game_server::add_client(int type, net_socket *sock, net_address *from)
 			return 0;
 		}
 
-		uint8_t reg = registered ? 1 : 0;
+		uint8_t reg = 1; // Of course the game is registered
 		if( sock->write( &reg, 1 ) != 1 )
 			return 0;
 

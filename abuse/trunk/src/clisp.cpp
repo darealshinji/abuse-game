@@ -76,8 +76,6 @@ extern void scatter_line(int x1, int y1, int x2, int y2, int c, int s);
 extern void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s);
 extern void show_end();
 
-extern int registered;
-
 static view *lget_view(void *arg, char const *msg)
 {
   game_object *o=(game_object *)lpointer_value(arg);
@@ -523,12 +521,8 @@ void clisp_init()                            // call by lisp_init, defines symbo
 
   add_lisp_function("player_rocket_ufun",2,2,   34);
 
-  if (registered)
-  {
-    add_lisp_function("plaser_ufun",2,2,          33);
-    add_lisp_function("lsaber_ufun",2,2,          35);
-  }
-
+  add_lisp_function("plaser_ufun",2,2,          33);
+  add_lisp_function("lsaber_ufun",2,2,          35);
 
   add_lisp_function("cop_mover",3,3,            36);
   add_lisp_function("latter_ai",0,0,            37);
