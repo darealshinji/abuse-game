@@ -1,0 +1,1499 @@
+------------------------------------------------------------------------
+r64 | sam | 2008-03-02 16:59:29 +0000 (Sun, 02 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/AUTHORS
+   D /abuse/trunk/ChangeLog
+   R /abuse/trunk/NEWS (from /abuse/trunk/ChangeLog:56)
+
+  * Rename ChangeLog into NEWS and add myself to AUTHORS.
+
+------------------------------------------------------------------------
+r63 | sam | 2008-03-02 16:49:22 +0000 (Sun, 02 Mar 2008) | 2 lines
+Changed paths:
+   D /abuse/trunk/src/chmorph.cpp
+   D /abuse/trunk/src/chmorph.hpp
+   M /abuse/trunk/src/game.cpp
+
+  * Minor cleanup.
+
+------------------------------------------------------------------------
+r62 | sam | 2008-03-02 16:35:46 +0000 (Sun, 02 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/configure.ac
+   M /abuse/trunk/src/Makefile.am
+   M /abuse/trunk/src/cache.hpp
+   M /abuse/trunk/src/extend.hpp
+   A /abuse/trunk/src/lisp
+   A /abuse/trunk/src/lisp/Makefile.am
+   A /abuse/trunk/src/lisp/lisp.cpp (from /abuse/trunk/src/lisp.cpp:60)
+   A /abuse/trunk/src/lisp/lisp.hpp (from /abuse/trunk/src/lisp.hpp:57)
+   A /abuse/trunk/src/lisp/lisp_gc.cpp (from /abuse/trunk/src/lisp_gc.cpp:56)
+   A /abuse/trunk/src/lisp/lisp_gc.hpp (from /abuse/trunk/src/lisp_gc.hpp:57)
+   A /abuse/trunk/src/lisp/lisp_opt.cpp (from /abuse/trunk/src/lisp_opt.cpp:56)
+   A /abuse/trunk/src/lisp/lisp_opt.hpp (from /abuse/trunk/src/lisp_opt.hpp:57)
+   D /abuse/trunk/src/lisp.cpp
+   D /abuse/trunk/src/lisp.hpp
+   D /abuse/trunk/src/lisp2.hpp
+   D /abuse/trunk/src/lisp_gc.cpp
+   D /abuse/trunk/src/lisp_gc.hpp
+   D /abuse/trunk/src/lisp_mac.cpp
+   D /abuse/trunk/src/lisp_opt.cpp
+   D /abuse/trunk/src/lisp_opt.hpp
+   M /abuse/trunk/src/loader2.hpp
+
+  * Moved some LISP stuff into src/lisp and removed unused lisp_mac.cpp file.
+
+------------------------------------------------------------------------
+r61 | sam | 2008-03-02 16:07:11 +0000 (Sun, 02 Mar 2008) | 3 lines
+Changed paths:
+   M /abuse/trunk/src/clisp.cpp
+   M /abuse/trunk/src/cop.cpp
+   M /abuse/trunk/src/dev.cpp
+   M /abuse/trunk/src/game.cpp
+   M /abuse/trunk/src/innet.cpp
+   M /abuse/trunk/src/menu.cpp
+   M /abuse/trunk/src/net/gclient.cpp
+   M /abuse/trunk/src/net/gserver.cpp
+   M /abuse/trunk/src/net/netdrv.cpp
+   M /abuse/trunk/src/unixnfc.cpp
+
+  * Get rid of game registration handling. All versions of Abuse are now
+    registered, I guess.
+
+------------------------------------------------------------------------
+r60 | sam | 2008-03-02 15:41:48 +0000 (Sun, 02 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/ant.cpp
+   M /abuse/trunk/src/cache.cpp
+   M /abuse/trunk/src/config.cpp
+   M /abuse/trunk/src/cop.cpp
+   M /abuse/trunk/src/dev.cpp
+   M /abuse/trunk/src/endgame.cpp
+   M /abuse/trunk/src/game.cpp
+   M /abuse/trunk/src/lisp.cpp
+   M /abuse/trunk/src/menu.cpp
+
+  * Make a few symbols static (Ref #7).
+
+------------------------------------------------------------------------
+r59 | sam | 2008-03-02 15:33:10 +0000 (Sun, 02 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/osx/abuse_sdl.pbproj/project.pbxproj
+   D /abuse/trunk/src/old_earth_menu.cpp
+
+  * Delete unused file old_earth_menu.cpp.
+
+------------------------------------------------------------------------
+r58 | sam | 2008-03-02 15:02:22 +0000 (Sun, 02 Mar 2008) | 3 lines
+Changed paths:
+   M /abuse/trunk/src/ant.cpp
+   M /abuse/trunk/src/cache.cpp
+   M /abuse/trunk/src/clisp.hpp
+   M /abuse/trunk/src/imlib/jmalloc.cpp
+   M /abuse/trunk/src/innet.cpp
+   M /abuse/trunk/src/lisp.cpp
+   M /abuse/trunk/src/menu.cpp
+   M /abuse/trunk/src/nfserver.hpp
+
+  * Remove a few duplicate prototype declarations.
+  * Add some harmless "%s" in sprintf() calls.
+
+------------------------------------------------------------------------
+r57 | sam | 2008-03-02 14:23:26 +0000 (Sun, 02 Mar 2008) | 3 lines
+Changed paths:
+   M /abuse/trunk/src/Makefile.am
+   A /abuse/trunk/src/ability.hpp (from /abuse/trunk/src/include/ability.hpp:56)
+   A /abuse/trunk/src/ant.hpp (from /abuse/trunk/src/include/ant.hpp:56)
+   A /abuse/trunk/src/automap.hpp (from /abuse/trunk/src/include/automap.hpp:56)
+   A /abuse/trunk/src/bus_type.hpp (from /abuse/trunk/src/include/bus_type.hpp:56)
+   A /abuse/trunk/src/cache.hpp (from /abuse/trunk/src/include/cache.hpp:56)
+   A /abuse/trunk/src/chars.hpp (from /abuse/trunk/src/include/chars.hpp:56)
+   A /abuse/trunk/src/chat.hpp (from /abuse/trunk/src/include/chat.hpp:56)
+   A /abuse/trunk/src/chmorph.hpp (from /abuse/trunk/src/include/chmorph.hpp:56)
+   A /abuse/trunk/src/client.hpp (from /abuse/trunk/src/include/client.hpp:56)
+   A /abuse/trunk/src/clisp.hpp (from /abuse/trunk/src/include/clisp.hpp:56)
+   A /abuse/trunk/src/compiled.hpp (from /abuse/trunk/src/include/compiled.hpp:56)
+   A /abuse/trunk/src/config.hpp (from /abuse/trunk/src/include/config.hpp:56)
+   A /abuse/trunk/src/console.hpp (from /abuse/trunk/src/include/console.hpp:56)
+   A /abuse/trunk/src/control.hpp (from /abuse/trunk/src/include/control.hpp:56)
+   A /abuse/trunk/src/cop.hpp (from /abuse/trunk/src/include/cop.hpp:56)
+   A /abuse/trunk/src/crc.hpp (from /abuse/trunk/src/include/crc.hpp:56)
+   A /abuse/trunk/src/demo.hpp (from /abuse/trunk/src/include/demo.hpp:56)
+   A /abuse/trunk/src/dev.hpp (from /abuse/trunk/src/include/dev.hpp:56)
+   A /abuse/trunk/src/devsel.hpp (from /abuse/trunk/src/include/devsel.hpp:56)
+   A /abuse/trunk/src/director.hpp (from /abuse/trunk/src/include/director.hpp:56)
+   A /abuse/trunk/src/extend.hpp (from /abuse/trunk/src/include/extend.hpp:56)
+   A /abuse/trunk/src/fakelib.hpp (from /abuse/trunk/src/include/fakelib.hpp:56)
+   A /abuse/trunk/src/game.hpp (from /abuse/trunk/src/include/game.hpp:56)
+   A /abuse/trunk/src/gamma.hpp (from /abuse/trunk/src/include/gamma.hpp:56)
+   A /abuse/trunk/src/go.hpp (from /abuse/trunk/src/include/go.hpp:56)
+   A /abuse/trunk/src/gui.hpp (from /abuse/trunk/src/include/gui.hpp:56)
+   A /abuse/trunk/src/help.hpp (from /abuse/trunk/src/include/help.hpp:56)
+   A /abuse/trunk/src/human.hpp (from /abuse/trunk/src/include/human.hpp:56)
+   A /abuse/trunk/src/id.hpp (from /abuse/trunk/src/include/id.hpp:56)
+   M /abuse/trunk/src/imlib/Makefile.am
+   A /abuse/trunk/src/imlib/bitmap.h (from /abuse/trunk/src/imlib/include/bitmap.h:56)
+   A /abuse/trunk/src/imlib/conio.h (from /abuse/trunk/src/imlib/include/conio.h:56)
+   A /abuse/trunk/src/imlib/dir.h (from /abuse/trunk/src/imlib/include/dir.h:56)
+   A /abuse/trunk/src/imlib/dos.h (from /abuse/trunk/src/imlib/include/dos.h:56)
+   A /abuse/trunk/src/imlib/doscall.hpp (from /abuse/trunk/src/imlib/include/doscall.hpp:56)
+   A /abuse/trunk/src/imlib/dprint.hpp (from /abuse/trunk/src/imlib/include/dprint.hpp:56)
+   A /abuse/trunk/src/imlib/emm.hpp (from /abuse/trunk/src/imlib/include/emm.hpp:56)
+   A /abuse/trunk/src/imlib/errs.h (from /abuse/trunk/src/imlib/include/errs.h:56)
+   A /abuse/trunk/src/imlib/event.hpp (from /abuse/trunk/src/imlib/include/event.hpp:56)
+   A /abuse/trunk/src/imlib/exitproc.hpp (from /abuse/trunk/src/imlib/include/exitproc.hpp:56)
+   A /abuse/trunk/src/imlib/filesel.hpp (from /abuse/trunk/src/imlib/include/filesel.hpp:56)
+   A /abuse/trunk/src/imlib/filter.hpp (from /abuse/trunk/src/imlib/include/filter.hpp:56)
+   A /abuse/trunk/src/imlib/fonts.hpp (from /abuse/trunk/src/imlib/include/fonts.hpp:56)
+   A /abuse/trunk/src/imlib/gifdecod.hpp (from /abuse/trunk/src/imlib/include/gifdecod.hpp:56)
+   A /abuse/trunk/src/imlib/gifread.hpp (from /abuse/trunk/src/imlib/include/gifread.hpp:56)
+   A /abuse/trunk/src/imlib/globals.hpp (from /abuse/trunk/src/imlib/include/globals.hpp:56)
+   A /abuse/trunk/src/imlib/glread.hpp (from /abuse/trunk/src/imlib/include/glread.hpp:56)
+   A /abuse/trunk/src/imlib/guistat.hpp (from /abuse/trunk/src/imlib/include/guistat.hpp:56)
+   A /abuse/trunk/src/imlib/image.hpp (from /abuse/trunk/src/imlib/include/image.hpp:56)
+   A /abuse/trunk/src/imlib/image24.hpp (from /abuse/trunk/src/imlib/include/image24.hpp:56)
+   D /abuse/trunk/src/imlib/include
+   A /abuse/trunk/src/imlib/include.hpp (from /abuse/trunk/src/imlib/include/include.hpp:56)
+   A /abuse/trunk/src/imlib/input.hpp (from /abuse/trunk/src/imlib/include/input.hpp:56)
+   A /abuse/trunk/src/imlib/jdir.hpp (from /abuse/trunk/src/imlib/include/jdir.hpp:56)
+   A /abuse/trunk/src/imlib/jmalloc.hpp (from /abuse/trunk/src/imlib/include/jmalloc.hpp:56)
+   A /abuse/trunk/src/imlib/jnet.hpp (from /abuse/trunk/src/imlib/include/jnet.hpp:56)
+   A /abuse/trunk/src/imlib/joy.hpp (from /abuse/trunk/src/imlib/include/joy.hpp:56)
+   A /abuse/trunk/src/imlib/jrand.hpp (from /abuse/trunk/src/imlib/include/jrand.hpp:56)
+   A /abuse/trunk/src/imlib/jwindow.hpp (from /abuse/trunk/src/imlib/include/jwindow.hpp:56)
+   A /abuse/trunk/src/imlib/keys.hpp (from /abuse/trunk/src/imlib/include/keys.hpp:56)
+   A /abuse/trunk/src/imlib/lbmread.hpp (from /abuse/trunk/src/imlib/include/lbmread.hpp:56)
+   A /abuse/trunk/src/imlib/linked.hpp (from /abuse/trunk/src/imlib/include/linked.hpp:56)
+   A /abuse/trunk/src/imlib/loader.hpp (from /abuse/trunk/src/imlib/include/loader.hpp:56)
+   A /abuse/trunk/src/imlib/macs.hpp (from /abuse/trunk/src/imlib/include/macs.hpp:56)
+   A /abuse/trunk/src/imlib/main.hpp (from /abuse/trunk/src/imlib/include/main.hpp:56)
+   A /abuse/trunk/src/imlib/mdlread.hpp (from /abuse/trunk/src/imlib/include/mdlread.hpp:56)
+   A /abuse/trunk/src/imlib/monoprnt.hpp (from /abuse/trunk/src/imlib/include/monoprnt.hpp:56)
+   A /abuse/trunk/src/imlib/morph.h (from /abuse/trunk/src/imlib/include/morph.h:56)
+   A /abuse/trunk/src/imlib/morph.hpp (from /abuse/trunk/src/imlib/include/morph.hpp:56)
+   A /abuse/trunk/src/imlib/mouse.hpp (from /abuse/trunk/src/imlib/include/mouse.hpp:56)
+   A /abuse/trunk/src/imlib/packet.hpp (from /abuse/trunk/src/imlib/include/packet.hpp:56)
+   A /abuse/trunk/src/imlib/palette.hpp (from /abuse/trunk/src/imlib/include/palette.hpp:56)
+   A /abuse/trunk/src/imlib/pcxread.hpp (from /abuse/trunk/src/imlib/include/pcxread.hpp:56)
+   A /abuse/trunk/src/imlib/pmenu.hpp (from /abuse/trunk/src/imlib/include/pmenu.hpp:56)
+   A /abuse/trunk/src/imlib/ppmread.hpp (from /abuse/trunk/src/imlib/include/ppmread.hpp:56)
+   A /abuse/trunk/src/imlib/readwav.hpp (from /abuse/trunk/src/imlib/include/readwav.hpp:56)
+   A /abuse/trunk/src/imlib/scroller.hpp (from /abuse/trunk/src/imlib/include/scroller.hpp:56)
+   A /abuse/trunk/src/imlib/sdriver.hpp (from /abuse/trunk/src/imlib/include/sdriver.hpp:56)
+   A /abuse/trunk/src/imlib/sound.hpp (from /abuse/trunk/src/imlib/include/sound.hpp:56)
+   A /abuse/trunk/src/imlib/specs.hpp (from /abuse/trunk/src/imlib/include/specs.hpp:56)
+   A /abuse/trunk/src/imlib/sprite.hpp (from /abuse/trunk/src/imlib/include/sprite.hpp:56)
+   A /abuse/trunk/src/imlib/status.hpp (from /abuse/trunk/src/imlib/include/status.hpp:56)
+   A /abuse/trunk/src/imlib/std.h (from /abuse/trunk/src/imlib/include/std.h:56)
+   A /abuse/trunk/src/imlib/supmorph.hpp (from /abuse/trunk/src/imlib/include/supmorph.hpp:56)
+   A /abuse/trunk/src/imlib/system.h (from /abuse/trunk/src/imlib/include/system.h:56)
+   A /abuse/trunk/src/imlib/targa.hpp (from /abuse/trunk/src/imlib/include/targa.hpp:56)
+   A /abuse/trunk/src/imlib/texture.hpp (from /abuse/trunk/src/imlib/include/texture.hpp:56)
+   A /abuse/trunk/src/imlib/timage.hpp (from /abuse/trunk/src/imlib/include/timage.hpp:56)
+   A /abuse/trunk/src/imlib/timer.hpp (from /abuse/trunk/src/imlib/include/timer.hpp:56)
+   A /abuse/trunk/src/imlib/timing.hpp (from /abuse/trunk/src/imlib/include/timing.hpp:56)
+   A /abuse/trunk/src/imlib/tools.hpp (from /abuse/trunk/src/imlib/include/tools.hpp:56)
+   A /abuse/trunk/src/imlib/video.hpp (from /abuse/trunk/src/imlib/include/video.hpp:56)
+   A /abuse/trunk/src/imlib/visobj.hpp (from /abuse/trunk/src/imlib/include/visobj.hpp:56)
+   A /abuse/trunk/src/imlib/xinclude.h (from /abuse/trunk/src/imlib/include/xinclude.h:56)
+   A /abuse/trunk/src/imlib/xwdread.hpp (from /abuse/trunk/src/imlib/include/xwdread.hpp:56)
+   D /abuse/trunk/src/include
+   A /abuse/trunk/src/intsect.hpp (from /abuse/trunk/src/include/intsect.hpp:56)
+   A /abuse/trunk/src/isllist.hpp (from /abuse/trunk/src/include/isllist.hpp:56)
+   A /abuse/trunk/src/isllist_bak.hpp (from /abuse/trunk/src/include/isllist_bak.hpp:56)
+   A /abuse/trunk/src/items.hpp (from /abuse/trunk/src/include/items.hpp:56)
+   A /abuse/trunk/src/language.hpp (from /abuse/trunk/src/include/language.hpp:56)
+   A /abuse/trunk/src/laser.hpp (from /abuse/trunk/src/include/laser.hpp:56)
+   A /abuse/trunk/src/lcache.hpp (from /abuse/trunk/src/include/lcache.hpp:56)
+   A /abuse/trunk/src/lcaller.hpp (from /abuse/trunk/src/include/lcaller.hpp:56)
+   A /abuse/trunk/src/level.hpp (from /abuse/trunk/src/include/level.hpp:56)
+   A /abuse/trunk/src/light.hpp (from /abuse/trunk/src/include/light.hpp:56)
+   A /abuse/trunk/src/lisp.hpp (from /abuse/trunk/src/include/lisp.hpp:56)
+   A /abuse/trunk/src/lisp2.hpp (from /abuse/trunk/src/include/lisp2.hpp:56)
+   A /abuse/trunk/src/lisp_gc.hpp (from /abuse/trunk/src/include/lisp_gc.hpp:56)
+   A /abuse/trunk/src/lisp_opt.hpp (from /abuse/trunk/src/include/lisp_opt.hpp:56)
+   A /abuse/trunk/src/lmenu.hpp (from /abuse/trunk/src/include/lmenu.hpp:56)
+   A /abuse/trunk/src/loader2.hpp (from /abuse/trunk/src/include/loader2.hpp:56)
+   A /abuse/trunk/src/loadgame.hpp (from /abuse/trunk/src/include/loadgame.hpp:56)
+   A /abuse/trunk/src/menu.hpp (from /abuse/trunk/src/include/menu.hpp:56)
+   A /abuse/trunk/src/morpher.hpp (from /abuse/trunk/src/include/morpher.hpp:56)
+   M /abuse/trunk/src/net/Makefile.am
+   A /abuse/trunk/src/net/endian.hpp (from /abuse/trunk/src/net/include/endian.hpp:49)
+   A /abuse/trunk/src/net/engine.hpp (from /abuse/trunk/src/net/include/engine.hpp:49)
+   A /abuse/trunk/src/net/fileman.hpp (from /abuse/trunk/src/net/include/fileman.hpp:49)
+   A /abuse/trunk/src/net/gclient.hpp (from /abuse/trunk/src/net/include/gclient.hpp:49)
+   A /abuse/trunk/src/net/ghandler.hpp (from /abuse/trunk/src/net/include/ghandler.hpp:49)
+   A /abuse/trunk/src/net/gserver.hpp (from /abuse/trunk/src/net/include/gserver.hpp:49)
+   D /abuse/trunk/src/net/include
+   A /abuse/trunk/src/net/indian.hpp (from /abuse/trunk/src/net/include/indian.hpp:49)
+   A /abuse/trunk/src/net/ipx.hpp (from /abuse/trunk/src/net/include/ipx.hpp:49)
+   A /abuse/trunk/src/net/netdrv.hpp (from /abuse/trunk/src/net/include/netdrv.hpp:49)
+   A /abuse/trunk/src/net/netfile.hpp (from /abuse/trunk/src/net/include/netfile.hpp:49)
+   A /abuse/trunk/src/net/sock.hpp (from /abuse/trunk/src/net/include/sock.hpp:49)
+   A /abuse/trunk/src/net/tcpip.hpp (from /abuse/trunk/src/net/include/tcpip.hpp:49)
+   A /abuse/trunk/src/net/undrv.hpp (from /abuse/trunk/src/net/include/undrv.hpp:49)
+   A /abuse/trunk/src/netcfg.hpp (from /abuse/trunk/src/include/netcfg.hpp:56)
+   A /abuse/trunk/src/netface.hpp (from /abuse/trunk/src/include/netface.hpp:56)
+   A /abuse/trunk/src/nfclient.hpp (from /abuse/trunk/src/include/nfclient.hpp:56)
+   A /abuse/trunk/src/nfserver.hpp (from /abuse/trunk/src/include/nfserver.hpp:56)
+   A /abuse/trunk/src/objects.hpp (from /abuse/trunk/src/include/objects.hpp:56)
+   A /abuse/trunk/src/parse.hpp (from /abuse/trunk/src/include/parse.hpp:56)
+   A /abuse/trunk/src/particle.hpp (from /abuse/trunk/src/include/particle.hpp:56)
+   A /abuse/trunk/src/points.hpp (from /abuse/trunk/src/include/points.hpp:56)
+   A /abuse/trunk/src/profile.hpp (from /abuse/trunk/src/include/profile.hpp:56)
+   A /abuse/trunk/src/property.hpp (from /abuse/trunk/src/include/property.hpp:56)
+   A /abuse/trunk/src/ramfile.hpp (from /abuse/trunk/src/include/ramfile.hpp:56)
+   A /abuse/trunk/src/sbar.hpp (from /abuse/trunk/src/include/sbar.hpp:56)
+   A /abuse/trunk/src/scene.hpp (from /abuse/trunk/src/include/scene.hpp:56)
+   M /abuse/trunk/src/sdlport/Makefile.am
+   A /abuse/trunk/src/seq.hpp (from /abuse/trunk/src/include/seq.hpp:56)
+   A /abuse/trunk/src/server2.hpp (from /abuse/trunk/src/include/server2.hpp:56)
+   A /abuse/trunk/src/specache.hpp (from /abuse/trunk/src/include/specache.hpp:56)
+   A /abuse/trunk/src/stack.hpp (from /abuse/trunk/src/include/stack.hpp:56)
+   A /abuse/trunk/src/text_gui.hpp (from /abuse/trunk/src/include/text_gui.hpp:56)
+   A /abuse/trunk/src/tiles.hpp (from /abuse/trunk/src/include/tiles.hpp:56)
+   A /abuse/trunk/src/transp.hpp (from /abuse/trunk/src/include/transp.hpp:56)
+   A /abuse/trunk/src/view.hpp (from /abuse/trunk/src/include/view.hpp:56)
+
+  * Move each header to the same directory as its corresponding source, to
+    get a better idea of which files are likely to export symbols.
+
+------------------------------------------------------------------------
+r56 | sam | 2008-03-02 14:03:36 +0000 (Sun, 02 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/ability.cpp
+   M /abuse/trunk/src/ant.cpp
+   M /abuse/trunk/src/automap.cpp
+   M /abuse/trunk/src/cache.cpp
+   M /abuse/trunk/src/calctrig.cpp
+   M /abuse/trunk/src/chars.cpp
+   M /abuse/trunk/src/chat.cpp
+   M /abuse/trunk/src/chmorph.cpp
+   M /abuse/trunk/src/client.cpp
+   M /abuse/trunk/src/clisp.cpp
+   M /abuse/trunk/src/collide.cpp
+   M /abuse/trunk/src/compiled.cpp
+   M /abuse/trunk/src/config.cpp
+   M /abuse/trunk/src/console.cpp
+   M /abuse/trunk/src/control.cpp
+   M /abuse/trunk/src/cop.cpp
+   M /abuse/trunk/src/crc.cpp
+   M /abuse/trunk/src/demo.cpp
+   M /abuse/trunk/src/dev.cpp
+   M /abuse/trunk/src/devsel.cpp
+   M /abuse/trunk/src/director.cpp
+   M /abuse/trunk/src/dosnfc.cpp
+   M /abuse/trunk/src/endgame.cpp
+   M /abuse/trunk/src/extend.cpp
+   M /abuse/trunk/src/fnt6x13.cpp
+   M /abuse/trunk/src/game.cpp
+   M /abuse/trunk/src/gamma.cpp
+   M /abuse/trunk/src/go.cpp
+   M /abuse/trunk/src/gui.cpp
+   M /abuse/trunk/src/help.cpp
+   M /abuse/trunk/src/human.cpp
+   M /abuse/trunk/src/imlib/convert.cpp
+   M /abuse/trunk/src/imlib/dprint.cpp
+   M /abuse/trunk/src/imlib/filesel.cpp
+   M /abuse/trunk/src/imlib/filter.cpp
+   M /abuse/trunk/src/imlib/fonts.cpp
+   M /abuse/trunk/src/imlib/gifread.cpp
+   M /abuse/trunk/src/imlib/globals.cpp
+   M /abuse/trunk/src/imlib/glread.cpp
+   M /abuse/trunk/src/imlib/glview.cpp
+   M /abuse/trunk/src/imlib/guistat.cpp
+   M /abuse/trunk/src/imlib/image-24.cpp
+   M /abuse/trunk/src/imlib/image.cpp
+   M /abuse/trunk/src/imlib/image24.cpp
+   M /abuse/trunk/src/imlib/include/bitmap.h
+   M /abuse/trunk/src/imlib/include/conio.h
+   M /abuse/trunk/src/imlib/include/dir.h
+   M /abuse/trunk/src/imlib/include/dos.h
+   M /abuse/trunk/src/imlib/include/doscall.hpp
+   M /abuse/trunk/src/imlib/include/dprint.hpp
+   M /abuse/trunk/src/imlib/include/emm.hpp
+   M /abuse/trunk/src/imlib/include/errs.h
+   M /abuse/trunk/src/imlib/include/event.hpp
+   M /abuse/trunk/src/imlib/include/exitproc.hpp
+   M /abuse/trunk/src/imlib/include/filesel.hpp
+   M /abuse/trunk/src/imlib/include/filter.hpp
+   M /abuse/trunk/src/imlib/include/fonts.hpp
+   M /abuse/trunk/src/imlib/include/gifdecod.hpp
+   M /abuse/trunk/src/imlib/include/gifread.hpp
+   M /abuse/trunk/src/imlib/include/globals.hpp
+   M /abuse/trunk/src/imlib/include/glread.hpp
+   M /abuse/trunk/src/imlib/include/guistat.hpp
+   M /abuse/trunk/src/imlib/include/image.hpp
+   M /abuse/trunk/src/imlib/include/image24.hpp
+   M /abuse/trunk/src/imlib/include/include.hpp
+   M /abuse/trunk/src/imlib/include/input.hpp
+   M /abuse/trunk/src/imlib/include/jdir.hpp
+   M /abuse/trunk/src/imlib/include/jmalloc.hpp
+   M /abuse/trunk/src/imlib/include/jnet.hpp
+   M /abuse/trunk/src/imlib/include/joy.hpp
+   M /abuse/trunk/src/imlib/include/jrand.hpp
+   M /abuse/trunk/src/imlib/include/jwindow.hpp
+   M /abuse/trunk/src/imlib/include/keys.hpp
+   M /abuse/trunk/src/imlib/include/lbmread.hpp
+   M /abuse/trunk/src/imlib/include/linked.hpp
+   M /abuse/trunk/src/imlib/include/loader.hpp
+   M /abuse/trunk/src/imlib/include/macs.hpp
+   M /abuse/trunk/src/imlib/include/main.hpp
+   M /abuse/trunk/src/imlib/include/mdlread.hpp
+   M /abuse/trunk/src/imlib/include/monoprnt.hpp
+   M /abuse/trunk/src/imlib/include/morph.h
+   M /abuse/trunk/src/imlib/include/morph.hpp
+   M /abuse/trunk/src/imlib/include/mouse.hpp
+   M /abuse/trunk/src/imlib/include/packet.hpp
+   M /abuse/trunk/src/imlib/include/palette.hpp
+   M /abuse/trunk/src/imlib/include/pcxread.hpp
+   M /abuse/trunk/src/imlib/include/pmenu.hpp
+   M /abuse/trunk/src/imlib/include/ppmread.hpp
+   M /abuse/trunk/src/imlib/include/readwav.hpp
+   M /abuse/trunk/src/imlib/include/scroller.hpp
+   M /abuse/trunk/src/imlib/include/sdriver.hpp
+   M /abuse/trunk/src/imlib/include/sound.hpp
+   M /abuse/trunk/src/imlib/include/specs.hpp
+   M /abuse/trunk/src/imlib/include/sprite.hpp
+   M /abuse/trunk/src/imlib/include/status.hpp
+   M /abuse/trunk/src/imlib/include/std.h
+   M /abuse/trunk/src/imlib/include/supmorph.hpp
+   M /abuse/trunk/src/imlib/include/system.h
+   M /abuse/trunk/src/imlib/include/targa.hpp
+   M /abuse/trunk/src/imlib/include/texture.hpp
+   M /abuse/trunk/src/imlib/include/timage.hpp
+   M /abuse/trunk/src/imlib/include/timer.hpp
+   M /abuse/trunk/src/imlib/include/timing.hpp
+   M /abuse/trunk/src/imlib/include/tools.hpp
+   M /abuse/trunk/src/imlib/include/video.hpp
+   M /abuse/trunk/src/imlib/include/visobj.hpp
+   M /abuse/trunk/src/imlib/include/xinclude.h
+   M /abuse/trunk/src/imlib/include/xwdread.hpp
+   M /abuse/trunk/src/imlib/include.cpp
+   M /abuse/trunk/src/imlib/input.cpp
+   M /abuse/trunk/src/imlib/jmalloc.cpp
+   M /abuse/trunk/src/imlib/jrand.cpp
+   M /abuse/trunk/src/imlib/jwindow.cpp
+   M /abuse/trunk/src/imlib/keys.cpp
+   M /abuse/trunk/src/imlib/lbmread.cpp
+   M /abuse/trunk/src/imlib/linked.cpp
+   M /abuse/trunk/src/imlib/loader.cpp
+   M /abuse/trunk/src/imlib/mdlread.cpp
+   M /abuse/trunk/src/imlib/morph.cpp
+   M /abuse/trunk/src/imlib/packet.cpp
+   M /abuse/trunk/src/imlib/palette.cpp
+   M /abuse/trunk/src/imlib/pcxread.cpp
+   M /abuse/trunk/src/imlib/pmenu.cpp
+   M /abuse/trunk/src/imlib/ppmread.cpp
+   M /abuse/trunk/src/imlib/readwav.cpp
+   M /abuse/trunk/src/imlib/readxwd.cpp
+   M /abuse/trunk/src/imlib/scroller.cpp
+   M /abuse/trunk/src/imlib/specs.cpp
+   M /abuse/trunk/src/imlib/sprite.cpp
+   M /abuse/trunk/src/imlib/status.cpp
+   M /abuse/trunk/src/imlib/supmorph.cpp
+   M /abuse/trunk/src/imlib/targa.cpp
+   M /abuse/trunk/src/imlib/texture.cpp
+   M /abuse/trunk/src/imlib/timage.cpp
+   M /abuse/trunk/src/imlib/timer.cpp
+   M /abuse/trunk/src/imlib/tools.cpp
+   M /abuse/trunk/src/imlib/tree.cpp
+   M /abuse/trunk/src/imlib/unpackgl.cpp
+   M /abuse/trunk/src/imlib/visobj.cpp
+   M /abuse/trunk/src/imlib/wildargv.cpp
+   M /abuse/trunk/src/imlib/xwdread.cpp
+   M /abuse/trunk/src/include/ability.hpp
+   M /abuse/trunk/src/include/ant.hpp
+   M /abuse/trunk/src/include/automap.hpp
+   M /abuse/trunk/src/include/bus_type.hpp
+   M /abuse/trunk/src/include/cache.hpp
+   M /abuse/trunk/src/include/chars.hpp
+   M /abuse/trunk/src/include/chat.hpp
+   M /abuse/trunk/src/include/chmorph.hpp
+   M /abuse/trunk/src/include/client.hpp
+   M /abuse/trunk/src/include/clisp.hpp
+   M /abuse/trunk/src/include/compiled.hpp
+   M /abuse/trunk/src/include/config.hpp
+   M /abuse/trunk/src/include/console.hpp
+   M /abuse/trunk/src/include/control.hpp
+   M /abuse/trunk/src/include/cop.hpp
+   M /abuse/trunk/src/include/crc.hpp
+   M /abuse/trunk/src/include/demo.hpp
+   M /abuse/trunk/src/include/dev.hpp
+   M /abuse/trunk/src/include/devsel.hpp
+   M /abuse/trunk/src/include/director.hpp
+   M /abuse/trunk/src/include/extend.hpp
+   M /abuse/trunk/src/include/fakelib.hpp
+   M /abuse/trunk/src/include/game.hpp
+   M /abuse/trunk/src/include/gamma.hpp
+   M /abuse/trunk/src/include/go.hpp
+   M /abuse/trunk/src/include/gui.hpp
+   M /abuse/trunk/src/include/help.hpp
+   M /abuse/trunk/src/include/human.hpp
+   M /abuse/trunk/src/include/id.hpp
+   M /abuse/trunk/src/include/intsect.hpp
+   M /abuse/trunk/src/include/isllist.hpp
+   M /abuse/trunk/src/include/isllist_bak.hpp
+   M /abuse/trunk/src/include/items.hpp
+   M /abuse/trunk/src/include/language.hpp
+   M /abuse/trunk/src/include/laser.hpp
+   M /abuse/trunk/src/include/lcache.hpp
+   M /abuse/trunk/src/include/lcaller.hpp
+   M /abuse/trunk/src/include/level.hpp
+   M /abuse/trunk/src/include/light.hpp
+   M /abuse/trunk/src/include/lisp.hpp
+   M /abuse/trunk/src/include/lisp2.hpp
+   M /abuse/trunk/src/include/lisp_gc.hpp
+   M /abuse/trunk/src/include/lisp_opt.hpp
+   M /abuse/trunk/src/include/lmenu.hpp
+   M /abuse/trunk/src/include/loader2.hpp
+   M /abuse/trunk/src/include/loadgame.hpp
+   M /abuse/trunk/src/include/menu.hpp
+   M /abuse/trunk/src/include/morpher.hpp
+   M /abuse/trunk/src/include/netcfg.hpp
+   M /abuse/trunk/src/include/netface.hpp
+   M /abuse/trunk/src/include/nfclient.hpp
+   M /abuse/trunk/src/include/nfserver.hpp
+   M /abuse/trunk/src/include/objects.hpp
+   M /abuse/trunk/src/include/parse.hpp
+   M /abuse/trunk/src/include/particle.hpp
+   M /abuse/trunk/src/include/points.hpp
+   M /abuse/trunk/src/include/profile.hpp
+   M /abuse/trunk/src/include/property.hpp
+   M /abuse/trunk/src/include/ramfile.hpp
+   M /abuse/trunk/src/include/sbar.hpp
+   M /abuse/trunk/src/include/scene.hpp
+   M /abuse/trunk/src/include/seq.hpp
+   M /abuse/trunk/src/include/server2.hpp
+   M /abuse/trunk/src/include/specache.hpp
+   M /abuse/trunk/src/include/stack.hpp
+   M /abuse/trunk/src/include/text_gui.hpp
+   M /abuse/trunk/src/include/tiles.hpp
+   M /abuse/trunk/src/include/transp.hpp
+   M /abuse/trunk/src/include/view.hpp
+   M /abuse/trunk/src/innet.cpp
+   M /abuse/trunk/src/install.cpp
+   M /abuse/trunk/src/intsect.cpp
+   M /abuse/trunk/src/items.cpp
+   M /abuse/trunk/src/keydrv.cpp
+   M /abuse/trunk/src/keytest.cpp
+   M /abuse/trunk/src/language.cpp
+   M /abuse/trunk/src/lcache.cpp
+   M /abuse/trunk/src/lcache2.cpp
+   M /abuse/trunk/src/letters.cpp
+   M /abuse/trunk/src/level.cpp
+   M /abuse/trunk/src/light.cpp
+   M /abuse/trunk/src/lisp.cpp
+   M /abuse/trunk/src/lisp_gc.cpp
+   M /abuse/trunk/src/lisp_mac.cpp
+   M /abuse/trunk/src/lisp_opt.cpp
+   M /abuse/trunk/src/loader2.cpp
+   M /abuse/trunk/src/loadgame.cpp
+   M /abuse/trunk/src/ltree.cpp
+   M /abuse/trunk/src/maker.cpp
+   M /abuse/trunk/src/menu.cpp
+   M /abuse/trunk/src/morpher.cpp
+   M /abuse/trunk/src/net/engine.cpp
+   M /abuse/trunk/src/net/fileman.cpp
+   M /abuse/trunk/src/net/gclient.cpp
+   M /abuse/trunk/src/net/gserver.cpp
+   M /abuse/trunk/src/net/netdrv.cpp
+   M /abuse/trunk/src/net/netfile.cpp
+   M /abuse/trunk/src/net/sock.cpp
+   M /abuse/trunk/src/net/tcpip.cpp
+   M /abuse/trunk/src/net/undrv.cpp
+   M /abuse/trunk/src/netcfg.cpp
+   M /abuse/trunk/src/newlight.cpp
+   M /abuse/trunk/src/nfclient.cpp
+   M /abuse/trunk/src/objects.cpp
+   M /abuse/trunk/src/old.nfclient.cpp
+   M /abuse/trunk/src/old.nfserver.cpp
+   M /abuse/trunk/src/old_earth_menu.cpp
+   M /abuse/trunk/src/old_server.cpp
+   M /abuse/trunk/src/oldhelp.cpp
+   M /abuse/trunk/src/parse.cpp
+   M /abuse/trunk/src/particle.cpp
+   M /abuse/trunk/src/pcxscale.cpp
+   M /abuse/trunk/src/points.cpp
+   M /abuse/trunk/src/profile.cpp
+   M /abuse/trunk/src/property.cpp
+   M /abuse/trunk/src/ramfile.cpp
+   M /abuse/trunk/src/remap.cpp
+   M /abuse/trunk/src/scene.cpp
+   M /abuse/trunk/src/sdlport/event.cpp
+   M /abuse/trunk/src/sdlport/jdir.cpp
+   M /abuse/trunk/src/sdlport/jnet.cpp
+   M /abuse/trunk/src/sdlport/joystick.cpp
+   M /abuse/trunk/src/sdlport/mouse.cpp
+   M /abuse/trunk/src/sdlport/setup.cpp
+   M /abuse/trunk/src/sdlport/setup.h
+   M /abuse/trunk/src/sdlport/sound.cpp
+   M /abuse/trunk/src/sdlport/timing.cpp
+   M /abuse/trunk/src/sdlport/video-overlay.cpp
+   M /abuse/trunk/src/sdlport/video.cpp
+   M /abuse/trunk/src/sensor.cpp
+   M /abuse/trunk/src/seq.cpp
+   M /abuse/trunk/src/server2.cpp
+   M /abuse/trunk/src/setup.cpp
+   M /abuse/trunk/src/smallfnt.cpp
+   M /abuse/trunk/src/smoosh.cpp
+   M /abuse/trunk/src/sndserver.cpp
+   M /abuse/trunk/src/specache.cpp
+   M /abuse/trunk/src/stack.cpp
+   M /abuse/trunk/src/statbar.cpp
+   M /abuse/trunk/src/status.cpp
+   M /abuse/trunk/src/test2.cpp
+   M /abuse/trunk/src/tester.cpp
+   M /abuse/trunk/src/text_gui.cpp
+   M /abuse/trunk/src/transp.cpp
+   M /abuse/trunk/src/trig.cpp
+   M /abuse/trunk/src/unixnfc.cpp
+   M /abuse/trunk/src/username.cpp
+   M /abuse/trunk/src/version.cpp
+   M /abuse/trunk/src/view.cpp
+
+  * Add licensing terms to most C / C++ files (Ref #5).
+
+------------------------------------------------------------------------
+r48 | sam | 2008-03-02 02:01:00 +0000 (Sun, 02 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk
+
+  * Add autom4te.cache to the svn:ignore list.
+
+------------------------------------------------------------------------
+r43 | sam | 2008-03-02 00:58:48 +0000 (Sun, 02 Mar 2008) | 3 lines
+Changed paths:
+   M /abuse/trunk/src/calctrig.cpp
+   M /abuse/trunk/src/include/lisp.hpp
+   M /abuse/trunk/src/include/lisp2.hpp
+   M /abuse/trunk/src/lisp.cpp
+   M /abuse/trunk/src/trig.cpp
+
+  * Fix argument types in lisp_cos(), lisp_sin() and lisp_atan() to avoid
+    overflows. Closes #1 #2 #3.
+
+------------------------------------------------------------------------
+r42 | sam | 2008-03-02 00:17:35 +0000 (Sun, 02 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk
+   M /abuse/trunk/Makefile.am
+   D /abuse/trunk/abuse-sdl.6.in
+   A /abuse/trunk/abuse.6.in (from /abuse/trunk/abuse-sdl.6.in:40)
+   M /abuse/trunk/configure.ac
+   M /abuse/trunk/src
+   M /abuse/trunk/src/Makefile.am
+
+  * Rename everything to "abuse" instead of "abuse-sdl".
+
+------------------------------------------------------------------------
+r41 | sam | 2008-03-02 00:12:38 +0000 (Sun, 02 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk
+   M /abuse/trunk/configure.ac
+   M /abuse/trunk/src/cache.cpp
+   M /abuse/trunk/src/sdlport/setup.cpp
+   M /abuse/trunk/src/setup.cpp
+
+  * Generate a config.h file.
+
+------------------------------------------------------------------------
+r40 | sam | 2008-03-01 23:52:07 +0000 (Sat, 01 Mar 2008) | 4 lines
+Changed paths:
+   M /abuse/trunk/configure.ac
+   M /abuse/trunk/src/dev.cpp
+   M /abuse/trunk/src/imlib/gifread.cpp
+   M /abuse/trunk/src/imlib/jmalloc.cpp
+   M /abuse/trunk/src/imlib/targa.cpp
+   M /abuse/trunk/src/loader2.cpp
+   M /abuse/trunk/src/net/include/tcpip.hpp
+   M /abuse/trunk/src/net/tcpip.cpp
+   M /abuse/trunk/src/objects.cpp
+   M /abuse/trunk/src/property.cpp
+   M /abuse/trunk/src/view.cpp
+
+  * Fix a few more warnings.
+  * Remove -Wshadow from the warnings because it is too verbose for now.
+  * Remove warning flags that have no meaning in C++.
+
+------------------------------------------------------------------------
+r39 | sam | 2008-03-01 23:29:06 +0000 (Sat, 01 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/ability.cpp
+   M /abuse/trunk/src/cache.cpp
+   M /abuse/trunk/src/chars.cpp
+   M /abuse/trunk/src/chat.cpp
+   M /abuse/trunk/src/clisp.cpp
+   M /abuse/trunk/src/compiled.cpp
+   M /abuse/trunk/src/config.cpp
+   M /abuse/trunk/src/console.cpp
+   M /abuse/trunk/src/cop.cpp
+   M /abuse/trunk/src/dev.cpp
+   M /abuse/trunk/src/director.cpp
+   M /abuse/trunk/src/endgame.cpp
+   M /abuse/trunk/src/game.cpp
+   M /abuse/trunk/src/gamma.cpp
+   M /abuse/trunk/src/gui.cpp
+   M /abuse/trunk/src/imlib/filesel.cpp
+   M /abuse/trunk/src/imlib/fonts.cpp
+   M /abuse/trunk/src/imlib/guistat.cpp
+   M /abuse/trunk/src/imlib/image.cpp
+   M /abuse/trunk/src/imlib/include/filesel.hpp
+   M /abuse/trunk/src/imlib/include/fonts.hpp
+   M /abuse/trunk/src/imlib/include/guistat.hpp
+   M /abuse/trunk/src/imlib/include/image.hpp
+   M /abuse/trunk/src/imlib/include/input.hpp
+   M /abuse/trunk/src/imlib/include/jmalloc.hpp
+   M /abuse/trunk/src/imlib/include/jwindow.hpp
+   M /abuse/trunk/src/imlib/include/keys.hpp
+   M /abuse/trunk/src/imlib/include/pcxread.hpp
+   M /abuse/trunk/src/imlib/include/pmenu.hpp
+   M /abuse/trunk/src/imlib/include/sound.hpp
+   M /abuse/trunk/src/imlib/include/specs.hpp
+   M /abuse/trunk/src/imlib/include/status.hpp
+   M /abuse/trunk/src/imlib/include/timage.hpp
+   M /abuse/trunk/src/imlib/input.cpp
+   M /abuse/trunk/src/imlib/jmalloc.cpp
+   M /abuse/trunk/src/imlib/jwindow.cpp
+   M /abuse/trunk/src/imlib/keys.cpp
+   M /abuse/trunk/src/imlib/pcxread.cpp
+   M /abuse/trunk/src/imlib/pmenu.cpp
+   M /abuse/trunk/src/imlib/specs.cpp
+   M /abuse/trunk/src/imlib/status.cpp
+   M /abuse/trunk/src/imlib/timage.cpp
+   M /abuse/trunk/src/include/ability.hpp
+   M /abuse/trunk/src/include/cache.hpp
+   M /abuse/trunk/src/include/chars.hpp
+   M /abuse/trunk/src/include/config.hpp
+   M /abuse/trunk/src/include/console.hpp
+   M /abuse/trunk/src/include/dev.hpp
+   M /abuse/trunk/src/include/extend.hpp
+   M /abuse/trunk/src/include/game.hpp
+   M /abuse/trunk/src/include/gui.hpp
+   M /abuse/trunk/src/include/items.hpp
+   M /abuse/trunk/src/include/language.hpp
+   M /abuse/trunk/src/include/level.hpp
+   M /abuse/trunk/src/include/light.hpp
+   M /abuse/trunk/src/include/lisp.hpp
+   M /abuse/trunk/src/include/lisp2.hpp
+   M /abuse/trunk/src/include/loadgame.hpp
+   M /abuse/trunk/src/include/netcfg.hpp
+   M /abuse/trunk/src/include/nfserver.hpp
+   M /abuse/trunk/src/include/objects.hpp
+   M /abuse/trunk/src/include/property.hpp
+   M /abuse/trunk/src/include/specache.hpp
+   M /abuse/trunk/src/include/view.hpp
+   M /abuse/trunk/src/innet.cpp
+   M /abuse/trunk/src/items.cpp
+   M /abuse/trunk/src/language.cpp
+   M /abuse/trunk/src/level.cpp
+   M /abuse/trunk/src/light.cpp
+   M /abuse/trunk/src/lisp.cpp
+   M /abuse/trunk/src/loader2.cpp
+   M /abuse/trunk/src/loadgame.cpp
+   M /abuse/trunk/src/menu.cpp
+   M /abuse/trunk/src/net/fileman.cpp
+   M /abuse/trunk/src/net/gserver.cpp
+   M /abuse/trunk/src/net/include/fileman.hpp
+   M /abuse/trunk/src/net/include/sock.hpp
+   M /abuse/trunk/src/net/include/tcpip.hpp
+   M /abuse/trunk/src/net/sock.cpp
+   M /abuse/trunk/src/net/tcpip.cpp
+   M /abuse/trunk/src/netcfg.cpp
+   M /abuse/trunk/src/newlight.cpp
+   M /abuse/trunk/src/nfclient.cpp
+   M /abuse/trunk/src/objects.cpp
+   M /abuse/trunk/src/property.cpp
+   M /abuse/trunk/src/scene.cpp
+   M /abuse/trunk/src/sdlport/event.cpp
+   M /abuse/trunk/src/sdlport/setup.cpp
+   M /abuse/trunk/src/sdlport/sound.cpp
+   M /abuse/trunk/src/server2.cpp
+   M /abuse/trunk/src/setup.cpp
+   M /abuse/trunk/src/specache.cpp
+   M /abuse/trunk/src/text_gui.cpp
+   M /abuse/trunk/src/unixnfc.cpp
+   M /abuse/trunk/src/username.cpp
+   M /abuse/trunk/src/version.cpp
+   M /abuse/trunk/src/view.cpp
+
+  * Fix almost 2,000 warnings by using proper "const" keywords where needed.
+
+------------------------------------------------------------------------
+r38 | sam | 2008-03-01 19:49:55 +0000 (Sat, 01 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk
+   M /abuse/trunk/src
+   M /abuse/trunk/src/imlib
+   M /abuse/trunk/src/net
+   M /abuse/trunk/src/sdlport
+
+  * Fix incomplete svn:ignore properties here and there.
+
+------------------------------------------------------------------------
+r37 | sam | 2008-03-01 19:47:57 +0000 (Sat, 01 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/configure.ac
+
+  * Activate shitloads of warnings.
+
+------------------------------------------------------------------------
+r32 | sam | 2008-03-01 14:08:00 +0000 (Sat, 01 Mar 2008) | 6 lines
+Changed paths:
+   M /abuse/trunk
+   M /abuse/trunk/Makefile.am
+   D /abuse/trunk/aclocal.m4
+   A /abuse/trunk/bootstrap
+   D /abuse/trunk/config.guess
+   D /abuse/trunk/config.sub
+   D /abuse/trunk/configure
+   A /abuse/trunk/configure.ac (from /abuse/trunk/configure.in:27)
+   D /abuse/trunk/configure.in
+   D /abuse/trunk/install-sh
+   D /abuse/trunk/ltmain.sh
+   D /abuse/trunk/missing
+   D /abuse/trunk/mkinstalldirs
+   M /abuse/trunk/src
+   M /abuse/trunk/src/imlib
+   M /abuse/trunk/src/net
+   M /abuse/trunk/src/sdlport
+
+  * Reorganised build system:
+    + Renamed configure.in to configure.ac.
+    + Add a bootstrap script.
+    + Put autotools files in .auto/.
+    + svn:ignore generated files.
+
+------------------------------------------------------------------------
+r31 | sam | 2008-03-01 13:58:40 +0000 (Sat, 01 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/light.cpp
+
+  * Fix invalid file pointer usage, thanks to Kees Cook.
+
+------------------------------------------------------------------------
+r30 | sam | 2008-03-01 13:58:14 +0000 (Sat, 01 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/include/stack.hpp
+
+  * Fix heap corruption and resulting at-exit crash, thanks to Kees Cook.
+
+------------------------------------------------------------------------
+r29 | sam | 2008-03-01 13:56:07 +0000 (Sat, 01 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/version.cpp
+
+  * Fix header inclusion order in version.cpp, thanks to Kees Cook.
+
+------------------------------------------------------------------------
+r28 | sam | 2008-03-01 13:55:00 +0000 (Sat, 01 Mar 2008) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/include/compiled.hpp
+
+  * Fix missing long -> int32_t change from an old patch by Maximiliano Curia.
+
+------------------------------------------------------------------------
+r23 | sam | 2005-11-11 12:05:33 +0000 (Fri, 11 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/sdlport/event.cpp
+
+  * Closing the window quits the game.
+
+------------------------------------------------------------------------
+r22 | sam | 2005-11-10 23:41:50 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   D /abuse/trunk/Makefile.in
+   D /abuse/trunk/src/Makefile.in
+   D /abuse/trunk/src/imlib/Makefile.in
+   D /abuse/trunk/src/net/Makefile.in
+   D /abuse/trunk/src/sdlport/Makefile.in
+
+  * removed useless stuff from SVN.
+
+------------------------------------------------------------------------
+r21 | sam | 2005-11-10 22:58:24 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   D /abuse/trunk/src/Makefile.am.bak
+   D /abuse/trunk/src/imlib/Makefile.am.bak
+   D /abuse/trunk/src/sdlport/Makefile.am.bak
+
+  * removed useless files
+
+------------------------------------------------------------------------
+r20 | sam | 2005-11-10 22:50:40 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/include/lcache.hpp
+   M /abuse/trunk/src/lisp.cpp
+   M /abuse/trunk/src/lisp_gc.cpp
+
+  * disabled GC, caching system and custom malloc.
+
+------------------------------------------------------------------------
+r19 | sam | 2005-11-10 22:01:43 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/imlib/image.cpp
+   M /abuse/trunk/src/imlib/include/image.hpp
+   M /abuse/trunk/src/imlib/readwav.cpp
+   M /abuse/trunk/src/include/bus_type.hpp
+   M /abuse/trunk/src/include/lisp.hpp
+   M /abuse/trunk/src/lcache.cpp
+   M /abuse/trunk/src/lisp.cpp
+
+  * cosmetic: s/allign/align/
+
+------------------------------------------------------------------------
+r18 | sam | 2005-11-10 20:44:53 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/include/objects.hpp
+   M /abuse/trunk/src/level.cpp
+   M /abuse/trunk/src/objects.cpp
+
+  * renamed RC_C RC_S RC_L to RC_8 RC_16 RC_32
+
+------------------------------------------------------------------------
+r17 | sam | 2005-11-10 20:41:13 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/cache.cpp
+   M /abuse/trunk/src/clisp.cpp
+   M /abuse/trunk/src/compiled.cpp
+   M /abuse/trunk/src/cop.cpp
+   M /abuse/trunk/src/crc.cpp
+   M /abuse/trunk/src/demo.cpp
+   M /abuse/trunk/src/dev.cpp
+   M /abuse/trunk/src/director.cpp
+   M /abuse/trunk/src/endgame.cpp
+   M /abuse/trunk/src/extend.cpp
+   M /abuse/trunk/src/game.cpp
+   M /abuse/trunk/src/gamma.cpp
+   M /abuse/trunk/src/go.cpp
+   M /abuse/trunk/src/imlib/filter.cpp
+   M /abuse/trunk/src/imlib/gifread.cpp
+   M /abuse/trunk/src/imlib/glread.cpp
+   M /abuse/trunk/src/imlib/image.cpp
+   M /abuse/trunk/src/imlib/include/image.hpp
+   M /abuse/trunk/src/imlib/include/jmalloc.hpp
+   M /abuse/trunk/src/imlib/include/jwindow.hpp
+   M /abuse/trunk/src/imlib/include/macs.hpp
+   M /abuse/trunk/src/imlib/include/packet.hpp
+   M /abuse/trunk/src/imlib/include/scroller.hpp
+   M /abuse/trunk/src/imlib/include/specs.hpp
+   M /abuse/trunk/src/imlib/include/system.h
+   M /abuse/trunk/src/imlib/include/timage.hpp
+   M /abuse/trunk/src/imlib/jmalloc.cpp
+   M /abuse/trunk/src/imlib/lbmread.cpp
+   M /abuse/trunk/src/imlib/mdlread.cpp
+   M /abuse/trunk/src/imlib/morph.cpp
+   M /abuse/trunk/src/imlib/packet.cpp
+   M /abuse/trunk/src/imlib/palette.cpp
+   M /abuse/trunk/src/imlib/pcxread.cpp
+   M /abuse/trunk/src/imlib/readwav.cpp
+   M /abuse/trunk/src/imlib/readxwd.cpp
+   M /abuse/trunk/src/imlib/scroller.cpp
+   M /abuse/trunk/src/imlib/specs.cpp
+   M /abuse/trunk/src/imlib/targa.cpp
+   M /abuse/trunk/src/imlib/timage.cpp
+   M /abuse/trunk/src/imlib/xwdread.cpp
+   M /abuse/trunk/src/include/cache.hpp
+   M /abuse/trunk/src/include/compiled.hpp
+   M /abuse/trunk/src/include/crc.hpp
+   M /abuse/trunk/src/include/extend.hpp
+   M /abuse/trunk/src/include/fakelib.hpp
+   M /abuse/trunk/src/include/game.hpp
+   M /abuse/trunk/src/include/items.hpp
+   M /abuse/trunk/src/include/level.hpp
+   M /abuse/trunk/src/include/light.hpp
+   M /abuse/trunk/src/include/netface.hpp
+   M /abuse/trunk/src/include/particle.hpp
+   M /abuse/trunk/src/include/transp.hpp
+   M /abuse/trunk/src/include/view.hpp
+   M /abuse/trunk/src/innet.cpp
+   M /abuse/trunk/src/items.cpp
+   M /abuse/trunk/src/lcache.cpp
+   M /abuse/trunk/src/level.cpp
+   M /abuse/trunk/src/light.cpp
+   M /abuse/trunk/src/lisp.cpp
+   M /abuse/trunk/src/lisp_gc.cpp
+   M /abuse/trunk/src/loader2.cpp
+   M /abuse/trunk/src/net/engine.cpp
+   M /abuse/trunk/src/net/fileman.cpp
+   M /abuse/trunk/src/net/gclient.cpp
+   M /abuse/trunk/src/net/gserver.cpp
+   M /abuse/trunk/src/net/include/endian.hpp
+   M /abuse/trunk/src/net/include/fileman.hpp
+   M /abuse/trunk/src/net/include/indian.hpp
+   M /abuse/trunk/src/net/include/ipx.hpp
+   M /abuse/trunk/src/net/netdrv.cpp
+   M /abuse/trunk/src/net/netfile.cpp
+   M /abuse/trunk/src/netcfg.cpp
+   M /abuse/trunk/src/newlight.cpp
+   M /abuse/trunk/src/nfclient.cpp
+   M /abuse/trunk/src/old.nfclient.cpp
+   M /abuse/trunk/src/old.nfserver.cpp
+   M /abuse/trunk/src/old_earth_menu.cpp
+   M /abuse/trunk/src/old_server.cpp
+   M /abuse/trunk/src/particle.cpp
+   M /abuse/trunk/src/profile.cpp
+   M /abuse/trunk/src/server2.cpp
+   M /abuse/trunk/src/sndserver.cpp
+   M /abuse/trunk/src/specache.cpp
+   M /abuse/trunk/src/transp.cpp
+   M /abuse/trunk/src/unixnfc.cpp
+   M /abuse/trunk/src/version.cpp
+   M /abuse/trunk/src/view.cpp
+
+  * absolute shitloads of 64 bit fixes.
+
+------------------------------------------------------------------------
+r16 | sam | 2005-11-10 19:08:09 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/ant.cpp
+   M /abuse/trunk/src/clisp.cpp
+   M /abuse/trunk/src/collide.cpp
+   M /abuse/trunk/src/cop.cpp
+   M /abuse/trunk/src/demo.cpp
+   M /abuse/trunk/src/dev.cpp
+   M /abuse/trunk/src/game.cpp
+   M /abuse/trunk/src/include/demo.hpp
+   M /abuse/trunk/src/include/dev.hpp
+   M /abuse/trunk/src/include/extend.hpp
+   M /abuse/trunk/src/include/game.hpp
+   M /abuse/trunk/src/include/intsect.hpp
+   M /abuse/trunk/src/include/level.hpp
+   M /abuse/trunk/src/include/light.hpp
+   M /abuse/trunk/src/include/lisp.hpp
+   M /abuse/trunk/src/include/objects.hpp
+   M /abuse/trunk/src/include/view.hpp
+   M /abuse/trunk/src/intsect.cpp
+   M /abuse/trunk/src/level.cpp
+   M /abuse/trunk/src/light.cpp
+   M /abuse/trunk/src/lisp.cpp
+   M /abuse/trunk/src/morpher.cpp
+   M /abuse/trunk/src/objects.cpp
+   M /abuse/trunk/src/view.cpp
+
+  * shitloads of long -> int32_t changes for 64 bit safety.
+
+------------------------------------------------------------------------
+r15 | sam | 2005-11-10 19:04:02 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/imlib/include/palette.hpp
+   M /abuse/trunk/src/imlib/palette.cpp
+
+  * fixed 64 bit issues in palette::getquad and palette::fade_to.
+
+------------------------------------------------------------------------
+r14 | sam | 2005-11-10 19:02:54 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/imlib/include/status.hpp
+   M /abuse/trunk/src/imlib/include/visobj.hpp
+
+  * fix C++ warning with classes that have virtual functions but not virtual dtor.
+
+------------------------------------------------------------------------
+r13 | sam | 2005-11-10 18:17:17 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/net/gclient.cpp
+
+  * fixed bad format string
+
+------------------------------------------------------------------------
+r12 | sam | 2005-11-10 16:31:21 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   D /abuse/trunk/libtool
+
+  * don't manage libtool using SVN.
+
+------------------------------------------------------------------------
+r11 | sam | 2005-11-10 16:28:36 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/include/lisp.hpp
+   M /abuse/trunk/src/lisp.cpp
+   M /abuse/trunk/src/sdlport/sound.cpp
+
+  * fixed 64 bit issues here and there.
+
+------------------------------------------------------------------------
+r10 | sam | 2005-11-10 16:24:19 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/cache.cpp
+
+  * cosmetic
+
+------------------------------------------------------------------------
+r9 | sam | 2005-11-10 16:15:07 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/game.cpp
+   M /abuse/trunk/src/loader2.cpp
+
+  * minor cosmetic changes
+
+------------------------------------------------------------------------
+r8 | sam | 2005-11-10 15:50:04 +0000 (Thu, 10 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/imlib/jmalloc.cpp
+   M /abuse/trunk/src/light.cpp
+
+  * fixed buffer overflows.
+
+------------------------------------------------------------------------
+r7 | sam | 2005-11-06 18:07:59 +0000 (Sun, 06 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/imlib/include/specs.hpp
+   M /abuse/trunk/src/imlib/include/system.h
+   M /abuse/trunk/src/imlib/jmalloc.cpp
+   M /abuse/trunk/src/imlib/specs.cpp
+
+  * fixed int size issues here and there
+
+------------------------------------------------------------------------
+r6 | sam | 2005-11-06 17:27:27 +0000 (Sun, 06 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/sdlport/setup.cpp
+
+  * fixed buffer overflow
+
+------------------------------------------------------------------------
+r5 | sam | 2005-11-06 17:27:09 +0000 (Sun, 06 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/src/net/include/sock.hpp
+
+  * fixed a warning
+
+------------------------------------------------------------------------
+r4 | sam | 2005-11-06 10:39:38 +0000 (Sun, 06 Nov 2005) | 2 lines
+Changed paths:
+   M /abuse/trunk/config.guess
+   M /abuse/trunk/config.sub
+   M /abuse/trunk/libtool
+   M /abuse/trunk/src/chars.cpp
+   M /abuse/trunk/src/collide.cpp
+   M /abuse/trunk/src/cop.cpp
+   M /abuse/trunk/src/demo.cpp
+   M /abuse/trunk/src/dev.cpp
+   M /abuse/trunk/src/game.cpp
+   M /abuse/trunk/src/gamma.cpp
+   M /abuse/trunk/src/imlib/dprint.cpp
+   M /abuse/trunk/src/imlib/filesel.cpp
+   M /abuse/trunk/src/imlib/fonts.cpp
+   M /abuse/trunk/src/imlib/gifread.cpp
+   M /abuse/trunk/src/imlib/include.cpp
+   M /abuse/trunk/src/imlib/input.cpp
+   M /abuse/trunk/src/imlib/jmalloc.cpp
+   M /abuse/trunk/src/imlib/jwindow.cpp
+   M /abuse/trunk/src/imlib/keys.cpp
+   M /abuse/trunk/src/imlib/lbmread.cpp
+   M /abuse/trunk/src/imlib/palette.cpp
+   M /abuse/trunk/src/imlib/pmenu.cpp
+   M /abuse/trunk/src/imlib/scroller.cpp
+   M /abuse/trunk/src/imlib/specs.cpp
+   M /abuse/trunk/src/imlib/targa.cpp
+   M /abuse/trunk/src/imlib/xwdread.cpp
+   M /abuse/trunk/src/innet.cpp
+   M /abuse/trunk/src/lcache.cpp
+   M /abuse/trunk/src/light.cpp
+   M /abuse/trunk/src/lisp.cpp
+   M /abuse/trunk/src/lisp_gc.cpp
+   M /abuse/trunk/src/loader2.cpp
+   M /abuse/trunk/src/loadgame.cpp
+   M /abuse/trunk/src/net/gserver.cpp
+   M /abuse/trunk/src/net/include/fileman.hpp
+   M /abuse/trunk/src/net/include/gserver.hpp
+   M /abuse/trunk/src/net/include/tcpip.hpp
+   M /abuse/trunk/src/net/tcpip.cpp
+   M /abuse/trunk/src/netcfg.cpp
+   M /abuse/trunk/src/nfclient.cpp
+   M /abuse/trunk/src/objects.cpp
+   M /abuse/trunk/src/sdlport/event.cpp
+   M /abuse/trunk/src/sdlport/setup.cpp
+   M /abuse/trunk/src/sdlport/sound.cpp
+   M /abuse/trunk/src/sdlport/video.cpp
+   M /abuse/trunk/src/unixnfc.cpp
+
+  * debian patches
+
+------------------------------------------------------------------------
+r2 | sam | 2005-11-05 14:38:39 +0000 (Sat, 05 Nov 2005) | 2 lines
+Changed paths:
+   A /abuse/trunk/AUTHORS
+   A /abuse/trunk/COPYING
+   A /abuse/trunk/ChangeLog
+   A /abuse/trunk/INSTALL
+   A /abuse/trunk/Makefile.am
+   A /abuse/trunk/Makefile.in
+   A /abuse/trunk/NEWS
+   A /abuse/trunk/README
+   A /abuse/trunk/TODO
+   A /abuse/trunk/abuse-sdl.6.in
+   A /abuse/trunk/abuse.bmp
+   A /abuse/trunk/abuse.lsp
+   A /abuse/trunk/abuse.png
+   A /abuse/trunk/acinclude.m4
+   A /abuse/trunk/aclocal.m4
+   A /abuse/trunk/config.guess
+   A /abuse/trunk/config.sub
+   A /abuse/trunk/configure
+   A /abuse/trunk/configure.in
+   A /abuse/trunk/gamma.lsp
+   A /abuse/trunk/install-sh
+   A /abuse/trunk/libtool
+   A /abuse/trunk/ltmain.sh
+   A /abuse/trunk/missing
+   A /abuse/trunk/mkinstalldirs
+   A /abuse/trunk/osx
+   A /abuse/trunk/osx/SDLMain.m
+   A /abuse/trunk/osx/SDLMain.nib
+   A /abuse/trunk/osx/SDLMain.nib/classes.nib
+   A /abuse/trunk/osx/SDLMain.nib/info.nib
+   A /abuse/trunk/osx/SDLMain.nib/objects.nib
+   A /abuse/trunk/osx/abuse_sdl.pbproj
+   A /abuse/trunk/osx/abuse_sdl.pbproj/project.pbxproj
+   A /abuse/trunk/osx/build
+   A /abuse/trunk/osx/build/intermediates
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex/categories.pbxbtree
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex/decls.pbxbtree
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex/files.pbxbtree
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex/imports.pbxbtree
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex/pbxindex.header
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex/protocols.pbxbtree
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex/refs.pbxbtree
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex/strings.pbxstrings
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex/strings.pbxstrings/control
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex/strings.pbxstrings/strings
+   A /abuse/trunk/osx/build/intermediates/abuse_sdl.pbxindex/subclasses.pbxbtree
+   A /abuse/trunk/src
+   A /abuse/trunk/src/Makefile.am
+   A /abuse/trunk/src/Makefile.am.bak
+   A /abuse/trunk/src/Makefile.in
+   A /abuse/trunk/src/ability.cpp
+   A /abuse/trunk/src/ant.cpp
+   A /abuse/trunk/src/automap.cpp
+   A /abuse/trunk/src/cache.cpp
+   A /abuse/trunk/src/calctrig.cpp
+   A /abuse/trunk/src/chars.cpp
+   A /abuse/trunk/src/chat.cpp
+   A /abuse/trunk/src/chmorph.cpp
+   A /abuse/trunk/src/client.cpp
+   A /abuse/trunk/src/clisp.cpp
+   A /abuse/trunk/src/collide.cpp
+   A /abuse/trunk/src/compiled.cpp
+   A /abuse/trunk/src/config.cpp
+   A /abuse/trunk/src/console.cpp
+   A /abuse/trunk/src/control.cpp
+   A /abuse/trunk/src/cop.cpp
+   A /abuse/trunk/src/crc.cpp
+   A /abuse/trunk/src/demo.cpp
+   A /abuse/trunk/src/dev.cpp
+   A /abuse/trunk/src/devsel.cpp
+   A /abuse/trunk/src/director.cpp
+   A /abuse/trunk/src/dosnfc.cpp
+   A /abuse/trunk/src/endgame.cpp
+   A /abuse/trunk/src/extend.cpp
+   A /abuse/trunk/src/fnt6x13.cpp
+   A /abuse/trunk/src/game.cpp
+   A /abuse/trunk/src/gamma.cpp
+   A /abuse/trunk/src/go.cpp
+   A /abuse/trunk/src/gui.cpp
+   A /abuse/trunk/src/help.cpp
+   A /abuse/trunk/src/human.cpp
+   A /abuse/trunk/src/imlib
+   A /abuse/trunk/src/imlib/Makefile.am
+   A /abuse/trunk/src/imlib/Makefile.am.bak
+   A /abuse/trunk/src/imlib/Makefile.in
+   A /abuse/trunk/src/imlib/convert.cpp
+   A /abuse/trunk/src/imlib/decoder.cpp
+   A /abuse/trunk/src/imlib/dprint.cpp
+   A /abuse/trunk/src/imlib/filesel.cpp
+   A /abuse/trunk/src/imlib/filter.cpp
+   A /abuse/trunk/src/imlib/fonts.cpp
+   A /abuse/trunk/src/imlib/gifread.cpp
+   A /abuse/trunk/src/imlib/globals.cpp
+   A /abuse/trunk/src/imlib/glread.cpp
+   A /abuse/trunk/src/imlib/glview.cpp
+   A /abuse/trunk/src/imlib/guistat.cpp
+   A /abuse/trunk/src/imlib/image-24.cpp
+   A /abuse/trunk/src/imlib/image.cpp
+   A /abuse/trunk/src/imlib/image24.cpp
+   A /abuse/trunk/src/imlib/include
+   A /abuse/trunk/src/imlib/include/bitmap.h
+   A /abuse/trunk/src/imlib/include/conio.h
+   A /abuse/trunk/src/imlib/include/dir.h
+   A /abuse/trunk/src/imlib/include/dos.h
+   A /abuse/trunk/src/imlib/include/doscall.hpp
+   A /abuse/trunk/src/imlib/include/dprint.hpp
+   A /abuse/trunk/src/imlib/include/emm.hpp
+   A /abuse/trunk/src/imlib/include/errs.h
+   A /abuse/trunk/src/imlib/include/event.hpp
+   A /abuse/trunk/src/imlib/include/exitproc.hpp
+   A /abuse/trunk/src/imlib/include/filesel.hpp
+   A /abuse/trunk/src/imlib/include/filter.hpp
+   A /abuse/trunk/src/imlib/include/fonts.hpp
+   A /abuse/trunk/src/imlib/include/gifdecod.hpp
+   A /abuse/trunk/src/imlib/include/gifread.hpp
+   A /abuse/trunk/src/imlib/include/globals.hpp
+   A /abuse/trunk/src/imlib/include/glread.hpp
+   A /abuse/trunk/src/imlib/include/guistat.hpp
+   A /abuse/trunk/src/imlib/include/image.hpp
+   A /abuse/trunk/src/imlib/include/image24.hpp
+   A /abuse/trunk/src/imlib/include/include.hpp
+   A /abuse/trunk/src/imlib/include/input.hpp
+   A /abuse/trunk/src/imlib/include/jdir.hpp
+   A /abuse/trunk/src/imlib/include/jmalloc.hpp
+   A /abuse/trunk/src/imlib/include/jnet.hpp
+   A /abuse/trunk/src/imlib/include/joy.hpp
+   A /abuse/trunk/src/imlib/include/jrand.hpp
+   A /abuse/trunk/src/imlib/include/jwindow.hpp
+   A /abuse/trunk/src/imlib/include/keys.hpp
+   A /abuse/trunk/src/imlib/include/lbmread.hpp
+   A /abuse/trunk/src/imlib/include/linked.hpp
+   A /abuse/trunk/src/imlib/include/loader.hpp
+   A /abuse/trunk/src/imlib/include/macs.hpp
+   A /abuse/trunk/src/imlib/include/main.hpp
+   A /abuse/trunk/src/imlib/include/mdlread.hpp
+   A /abuse/trunk/src/imlib/include/monoprnt.hpp
+   A /abuse/trunk/src/imlib/include/morph.h
+   A /abuse/trunk/src/imlib/include/morph.hpp
+   A /abuse/trunk/src/imlib/include/mouse.hpp
+   A /abuse/trunk/src/imlib/include/packet.hpp
+   A /abuse/trunk/src/imlib/include/palette.hpp
+   A /abuse/trunk/src/imlib/include/pcxread.hpp
+   A /abuse/trunk/src/imlib/include/pmenu.hpp
+   A /abuse/trunk/src/imlib/include/ppmread.hpp
+   A /abuse/trunk/src/imlib/include/readwav.hpp
+   A /abuse/trunk/src/imlib/include/scroller.hpp
+   A /abuse/trunk/src/imlib/include/sdriver.hpp
+   A /abuse/trunk/src/imlib/include/sound.hpp
+   A /abuse/trunk/src/imlib/include/specs.hpp
+   A /abuse/trunk/src/imlib/include/sprite.hpp
+   A /abuse/trunk/src/imlib/include/status.hpp
+   A /abuse/trunk/src/imlib/include/std.h
+   A /abuse/trunk/src/imlib/include/supmorph.hpp
+   A /abuse/trunk/src/imlib/include/system.h
+   A /abuse/trunk/src/imlib/include/targa.hpp
+   A /abuse/trunk/src/imlib/include/texture.hpp
+   A /abuse/trunk/src/imlib/include/timage.hpp
+   A /abuse/trunk/src/imlib/include/timer.hpp
+   A /abuse/trunk/src/imlib/include/timing.hpp
+   A /abuse/trunk/src/imlib/include/tools.hpp
+   A /abuse/trunk/src/imlib/include/video.hpp
+   A /abuse/trunk/src/imlib/include/visobj.hpp
+   A /abuse/trunk/src/imlib/include/xinclude.h
+   A /abuse/trunk/src/imlib/include/xwdread.hpp
+   A /abuse/trunk/src/imlib/include.cpp
+   A /abuse/trunk/src/imlib/input.cpp
+   A /abuse/trunk/src/imlib/jmalloc.cpp
+   A /abuse/trunk/src/imlib/jrand.cpp
+   A /abuse/trunk/src/imlib/jwindow.cpp
+   A /abuse/trunk/src/imlib/keys.cpp
+   A /abuse/trunk/src/imlib/lbmread.cpp
+   A /abuse/trunk/src/imlib/linked.cpp
+   A /abuse/trunk/src/imlib/loader.cpp
+   A /abuse/trunk/src/imlib/mdlread.cpp
+   A /abuse/trunk/src/imlib/morph.cpp
+   A /abuse/trunk/src/imlib/packet.cpp
+   A /abuse/trunk/src/imlib/palette.cpp
+   A /abuse/trunk/src/imlib/pcxread.cpp
+   A /abuse/trunk/src/imlib/pmenu.cpp
+   A /abuse/trunk/src/imlib/ppmread.cpp
+   A /abuse/trunk/src/imlib/readwav.cpp
+   A /abuse/trunk/src/imlib/readxwd.cpp
+   A /abuse/trunk/src/imlib/scroller.cpp
+   A /abuse/trunk/src/imlib/specs.cpp
+   A /abuse/trunk/src/imlib/sprite.cpp
+   A /abuse/trunk/src/imlib/status.cpp
+   A /abuse/trunk/src/imlib/supmorph.cpp
+   A /abuse/trunk/src/imlib/targa.cpp
+   A /abuse/trunk/src/imlib/texture.cpp
+   A /abuse/trunk/src/imlib/timage.cpp
+   A /abuse/trunk/src/imlib/timer.cpp
+   A /abuse/trunk/src/imlib/tools.cpp
+   A /abuse/trunk/src/imlib/tree.cpp
+   A /abuse/trunk/src/imlib/unpackgl.cpp
+   A /abuse/trunk/src/imlib/visobj.cpp
+   A /abuse/trunk/src/imlib/wildargv.cpp
+   A /abuse/trunk/src/imlib/xwdread.cpp
+   A /abuse/trunk/src/include
+   A /abuse/trunk/src/include/ability.hpp
+   A /abuse/trunk/src/include/ant.hpp
+   A /abuse/trunk/src/include/automap.hpp
+   A /abuse/trunk/src/include/bus_type.hpp
+   A /abuse/trunk/src/include/cache.hpp
+   A /abuse/trunk/src/include/chars.hpp
+   A /abuse/trunk/src/include/chat.hpp
+   A /abuse/trunk/src/include/chmorph.hpp
+   A /abuse/trunk/src/include/client.hpp
+   A /abuse/trunk/src/include/clisp.hpp
+   A /abuse/trunk/src/include/compiled.hpp
+   A /abuse/trunk/src/include/config.hpp
+   A /abuse/trunk/src/include/console.hpp
+   A /abuse/trunk/src/include/control.hpp
+   A /abuse/trunk/src/include/cop.hpp
+   A /abuse/trunk/src/include/crc.hpp
+   A /abuse/trunk/src/include/demo.hpp
+   A /abuse/trunk/src/include/dev.hpp
+   A /abuse/trunk/src/include/devsel.hpp
+   A /abuse/trunk/src/include/director.hpp
+   A /abuse/trunk/src/include/extend.hpp
+   A /abuse/trunk/src/include/fakelib.hpp
+   A /abuse/trunk/src/include/game.hpp
+   A /abuse/trunk/src/include/gamma.hpp
+   A /abuse/trunk/src/include/go.hpp
+   A /abuse/trunk/src/include/gui.hpp
+   A /abuse/trunk/src/include/help.hpp
+   A /abuse/trunk/src/include/human.hpp
+   A /abuse/trunk/src/include/id.hpp
+   A /abuse/trunk/src/include/intsect.hpp
+   A /abuse/trunk/src/include/isllist.hpp
+   A /abuse/trunk/src/include/isllist_bak.hpp
+   A /abuse/trunk/src/include/items.hpp
+   A /abuse/trunk/src/include/language.hpp
+   A /abuse/trunk/src/include/laser.hpp
+   A /abuse/trunk/src/include/lcache.hpp
+   A /abuse/trunk/src/include/lcaller.hpp
+   A /abuse/trunk/src/include/level.hpp
+   A /abuse/trunk/src/include/light.hpp
+   A /abuse/trunk/src/include/lisp.hpp
+   A /abuse/trunk/src/include/lisp2.hpp
+   A /abuse/trunk/src/include/lisp_gc.hpp
+   A /abuse/trunk/src/include/lisp_opt.hpp
+   A /abuse/trunk/src/include/lmenu.hpp
+   A /abuse/trunk/src/include/loader2.hpp
+   A /abuse/trunk/src/include/loadgame.hpp
+   A /abuse/trunk/src/include/menu.hpp
+   A /abuse/trunk/src/include/morpher.hpp
+   A /abuse/trunk/src/include/netcfg.hpp
+   A /abuse/trunk/src/include/netface.hpp
+   A /abuse/trunk/src/include/nfclient.hpp
+   A /abuse/trunk/src/include/nfserver.hpp
+   A /abuse/trunk/src/include/objects.hpp
+   A /abuse/trunk/src/include/parse.hpp
+   A /abuse/trunk/src/include/particle.hpp
+   A /abuse/trunk/src/include/points.hpp
+   A /abuse/trunk/src/include/profile.hpp
+   A /abuse/trunk/src/include/property.hpp
+   A /abuse/trunk/src/include/ramfile.hpp
+   A /abuse/trunk/src/include/sbar.hpp
+   A /abuse/trunk/src/include/scene.hpp
+   A /abuse/trunk/src/include/seq.hpp
+   A /abuse/trunk/src/include/server2.hpp
+   A /abuse/trunk/src/include/specache.hpp
+   A /abuse/trunk/src/include/stack.hpp
+   A /abuse/trunk/src/include/text_gui.hpp
+   A /abuse/trunk/src/include/tiles.hpp
+   A /abuse/trunk/src/include/transp.hpp
+   A /abuse/trunk/src/include/view.hpp
+   A /abuse/trunk/src/innet.cpp
+   A /abuse/trunk/src/install.cpp
+   A /abuse/trunk/src/intsect.cpp
+   A /abuse/trunk/src/items.cpp
+   A /abuse/trunk/src/keydrv.cpp
+   A /abuse/trunk/src/keytest.cpp
+   A /abuse/trunk/src/language.cpp
+   A /abuse/trunk/src/lcache.cpp
+   A /abuse/trunk/src/lcache2.cpp
+   A /abuse/trunk/src/letters.cpp
+   A /abuse/trunk/src/level.cpp
+   A /abuse/trunk/src/light.cpp
+   A /abuse/trunk/src/lisp.cpp
+   A /abuse/trunk/src/lisp_gc.cpp
+   A /abuse/trunk/src/lisp_mac.cpp
+   A /abuse/trunk/src/lisp_opt.cpp
+   A /abuse/trunk/src/loader2.cpp
+   A /abuse/trunk/src/loadgame.cpp
+   A /abuse/trunk/src/ltree.cpp
+   A /abuse/trunk/src/maker.cpp
+   A /abuse/trunk/src/menu.cpp
+   A /abuse/trunk/src/morpher.cpp
+   A /abuse/trunk/src/net
+   A /abuse/trunk/src/net/Makefile.am
+   A /abuse/trunk/src/net/Makefile.in
+   A /abuse/trunk/src/net/engine.cpp
+   A /abuse/trunk/src/net/fileman.cpp
+   A /abuse/trunk/src/net/gclient.cpp
+   A /abuse/trunk/src/net/gserver.cpp
+   A /abuse/trunk/src/net/include
+   A /abuse/trunk/src/net/include/endian.hpp
+   A /abuse/trunk/src/net/include/engine.hpp
+   A /abuse/trunk/src/net/include/fileman.hpp
+   A /abuse/trunk/src/net/include/gclient.hpp
+   A /abuse/trunk/src/net/include/ghandler.hpp
+   A /abuse/trunk/src/net/include/gserver.hpp
+   A /abuse/trunk/src/net/include/indian.hpp
+   A /abuse/trunk/src/net/include/ipx.hpp
+   A /abuse/trunk/src/net/include/netdrv.hpp
+   A /abuse/trunk/src/net/include/netfile.hpp
+   A /abuse/trunk/src/net/include/sock.hpp
+   A /abuse/trunk/src/net/include/tcpip.hpp
+   A /abuse/trunk/src/net/include/undrv.hpp
+   A /abuse/trunk/src/net/netdrv.cpp
+   A /abuse/trunk/src/net/netfile.cpp
+   A /abuse/trunk/src/net/sock.cpp
+   A /abuse/trunk/src/net/tcpip.cpp
+   A /abuse/trunk/src/net/undrv.cpp
+   A /abuse/trunk/src/netcfg.cpp
+   A /abuse/trunk/src/newlight.cpp
+   A /abuse/trunk/src/nfclient.cpp
+   A /abuse/trunk/src/objects.cpp
+   A /abuse/trunk/src/old.nfclient.cpp
+   A /abuse/trunk/src/old.nfserver.cpp
+   A /abuse/trunk/src/old_earth_menu.cpp
+   A /abuse/trunk/src/old_server.cpp
+   A /abuse/trunk/src/oldhelp.cpp
+   A /abuse/trunk/src/parse.cpp
+   A /abuse/trunk/src/particle.cpp
+   A /abuse/trunk/src/pcxscale.cpp
+   A /abuse/trunk/src/points.cpp
+   A /abuse/trunk/src/profile.cpp
+   A /abuse/trunk/src/property.cpp
+   A /abuse/trunk/src/ramfile.cpp
+   A /abuse/trunk/src/remap.cpp
+   A /abuse/trunk/src/scene.cpp
+   A /abuse/trunk/src/sdlport
+   A /abuse/trunk/src/sdlport/Makefile.am
+   A /abuse/trunk/src/sdlport/Makefile.am.bak
+   A /abuse/trunk/src/sdlport/Makefile.in
+   A /abuse/trunk/src/sdlport/event.cpp
+   A /abuse/trunk/src/sdlport/jdir.cpp
+   A /abuse/trunk/src/sdlport/jnet.cpp
+   A /abuse/trunk/src/sdlport/joystick.cpp
+   A /abuse/trunk/src/sdlport/mouse.cpp
+   A /abuse/trunk/src/sdlport/setup.cpp
+   A /abuse/trunk/src/sdlport/setup.h
+   A /abuse/trunk/src/sdlport/sound.cpp
+   A /abuse/trunk/src/sdlport/timing.cpp
+   A /abuse/trunk/src/sdlport/video-overlay.cpp
+   A /abuse/trunk/src/sdlport/video.cpp
+   A /abuse/trunk/src/sensor.cpp
+   A /abuse/trunk/src/seq.cpp
+   A /abuse/trunk/src/server2.cpp
+   A /abuse/trunk/src/setup.cpp
+   A /abuse/trunk/src/smallfnt.cpp
+   A /abuse/trunk/src/smoosh.cpp
+   A /abuse/trunk/src/sndserver.cpp
+   A /abuse/trunk/src/specache.cpp
+   A /abuse/trunk/src/stack.cpp
+   A /abuse/trunk/src/statbar.cpp
+   A /abuse/trunk/src/status.cpp
+   A /abuse/trunk/src/test2.cpp
+   A /abuse/trunk/src/tester.cpp
+   A /abuse/trunk/src/text_gui.cpp
+   A /abuse/trunk/src/transp.cpp
+   A /abuse/trunk/src/trig.cpp
+   A /abuse/trunk/src/unixnfc.cpp
+   A /abuse/trunk/src/username.cpp
+   A /abuse/trunk/src/version.cpp
+   A /abuse/trunk/src/view.cpp
+
+  * imported original 0.7.0 tarball
+
+------------------------------------------------------------------------
+r1 | sam | 2005-11-05 14:38:39 +0000 (Sat, 05 Nov 2005) | 2 lines
+Changed paths:
+   A /abuse
+   A /abuse/branches
+   A /abuse/tags
+   A /abuse/trunk
+
+  * Creating repository.
+
+------------------------------------------------------------------------
