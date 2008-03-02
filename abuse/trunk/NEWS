@@ -1,3 +1,9 @@
+02-03-2008
+	- Abuse-SDL 0.7.1 released.
+	- Countless bugfixes (memory leaks, alignment issues, 64-bit
+		portability, buffer overflows, uninitialised data).
+	- New webpage.
+
 15-12-2002
 	- Abuse-SDL 0.7.0 released.
 	- Added OpenGL support. (Joris Beugnies)

@@ -1,4 +1,4 @@
-Abuse-SDL 0.7.0 README
+Abuse-SDL 0.7.1 README
 ----------------------
 
 ----
@@ -60,7 +60,7 @@ Abuse-SDL has the following requirements:
 
 If Abuse-SDL has been installed properly, the command:
 
-  abuse.sdl
+  abuse
 
 will start the game.
 
@@ -176,8 +176,8 @@ Go to Jonathan Clark, Dave Taylor and the rest of the Crack Dot Com team for
 making the best 2D platform shooter ever, and then releasing the code that
 makes Abuse-SDL possible.
 
-Also, thanks go to Jonathan Clark for allowing me to distribute the original
-datafiles with Abuse-SDL.
+Also, thanks go to Jonathan Clark for allowing Anthony to distribute the
+original datafiles with Abuse-SDL.
 
 Thanks also to everyone who has contributed ideas, bug reports and patches.
 See the AUTHORS file for details.
@@ -186,13 +186,13 @@ See the AUTHORS file for details.
 9. FEEDBACK
 
 If you have any questions, comments or constructive criticism,
-my email address is:
+Anthony's email address is:
 
   trandor@labyrinth.net.au
 
 The Abuse-SDL webpage can be found at:
 
-  http://www.labyrinth.net.au/~trandor/abuse
+  http://abuse.zoy.org/
 
 ----
 
