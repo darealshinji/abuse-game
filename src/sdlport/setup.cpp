@@ -4,6 +4,8 @@
  * by Anthony Kruize
  ************************/
 
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -18,6 +20,7 @@
 #include <GL/glu.h>
 #endif    /* __APPLE__ */
 #endif    /* HAVE_OPENGL */
+
 #include "specs.hpp"
 #include "keys.hpp"
 #include "setup.h"

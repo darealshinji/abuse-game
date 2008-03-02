@@ -1,3 +1,11 @@
+#include "config.h"
+
+#if (defined(__MACH__) || !defined(__APPLE__))
+#include <sys/stat.h>
+#endif
+
+#include <fcntl.h>
+
 #include "cache.hpp"
 #include "lisp.hpp"
 #include "video.hpp"
@@ -13,11 +21,6 @@
 #include "dev.hpp"
 #include "specache.hpp"
 
-#if (defined(__MACH__) || !defined(__APPLE__))
-#include <sys/stat.h>
-#endif
-
-#include <fcntl.h>
 char lfname[100]="";          // name of compiled lisp code cache file
 
 #define touch(x) { (x)->last_access=last_access++; \

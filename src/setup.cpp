@@ -1,3 +1,5 @@
+#include "config.h"
+
 #ifdef __WATCOMC__
 
 #include "specs.hpp"
