@@ -38,7 +38,7 @@ AC_CHECK_LIB(nsl,gethostbyname,LIBS="$LIBS -lnsl")
 dnl Check for SDL
 SDL_VERSION=1.1.6
 AM_PATH_SDL($SDL_VERSION, :,
-		AC_MSG_ERROR([*** SDL version $SDL_VERSION or above not found!]))
+    AC_MSG_ERROR([*** SDL version $SDL_VERSION or above not found!]))
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS $X_LIBS -L/usr/lib"
 
@@ -63,31 +63,32 @@ dnl doesn't seem to work this way.
 AC_MSG_CHECKING(for OpenGL support)
 have_opengl=no
 AC_TRY_COMPILE([
-		#ifdef WIN32
-		#include <windows.h>
-		#elif defined(__APPLE__) && defined(__MACH__)
-/*		#include <OpenGL/gl.h>*/
-		#error	/* Error so the compile fails on OSX */
-		#else
-		#include <GL/gl.h>
-		#endif
+    #ifdef WIN32
+    #include <windows.h>
+    #elif defined(__APPLE__) && defined(__MACH__)
+/*    #include <OpenGL/gl.h>*/
+    #error	/* Error so the compile fails on OSX */
+    #else
+    #include <GL/gl.h>
+    #endif
 ],[
 ],[
 have_opengl=yes
 ])
 AC_MSG_RESULT($have_opengl)
 if test x$have_opengl = xyes; then
-		CFLAGS="$CFLAGS -DHAVE_OPENGL"
-		CXXFLAGS="$CXXFLAGS -DHAVE_OPENGL"
-		LIBS="$LIBS -lGL -lpthread"
+    CFLAGS="$CFLAGS -DHAVE_OPENGL"
+    CXXFLAGS="$CXXFLAGS -DHAVE_OPENGL"
+    LIBS="$LIBS -lGL -lpthread"
 fi
 
-AC_OUTPUT([Makefile
-		abuse-sdl.6
-		src/Makefile
-		src/net/Makefile
-		src/imlib/Makefile
-		src/sdlport/Makefile])
+AC_OUTPUT([
+    Makefile
+    abuse.6
+    src/Makefile
+    src/net/Makefile
+    src/imlib/Makefile
+    src/sdlport/Makefile])
 
 echo "
 ------ Configuration for $PACKAGE $VERSION ------
