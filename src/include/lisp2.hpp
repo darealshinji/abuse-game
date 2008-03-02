@@ -61,9 +61,9 @@ extern Cell *true_symbol;
 /* ------------------------- TRIGONOMETRY -------------------- */
 
 #define FIXED_TRIG_SIZE 360               // 360 degrees stored in table
-extern long sin_table[FIXED_TRIG_SIZE];   // this should be filled in by external module
+extern int32_t sin_table[FIXED_TRIG_SIZE];   // this should be filled in by external module
 #define TBS 1662                          // atan table granularity
-extern unsigned short atan_table[TBS];
+extern uint16_t atan_table[TBS];
 
 /* ------------------------- COMPATIBILITY -------------------- */
 
@@ -110,9 +110,9 @@ int get_lprop_number (void* symbol, int number);
 Cell* assoc (void* vlists, void* vtarget);
 char* symbol_name (void* symbol);
 int item_type (void* cell);
-long lisp_cos(long x);
-long lisp_sin(long x);
-long lisp_atan2(long dy, long dx);
+int32_t lisp_cos(int32_t x);
+int32_t lisp_sin(int32_t x);
+int32_t lisp_atan2(int32_t dy, int32_t dx);
 void push_onto_list(Cell *object, Cell *&list);
 
 void* lpointer_value (void* x);

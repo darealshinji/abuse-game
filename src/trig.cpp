@@ -1,4 +1,6 @@
-long sin_table[360]={
+#include "system.h"
+
+int32_t sin_table[360]={
   0x00000000, 0x00000477, 0x000008ef, 0x00000d65, 0x000011db, 0x0000164f, 
   0x00001ac2, 0x00001f32, 0x000023a0, 0x0000280c, 0x00002c74, 0x000030d8, 
   0x00003539, 0x00003996, 0x00003dee, 0x00004241, 0x00004690, 0x00004ad8, 
@@ -60,7 +62,7 @@ long sin_table[360]={
   0xffffcac7, 0xffffcf28, 0xffffd38c, 0xffffd7f4, 0xffffdc60, 0xffffe0ce, 
   0xffffe53e, 0xffffe9b1, 0xffffee25, 0xfffff29b, 0xfffff711, 0xfffffb89
   };
-unsigned short atan_table[1662]={
+uint16_t atan_table[1662]={
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 
     0,   0,   0,   0,   0,   0,   0,   1,   2,   3,   4,   5, 

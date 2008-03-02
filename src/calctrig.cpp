@@ -3,7 +3,7 @@
 main()
 {
   int i,x;
-  printf("long sin_table[360]={\n  ");
+  printf("int32_t sin_table[360]={\n  ");
   for (i=0;i<360;i++)
   {
     printf("0x%08x",(long)(sin(i/180.0*3.141592654)*65536));
@@ -12,7 +12,7 @@ main()
   }
   printf("};\n");
 
-  printf("unsigned short atan_table[1662]={\n  ");
+  printf("uint16_t atan_table[1662]={\n  ");
  
   for (i=1;i<1662;i++)
   {    
