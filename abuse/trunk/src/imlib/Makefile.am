@@ -10,6 +10,6 @@ libimlib_a_SOURCES = filter.cpp gifread.cpp globals.cpp image.cpp \
 	packet.cpp readwav.cpp pmenu.cpp scroller.cpp filesel.cpp \
 	tools.cpp guistat.cpp sprite.cpp jwindow.cpp
 
-INCLUDES = -I$(srcdir)/include
+INCLUDES = -I$(srcdir)
 
 CPPFLAGS = @CPPFLAGS@ -DMANAGE_MEM -DNO_CHECK
