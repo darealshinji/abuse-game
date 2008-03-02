@@ -152,6 +152,7 @@ ico_button::ico_button(int X, int Y, int ID, int Up, int down, int upa, int down
   ua=upa; da=downa;
   next=Next;
   activate_id=act_id;
+  act = 0;
 }
 
 ico_switch_button::~ico_switch_button()

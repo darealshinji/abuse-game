@@ -932,6 +932,7 @@ dev_controll::dev_controll()
   selected_object=NULL;
   edit_object=NULL;
   ai_object=NULL;
+  search_object = NULL;
   memprof=NULL;
   oedit=NULL;  
   forew=NULL;
