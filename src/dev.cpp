@@ -194,7 +194,7 @@ int confirm_quit()
   return quit;
 }
 
-void show_object_number (game_object *who)
+static void show_object_number (game_object *who)
 {
   int total=0,number=0;
   game_object *c;  
@@ -213,7 +213,7 @@ void dev_controll::search_backward()
 } 
 
 
-void single_render()
+static void single_render()
 {
   // enlarge clip area
   the_game->first_view->cx2=the_game->first_view->cx1+
@@ -225,7 +225,7 @@ void single_render()
   small_render_on=0;
 }
 
-void double_render()
+static void double_render()
 {
   small_render_on=1;
   // reduce clip area
@@ -329,7 +329,7 @@ void dev_term::execute(char *st)
   }
 }
 
-void load_dev_icons()
+static void load_dev_icons()
 {
   char const *artf="art/dev.spe";
   dev_del=cash.reg(artf,"dev_del",SPEC_IMAGE,0);
@@ -544,7 +544,7 @@ void dev_controll::dev_draw(view *v)
   update_memprof();
 }
 
-light_source *find_light(int32_t x, int32_t y)
+static light_source *find_light(int32_t x, int32_t y)
 {
   image *i=cash.img(light_buttons[0]);
   int l=i->width()/2,h=i->height()/2;
@@ -706,7 +706,7 @@ void dev_controll::toggle_omenu()
   }  
 } 
 
-int get_omenu_item(int x)
+static int get_omenu_item(int x)
 {
   for (int i=0;i<total_objects;i++)
     if (listable_objs[x]==object_names[i])
@@ -3366,7 +3366,7 @@ void dev_controll::fg_fill(int color, int x, int y, pal_win *p)
   the_game->need_refresh();
 }
 
-int get_char_mem(int type, int print)
+static int get_char_mem(int type, int print)
 {
   int t=0;
   for (int j=0;j<MAX_STATE;j++)

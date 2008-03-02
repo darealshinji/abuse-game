@@ -51,13 +51,13 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
 
   for (y=y1;y<=y2;y++)
   {
-    unsigned char *sl=screen->scan_line(y)+x1;
+    uint8_t *sl=screen->scan_line(y)+x1;
     for (x=x1;x<=x2;x++,sl++)
     {
-      unsigned char *paddr=(unsigned char *)pal->addr()+(*sl)*3;
-      unsigned char r=((*(paddr++))-r_to)*percent/256+r_to;
-      unsigned char g=((*(paddr++))-g_to)*percent/256+g_to;
-      unsigned char b=((*(paddr++))-b_to)*percent/256+b_to;
+      uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
+      uint8_t r=((*(paddr++))-r_to)*percent/256+r_to;
+      uint8_t g=((*(paddr++))-g_to)*percent/256+g_to;
+      uint8_t b=((*(paddr++))-b_to)*percent/256+b_to;
       *sl=color_table->lookup_color((r)>>3,(g)>>3,(b)>>3);
     }
   }
@@ -77,13 +77,13 @@ void darken_area(int x1, int y1, int x2, int y2, int amount)
 
   for (y=y1;y<=y2;y++)
   {
-    unsigned char *sl=screen->scan_line(y)+x1;
+    uint8_t *sl=screen->scan_line(y)+x1;
     for (x=x1;x<=x2;x++,sl++)
     {
-      unsigned char *paddr=(unsigned char *)pal->addr()+(*sl)*3;
-      unsigned char r=(*(paddr++))*amount/256;
-      unsigned char g=(*(paddr++))*amount/256;
-      unsigned char b=(*(paddr++))*amount/256;
+      uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
+      uint8_t r=(*(paddr++))*amount/256;
+      uint8_t g=(*(paddr++))*amount/256;
+      uint8_t b=(*(paddr++))*amount/256;
       *sl=color_table->lookup_color((r)>>3,(g)>>3,(b)>>3);
     }
   }

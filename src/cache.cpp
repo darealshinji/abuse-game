@@ -662,11 +662,11 @@ void cache_list::unreg(int id)
     printf("Error : trying to unregister free object\n");
 }
 
-void cache_cleanup2()
+static void cache_cleanup2()
 { unlink(lfname); 
 }
 
-void cache_cleanup(int ret, void *arg)
+static void cache_cleanup(int ret, void *arg)
 { unlink(lfname); 
 }
 

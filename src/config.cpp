@@ -31,7 +31,7 @@ struct player_keys
 
 player_keys *key_map = NULL;
 
-int binding_for_player( int player )
+static int binding_for_player( int player )
 {
 	char tmp[40];
 	sprintf( tmp, "player%d", player );

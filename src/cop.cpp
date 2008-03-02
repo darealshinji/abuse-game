@@ -198,7 +198,7 @@ void *top_ai()
 }
 
 
-int player_fire_weapon(game_object *o, int type, game_object *target, int angle, signed char *fire_off)
+static int player_fire_weapon(game_object *o, int type, game_object *target, int angle, signed char *fire_off)
 {
 
   if (!o->total_objects()) return 0;

@@ -32,11 +32,11 @@
 #include "dev.hpp"
 #endif
 
-/* To bypass the whole garbage collection issue of lisp I am going to have seperate spaces
-   where lisp objects can reside.  Compiled code and gloabal varibles will reside in permanant
-   space.  Eveything else will reside in tmp space which gets thrown away after completion of eval. 
-     system functions reside in permant space.
-*/
+/* To bypass the whole garbage collection issue of lisp I am going to have
+ * separate spaces where lisp objects can reside.  Compiled code and gloabal
+ * varibles will reside in permanant space.  Eveything else will reside in
+ * tmp space which gets thrown away after completion of eval.  system
+ * functions reside in permant space. */
 
 bFILE *current_print_file=NULL;
 lisp_symbol *lsym_root=NULL;
