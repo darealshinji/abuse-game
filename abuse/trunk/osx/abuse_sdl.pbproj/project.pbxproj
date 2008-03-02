@@ -819,11 +819,6 @@
 			path = gifread.hpp;
 			refType = 4;
 		};
-		F5ACF28F0305D66801A80002 = {
-			isa = PBXFileReference;
-			path = globals.hpp;
-			refType = 4;
-		};
 		F5ACF2900305D66801A80002 = {
 			isa = PBXFileReference;
 			path = glread.hpp;
@@ -972,11 +967,6 @@
 		F5ACF2AD0305D66801A80002 = {
 			isa = PBXFileReference;
 			path = scroller.hpp;
-			refType = 4;
-		};
-		F5ACF2AE0305D66801A80002 = {
-			isa = PBXFileReference;
-			path = sdriver.hpp;
 			refType = 4;
 		};
 		F5ACF2AF0305D66801A80002 = {

@@ -3,7 +3,16 @@ DEFS = @DEFS@ @EXPDATADIR@
 
 noinst_LIBRARIES = libsdlport.a
 
-libsdlport_a_SOURCES = video.cpp mouse.cpp event.cpp sound.cpp timing.cpp jdir.cpp joystick.cpp setup.cpp
+libsdlport_a_SOURCES = \
+    video.cpp \
+    mouse.cpp \
+    event.cpp \
+    sound.cpp sound.hpp \
+    timing.cpp \
+    jdir.cpp \
+    joystick.cpp joy.hpp \
+    setup.cpp setup.h \
+    $(NULL)
 libsdlport_a_LIBADD =
 
 INCLUDES = -I$(srcdir)/../ -I$(srcdir)/../imlib $(SDL_CFLAGS)

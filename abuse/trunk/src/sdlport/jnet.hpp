@@ -7,6 +7,8 @@
  *  Jonathan Clark.
  */
 
+/* FIXME: this file is unused */
+
 #ifndef __NET_HPP_
 #define __NET_HPP_
 

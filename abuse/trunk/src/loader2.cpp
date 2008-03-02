@@ -15,7 +15,6 @@
 #include "loader2.hpp"
 #include "chars.hpp"
 #include "specs.hpp"
-#include "parse.hpp"
 #include "lisp.hpp"
 #include "jrand.hpp"
 #include "menu.hpp"
@@ -24,7 +23,6 @@
 
 #include "dev.hpp"
 #include "light.hpp"
-#include "morph.hpp"
 #include "dprint.hpp"
 #include "particle.hpp"
 #include "clisp.hpp"

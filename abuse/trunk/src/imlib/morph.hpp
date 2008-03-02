@@ -7,14 +7,16 @@
  *  Jonathan Clark.
  */
 
+/* FIXME: this file is unused */
+
 #ifndef __MORPH_HPP_
 #define __MORPH_HPP_
 
 #include <stdio.h>
+
 #include "image.hpp"
 #include "palette.hpp"
 #include "macs.hpp"
-#include "monoprnt.hpp"
 #include "specs.hpp"
 #include "filter.hpp"
 #include "jmalloc.hpp"

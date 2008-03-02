@@ -13,10 +13,10 @@
 #include <stdlib.h>
 
 #include "lisp/lisp.hpp"
+#include "sdlport/sound.hpp"
 
 #include "specs.hpp"
 #include "items.hpp"
-#include "sound.hpp"
 #include "particle.hpp"
 
 class level;

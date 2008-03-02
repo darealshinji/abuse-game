@@ -9,6 +9,8 @@
 
 #include "config.h"
 
+#include "sdlport/joy.hpp"
+
 #include "ant.hpp"
 #include "lisp.hpp"
 #include "game.hpp"
@@ -23,7 +25,6 @@
 #include "cop.hpp"
 #include "loadgame.hpp"
 #include "nfserver.hpp"
-#include "joy.hpp"
 #include "demo.hpp"
 #include "chat.hpp"
 #include "text_gui.hpp"

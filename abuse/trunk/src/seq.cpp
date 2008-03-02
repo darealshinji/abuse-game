@@ -11,7 +11,6 @@
 
 #include "seq.hpp"
 #include "macs.hpp"
-#include "parse.hpp"
 #include "lisp.hpp"
 
 int sequence::size()
