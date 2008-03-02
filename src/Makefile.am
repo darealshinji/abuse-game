@@ -20,6 +20,6 @@ abuse_LDADD = ./sdlport/libsdlport.a ./imlib/libimlib.a ./net/libnet.a
 
 abuse_DEPENDENCIES = ./sdlport/libsdlport.a ./imlib/libimlib.a ./net/libnet.a
 
-INCLUDES = -I$(srcdir)/include -I$(srcdir)/imlib/include -I$(srcdir)/net/include $(SDL_CFLAGS)
+INCLUDES = -I$(srcdir) -I$(srcdir)/imlib -I$(srcdir)/net $(SDL_CFLAGS)
 
 CPPFLAGS = @CPPFLAGS@ -DMANAGE_MEM -DNO_CHECK
