@@ -1801,12 +1801,6 @@
 			path = ../src/objects.cpp;
 			refType = 2;
 		};
-		F5C580D5028E0D5D012A168D = {
-			isa = PBXFileReference;
-			name = old_earth_menu.cpp;
-			path = ../src/old_earth_menu.cpp;
-			refType = 2;
-		};
 		F5C580D6028E0D5D012A168D = {
 			isa = PBXFileReference;
 			name = old_server.cpp;
