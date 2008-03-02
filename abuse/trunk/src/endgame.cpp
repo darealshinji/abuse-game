@@ -39,7 +39,7 @@ struct mask_line
 
 extern int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *font, uint8_t *cmap, char color);
 
-mask_line *make_mask_lines(image *mask, int map_width)
+static mask_line *make_mask_lines(image *mask, int map_width)
 {
   mask_line *p=(mask_line *)jmalloc(mask->height()*sizeof(mask_line),"mask_line");
   for (int y=0;y<mask->height();y++)

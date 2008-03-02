@@ -48,7 +48,7 @@ static void scream_check(game_object *o, game_object *b)
   } else o->lvars[ANT_no_see_time]++;
 }
 
-int ant_congestion(game_object *o)
+static int ant_congestion(game_object *o)
 {
   for (game_object *d=current_level->first_active_object();d;d=d->next_active)
   {
@@ -57,7 +57,7 @@ int ant_congestion(game_object *o)
   return 0;
 }
 
-int ant_dodge(game_object *o)
+static int ant_dodge(game_object *o)
 {
   if (o->lvars[ANT_need_to_dodge]==1)
   {

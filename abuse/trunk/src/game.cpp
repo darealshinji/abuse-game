@@ -1716,9 +1716,6 @@ int game::calc_speed()
 
 extern int start_edit;
 
-void single_render();
-void double_render();
-
 void game::get_input()
 {
 	event ev;
