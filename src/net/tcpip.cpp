@@ -1,12 +1,23 @@
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
 #ifdef _AIX
 #include <strings.h>
 #endif
+#include <ctype.h>
 
 #if (defined(__APPLE__) && !defined(__MACH__))
-#include "GUSI.h"
+#   include "GUSI.h"
 #endif
 #include "tcpip.hpp"
-#include <ctype.h>
 
 extern tcpip_protocol tcpip;
 

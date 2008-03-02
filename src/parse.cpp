@@ -1,7 +1,19 @@
-#include "parse.hpp"
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+#include "parse.hpp"
 
 char *ttype[]={"END","NUMBER","STRING","WORD","OPERATOR","LEFT BRACE","RIGHT BRACE",
 	        "LEFT PAREN","RIGHT_PAREN","ASSIGNMENT","COMMA"};

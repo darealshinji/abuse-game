@@ -1,3 +1,26 @@
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
+//#ifdef __POWERPC__
+//#include <profiler.h>  //prof
+//#endif
+
+#include <ctype.h>
+#include <setjmp.h>
+
+#ifdef __APPLE__
+// SDL for OSX needs to override main()
+#   include <SDL.h>
+#endif
+
 #include "game.hpp"
 #include "dev.hpp"
 #include "id.hpp"
@@ -33,18 +56,6 @@
 #include "chat.hpp"
 #include "demo.hpp"
 #include "netcfg.hpp"
-
-//#ifdef __POWERPC__
-//#include <profiler.h>  //prof
-//#endif
-
-#include <ctype.h>
-#include <setjmp.h>
-
-#ifdef __APPLE__
-// SDL for OSX needs to override main()
-#include <SDL.h>
-#endif
 
 #define SHIFT_RIGHT_DEFAULT 0
 #define SHIFT_DOWN_DEFAULT 30

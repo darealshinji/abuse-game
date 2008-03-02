@@ -1,9 +1,13 @@
-#include "fileman.hpp"
-#include "netdrv.hpp"
-#include "gserver.hpp"
-#include "gclient.hpp"
-#include "undrv.hpp"
-#include "tcpip.hpp"
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,6 +26,13 @@
 #include <sys/shm.h>
 #include <bstring.h>
 #include <netdb.h>
+
+#include "fileman.hpp"
+#include "netdrv.hpp"
+#include "gserver.hpp"
+#include "gclient.hpp"
+#include "undrv.hpp"
+#include "tcpip.hpp"
 
 #define real2shm(type,ptr) (ptr==NULL ? NULL : ((type *)((uint8_t *)(ptr)-(uint8_t *)base)))
 #define shm2real(type,ptr) (ptr==NULL ? NULL : ((type *)((intptr_t)(ptr)+(intptr_t)(base))))

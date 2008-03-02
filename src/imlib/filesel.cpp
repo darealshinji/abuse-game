@@ -1,11 +1,22 @@
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
+#ifdef __WATCOMC__
+#   include <direct.h>
+#endif
+
 #include "filesel.hpp"
 #include "input.hpp"
 #include "scroller.hpp"
 #include "jdir.hpp"
-
-#ifdef __WATCOMC__
-#include <direct.h>
-#endif
 
 class file_picker : public spicker
 {

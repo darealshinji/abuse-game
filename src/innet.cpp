@@ -1,16 +1,14 @@
 /*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
 
-  This file is a combination of :
-    src/net/unix/unixnfc.c 
-    src/net/unix/netdrv.c 
-    src/net/unix/undrv.c
+#include "config.h"
 
-    netdrv & undrv compile to a stand-alone program with talk with unixnfc
-via a FIFO in /tmp, using a RPC-like scheme.  This versions runs inside
-of a abuse and therefore is a bit simpler.
-
-
-*/
 #include <stdio.h>
 
 #include "demo.hpp"
@@ -27,6 +25,18 @@ of a abuse and therefore is a bit simpler.
 #include "gclient.hpp"
 #include "dprint.hpp"
 #include "netcfg.hpp"
+
+/*
+
+  This file is a combination of :
+    src/net/unix/unixnfc.c 
+    src/net/unix/netdrv.c 
+    src/net/unix/undrv.c
+
+    netdrv & undrv compile to a stand-alone program with talk with unixnfc
+via a FIFO in /tmp, using a RPC-like scheme.  This versions runs inside
+of a abuse and therefore is a bit simpler.
+*/
 
 #ifdef __WATCOMC__
 #define getlogin() "DOS user"

@@ -1,6 +1,18 @@
-/*      Key driver, by Jonathan Clark 
-          (portions from showkey.c)
-*/
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
+
+#include "config.h"
+
+#include <linux/keyboard.h>
+#include <sys/ioctl.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <stdio.h>
 #include <unistd.h>
@@ -13,14 +25,11 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-
+/*      Key driver, by Jonathan Clark 
+          (portions from showkey.c)
+*/
 
 unsigned char keyboard_buf[16];
-
-#include <linux/keyboard.h>
-#include <sys/ioctl.h>
-#include <stdlib.h>
-#include <string.h>
 
 int fd,my_console=-1;
 struct termios old_term;

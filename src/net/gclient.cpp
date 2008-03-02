@@ -1,9 +1,13 @@
-#include "netcfg.hpp"
-#include "gclient.hpp"
-#include "netface.hpp"
-#include "undrv.hpp"
-#include "timing.hpp"
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com or
+ *  Jonathan Clark.
+ */
 
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +17,12 @@
 #include <sys/types.h>
 #include <string.h>
 #include <signal.h>
+
+#include "netcfg.hpp"
+#include "gclient.hpp"
+#include "netface.hpp"
+#include "undrv.hpp"
+#include "timing.hpp"
 
 extern base_memory_struct *base;
 extern net_socket *comm_sock,*game_sock;
