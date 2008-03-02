@@ -712,7 +712,7 @@ void remap_area(image *screen, int x1, int y1, int x2, int y2, uint8_t *remap)
   }
 }
 
-void post_render()
+static void post_render()
 {
   if (DEFINEDP(symbol_function(l_post_render)))
   {
