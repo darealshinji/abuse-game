@@ -676,21 +676,21 @@ void *lisp_equal(void *n1, void *n2)
   }
 }
 
-long lisp_cos(long x)
+int32_t lisp_cos(int32_t x)
 {
   x=(x+FIXED_TRIG_SIZE/4)%FIXED_TRIG_SIZE;
   if (x<0) return sin_table[FIXED_TRIG_SIZE+x];
   else return sin_table[x];
 }
 
-long lisp_sin(long x)
+int32_t lisp_sin(int32_t x)
 {
   x=x%FIXED_TRIG_SIZE;
   if (x<0) return sin_table[FIXED_TRIG_SIZE+x];
   else return sin_table[x];
 }
 
-long lisp_atan2(long dy, long dx)
+int32_t lisp_atan2(int32_t dy, int32_t dx)
 {
   if (dy==0)
   {
@@ -708,13 +708,13 @@ long lisp_atan2(long dy, long dx)
       {
 	if (abs(dx)>abs(dy))
 	{
-	  long a=dx*29/dy;
+	  int32_t a=dx*29/dy;
 	  if (a>=TBS) return 0;
 	  else return 45-atan_table[a];
 	}
 	else 
 	{
-	  long a=dy*29/dx;
+	  int32_t a=dy*29/dx;
 	  if (a>=TBS) return 90;
 	  else return 45+atan_table[a];
 	}
@@ -722,7 +722,7 @@ long lisp_atan2(long dy, long dx)
       {
 	if (abs(dx)>abs(dy))
 	{
-	  long a=dx*29/abs(dy);
+	  int32_t a=dx*29/abs(dy);
 	  if (a>=TBS)
 	    return 0;
 	  else
@@ -730,7 +730,7 @@ long lisp_atan2(long dy, long dx)
 	}
 	else
 	{
-	  long a=abs(dy)*29/dx;
+	  int32_t a=abs(dy)*29/dx;
 	  if (a>=TBS)
 	    return 260;
 	  else
@@ -743,7 +743,7 @@ long lisp_atan2(long dy, long dx)
       {
 	if (abs(dx)>abs(dy))
 	{
-	  long a=-dx*29/dy;
+	  int32_t a=-dx*29/dy;
 	  if (a>=TBS)
 	    return 135+45;
 	  else
@@ -751,7 +751,7 @@ long lisp_atan2(long dy, long dx)
 	}
 	else 
 	{
-	  long a=dy*29/-dx;
+	  int32_t a=dy*29/-dx;
 	  if (a>=TBS)
 	    return 135-45;
 	  else
@@ -761,14 +761,14 @@ long lisp_atan2(long dy, long dx)
       {
 	if (abs(dx)>abs(dy))
 	{
-	  long a=-dx*29/abs(dy);
+	  int32_t a=-dx*29/abs(dy);
 	  if (a>=TBS)
 	    return 225-45;
 	  else return 225-atan_table[a];
 	}
 	else 
 	{
-	  long a=abs(dy)*29/abs(dx);
+	  int32_t a=abs(dy)*29/abs(dx);
 	  if (a>=TBS)
 	    return 225+45;	  
 	  else return 225+atan_table[a];
