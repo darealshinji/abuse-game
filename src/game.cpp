@@ -1280,9 +1280,14 @@ void do_title()
 		if( DEFINEDP( logo_snd ) && ( sound_avail & SFX_INITIALIZED ) )
 			cash.sfx( lnumber_value( logo_snd ) )->play( sfx_volume );
 
-		image blank( 2, 2 );
-		blank.clear();
-		eh->set_mouse_shape( blank.copy(), 0, 0 );      // don't show mouse
+		// This must be a dynamic allocated image because if it
+		// is not and the window gets closed during do_title, then
+		// exit() will try to delete (through the desctructor of
+		// image_list in image.cpp) the image on the stack -> boom.
+		image *blank = new image( 2, 2 );
+		blank->clear();
+		eh->set_mouse_shape( blank->copy(), 0, 0 ); // hide mouse
+		delete blank;
 		fade_in( cash.img( cdc_logo ), 32 );
 
 		milli_wait( 900 );
