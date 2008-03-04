@@ -31,12 +31,14 @@
       stack
 */
 
-grow_stack<void> l_user_stack(600);       // stack user progs can push data and have it GCed
-grow_stack<void *> l_ptr_stack(6000);         // stack of user pointers, user pointers get remapped on GC
+// Stack where user programs can push data and have it GCed
+grow_stack<void> l_user_stack(150);
+// Stack of user pointers
+grow_stack<void *> l_ptr_stack(1500);
 
-int reg_ptr_total=0;
-int reg_ptr_list_size=0;
-void ***reg_ptr_list=NULL;
+int reg_ptr_total = 0;
+int reg_ptr_list_size = 0;
+void ***reg_ptr_list = NULL;
 
 void register_pointer(void **addr)
 {
