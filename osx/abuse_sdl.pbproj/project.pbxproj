@@ -1917,12 +1917,6 @@
 			path = ../src/specache.cpp;
 			refType = 2;
 		};
-		F5C580EB028E0D5D012A168D = {
-			isa = PBXFileReference;
-			name = stack.cpp;
-			path = ../src/stack.cpp;
-			refType = 2;
-		};
 		F5C580EC028E0D5D012A168D = {
 			isa = PBXFileReference;
 			name = statbar.cpp;
