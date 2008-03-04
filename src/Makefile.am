@@ -58,7 +58,7 @@ abuse_SOURCES = \
     crc.cpp crc.hpp \
     gamma.cpp gamma.hpp \
     language.cpp language.hpp \
-    bus_type.hpp stack.hpp id.hpp netface.hpp isllist.hpp sbar.hpp \
+    bus_type.hpp id.hpp netface.hpp isllist.hpp sbar.hpp \
     nfserver.hpp exitproc.hpp \
     $(NULL)
 

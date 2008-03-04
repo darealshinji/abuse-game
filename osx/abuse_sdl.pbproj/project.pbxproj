@@ -2736,7 +2736,7 @@
 		};
 		F5C58193028E0D6D012A168D = {
 			isa = PBXFileReference;
-			path = stack.hpp;
+			path = lisp/stack.hpp;
 			refType = 4;
 		};
 		F5C58194028E0D6D012A168D = {
