@@ -670,8 +670,6 @@ static void cache_cleanup(int ret, void *arg)
 { unlink(lfname); 
 }
 
-extern char *macify_name(char *s);
-
 void cache_list::create_lcache()
 {
 #ifdef WIN32
@@ -688,9 +686,6 @@ void cache_list::create_lcache()
 
 #if defined( __APPLE__ )
 		unlink(lfname);
-#if (defined(__APPLE__) && !defined(__MACH__))
-		macify_name(lfname);
-#endif
 		FILE *fp=fopen(lfname,"wb");
 		if (fp)
 		{
