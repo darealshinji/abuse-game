@@ -11,6 +11,8 @@
 
 #include <string.h>
 
+#include "game.hpp"
+
 #include "specs.hpp"
 #include "jwindow.hpp"
 #include "id.hpp"
@@ -23,13 +25,10 @@
 #include "dev.hpp"
 #include "id.hpp"
 #include "demo.hpp"
-#include "game.hpp"
 
 extern void *save_order;         // load from "saveordr.lsp", contains a list ordering the save games
 
 extern JCFont *console_font;
-
-extern window_manager *eh;
 
 #define MAX_SAVE_GAMES 5
 int last_save_game_number=0;

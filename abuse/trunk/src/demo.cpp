@@ -9,11 +9,12 @@
 
 #include "config.h"
 
+#include "game.hpp"
+
 #include "demo.hpp"
 #include "specs.hpp"
 #include "macs.hpp"
 #include "jwindow.hpp"
-#include "game.hpp"
 #include "jmalloc.hpp"
 #include "dprint.hpp"
 #include "dev.hpp"
@@ -24,7 +25,6 @@
 
 
 demo_manager demo_man;
-extern window_manager *eh;
 int last_demo_mx,last_demo_my,last_demo_mbut;
 extern base_memory_struct *base;   // points to shm_addr
 extern int idle_ticks;

@@ -11,9 +11,10 @@
 
 #include <math.h>
 
+#include "game.hpp"
+
 #include "jwindow.hpp"
 #include "lisp.hpp"
-#include "game.hpp"
 #include "scroller.hpp"
 #include "id.hpp"
 #include "cache.hpp"
@@ -21,7 +22,6 @@
 #include "dprint.hpp"
 #include "loader2.hpp"
 
-extern window_manager *eh;
 extern int dev_ok;
 palette *old_pal=NULL;
 

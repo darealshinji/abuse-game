@@ -11,6 +11,8 @@
 
 #include <math.h>
 
+#include "dev.hpp"
+
 #include "menu.hpp"
 #include "lisp.hpp"
 #include "game.hpp"
@@ -20,7 +22,6 @@
 #include "pmenu.hpp"
 #include "gui.hpp"
 #include "property.hpp"
-#include "dev.hpp"
 #include "clisp.hpp"
 #include "gamma.hpp"
 #include "dprint.hpp"
@@ -32,7 +33,6 @@
 
 extern net_protocol *prot;
 jwindow *volume_window=NULL;
-extern int confirm_quit();
 
 //percent is 0..256
 void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int percent)

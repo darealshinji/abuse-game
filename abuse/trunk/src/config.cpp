@@ -12,16 +12,15 @@
 #include <ctype.h>
 
 #include "sdlport/joy.hpp"
+#include "game.hpp"
 
 #include "keys.hpp"
 #include "lisp.hpp"
 #include "jwindow.hpp"
 #include "config.hpp"
-#include "game.hpp"
 
 extern int get_key_binding(char const *dir, int i);
 
-extern window_manager *eh;
 int key_players = 0;
 int morph_detail = MEDIUM_DETAIL;
 

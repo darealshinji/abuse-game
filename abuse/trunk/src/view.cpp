@@ -9,6 +9,9 @@
 
 #include "config.h"
 
+#include "game.hpp"
+
+
 #include "system.h"
 #include "view.hpp"
 #include "lisp.hpp"
@@ -30,7 +33,6 @@
 #define SHIFT_RIGHT_DEFAULT 0
 
 extern int get_key_binding( char const *dir, int i );
-extern window_manager *eh;
 view *player_list=NULL;
 int morph_sel_frame_color;
 

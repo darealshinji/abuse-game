@@ -44,10 +44,13 @@
 #define START_STATE       8
 #define BLACK 0
 
+/* Cleaned-up externs */
+extern window_manager *eh;
+
+
 #define tile_type unsigned short
 class game;
 extern game *the_game;
-extern window_manager *eh;
 extern int dev;
 extern int morph_sel_frame_color;
 
