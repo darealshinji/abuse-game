@@ -58,7 +58,6 @@
 
 class game;
 extern crc_manager *net_crcs;
-extern void show_verinfo(int argc, char **argv);
 game *the_game;
 window_manager *eh = NULL;
 int dev, shift_down = SHIFT_DOWN_DEFAULT, shift_right = SHIFT_RIGHT_DEFAULT;
@@ -2337,7 +2336,7 @@ void game_getter(char *st, int max)
 
 void show_startup()
 {
-  show_verinfo(start_argc, start_argv);
+    dprintf("Abuse version %s\n", PACKAGE_VERSION);
 }
 
 char *get_line(int open_braces)

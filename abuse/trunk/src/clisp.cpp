@@ -2137,11 +2137,11 @@ long c_caller(long number, void *args)
     } break;
     case 265 :
     {
-      return major_version;
+      return atoi(PACKAGE_VERSION);
     } break;
     case 266 :
     {
-      return minor_version;
+      return atoi(strchr(PACKAGE_VERSION, '.') + 1);
     } break;
     case 267 :
     {

@@ -11,7 +11,6 @@ abuse_SOURCES = \
     innet.cpp \
     chat.cpp chat.hpp \
     endgame.cpp \
-    version.cpp \
     loadgame.cpp loadgame.hpp \
     profile.cpp profile.hpp \
     cop.cpp cop.hpp \
