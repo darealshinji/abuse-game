@@ -27,10 +27,6 @@
 #include "jmalloc.hpp"
 #include "dprint.hpp"
 
-#if (defined(__APPLE__) && !defined(__MACH__))
-extern char *macify_name(char *s);
-#endif
-
 char const *spec_types[] =
 {
     "Invalid type", // 0
@@ -295,32 +291,24 @@ void set_spec_main_file(char const *filename, int Search_order)
 
 void fast_load_start_recording(char *filename)
 {
-#if (defined(__APPLE__) && !defined(__MACH__))
-  fast_load_fd = ::open(macify_name(filename),O_BINARY|O_CREAT|O_RDWR);
-#else
-  fast_load_fd = ::open(filename,O_CREAT|O_RDWR,S_IRWXU | S_IRWXG | S_IRWXO);
-#endif
-	fast_load_mode = 1;
+    fast_load_fd = ::open(filename,O_CREAT|O_RDWR,S_IRWXU | S_IRWXG | S_IRWXO);
+    fast_load_mode = 1;
 }
 
 void fast_load_stop_recording()
 {
-	fast_load_mode = 0;
+    fast_load_mode = 0;
 }
 
 void fast_load_start_reloading(char *filename)
 {
-#if (defined(__APPLE__) && !defined(__MACH__))
-  fast_load_fd = ::open(macify_name(filename),O_BINARY|O_RDONLY);
-#else
-  fast_load_fd = ::open(filename,O_RDONLY);
-#endif
-	fast_load_mode = 2;
+    fast_load_fd = ::open(filename,O_RDONLY);
+    fast_load_mode = 2;
 }
 
 void fast_load_stop_reloading()
 {
-	fast_load_mode = 0;
+    fast_load_mode = 0;
 }
 
 jFILE::jFILE(FILE *file_pointer)                       // assumes fp is at begining of file
@@ -355,17 +343,9 @@ void jFILE::open_external(char const *filename, char const *mode, int flags)
     flags-=O_WRONLY;
     flags|=O_CREAT|O_RDWR;
 
-#if (defined(__APPLE__) && !defined(__MACH__))
-    fd=open(macify_name(tmp_name),flags);
-#else
     fd=open(tmp_name,flags,S_IRWXU | S_IRWXG | S_IRWXO);
-#endif
   } else 
-#if (defined(__APPLE__) && !defined(__MACH__))
-    fd=open(macify_name(tmp_name),flags);
-#else
     fd=open(tmp_name,flags);
-#endif
 
 //  umask(old_mask);
   if (fd>=0 && !skip_size)

@@ -80,10 +80,6 @@ extern uint8_t chatting_enabled;
 
 extern int confirm_quit();
 
-#if(defined(__APPLE__) && !defined(__MACH__))
-extern char *macify_name(char *s);
-#endif
-
 // Enabled TCPIP driver
 #include "tcpip.hpp"
 tcpip_protocol tcpip;
@@ -96,12 +92,8 @@ FILE *open_FILE(char const *filename, char const *mode)
         sprintf(tmp_name, "%s %s", get_filename_prefix(), filename);
     else
         strcpy(tmp_name, filename);
-#if(defined(__APPLE__) && !defined(__MACH__))
-    macify_name(tmp_name);
-#endif
     return fopen(tmp_name, mode);
 }
-
 
 void handle_no_space()
 {
