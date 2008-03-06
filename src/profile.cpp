@@ -9,12 +9,13 @@
 
 #include "config.h"
 
+#include "game.hpp"
+
+
 #include "profile.hpp"
 #include "jwindow.hpp"
 #include "property.hpp"
 #include "objects.hpp"
-
-extern window_manager *eh;
 
 
 jwindow *prof_win=NULL;

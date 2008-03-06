@@ -19,8 +19,9 @@
 
 #include "sdlport/joy.hpp"
 
-#include "game.hpp"
 #include "dev.hpp"
+#include "game.hpp"
+
 #include "id.hpp"
 #include "timing.hpp"
 #include "automap.hpp"
@@ -56,7 +57,6 @@
 #define SHIFT_RIGHT_DEFAULT 0
 #define SHIFT_DOWN_DEFAULT 30
 
-class game;
 extern crc_manager *net_crcs;
 game *the_game;
 window_manager *eh = NULL;
@@ -76,8 +76,6 @@ int has_joystick = 0;
 char req_name[100];
 
 extern uint8_t chatting_enabled;
-
-extern int confirm_quit();
 
 // Enabled TCPIP driver
 #include "tcpip.hpp"

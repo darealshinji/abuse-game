@@ -15,6 +15,9 @@
 #include "console.hpp"
 #include "timing.hpp"
 
+/* Cleaned-up externs */
+extern int confirm_quit();
+
 
 extern int scale_mult,scale_div;
 extern char level_file[100];

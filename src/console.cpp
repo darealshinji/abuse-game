@@ -12,11 +12,11 @@
 #include <ctype.h>
 #include <stdarg.h>
 
+#include "game.hpp"
+
 #include "linked.hpp"
 #include "console.hpp"
 #include "jmalloc.hpp"
-
-extern window_manager *eh;
 
 void console::put_string(char const *st)
 {

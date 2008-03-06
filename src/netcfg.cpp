@@ -9,6 +9,9 @@
 
 #include "config.h"
 
+#include "game.hpp"
+
+
 #include "netcfg.hpp"
 #include "input.hpp"
 #include "cache.hpp"
@@ -19,7 +22,6 @@
 #include "dev.hpp"
 
 extern char *get_login();
-extern window_manager *eh;
 net_configuration *main_net_cfg=NULL;
 extern char lsf[256];
 

@@ -11,6 +11,8 @@
 
 #ifdef __WATCOMC__
 
+#include "game.hpp"
+
 #include "specs.hpp"
 #include "id.hpp"
 #include "jwindow.hpp"
@@ -28,7 +30,6 @@
 
 extern int sosEZGetConfig(char *szName);
 
-extern window_manager *eh;
 extern palette *lastl;
 
 extern unsigned char fnt6x13[192*104];
