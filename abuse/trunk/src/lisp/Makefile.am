@@ -5,6 +5,7 @@ liblisp_a_SOURCES = \
     lisp.cpp lisp.hpp \
     lisp_opt.cpp lisp_opt.hpp \
     lisp_gc.cpp lisp_gc.hpp \
+    trig.cpp \
     stack.hpp \
     $(NULL)
 

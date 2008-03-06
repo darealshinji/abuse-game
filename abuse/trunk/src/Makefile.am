@@ -26,7 +26,6 @@ abuse_SOURCES = \
     gui.cpp gui.hpp \
     transp.cpp transp.hpp \
     collide.cpp \
-    trig.cpp \
     property.cpp property.hpp \
     cache.cpp cache.hpp \
     particle.cpp particle.hpp \
