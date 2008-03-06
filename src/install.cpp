@@ -34,10 +34,6 @@ int detect_platform()
   return LINUX;
 #endif
 
-#ifdef __WATCOMC__
-  return WATCOM;
-#endif
-
 #ifdef _AIX
   return AIX;
 #endif
@@ -269,10 +265,8 @@ void *l_caller(long number, void *arg)
     } break;
     case 10 :
     {
-      char str[200];
-      strcpy(str,lstring_value(eval(CAR(arg))));
-      modify_install_path(str);
-      return new_lisp_string(str);
+      /* This is now a no-op --sam */
+      return new_lisp_string(lstring_value(eval(CAR(arg))));
     } break;
   }
   return ret;

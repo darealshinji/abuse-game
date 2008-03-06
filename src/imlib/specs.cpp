@@ -329,9 +329,6 @@ void jFILE::open_external(char const *filename, char const *mode, int flags)
   else strcpy(tmp_name,filename);
 
 //  int old_mask=umask(S_IRWXU | S_IRWXG | S_IRWXO);
-#ifdef __WATCOMC__
-  flags|=O_BINARY;
-#endif
   if (flags&O_WRONLY)
   {
     if ((flags&O_APPEND)==0) 

@@ -180,21 +180,13 @@ void view::update_scroll()
 
 char cur_user_name[20]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-#ifdef __WATCOMC__
 char const *get_login()
-{  if (cur_user_name[0]) return cur_user_name; else return "DOS user"; }
-
-#include <dos.h>
-#elif defined( __APPLE__ )
-
-char const *get_login()
-{  if (cur_user_name[0]) return cur_user_name; else return "Mac user"; }
-
-#else
-char const *get_login()
-{  if (cur_user_name[0]) return cur_user_name; else return (getlogin() ? getlogin() : "unknown"); }
-
-#endif
+{
+    if(cur_user_name[0])
+        return cur_user_name;
+    else
+        return(getlogin() ? getlogin() : "unknown");
+}
 
 void set_login(char const *name)
 { strncpy(cur_user_name,name,20); }

@@ -14,14 +14,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#ifdef __WATCOMC__
-#   include <sys\types.h>
-#   include <direct.h>
-#   define make_dir(dir) mkdir(dir)
-#else
-#   include <sys/stat.h>
-#   define make_dir(dir) mkdir(dir,511)
-#endif
+#include <sys/stat.h>
+#define make_dir(dir) mkdir(dir,511)
 
 #define NO_LIBS 1
 #include "lisp.c"
@@ -44,10 +38,6 @@ int detect_platform()
 {
 #ifdef __linux__
   return LINUX;
-#endif
-
-#ifdef __WATCOMC__
-  return WATCOM;
 #endif
 
 #ifdef _AIX
@@ -99,44 +89,11 @@ void clisp_init()
 }
 
 
-#ifdef __WATCOMC__
-#include <dos.h>
-#endif
-
 int change_dir(char *path)
 {
-#ifdef __WATCOMC__
-  unsigned cur_drive;
-  _dos_getdrive(&cur_drive);
-  if (path[1]==':')
-  {
-    unsigned total;
-    _dos_setdrive(toupper(path[0])-'A'+1,&total);
-
-
-    unsigned new_drive;
-    _dos_getdrive(&new_drive);
-
-    if (new_drive!=toupper(path[0])-'A'+1)
-    {
-      return 0;
-    }
-
-    path+=2;
-  }
-  
-  int er=chdir(path);
-  if (er)
-  {
-    unsigned total;
-    _dos_setdrive(cur_drive,&total);
-  }
-  return !er;
-#else
-  int ret=chdir(path);    // weird
-  ret=chdir(path);
-  return ret==0;
-#endif  
+    int ret = chdir(path); // weird
+    ret = chdir(path);
+    return ret == 0;
 }
 
 long c_caller(long number, void *arg) // exten c function switches on number

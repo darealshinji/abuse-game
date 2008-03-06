@@ -9,10 +9,6 @@
 
 #include "config.h"
 
-#ifdef __WATCOMC__
-#   include <direct.h>
-#endif
-
 #include "filesel.hpp"
 #include "input.hpp"
 #include "scroller.hpp"

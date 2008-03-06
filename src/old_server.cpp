@@ -9,12 +9,7 @@
 
 #include "config.h"
 
-#ifdef __WATCOMC__
-#   define getlogin() "DOS user"
-#   include <dos.h>
-#else
-#   include <unistd.h>
-#endif
+#include <unistd.h>
 
 #include "nfserver.hpp"
 
