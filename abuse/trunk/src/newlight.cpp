@@ -493,12 +493,6 @@ void delete_patch_list(light_patch *first)
 }
 
 
-#ifdef __WATCOMC__
-extern "C" {
-extern long MAP_PUT(long pad, long screen_addr, long remap, long w);
-extern long MAP_PUT2(long dest, long screen_addr, long remap, long w);
-} ;
-#else
 inline long MAP_PUT(long pad, long screen_addr, long remap, long w)
 { while (w--) 
   { 
@@ -517,9 +511,6 @@ inline long MAP_PUT2(long dest_addr, long screen_addr, long remap, long w)
   } 
   return dest_addr;
 }
-
-#endif
-
 
 inline long calc_lv(light_patch *lp, long sx, long sy)
 {
@@ -599,12 +590,7 @@ void light_screen(image *sc, long screenx, long screeny, uchar *light_lookup)
     if (lp->total==0)  // do dark patches really fast.
     {
       unsigned char *sl=screen->scan_line(lp->y1)+lp->x1,*dest;
-#ifdef __WATCOMC__
-      if (get_vmode()==19) dest=(uchar *)0xa0000+lp->y1*320+lp->x1;
-      else dest=sl;
-#else
       dest=sl;
-#endif
       
       int y2=lp->y2;
       for (int y=lp->y1;y<=y2;y++,sl+=scr_w,dest+=scr_w)
@@ -622,12 +608,7 @@ void light_screen(image *sc, long screenx, long screeny, uchar *light_lookup)
       int ymask=(ytry-1);
 
       uchar *yaddr=screen->scan_line(lp->y1)+lp->x1,*dyaddr;
-#ifdef __WATCOMC__
-      if (get_vmode()==19) dyaddr=((uchar *)0xa0000)+lp->y1*320+lp->x1;
-      else dyaddr=yaddr;
-#else
       dyaddr=yaddr;
-#endif
 
       for (int y=lp->y1;y<=y2;)
       {

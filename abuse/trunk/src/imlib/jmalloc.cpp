@@ -679,10 +679,6 @@ void jmalloc_uninit()
     {
       case HI_BLOCK : 
       { free(bmanage[i].addr); } break;
-#ifdef __WATCOMC__      
-      case LOW_BLOCK :
-      { free_low_memory(bmanage[i].addr); } break;
-#endif      
     }
   }
   bmanage_total=0;
@@ -699,14 +695,6 @@ static char const *not_enough_total_memory_message =
     "                 run this program.\n"
     "    DOS users  : Remove any TSR's and device drivers you can.\n"
     "    UNIX users : Do you have a swapfile/partition setup?\n";
-#ifdef __WATCOMC__
-static char const *not_enough_low_memory_message =
-    "Memory Manager : Not enough low memory available (%d : need %d)\n"
-    "  Suggestions...\n"
-    "    - make a boot disk\n"
-    "    - remove TSRs & drivers not needed by ABUSE\n"
-    "    - add memory to your system\n";
-#endif
 
 void jmalloc_init(int32_t min_size)
 {
@@ -749,27 +737,6 @@ void jmalloc_init(int32_t min_size)
     bmanage[bmanage_total].init(malloc(150224),150224,HI_BLOCK);
     bmanage_total++;      */
 
-#ifdef __WATCOMC__
-    if (size!=jmalloc_max_size)
-    {
-      do
-      {
-	size=low_memory_available();
-	if (size>jmalloc_min_low_size+0x1000)              // save 64K for misc low memory needs
-	{
-	  bmanage[bmanage_total].init(alloc_low_memory(size-jmalloc_min_low_size-0x1000),size-jmalloc_min_low_size-0x1000,LOW_BLOCK);
-	  bmanage_total++; 
-	  fprintf(stderr,"Added low memory block (%d bytes)\n",size);
-	}
-      } while (size>jmalloc_min_low_size+0x1000);
-      if (size<jmalloc_min_low_size)
-      {
-	fprintf(stderr,not_enough_low_memory_message,size,jmalloc_min_low_size);
-	exit(0);
-      }
-    }
-#endif
- 
     fprintf(stderr,"Memory available : %d\n",j_available());
     if (j_available()<min_size)
     {

@@ -607,13 +607,6 @@ void delete_patch_list(light_patch *first)
   }
 }
 
-/*
-#ifdef __WATCOMC__
-extern "C" {
-extern int32_t MAP_PUT(int32_t pad, int32_t screen_addr, int32_t remap, int32_t w);
-} ;
-#else*/
-
 inline void MAP_PUT(uint8_t * screen_addr, uint8_t * remap, int w)
 { 
   register int cx=w;
@@ -635,78 +628,6 @@ inline void MAP_2PUT(uint8_t * in_addr, uint8_t * out_addr, uint8_t * remap, int
     *((uint8_t *)(out_addr++))=x;
   }
 }
-
-/*
-#endif
-
-inline void PUT8(int32_t *addr, uint8_t *remap)
-{
-  register uint32_t in_pixels;
-  register uint32_t pixel;
-  register uint32_t out_pixels;
-  in_pixels=*addr;
-  pixel=in_pixels;
-  out_pixels=remap[(uint8_t)pixel];
-  
-  pixel=in_pixels;
-  pixel>>=8;
-  pixel=remap[(uint8_t)pixel];
-  pixel<<=8;
-  out_pixels|=pixel;
-
-  pixel=in_pixels;
-  pixel>>=16;
-  pixel=remap[(uint8_t)pixel];
-  pixel<<=16;
-  out_pixels|=pixel;
-
-  pixel=in_pixels;
-  pixel>>=24;
-  pixel=remap[(uint8_t)pixel];
-  pixel<<=24;
-  out_pixels|=pixel;
-
-  *addr=out_pixels;        // send out bus
-
-  // do next 4
-  in_pixels=addr[1];
-
-  pixel=in_pixels;
-  pixel&=0xff;
-  out_pixels=remap[pixel];
-  
-  pixel=in_pixels;
-  pixel>>=8;
-  pixel=remap[(uint8_t)pixel];
-  pixel<<=8;
-  out_pixels|=pixel;
-
-  pixel=in_pixels;
-  pixel>>=16;
-  pixel=remap[(uint8_t)pixel];
-  pixel<<=16;
-  out_pixels|=pixel;
-
-  pixel=in_pixels;
-  pixel>>=24;
-  pixel=remap[(uint8_t)pixel];
-  pixel<<=24;
-  out_pixels|=pixel;  
-  addr[1]=out_pixels;        // send out bus
-  
-}
-
-inline int32_t MAP_PUT2(int32_t dest_addr, int32_t screen_addr, int32_t remap, int32_t w)
-{ while (w--) 
-  { 
-    *((uint8_t *)(dest_addr))=*((uint8_t *)remap+*((uint8_t *)screen_addr)); 
-    screen_addr++; 
-    dest_addr++;
-  } 
-  return dest_addr;
-}
-
-*/
 
 uint16_t min_light_level;
 // calculate the light value for this block.  sum up all contritors
@@ -758,12 +679,6 @@ inline int calc_light_value(light_patch *lp,   // light patch to look at
 }
 
 
-/*#ifdef __WATCOMC__
-
-extern "C" void remap_line_asm(uint8_t *screen_line,uint8_t *light_lookup,uint8_t *remap_line,int count);
-
-#else */
-
 void remap_line_asm2(uint8_t *addr,uint8_t *light_lookup,uint8_t *remap_line,int count)
 //inline void remap_line_asm2(uint8_t *addr,uint8_t *light_lookup,uint8_t *remap_line,int count)
 {
@@ -784,9 +699,6 @@ void remap_line_asm2(uint8_t *addr,uint8_t *light_lookup,uint8_t *remap_line,int
 
   }
 }
-
-//#endif
-
 
 inline void put_8line(uint8_t *in_line, uint8_t *out_line, uint8_t *remap, uint8_t *light_lookup, int count)
 {

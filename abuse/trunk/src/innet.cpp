@@ -38,10 +38,6 @@ via a FIFO in /tmp, using a RPC-like scheme.  This versions runs inside
 of a abuse and therefore is a bit simpler.
 */
 
-#ifdef __WATCOMC__
-#define getlogin() "DOS user"
-#endif
-
 base_memory_struct *base;   // points to shm_addr
 base_memory_struct local_base;
 net_address *net_server=NULL;

@@ -18,25 +18,8 @@
 #endif
 
 
-#if defined( __WATCOMC__ )
-  // they didn't include this def in their math include
-  #ifndef M_PI
-    #define M_PI 3.141592654
-  #endif
-  // so stuff can find proper file ops
-  #include <io.h>
-#elif defined( __POWERPC__ )
-  // they didn't include this def in their math include
-  #ifndef M_PI
-    #define M_PI 3.141592654
-  #endif
-	#include <unistd.h>
-#else
-  // so apps can find unlink
-  #include <unistd.h>
-  #include <stdint.h>
-#endif
-
+#include <unistd.h>
+#include <stdint.h>
 
 #define uint16_swap(x) (((((uint16_t) (x)))<<8)|((((uint16_t) (x)))>>8))
 #define uint32_swap(x) \

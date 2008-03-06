@@ -14,12 +14,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#ifdef __WATCOMC__
-char const *get_username() { return "DOS user"; }
-#elif (defined(__APPLE__) && !defined(__MACH__))
-char const *get_username() { return "Mac user"; }
-#else
-  
 char const *get_username()
 {
   struct passwd *pw;
@@ -33,7 +27,4 @@ char const *get_username()
       return "UNIX user";
   } else return name; 
 }
-
-#endif
-
 

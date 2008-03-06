@@ -15,10 +15,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
-
-#ifndef __WATCOMC__
-#   include <sys/stat.h>
-#endif
+#include <sys/stat.h>
 
 #include "macs.hpp"
 
@@ -237,10 +234,6 @@ void file_manager::add_nfs_client(net_socket *sock)
 
   mp=mode;
   int flags=0;
-
-#ifdef __WATCOMC__
-    flags|=O_BINARY;
-#endif
 
   while (*mp)
   {

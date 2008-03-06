@@ -22,7 +22,6 @@ void *nice_input(char *t, char *p, char *d);
 void *nice_menu(void *main_title, void *menu_title, void *list);
 void center_tbox(void *list, int c);
 void *show_yes_no(void *t, void *msg, void *y, void *n);
-void modify_install_path(char *path);
 
 
 
