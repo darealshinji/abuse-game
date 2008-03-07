@@ -29,7 +29,7 @@ struct player_keys
 	int joy, left, right, up, down, b1, b2, b3, b4;
 };
 
-player_keys *key_map = NULL;
+static player_keys *key_map = NULL;
 
 static int binding_for_player( int player )
 {
@@ -221,10 +221,11 @@ void key_bindings(int player, int &left, int &right, int &up, int &down, int &b1
 
 void config_cleanup()
 {
-	if( key_map )
-	{
-		jfree( key_map );
-	}
+    if(key_map)
+    {
+        jfree(key_map);
+        key_map = NULL;
+    }
 }
 
 //
