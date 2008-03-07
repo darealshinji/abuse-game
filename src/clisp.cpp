@@ -31,8 +31,9 @@
 #include "jdir.hpp"
 #include "netcfg.hpp"
 
-extern uint8_t major_version;
-extern uint8_t minor_version;
+#define ENGINE_MAJOR 1
+#define ENGINE_MINOR 20
+
 extern int has_joystick;
 
 // the following are references to lisp symbols
@@ -2137,11 +2138,11 @@ long c_caller(long number, void *args)
     } break;
     case 265 :
     {
-      return atoi(PACKAGE_VERSION);
+      return ENGINE_MAJOR;
     } break;
     case 266 :
     {
-      return atoi(strchr(PACKAGE_VERSION, '.') + 1);
+      return ENGINE_MINOR;
     } break;
     case 267 :
     {
