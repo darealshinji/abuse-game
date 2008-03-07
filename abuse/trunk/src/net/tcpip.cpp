@@ -427,24 +427,28 @@ net_address *tcpip_protocol::find_address(int port, char *name)
 
 	end_notify();
 
-  if (!responder) {
+    if (!responder)
+    {
 //#ifdef TCPIP_DEBUG
-		fprintf(stderr,"Creating responder on port %d\n",port);
+        fprintf(stderr,"Creating responder on port %d\n",port);
 //#endif
-    responder = create_listen_socket(port, net_socket::SOCKET_FAST);
-		responder->read_selectable();
-		responder->write_unselectable();
-    bcast = (ip_address *)get_local_address();
-    bcast->set_port(port);
+        responder = create_listen_socket(port, net_socket::SOCKET_FAST);
+        if(responder)
+        {
+            responder->read_selectable();
+            responder->write_unselectable();
+            bcast = (ip_address *)get_local_address();
+            bcast->set_port(port);
     
 //#ifdef TCPIP_DEBUG
-		*((unsigned char *)(&bcast->addr.sin_addr)+3) = 255;
-		bcast->store_string(s,256);
-		fprintf(stderr,"Simulating broadcast to [%s]\n",s);
+            *((unsigned char *)(&bcast->addr.sin_addr)+3) = 255;
+            bcast->store_string(s,256);
+            fprintf(stderr,"Simulating broadcast to [%s]\n",s);
 //#endif
 
-		*((unsigned char *)(&bcast->addr.sin_addr)+3) = 0;		
-	}
+            *((unsigned char *)(&bcast->addr.sin_addr)+3) = 0;		
+        }
+    }
 
   if (responder)
   {
