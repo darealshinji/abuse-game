@@ -540,18 +540,7 @@ void game::load_level(char const *name)
     else
     {
         spec_directory sd(fp);
-
-#if 0
-        spec_entry *e = sd.find("Copyright 1995 Crack dot Com, All Rights reserved");
-        if(!e)
-        {
-            the_game->show_help(symbol_str("missing_c"));
-            current_level = new level(100, 100, "untitled");
-            the_game->need_refresh();
-        }
-        else
-#endif
-            current_level = new level(&sd, fp, name);
+        current_level = new level(&sd, fp, name);
         delete fp;
     }
 
