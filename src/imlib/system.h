@@ -10,13 +10,7 @@
 #ifndef __SYS__
 #define __SYS__
 
-
-#ifdef WORDS_BIGENDIAN
-  #define BIG_ENDIANS
-#else
-  #define LITTLE_ENDIANS
-#endif
-
+#include <SDL.h>
 
 #include <unistd.h>
 #include <stdint.h>
@@ -26,7 +20,7 @@
    ((( ((uint32_t)(x)) )>>24)|((( ((uint32_t)(x)) )&0x00ff0000)>>8)| \
    ((( ((uint32_t)(x)) )&0x0000ff00)<<8)|(( ((uint32_t)(x)) )<<24))
 
-#if defined BIG_ENDIANS
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN 
 #define LONG int32_t
 #define uint16_to_intel(x) uint16_swap(x)
 #define uint16_to_local(x) uint16_to_intel(x)

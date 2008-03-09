@@ -20,7 +20,9 @@
 #include "event.hpp"
 #include "video.hpp"
 #include "dos.h"
+#ifndef __APPLE__
 #include "main.hpp"
+#endif
 #include "macs.hpp"
 #include "image24.hpp"
 
@@ -295,9 +297,7 @@ void getimage(FILE *file,image *im,int pad)
 {
   int i,j;
   uint8_t *sl;
-#if BYTE_ORDER!=BIG_ENDIAN
-  printf("little guys\n");
-#endif
+
   printf("getting image, bits_per_item = %d %d %d\n",bits_per_item,bits_used,bit_order==MSBFirst);
   for (i=0; i<im->height(); i++)
     {
