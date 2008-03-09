@@ -9,10 +9,6 @@
 #include <sys/types.h>
 #include "isllist.hpp"
 
-#ifdef __APPLE__
-typedef int socklen_t;
-#endif
-
 #if (defined(__APPLE__) && !defined(__MACH__))
 #include "GUSI.h"
 #else

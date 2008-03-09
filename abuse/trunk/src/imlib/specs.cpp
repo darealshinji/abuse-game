@@ -931,7 +931,7 @@ void write_uint32(FILE *fp, uint32_t x)
 uint8_t read_uint8(FILE *fp) { return fgetc(fp)&0xff; }
 void write_uint8(FILE *fp, uint8_t x) { fputc((unsigned char)x,fp); }
 
-uint32_t read_other_int32(FILE *fp)
+uint32_t read_other_uint32(FILE *fp)
 {
   uint32_t x;
   fread(&x,1,4,fp);

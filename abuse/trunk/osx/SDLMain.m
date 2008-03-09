@@ -6,16 +6,12 @@
 */
 
 #import "SDL.h"
-#import <Cocoa/Cocoa.h>
-
-@interface SDLMain : NSObject
-@end
-
+#import "SDLMain.h"
 #import <sys/param.h> /* for MAXPATHLEN */
 #import <unistd.h>
 
 /* Use this flag to determine whether we use SDLMain.nib or not */
-#define		SDL_USE_NIB_FILE	1
+#define		SDL_USE_NIB_FILE	0
 
 
 static int    gArgc;
@@ -26,6 +22,11 @@ static BOOL   gFinderLaunch;
 /* A helper category for NSString */
 @interface NSString (ReplaceSubString)
 - (NSString *)stringByReplacingRange:(NSRange)aRange with:(NSString *)aString;
+@end
+#else
+/* An internal Apple class used to setup Apple menus */
+@interface NSAppleMenuController:NSObject {}
+- (void)controlMenu:(NSMenu *)aMenu;
 @end
 #endif
 
@@ -46,13 +47,7 @@ static BOOL   gFinderLaunch;
 
 /* The main class of the application, the application's delegate */
 @implementation SDLMain
-- (void)quit:(id)sender
-{
-    /* Post a SDL_QUIT event */
-    SDL_Event event;
-    event.type = SDL_QUIT;
-    SDL_PushEvent(&event);
-}
+
 /* Set the working directory to the .app's parent directory */
 - (void) setupWorkingDirectory:(BOOL)shouldChdir
 {
@@ -100,6 +95,86 @@ static BOOL   gFinderLaunch;
             [self fixMenu:[menuItem submenu] withAppName:appName];
     }
     [ aMenu sizeToFit ];
+}
+
+#else
+
+void setupAppleMenu(void)
+{
+    /* warning: this code is very odd */
+    NSAppleMenuController *appleMenuController;
+    NSMenu *appleMenu;
+    NSMenuItem *appleMenuItem;
+
+    appleMenuController = [[NSAppleMenuController alloc] init];
+    appleMenu = [[NSMenu alloc] initWithTitle:@""];
+    appleMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
+    
+    [appleMenuItem setSubmenu:appleMenu];
+
+    /* yes, we do need to add it and then remove it --
+       if you don't add it, it doesn't get displayed
+       if you don't remove it, you have an extra, titleless item in the menubar
+       when you remove it, it appears to stick around
+       very, very odd */
+    [[NSApp mainMenu] addItem:appleMenuItem];
+    [appleMenuController controlMenu:appleMenu];
+    [[NSApp mainMenu] removeItem:appleMenuItem];
+    [appleMenu release];
+    [appleMenuItem release];
+}
+
+/* Create a window menu */
+void setupWindowMenu(void)
+{
+    NSMenu		*windowMenu;
+    NSMenuItem	*windowMenuItem;
+    NSMenuItem	*menuItem;
+
+
+    windowMenu = [[NSMenu alloc] initWithTitle:@"Window"];
+    
+    /* "Minimize" item */
+    menuItem = [[NSMenuItem alloc] initWithTitle:@"Minimize" action:@selector(performMiniaturize:) keyEquivalent:@"m"];
+    [windowMenu addItem:menuItem];
+    [menuItem release];
+    
+    /* Put menu into the menubar */
+    windowMenuItem = [[NSMenuItem alloc] initWithTitle:@"Window" action:nil keyEquivalent:@""];
+    [windowMenuItem setSubmenu:windowMenu];
+    [[NSApp mainMenu] addItem:windowMenuItem];
+    
+    /* Tell the application object that this is now the window menu */
+    [NSApp setWindowsMenu:windowMenu];
+
+    /* Finally give up our references to the objects */
+    [windowMenu release];
+    [windowMenuItem release];
+}
+
+/* Replacement for NSApplicationMain */
+void CustomApplicationMain (argc, argv)
+{
+    NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
+    SDLMain				*sdlMain;
+
+    /* Ensure the application object is initialised */
+    [SDLApplication sharedApplication];
+    
+    /* Set up the menubar */
+    [NSApp setMainMenu:[[NSMenu alloc] init]];
+    setupAppleMenu();
+    setupWindowMenu();
+    
+    /* Create SDLMain and make it the app delegate */
+    sdlMain = [[SDLMain alloc] init];
+    [NSApp setDelegate:sdlMain];
+    
+    /* Start the main event loop */
+    [NSApp run];
+    
+    [sdlMain release];
+    [pool release];
 }
 
 #endif
@@ -196,6 +271,8 @@ int main (int argc, char **argv)
 #if SDL_USE_NIB_FILE
     [SDLApplication poseAsClass:[NSApplication class]];
     NSApplicationMain (argc, argv);
+#else
+    CustomApplicationMain (argc, argv);
 #endif
     return 0;
 }
