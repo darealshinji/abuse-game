@@ -3462,7 +3462,7 @@ struct pmi
 } ;
 
 
-static pmi fm[]={
+static pmi filemenu[]={
           {"menu1_load",         ID_LEVEL_LOAD,NULL,-1},
 	  {NULL,0,NULL,-1},
 	  {"menu1_save",     ID_LEVEL_SAVE,NULL,-1},
@@ -3483,7 +3483,7 @@ static pmi fm[]={
 	};
 
 
-static pmi em[]={
+static pmi editmenu[]={
   {"menu2_light",               ID_TOGGLE_LIGHT,NULL,-1},
   {"menu2_scroll",            ID_SET_SCROLL,NULL,-1},
   {"menu2_center",       ID_CENTER_PLAYER,NULL,-1},
@@ -3513,7 +3513,7 @@ static pmi em[]={
 
 
 // Window Menus
-static pmi wm[]={
+static pmi winmenu[]={
           {"menu3_fore",    ID_WIN_FORE,    &forew_on,-1},
           {"menu3_back",    ID_WIN_BACK,    &backw_on,-1},
           {"menu3_layers",    ID_WIN_LAYERS,  &show_menu_on,-1},
@@ -3531,7 +3531,7 @@ static pmi wm[]={
 
 
 /*
-static pmi fm[]={
+static pmi filemenu[]={
           {"Load Level",         ID_LEVEL_LOAD,NULL,-1},
 	  {NULL,0,NULL,-1},
 	  {"Save Level (S)",     ID_LEVEL_SAVE,NULL,-1},
@@ -3552,7 +3552,7 @@ static pmi fm[]={
 	};
 
 
-static pmi em[]={
+static pmi editmenu[]={
   {"Toggle light",               ID_TOGGLE_LIGHT,NULL,-1},
   {"Set scroll rate",            ID_SET_SCROLL,NULL,-1},
   {"Center on player   (c)",       ID_CENTER_PLAYER,NULL,-1},
@@ -3582,7 +3582,7 @@ static pmi em[]={
 
 
 // Window Menus
-static pmi wm[]={
+static pmi winmenu[]={
           {"Foreground  (f)",    ID_WIN_FORE,    &forew_on,-1},
           {"Background  (b)",    ID_WIN_BACK,    &backw_on,-1},
           {"Draw layers (L)",    ID_WIN_LAYERS,  &show_menu_on,-1},
@@ -3610,9 +3610,9 @@ static pmenu_item *i_recurse(pmi *first)
 static pmenu *make_menu(int x, int y)
 {
   return new pmenu(x,y,
-         new pmenu_item(symbol_str("file_top"),new psub_menu(i_recurse(fm),NULL),
-	 new pmenu_item(symbol_str("edit_top"),new psub_menu(i_recurse(em),NULL),
-	 new pmenu_item(symbol_str("window_top"),new psub_menu(i_recurse(wm),NULL),NULL))),screen,eh);
+         new pmenu_item(symbol_str("file_top"),new psub_menu(i_recurse(filemenu),NULL),
+	 new pmenu_item(symbol_str("edit_top"),new psub_menu(i_recurse(editmenu),NULL),
+	 new pmenu_item(symbol_str("window_top"),new psub_menu(i_recurse(winmenu),NULL),NULL))),screen,eh);
 }
 
 
