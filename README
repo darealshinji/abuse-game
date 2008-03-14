@@ -1,199 +1,103 @@
-Abuse-SDL 0.7.1 README
-----------------------
+Crack dot Com is hereby releasing the source code to Abuse to the
+public domain.
 
-----
+Ownership:
 
-1. Introduction
-2. Additional Features
-3. Requirements
-4. Running Abuse-SDL
-5. Configuration
-6. Installing the datafiles.
-7. Notes
-8. Special Thanks
-9. Feedback
+  The following are statements of Crack dot Com's ownership.  These
+  items are NOT being submitted to the public domain.
 
-----
+    Crack dot Com retains ownership of the Abuse trademark.
+    Crack dot Com retains ownership of the Crack dot Com trademark.
+    Crack dot Com retains ownership of the Abuse "retail" data set.
+    Crack dot Com retains ownership of the Abuse "registered" data set.
 
+  The "retail" and "registered" data sets are defined as the levels,
+  sound effects, music, artwork and other data which are NOT common to the
+  "shareware" release of the game.
 
-1. INTRODUCTION
+Licenses and Third Party Owners:
 
-Welcome to Abuse-SDL, the port of the classic game Abuse to the
-Simple DirectMedia Layer.  Abuse was originally developed by
-Crack dot Com and released in 1995 for MS-DOS.  A Linux version was
-also made available at a later date.  It had a few limitations
-the most restrictive of which was that it only ran on an 8-bit
-display, and only in a window.
-Abuse-SDL will run at any colour depth and supports fullscreen
-mode, as well as many other new features.  It should also be more
-portable and hopefully run on a variety of *nix variants, and possibly
-other systems supported by the SDL library.
+  Crack licensed the DOS Abuse rights to Electronic Arts and the Mac Abuse
+  rights to Bungie.  Crack is therefore NOT releasing the full data set to
+  the public domain to protect EA's and Bungie's investments in the product.
 
+  Sound effects found in the shareware release of Abuse are the copyright of
+  Bobby Prince and are not being submitted to the public domain.
 
-2. ADDITIONAL FEATURES
+Disclaimer of Waranty:
 
-Abuse-SDL has the following extra features over the original
-Abuse:
+  As with most public domain software, no warranty is made or implied
+  by Crack dot Com or Jonathan Clark.
 
-  Runs at a screen bit depth of 8, 16, 24 or 32.
-  Fullscreen display.
-  Scaling by any amount (eg. 2, 3 or 4)
-  OpenGL support for hardware scaling and anti-aliasing.
-  Stereo sound with panning.
-  Mousewheel support for changing weapons.
-  Customizable keys.
+Examples of What you CAN Do:
 
+  Make another game and sell it commercially using the Abuse source code.
+  Use pieces of the source code or shareware data (excluding the WAV's-
+    you must speak to Bobby Prince) however you see fit.
+  Learn how to make a better game.
+  Port Abuse to any system you like.
 
-3. REQUIREMENTS
+A note from Jonathan Clark:
 
-Abuse-SDL has the following requirements:
+  I'm busy coding Golgotha so I don't have time to answer many questions.
+  If you e-mail me, I'll read it (unless it's really long), but I may
+  not answer.  If you are making a game with the code, I would like to
+  hear about that sort of thing.
 
-  SDL 1.1.6 or above.
-  One of the following sets of datafiles:
-    - Registered Abuse(original CD)
-    - Abuse Shareware
-    - fRaBs(Free Abuse)
-  OpenGL is optional.
+A note from Dave Taylor:
 
+  I didn't write a line of the Abuse source code, but I'm proud to have
+  footed the bill.  If any adventurous coders are interested, I would
+  love to someday see a version which runs a lot faster, draws interpolated
+  frames between the 15 Hz (i believe) updates, and runs under Win32.  I
+  believe in the released versions, we didn't include a line of assembly,
+  and we've identified several areas that can be optimized.
 
-4. RUNNING ABUSE-SDL
+  Also enclosed is the Mac Abuse source tree.  We decided to split
+  the Mac version from the main source tree.  The Mac version features
+  several updates to the Abuse engine and is designed primarily for a
+  640x480 resolution.  We do not know if the Mac Abuse source tree
+  compiles these days, so it's certainly wiser for the novice to stick
+  with the main abuse and imlib directories instead of the macabuse/abuse
+  and macabuse/imlib directories.
 
-If Abuse-SDL has been installed properly, the command:
+  Many thanks to Jason Merrill at Cygnus who fitted the Abuse source to
+  use configure and fixed several bugs.  The following are exerpts from
+  his e-mail to us detailing some of those changes:
 
-  abuse
+    "You'll need to remove abuse/lnx_sdrv and abuse/keydrv before building so
+     make doesn't rebuild them in the source directory.
 
-will start the game.
+     Some crashes fixed.  Curiously, building the 'opt' target instead of
+     'debug' produces a program that doesn't crash in mid-game, though it does
+     occasionally say "jfree: bad pointer".  I haven't checked whether this is
+     because of optimization or -DNO_CHECK.
 
-The following command-line switches can be used:
+     ABUSE_PATH should work now, but it's useless without ABUSE_SAVE_PATH,
+     which would be harder to fix.  The 'abuse' script just makes symlinks
+     to the installed data files.
 
-  -datadir <arg>    Set the location of the datafiles
-  -doublebuf        Enable double buffering
-  -edit             Start in editor mode
-  -f <arg>          Load the map file named <arg>
-  -fullscreen       Enable fullscreen mode
-  -gl               Enable OpenGL (if supported)
-  -antialias        Enable anti-aliasing (only with -gl)
-  -lisp             Start in lisp interpreter mode
-  -mono             Disable stereo sound
-  -nodelay          Run at maximum speed
-  -nosound          Disable sound
-  -scale <arg>      Scale by <arg> amount
+     keydrv now works and cleans up after itself.
 
+     Changed SVGA mouse init to be run before vga_init so it only needs to be
+     suid root, not run as root.  Use vga_getmousetype() instead of checking
+     MOUSE_TYPE.
 
-5. CONFIGURATION
+     The patch uses automake, but stock FSF automake won't work.  I had to
+     tweak it to accommodate your source layout.  Avoid rebuilding
+     Makefile.in.
 
-Abuse-SDL also has a configuration file where these options can be set
-instead of using the command line.  The file "abuserc" will be created in
-your ~/.abuse directory the first time Abuse-SDL is run.
-Lines starting with a ';' are comments.
-Setting an option to '1' turns it on, and '0' turns it off.
+     This should work for non-linux UNIX targets as well, but I haven't tested
+     it yet.
 
-To change the keys used in the game, simply type the key after the option.
-The following special keys can also be used:
-  LEFT, RIGHT, UP, DOWN : Cursor keys and keypad.
-  CTRL_L, CTRL_R        : Left and right CTRL keys.
-  ALT_L, ALT_R          : Left and right ALT keys.
-  SHIFT_L, SHIFT_R      : Left and right SHIFT keys.
-  F1 - F10              : Function keys 1 through 10.
-  TAB                   : TAB key.
-  BACKSPACE             : Backspace key.
-  ENTER                 : Enter key
-  INSERT, DEL           : Insert and Delete keys.
-  PAGEUP, PAGEDOWN      : PageUp and PageDown keys.
-  CAPS, NUM_LOCK        : Caps-Lock and Num-Lock keys.
-  SPACE                 : Spacebar.
-
-The default key settings are as follows:
-  Left        : Left cursor key.
-  Right       : Right cursor key.
-  Up/Jump     : Up cursor key.
-  Down/Use    : Down cursor key.
-  Prev Weapon : Left or Right CTRL keys.
-  Next Weapon : Insert key.
-
-The mouse always controls your aim, with Left button for fire and
-Right button for special.  Mousewheel can be used for changing weapons.
+     Fixes another couple of crashes and fixes support for sparc-sun-solaris2,
+     mips-sgi-irix5, powerpc-ibm-aix4.1, and probably others I haven't tried.
+     I haven't tested the AIX sound driver."
 
 
-6. INSTALLING THE DATAFILES
+Have fun,
 
-Abuse-SDL requires a set of datafiles(graphics, sounds, maps and so on) to be
-installed before it will run.  They are available as a separate package from
-the Abuse-SDL website.
+  Jonathan Clark                 Dave Taylor
+  Lead Programmer/Founder        President/Founder
+  Crack dot Com                  Crack dot Com
 
-By default, Abuse-SDL expects the datafiles to be installed in the following
-location:
-
-  /usr/local/share/games/abuse
-
-However it is possible to change this and tell Abuse-SDL where to find the
-files if they are in another location.
-The location can be set when Abuse-SDL is compiled.  See the INSTALL file for
-instructions on how to do this.
-You can also specify the location with the -datadir argument when Abuse-SDL is
-run.  See section 4 above.
-Finally, the location can be set in the configuration file. See section 5 above.
-
-To install the datafiles, simply unpack the archive into a location of your
-choice (preferably '/usr/local/share/games/abuse' as mentioned above).
-
-
-7. NOTES
-
-Scaling:
-  Scaling is still experimental and not very fast.  Try scaling by different
-  amounts to see which ones work the best.
-
-OpenGL:
-  OpenGL can be used to provide hardware accelerated scaling and anti-aliasing.
-  You will require a 3D card with the appropriate drivers and GL libraries
-  installed for this to work.
-
-fRaBs:
-  The current release of fRaBs has some naming issues under Linux.
-  In the 'addon/leon/' directory a lot of the files are uppercase when Abuse
-  is expecting them to be lowercase.
-  Renaming the files to be all lowercase will fix this problem.
-
-BOSS_ANT has no value:
-  On some systems when running Abuse-SDL, the following error is given:
-    "BOSS_ANT has no value"
-  The exact cause of this is unknown, however there is a workaround.
-  If you don't already have a '.abuse' directory in your $HOME directory,
-  simply create it with the following command:
-
-    mkdir ~/.abuse
-
-  Then copy the file 'gamma.lsp' that is included with Abuse-SDL into that
-  directory.  This should fix the problem and allow Abuse-SDL to run correctly.
-  The 'gamma.lsp' file stores the settings for gamma correction and be adjusted
-  from the main game menu if desired.
-
-
-8. SPECIAL THANKS
-
-Go to Jonathan Clark, Dave Taylor and the rest of the Crack Dot Com team for
-making the best 2D platform shooter ever, and then releasing the code that
-makes Abuse-SDL possible.
-
-Also, thanks go to Jonathan Clark for allowing Anthony to distribute the
-original datafiles with Abuse-SDL.
-
-Thanks also to everyone who has contributed ideas, bug reports and patches.
-See the AUTHORS file for details.
-
-
-9. FEEDBACK
-
-If you have any questions, comments or constructive criticism,
-Anthony's email address is:
-
-  trandor@labyrinth.net.au
-
-The Abuse-SDL webpage can be found at:
-
-  http://abuse.zoy.org/
-
-----
-
-Have fun!

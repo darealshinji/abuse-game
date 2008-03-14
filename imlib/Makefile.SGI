@@ -1,0 +1,2135 @@
+all : opt
+
+debug : ./SGI/debug/image.a ./SGI/debug/packet.a ./SGI/debug/gui.a ./SGI/debug/net.a ./SGI/debug/dir.a ./SGI/debug/sound.a ./SGI/debug/joy.a ./SGI/debug/winman.a ./SGI/debug/time.a
+	echo Made debug
+
+opt : ./SGI/opt/image.a ./SGI/opt/packet.a ./SGI/opt/gui.a ./SGI/opt/net.a ./SGI/opt/dir.a ./SGI/opt/sound.a ./SGI/opt/joy.a ./SGI/opt/winman.a ./SGI/opt/time.a
+	echo Made opt
+
+profile : ./SGI/profile/image.a ./SGI/profile/packet.a ./SGI/profile/gui.a ./SGI/profile/net.a ./SGI/profile/dir.a ./SGI/profile/sound.a ./SGI/profile/joy.a ./SGI/profile/winman.a ./SGI/profile/time.a
+	echo Made profile
+
+SGI_image_debug_o_files = \
+	./SGI/debug/filter.o \
+	./SGI/debug/gifread.o \
+	./SGI/debug/globals.o \
+	./SGI/debug/image.o \
+	./SGI/debug/linked.o \
+	./SGI/debug/input.o \
+	./SGI/debug/mdlread.o \
+	./SGI/debug/palette.o \
+	./SGI/debug/ppmread.o \
+	./SGI/debug/include.o \
+	./SGI/debug/xwdread.o \
+	./SGI/debug/fonts.o \
+	./SGI/debug/decoder.o \
+	./SGI/debug/loader.o \
+	./SGI/debug/glread.o \
+	./SGI/debug/texture.o \
+	./SGI/debug/specs.o \
+	./SGI/debug/supmorph.o \
+	./SGI/debug/image24.o \
+	./SGI/debug/pcxread.o \
+	./SGI/debug/timage.o \
+	./SGI/debug/jmalloc.o \
+	./SGI/debug/jrand.o \
+	./SGI/debug/lbmread.o \
+	./SGI/debug/keys.o \
+	./SGI/debug/dprint.o \
+	./SGI/debug/status.o \
+	./SGI/debug/visobj.o
+
+SGI_packet_debug_o_files = \
+	./SGI/debug/packet.o
+
+SGI_gui_debug_o_files = \
+	./SGI/debug/pmenu.o \
+	./SGI/debug/scroller.o \
+	./SGI/debug/filesel.o \
+	./SGI/debug/tools.o \
+	./SGI/debug/guistat.o
+
+SGI_net_debug_o_files = \
+	port/unix/SGI/debug/jnet.o
+
+SGI_dir_debug_o_files = \
+	port/unix/SGI/debug/jdir.o
+
+SGI_sound_debug_o_files = \
+	port/sgi/SGI/debug/sound.o \
+	./SGI/debug/readwav.o
+
+SGI_joy_debug_o_files = \
+	port/unix/SGI/debug/joystick.o
+
+SGI_winman_debug_o_files = \
+	port/x11/SGI/debug/video.o \
+	port/x11/SGI/debug/mouse.o \
+	port/x11/SGI/debug/event.o \
+	./SGI/debug/jwindow.o
+
+SGI_time_debug_o_files = \
+	port/sgi/SGI/debug/timing.o
+
+./SGI/debug/time.a : $(SGI_time_debug_o_files)
+	ar ruvs ./SGI/debug/time.a \
+	port/sgi/SGI/debug/timing.o
+
+port/sgi/SGI/debug/timing.o : port/sgi/timing.c
+	g++ -c -o port/sgi/SGI/debug/timing.o port/sgi/timing.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+port/sgi/SGI/debug/timing.o : include/timing.hpp
+
+./SGI/debug/winman.a : $(SGI_winman_debug_o_files)
+	ar ruvs ./SGI/debug/winman.a \
+	port/x11/SGI/debug/video.o \
+	port/x11/SGI/debug/mouse.o \
+	port/x11/SGI/debug/event.o \
+	./SGI/debug/jwindow.o
+
+port/x11/SGI/debug/video.o : port/x11/video.c
+	g++ -c -o port/x11/SGI/debug/video.o port/x11/video.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+port/x11/SGI/debug/video.o : include/bitmap.h
+port/x11/SGI/debug/video.o : include/macs.hpp
+port/x11/SGI/debug/video.o : include/xinclude.h
+port/x11/SGI/debug/video.o : include/dos.h
+port/x11/SGI/debug/video.o : include/video.hpp
+port/x11/SGI/debug/video.o : include/globals.hpp
+port/x11/SGI/debug/video.o : include/system.h
+port/x11/SGI/debug/video.o : include/jmalloc.hpp
+port/x11/SGI/debug/video.o : include/specs.hpp
+port/x11/SGI/debug/video.o : include/palette.hpp
+port/x11/SGI/debug/video.o : include/linked.hpp
+port/x11/SGI/debug/video.o : include/image.hpp
+port/x11/SGI/debug/video.o : include/filter.hpp
+port/x11/SGI/debug/mouse.o : port/x11/mouse.c
+	g++ -c -o port/x11/SGI/debug/mouse.o port/x11/mouse.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+port/x11/SGI/debug/mouse.o : include/xinclude.h
+port/x11/SGI/debug/mouse.o : include/mouse.hpp
+port/x11/SGI/debug/mouse.o : include/monoprnt.hpp
+port/x11/SGI/debug/mouse.o : include/mdlread.hpp
+port/x11/SGI/debug/mouse.o : include/filter.hpp
+port/x11/SGI/debug/mouse.o : include/macs.hpp
+port/x11/SGI/debug/mouse.o : include/sprite.hpp
+port/x11/SGI/debug/mouse.o : include/jmalloc.hpp
+port/x11/SGI/debug/mouse.o : include/specs.hpp
+port/x11/SGI/debug/mouse.o : include/palette.hpp
+port/x11/SGI/debug/mouse.o : include/linked.hpp
+port/x11/SGI/debug/mouse.o : include/image.hpp
+port/x11/SGI/debug/mouse.o : include/system.h
+port/x11/SGI/debug/mouse.o : include/video.hpp
+port/x11/SGI/debug/event.o : port/x11/event.c
+	g++ -c -o port/x11/SGI/debug/event.o port/x11/event.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+port/x11/SGI/debug/event.o : include/keys.hpp
+port/x11/SGI/debug/event.o : include/event.hpp
+port/x11/SGI/debug/event.o : include/sprite.hpp
+port/x11/SGI/debug/event.o : include/mouse.hpp
+port/x11/SGI/debug/event.o : include/macs.hpp
+port/x11/SGI/debug/event.o : include/gifread.hpp
+port/x11/SGI/debug/event.o : include/video.hpp
+port/x11/SGI/debug/event.o : include/mdlread.hpp
+port/x11/SGI/debug/event.o : include/jmalloc.hpp
+port/x11/SGI/debug/event.o : include/specs.hpp
+port/x11/SGI/debug/event.o : include/palette.hpp
+port/x11/SGI/debug/event.o : include/linked.hpp
+port/x11/SGI/debug/event.o : include/image.hpp
+port/x11/SGI/debug/event.o : include/xinclude.h
+port/x11/SGI/debug/event.o : include/system.h
+./SGI/debug/jwindow.o : jwindow.c
+	g++ -c -o ./SGI/debug/jwindow.o jwindow.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/jwindow.o : include/timage.hpp
+./SGI/debug/jwindow.o : include/fonts.hpp
+./SGI/debug/jwindow.o : include/jwindow.hpp
+./SGI/debug/jwindow.o : include/filter.hpp
+./SGI/debug/jwindow.o : include/mouse.hpp
+./SGI/debug/jwindow.o : include/macs.hpp
+./SGI/debug/jwindow.o : include/sprite.hpp
+./SGI/debug/jwindow.o : include/keys.hpp
+./SGI/debug/jwindow.o : include/event.hpp
+./SGI/debug/jwindow.o : include/jmalloc.hpp
+./SGI/debug/jwindow.o : include/specs.hpp
+./SGI/debug/jwindow.o : include/palette.hpp
+./SGI/debug/jwindow.o : include/linked.hpp
+./SGI/debug/jwindow.o : include/image.hpp
+./SGI/debug/jwindow.o : include/system.h
+./SGI/debug/jwindow.o : include/video.hpp
+
+./SGI/debug/joy.a : $(SGI_joy_debug_o_files)
+	ar ruvs ./SGI/debug/joy.a \
+	port/unix/SGI/debug/joystick.o
+
+port/unix/SGI/debug/joystick.o : port/unix/joystick.c
+	g++ -c -o port/unix/SGI/debug/joystick.o port/unix/joystick.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+port/unix/SGI/debug/joystick.o : port/unix/joystick.c
+
+./SGI/debug/sound.a : $(SGI_sound_debug_o_files)
+	ar ruvs ./SGI/debug/sound.a \
+	port/sgi/SGI/debug/sound.o \
+	./SGI/debug/readwav.o
+
+port/sgi/SGI/debug/sound.o : port/sgi/sound.c
+	g++ -c -o port/sgi/SGI/debug/sound.o port/sgi/sound.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+port/sgi/SGI/debug/sound.o : include/timing.hpp
+port/sgi/SGI/debug/sound.o : include/dprint.hpp
+port/sgi/SGI/debug/sound.o : include/jmalloc.hpp
+port/sgi/SGI/debug/sound.o : include/linked.hpp
+port/sgi/SGI/debug/sound.o : include/specs.hpp
+port/sgi/SGI/debug/sound.o : include/readwav.hpp
+port/sgi/SGI/debug/sound.o : include/sound.hpp
+port/sgi/SGI/debug/sound.o : include/system.h
+port/sgi/SGI/debug/sound.o : include/macs.hpp
+./SGI/debug/readwav.o : readwav.c
+	g++ -c -o ./SGI/debug/readwav.o readwav.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/readwav.o : include/dprint.hpp
+./SGI/debug/readwav.o : include/macs.hpp
+./SGI/debug/readwav.o : include/system.h
+./SGI/debug/readwav.o : include/jmalloc.hpp
+./SGI/debug/readwav.o : include/linked.hpp
+./SGI/debug/readwav.o : include/specs.hpp
+./SGI/debug/readwav.o : include/readwav.hpp
+
+./SGI/debug/dir.a : $(SGI_dir_debug_o_files)
+	ar ruvs ./SGI/debug/dir.a \
+	port/unix/SGI/debug/jdir.o
+
+port/unix/SGI/debug/jdir.o : port/unix/jdir.c
+	g++ -c -o port/unix/SGI/debug/jdir.o port/unix/jdir.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+port/unix/SGI/debug/jdir.o : include/jmalloc.hpp
+
+./SGI/debug/net.a : $(SGI_net_debug_o_files)
+	ar ruvs ./SGI/debug/net.a \
+	port/unix/SGI/debug/jnet.o
+
+port/unix/SGI/debug/jnet.o : port/unix/jnet.c
+	g++ -c -o port/unix/SGI/debug/jnet.o port/unix/jnet.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+port/unix/SGI/debug/jnet.o : include/jmalloc.hpp
+port/unix/SGI/debug/jnet.o : include/packet.hpp
+port/unix/SGI/debug/jnet.o : include/system.h
+port/unix/SGI/debug/jnet.o : include/macs.hpp
+port/unix/SGI/debug/jnet.o : include/jnet.hpp
+
+./SGI/debug/gui.a : $(SGI_gui_debug_o_files)
+	ar ruvs ./SGI/debug/gui.a \
+	./SGI/debug/pmenu.o \
+	./SGI/debug/scroller.o \
+	./SGI/debug/filesel.o \
+	./SGI/debug/tools.o \
+	./SGI/debug/guistat.o
+
+./SGI/debug/pmenu.o : pmenu.c
+	g++ -c -o ./SGI/debug/pmenu.o pmenu.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/pmenu.o : include/timage.hpp
+./SGI/debug/pmenu.o : include/fonts.hpp
+./SGI/debug/pmenu.o : include/filter.hpp
+./SGI/debug/pmenu.o : include/mouse.hpp
+./SGI/debug/pmenu.o : include/macs.hpp
+./SGI/debug/pmenu.o : include/sprite.hpp
+./SGI/debug/pmenu.o : include/keys.hpp
+./SGI/debug/pmenu.o : include/event.hpp
+./SGI/debug/pmenu.o : include/specs.hpp
+./SGI/debug/pmenu.o : include/palette.hpp
+./SGI/debug/pmenu.o : include/linked.hpp
+./SGI/debug/pmenu.o : include/image.hpp
+./SGI/debug/pmenu.o : include/system.h
+./SGI/debug/pmenu.o : include/video.hpp
+./SGI/debug/pmenu.o : include/jwindow.hpp
+./SGI/debug/pmenu.o : include/input.hpp
+./SGI/debug/pmenu.o : include/jmalloc.hpp
+./SGI/debug/pmenu.o : include/pmenu.hpp
+./SGI/debug/scroller.o : scroller.c
+	g++ -c -o ./SGI/debug/scroller.o scroller.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/scroller.o : include/timage.hpp
+./SGI/debug/scroller.o : include/fonts.hpp
+./SGI/debug/scroller.o : include/filter.hpp
+./SGI/debug/scroller.o : include/mouse.hpp
+./SGI/debug/scroller.o : include/macs.hpp
+./SGI/debug/scroller.o : include/sprite.hpp
+./SGI/debug/scroller.o : include/keys.hpp
+./SGI/debug/scroller.o : include/event.hpp
+./SGI/debug/scroller.o : include/jmalloc.hpp
+./SGI/debug/scroller.o : include/specs.hpp
+./SGI/debug/scroller.o : include/palette.hpp
+./SGI/debug/scroller.o : include/linked.hpp
+./SGI/debug/scroller.o : include/image.hpp
+./SGI/debug/scroller.o : include/system.h
+./SGI/debug/scroller.o : include/video.hpp
+./SGI/debug/scroller.o : include/jwindow.hpp
+./SGI/debug/scroller.o : include/input.hpp
+./SGI/debug/scroller.o : include/scroller.hpp
+./SGI/debug/filesel.o : filesel.c
+	g++ -c -o ./SGI/debug/filesel.o filesel.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/filesel.o : include/jdir.hpp
+./SGI/debug/filesel.o : include/scroller.hpp
+./SGI/debug/filesel.o : include/input.hpp
+./SGI/debug/filesel.o : include/timage.hpp
+./SGI/debug/filesel.o : include/fonts.hpp
+./SGI/debug/filesel.o : include/filter.hpp
+./SGI/debug/filesel.o : include/mouse.hpp
+./SGI/debug/filesel.o : include/macs.hpp
+./SGI/debug/filesel.o : include/sprite.hpp
+./SGI/debug/filesel.o : include/keys.hpp
+./SGI/debug/filesel.o : include/event.hpp
+./SGI/debug/filesel.o : include/jmalloc.hpp
+./SGI/debug/filesel.o : include/specs.hpp
+./SGI/debug/filesel.o : include/palette.hpp
+./SGI/debug/filesel.o : include/linked.hpp
+./SGI/debug/filesel.o : include/image.hpp
+./SGI/debug/filesel.o : include/system.h
+./SGI/debug/filesel.o : include/video.hpp
+./SGI/debug/filesel.o : include/jwindow.hpp
+./SGI/debug/filesel.o : include/filesel.hpp
+./SGI/debug/tools.o : tools.c
+	g++ -c -o ./SGI/debug/tools.o tools.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/tools.o : include/visobj.hpp
+./SGI/debug/tools.o : include/scroller.hpp
+./SGI/debug/tools.o : include/input.hpp
+./SGI/debug/tools.o : include/timage.hpp
+./SGI/debug/tools.o : include/fonts.hpp
+./SGI/debug/tools.o : include/filter.hpp
+./SGI/debug/tools.o : include/mouse.hpp
+./SGI/debug/tools.o : include/macs.hpp
+./SGI/debug/tools.o : include/sprite.hpp
+./SGI/debug/tools.o : include/keys.hpp
+./SGI/debug/tools.o : include/event.hpp
+./SGI/debug/tools.o : include/jmalloc.hpp
+./SGI/debug/tools.o : include/specs.hpp
+./SGI/debug/tools.o : include/palette.hpp
+./SGI/debug/tools.o : include/linked.hpp
+./SGI/debug/tools.o : include/image.hpp
+./SGI/debug/tools.o : include/system.h
+./SGI/debug/tools.o : include/video.hpp
+./SGI/debug/tools.o : include/jwindow.hpp
+./SGI/debug/tools.o : include/tools.hpp
+./SGI/debug/guistat.o : guistat.c
+	g++ -c -o ./SGI/debug/guistat.o guistat.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/guistat.o : include/guistat.hpp
+./SGI/debug/guistat.o : include/timing.hpp
+./SGI/debug/guistat.o : include/timage.hpp
+./SGI/debug/guistat.o : include/fonts.hpp
+./SGI/debug/guistat.o : include/filter.hpp
+./SGI/debug/guistat.o : include/mouse.hpp
+./SGI/debug/guistat.o : include/macs.hpp
+./SGI/debug/guistat.o : include/sprite.hpp
+./SGI/debug/guistat.o : include/keys.hpp
+./SGI/debug/guistat.o : include/event.hpp
+./SGI/debug/guistat.o : include/jmalloc.hpp
+./SGI/debug/guistat.o : include/specs.hpp
+./SGI/debug/guistat.o : include/palette.hpp
+./SGI/debug/guistat.o : include/linked.hpp
+./SGI/debug/guistat.o : include/image.hpp
+./SGI/debug/guistat.o : include/system.h
+./SGI/debug/guistat.o : include/video.hpp
+./SGI/debug/guistat.o : include/jwindow.hpp
+./SGI/debug/guistat.o : include/visobj.hpp
+./SGI/debug/guistat.o : include/status.hpp
+
+./SGI/debug/packet.a : $(SGI_packet_debug_o_files)
+	ar ruvs ./SGI/debug/packet.a \
+	./SGI/debug/packet.o
+
+./SGI/debug/packet.o : packet.c
+	g++ -c -o ./SGI/debug/packet.o packet.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/packet.o : include/jmalloc.hpp
+./SGI/debug/packet.o : include/system.h
+./SGI/debug/packet.o : include/macs.hpp
+./SGI/debug/packet.o : include/packet.hpp
+
+./SGI/debug/image.a : $(SGI_image_debug_o_files)
+	ar ruvs ./SGI/debug/image.a \
+	./SGI/debug/filter.o \
+	./SGI/debug/gifread.o \
+	./SGI/debug/globals.o \
+	./SGI/debug/image.o \
+	./SGI/debug/linked.o \
+	./SGI/debug/input.o \
+	./SGI/debug/mdlread.o \
+	./SGI/debug/palette.o \
+	./SGI/debug/ppmread.o \
+	./SGI/debug/include.o \
+	./SGI/debug/xwdread.o \
+	./SGI/debug/fonts.o \
+	./SGI/debug/decoder.o \
+	./SGI/debug/loader.o \
+	./SGI/debug/glread.o \
+	./SGI/debug/texture.o \
+	./SGI/debug/specs.o \
+	./SGI/debug/supmorph.o \
+	./SGI/debug/image24.o \
+	./SGI/debug/pcxread.o \
+	./SGI/debug/timage.o \
+	./SGI/debug/jmalloc.o \
+	./SGI/debug/jrand.o \
+	./SGI/debug/lbmread.o \
+	./SGI/debug/keys.o \
+	./SGI/debug/dprint.o \
+	./SGI/debug/status.o \
+	./SGI/debug/visobj.o
+
+./SGI/debug/filter.o : filter.c
+	g++ -c -o ./SGI/debug/filter.o filter.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/filter.o : include/filter.hpp
+./SGI/debug/filter.o : include/macs.hpp
+./SGI/debug/filter.o : include/system.h
+./SGI/debug/filter.o : include/jmalloc.hpp
+./SGI/debug/filter.o : include/specs.hpp
+./SGI/debug/filter.o : include/palette.hpp
+./SGI/debug/filter.o : include/linked.hpp
+./SGI/debug/filter.o : include/image.hpp
+./SGI/debug/gifread.o : gifread.c
+	g++ -c -o ./SGI/debug/gifread.o gifread.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/gifread.o : include/macs.hpp
+./SGI/debug/gifread.o : include/dir.h
+./SGI/debug/gifread.o : include/dos.h
+./SGI/debug/gifread.o : include/std.h
+./SGI/debug/gifread.o : include/gifdecod.hpp
+./SGI/debug/gifread.o : include/video.hpp
+./SGI/debug/gifread.o : include/system.h
+./SGI/debug/gifread.o : include/jmalloc.hpp
+./SGI/debug/gifread.o : include/specs.hpp
+./SGI/debug/gifread.o : include/palette.hpp
+./SGI/debug/gifread.o : include/linked.hpp
+./SGI/debug/gifread.o : include/image.hpp
+./SGI/debug/gifread.o : include/gifread.hpp
+./SGI/debug/globals.o : globals.c
+	g++ -c -o ./SGI/debug/globals.o globals.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/globals.o : globals.c
+./SGI/debug/image.o : image.c
+	g++ -c -o ./SGI/debug/image.o image.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/image.o : include/exitproc.hpp
+./SGI/debug/image.o : include/dos.h
+./SGI/debug/image.o : include/macs.hpp
+./SGI/debug/image.o : include/jmalloc.hpp
+./SGI/debug/image.o : include/specs.hpp
+./SGI/debug/image.o : include/palette.hpp
+./SGI/debug/image.o : include/image.hpp
+./SGI/debug/image.o : include/linked.hpp
+./SGI/debug/image.o : include/system.h
+./SGI/debug/image.o : include/emm.hpp
+./SGI/debug/linked.o : linked.c
+	g++ -c -o ./SGI/debug/linked.o linked.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/linked.o : include/linked.hpp
+./SGI/debug/input.o : input.c
+	g++ -c -o ./SGI/debug/input.o input.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/input.o : include/timage.hpp
+./SGI/debug/input.o : include/fonts.hpp
+./SGI/debug/input.o : include/filter.hpp
+./SGI/debug/input.o : include/mouse.hpp
+./SGI/debug/input.o : include/macs.hpp
+./SGI/debug/input.o : include/sprite.hpp
+./SGI/debug/input.o : include/keys.hpp
+./SGI/debug/input.o : include/event.hpp
+./SGI/debug/input.o : include/jmalloc.hpp
+./SGI/debug/input.o : include/specs.hpp
+./SGI/debug/input.o : include/palette.hpp
+./SGI/debug/input.o : include/linked.hpp
+./SGI/debug/input.o : include/image.hpp
+./SGI/debug/input.o : include/system.h
+./SGI/debug/input.o : include/video.hpp
+./SGI/debug/input.o : include/jwindow.hpp
+./SGI/debug/input.o : include/input.hpp
+./SGI/debug/mdlread.o : mdlread.c
+	g++ -c -o ./SGI/debug/mdlread.o mdlread.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/mdlread.o : include/macs.hpp
+./SGI/debug/mdlread.o : include/image.hpp
+./SGI/debug/mdlread.o : include/system.h
+./SGI/debug/mdlread.o : include/jmalloc.hpp
+./SGI/debug/mdlread.o : include/specs.hpp
+./SGI/debug/mdlread.o : include/linked.hpp
+./SGI/debug/mdlread.o : include/palette.hpp
+./SGI/debug/mdlread.o : include/mdlread.hpp
+./SGI/debug/palette.o : palette.c
+	g++ -c -o ./SGI/debug/palette.o palette.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/palette.o : include/filter.hpp
+./SGI/debug/palette.o : include/video.hpp
+./SGI/debug/palette.o : include/dos.h
+./SGI/debug/palette.o : include/macs.hpp
+./SGI/debug/palette.o : include/image.hpp
+./SGI/debug/palette.o : include/system.h
+./SGI/debug/palette.o : include/jmalloc.hpp
+./SGI/debug/palette.o : include/specs.hpp
+./SGI/debug/palette.o : include/linked.hpp
+./SGI/debug/palette.o : include/palette.hpp
+./SGI/debug/ppmread.o : ppmread.c
+	g++ -c -o ./SGI/debug/ppmread.o ppmread.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/ppmread.o : include/ppmread.hpp
+./SGI/debug/ppmread.o : include/macs.hpp
+./SGI/debug/ppmread.o : include/system.h
+./SGI/debug/ppmread.o : include/jmalloc.hpp
+./SGI/debug/ppmread.o : include/specs.hpp
+./SGI/debug/ppmread.o : include/palette.hpp
+./SGI/debug/ppmread.o : include/linked.hpp
+./SGI/debug/ppmread.o : include/image.hpp
+./SGI/debug/include.o : include.c
+	g++ -c -o ./SGI/debug/include.o include.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/include.o : include/system.h
+./SGI/debug/include.o : include/jmalloc.hpp
+./SGI/debug/include.o : include/specs.hpp
+./SGI/debug/include.o : include/palette.hpp
+./SGI/debug/include.o : include/linked.hpp
+./SGI/debug/include.o : include/image.hpp
+./SGI/debug/include.o : include/include.hpp
+./SGI/debug/xwdread.o : xwdread.c
+	g++ -c -o ./SGI/debug/xwdread.o xwdread.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/xwdread.o : include/image24.hpp
+./SGI/debug/xwdread.o : include/main.hpp
+./SGI/debug/xwdread.o : include/dos.h
+./SGI/debug/xwdread.o : include/video.hpp
+./SGI/debug/xwdread.o : include/mouse.hpp
+./SGI/debug/xwdread.o : include/macs.hpp
+./SGI/debug/xwdread.o : include/sprite.hpp
+./SGI/debug/xwdread.o : include/keys.hpp
+./SGI/debug/xwdread.o : include/event.hpp
+./SGI/debug/xwdread.o : include/system.h
+./SGI/debug/xwdread.o : include/jmalloc.hpp
+./SGI/debug/xwdread.o : include/specs.hpp
+./SGI/debug/xwdread.o : include/palette.hpp
+./SGI/debug/xwdread.o : include/linked.hpp
+./SGI/debug/xwdread.o : include/image.hpp
+./SGI/debug/xwdread.o : include/filter.hpp
+./SGI/debug/fonts.o : fonts.c
+	g++ -c -o ./SGI/debug/fonts.o fonts.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/fonts.o : include/filter.hpp
+./SGI/debug/fonts.o : include/macs.hpp
+./SGI/debug/fonts.o : include/timage.hpp
+./SGI/debug/fonts.o : include/system.h
+./SGI/debug/fonts.o : include/jmalloc.hpp
+./SGI/debug/fonts.o : include/specs.hpp
+./SGI/debug/fonts.o : include/palette.hpp
+./SGI/debug/fonts.o : include/linked.hpp
+./SGI/debug/fonts.o : include/image.hpp
+./SGI/debug/fonts.o : include/fonts.hpp
+./SGI/debug/decoder.o : decoder.c
+	g++ -c -o ./SGI/debug/decoder.o decoder.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/decoder.o : include/macs.hpp
+./SGI/debug/decoder.o : include/system.h
+./SGI/debug/decoder.o : include/jmalloc.hpp
+./SGI/debug/decoder.o : include/specs.hpp
+./SGI/debug/decoder.o : include/palette.hpp
+./SGI/debug/decoder.o : include/linked.hpp
+./SGI/debug/decoder.o : include/image.hpp
+./SGI/debug/decoder.o : include/errs.h
+./SGI/debug/loader.o : loader.c
+	g++ -c -o ./SGI/debug/loader.o loader.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/loader.o : include/lbmread.hpp
+./SGI/debug/loader.o : include/pcxread.hpp
+./SGI/debug/loader.o : include/glread.hpp
+./SGI/debug/loader.o : include/xwdread.hpp
+./SGI/debug/loader.o : include/ppmread.hpp
+./SGI/debug/loader.o : include/mdlread.hpp
+./SGI/debug/loader.o : include/filter.hpp
+./SGI/debug/loader.o : include/macs.hpp
+./SGI/debug/loader.o : include/image24.hpp
+./SGI/debug/loader.o : include/system.h
+./SGI/debug/loader.o : include/jmalloc.hpp
+./SGI/debug/loader.o : include/specs.hpp
+./SGI/debug/loader.o : include/palette.hpp
+./SGI/debug/loader.o : include/linked.hpp
+./SGI/debug/loader.o : include/image.hpp
+./SGI/debug/loader.o : include/loader.hpp
+./SGI/debug/glread.o : glread.c
+	g++ -c -o ./SGI/debug/glread.o glread.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/glread.o : include/video.hpp
+./SGI/debug/glread.o : include/jmalloc.hpp
+./SGI/debug/glread.o : include/specs.hpp
+./SGI/debug/glread.o : include/palette.hpp
+./SGI/debug/glread.o : include/linked.hpp
+./SGI/debug/glread.o : include/image.hpp
+./SGI/debug/glread.o : include/system.h
+./SGI/debug/glread.o : include/macs.hpp
+./SGI/debug/texture.o : texture.c
+	g++ -c -o ./SGI/debug/texture.o texture.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/texture.o : include/mouse.hpp
+./SGI/debug/texture.o : include/sprite.hpp
+./SGI/debug/texture.o : include/keys.hpp
+./SGI/debug/texture.o : include/event.hpp
+./SGI/debug/texture.o : include/macs.hpp
+./SGI/debug/texture.o : include/video.hpp
+./SGI/debug/texture.o : include/system.h
+./SGI/debug/texture.o : include/jmalloc.hpp
+./SGI/debug/texture.o : include/specs.hpp
+./SGI/debug/texture.o : include/palette.hpp
+./SGI/debug/texture.o : include/linked.hpp
+./SGI/debug/texture.o : include/image.hpp
+./SGI/debug/specs.o : specs.c
+	g++ -c -o ./SGI/debug/specs.o specs.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/specs.o : include/dprint.hpp
+./SGI/debug/specs.o : include/system.h
+./SGI/debug/specs.o : include/jmalloc.hpp
+./SGI/debug/specs.o : include/specs.hpp
+./SGI/debug/specs.o : include/palette.hpp
+./SGI/debug/specs.o : include/linked.hpp
+./SGI/debug/specs.o : include/image.hpp
+./SGI/debug/supmorph.o : supmorph.c
+	g++ -c -o ./SGI/debug/supmorph.o supmorph.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/supmorph.o : include/jrand.hpp
+./SGI/debug/supmorph.o : include/video.hpp
+./SGI/debug/supmorph.o : include/timing.hpp
+./SGI/debug/supmorph.o : include/filter.hpp
+./SGI/debug/supmorph.o : include/macs.hpp
+./SGI/debug/supmorph.o : include/system.h
+./SGI/debug/supmorph.o : include/specs.hpp
+./SGI/debug/supmorph.o : include/palette.hpp
+./SGI/debug/supmorph.o : include/linked.hpp
+./SGI/debug/supmorph.o : include/image.hpp
+./SGI/debug/supmorph.o : include/timage.hpp
+./SGI/debug/supmorph.o : include/jmalloc.hpp
+./SGI/debug/supmorph.o : include/supmorph.hpp
+./SGI/debug/image24.o : image24.c
+	g++ -c -o ./SGI/debug/image24.o image24.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/image24.o : include/image.hpp
+./SGI/debug/image24.o : include/filter.hpp
+./SGI/debug/image24.o : include/macs.hpp
+./SGI/debug/image24.o : include/system.h
+./SGI/debug/image24.o : include/jmalloc.hpp
+./SGI/debug/image24.o : include/specs.hpp
+./SGI/debug/image24.o : include/linked.hpp
+./SGI/debug/image24.o : include/palette.hpp
+./SGI/debug/image24.o : include/image24.hpp
+./SGI/debug/pcxread.o : pcxread.c
+	g++ -c -o ./SGI/debug/pcxread.o pcxread.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/pcxread.o : include/filter.hpp
+./SGI/debug/pcxread.o : include/macs.hpp
+./SGI/debug/pcxread.o : include/image24.hpp
+./SGI/debug/pcxread.o : include/system.h
+./SGI/debug/pcxread.o : include/jmalloc.hpp
+./SGI/debug/pcxread.o : include/specs.hpp
+./SGI/debug/pcxread.o : include/palette.hpp
+./SGI/debug/pcxread.o : include/linked.hpp
+./SGI/debug/pcxread.o : include/image.hpp
+./SGI/debug/pcxread.o : include/pcxread.hpp
+./SGI/debug/timage.o : timage.c
+	g++ -c -o ./SGI/debug/timage.o timage.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/timage.o : include/filter.hpp
+./SGI/debug/timage.o : include/macs.hpp
+./SGI/debug/timage.o : include/system.h
+./SGI/debug/timage.o : include/jmalloc.hpp
+./SGI/debug/timage.o : include/specs.hpp
+./SGI/debug/timage.o : include/palette.hpp
+./SGI/debug/timage.o : include/linked.hpp
+./SGI/debug/timage.o : include/image.hpp
+./SGI/debug/timage.o : include/timage.hpp
+./SGI/debug/jmalloc.o : jmalloc.c
+	g++ -c -o ./SGI/debug/jmalloc.o jmalloc.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/jmalloc.o : include/jmalloc.hpp
+./SGI/debug/jmalloc.o : include/system.h
+./SGI/debug/jmalloc.o : include/macs.hpp
+./SGI/debug/jmalloc.o : include/doscall.hpp
+./SGI/debug/jrand.o : jrand.c
+	g++ -c -o ./SGI/debug/jrand.o jrand.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/jrand.o : include/jrand.hpp
+./SGI/debug/lbmread.o : lbmread.c
+	g++ -c -o ./SGI/debug/lbmread.o lbmread.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/lbmread.o : include/system.h
+./SGI/debug/lbmread.o : include/jmalloc.hpp
+./SGI/debug/lbmread.o : include/specs.hpp
+./SGI/debug/lbmread.o : include/palette.hpp
+./SGI/debug/lbmread.o : include/linked.hpp
+./SGI/debug/lbmread.o : include/image.hpp
+./SGI/debug/lbmread.o : include/lbmread.hpp
+./SGI/debug/keys.o : keys.c
+	g++ -c -o ./SGI/debug/keys.o keys.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/keys.o : include/keys.hpp
+./SGI/debug/dprint.o : dprint.c
+	g++ -c -o ./SGI/debug/dprint.o dprint.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/dprint.o : include/system.h
+./SGI/debug/dprint.o : include/macs.hpp
+./SGI/debug/status.o : status.c
+	g++ -c -o ./SGI/debug/status.o status.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/status.o : include/dprint.hpp
+./SGI/debug/status.o : include/timage.hpp
+./SGI/debug/status.o : include/fonts.hpp
+./SGI/debug/status.o : include/filter.hpp
+./SGI/debug/status.o : include/mouse.hpp
+./SGI/debug/status.o : include/sprite.hpp
+./SGI/debug/status.o : include/keys.hpp
+./SGI/debug/status.o : include/event.hpp
+./SGI/debug/status.o : include/jmalloc.hpp
+./SGI/debug/status.o : include/specs.hpp
+./SGI/debug/status.o : include/palette.hpp
+./SGI/debug/status.o : include/linked.hpp
+./SGI/debug/status.o : include/image.hpp
+./SGI/debug/status.o : include/video.hpp
+./SGI/debug/status.o : include/jwindow.hpp
+./SGI/debug/status.o : include/visobj.hpp
+./SGI/debug/status.o : include/status.hpp
+./SGI/debug/status.o : include/system.h
+./SGI/debug/status.o : include/macs.hpp
+./SGI/debug/visobj.o : visobj.c
+	g++ -c -o ./SGI/debug/visobj.o visobj.c -Iinclude -g -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/debug/visobj.o : include/timage.hpp
+./SGI/debug/visobj.o : include/fonts.hpp
+./SGI/debug/visobj.o : include/filter.hpp
+./SGI/debug/visobj.o : include/mouse.hpp
+./SGI/debug/visobj.o : include/macs.hpp
+./SGI/debug/visobj.o : include/sprite.hpp
+./SGI/debug/visobj.o : include/keys.hpp
+./SGI/debug/visobj.o : include/event.hpp
+./SGI/debug/visobj.o : include/jmalloc.hpp
+./SGI/debug/visobj.o : include/specs.hpp
+./SGI/debug/visobj.o : include/palette.hpp
+./SGI/debug/visobj.o : include/linked.hpp
+./SGI/debug/visobj.o : include/image.hpp
+./SGI/debug/visobj.o : include/system.h
+./SGI/debug/visobj.o : include/video.hpp
+./SGI/debug/visobj.o : include/jwindow.hpp
+./SGI/debug/visobj.o : include/visobj.hpp
+
+SGI_image_opt_o_files = \
+	./SGI/opt/filter.o \
+	./SGI/opt/gifread.o \
+	./SGI/opt/globals.o \
+	./SGI/opt/image.o \
+	./SGI/opt/linked.o \
+	./SGI/opt/input.o \
+	./SGI/opt/mdlread.o \
+	./SGI/opt/palette.o \
+	./SGI/opt/ppmread.o \
+	./SGI/opt/include.o \
+	./SGI/opt/xwdread.o \
+	./SGI/opt/fonts.o \
+	./SGI/opt/decoder.o \
+	./SGI/opt/loader.o \
+	./SGI/opt/glread.o \
+	./SGI/opt/texture.o \
+	./SGI/opt/specs.o \
+	./SGI/opt/supmorph.o \
+	./SGI/opt/image24.o \
+	./SGI/opt/pcxread.o \
+	./SGI/opt/timage.o \
+	./SGI/opt/jmalloc.o \
+	./SGI/opt/jrand.o \
+	./SGI/opt/lbmread.o \
+	./SGI/opt/keys.o \
+	./SGI/opt/dprint.o \
+	./SGI/opt/status.o \
+	./SGI/opt/visobj.o
+
+SGI_packet_opt_o_files = \
+	./SGI/opt/packet.o
+
+SGI_gui_opt_o_files = \
+	./SGI/opt/pmenu.o \
+	./SGI/opt/scroller.o \
+	./SGI/opt/filesel.o \
+	./SGI/opt/tools.o \
+	./SGI/opt/guistat.o
+
+SGI_net_opt_o_files = \
+	port/unix/SGI/opt/jnet.o
+
+SGI_dir_opt_o_files = \
+	port/unix/SGI/opt/jdir.o
+
+SGI_sound_opt_o_files = \
+	port/sgi/SGI/opt/sound.o \
+	./SGI/opt/readwav.o
+
+SGI_joy_opt_o_files = \
+	port/unix/SGI/opt/joystick.o
+
+SGI_winman_opt_o_files = \
+	port/x11/SGI/opt/video.o \
+	port/x11/SGI/opt/mouse.o \
+	port/x11/SGI/opt/event.o \
+	./SGI/opt/jwindow.o
+
+SGI_time_opt_o_files = \
+	port/sgi/SGI/opt/timing.o
+
+./SGI/opt/time.a : $(SGI_time_opt_o_files)
+	ar ruvs ./SGI/opt/time.a \
+	port/sgi/SGI/opt/timing.o
+
+port/sgi/SGI/opt/timing.o : port/sgi/timing.c
+	g++ -c -o port/sgi/SGI/opt/timing.o port/sgi/timing.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+port/sgi/SGI/opt/timing.o : include/timing.hpp
+
+./SGI/opt/winman.a : $(SGI_winman_opt_o_files)
+	ar ruvs ./SGI/opt/winman.a \
+	port/x11/SGI/opt/video.o \
+	port/x11/SGI/opt/mouse.o \
+	port/x11/SGI/opt/event.o \
+	./SGI/opt/jwindow.o
+
+port/x11/SGI/opt/video.o : port/x11/video.c
+	g++ -c -o port/x11/SGI/opt/video.o port/x11/video.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+port/x11/SGI/opt/video.o : include/bitmap.h
+port/x11/SGI/opt/video.o : include/macs.hpp
+port/x11/SGI/opt/video.o : include/xinclude.h
+port/x11/SGI/opt/video.o : include/dos.h
+port/x11/SGI/opt/video.o : include/video.hpp
+port/x11/SGI/opt/video.o : include/globals.hpp
+port/x11/SGI/opt/video.o : include/system.h
+port/x11/SGI/opt/video.o : include/jmalloc.hpp
+port/x11/SGI/opt/video.o : include/specs.hpp
+port/x11/SGI/opt/video.o : include/palette.hpp
+port/x11/SGI/opt/video.o : include/linked.hpp
+port/x11/SGI/opt/video.o : include/image.hpp
+port/x11/SGI/opt/video.o : include/filter.hpp
+port/x11/SGI/opt/mouse.o : port/x11/mouse.c
+	g++ -c -o port/x11/SGI/opt/mouse.o port/x11/mouse.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+port/x11/SGI/opt/mouse.o : include/xinclude.h
+port/x11/SGI/opt/mouse.o : include/mouse.hpp
+port/x11/SGI/opt/mouse.o : include/monoprnt.hpp
+port/x11/SGI/opt/mouse.o : include/mdlread.hpp
+port/x11/SGI/opt/mouse.o : include/filter.hpp
+port/x11/SGI/opt/mouse.o : include/macs.hpp
+port/x11/SGI/opt/mouse.o : include/sprite.hpp
+port/x11/SGI/opt/mouse.o : include/jmalloc.hpp
+port/x11/SGI/opt/mouse.o : include/specs.hpp
+port/x11/SGI/opt/mouse.o : include/palette.hpp
+port/x11/SGI/opt/mouse.o : include/linked.hpp
+port/x11/SGI/opt/mouse.o : include/image.hpp
+port/x11/SGI/opt/mouse.o : include/system.h
+port/x11/SGI/opt/mouse.o : include/video.hpp
+port/x11/SGI/opt/event.o : port/x11/event.c
+	g++ -c -o port/x11/SGI/opt/event.o port/x11/event.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+port/x11/SGI/opt/event.o : include/keys.hpp
+port/x11/SGI/opt/event.o : include/event.hpp
+port/x11/SGI/opt/event.o : include/sprite.hpp
+port/x11/SGI/opt/event.o : include/mouse.hpp
+port/x11/SGI/opt/event.o : include/macs.hpp
+port/x11/SGI/opt/event.o : include/gifread.hpp
+port/x11/SGI/opt/event.o : include/video.hpp
+port/x11/SGI/opt/event.o : include/mdlread.hpp
+port/x11/SGI/opt/event.o : include/jmalloc.hpp
+port/x11/SGI/opt/event.o : include/specs.hpp
+port/x11/SGI/opt/event.o : include/palette.hpp
+port/x11/SGI/opt/event.o : include/linked.hpp
+port/x11/SGI/opt/event.o : include/image.hpp
+port/x11/SGI/opt/event.o : include/xinclude.h
+port/x11/SGI/opt/event.o : include/system.h
+./SGI/opt/jwindow.o : jwindow.c
+	g++ -c -o ./SGI/opt/jwindow.o jwindow.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/jwindow.o : include/timage.hpp
+./SGI/opt/jwindow.o : include/fonts.hpp
+./SGI/opt/jwindow.o : include/jwindow.hpp
+./SGI/opt/jwindow.o : include/filter.hpp
+./SGI/opt/jwindow.o : include/mouse.hpp
+./SGI/opt/jwindow.o : include/macs.hpp
+./SGI/opt/jwindow.o : include/sprite.hpp
+./SGI/opt/jwindow.o : include/keys.hpp
+./SGI/opt/jwindow.o : include/event.hpp
+./SGI/opt/jwindow.o : include/jmalloc.hpp
+./SGI/opt/jwindow.o : include/specs.hpp
+./SGI/opt/jwindow.o : include/palette.hpp
+./SGI/opt/jwindow.o : include/linked.hpp
+./SGI/opt/jwindow.o : include/image.hpp
+./SGI/opt/jwindow.o : include/system.h
+./SGI/opt/jwindow.o : include/video.hpp
+
+./SGI/opt/joy.a : $(SGI_joy_opt_o_files)
+	ar ruvs ./SGI/opt/joy.a \
+	port/unix/SGI/opt/joystick.o
+
+port/unix/SGI/opt/joystick.o : port/unix/joystick.c
+	g++ -c -o port/unix/SGI/opt/joystick.o port/unix/joystick.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+port/unix/SGI/opt/joystick.o : port/unix/joystick.c
+
+./SGI/opt/sound.a : $(SGI_sound_opt_o_files)
+	ar ruvs ./SGI/opt/sound.a \
+	port/sgi/SGI/opt/sound.o \
+	./SGI/opt/readwav.o
+
+port/sgi/SGI/opt/sound.o : port/sgi/sound.c
+	g++ -c -o port/sgi/SGI/opt/sound.o port/sgi/sound.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+port/sgi/SGI/opt/sound.o : include/timing.hpp
+port/sgi/SGI/opt/sound.o : include/dprint.hpp
+port/sgi/SGI/opt/sound.o : include/jmalloc.hpp
+port/sgi/SGI/opt/sound.o : include/linked.hpp
+port/sgi/SGI/opt/sound.o : include/specs.hpp
+port/sgi/SGI/opt/sound.o : include/readwav.hpp
+port/sgi/SGI/opt/sound.o : include/sound.hpp
+port/sgi/SGI/opt/sound.o : include/system.h
+port/sgi/SGI/opt/sound.o : include/macs.hpp
+./SGI/opt/readwav.o : readwav.c
+	g++ -c -o ./SGI/opt/readwav.o readwav.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/readwav.o : include/dprint.hpp
+./SGI/opt/readwav.o : include/macs.hpp
+./SGI/opt/readwav.o : include/system.h
+./SGI/opt/readwav.o : include/jmalloc.hpp
+./SGI/opt/readwav.o : include/linked.hpp
+./SGI/opt/readwav.o : include/specs.hpp
+./SGI/opt/readwav.o : include/readwav.hpp
+
+./SGI/opt/dir.a : $(SGI_dir_opt_o_files)
+	ar ruvs ./SGI/opt/dir.a \
+	port/unix/SGI/opt/jdir.o
+
+port/unix/SGI/opt/jdir.o : port/unix/jdir.c
+	g++ -c -o port/unix/SGI/opt/jdir.o port/unix/jdir.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+port/unix/SGI/opt/jdir.o : include/jmalloc.hpp
+
+./SGI/opt/net.a : $(SGI_net_opt_o_files)
+	ar ruvs ./SGI/opt/net.a \
+	port/unix/SGI/opt/jnet.o
+
+port/unix/SGI/opt/jnet.o : port/unix/jnet.c
+	g++ -c -o port/unix/SGI/opt/jnet.o port/unix/jnet.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+port/unix/SGI/opt/jnet.o : include/jmalloc.hpp
+port/unix/SGI/opt/jnet.o : include/packet.hpp
+port/unix/SGI/opt/jnet.o : include/system.h
+port/unix/SGI/opt/jnet.o : include/macs.hpp
+port/unix/SGI/opt/jnet.o : include/jnet.hpp
+
+./SGI/opt/gui.a : $(SGI_gui_opt_o_files)
+	ar ruvs ./SGI/opt/gui.a \
+	./SGI/opt/pmenu.o \
+	./SGI/opt/scroller.o \
+	./SGI/opt/filesel.o \
+	./SGI/opt/tools.o \
+	./SGI/opt/guistat.o
+
+./SGI/opt/pmenu.o : pmenu.c
+	g++ -c -o ./SGI/opt/pmenu.o pmenu.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/pmenu.o : include/timage.hpp
+./SGI/opt/pmenu.o : include/fonts.hpp
+./SGI/opt/pmenu.o : include/filter.hpp
+./SGI/opt/pmenu.o : include/mouse.hpp
+./SGI/opt/pmenu.o : include/macs.hpp
+./SGI/opt/pmenu.o : include/sprite.hpp
+./SGI/opt/pmenu.o : include/keys.hpp
+./SGI/opt/pmenu.o : include/event.hpp
+./SGI/opt/pmenu.o : include/specs.hpp
+./SGI/opt/pmenu.o : include/palette.hpp
+./SGI/opt/pmenu.o : include/linked.hpp
+./SGI/opt/pmenu.o : include/image.hpp
+./SGI/opt/pmenu.o : include/system.h
+./SGI/opt/pmenu.o : include/video.hpp
+./SGI/opt/pmenu.o : include/jwindow.hpp
+./SGI/opt/pmenu.o : include/input.hpp
+./SGI/opt/pmenu.o : include/jmalloc.hpp
+./SGI/opt/pmenu.o : include/pmenu.hpp
+./SGI/opt/scroller.o : scroller.c
+	g++ -c -o ./SGI/opt/scroller.o scroller.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/scroller.o : include/timage.hpp
+./SGI/opt/scroller.o : include/fonts.hpp
+./SGI/opt/scroller.o : include/filter.hpp
+./SGI/opt/scroller.o : include/mouse.hpp
+./SGI/opt/scroller.o : include/macs.hpp
+./SGI/opt/scroller.o : include/sprite.hpp
+./SGI/opt/scroller.o : include/keys.hpp
+./SGI/opt/scroller.o : include/event.hpp
+./SGI/opt/scroller.o : include/jmalloc.hpp
+./SGI/opt/scroller.o : include/specs.hpp
+./SGI/opt/scroller.o : include/palette.hpp
+./SGI/opt/scroller.o : include/linked.hpp
+./SGI/opt/scroller.o : include/image.hpp
+./SGI/opt/scroller.o : include/system.h
+./SGI/opt/scroller.o : include/video.hpp
+./SGI/opt/scroller.o : include/jwindow.hpp
+./SGI/opt/scroller.o : include/input.hpp
+./SGI/opt/scroller.o : include/scroller.hpp
+./SGI/opt/filesel.o : filesel.c
+	g++ -c -o ./SGI/opt/filesel.o filesel.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/filesel.o : include/jdir.hpp
+./SGI/opt/filesel.o : include/scroller.hpp
+./SGI/opt/filesel.o : include/input.hpp
+./SGI/opt/filesel.o : include/timage.hpp
+./SGI/opt/filesel.o : include/fonts.hpp
+./SGI/opt/filesel.o : include/filter.hpp
+./SGI/opt/filesel.o : include/mouse.hpp
+./SGI/opt/filesel.o : include/macs.hpp
+./SGI/opt/filesel.o : include/sprite.hpp
+./SGI/opt/filesel.o : include/keys.hpp
+./SGI/opt/filesel.o : include/event.hpp
+./SGI/opt/filesel.o : include/jmalloc.hpp
+./SGI/opt/filesel.o : include/specs.hpp
+./SGI/opt/filesel.o : include/palette.hpp
+./SGI/opt/filesel.o : include/linked.hpp
+./SGI/opt/filesel.o : include/image.hpp
+./SGI/opt/filesel.o : include/system.h
+./SGI/opt/filesel.o : include/video.hpp
+./SGI/opt/filesel.o : include/jwindow.hpp
+./SGI/opt/filesel.o : include/filesel.hpp
+./SGI/opt/tools.o : tools.c
+	g++ -c -o ./SGI/opt/tools.o tools.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/tools.o : include/visobj.hpp
+./SGI/opt/tools.o : include/scroller.hpp
+./SGI/opt/tools.o : include/input.hpp
+./SGI/opt/tools.o : include/timage.hpp
+./SGI/opt/tools.o : include/fonts.hpp
+./SGI/opt/tools.o : include/filter.hpp
+./SGI/opt/tools.o : include/mouse.hpp
+./SGI/opt/tools.o : include/macs.hpp
+./SGI/opt/tools.o : include/sprite.hpp
+./SGI/opt/tools.o : include/keys.hpp
+./SGI/opt/tools.o : include/event.hpp
+./SGI/opt/tools.o : include/jmalloc.hpp
+./SGI/opt/tools.o : include/specs.hpp
+./SGI/opt/tools.o : include/palette.hpp
+./SGI/opt/tools.o : include/linked.hpp
+./SGI/opt/tools.o : include/image.hpp
+./SGI/opt/tools.o : include/system.h
+./SGI/opt/tools.o : include/video.hpp
+./SGI/opt/tools.o : include/jwindow.hpp
+./SGI/opt/tools.o : include/tools.hpp
+./SGI/opt/guistat.o : guistat.c
+	g++ -c -o ./SGI/opt/guistat.o guistat.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/guistat.o : include/guistat.hpp
+./SGI/opt/guistat.o : include/timing.hpp
+./SGI/opt/guistat.o : include/timage.hpp
+./SGI/opt/guistat.o : include/fonts.hpp
+./SGI/opt/guistat.o : include/filter.hpp
+./SGI/opt/guistat.o : include/mouse.hpp
+./SGI/opt/guistat.o : include/macs.hpp
+./SGI/opt/guistat.o : include/sprite.hpp
+./SGI/opt/guistat.o : include/keys.hpp
+./SGI/opt/guistat.o : include/event.hpp
+./SGI/opt/guistat.o : include/jmalloc.hpp
+./SGI/opt/guistat.o : include/specs.hpp
+./SGI/opt/guistat.o : include/palette.hpp
+./SGI/opt/guistat.o : include/linked.hpp
+./SGI/opt/guistat.o : include/image.hpp
+./SGI/opt/guistat.o : include/system.h
+./SGI/opt/guistat.o : include/video.hpp
+./SGI/opt/guistat.o : include/jwindow.hpp
+./SGI/opt/guistat.o : include/visobj.hpp
+./SGI/opt/guistat.o : include/status.hpp
+
+./SGI/opt/packet.a : $(SGI_packet_opt_o_files)
+	ar ruvs ./SGI/opt/packet.a \
+	./SGI/opt/packet.o
+
+./SGI/opt/packet.o : packet.c
+	g++ -c -o ./SGI/opt/packet.o packet.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/packet.o : include/jmalloc.hpp
+./SGI/opt/packet.o : include/system.h
+./SGI/opt/packet.o : include/macs.hpp
+./SGI/opt/packet.o : include/packet.hpp
+
+./SGI/opt/image.a : $(SGI_image_opt_o_files)
+	ar ruvs ./SGI/opt/image.a \
+	./SGI/opt/filter.o \
+	./SGI/opt/gifread.o \
+	./SGI/opt/globals.o \
+	./SGI/opt/image.o \
+	./SGI/opt/linked.o \
+	./SGI/opt/input.o \
+	./SGI/opt/mdlread.o \
+	./SGI/opt/palette.o \
+	./SGI/opt/ppmread.o \
+	./SGI/opt/include.o \
+	./SGI/opt/xwdread.o \
+	./SGI/opt/fonts.o \
+	./SGI/opt/decoder.o \
+	./SGI/opt/loader.o \
+	./SGI/opt/glread.o \
+	./SGI/opt/texture.o \
+	./SGI/opt/specs.o \
+	./SGI/opt/supmorph.o \
+	./SGI/opt/image24.o \
+	./SGI/opt/pcxread.o \
+	./SGI/opt/timage.o \
+	./SGI/opt/jmalloc.o \
+	./SGI/opt/jrand.o \
+	./SGI/opt/lbmread.o \
+	./SGI/opt/keys.o \
+	./SGI/opt/dprint.o \
+	./SGI/opt/status.o \
+	./SGI/opt/visobj.o
+
+./SGI/opt/filter.o : filter.c
+	g++ -c -o ./SGI/opt/filter.o filter.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/filter.o : include/filter.hpp
+./SGI/opt/filter.o : include/macs.hpp
+./SGI/opt/filter.o : include/system.h
+./SGI/opt/filter.o : include/jmalloc.hpp
+./SGI/opt/filter.o : include/specs.hpp
+./SGI/opt/filter.o : include/palette.hpp
+./SGI/opt/filter.o : include/linked.hpp
+./SGI/opt/filter.o : include/image.hpp
+./SGI/opt/gifread.o : gifread.c
+	g++ -c -o ./SGI/opt/gifread.o gifread.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/gifread.o : include/macs.hpp
+./SGI/opt/gifread.o : include/dir.h
+./SGI/opt/gifread.o : include/dos.h
+./SGI/opt/gifread.o : include/std.h
+./SGI/opt/gifread.o : include/gifdecod.hpp
+./SGI/opt/gifread.o : include/video.hpp
+./SGI/opt/gifread.o : include/system.h
+./SGI/opt/gifread.o : include/jmalloc.hpp
+./SGI/opt/gifread.o : include/specs.hpp
+./SGI/opt/gifread.o : include/palette.hpp
+./SGI/opt/gifread.o : include/linked.hpp
+./SGI/opt/gifread.o : include/image.hpp
+./SGI/opt/gifread.o : include/gifread.hpp
+./SGI/opt/globals.o : globals.c
+	g++ -c -o ./SGI/opt/globals.o globals.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/globals.o : globals.c
+./SGI/opt/image.o : image.c
+	g++ -c -o ./SGI/opt/image.o image.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/image.o : include/exitproc.hpp
+./SGI/opt/image.o : include/dos.h
+./SGI/opt/image.o : include/macs.hpp
+./SGI/opt/image.o : include/jmalloc.hpp
+./SGI/opt/image.o : include/specs.hpp
+./SGI/opt/image.o : include/palette.hpp
+./SGI/opt/image.o : include/image.hpp
+./SGI/opt/image.o : include/linked.hpp
+./SGI/opt/image.o : include/system.h
+./SGI/opt/image.o : include/emm.hpp
+./SGI/opt/linked.o : linked.c
+	g++ -c -o ./SGI/opt/linked.o linked.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/linked.o : include/linked.hpp
+./SGI/opt/input.o : input.c
+	g++ -c -o ./SGI/opt/input.o input.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/input.o : include/timage.hpp
+./SGI/opt/input.o : include/fonts.hpp
+./SGI/opt/input.o : include/filter.hpp
+./SGI/opt/input.o : include/mouse.hpp
+./SGI/opt/input.o : include/macs.hpp
+./SGI/opt/input.o : include/sprite.hpp
+./SGI/opt/input.o : include/keys.hpp
+./SGI/opt/input.o : include/event.hpp
+./SGI/opt/input.o : include/jmalloc.hpp
+./SGI/opt/input.o : include/specs.hpp
+./SGI/opt/input.o : include/palette.hpp
+./SGI/opt/input.o : include/linked.hpp
+./SGI/opt/input.o : include/image.hpp
+./SGI/opt/input.o : include/system.h
+./SGI/opt/input.o : include/video.hpp
+./SGI/opt/input.o : include/jwindow.hpp
+./SGI/opt/input.o : include/input.hpp
+./SGI/opt/mdlread.o : mdlread.c
+	g++ -c -o ./SGI/opt/mdlread.o mdlread.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/mdlread.o : include/macs.hpp
+./SGI/opt/mdlread.o : include/image.hpp
+./SGI/opt/mdlread.o : include/system.h
+./SGI/opt/mdlread.o : include/jmalloc.hpp
+./SGI/opt/mdlread.o : include/specs.hpp
+./SGI/opt/mdlread.o : include/linked.hpp
+./SGI/opt/mdlread.o : include/palette.hpp
+./SGI/opt/mdlread.o : include/mdlread.hpp
+./SGI/opt/palette.o : palette.c
+	g++ -c -o ./SGI/opt/palette.o palette.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/palette.o : include/filter.hpp
+./SGI/opt/palette.o : include/video.hpp
+./SGI/opt/palette.o : include/dos.h
+./SGI/opt/palette.o : include/macs.hpp
+./SGI/opt/palette.o : include/image.hpp
+./SGI/opt/palette.o : include/system.h
+./SGI/opt/palette.o : include/jmalloc.hpp
+./SGI/opt/palette.o : include/specs.hpp
+./SGI/opt/palette.o : include/linked.hpp
+./SGI/opt/palette.o : include/palette.hpp
+./SGI/opt/ppmread.o : ppmread.c
+	g++ -c -o ./SGI/opt/ppmread.o ppmread.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/ppmread.o : include/ppmread.hpp
+./SGI/opt/ppmread.o : include/macs.hpp
+./SGI/opt/ppmread.o : include/system.h
+./SGI/opt/ppmread.o : include/jmalloc.hpp
+./SGI/opt/ppmread.o : include/specs.hpp
+./SGI/opt/ppmread.o : include/palette.hpp
+./SGI/opt/ppmread.o : include/linked.hpp
+./SGI/opt/ppmread.o : include/image.hpp
+./SGI/opt/include.o : include.c
+	g++ -c -o ./SGI/opt/include.o include.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/include.o : include/system.h
+./SGI/opt/include.o : include/jmalloc.hpp
+./SGI/opt/include.o : include/specs.hpp
+./SGI/opt/include.o : include/palette.hpp
+./SGI/opt/include.o : include/linked.hpp
+./SGI/opt/include.o : include/image.hpp
+./SGI/opt/include.o : include/include.hpp
+./SGI/opt/xwdread.o : xwdread.c
+	g++ -c -o ./SGI/opt/xwdread.o xwdread.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/xwdread.o : include/image24.hpp
+./SGI/opt/xwdread.o : include/main.hpp
+./SGI/opt/xwdread.o : include/dos.h
+./SGI/opt/xwdread.o : include/video.hpp
+./SGI/opt/xwdread.o : include/mouse.hpp
+./SGI/opt/xwdread.o : include/macs.hpp
+./SGI/opt/xwdread.o : include/sprite.hpp
+./SGI/opt/xwdread.o : include/keys.hpp
+./SGI/opt/xwdread.o : include/event.hpp
+./SGI/opt/xwdread.o : include/system.h
+./SGI/opt/xwdread.o : include/jmalloc.hpp
+./SGI/opt/xwdread.o : include/specs.hpp
+./SGI/opt/xwdread.o : include/palette.hpp
+./SGI/opt/xwdread.o : include/linked.hpp
+./SGI/opt/xwdread.o : include/image.hpp
+./SGI/opt/xwdread.o : include/filter.hpp
+./SGI/opt/fonts.o : fonts.c
+	g++ -c -o ./SGI/opt/fonts.o fonts.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/fonts.o : include/filter.hpp
+./SGI/opt/fonts.o : include/macs.hpp
+./SGI/opt/fonts.o : include/timage.hpp
+./SGI/opt/fonts.o : include/system.h
+./SGI/opt/fonts.o : include/jmalloc.hpp
+./SGI/opt/fonts.o : include/specs.hpp
+./SGI/opt/fonts.o : include/palette.hpp
+./SGI/opt/fonts.o : include/linked.hpp
+./SGI/opt/fonts.o : include/image.hpp
+./SGI/opt/fonts.o : include/fonts.hpp
+./SGI/opt/decoder.o : decoder.c
+	g++ -c -o ./SGI/opt/decoder.o decoder.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/decoder.o : include/macs.hpp
+./SGI/opt/decoder.o : include/system.h
+./SGI/opt/decoder.o : include/jmalloc.hpp
+./SGI/opt/decoder.o : include/specs.hpp
+./SGI/opt/decoder.o : include/palette.hpp
+./SGI/opt/decoder.o : include/linked.hpp
+./SGI/opt/decoder.o : include/image.hpp
+./SGI/opt/decoder.o : include/errs.h
+./SGI/opt/loader.o : loader.c
+	g++ -c -o ./SGI/opt/loader.o loader.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/loader.o : include/lbmread.hpp
+./SGI/opt/loader.o : include/pcxread.hpp
+./SGI/opt/loader.o : include/glread.hpp
+./SGI/opt/loader.o : include/xwdread.hpp
+./SGI/opt/loader.o : include/ppmread.hpp
+./SGI/opt/loader.o : include/mdlread.hpp
+./SGI/opt/loader.o : include/filter.hpp
+./SGI/opt/loader.o : include/macs.hpp
+./SGI/opt/loader.o : include/image24.hpp
+./SGI/opt/loader.o : include/system.h
+./SGI/opt/loader.o : include/jmalloc.hpp
+./SGI/opt/loader.o : include/specs.hpp
+./SGI/opt/loader.o : include/palette.hpp
+./SGI/opt/loader.o : include/linked.hpp
+./SGI/opt/loader.o : include/image.hpp
+./SGI/opt/loader.o : include/loader.hpp
+./SGI/opt/glread.o : glread.c
+	g++ -c -o ./SGI/opt/glread.o glread.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/glread.o : include/video.hpp
+./SGI/opt/glread.o : include/jmalloc.hpp
+./SGI/opt/glread.o : include/specs.hpp
+./SGI/opt/glread.o : include/palette.hpp
+./SGI/opt/glread.o : include/linked.hpp
+./SGI/opt/glread.o : include/image.hpp
+./SGI/opt/glread.o : include/system.h
+./SGI/opt/glread.o : include/macs.hpp
+./SGI/opt/texture.o : texture.c
+	g++ -c -o ./SGI/opt/texture.o texture.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/texture.o : include/mouse.hpp
+./SGI/opt/texture.o : include/sprite.hpp
+./SGI/opt/texture.o : include/keys.hpp
+./SGI/opt/texture.o : include/event.hpp
+./SGI/opt/texture.o : include/macs.hpp
+./SGI/opt/texture.o : include/video.hpp
+./SGI/opt/texture.o : include/system.h
+./SGI/opt/texture.o : include/jmalloc.hpp
+./SGI/opt/texture.o : include/specs.hpp
+./SGI/opt/texture.o : include/palette.hpp
+./SGI/opt/texture.o : include/linked.hpp
+./SGI/opt/texture.o : include/image.hpp
+./SGI/opt/specs.o : specs.c
+	g++ -c -o ./SGI/opt/specs.o specs.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/specs.o : include/dprint.hpp
+./SGI/opt/specs.o : include/system.h
+./SGI/opt/specs.o : include/jmalloc.hpp
+./SGI/opt/specs.o : include/specs.hpp
+./SGI/opt/specs.o : include/palette.hpp
+./SGI/opt/specs.o : include/linked.hpp
+./SGI/opt/specs.o : include/image.hpp
+./SGI/opt/supmorph.o : supmorph.c
+	g++ -c -o ./SGI/opt/supmorph.o supmorph.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/supmorph.o : include/jrand.hpp
+./SGI/opt/supmorph.o : include/video.hpp
+./SGI/opt/supmorph.o : include/timing.hpp
+./SGI/opt/supmorph.o : include/filter.hpp
+./SGI/opt/supmorph.o : include/macs.hpp
+./SGI/opt/supmorph.o : include/system.h
+./SGI/opt/supmorph.o : include/specs.hpp
+./SGI/opt/supmorph.o : include/palette.hpp
+./SGI/opt/supmorph.o : include/linked.hpp
+./SGI/opt/supmorph.o : include/image.hpp
+./SGI/opt/supmorph.o : include/timage.hpp
+./SGI/opt/supmorph.o : include/jmalloc.hpp
+./SGI/opt/supmorph.o : include/supmorph.hpp
+./SGI/opt/image24.o : image24.c
+	g++ -c -o ./SGI/opt/image24.o image24.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/image24.o : include/image.hpp
+./SGI/opt/image24.o : include/filter.hpp
+./SGI/opt/image24.o : include/macs.hpp
+./SGI/opt/image24.o : include/system.h
+./SGI/opt/image24.o : include/jmalloc.hpp
+./SGI/opt/image24.o : include/specs.hpp
+./SGI/opt/image24.o : include/linked.hpp
+./SGI/opt/image24.o : include/palette.hpp
+./SGI/opt/image24.o : include/image24.hpp
+./SGI/opt/pcxread.o : pcxread.c
+	g++ -c -o ./SGI/opt/pcxread.o pcxread.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/pcxread.o : include/filter.hpp
+./SGI/opt/pcxread.o : include/macs.hpp
+./SGI/opt/pcxread.o : include/image24.hpp
+./SGI/opt/pcxread.o : include/system.h
+./SGI/opt/pcxread.o : include/jmalloc.hpp
+./SGI/opt/pcxread.o : include/specs.hpp
+./SGI/opt/pcxread.o : include/palette.hpp
+./SGI/opt/pcxread.o : include/linked.hpp
+./SGI/opt/pcxread.o : include/image.hpp
+./SGI/opt/pcxread.o : include/pcxread.hpp
+./SGI/opt/timage.o : timage.c
+	g++ -c -o ./SGI/opt/timage.o timage.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/timage.o : include/filter.hpp
+./SGI/opt/timage.o : include/macs.hpp
+./SGI/opt/timage.o : include/system.h
+./SGI/opt/timage.o : include/jmalloc.hpp
+./SGI/opt/timage.o : include/specs.hpp
+./SGI/opt/timage.o : include/palette.hpp
+./SGI/opt/timage.o : include/linked.hpp
+./SGI/opt/timage.o : include/image.hpp
+./SGI/opt/timage.o : include/timage.hpp
+./SGI/opt/jmalloc.o : jmalloc.c
+	g++ -c -o ./SGI/opt/jmalloc.o jmalloc.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/jmalloc.o : include/jmalloc.hpp
+./SGI/opt/jmalloc.o : include/system.h
+./SGI/opt/jmalloc.o : include/macs.hpp
+./SGI/opt/jmalloc.o : include/doscall.hpp
+./SGI/opt/jrand.o : jrand.c
+	g++ -c -o ./SGI/opt/jrand.o jrand.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/jrand.o : include/jrand.hpp
+./SGI/opt/lbmread.o : lbmread.c
+	g++ -c -o ./SGI/opt/lbmread.o lbmread.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/lbmread.o : include/system.h
+./SGI/opt/lbmread.o : include/jmalloc.hpp
+./SGI/opt/lbmread.o : include/specs.hpp
+./SGI/opt/lbmread.o : include/palette.hpp
+./SGI/opt/lbmread.o : include/linked.hpp
+./SGI/opt/lbmread.o : include/image.hpp
+./SGI/opt/lbmread.o : include/lbmread.hpp
+./SGI/opt/keys.o : keys.c
+	g++ -c -o ./SGI/opt/keys.o keys.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/keys.o : include/keys.hpp
+./SGI/opt/dprint.o : dprint.c
+	g++ -c -o ./SGI/opt/dprint.o dprint.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/dprint.o : include/system.h
+./SGI/opt/dprint.o : include/macs.hpp
+./SGI/opt/status.o : status.c
+	g++ -c -o ./SGI/opt/status.o status.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/status.o : include/dprint.hpp
+./SGI/opt/status.o : include/timage.hpp
+./SGI/opt/status.o : include/fonts.hpp
+./SGI/opt/status.o : include/filter.hpp
+./SGI/opt/status.o : include/mouse.hpp
+./SGI/opt/status.o : include/sprite.hpp
+./SGI/opt/status.o : include/keys.hpp
+./SGI/opt/status.o : include/event.hpp
+./SGI/opt/status.o : include/jmalloc.hpp
+./SGI/opt/status.o : include/specs.hpp
+./SGI/opt/status.o : include/palette.hpp
+./SGI/opt/status.o : include/linked.hpp
+./SGI/opt/status.o : include/image.hpp
+./SGI/opt/status.o : include/video.hpp
+./SGI/opt/status.o : include/jwindow.hpp
+./SGI/opt/status.o : include/visobj.hpp
+./SGI/opt/status.o : include/status.hpp
+./SGI/opt/status.o : include/system.h
+./SGI/opt/status.o : include/macs.hpp
+./SGI/opt/visobj.o : visobj.c
+	g++ -c -o ./SGI/opt/visobj.o visobj.c -Iinclude -O2 -DMANAGE_MEM -DNO_CHECK 
+
+./SGI/opt/visobj.o : include/timage.hpp
+./SGI/opt/visobj.o : include/fonts.hpp
+./SGI/opt/visobj.o : include/filter.hpp
+./SGI/opt/visobj.o : include/mouse.hpp
+./SGI/opt/visobj.o : include/macs.hpp
+./SGI/opt/visobj.o : include/sprite.hpp
+./SGI/opt/visobj.o : include/keys.hpp
+./SGI/opt/visobj.o : include/event.hpp
+./SGI/opt/visobj.o : include/jmalloc.hpp
+./SGI/opt/visobj.o : include/specs.hpp
+./SGI/opt/visobj.o : include/palette.hpp
+./SGI/opt/visobj.o : include/linked.hpp
+./SGI/opt/visobj.o : include/image.hpp
+./SGI/opt/visobj.o : include/system.h
+./SGI/opt/visobj.o : include/video.hpp
+./SGI/opt/visobj.o : include/jwindow.hpp
+./SGI/opt/visobj.o : include/visobj.hpp
+
+SGI_image_profile_o_files = \
+	./SGI/profile/filter.o \
+	./SGI/profile/gifread.o \
+	./SGI/profile/globals.o \
+	./SGI/profile/image.o \
+	./SGI/profile/linked.o \
+	./SGI/profile/input.o \
+	./SGI/profile/mdlread.o \
+	./SGI/profile/palette.o \
+	./SGI/profile/ppmread.o \
+	./SGI/profile/include.o \
+	./SGI/profile/xwdread.o \
+	./SGI/profile/fonts.o \
+	./SGI/profile/decoder.o \
+	./SGI/profile/loader.o \
+	./SGI/profile/glread.o \
+	./SGI/profile/texture.o \
+	./SGI/profile/specs.o \
+	./SGI/profile/supmorph.o \
+	./SGI/profile/image24.o \
+	./SGI/profile/pcxread.o \
+	./SGI/profile/timage.o \
+	./SGI/profile/jmalloc.o \
+	./SGI/profile/jrand.o \
+	./SGI/profile/lbmread.o \
+	./SGI/profile/keys.o \
+	./SGI/profile/dprint.o \
+	./SGI/profile/status.o \
+	./SGI/profile/visobj.o
+
+SGI_packet_profile_o_files = \
+	./SGI/profile/packet.o
+
+SGI_gui_profile_o_files = \
+	./SGI/profile/pmenu.o \
+	./SGI/profile/scroller.o \
+	./SGI/profile/filesel.o \
+	./SGI/profile/tools.o \
+	./SGI/profile/guistat.o
+
+SGI_net_profile_o_files = \
+	port/unix/SGI/profile/jnet.o
+
+SGI_dir_profile_o_files = \
+	port/unix/SGI/profile/jdir.o
+
+SGI_sound_profile_o_files = \
+	port/sgi/SGI/profile/sound.o \
+	./SGI/profile/readwav.o
+
+SGI_joy_profile_o_files = \
+	port/unix/SGI/profile/joystick.o
+
+SGI_winman_profile_o_files = \
+	port/x11/SGI/profile/video.o \
+	port/x11/SGI/profile/mouse.o \
+	port/x11/SGI/profile/event.o \
+	./SGI/profile/jwindow.o
+
+SGI_time_profile_o_files = \
+	port/sgi/SGI/profile/timing.o
+
+./SGI/profile/time.a : $(SGI_time_profile_o_files)
+	ar ruvs ./SGI/profile/time.a \
+	port/sgi/SGI/profile/timing.o
+
+port/sgi/SGI/profile/timing.o : port/sgi/timing.c
+	g++ -c -o port/sgi/SGI/profile/timing.o port/sgi/timing.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+port/sgi/SGI/profile/timing.o : include/timing.hpp
+
+./SGI/profile/winman.a : $(SGI_winman_profile_o_files)
+	ar ruvs ./SGI/profile/winman.a \
+	port/x11/SGI/profile/video.o \
+	port/x11/SGI/profile/mouse.o \
+	port/x11/SGI/profile/event.o \
+	./SGI/profile/jwindow.o
+
+port/x11/SGI/profile/video.o : port/x11/video.c
+	g++ -c -o port/x11/SGI/profile/video.o port/x11/video.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+port/x11/SGI/profile/video.o : include/bitmap.h
+port/x11/SGI/profile/video.o : include/macs.hpp
+port/x11/SGI/profile/video.o : include/xinclude.h
+port/x11/SGI/profile/video.o : include/dos.h
+port/x11/SGI/profile/video.o : include/video.hpp
+port/x11/SGI/profile/video.o : include/globals.hpp
+port/x11/SGI/profile/video.o : include/system.h
+port/x11/SGI/profile/video.o : include/jmalloc.hpp
+port/x11/SGI/profile/video.o : include/specs.hpp
+port/x11/SGI/profile/video.o : include/palette.hpp
+port/x11/SGI/profile/video.o : include/linked.hpp
+port/x11/SGI/profile/video.o : include/image.hpp
+port/x11/SGI/profile/video.o : include/filter.hpp
+port/x11/SGI/profile/mouse.o : port/x11/mouse.c
+	g++ -c -o port/x11/SGI/profile/mouse.o port/x11/mouse.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+port/x11/SGI/profile/mouse.o : include/xinclude.h
+port/x11/SGI/profile/mouse.o : include/mouse.hpp
+port/x11/SGI/profile/mouse.o : include/monoprnt.hpp
+port/x11/SGI/profile/mouse.o : include/mdlread.hpp
+port/x11/SGI/profile/mouse.o : include/filter.hpp
+port/x11/SGI/profile/mouse.o : include/macs.hpp
+port/x11/SGI/profile/mouse.o : include/sprite.hpp
+port/x11/SGI/profile/mouse.o : include/jmalloc.hpp
+port/x11/SGI/profile/mouse.o : include/specs.hpp
+port/x11/SGI/profile/mouse.o : include/palette.hpp
+port/x11/SGI/profile/mouse.o : include/linked.hpp
+port/x11/SGI/profile/mouse.o : include/image.hpp
+port/x11/SGI/profile/mouse.o : include/system.h
+port/x11/SGI/profile/mouse.o : include/video.hpp
+port/x11/SGI/profile/event.o : port/x11/event.c
+	g++ -c -o port/x11/SGI/profile/event.o port/x11/event.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+port/x11/SGI/profile/event.o : include/keys.hpp
+port/x11/SGI/profile/event.o : include/event.hpp
+port/x11/SGI/profile/event.o : include/sprite.hpp
+port/x11/SGI/profile/event.o : include/mouse.hpp
+port/x11/SGI/profile/event.o : include/macs.hpp
+port/x11/SGI/profile/event.o : include/gifread.hpp
+port/x11/SGI/profile/event.o : include/video.hpp
+port/x11/SGI/profile/event.o : include/mdlread.hpp
+port/x11/SGI/profile/event.o : include/jmalloc.hpp
+port/x11/SGI/profile/event.o : include/specs.hpp
+port/x11/SGI/profile/event.o : include/palette.hpp
+port/x11/SGI/profile/event.o : include/linked.hpp
+port/x11/SGI/profile/event.o : include/image.hpp
+port/x11/SGI/profile/event.o : include/xinclude.h
+port/x11/SGI/profile/event.o : include/system.h
+./SGI/profile/jwindow.o : jwindow.c
+	g++ -c -o ./SGI/profile/jwindow.o jwindow.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/jwindow.o : include/timage.hpp
+./SGI/profile/jwindow.o : include/fonts.hpp
+./SGI/profile/jwindow.o : include/jwindow.hpp
+./SGI/profile/jwindow.o : include/filter.hpp
+./SGI/profile/jwindow.o : include/mouse.hpp
+./SGI/profile/jwindow.o : include/macs.hpp
+./SGI/profile/jwindow.o : include/sprite.hpp
+./SGI/profile/jwindow.o : include/keys.hpp
+./SGI/profile/jwindow.o : include/event.hpp
+./SGI/profile/jwindow.o : include/jmalloc.hpp
+./SGI/profile/jwindow.o : include/specs.hpp
+./SGI/profile/jwindow.o : include/palette.hpp
+./SGI/profile/jwindow.o : include/linked.hpp
+./SGI/profile/jwindow.o : include/image.hpp
+./SGI/profile/jwindow.o : include/system.h
+./SGI/profile/jwindow.o : include/video.hpp
+
+./SGI/profile/joy.a : $(SGI_joy_profile_o_files)
+	ar ruvs ./SGI/profile/joy.a \
+	port/unix/SGI/profile/joystick.o
+
+port/unix/SGI/profile/joystick.o : port/unix/joystick.c
+	g++ -c -o port/unix/SGI/profile/joystick.o port/unix/joystick.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+port/unix/SGI/profile/joystick.o : port/unix/joystick.c
+
+./SGI/profile/sound.a : $(SGI_sound_profile_o_files)
+	ar ruvs ./SGI/profile/sound.a \
+	port/sgi/SGI/profile/sound.o \
+	./SGI/profile/readwav.o
+
+port/sgi/SGI/profile/sound.o : port/sgi/sound.c
+	g++ -c -o port/sgi/SGI/profile/sound.o port/sgi/sound.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+port/sgi/SGI/profile/sound.o : include/timing.hpp
+port/sgi/SGI/profile/sound.o : include/dprint.hpp
+port/sgi/SGI/profile/sound.o : include/jmalloc.hpp
+port/sgi/SGI/profile/sound.o : include/linked.hpp
+port/sgi/SGI/profile/sound.o : include/specs.hpp
+port/sgi/SGI/profile/sound.o : include/readwav.hpp
+port/sgi/SGI/profile/sound.o : include/sound.hpp
+port/sgi/SGI/profile/sound.o : include/system.h
+port/sgi/SGI/profile/sound.o : include/macs.hpp
+./SGI/profile/readwav.o : readwav.c
+	g++ -c -o ./SGI/profile/readwav.o readwav.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/readwav.o : include/dprint.hpp
+./SGI/profile/readwav.o : include/macs.hpp
+./SGI/profile/readwav.o : include/system.h
+./SGI/profile/readwav.o : include/jmalloc.hpp
+./SGI/profile/readwav.o : include/linked.hpp
+./SGI/profile/readwav.o : include/specs.hpp
+./SGI/profile/readwav.o : include/readwav.hpp
+
+./SGI/profile/dir.a : $(SGI_dir_profile_o_files)
+	ar ruvs ./SGI/profile/dir.a \
+	port/unix/SGI/profile/jdir.o
+
+port/unix/SGI/profile/jdir.o : port/unix/jdir.c
+	g++ -c -o port/unix/SGI/profile/jdir.o port/unix/jdir.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+port/unix/SGI/profile/jdir.o : include/jmalloc.hpp
+
+./SGI/profile/net.a : $(SGI_net_profile_o_files)
+	ar ruvs ./SGI/profile/net.a \
+	port/unix/SGI/profile/jnet.o
+
+port/unix/SGI/profile/jnet.o : port/unix/jnet.c
+	g++ -c -o port/unix/SGI/profile/jnet.o port/unix/jnet.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+port/unix/SGI/profile/jnet.o : include/jmalloc.hpp
+port/unix/SGI/profile/jnet.o : include/packet.hpp
+port/unix/SGI/profile/jnet.o : include/system.h
+port/unix/SGI/profile/jnet.o : include/macs.hpp
+port/unix/SGI/profile/jnet.o : include/jnet.hpp
+
+./SGI/profile/gui.a : $(SGI_gui_profile_o_files)
+	ar ruvs ./SGI/profile/gui.a \
+	./SGI/profile/pmenu.o \
+	./SGI/profile/scroller.o \
+	./SGI/profile/filesel.o \
+	./SGI/profile/tools.o \
+	./SGI/profile/guistat.o
+
+./SGI/profile/pmenu.o : pmenu.c
+	g++ -c -o ./SGI/profile/pmenu.o pmenu.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/pmenu.o : include/timage.hpp
+./SGI/profile/pmenu.o : include/fonts.hpp
+./SGI/profile/pmenu.o : include/filter.hpp
+./SGI/profile/pmenu.o : include/mouse.hpp
+./SGI/profile/pmenu.o : include/macs.hpp
+./SGI/profile/pmenu.o : include/sprite.hpp
+./SGI/profile/pmenu.o : include/keys.hpp
+./SGI/profile/pmenu.o : include/event.hpp
+./SGI/profile/pmenu.o : include/specs.hpp
+./SGI/profile/pmenu.o : include/palette.hpp
+./SGI/profile/pmenu.o : include/linked.hpp
+./SGI/profile/pmenu.o : include/image.hpp
+./SGI/profile/pmenu.o : include/system.h
+./SGI/profile/pmenu.o : include/video.hpp
+./SGI/profile/pmenu.o : include/jwindow.hpp
+./SGI/profile/pmenu.o : include/input.hpp
+./SGI/profile/pmenu.o : include/jmalloc.hpp
+./SGI/profile/pmenu.o : include/pmenu.hpp
+./SGI/profile/scroller.o : scroller.c
+	g++ -c -o ./SGI/profile/scroller.o scroller.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/scroller.o : include/timage.hpp
+./SGI/profile/scroller.o : include/fonts.hpp
+./SGI/profile/scroller.o : include/filter.hpp
+./SGI/profile/scroller.o : include/mouse.hpp
+./SGI/profile/scroller.o : include/macs.hpp
+./SGI/profile/scroller.o : include/sprite.hpp
+./SGI/profile/scroller.o : include/keys.hpp
+./SGI/profile/scroller.o : include/event.hpp
+./SGI/profile/scroller.o : include/jmalloc.hpp
+./SGI/profile/scroller.o : include/specs.hpp
+./SGI/profile/scroller.o : include/palette.hpp
+./SGI/profile/scroller.o : include/linked.hpp
+./SGI/profile/scroller.o : include/image.hpp
+./SGI/profile/scroller.o : include/system.h
+./SGI/profile/scroller.o : include/video.hpp
+./SGI/profile/scroller.o : include/jwindow.hpp
+./SGI/profile/scroller.o : include/input.hpp
+./SGI/profile/scroller.o : include/scroller.hpp
+./SGI/profile/filesel.o : filesel.c
+	g++ -c -o ./SGI/profile/filesel.o filesel.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/filesel.o : include/jdir.hpp
+./SGI/profile/filesel.o : include/scroller.hpp
+./SGI/profile/filesel.o : include/input.hpp
+./SGI/profile/filesel.o : include/timage.hpp
+./SGI/profile/filesel.o : include/fonts.hpp
+./SGI/profile/filesel.o : include/filter.hpp
+./SGI/profile/filesel.o : include/mouse.hpp
+./SGI/profile/filesel.o : include/macs.hpp
+./SGI/profile/filesel.o : include/sprite.hpp
+./SGI/profile/filesel.o : include/keys.hpp
+./SGI/profile/filesel.o : include/event.hpp
+./SGI/profile/filesel.o : include/jmalloc.hpp
+./SGI/profile/filesel.o : include/specs.hpp
+./SGI/profile/filesel.o : include/palette.hpp
+./SGI/profile/filesel.o : include/linked.hpp
+./SGI/profile/filesel.o : include/image.hpp
+./SGI/profile/filesel.o : include/system.h
+./SGI/profile/filesel.o : include/video.hpp
+./SGI/profile/filesel.o : include/jwindow.hpp
+./SGI/profile/filesel.o : include/filesel.hpp
+./SGI/profile/tools.o : tools.c
+	g++ -c -o ./SGI/profile/tools.o tools.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/tools.o : include/visobj.hpp
+./SGI/profile/tools.o : include/scroller.hpp
+./SGI/profile/tools.o : include/input.hpp
+./SGI/profile/tools.o : include/timage.hpp
+./SGI/profile/tools.o : include/fonts.hpp
+./SGI/profile/tools.o : include/filter.hpp
+./SGI/profile/tools.o : include/mouse.hpp
+./SGI/profile/tools.o : include/macs.hpp
+./SGI/profile/tools.o : include/sprite.hpp
+./SGI/profile/tools.o : include/keys.hpp
+./SGI/profile/tools.o : include/event.hpp
+./SGI/profile/tools.o : include/jmalloc.hpp
+./SGI/profile/tools.o : include/specs.hpp
+./SGI/profile/tools.o : include/palette.hpp
+./SGI/profile/tools.o : include/linked.hpp
+./SGI/profile/tools.o : include/image.hpp
+./SGI/profile/tools.o : include/system.h
+./SGI/profile/tools.o : include/video.hpp
+./SGI/profile/tools.o : include/jwindow.hpp
+./SGI/profile/tools.o : include/tools.hpp
+./SGI/profile/guistat.o : guistat.c
+	g++ -c -o ./SGI/profile/guistat.o guistat.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/guistat.o : include/guistat.hpp
+./SGI/profile/guistat.o : include/timing.hpp
+./SGI/profile/guistat.o : include/timage.hpp
+./SGI/profile/guistat.o : include/fonts.hpp
+./SGI/profile/guistat.o : include/filter.hpp
+./SGI/profile/guistat.o : include/mouse.hpp
+./SGI/profile/guistat.o : include/macs.hpp
+./SGI/profile/guistat.o : include/sprite.hpp
+./SGI/profile/guistat.o : include/keys.hpp
+./SGI/profile/guistat.o : include/event.hpp
+./SGI/profile/guistat.o : include/jmalloc.hpp
+./SGI/profile/guistat.o : include/specs.hpp
+./SGI/profile/guistat.o : include/palette.hpp
+./SGI/profile/guistat.o : include/linked.hpp
+./SGI/profile/guistat.o : include/image.hpp
+./SGI/profile/guistat.o : include/system.h
+./SGI/profile/guistat.o : include/video.hpp
+./SGI/profile/guistat.o : include/jwindow.hpp
+./SGI/profile/guistat.o : include/visobj.hpp
+./SGI/profile/guistat.o : include/status.hpp
+
+./SGI/profile/packet.a : $(SGI_packet_profile_o_files)
+	ar ruvs ./SGI/profile/packet.a \
+	./SGI/profile/packet.o
+
+./SGI/profile/packet.o : packet.c
+	g++ -c -o ./SGI/profile/packet.o packet.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/packet.o : include/jmalloc.hpp
+./SGI/profile/packet.o : include/system.h
+./SGI/profile/packet.o : include/macs.hpp
+./SGI/profile/packet.o : include/packet.hpp
+
+./SGI/profile/image.a : $(SGI_image_profile_o_files)
+	ar ruvs ./SGI/profile/image.a \
+	./SGI/profile/filter.o \
+	./SGI/profile/gifread.o \
+	./SGI/profile/globals.o \
+	./SGI/profile/image.o \
+	./SGI/profile/linked.o \
+	./SGI/profile/input.o \
+	./SGI/profile/mdlread.o \
+	./SGI/profile/palette.o \
+	./SGI/profile/ppmread.o \
+	./SGI/profile/include.o \
+	./SGI/profile/xwdread.o \
+	./SGI/profile/fonts.o \
+	./SGI/profile/decoder.o \
+	./SGI/profile/loader.o \
+	./SGI/profile/glread.o \
+	./SGI/profile/texture.o \
+	./SGI/profile/specs.o \
+	./SGI/profile/supmorph.o \
+	./SGI/profile/image24.o \
+	./SGI/profile/pcxread.o \
+	./SGI/profile/timage.o \
+	./SGI/profile/jmalloc.o \
+	./SGI/profile/jrand.o \
+	./SGI/profile/lbmread.o \
+	./SGI/profile/keys.o \
+	./SGI/profile/dprint.o \
+	./SGI/profile/status.o \
+	./SGI/profile/visobj.o
+
+./SGI/profile/filter.o : filter.c
+	g++ -c -o ./SGI/profile/filter.o filter.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/filter.o : include/filter.hpp
+./SGI/profile/filter.o : include/macs.hpp
+./SGI/profile/filter.o : include/system.h
+./SGI/profile/filter.o : include/jmalloc.hpp
+./SGI/profile/filter.o : include/specs.hpp
+./SGI/profile/filter.o : include/palette.hpp
+./SGI/profile/filter.o : include/linked.hpp
+./SGI/profile/filter.o : include/image.hpp
+./SGI/profile/gifread.o : gifread.c
+	g++ -c -o ./SGI/profile/gifread.o gifread.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/gifread.o : include/macs.hpp
+./SGI/profile/gifread.o : include/dir.h
+./SGI/profile/gifread.o : include/dos.h
+./SGI/profile/gifread.o : include/std.h
+./SGI/profile/gifread.o : include/gifdecod.hpp
+./SGI/profile/gifread.o : include/video.hpp
+./SGI/profile/gifread.o : include/system.h
+./SGI/profile/gifread.o : include/jmalloc.hpp
+./SGI/profile/gifread.o : include/specs.hpp
+./SGI/profile/gifread.o : include/palette.hpp
+./SGI/profile/gifread.o : include/linked.hpp
+./SGI/profile/gifread.o : include/image.hpp
+./SGI/profile/gifread.o : include/gifread.hpp
+./SGI/profile/globals.o : globals.c
+	g++ -c -o ./SGI/profile/globals.o globals.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/globals.o : globals.c
+./SGI/profile/image.o : image.c
+	g++ -c -o ./SGI/profile/image.o image.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/image.o : include/exitproc.hpp
+./SGI/profile/image.o : include/dos.h
+./SGI/profile/image.o : include/macs.hpp
+./SGI/profile/image.o : include/jmalloc.hpp
+./SGI/profile/image.o : include/specs.hpp
+./SGI/profile/image.o : include/palette.hpp
+./SGI/profile/image.o : include/image.hpp
+./SGI/profile/image.o : include/linked.hpp
+./SGI/profile/image.o : include/system.h
+./SGI/profile/image.o : include/emm.hpp
+./SGI/profile/linked.o : linked.c
+	g++ -c -o ./SGI/profile/linked.o linked.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/linked.o : include/linked.hpp
+./SGI/profile/input.o : input.c
+	g++ -c -o ./SGI/profile/input.o input.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/input.o : include/timage.hpp
+./SGI/profile/input.o : include/fonts.hpp
+./SGI/profile/input.o : include/filter.hpp
+./SGI/profile/input.o : include/mouse.hpp
+./SGI/profile/input.o : include/macs.hpp
+./SGI/profile/input.o : include/sprite.hpp
+./SGI/profile/input.o : include/keys.hpp
+./SGI/profile/input.o : include/event.hpp
+./SGI/profile/input.o : include/jmalloc.hpp
+./SGI/profile/input.o : include/specs.hpp
+./SGI/profile/input.o : include/palette.hpp
+./SGI/profile/input.o : include/linked.hpp
+./SGI/profile/input.o : include/image.hpp
+./SGI/profile/input.o : include/system.h
+./SGI/profile/input.o : include/video.hpp
+./SGI/profile/input.o : include/jwindow.hpp
+./SGI/profile/input.o : include/input.hpp
+./SGI/profile/mdlread.o : mdlread.c
+	g++ -c -o ./SGI/profile/mdlread.o mdlread.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/mdlread.o : include/macs.hpp
+./SGI/profile/mdlread.o : include/image.hpp
+./SGI/profile/mdlread.o : include/system.h
+./SGI/profile/mdlread.o : include/jmalloc.hpp
+./SGI/profile/mdlread.o : include/specs.hpp
+./SGI/profile/mdlread.o : include/linked.hpp
+./SGI/profile/mdlread.o : include/palette.hpp
+./SGI/profile/mdlread.o : include/mdlread.hpp
+./SGI/profile/palette.o : palette.c
+	g++ -c -o ./SGI/profile/palette.o palette.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/palette.o : include/filter.hpp
+./SGI/profile/palette.o : include/video.hpp
+./SGI/profile/palette.o : include/dos.h
+./SGI/profile/palette.o : include/macs.hpp
+./SGI/profile/palette.o : include/image.hpp
+./SGI/profile/palette.o : include/system.h
+./SGI/profile/palette.o : include/jmalloc.hpp
+./SGI/profile/palette.o : include/specs.hpp
+./SGI/profile/palette.o : include/linked.hpp
+./SGI/profile/palette.o : include/palette.hpp
+./SGI/profile/ppmread.o : ppmread.c
+	g++ -c -o ./SGI/profile/ppmread.o ppmread.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/ppmread.o : include/ppmread.hpp
+./SGI/profile/ppmread.o : include/macs.hpp
+./SGI/profile/ppmread.o : include/system.h
+./SGI/profile/ppmread.o : include/jmalloc.hpp
+./SGI/profile/ppmread.o : include/specs.hpp
+./SGI/profile/ppmread.o : include/palette.hpp
+./SGI/profile/ppmread.o : include/linked.hpp
+./SGI/profile/ppmread.o : include/image.hpp
+./SGI/profile/include.o : include.c
+	g++ -c -o ./SGI/profile/include.o include.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/include.o : include/system.h
+./SGI/profile/include.o : include/jmalloc.hpp
+./SGI/profile/include.o : include/specs.hpp
+./SGI/profile/include.o : include/palette.hpp
+./SGI/profile/include.o : include/linked.hpp
+./SGI/profile/include.o : include/image.hpp
+./SGI/profile/include.o : include/include.hpp
+./SGI/profile/xwdread.o : xwdread.c
+	g++ -c -o ./SGI/profile/xwdread.o xwdread.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/xwdread.o : include/image24.hpp
+./SGI/profile/xwdread.o : include/main.hpp
+./SGI/profile/xwdread.o : include/dos.h
+./SGI/profile/xwdread.o : include/video.hpp
+./SGI/profile/xwdread.o : include/mouse.hpp
+./SGI/profile/xwdread.o : include/macs.hpp
+./SGI/profile/xwdread.o : include/sprite.hpp
+./SGI/profile/xwdread.o : include/keys.hpp
+./SGI/profile/xwdread.o : include/event.hpp
+./SGI/profile/xwdread.o : include/system.h
+./SGI/profile/xwdread.o : include/jmalloc.hpp
+./SGI/profile/xwdread.o : include/specs.hpp
+./SGI/profile/xwdread.o : include/palette.hpp
+./SGI/profile/xwdread.o : include/linked.hpp
+./SGI/profile/xwdread.o : include/image.hpp
+./SGI/profile/xwdread.o : include/filter.hpp
+./SGI/profile/fonts.o : fonts.c
+	g++ -c -o ./SGI/profile/fonts.o fonts.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/fonts.o : include/filter.hpp
+./SGI/profile/fonts.o : include/macs.hpp
+./SGI/profile/fonts.o : include/timage.hpp
+./SGI/profile/fonts.o : include/system.h
+./SGI/profile/fonts.o : include/jmalloc.hpp
+./SGI/profile/fonts.o : include/specs.hpp
+./SGI/profile/fonts.o : include/palette.hpp
+./SGI/profile/fonts.o : include/linked.hpp
+./SGI/profile/fonts.o : include/image.hpp
+./SGI/profile/fonts.o : include/fonts.hpp
+./SGI/profile/decoder.o : decoder.c
+	g++ -c -o ./SGI/profile/decoder.o decoder.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/decoder.o : include/macs.hpp
+./SGI/profile/decoder.o : include/system.h
+./SGI/profile/decoder.o : include/jmalloc.hpp
+./SGI/profile/decoder.o : include/specs.hpp
+./SGI/profile/decoder.o : include/palette.hpp
+./SGI/profile/decoder.o : include/linked.hpp
+./SGI/profile/decoder.o : include/image.hpp
+./SGI/profile/decoder.o : include/errs.h
+./SGI/profile/loader.o : loader.c
+	g++ -c -o ./SGI/profile/loader.o loader.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/loader.o : include/lbmread.hpp
+./SGI/profile/loader.o : include/pcxread.hpp
+./SGI/profile/loader.o : include/glread.hpp
+./SGI/profile/loader.o : include/xwdread.hpp
+./SGI/profile/loader.o : include/ppmread.hpp
+./SGI/profile/loader.o : include/mdlread.hpp
+./SGI/profile/loader.o : include/filter.hpp
+./SGI/profile/loader.o : include/macs.hpp
+./SGI/profile/loader.o : include/image24.hpp
+./SGI/profile/loader.o : include/system.h
+./SGI/profile/loader.o : include/jmalloc.hpp
+./SGI/profile/loader.o : include/specs.hpp
+./SGI/profile/loader.o : include/palette.hpp
+./SGI/profile/loader.o : include/linked.hpp
+./SGI/profile/loader.o : include/image.hpp
+./SGI/profile/loader.o : include/loader.hpp
+./SGI/profile/glread.o : glread.c
+	g++ -c -o ./SGI/profile/glread.o glread.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/glread.o : include/video.hpp
+./SGI/profile/glread.o : include/jmalloc.hpp
+./SGI/profile/glread.o : include/specs.hpp
+./SGI/profile/glread.o : include/palette.hpp
+./SGI/profile/glread.o : include/linked.hpp
+./SGI/profile/glread.o : include/image.hpp
+./SGI/profile/glread.o : include/system.h
+./SGI/profile/glread.o : include/macs.hpp
+./SGI/profile/texture.o : texture.c
+	g++ -c -o ./SGI/profile/texture.o texture.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/texture.o : include/mouse.hpp
+./SGI/profile/texture.o : include/sprite.hpp
+./SGI/profile/texture.o : include/keys.hpp
+./SGI/profile/texture.o : include/event.hpp
+./SGI/profile/texture.o : include/macs.hpp
+./SGI/profile/texture.o : include/video.hpp
+./SGI/profile/texture.o : include/system.h
+./SGI/profile/texture.o : include/jmalloc.hpp
+./SGI/profile/texture.o : include/specs.hpp
+./SGI/profile/texture.o : include/palette.hpp
+./SGI/profile/texture.o : include/linked.hpp
+./SGI/profile/texture.o : include/image.hpp
+./SGI/profile/specs.o : specs.c
+	g++ -c -o ./SGI/profile/specs.o specs.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/specs.o : include/dprint.hpp
+./SGI/profile/specs.o : include/system.h
+./SGI/profile/specs.o : include/jmalloc.hpp
+./SGI/profile/specs.o : include/specs.hpp
+./SGI/profile/specs.o : include/palette.hpp
+./SGI/profile/specs.o : include/linked.hpp
+./SGI/profile/specs.o : include/image.hpp
+./SGI/profile/supmorph.o : supmorph.c
+	g++ -c -o ./SGI/profile/supmorph.o supmorph.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/supmorph.o : include/jrand.hpp
+./SGI/profile/supmorph.o : include/video.hpp
+./SGI/profile/supmorph.o : include/timing.hpp
+./SGI/profile/supmorph.o : include/filter.hpp
+./SGI/profile/supmorph.o : include/macs.hpp
+./SGI/profile/supmorph.o : include/system.h
+./SGI/profile/supmorph.o : include/specs.hpp
+./SGI/profile/supmorph.o : include/palette.hpp
+./SGI/profile/supmorph.o : include/linked.hpp
+./SGI/profile/supmorph.o : include/image.hpp
+./SGI/profile/supmorph.o : include/timage.hpp
+./SGI/profile/supmorph.o : include/jmalloc.hpp
+./SGI/profile/supmorph.o : include/supmorph.hpp
+./SGI/profile/image24.o : image24.c
+	g++ -c -o ./SGI/profile/image24.o image24.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/image24.o : include/image.hpp
+./SGI/profile/image24.o : include/filter.hpp
+./SGI/profile/image24.o : include/macs.hpp
+./SGI/profile/image24.o : include/system.h
+./SGI/profile/image24.o : include/jmalloc.hpp
+./SGI/profile/image24.o : include/specs.hpp
+./SGI/profile/image24.o : include/linked.hpp
+./SGI/profile/image24.o : include/palette.hpp
+./SGI/profile/image24.o : include/image24.hpp
+./SGI/profile/pcxread.o : pcxread.c
+	g++ -c -o ./SGI/profile/pcxread.o pcxread.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/pcxread.o : include/filter.hpp
+./SGI/profile/pcxread.o : include/macs.hpp
+./SGI/profile/pcxread.o : include/image24.hpp
+./SGI/profile/pcxread.o : include/system.h
+./SGI/profile/pcxread.o : include/jmalloc.hpp
+./SGI/profile/pcxread.o : include/specs.hpp
+./SGI/profile/pcxread.o : include/palette.hpp
+./SGI/profile/pcxread.o : include/linked.hpp
+./SGI/profile/pcxread.o : include/image.hpp
+./SGI/profile/pcxread.o : include/pcxread.hpp
+./SGI/profile/timage.o : timage.c
+	g++ -c -o ./SGI/profile/timage.o timage.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/timage.o : include/filter.hpp
+./SGI/profile/timage.o : include/macs.hpp
+./SGI/profile/timage.o : include/system.h
+./SGI/profile/timage.o : include/jmalloc.hpp
+./SGI/profile/timage.o : include/specs.hpp
+./SGI/profile/timage.o : include/palette.hpp
+./SGI/profile/timage.o : include/linked.hpp
+./SGI/profile/timage.o : include/image.hpp
+./SGI/profile/timage.o : include/timage.hpp
+./SGI/profile/jmalloc.o : jmalloc.c
+	g++ -c -o ./SGI/profile/jmalloc.o jmalloc.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/jmalloc.o : include/jmalloc.hpp
+./SGI/profile/jmalloc.o : include/system.h
+./SGI/profile/jmalloc.o : include/macs.hpp
+./SGI/profile/jmalloc.o : include/doscall.hpp
+./SGI/profile/jrand.o : jrand.c
+	g++ -c -o ./SGI/profile/jrand.o jrand.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/jrand.o : include/jrand.hpp
+./SGI/profile/lbmread.o : lbmread.c
+	g++ -c -o ./SGI/profile/lbmread.o lbmread.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/lbmread.o : include/system.h
+./SGI/profile/lbmread.o : include/jmalloc.hpp
+./SGI/profile/lbmread.o : include/specs.hpp
+./SGI/profile/lbmread.o : include/palette.hpp
+./SGI/profile/lbmread.o : include/linked.hpp
+./SGI/profile/lbmread.o : include/image.hpp
+./SGI/profile/lbmread.o : include/lbmread.hpp
+./SGI/profile/keys.o : keys.c
+	g++ -c -o ./SGI/profile/keys.o keys.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/keys.o : include/keys.hpp
+./SGI/profile/dprint.o : dprint.c
+	g++ -c -o ./SGI/profile/dprint.o dprint.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/dprint.o : include/system.h
+./SGI/profile/dprint.o : include/macs.hpp
+./SGI/profile/status.o : status.c
+	g++ -c -o ./SGI/profile/status.o status.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/status.o : include/dprint.hpp
+./SGI/profile/status.o : include/timage.hpp
+./SGI/profile/status.o : include/fonts.hpp
+./SGI/profile/status.o : include/filter.hpp
+./SGI/profile/status.o : include/mouse.hpp
+./SGI/profile/status.o : include/sprite.hpp
+./SGI/profile/status.o : include/keys.hpp
+./SGI/profile/status.o : include/event.hpp
+./SGI/profile/status.o : include/jmalloc.hpp
+./SGI/profile/status.o : include/specs.hpp
+./SGI/profile/status.o : include/palette.hpp
+./SGI/profile/status.o : include/linked.hpp
+./SGI/profile/status.o : include/image.hpp
+./SGI/profile/status.o : include/video.hpp
+./SGI/profile/status.o : include/jwindow.hpp
+./SGI/profile/status.o : include/visobj.hpp
+./SGI/profile/status.o : include/status.hpp
+./SGI/profile/status.o : include/system.h
+./SGI/profile/status.o : include/macs.hpp
+./SGI/profile/visobj.o : visobj.c
+	g++ -c -o ./SGI/profile/visobj.o visobj.c -Iinclude -O2 -g -p -DMEM_CHECK -DMANAGE_MEM 
+
+./SGI/profile/visobj.o : include/timage.hpp
+./SGI/profile/visobj.o : include/fonts.hpp
+./SGI/profile/visobj.o : include/filter.hpp
+./SGI/profile/visobj.o : include/mouse.hpp
+./SGI/profile/visobj.o : include/macs.hpp
+./SGI/profile/visobj.o : include/sprite.hpp
+./SGI/profile/visobj.o : include/keys.hpp
+./SGI/profile/visobj.o : include/event.hpp
+./SGI/profile/visobj.o : include/jmalloc.hpp
+./SGI/profile/visobj.o : include/specs.hpp
+./SGI/profile/visobj.o : include/palette.hpp
+./SGI/profile/visobj.o : include/linked.hpp
+./SGI/profile/visobj.o : include/image.hpp
+./SGI/profile/visobj.o : include/system.h
+./SGI/profile/visobj.o : include/video.hpp
+./SGI/profile/visobj.o : include/jwindow.hpp
+./SGI/profile/visobj.o : include/visobj.hpp
+

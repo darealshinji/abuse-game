@@ -1,10 +1,8 @@
-## Process this file with automake to produce Makefile.in
+SUBDIRS = imlib abuse
 
-SUBDIRS = src
-
-man_MANS = abuse.6
-
-datafiledir = $(datadir)/games/abuse
-datafile_DATA = abuse.bmp abuse.lsp abuse.png
-
-EXTRA_DIST = bootstrap abuse.6 abuse.bmp abuse.lsp abuse.png
+debug:
+	$(MAKE) DEFS='-DMANAGE_MEM -DMEM_CHECK' CXXFLAGS=-g
+opt:
+	$(MAKE) DEFS='-DMANAGE_MEM -DNO_CHECK' CXXFLAGS=-O2
+profile:
+	$(MAKE) DEFS='-DMANAGE_MEM -DNO_CHECK' CXXFLAGS='-O2 -g -pg'
