@@ -128,9 +128,9 @@ class dev_term : public shell_term
 {
   dev_controll *dv;
   public :
-  dev_term(int width, int height, dev_controll *dev) : shell_term(eh,console_font,width,height,"dev")
+  dev_term(int width, int height, dev_controll *dev) : shell_term(console_font, width, height, "dev")
   {
-    dv=dev;
+    dv = dev;
   }
   virtual ~dev_term() {};
   virtual void execute(char *st);

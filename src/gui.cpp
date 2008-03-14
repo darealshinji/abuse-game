@@ -30,7 +30,7 @@ ico_switch_button::ico_switch_button(int X, int Y, int ID, int start_on, ifield 
   if (!cur_but) cur_but=blist;
 }
 
-void ico_switch_button::area(int &x1, int &y1, int &x2, int &y2, window_manager *wm)
+void ico_switch_button::area(int &x1, int &y1, int &x2, int &y2)
 {
   x1=10000;
   y1=10000;
@@ -39,7 +39,7 @@ void ico_switch_button::area(int &x1, int &y1, int &x2, int &y2, window_manager 
   int X1,Y1,X2,Y2;
   for (ifield *b=blist;b;b=b->next)
   {    
-    b->area(X1,Y1,X2,Y2,wm);
+    b->area(X1,Y1,X2,Y2);
     if (X1<x1) x1=X1;
     if (Y1<y1) y1=Y1;
     if (X2>x2) x2=X2;
@@ -67,23 +67,23 @@ ifield *ico_switch_button::unlink(int id)
   return NULL;
 }
 
-void ico_switch_button::handle_event(event &ev, image *screen, window_manager *wm, input_manager *im)
+void ico_switch_button::handle_event(event &ev, image *screen, input_manager *im)
 {
   if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
                                          ev.mouse_button))
   {
     cur_but=cur_but->next;
     if (!cur_but) cur_but=blist;
-    cur_but->draw(act,screen,wm);
-    cur_but->handle_event(ev,screen,wm,im);
+    cur_but->draw(act,screen);
+    cur_but->handle_event(ev,screen,im);
   }
 
 }
 
-void ico_button::draw(int active, image *screen, window_manager *wm)
+void ico_button::draw(int active, image *screen)
 {
   int x1,y1,x2,y2;
-  area(x1,y1,x2,y2,wm); 
+  area(x1,y1,x2,y2); 
  
   if (active!=act  && activate_id!=-1 && active)
     wm->push_event(new event(activate_id,NULL));
@@ -115,22 +115,22 @@ void ico_button::draw(int active, image *screen, window_manager *wm)
 extern long S_BUTTON_PRESS_SND;
 extern int sfx_volume;
 
-void ico_button::handle_event(event &ev, image *screen, window_manager *wm, input_manager *im)
+void ico_button::handle_event(event &ev, image *screen, input_manager *im)
 {
   if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
                                          ev.mouse_button))
   {
     int  x1,y1,x2,y2;
-    area(x1,y1,x2,y2,wm);
+    area(x1,y1,x2,y2);
     up=!up;
-    draw(act,screen,wm);
+    draw(act,screen);
     wm->push_event(new event(id,(char *)this));
     if (S_BUTTON_PRESS_SND)
       cash.sfx(S_BUTTON_PRESS_SND)->play(sfx_volume);
   }
 }
 
-void ico_button::area(int &x1, int &y1, int &x2, int &y2, window_manager *wm)
+void ico_button::area(int &x1, int &y1, int &x2, int &y2)
 {
   x1=x; y1=y;
   x2=x+cash.img(u)->width()-1;

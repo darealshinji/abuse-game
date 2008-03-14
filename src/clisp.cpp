@@ -926,7 +926,7 @@ void *l_caller(long number, void *args)
       }
       return ret;
     } break;
-    case 51 :   return new_lisp_pointer(eh->font()); break;
+    case 51 :   return new_lisp_pointer(wm->font()); break;
     case 52 : 
     {
       view *c=current_object->controller();
@@ -1296,9 +1296,9 @@ long c_caller(long number, void *args)
       screen->line(cx1,cy1,cx2,cy2,c);
       return 1;
     } break;
-    case 93 : return eh->dark_color(); break;
-    case 94 : return eh->medium_color(); break;
-    case 95 : return eh->bright_color(); break;
+    case 93 : return wm->dark_color(); break;
+    case 94 : return wm->medium_color(); break;
+    case 95 : return wm->bright_color(); break;
 
     case 99 : current_object->remove_object((game_object *)lpointer_value(CAR(args))); return 1; break;
     case 100 : current_object->add_light((light_source *)lpointer_value(CAR(args))); return 1; break;
@@ -2183,7 +2183,7 @@ long c_caller(long number, void *args)
       int y=lnumber_value(CAR(args));
       c_target=id;
       if (screen)
-        eh->set_mouse_shape(cash.img(c_target)->copy(),x,y);
+        wm->set_mouse_shape(cash.img(c_target)->copy(),x,y);
     } break;
     case 276 :
     {      

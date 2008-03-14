@@ -22,10 +22,10 @@ class file_picker : public spicker
   public:
   file_picker(int X, int Y, int ID, int Rows, ifield *Next);
   virtual int total() { return tf+td; }
-  virtual int item_width(window_manager *wm) { return wm->font()->width()*wid; }
-  virtual int item_height(window_manager *wm) { return wm->font()->height()+1; }
-  virtual void draw_item(window_manager *wm, image *screen, int x, int y, int num, int active);
-  virtual void note_selection(window_manager *wm, image *screen, input_manager *inm, int x);
+  virtual int item_width() { return wm->font()->width()*wid; }
+  virtual int item_height() { return wm->font()->height()+1; }
+  virtual void draw_item(image *screen, int x, int y, int num, int active);
+  virtual void note_selection(image *screen, input_manager *inm, int x);
   void free_up();
   ~file_picker() { free_up(); }
 } ; 
@@ -41,14 +41,14 @@ void file_picker::free_up()
   if (td) jfree(d);
 }
 
-void file_picker::note_selection(window_manager *wm, image *screen, input_manager *inm, int x)
+void file_picker::note_selection(image *screen, input_manager *inm, int x)
 {
   if (x<td)
   {
     if (strcmp(d[x],"."))
     {
       int x1,y1,x2,y2;
-      area(x1,y1,x2,y2,wm);
+      area(x1,y1,x2,y2);
       screen->bar(x1,y1,x2,y2,wm->medium_color());
 
       char st[200],curdir[200];
@@ -71,22 +71,22 @@ void file_picker::note_selection(window_manager *wm, image *screen, input_manage
       
 
       reconfigure();  
-      draw_first(screen,wm);
+      draw_first(screen);
     }
   } else
   {
     char nm[200];
     sprintf(nm,"%s/%s",cd,f[x-td]);
     text_field *link=(text_field *)inm->get(sid);
-    link->change_data(nm,strlen(nm),1,screen,wm);
+    link->change_data(nm,strlen(nm),1,screen);
   }
 
 }
 
-void file_picker::draw_item(window_manager *wm, image *screen, int x, int y, int num, int active)
+void file_picker::draw_item(image *screen, int x, int y, int num, int active)
 {
   if (active)
-    screen->bar(x,y,x+item_width(wm)-1,y+item_height(wm)-1,wm->black());
+    screen->bar(x,y,x+item_width()-1,y+item_height()-1,wm->black());
 
   if (num<td)
   {
@@ -115,7 +115,7 @@ file_picker::file_picker(int X, int Y, int ID, int Rows, ifield *Next)
   reconfigure();  
 }
 
-jwindow *file_dialog(window_manager *wm, char const *prompt, char const *def,
+jwindow *file_dialog(char const *prompt, char const *def,
 		     int ok_id, char const *ok_name, int cancel_id,
                      char const *cancel_name, char const *FILENAME_str,
                      int filename_id)

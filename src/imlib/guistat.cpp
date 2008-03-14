@@ -9,6 +9,7 @@
 
 #include "config.h"
 
+#include "input.hpp"
 #include "status.hpp"
 #include "timing.hpp"
 #include "guistat.hpp"
@@ -20,16 +21,14 @@ class gui_status_node
   gui_status_node *next;
   visual_object *show;
   jwindow *stat_win;
-  window_manager *wm;
   int last_update;
   time_marker last_time;
-  gui_status_node(char const *Name, visual_object *Show, window_manager *WM, gui_status_node *Next) 
+  gui_status_node(char const *Name, visual_object *Show, gui_status_node *Next) 
   { name=strcpy((char *)jmalloc(strlen(Name)+1,"status name"),Name); 
     show=Show;
     next=Next; 
     last_update=0;
     stat_win=NULL;
-    wm=WM;
   }
   ~gui_status_node();
 } ; 
@@ -72,12 +71,11 @@ void gui_status_manager::draw_bar(gui_status_node *whom, int perc)
 
 void gui_status_manager::push(char const *name, visual_object *show)
 {
-  first=new gui_status_node(name,show,wm,first);  
+  first=new gui_status_node(name,show,first);  
 }
 
-gui_status_manager::gui_status_manager(window_manager *WM) 
+gui_status_manager::gui_status_manager() 
 { 
-  wm=WM; 
   first=NULL; 
   strcpy(title,"STATUS"); 
   last_perc=0;
@@ -94,9 +92,9 @@ void gui_status_manager::update(int percentage)
       if (now.diff_time(&first->last_time)>1)
       {
 	long wx=xres/2,wy=10,len1=strlen(first->name)*wm->font()->width()+10,len2=0,len3,
-	  h1=wm->font()->height()+5,h2=first->show ? first->show->height(wm) : 0;
+	  h1=wm->font()->height()+5,h2=first->show ? first->show->height() : 0;
 
-	if (first->show) len2=first->show->width(wm)/2;
+	if (first->show) len2=first->show->width()/2;
 	if (len2>len1) len3=len2; else len3=len1;
 	wx-=len3/2; 
 	
@@ -111,7 +109,7 @@ void gui_status_manager::update(int percentage)
 	wm->font()->put_string(first->stat_win->screen,mx,my,first->name,wm->bright_color());
 	if (first->show)
 	  first->show->draw(first->stat_win->screen,(first->stat_win->x2()-first->stat_win->x1())/2-
-			    first->show->width(wm)/2,my+h1,wm,NULL);
+			    first->show->width()/2,my+h1,NULL);
 
 	draw_bar(first,percentage);
 	wm->flush_screen();

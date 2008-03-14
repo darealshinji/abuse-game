@@ -786,11 +786,11 @@ void level::draw_areas(view *v)
     if (a->active)
     {
       c1=morph_sel_frame_color;
-      c2=eh->bright_color();
+      c2=wm->bright_color();
     } else 
     {
       c2=morph_sel_frame_color;
-      c1=eh->bright_color();
+      c1=wm->bright_color();
     }
     
     the_game->game_to_mouse(a->x,a->y,v,sx1,sy1);
@@ -1629,7 +1629,7 @@ bFILE *level::create_dir(char *filename, int save_all,
       name_len+=strlen(v->name)+2;
     sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"player_names",NULL,name_len,0));
 
-    sd.add_by_hand(new spec_entry(SPEC_IMAGE,"thumb nail",NULL,4+160*(100+eh->font()->height()*2),0));
+    sd.add_by_hand(new spec_entry(SPEC_IMAGE,"thumb nail",NULL,4+160*(100+wm->font()->height()*2),0));
   }
 
   sd.calc_offsets();
@@ -1641,18 +1641,18 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
 
 void level::write_thumb_nail(bFILE *fp, image *im)
 {
-  image *i=new image(160,100+eh->font()->height()*2);
+  image *i=new image(160,100+wm->font()->height()*2);
   i->clear();
   scale_put(im,i,0,0,160,100);
   if (first_name)
-    eh->font()->put_string(i,80-strlen(first_name)*eh->font()->width()/2,100,first_name);
+    wm->font()->put_string(i,80-strlen(first_name)*wm->font()->width()/2,100,first_name);
 
   time_t t;
   t=time(NULL);
   char buf[80];
 
   strftime(buf,80,"%T %A %B %d",localtime(&t));  
-  eh->font()->put_string(i,80-strlen(buf)*eh->font()->width()/2,100+eh->font()->height(),buf);
+  wm->font()->put_string(i,80-strlen(buf)*wm->font()->width()/2,100+wm->font()->height(),buf);
 
   fp->write_uint16(i->width());
   fp->write_uint16(i->height());

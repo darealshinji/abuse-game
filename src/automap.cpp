@@ -152,7 +152,7 @@ void automap::toggle_window()
 {
   if (automap_window)
   {    
-    eh->close_window(automap_window);
+    wm->close_window(automap_window);
     automap_window=NULL;
   } 
   else
@@ -160,9 +160,9 @@ void automap::toggle_window()
     old_dx=-1000;        // make sure the map gets drawn the first time
     old_dy=-1000;
 
-    automap_window=eh->new_window(0,0,w*AUTOTILE_WIDTH,h*AUTOTILE_HEIGHT);
-    automap_window->screen->bar(17,1,17+8*6+3,6,eh->medium_color());    
-    eh->font()->put_string(automap_window->screen,20,2,"AUTOMAP");
+    automap_window=wm->new_window(0,0,w*AUTOTILE_WIDTH,h*AUTOTILE_HEIGHT);
+    automap_window->screen->bar(17,1,17+8*6+3,6,wm->medium_color());    
+    wm->font()->put_string(automap_window->screen,20,2,"AUTOMAP");
     draw();    
   }  
 }
@@ -197,7 +197,7 @@ void automap::handle_event(event &ev)
 	}  
 	break;	
       case EV_CLOSE_WINDOW :
-        eh->close_window(automap_window);
+        wm->close_window(automap_window);
 	automap_window=NULL;
 	break;	             
     }    

@@ -37,12 +37,11 @@ class input_manager
 {
   image *screen;
   ifield *first,*active,*grab;
-  window_manager *wm;
   jwindow *cur;
   int no_selections_allowed;
 public :
-  input_manager(image *Screen, window_manager *WM, ifield *First);
-  void handle_event(event &ev, jwindow *j, window_manager *wm);
+  input_manager(image *Screen, ifield *First);
+  void handle_event(event &ev, jwindow *j);
   ifield *get(int id);
   void redraw();
   void add(ifield *i);
@@ -63,10 +62,10 @@ public :
 
   int id;
   ifield *next;
-  virtual void area(int &x1, int &y1, int &x2, int &y2, window_manager *wm) = 0;
-  virtual void draw_first(image *screen, window_manager *wm)              = 0;
-  virtual void draw(int active, image *screen, window_manager *wm)        = 0;
-  virtual void handle_event(event &ev, image *screen, window_manager *wm, input_manager *im) = 0;
+  virtual void area(int &x1, int &y1, int &x2, int &y2) = 0;
+  virtual void draw_first(image *screen)              = 0;
+  virtual void draw(int active, image *screen)        = 0;
+  virtual void handle_event(event &ev, image *screen, input_manager *im) = 0;
   virtual int selectable() { return 1; }
   virtual void remap(filter *f) { ; }
   virtual char *read() = 0;
@@ -92,7 +91,7 @@ public :
   image *screen;
   input_manager *inm;
   void *local_info;     // pointer to info block for local system (may support windows)
-  jwindow(int X, int Y, int L, int H, window_manager *wm, ifield *fields, char const *Name=NULL);
+  jwindow(int X, int Y, int L, int H, ifield *fields, char const *Name=NULL);
   void redraw(int hi, int med, int low, JCFont *fnt);
   void resize(int L, int H);
   void clear(int color=0) { screen->bar(x1(),y1(),x2(),y2(),color); }

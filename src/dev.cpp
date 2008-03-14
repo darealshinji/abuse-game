@@ -99,16 +99,15 @@ class cached_image : public visual_object
   int id;
   public :
   cached_image(int Id) { id=Id; }
-  virtual void draw(image *screen, int x, int y, 
-		    window_manager *wm, filter *f)
+  virtual void draw(image *screen, int x, int y, filter *f)
   {
     if (f)
       f->put_image(screen,cash.img(id),x,y,1);
     else
       cash.img(id)->put_image(screen,x,y); 
   }
-  virtual int width(window_manager *wm) { return cash.img(id)->width(); }
-  virtual int height(window_manager *wm) { return cash.img(id)->height(); }
+  virtual int width() { return cash.img(id)->width(); }
+  virtual int height() { return cash.img(id)->height(); }
 } ;
 
 
@@ -138,14 +137,14 @@ void make_screen_size(int w, int h);
 class amb_cont : public scroller
 {
   public :
-  amb_cont(int X, int Y, ifield *Next) : scroller(X,Y,ID_NULL,100,eh->font()->height()+2,0,64,Next) 
+  amb_cont(int X, int Y, ifield *Next) : scroller(X,Y,ID_NULL,100,wm->font()->height()+2,0,64,Next) 
   { if (player_list) sx=player_list->ambient; }
-  virtual void scroll_event(int newx, image *screen, window_manager *wm)
+  virtual void scroll_event(int newx, image *screen)
   {
     screen->bar(x,y,x+l-1,y+h-1,wm->dark_color());
     char st[100];
     sprintf(st,"%d",newx);
-    wm->font()->put_string(screen,x+30,y+1,st,eh->bright_color());
+    wm->font()->put_string(screen,x+30,y+1,st,wm->bright_color());
     if (player_list)
       player_list->ambient=newx;
     the_game->need_refresh();
@@ -159,19 +158,19 @@ int confirm_quit()
         *cancel_image=cash.img(cash.reg("art/frame.spe","cancel",SPEC_IMAGE,1))->copy();
 
 
-  jwindow *quitw=eh->new_window(xres/2+40,yres/2,80,-1,
+  jwindow *quitw=wm->new_window(xres/2+40,yres/2,80,-1,
 			  new button(WINDOW_FRAME_LEFT+10,WINDOW_FRAME_TOP+20,ID_QUIT_OK,ok_image,
 			  new button(WINDOW_FRAME_LEFT+38,WINDOW_FRAME_TOP+20,ID_CANCEL,cancel_image,
 			  new info_field(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP,ID_NULL,symbol_str("sure?"),NULL))),
 				    symbol_str("quit_title"));
-  eh->grab_focus(quitw);
+  wm->grab_focus(quitw);
   int fin=0,quit=0;
   do
   {
-    eh->flush_screen();
+    wm->flush_screen();
 
     event ev;
-    eh->get_event(ev);
+    wm->get_event(ev);
     if (ev.type==EV_MESSAGE && ev.message.id==ID_QUIT_OK)
       fin=quit=1;
     else if (ev.type==EV_MESSAGE && ev.message.id==ID_CANCEL)
@@ -188,8 +187,8 @@ int confirm_quit()
 
   the_game->reset_keymap();
 
-  eh->close_window(quitw);
-  eh->flush_screen();
+  wm->close_window(quitw);
+  wm->flush_screen();
   return quit;
 }
 
@@ -291,18 +290,18 @@ void dev_controll::search_forward()
 
 int32_t dev_controll::snap_x(int32_t x)
 {
-  if (eh->key_pressed(JK_CTRL_L) || eh->key_pressed(JK_CTRL_R))
+  if (wm->key_pressed(JK_CTRL_L) || wm->key_pressed(JK_CTRL_R))
     return x-(x%the_game->ftile_width());
-  else if (eh->key_pressed(JK_ALT_L) || eh->key_pressed(JK_ALT_R))
+  else if (wm->key_pressed(JK_ALT_L) || wm->key_pressed(JK_ALT_R))
     return x-(x%the_game->ftile_width())+the_game->ftile_width()/2;
   else return x;  
 }
 
 int32_t dev_controll::snap_y(int32_t y)
 {
-  if (eh->key_pressed(JK_CTRL_L) || eh->key_pressed(JK_CTRL_R))
+  if (wm->key_pressed(JK_CTRL_L) || wm->key_pressed(JK_CTRL_R))
     return y-(y%the_game->ftile_height())-1;
-  else if (eh->key_pressed(JK_ALT_L) || eh->key_pressed(JK_ALT_R))
+  else if (wm->key_pressed(JK_ALT_L) || wm->key_pressed(JK_ALT_R))
     return y-(y%the_game->ftile_height())+the_game->ftile_height()/2-1;
   else return y;
 }
@@ -310,7 +309,7 @@ int32_t dev_controll::snap_y(int32_t y)
 void dev_controll::make_ambient()
 {
   if (!ambw)
-  ambw=eh->new_window(prop->getd("ambient x",-1),
+  ambw=wm->new_window(prop->getd("ambient x",-1),
 		      prop->getd("ambient y",-1),-1,-1,
 		      new amb_cont(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP,NULL),"ambient");
 }
@@ -465,7 +464,7 @@ void dev_controll::dev_draw(view *v)
 	  image *im=cash.img(light_buttons[f->type]);
 	  im->put_image(screen,f->x-vx+v->cx1-im->width()/2,f->y-vy+v->cy1-im->height()/2,1);
 	  screen->rectangle(f->x1-vx+v->cx1,f->y1-vy+v->cy1,f->x2-vx+v->cx1,f->y2-vy+v->cy1,
-			    eh->medium_color());
+			    wm->medium_color());
 	}
       }
     }
@@ -483,7 +482,7 @@ void dev_controll::dev_draw(view *v)
       int l=i->width()/2,h=i->height()/2;
       int32_t rx1,ry1;
       the_game->game_to_mouse(selected_light->x,selected_light->y,v,rx1,ry1);      
-      screen->rectangle(rx1-l,ry1-h,rx1+l,ry1+h,eh->bright_color());
+      screen->rectangle(rx1-l,ry1-h,rx1+l,ry1+h,wm->bright_color());
     }
 
     game_object *o;
@@ -507,7 +506,7 @@ void dev_controll::dev_draw(view *v)
 	{
 	  game_object *other=o->get_object(i);
 	  the_game->game_to_mouse(other->x,other->y,current_view,x2,y2);	
-	  screen->line(x1,y1,x2,y2,eh->bright_color());
+	  screen->line(x1,y1,x2,y2,wm->bright_color());
 	}
 
 	for (i=0;i<o->total_lights();i++)
@@ -526,7 +525,7 @@ void dev_controll::dev_draw(view *v)
       int32_t rx1,ry1,rx2,ry2;
       the_game->game_to_mouse(x1,y1,v,rx1,ry1);
       the_game->game_to_mouse(x2,y2,v,rx2,ry2);
-      screen->rectangle(rx1,ry1,rx2,ry2,eh->bright_color());
+      screen->rectangle(rx1,ry1,rx2,ry2,wm->bright_color());
 
       the_game->game_to_mouse(selected_object->x,selected_object->y,current_view,x1,y1);
       for (int i=0;i<selected_object->total_objects();i++)
@@ -573,16 +572,16 @@ void dev_controll::update_memprof()
     for (i=0;i<total;i++)
     {
       int h=st[i]*100/3000;  x++;
-      memprof->screen->bar(x,y,x,y+h,eh->bright_color());
+      memprof->screen->bar(x,y,x,y+h,wm->bright_color());
       h=ch[i]*100/3000;
-      memprof->screen->bar(x,y,x,y+h,eh->medium_color());
+      memprof->screen->bar(x,y,x,y+h,wm->medium_color());
       x++;
     }
     jfree(st);
     jfree(ch);
     char buf[100];
     sprintf(buf,"%8ld %8ld",(long int)j_allocated(),(long int)j_available());
-    eh->font()->put_string(memprof->screen,memprof->x1(),memprof->y2()-eh->font()->height(),buf);
+    wm->font()->put_string(memprof->screen,memprof->x1(),memprof->y2()-wm->font()->height(),buf);
 
   }
   
@@ -594,7 +593,7 @@ void dev_controll::toggle_memprof()
   {
     prop->setd("memprof x",memprof->x);
     prop->setd("memprof y",memprof->y);
-    eh->close_window(memprof);
+    wm->close_window(memprof);
     memprof=NULL;
   } else
   {
@@ -602,7 +601,7 @@ void dev_controll::toggle_memprof()
     small_static_allocation_summary(total,st,ch);
     jfree(st);
     jfree(ch);
-    memprof=eh->new_window(0,0,total*2+20,100,NULL);
+    memprof=wm->new_window(0,0,total*2+20,100,NULL);
     update_memprof();   
   }
 }
@@ -614,7 +613,7 @@ void dev_controll::toggle_toolbar()
     tbw_on=0;
     prop->setd("toolbar x",tbw->x);
     prop->setd("toolbar y",tbw->y);
-    eh->close_window(tbw);
+    wm->close_window(tbw);
     tbw=NULL;
   } else
   {
@@ -630,10 +629,10 @@ void dev_controll::toggle_toolbar()
     tool_picker *tp=new tool_picker(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP, 
 					     ID_NULL,
 					     5,(visual_object **)dev_mode_pict,dev_mode_ids,DEV_MODES,
-						pal,pal,eh,NULL);
-    tbw=eh->new_window(prop->getd("toolbar x",-1),
+						pal,pal,NULL);
+    tbw=wm->new_window(prop->getd("toolbar x",-1),
 		       prop->getd("toolbar y",-1),-1,-1,tp);
-    tp->set_x(setx,tbw->screen,eh);
+    tp->set_x(setx,tbw->screen);
   }
 }
 
@@ -644,7 +643,7 @@ void dev_controll::toggle_show_menu()
     show_menu_on=0;
     prop->setd("layer x",show_menu->x);
     prop->setd("layer y",show_menu->y);
-    eh->close_window(show_menu);
+    wm->close_window(show_menu);
     show_menu=NULL;
   } else
   {
@@ -658,7 +657,7 @@ void dev_controll::toggle_show_menu()
     button *bdb=new button(sx,sy+20, SHOW_FOREGROUND_BOUND, symbol_str("l_bound"),bb); if (dev&DRAW_FG_BOUND_LAYER) bdb->push();
     button *fb=new button(sx,sy+ 0,  SHOW_FOREGROUND,       symbol_str("l_fore"),bdb);      if (dev&DRAW_FG_LAYER)       fb->push();
 
-    show_menu=eh->new_window(prop->getd("layer x",-1),
+    show_menu=wm->new_window(prop->getd("layer x",-1),
 			     prop->getd("layer y",-1),
 			     -1,-1,fb,symbol_str(symbol_str("SHOW?")));
   }
@@ -675,7 +674,7 @@ void dev_controll::toggle_omenu()
     omenu_on=0;
     prop->setd("objects x",omenu->x);
     prop->setd("objects y",omenu->y);
-    eh->close_window(omenu);
+    wm->close_window(omenu);
     omenu=NULL;
     jfree(listable_objs);
     listable_objs=NULL;
@@ -697,10 +696,10 @@ void dev_controll::toggle_omenu()
 	c++;
       }
 	      
-    omenu=eh->new_window(prop->getd("objects x",0),
+    omenu=wm->new_window(prop->getd("objects x",0),
 			 prop->getd("objects y",0),-1,-1,
 			 new pick_list(WINDOW_FRAME_LEFT,
-				       WINDOW_FRAME_TOP,DEV_CREATE,yres/eh->font()->height()/2,
+				       WINDOW_FRAME_TOP,DEV_CREATE,yres/wm->font()->height()/2,
 				       listable_objs,total_listable,0,NULL,cash.img(window_texture)));
   }  
 } 
@@ -720,7 +719,7 @@ void dev_controll::toggle_pmenu()
     pmenu_on=0;
     prop->setd("pal x",pmenu->x);
     prop->setd("pal y",pmenu->y);
-    eh->close_window(pmenu);
+    wm->close_window(pmenu);
     pmenu=NULL;
     jfree(pwin_list);
   }
@@ -732,11 +731,11 @@ void dev_controll::toggle_pmenu()
     for (i=0;i<total_pals;i++)
       pwin_list[i]=pal_wins[i]->name;
 
-    pmenu=eh->new_window(prop->getd("pal x",0),
+    pmenu=wm->new_window(prop->getd("pal x",0),
 			 prop->getd("pal y",-1),
 			 -1,-1,
 			 new pick_list(WINDOW_FRAME_LEFT,
-				       WINDOW_FRAME_TOP,DEV_PALETTE,yres/eh->font()->height()/2,
+				       WINDOW_FRAME_TOP,DEV_PALETTE,yres/wm->font()->height()/2,
 				       pwin_list,total_pals,0,NULL,cash.img(window_texture)));
   } else the_game->show_help(symbol_str("no_pals"));
 } 
@@ -750,10 +749,10 @@ void dev_controll::toggle_fgw()
     int maxh=(yres-25)/(the_game->ftile_height()/fg_scale);
 
     tile_picker *f_tp=new tile_picker(WINDOW_FRAME_LEFT+1,WINDOW_FRAME_TOP+1,
-					 DEV_FG_PICKER,SPEC_FORETILE,eh,fg_scale,maxh,fg_w,NULL);
+					 DEV_FG_PICKER,SPEC_FORETILE,fg_scale,maxh,fg_w,NULL);
     f_tp->reverse();
 
-    forew=eh->new_window(prop->getd("fore x",-30),
+    forew=wm->new_window(prop->getd("fore x",-30),
 			 prop->getd("fore y",0),
 			 -1,-1,
 			 f_tp,symbol_str("l_fg"));
@@ -762,7 +761,7 @@ void dev_controll::toggle_fgw()
     forew_on=1;
     prop->setd("fore x",forew->x);
     prop->setd("fore y",forew->y);
-    eh->close_window(forew);
+    wm->close_window(forew);
     forew=NULL;
   }
 }
@@ -771,13 +770,13 @@ void dev_controll::toggle_music_window()
 {
 /*  if (!music_window)
   {
-    music_window=eh->new_window(-1,30,0,0,
+    music_window=wm->new_window(-1,30,0,0,
 			 new pick_list(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP,
 				       DEV_MUSIC_PICKLIST,10,song_list,total_songs,0,NULL));
-    eh->fnt->put_string(music_window->screen,WINDOW_FRAME_LEFT,1,"songs");
+    wm->fnt->put_string(music_window->screen,WINDOW_FRAME_LEFT,1,"songs");
   } else
   { 
-    eh->close_window(music_window);
+    wm->close_window(music_window);
     music_window=NULL;
   }*/
 }
@@ -789,17 +788,17 @@ void dev_controll::toggle_bgw()
     backw_on=0;
     int maxh=(yres-25)/(the_game->btile_height()/bg_scale);
 
-    backw=eh->new_window(prop->getd("back x",-30),
+    backw=wm->new_window(prop->getd("back x",-30),
 			 prop->getd("back y",0),
 			 -1,-1,
 			 new tile_picker(WINDOW_FRAME_LEFT+1,WINDOW_FRAME_TOP+1,
-					 DEV_BG_PICKER,SPEC_BACKTILE,eh,bg_scale,maxh,bg_w,NULL),symbol_str("l_bg"));
+					 DEV_BG_PICKER,SPEC_BACKTILE,bg_scale,maxh,bg_w,NULL),symbol_str("l_bg"));
   } else
   { 
     backw_on=1;
     prop->setd("back x",backw->x);
     prop->setd("back y",backw->y);
-    eh->close_window(backw);
+    wm->close_window(backw);
     backw=NULL;
   }
 }
@@ -811,15 +810,15 @@ void dev_controll::toggle_search_window()
     int wl=WINDOW_FRAME_LEFT+1,
         wh=WINDOW_FRAME_TOP+1;
     int bw=cash.img(dev_forward)->width();
-    search_window=eh->new_window(prop->getd("searchw x",-30),
+    search_window=wm->new_window(prop->getd("searchw x",-30),
 				 prop->getd("searchw y",0),
 				 -1,-1,
 				 new text_field(wl,wh,ID_SEARCH_TEXT,"object name>",
 						"***************************",
 						prop->get("search name",""),
-				  new button(wl+bw*1,wh+eh->font()->height()+5,ID_SEARCH_BACKWARD,
+				  new button(wl+bw*1,wh+wm->font()->height()+5,ID_SEARCH_BACKWARD,
 					    cash.img(dev_backward),
-				  new button(wl+bw*3,wh+eh->font()->height()+5,ID_SEARCH_FOREWARD,
+				  new button(wl+bw*3,wh+wm->font()->height()+5,ID_SEARCH_FOREWARD,
 					    cash.img(dev_forward),NULL))),"SEARCH");
     searchw_on=0;
   } else
@@ -828,7 +827,7 @@ void dev_controll::toggle_search_window()
     prop->setd("searchw x",search_window->x);
     prop->setd("searchw y",search_window->y);
     prop->set("search name",search_window->read(ID_SEARCH_TEXT));
-    eh->close_window(search_window);
+    wm->close_window(search_window);
     search_window=NULL;
     search_object=NULL;
   }
@@ -960,7 +959,7 @@ dev_controll::dev_controll()
   
   dev_console=new dev_term(50,18,this);
   if (start_edit)
-    dev_menu=make_menu(0,yres-eh->font()->height()-5);    
+    dev_menu=make_menu(0,yres-wm->font()->height()-5);    
 
   if (get_option("-nolight"))
     dev=dev^DRAW_LIGHTS;
@@ -1242,7 +1241,7 @@ void dev_controll::do_command(char const *command, event &ev)
     {
       cur_fg=current_level->get_fg(x,y);
       if (forew)      
-	((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->screen,eh);      
+	((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->screen);      
       the_game->need_refresh();
     }
   }
@@ -1266,7 +1265,7 @@ void dev_controll::do_command(char const *command, event &ev)
       if (cur_fg>=nforetiles) cur_fg=nforetiles-1;
 
       if (forew)      
-	((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->screen,eh);      
+	((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->screen);      
     }   
   }
 
@@ -1348,8 +1347,8 @@ void dev_controll::toggle_light_window()
 {
   if (!lightw)
   {
-    int wl=WINDOW_FRAME_LEFT,wh=WINDOW_FRAME_TOP,bh=16+6,bw=20+6,th=eh->font()->height()+4;    
-    lightw=eh->new_window(prop->getd("light create x",0),
+    int wl=WINDOW_FRAME_LEFT,wh=WINDOW_FRAME_TOP,bh=16+6,bw=20+6,th=wm->font()->height()+4;    
+    lightw=wm->new_window(prop->getd("light create x",0),
 			  prop->getd("light create y",0),
 			  -1,-1,new button_box(wl,wh,DEV_LIGHT_BUTTON_BOX,1,
 				    new button(wl+bw*0,wh+bh*0,DEV_LIGHT0,cash.img(light_buttons[0]),
@@ -1387,7 +1386,7 @@ void dev_controll::toggle_light_window()
     prop->setd("light create h",atoi(lightw->read(DEV_LIGHTH)));
     prop->setd("light create r1",atoi(lightw->read(DEV_LIGHTR1)));
     prop->setd("light create r2",atoi(lightw->read(DEV_LIGHTR2)));
-    eh->close_window(lightw);
+    wm->close_window(lightw);
     lightw=NULL;
   }
 }
@@ -1395,7 +1394,7 @@ void dev_controll::toggle_light_window()
 void dev_controll::make_ai_window(game_object *o)
 {
   ai_object=o;
-  int th=eh->font()->height()+4,wl=WINDOW_FRAME_LEFT,wh=WINDOW_FRAME_TOP+20;
+  int th=wm->font()->height()+4,wl=WINDOW_FRAME_LEFT,wh=WINDOW_FRAME_TOP+20;
   if (figures[o->otype]->total_fields)
   {
     int maxl=0;
@@ -1423,7 +1422,7 @@ void dev_controll::make_ai_window(game_object *o)
       last=p;
       wh+=th;
     }         
-    aiw=eh->new_window(prop->getd("ai x",0),
+    aiw=wm->new_window(prop->getd("ai x",0),
 		       prop->getd("ai y",0),
 		       -1,-1,		     
        new button(wl,owh-20,DEV_AI_OK,cash.img(dev_ok),first),"ai");
@@ -1431,7 +1430,7 @@ void dev_controll::make_ai_window(game_object *o)
   }
   else
   {
-    aiw=eh->new_window(prop->getd("ai x",0),
+    aiw=wm->new_window(prop->getd("ai x",0),
 		       prop->getd("ai y",0),
 		       -1,-1,
        new button(wl,wh-20,DEV_AI_OK,cash.img(dev_ok),
@@ -1449,7 +1448,7 @@ void dev_controll::make_ai_window(game_object *o)
 		      NULL)))))))))))),"ai");
   }
 
-  eh->grab_focus(aiw);
+  wm->grab_focus(aiw);
 }
 
 void dev_controll::notify_deleted_light(light_source *l)
@@ -1460,7 +1459,7 @@ void dev_controll::notify_deleted_light(light_source *l)
     {
       prop->setd("ledit x",ledit->x);
       prop->setd("ledit y",ledit->y);
-      eh->close_window(ledit); ledit=NULL;
+      wm->close_window(ledit); ledit=NULL;
     }
     edit_light=NULL;
   }
@@ -1535,7 +1534,7 @@ void dev_controll::close_ai_window()
     }
     prop->setd("ai x",aiw->x);
     prop->setd("ai y",aiw->y);
-    eh->close_window(aiw);
+    wm->close_window(aiw);
     aiw=NULL;
     ai_object=NULL;
     the_game->need_refresh();
@@ -1576,7 +1575,7 @@ void dev_controll::close_area_win(int read_values)
       current_area->view_xoff_speed=atoi(area_win->read(DEV_AREA_VIEW_XOFF_SPEED));
       current_area->view_yoff_speed=atoi(area_win->read(DEV_AREA_VIEW_YOFF_SPEED));
     }    
-    eh->close_window(area_win);
+    wm->close_window(area_win);
     area_win=NULL;
   }
 }
@@ -1608,8 +1607,8 @@ void dev_controll::pick_handle_input(event &ev)
     {         
       if (area_win) close_area_win(0);
       int wl=WINDOW_FRAME_LEFT;
-      int wh=WINDOW_FRAME_TOP,th=eh->font()->height()+12,bw=cash.img(dev_ok)->width()+10;
-      area_win=eh->new_window(prop->getd("area_box x",0),
+      int wh=WINDOW_FRAME_TOP,th=wm->font()->height()+12,bw=cash.img(dev_ok)->width()+10;
+      area_win=wm->new_window(prop->getd("area_box x",0),
 			      prop->getd("area_box y",0),
 			      -1,-1,
 
@@ -1646,7 +1645,7 @@ void dev_controll::close_oedit_window()
   {
     prop->setd("oedit x",oedit->x);
     prop->setd("oedit y",oedit->y);
-    eh->close_window(oedit);
+    wm->close_window(oedit);
     oedit=NULL;	     
     edit_object=NULL;
   }
@@ -1665,7 +1664,7 @@ void dev_controll::handle_event(event &ev)
     the_game->need_refresh();
   }
 
-  if (dev_menu && dev_menu->handle_event(ev,screen,eh)) return ;
+  if (dev_menu && dev_menu->handle_event(ev,screen)) return ;
 
   if (!current_level) return ;
 
@@ -1676,7 +1675,7 @@ void dev_controll::handle_event(event &ev)
     dlastx=last_demo_mx;
     dlasty=last_demo_my;    
   }
-  if (dev_console && dev_console->handle_event(ev,eh))
+  if (dev_console && dev_console->handle_event(ev))
     return;
 
   if (ev.type==EV_KEY && ev.key==JK_F2)
@@ -1940,7 +1939,7 @@ void dev_controll::handle_event(event &ev)
 	     
 	    int bw=20+6,bh=16+6,wl=WINDOW_FRAME_LEFT,wh=WINDOW_FRAME_TOP;
 
-	    oedit=eh->new_window(prop->getd("oedit x",0),
+	    oedit=wm->new_window(prop->getd("oedit x",0),
 				 prop->getd("oedit y",0),
 				 -1,-1,new button_box(wl,wh,ID_NULL,1,
 		new button(wl+bw*0,wh,DEV_OEDIT_OK,cash.img(dev_ok),
@@ -1968,16 +1967,16 @@ void dev_controll::handle_event(event &ev)
 	    {
 	      prop->setd("ledit x",ledit->x);
 	      prop->setd("ledit x",ledit->y);
-	      eh->close_window(ledit);
+	      wm->close_window(ledit);
 	    }
-	    int bw=20+6,bh=16+6,wl=WINDOW_FRAME_LEFT,wh=WINDOW_FRAME_TOP,th=eh->font()->height()+4;
+	    int bw=20+6,bh=16+6,wl=WINDOW_FRAME_LEFT,wh=WINDOW_FRAME_TOP,th=wm->font()->height()+4;
 	    edit_light=selected_light;
 	    if (edit_object)
 	    {
 	      edit_object->add_light(edit_light);
 	      edit_light->known=1;
 	    }
-	    ledit=eh->new_window(prop->getd("ledit x",0),
+	    ledit=wm->new_window(prop->getd("ledit x",0),
 				 prop->getd("ledit y",0),
 				 -1,-1,
 		 	 new button_box(wl,wh,ID_NULL,1,
@@ -2058,7 +2057,7 @@ void dev_controll::handle_event(event &ev)
 	{
 	  if (mess_win)
 	  {
-	    eh->close_window(mess_win);
+	    wm->close_window(mess_win);
 	    mess_win=NULL;
 	  } break;
 	} break;
@@ -2066,10 +2065,10 @@ void dev_controll::handle_event(event &ev)
 	{ 	
 	  if (!mess_win)
 	  {
-	    mess_win=file_dialog(eh,symbol_str("level_name"),current_level ? current_level->name() : "",
+	    mess_win=file_dialog(symbol_str("level_name"),current_level ? current_level->name() : "",
 				 ID_LEVEL_LOAD_OK,symbol_str("ok_button"),ID_CANCEL,symbol_str("cancel_button"),
 				 symbol_str("FILENAME"),ID_MESS_STR1);
-	    eh->grab_focus(mess_win);
+	    wm->grab_focus(mess_win);
 	  }
 	} break;
 	case ID_LEVEL_LOAD_OK :
@@ -2077,7 +2076,7 @@ void dev_controll::handle_event(event &ev)
 	  char cmd[100];
 	  sprintf(cmd,"load %s",mess_win->read(ID_MESS_STR1));
 	  dev_cont->do_command(cmd,ev);
-	  eh->push_event(new event(ID_CANCEL,NULL));        // close window
+	  wm->push_event(new event(ID_CANCEL,NULL));        // close window
 	} break;	
 	case ID_GAME_SAVE :
 	{
@@ -2102,11 +2101,11 @@ void dev_controll::handle_event(event &ev)
 	{
 	  if (!mess_win)
 	  {
-	    mess_win=file_dialog(eh,symbol_str("saveas_name"),current_level ? current_level->name() : "untitled.spe",
+	    mess_win=file_dialog(symbol_str("saveas_name"),current_level ? current_level->name() : "untitled.spe",
 			       ID_LEVEL_SAVEAS_OK,symbol_str("ok_button"),
 				 ID_CANCEL,symbol_str("cancel_button"),
 				 symbol_str("FILENAME"),ID_MESS_STR1);
-	    eh->grab_focus(mess_win);
+	    wm->grab_focus(mess_win);
 	  }
 	} break;
 	case ID_LEVEL_SAVEAS_OK :
@@ -2114,8 +2113,8 @@ void dev_controll::handle_event(event &ev)
 	  if (current_level)
 	  {
 	    current_level->set_name(mess_win->read(ID_MESS_STR1));
-	    eh->push_event(new event(ID_CANCEL,NULL));        // close window after save
-	    eh->push_event(new event(ID_LEVEL_SAVE,NULL));	    
+	    wm->push_event(new event(ID_CANCEL,NULL));        // close window after save
+	    wm->push_event(new event(ID_LEVEL_SAVE,NULL));	    
 	  }
 	} break;
 	case ID_EDIT_SAVE :
@@ -2146,16 +2145,16 @@ void dev_controll::handle_event(event &ev)
 	{
 	  if (!mess_win)
 	  {
-	    mess_win=eh->new_window(xres/2,yres/2,-1,-1,
+	    mess_win=wm->new_window(xres/2,yres/2,-1,-1,
 		       new button(WINDOW_FRAME_LEFT+10,WINDOW_FRAME_TOP+20,ID_LEVEL_NEW_OK,symbol_str("YES"),
              	       new button(WINDOW_FRAME_LEFT+40,WINDOW_FRAME_TOP+20,ID_CANCEL,symbol_str("NO"),
 	      new info_field(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP,ID_NULL,symbol_str("sure?"),NULL))),symbol_str("New?"));
-	    eh->grab_focus(mess_win);
+	    wm->grab_focus(mess_win);
 	  }
 	} break;
 	case ID_LEVEL_NEW_OK :
 	{
-	  eh->push_event(new event(ID_CANCEL,NULL));  // close_window
+	  wm->push_event(new event(ID_CANCEL,NULL));  // close_window
 	  if (current_level)	  
 	    delete current_level;	 
 	  current_level=new level(100,100,"untitled.spe");
@@ -2164,8 +2163,8 @@ void dev_controll::handle_event(event &ev)
 	{
 	  if (!mess_win)
 	  {
-	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=eh->font()->height()+8;
-	    mess_win=eh->new_window(xres/2,yres/2,-1,-1,
+	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=wm->font()->height()+8;
+	    mess_win=wm->new_window(xres/2,yres/2,-1,-1,
 		    new text_field(wl,wt+h*0,ID_MESS_STR1,symbol_str("width_"),"****",
 			       current_level ? current_level->foreground_width() : 100,
 		    new text_field(wl,wt+h*1,ID_MESS_STR2,symbol_str("height_"),"****",
@@ -2181,7 +2180,7 @@ void dev_controll::handle_event(event &ev)
 	    current_level->set_size(atoi(mess_win->read(ID_MESS_STR1)),
 				    atoi(mess_win->read(ID_MESS_STR2)));
 	  } else the_game->show_help("Create a level first!");
-	  eh->push_event(new event(ID_CANCEL,NULL));  // close_window
+	  wm->push_event(new event(ID_CANCEL,NULL));  // close_window
 	} break;
 
 	case ID_SUSPEND :
@@ -2216,8 +2215,8 @@ void dev_controll::handle_event(event &ev)
 	{
 	  if (!mess_win)
 	  {
-	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=eh->font()->height()+8;
-	    mess_win=eh->new_window(xres/2,yres/2,-1,-1,
+	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=wm->font()->height()+8;
+	    mess_win=wm->new_window(xres/2,yres/2,-1,-1,
 		    new text_field(wl,wt+h*0,ID_RECORD_DEMO_FILENAME,
 				   "demo filename","*******************",
 				   "demo.dat",
@@ -2229,15 +2228,15 @@ void dev_controll::handle_event(event &ev)
         case ID_RECORD_DEMO_OK :
 	{
 	  demo_man.set_state(demo_manager::RECORDING,mess_win->read(ID_RECORD_DEMO_FILENAME));
-	  eh->push_event(new event(ID_CANCEL,NULL));        // close window	  
+	  wm->push_event(new event(ID_CANCEL,NULL));        // close window	  
 	} break;
 
 	case ID_PLAY_DEMO :
 	{
 	  if (!mess_win)
 	  {
-	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=eh->font()->height()+8;
-	    mess_win=eh->new_window(xres/2,yres/2,-1,-1,
+	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=wm->font()->height()+8;
+	    mess_win=wm->new_window(xres/2,yres/2,-1,-1,
 		    new text_field(wl,wt+h*0,ID_PLAY_DEMO_FILENAME,
 				   "demo filename","*******************",
 				   "demo.dat",
@@ -2249,7 +2248,7 @@ void dev_controll::handle_event(event &ev)
         case ID_PLAY_DEMO_OK :
 	{
 	  demo_man.set_state(demo_manager::PLAYING,mess_win->read(ID_PLAY_DEMO_FILENAME));
-	  eh->close_window(mess_win);
+	  wm->close_window(mess_win);
 	  mess_win=NULL;
 	} break; 
 
@@ -2257,8 +2256,8 @@ void dev_controll::handle_event(event &ev)
 	{
 	  if (!mess_win)
 	  {
-	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=eh->font()->height()+8;
-	    mess_win=eh->new_window(xres/2,yres/2,-1,-1,
+	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=wm->font()->height()+8;
+	    mess_win=wm->new_window(xres/2,yres/2,-1,-1,
 		    new text_field(wl,wt+h*0,ID_MESS_STR1,symbol_str("x_mul"),"****",bg_xmul,
 		    new text_field(wl,wt+h*1,ID_MESS_STR2,symbol_str("x_div"),"****",bg_xdiv,
 		    new text_field(wl,wt+h*2,ID_MESS_STR3,symbol_str("y_mul"),"****",bg_ymul,
@@ -2277,30 +2276,30 @@ void dev_controll::handle_event(event &ev)
 	  if ( (((float)tbg_xmul/(float)tbg_xdiv) < ((float)bg_xmul/(float)bg_xdiv)) ||
 	      (((float)tbg_ymul/(float)tbg_ydiv) < ((float)bg_ymul/(float)bg_ydiv)))
 	  {
-	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=eh->font()->height()+8;
+	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=wm->font()->height()+8;
 
-	    warn_win=eh->new_window(xres/2-40,yres/2-40,-1,-1,
+	    warn_win=wm->new_window(xres/2-40,yres/2-40,-1,-1,
 			      new info_field(wl,wt,ID_NULL,
 					  symbol_str("back_loss"),
 					  new button(wl+10,wt+h*4,ID_SET_SCROLL_OK,symbol_str("ok_button"),
 					  new button(wt+40,wt+h*4,ID_WARN_CANCEL,symbol_str("cancel_button"),NULL))),
 				    symbol_str("WARNING"));
-	    eh->grab_focus(warn_win);
-	  } else eh->push_event(new event(ID_SET_SCROLL_OK,NULL));
+	    wm->grab_focus(warn_win);
+	  } else wm->push_event(new event(ID_SET_SCROLL_OK,NULL));
 	} break;
 	case ID_WARN_CANCEL :
 	{
-	  eh->close_window(warn_win); warn_win=NULL;
-	  eh->push_event(new event(ID_CANCEL,NULL));
+	  wm->close_window(warn_win); warn_win=NULL;
+	  wm->push_event(new event(ID_CANCEL,NULL));
 	} break;
 	case ID_SET_SCROLL_OK :
 	{
-	  if (warn_win) { eh->close_window(warn_win); warn_win=NULL; }
+	  if (warn_win) { wm->close_window(warn_win); warn_win=NULL; }
 	  bg_xmul=atoi(mess_win->read(ID_MESS_STR1));
 	  bg_xdiv=atoi(mess_win->read(ID_MESS_STR2));
 	  bg_ymul=atoi(mess_win->read(ID_MESS_STR3));
 	  bg_ydiv=atoi(mess_win->read(ID_MESS_STR4));
-	  eh->push_event(new event(ID_CANCEL,NULL));        // close window
+	  wm->push_event(new event(ID_CANCEL,NULL));        // close window
 	} break;
 
 	case ID_CENTER_PLAYER :
@@ -2322,8 +2321,8 @@ void dev_controll::handle_event(event &ev)
 	{
 	  if (!mess_win)
 	  {
-	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=eh->font()->height()+8;
-	    mess_win=eh->new_window(xres/2,yres/2,-1,-1,
+	    int wl=WINDOW_FRAME_LEFT,wt=WINDOW_FRAME_TOP,h=wm->font()->height()+8;
+	    mess_win=wm->new_window(xres/2,yres/2,-1,-1,
 		    new text_field(wl,wt+h*0,ID_MESS_STR1,symbol_str("ap_width"),"****",2,
 		    new text_field(wl,wt+h*1,ID_MESS_STR2,symbol_str("ap_height"),"****",2,
 		    new text_field(wl,wt+h*2,ID_MESS_STR3,symbol_str("ap_name"),"***********","pal",
@@ -2339,7 +2338,7 @@ void dev_controll::handle_event(event &ev)
 		  atoi(mess_win->read(ID_MESS_STR2)));
 	  char const *s=name;
 	  eval(compile(s));
-	  eh->push_event(new event(ID_CANCEL,NULL));        // close window
+	  wm->push_event(new event(ID_CANCEL,NULL));        // close window
 	} break;
 	case ID_TOGGLE_DELAY :
 	{
@@ -2470,7 +2469,7 @@ void dev_controll::handle_event(event &ev)
 	{
 	  prop->setd("ledit x",ledit->x);
 	  prop->setd("ledit y",ledit->y);
-	  eh->close_window(ledit); ledit=NULL;
+	  wm->close_window(ledit); ledit=NULL;
 	  if (current_level)
 	    current_level->remove_light(edit_light);
 	  else
@@ -2498,14 +2497,14 @@ void dev_controll::handle_event(event &ev)
 	  edit_light=NULL;
 	  prop->setd("ledit x",ledit->x);
 	  prop->setd("ledit y",ledit->y);
-	  eh->close_window(ledit); ledit=NULL;
+	  wm->close_window(ledit); ledit=NULL;
 	  the_game->need_refresh();	  
 	} break;
 	case DEV_LEDIT_MOVE :
 	{
 	  prop->setd("ledit x",ledit->x);
 	  prop->setd("ledit y",ledit->y);
-	  eh->close_window(ledit); ledit=NULL;
+	  wm->close_window(ledit); ledit=NULL;
 	  state=DEV_MOVE_LIGHT;
 	} break;
 	case DEV_LEDIT_COPY :
@@ -2513,7 +2512,7 @@ void dev_controll::handle_event(event &ev)
 	  edit_light=edit_light->copy();
 	  prop->setd("ledit x",ledit->x);
 	  prop->setd("ledit y",ledit->y);
-	  eh->close_window(ledit); ledit=NULL;	  
+	  wm->close_window(ledit); ledit=NULL;	  
 	  state=DEV_MOVE_LIGHT;
 	} break;
 
@@ -2596,7 +2595,7 @@ void dev_controll::handle_event(event &ev)
 	  strcpy(cmd,commandw->inm->get(DEV_COMMAND)->read());	    
 	  prop->setd("commandw x",commandw->x);
 	  prop->setd("commandw y",commandw->y);
-	  eh->close_window(commandw); 
+	  wm->close_window(commandw); 
 	  commandw=NULL;
 	  do_command(cmd,ev);
 	} break;
@@ -2699,12 +2698,12 @@ void dev_controll::handle_event(event &ev)
 	{
 	  prop->setd("commandw x",commandw->x);
 	  prop->setd("commandw y",commandw->y);	  
-	  eh->close_window(commandw); 
+	  wm->close_window(commandw); 
 	  commandw=NULL;	
 	} else if (ev.window==oedit)
 	  close_oedit_window();
 	else if (ev.window==ambw)
-	{ eh->close_window(ambw); ambw=NULL; }
+	{ wm->close_window(ambw); ambw=NULL; }
 	else if (ev.window==backw) toggle_bgw();
 	else if (ev.window==forew) toggle_fgw();
 	else if (ev.window==lightw) toggle_light_window();
@@ -2790,7 +2789,7 @@ void dev_controll::handle_event(event &ev)
 	  case 'a' : toggle_toolbar(); break;
 	  case 'A' : { if (selected_object)
 		       {
-			 if (oedit) eh->push_event(new event(DEV_OEDIT_OK,NULL));		       
+			 if (oedit) wm->push_event(new event(DEV_OEDIT_OK,NULL));		       
 			 make_ai_window(selected_object);
 		       }
 		     } break;
@@ -2855,7 +2854,7 @@ void dev_controll::handle_event(event &ev)
 	  case 'C' :  
 	  if (selected_object && selected_object->controller()==NULL)
 	  { copy_object=selected_object;
-			eh->push_event(new event(DEV_OEDIT_COPY,NULL)); } break;
+			wm->push_event(new event(DEV_OEDIT_COPY,NULL)); } break;
 	  
 	  case 'D' : the_game->toggle_delay(); break;
 	  case 'L' : toggle_show_menu(); break;
@@ -2919,7 +2918,7 @@ void dev_controll::handle_event(event &ev)
 	      {
 		if (ledit)
 		{
-		  eh->close_window(ledit);
+		  wm->close_window(ledit);
 		  ledit=NULL;
 		}
 		edit_light=selected_light;
@@ -3011,7 +3010,7 @@ pal_win::pal_win(void *args)
 void pal_win::open_window()
 { 
   if (me) close_window();
-  me=eh->new_window(x,y,w*f_wid/scale,h*f_hi/scale,NULL,name);
+  me=wm->new_window(x,y,w*f_wid/scale,h*f_hi/scale,NULL,name);
   draw();
 }
 
@@ -3022,7 +3021,7 @@ void pal_win::close_window()
     x=me->x;    //  save the old poisition of the window so that when we  open it
                 //  it will be in the same spot
     y=me->y;
-    eh->close_window(me);
+    wm->close_window(me);
     me=NULL;
     
   }
@@ -3053,7 +3052,7 @@ void pal_win::draw()
 	me->screen->rectangle(me->x1()+(i%w)*tw,
 			  me->y1()+(i/w)*th,
 			  me->x1()+(i%w)*tw+tw-1,
-			  me->y1()+(i/w)*th+th-1,eh->bright_color());
+			  me->y1()+(i/w)*th+th-1,wm->bright_color());
       }
     }
     delete im;
@@ -3096,7 +3095,7 @@ void pal_win::handle_event(event &ev)
 	    cur_fg=pat[selx+sely*w];
 	    if (dev_cont->forew)      
 	      ((tile_picker *)dev_cont->forew->
-	       read(DEV_FG_PICKER))->recenter(dev_cont->forew->screen,eh);      
+	       read(DEV_FG_PICKER))->recenter(dev_cont->forew->screen);      
 	  }
 	} else if (ev.mouse_button==2)
 	{
@@ -3612,7 +3611,7 @@ static pmenu *make_menu(int x, int y)
   return new pmenu(x,y,
          new pmenu_item(symbol_str("file_top"),new psub_menu(i_recurse(filemenu),NULL),
 	 new pmenu_item(symbol_str("edit_top"),new psub_menu(i_recurse(editmenu),NULL),
-	 new pmenu_item(symbol_str("window_top"),new psub_menu(i_recurse(winmenu),NULL),NULL))),screen,eh);
+	 new pmenu_item(symbol_str("window_top"),new psub_menu(i_recurse(winmenu),NULL),NULL))),screen);
 }
 
 
@@ -3622,17 +3621,17 @@ void toggle_edit_mode()
   dev=dev^EDIT_MODE;
   if (dev&EDIT_MODE)
   {
-    eh->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
+    wm->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
     pal->load();
   }
   else
   {
     if (dev&MAP_MODE) dev-=MAP_MODE;                        // no map mode while playing!
-    eh->set_mouse_shape(cash.img(c_target)->copy(),8,8);
+    wm->set_mouse_shape(cash.img(c_target)->copy(),8,8);
   }
   if ((dev&EDIT_MODE) && !dev_menu)
   {
-    dev_menu=make_menu(0,yres-eh->font()->height()-5);    
+    dev_menu=make_menu(0,yres-wm->font()->height()-5);    
   }
   else if (!(dev&EDIT_MODE) && dev_menu)
   {

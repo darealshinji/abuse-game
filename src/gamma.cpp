@@ -29,10 +29,10 @@ class gray_picker : public spicker
 {
 public:
 	int sc;
-	virtual void draw_item(window_manager *wm, image *screen, int x, int y, int num, int active)
+	virtual void draw_item(image *screen, int x, int y, int num, int active)
 	{
-		long x2 = x + item_width( wm ) - 1;
-		long y2 = y + item_height( wm ) - 1;
+		long x2 = x + item_width() - 1;
+		long y2 = y + item_height() - 1;
 		screen->bar( x, y, x2, y2, 0 );
 		screen->bar( x, y, x2 - 3, y2, sc + num );
 		if( active )
@@ -42,8 +42,8 @@ public:
 	}
 	void set_pos( int x ) { cur_sel = x; }
 	virtual int total() { return 32; }
-	virtual int item_width( window_manager *wm ) { return 12; }
-	virtual int item_height( window_manager *wm ) { return 20; }
+	virtual int item_width() { return 12; }
+	virtual int item_height() { return 20; }
 	virtual int activate_on_mouse_move() { return 0; }
 
 	gray_picker( int X, int Y, int ID, int start, int current, ifield *Next) : spicker( X, Y, ID, 1, 20, 0, 0, Next )
@@ -93,7 +93,7 @@ void gamma_correct(palette *&pal, int force_menu)
 
 		gray_pal->load();
 
-		int wm_bc = eh->bright_color(), wm_mc = eh->medium_color(), wm_dc = eh->dark_color();
+		int wm_bc = wm->bright_color(), wm_mc = wm->medium_color(), wm_dc = wm->dark_color();
 
 		int br_r = pal->red( wm_bc ) + 20;
 		if( br_r > 255)
@@ -143,29 +143,29 @@ void gamma_correct(palette *&pal, int force_menu)
 			dr_b = 0;
 		}
 
-		eh->set_colors( gray_pal->find_closest( br_r, br_g, br_b ),
+		wm->set_colors( gray_pal->find_closest( br_r, br_g, br_b ),
 			gray_pal->find_closest( md_r, md_g, md_b ),
 			gray_pal->find_closest( dr_r, dr_g, dr_b ) );
 
 		int wl = WINDOW_FRAME_LEFT, wh = WINDOW_FRAME_TOP;
-		int sh = eh->font()->height() + 35;
+		int sh = wm->font()->height() + 35;
 		button *but = new button( wl + 5, wh + 5 + sh * 3, ID_GAMMA_OK, cash.img( ok_button ),
 			new info_field( wl + 35, wh + 10 + sh * 3, ID_NULL, lang_string( "gamma_msg" ), 0 ) );
 
 		gray_picker *gp = new gray_picker( wl + 2, wh + 5 + sh * 1, ID_GREEN_PICKER, 0, dg / 4, but);
 		gp->set_pos( dg / 4 );
 
-		jwindow *gw = eh->new_window( xres / 2 - 190, yres / 2 - 90, -1, -1, gp);
+		jwindow *gw = wm->new_window( xres / 2 - 190, yres / 2 - 90, -1, -1, gp);
 
 		event ev;
-		eh->flush_screen();
+		wm->flush_screen();
 		do
 		{
 			do
 			{
-				eh->get_event(ev);
-			} while( ev.type == EV_MOUSE_MOVE && eh->event_waiting() );
-			eh->flush_screen();
+				wm->get_event(ev);
+			} while( ev.type == EV_MOUSE_MOVE && wm->event_waiting() );
+			wm->flush_screen();
 			if( ev.type == EV_CLOSE_WINDOW)
 			{
 				abort = 1;
@@ -178,10 +178,10 @@ void gamma_correct(palette *&pal, int force_menu)
 
 		dg = ( (spicker *)gw->inm->get( ID_GREEN_PICKER ) )->first_selected() * 4;
 
-		eh->close_window( gw );
-		eh->flush_screen();
+		wm->close_window( gw );
+		wm->flush_screen();
 
-		eh->set_colors( wm_bc, wm_mc, wm_dc);
+		wm->set_colors( wm_bc, wm_mc, wm_dc);
 		delete gray_pal;
 
 		if( !abort )

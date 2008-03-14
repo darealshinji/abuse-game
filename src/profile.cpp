@@ -55,7 +55,7 @@ void profile_init()
   profile_reset();
 
   
-  prof_win=eh->new_window(prop->getd("profile x",-1),
+  prof_win=wm->new_window(prop->getd("profile x",-1),
 			  prop->getd("profile y",-1),
 			  20*console_font->width(),
 			  (prof_height+1)*console_font->height(),
@@ -80,7 +80,7 @@ void profile_uninit()
 {
   if (prof_list) jfree(prof_list);
   prof_list=NULL;
-  if (prof_win) { eh->close_window(prof_win); prof_win=NULL; }
+  if (prof_win) { wm->close_window(prof_win); prof_win=NULL; }
 }
 
 
@@ -124,7 +124,7 @@ void profile_update()
     console_font->put_string(prof_win->screen,spliter+1,dy,object_names[prof_list[i].otype]);
     prof_win->screen->bar(spliter-1-(int)(prof_list[i].total_time*time_scaler),dy+1,
 			  spliter-1,
-			  dy+console_font->height()-1,eh->bright_color());
+			  dy+console_font->height()-1,wm->bright_color());
     dy+=console_font->height()+1;
   }
 

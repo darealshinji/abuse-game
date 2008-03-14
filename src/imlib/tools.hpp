@@ -30,16 +30,16 @@ class tool_picker : public spicker
   // you are expected keep image and id list in memory, tool_picker does not copy them
   tool_picker(int X, int Y, int ID, 
 	      int show_h, visual_object **Icons, int *Ids, int total_ic, 
-	      palette *icon_palette, palette *pal, window_manager *wm, ifield *Next);
+	      palette *icon_palette, palette *pal, ifield *Next);
 
-  virtual void draw_item(window_manager *wm, image *screen, int x, int y, int num, int active);
+  virtual void draw_item(image *screen, int x, int y, int num, int active);
   virtual int total() { return total_icons; }
-  virtual int item_width(window_manager *wm) { return iw; } 
-  virtual int item_height(window_manager *wm) { return ih; }
-  virtual void note_new_current(window_manager *wm, image *screen, input_manager *inm, int x) 
+  virtual int item_width() { return iw; } 
+  virtual int item_height() { return ih; }
+  virtual void note_new_current(image *screen, input_manager *inm, int x) 
   { wm->push_event(new event(ids[x],NULL)); }
 
-  void remap(palette *pal, window_manager *wm, image *screen);
+  void remap(palette *pal, image *screen);
   ~tool_picker();
 } ;
 

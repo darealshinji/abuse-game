@@ -124,7 +124,7 @@ void director::wait(void *arg)
   void *pan_symbol=make_find_symbol("pan"),
        *text_symbol=make_find_symbol("text");
       
-  JCFont *font=eh->font();
+  JCFont *font=wm->font();
 
   do
   {
@@ -155,7 +155,7 @@ void director::wait(void *arg)
 		    the_game->first_view->cx2-tright,
 		    the_game->first_view->cy2-tbottom,text,font,
 		    white_light+32*256,
-		    eh->bright_color()
+		    wm->bright_color()
 		    
 		    ))
         text=NULL;
@@ -173,11 +173,11 @@ void director::wait(void *arg)
       } else text_time=new time_marker;	    
     } else if (arg==text_symbol) done=1;
 	    
-    eh->flush_screen();	  
-    while (eh->event_waiting())
+    wm->flush_screen();	  
+    while (wm->event_waiting())
     {	
       event ev;	    
-      eh->get_event(ev);
+      wm->get_event(ev);
       if (ev.type==EV_KEY)
       {
 	switch (ev.key)

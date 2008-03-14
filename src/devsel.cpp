@@ -18,9 +18,9 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
 void scale_put_trans(image *im, image *screen, int x, int y, short new_width, short new_height);
 int cur_bg=0,cur_fg=0,cur_char=0;
 
-void tile_picker::recenter(image *screen, window_manager *wm)
+void tile_picker::recenter(image *screen)
 {
-  set_x(get_current(),screen,wm);
+  set_x(get_current(), screen);
 }
 
 int tile_picker::picw()
@@ -71,7 +71,7 @@ int tile_picker::total()
   return 1;
 }
 
-tile_picker::tile_picker(int X, int Y, int ID, int spec_type, window_manager *wm, 
+tile_picker::tile_picker(int X, int Y, int ID, int spec_type, 
 			 int Scale, int scroll_h, int Wid, ifield *Next)
      : scroller(X,Y,ID,2,2,1,0,Next)
 { 
@@ -85,13 +85,13 @@ tile_picker::tile_picker(int X, int Y, int ID, int spec_type, window_manager *wm
 }
 
 
-void tile_picker::scroll_event(int newx, image *screen, window_manager *wm)
+void tile_picker::scroll_event(int newx, image *screen)
 {
   int yo=y,ya=pich(),xw=picw(),c=get_current(),xo;
   image im(xw,ya);
   last_sel=newx;
 
-  screen->bar(x,y,x+l-1,y+h-1,eh->black());
+  screen->bar(x,y,x+l-1,y+h-1,wm->black());
   for (int i=newx;i<newx+th*wid;i++)
   {
     xo=x+((i-newx)%wid)*xw;
@@ -141,7 +141,7 @@ void tile_picker::scroll_event(int newx, image *screen, window_manager *wm)
 }
 
 
-void tile_picker::handle_inside_event(event &ev, image *screen, window_manager *wm, input_manager *inm)
+void tile_picker::handle_inside_event(event &ev, image *screen, input_manager *inm)
 {
   if (ev.type==EV_MOUSE_BUTTON)
   {
@@ -149,7 +149,7 @@ void tile_picker::handle_inside_event(event &ev, image *screen, window_manager *
     if (sel<t && sel>=0 && sel!=get_current())
     {
       set_current(sel);
-      scroll_event(last_sel,screen,wm);
+      scroll_event(last_sel, screen);
     }
   }
 }

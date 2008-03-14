@@ -245,15 +245,15 @@ void status_bar::draw_update()
 	mouse_in_area())
     {
       if ((current_level->tick_counter()&4)==0)
-        eh->set_mouse_shape(cash.img(c_mouse1)->copy(),4,4);
-      else eh->set_mouse_shape(cash.img(c_mouse2)->copy(),4,4);   
+        wm->set_mouse_shape(cash.img(c_mouse1)->copy(),4,4);
+      else wm->set_mouse_shape(cash.img(c_mouse2)->copy(),4,4);   
       changed_cursor=1;
     } else if (changed_cursor)
     {
       if (!(dev&EDIT_MODE))
-        eh->set_mouse_shape(cash.img(c_target)->copy(),8,8);
+        wm->set_mouse_shape(cash.img(c_target)->copy(),8,8);
       else
-        eh->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
+        wm->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
       changed_cursor=0;      
     }
 

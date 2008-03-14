@@ -16,9 +16,9 @@
 class visual_object
 {
   public :
-  virtual void draw(image *screen, int x, int y, window_manager *wm, filter *f) = 0;
-  virtual int width(window_manager *wm) = 0;
-  virtual int height(window_manager *wm) = 0;
+  virtual void draw(image *screen, int x, int y, filter *f) = 0;
+  virtual int width() = 0;
+  virtual int height() = 0;
   virtual ~visual_object() {}
 } ;
 
@@ -30,10 +30,9 @@ class image_visual : public visual_object
   image *im;
 
   image_visual(image *img) { im=img; }
-  virtual void draw(image *screen, int x, int y, 
-		    window_manager *wm, filter *f);
-  virtual int width(window_manager *wm) { return im->width(); }
-  virtual int height(window_manager *wm) { return im->height(); }
+  virtual void draw(image *screen, int x, int y, filter *f);
+  virtual int width() { return im->width(); }
+  virtual int height() { return im->height(); }
 } ;
 
 
@@ -44,10 +43,9 @@ class string_visual : public visual_object
   int w,h;
   public :
   string_visual(char *string, int Color);
-  virtual void draw(image *screen, int x, int y, 
-		    window_manager *wm, filter *f);
-  virtual int width(window_manager *wm); 
-  virtual int height(window_manager *wm);
+  virtual void draw(image *screen, int x, int y, filter *f);
+  virtual int width(); 
+  virtual int height();
 } ;
 
 

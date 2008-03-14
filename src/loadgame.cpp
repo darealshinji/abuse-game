@@ -72,7 +72,7 @@ jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
   for (i=0;i<total_saved-1;i++)
     buts[i]->next=buts[i+1];
 
-  return eh->new_window(mx,yres/2-(WINDOW_FRAME_TOP+ih*5)/2,-1,-1,buts[0]);
+  return wm->new_window(mx,yres/2-(WINDOW_FRAME_TOP+ih*5)/2,-1,-1,buts[0]);
 }
 
 int get_save_spot()
@@ -102,8 +102,8 @@ int get_save_spot()
   int quit=0;
   do
   {
-    eh->flush_screen();
-    eh->get_event(ev);
+    wm->flush_screen();
+    wm->get_event(ev);
     if (ev.type==EV_MESSAGE && ev.message.id>=ID_LOAD_GAME_NUMBER && ev.message.id<ID_LOAD_GAME_PREVIEW)
       got_level=ev.message.id-ID_LOAD_GAME_NUMBER+1;
 
@@ -112,7 +112,7 @@ int get_save_spot()
       quit=1;
   } while (!got_level && !quit);
 
-  eh->close_window(l_win);
+  wm->close_window(l_win);
   the_game->reset_keymap();
   return got_level;
 }
@@ -219,7 +219,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 
 
 	jwindow *l_win=create_num_window(0,total_saved,thumb_nails);
-	jwindow *preview=eh->new_window(l_win->x+l_win->l+5,l_win->y,max_w,max_h,NULL,title);
+	jwindow *preview=wm->new_window(l_win->x+l_win->l+5,l_win->y,max_w,max_h,NULL,title);
 
 	first->put_image(preview->screen,preview->x1(),preview->y1());
 
@@ -228,8 +228,8 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 	int quit=0;
 	do
 	{
-		eh->flush_screen();
-		eh->get_event(ev);
+		wm->flush_screen();
+		wm->get_event(ev);
 		if (ev.type==EV_MESSAGE && ev.message.id>=ID_LOAD_GAME_NUMBER && ev.message.id<ID_LOAD_GAME_PREVIEW)
 			got_level=ev.message.id-ID_LOAD_GAME_NUMBER+1;
 
@@ -244,8 +244,8 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 			quit=1;
 	} while (!got_level && !quit);
 
-	eh->close_window(l_win);
-	eh->close_window(preview);
+	wm->close_window(l_win);
+	wm->close_window(preview);
 
 	for (i=0;i<total_saved;i++)
 		if (thumb_nails[i])

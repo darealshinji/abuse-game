@@ -28,13 +28,13 @@
 #include "jwindow.hpp"
 #include "input.hpp"
 #include "dev.hpp"
+#include "game.hpp"
 
 extern base_memory_struct *base;
 extern net_socket *comm_sock,*game_sock;
 
 extern net_protocol *prot;
 extern join_struct *join_array;
-extern window_manager *eh;
 extern void service_net_request();
 
 game_server::game_server()
@@ -65,20 +65,20 @@ void game_server::game_start_wait()
   {
     if (last_count!=total_players())
     {
-      if (stat) eh->close_window(stat);
+      if (stat) wm->close_window(stat);
       char msg[100];
       sprintf(msg,symbol_str("min_wait"),main_net_cfg->min_players-total_players());
-      stat=eh->new_window(100,50,-1,-1,new info_field(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP,ID_NULL,msg,
-				       new button(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP+eh->font()->height()*2,
+      stat=wm->new_window(100,50,-1,-1,new info_field(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP,ID_NULL,msg,
+				       new button(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP+wm->font()->height()*2,
 						  ID_CANCEL,symbol_str("cancel_button"),NULL)  ));
-      eh->flush_screen();
+      wm->flush_screen();
       last_count=total_players();
     }
 
-    if (eh->event_waiting())
+    if (wm->event_waiting())
     {
-      do { eh->get_event(ev); }  while (ev.type==EV_MOUSE_MOVE && eh->event_waiting()); 
-      eh->flush_screen();
+      do { wm->get_event(ev); }  while (ev.type==EV_MOUSE_MOVE && wm->event_waiting()); 
+      wm->flush_screen();
       if (ev.type==EV_MESSAGE && ev.message.id==ID_CANCEL)
         abort=1;
     }
@@ -87,8 +87,8 @@ void game_server::game_start_wait()
   }
   if (stat)
   {
-    eh->close_window(stat);
-    eh->flush_screen();  
+    wm->close_window(stat);
+    wm->flush_screen();  
   }
 }
   

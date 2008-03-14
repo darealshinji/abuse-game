@@ -54,7 +54,7 @@ char *get_page(int x)
 
 void make_help_page(int page, image *s)
 {
-  int x=0,y=0,fw=eh->font()->width(),fh=eh->font()->height(),ya;
+  int x=0,y=0,fw=wm->font()->width(),fh=wm->font()->height(),ya;
   char *h,*ho,imname[30],*inp;
   h=ho=get_page(page);
   
@@ -63,7 +63,7 @@ void make_help_page(int page, image *s)
   bFILE *fp=open_file("art/joy.spe","rb");
   if (fp->open_failure())
   {
-    eh->font()->put_string(s,10,10,"Help file missing!");
+    wm->font()->put_string(s,10,10,"Help file missing!");
     return ;
     
   }  
@@ -81,7 +81,7 @@ void make_help_page(int page, image *s)
 	h++;
 	if (*h=='@')
 	{	  
-          eh->font()->put_char(s,x,y,*h);
+          wm->font()->put_char(s,x,y,*h);
 	  x+=fw;	  
 	  h++;	  
 	}	
@@ -121,7 +121,7 @@ void make_help_page(int page, image *s)
 	  
 	  if (!sd.find(imname))
 	  {	    
-	    eh->font()->put_string(s,0,yres-10,"Missing image!");
+	    wm->font()->put_string(s,0,yres-10,"Missing image!");
 	    delete fp;
 	    jfree(ho);	    
 	    return ;	    
@@ -159,7 +159,7 @@ void make_help_page(int page, image *s)
       }
       else
       {
-	eh->font()->put_char(s,x,y,*h);
+	wm->font()->put_char(s,x,y,*h);
 	x+=fw;	  
 	h++;	
       }                 
@@ -197,7 +197,7 @@ void show_help(int direction)
   {
     screen->scroll(0,0,xres,yres,0,scroll_step);
     h->put_part(screen,0,helpy,0,0,xres,-helpy+scroll_step);
-    eh->flush_screen();    
+    wm->flush_screen();    
   }
   delete h;       
 }

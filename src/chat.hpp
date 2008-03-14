@@ -20,7 +20,7 @@ class chat_console : public console
   void draw_user(char *st);
   void put_all(char *st);
   void clear();
-  chat_console(window_manager *WM, JCFont *font, int width, int height);
+  chat_console(JCFont *font, int width, int height);
   
 } ;
 

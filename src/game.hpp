@@ -45,7 +45,7 @@
 #define BLACK 0
 
 /* Cleaned-up externs */
-extern window_manager *eh;
+extern window_manager *wm;
 
 
 #define tile_type unsigned short

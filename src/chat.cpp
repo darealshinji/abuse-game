@@ -12,8 +12,8 @@
 #include "chat.hpp"
 #include "dev.hpp"
 
-chat_console::chat_console(window_manager *WM, JCFont *font, int width, int height) :
-  console(WM,font,width,height<4 ? 4 : height,symbol_str("CHAT"))
+chat_console::chat_console(JCFont *font, int width, int height) :
+  console(font,width,height<4 ? 4 : height,symbol_str("CHAT"))
 {
   clear();
   cx=0;

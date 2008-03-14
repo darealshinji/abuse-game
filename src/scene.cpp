@@ -649,11 +649,11 @@ void play_scene(char *script, char *filename, JCFont *font)
 	  if (!strcmp(token,"text"))
 	    if (!text_loaded) done=1;
 	    
-	  eh->flush_screen();	  
-	  while (eh->event_waiting())
+	  wm->flush_screen();	  
+	  while (wm->event_waiting())
 	  {	
 	    event ev;	    
-	    eh->get_event(ev);
+	    wm->get_event(ev);
 	    if (ev.type==EV_KEY)
 	    {
 	      switch (ev.key)

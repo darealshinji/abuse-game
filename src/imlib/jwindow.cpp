@@ -11,6 +11,7 @@
 
 #include "video.hpp"
 #include "image.hpp"
+#include "input.hpp"
 #include "event.hpp"
 #include "filter.hpp"
 #include "event.hpp"
@@ -200,7 +201,7 @@ void window_manager::get_event(event &ev)
         drag_mousey=ev.window->y-ev.mouse_move.y;
         ev.type=EV_SPURIOUS;
       } else if (ev.window)
-        ev.window->inm->handle_event(ev,ev.window,this);
+        ev.window->inm->handle_event(ev,ev.window);
     }
   } else if (state==dragging)
   {
@@ -273,7 +274,7 @@ jwindow *window_manager::new_window(int x, int y, int l, int h, ifield *fields, 
   if (x>screen->width()-4) x=screen->width()-25;
   if (y>screen->height()-4) y=screen->height()-10;
   
-  jwindow *j=new jwindow(x,y,l,h,this,fields,Name),*k;
+  jwindow *j=new jwindow(x,y,l,h,fields,Name),*k;
   j->property.hidden=0;
   if (!first)
     first=j;
@@ -349,7 +350,7 @@ void jwindow::set_moveability(int x)
   property.moveable=x;
 }
 
-jwindow::jwindow(int X, int Y, int L, int H, window_manager *wm, ifield *fields, char const *Name)
+jwindow::jwindow(int X, int Y, int L, int H, ifield *fields, char const *Name)
 {
   ifield *i;
   int x1,y1,x2,y2;
@@ -358,7 +359,7 @@ jwindow::jwindow(int X, int Y, int L, int H, window_manager *wm, ifield *fields,
   if (fields)
     for (i=fields;i;i=i->next)
     {
-      i->area(x1,y1,x2,y2,wm);
+      i->area(x1,y1,x2,y2);
       if ((int)y2>(int)h) 
         h=y2+1;
       if ((int)x2>(int)l) 
@@ -383,7 +384,7 @@ jwindow::jwindow(int X, int Y, int L, int H, window_manager *wm, ifield *fields,
   h=screen->height();
   screen->clear(backg);
   next=NULL;
-  inm=new input_manager(screen,wm,fields);
+  inm=new input_manager(screen,fields);
   if (Name==NULL)
     name=strcpy((char *)jmalloc(strlen(" ")+1,"jwindow::window name")," ");  
   else
@@ -468,12 +469,12 @@ input_manager::~input_manager()
 void input_manager::clear_current()
 {
   if (active)
-    active->draw(0,screen,wm);
+    active->draw(0,screen);
 
   active=NULL;
 }
 
-void input_manager::handle_event(event &ev, jwindow *j, window_manager *wm)
+void input_manager::handle_event(event &ev, jwindow *j)
 {
   ifield *i,*in_area=NULL;
   int x1,y1,x2,y2;
@@ -490,7 +491,7 @@ void input_manager::handle_event(event &ev, jwindow *j, window_manager *wm)
     {
       for (i=first;i;i=i->next)
       {
-	i->area(x1,y1,x2,y2,wm);
+	i->area(x1,y1,x2,y2);
 	if (ev.mouse_move.x>=x1 && ev.mouse_move.y>=y1 &&
 	    ev.mouse_move.x<=x2 && ev.mouse_move.y<=y2)
         in_area=i;
@@ -498,39 +499,39 @@ void input_manager::handle_event(event &ev, jwindow *j, window_manager *wm)
       if (in_area!=active && (no_selections_allowed || (in_area && in_area->selectable())))
       {
 	if (active)
-          active->draw(0,screen,wm);
+          active->draw(0,screen);
 
 	active=in_area; 
 
 	if (active)
-	  active->draw(1,screen,wm);
+	  active->draw(1,screen);
       }
     } 
     if (ev.type==EV_KEY && ev.key==JK_TAB && active)
     { 
-      active->draw(0,screen,wm);
+      active->draw(0,screen);
       do
       {
 	active=active->next;
 	if (!active) active=first;
       } while (active && !active->selectable());
-      active->draw(1,screen,wm);
+      active->draw(1,screen);
     }
   } else active=grab;
 
   if (active)
   {
     if (ev.type!=EV_MOUSE_MOVE && ev.type!=EV_MOUSE_BUTTON)
-      active->handle_event(ev,screen,wm,this);
+      active->handle_event(ev,screen,this);
     else
     {
-      active->area(x1,y1,x2,y2,wm);
+      active->area(x1,y1,x2,y2);
       if (grab || (ev.mouse_move.x>=x1 && ev.mouse_move.y>=y1 &&
           ev.mouse_move.x<=x2 && ev.mouse_move.y<=y2))
       {
 	if (j)
-	  active->handle_event(ev,screen,wm,j->inm);
-	else active->handle_event(ev,screen,wm,this);
+	  active->handle_event(ev,screen,j->inm);
+	else active->handle_event(ev,screen,this);
       }
     }
   }
@@ -551,18 +552,17 @@ void input_manager::redraw()
 {
   ifield *i;
   for (i=first;i;i=i->next)
-    i->draw_first(screen,wm);
+    i->draw_first(screen);
   if (active)
-    active->draw(1,screen,wm);
+    active->draw(1,screen);
 }
 
-input_manager::input_manager(image *Screen, window_manager *WM, ifield *First)
+input_manager::input_manager(image *Screen, ifield *First)
 {
   no_selections_allowed=0;
   cur=NULL;
   grab=NULL;
   screen=Screen;
-  wm=WM;
   active=first=First;
   while (active && !active->selectable()) active=active->next;
   redraw();

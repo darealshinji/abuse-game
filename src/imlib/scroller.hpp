@@ -32,27 +32,27 @@ protected :
 
   int wig_x();
   int darea() { return (l-bw()-2)-bw()-bw(); }
-  void draw_wiget(image *screen, window_manager *wm, int erase);
+  void draw_wiget(image *screen, int erase);
   int mouse_to_drag(int mx,int my);
 public :
   int t,sx;
   scroller(int X, int Y, int ID, int L, int H, int Vert, int Total_items, ifield *Next);
-  virtual void area(int &x1, int &y1, int &x2, int &y2, window_manager *wm);
-  virtual void draw_first(image *screen, window_manager *wm);
-  virtual void draw(int active, image *screen, window_manager *wm);
-  virtual void handle_event(event &ev, image *screen, window_manager *wm, input_manager *im);
+  virtual void area(int &x1, int &y1, int &x2, int &y2);
+  virtual void draw_first(image *screen);
+  virtual void draw(int active, image *screen);
+  virtual void handle_event(event &ev, image *screen, input_manager *im);
   virtual char *read() { return (char *)&sx; }
 
   virtual int activate_on_mouse_move() { return 1; }
-  virtual void handle_inside_event(event &ev, image *screen, window_manager *wm, input_manager *inm) {;}
-  virtual void scroll_event(int newx, image *screen, window_manager *wm);
-  virtual void handle_up(image *screen, window_manager *wm, input_manager *inm);
-  virtual void handle_down(image *screen, window_manager *wm, input_manager *inm);
-  virtual void handle_left(image *screen, window_manager *wm, input_manager *inm);
-  virtual void handle_right(image *screen, window_manager *wm, input_manager *inm);
-  virtual void area_config(window_manager *wm) { ; }
+  virtual void handle_inside_event(event &ev, image *screen, input_manager *inm) {;}
+  virtual void scroll_event(int newx, image *screen);
+  virtual void handle_up(image *screen, input_manager *inm);
+  virtual void handle_down(image *screen, input_manager *inm);
+  virtual void handle_left(image *screen, input_manager *inm);
+  virtual void handle_right(image *screen, input_manager *inm);
+  virtual void area_config() { ; }
   void set_size(int width, int height) { l=width; h=height; }
-  virtual void set_x(int x, image *screen, window_manager *wm);
+  virtual void set_x(int x, image *screen);
 } ;
 
 class spicker : public scroller
@@ -63,27 +63,27 @@ class spicker : public scroller
   public :
   spicker(int X, int Y, int ID, int Rows, int Cols, int Vert, int MultiSelect, ifield *Next);
   int vis() { if (vert) return r; else return c; }
-  virtual void area_config(window_manager *wm);
+  virtual void area_config();
   void set_select(int x, int on);
   int get_select(int x);
   int first_selected();
-  virtual void scroll_event(int newx, image *screen, window_manager *wm);
-  virtual void handle_inside_event(event &ev, image *screen, window_manager *wm, input_manager *inm);
+  virtual void scroll_event(int newx, image *screen);
+  virtual void handle_inside_event(event &ev, image *screen, input_manager *inm);
 
   // you should define \/
-  virtual void draw_background(window_manager *wm, image *screen);
-  virtual void draw_item(window_manager *wm, image *screen, int x, int y, int num, int active) = 0;
+  virtual void draw_background(image *screen);
+  virtual void draw_item(image *screen, int x, int y, int num, int active) = 0;
   virtual int total() = 0;
-  virtual int item_width(window_manager *wm) = 0;
-  virtual int item_height(window_manager *wm) = 0;
-  virtual void note_selection(window_manager *wm, image *screen, input_manager *inm, int x) { ; }
-  virtual void note_new_current(window_manager *wm, image *screen, input_manager *inm, int x) { ; }
+  virtual int item_width() = 0;
+  virtual int item_height() = 0;
+  virtual void note_selection(image *screen, input_manager *inm, int x) { ; }
+  virtual void note_new_current(image *screen, input_manager *inm, int x) { ; }
   virtual int ok_to_select(int num) { return 1; }
-  virtual void handle_up(image *screen, window_manager *wm, input_manager *inm);
-  virtual void handle_down(image *screen, window_manager *wm, input_manager *inm);
-  virtual void handle_left(image *screen, window_manager *wm, input_manager *inm);
-  virtual void handle_right(image *screen, window_manager *wm, input_manager *inm);
-  virtual void set_x(int x, image *screen, window_manager *wm);
+  virtual void handle_up(image *screen, input_manager *inm);
+  virtual void handle_down(image *screen, input_manager *inm);
+  virtual void handle_left(image *screen, input_manager *inm);
+  virtual void handle_right(image *screen, input_manager *inm);
+  virtual void set_x(int x, image *screen);
   void reconfigure();   // should be called by constructor after class is ready to take virtual calls
   ~spicker() { if (select) jfree(select); }
 } ; 
@@ -103,12 +103,12 @@ class pick_list : public scroller
   public :
   pick_list(int X, int Y, int ID, int height,
 	    char **List, int num_entries, int start_yoffset, ifield *Next, image *texture=NULL);
-  virtual void handle_inside_event(event &ev, image *screen, window_manager *wm, input_manager *inm);
-  virtual void scroll_event(int newx, image *screen, window_manager *wm);
+  virtual void handle_inside_event(event &ev, image *screen, input_manager *inm);
+  virtual void scroll_event(int newx, image *screen);
   virtual char *read() { return (char *)this; }
-  virtual void area_config(window_manager *wm);
-  virtual void handle_up(image *screen, window_manager *wm, input_manager *inm);
-  virtual void handle_down(image *screen, window_manager *wm, input_manager *inm);
+  virtual void area_config();
+  virtual void handle_up(image *screen, input_manager *inm);
+  virtual void handle_down(image *screen, input_manager *inm);
   int get_selection() { return lis[cur_sel].number; }
   ~pick_list() { jfree(lis); }
 } ;
