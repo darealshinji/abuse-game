@@ -1,0 +1,16 @@
+* void dev_controll::handle_event(event &ev)
+	Get it under control...
+
+* make static WINDOW_BORDER_TOP, BOTTOM, etc functions for jwindow
+
+* Check out next_level_ai
+
+* check out LISP modifications that'll be required for mod authors
+
+* Re-write the windowing code to read window definitions from a "resource file" ala Windows.
+
+* Fix high resolution font
+
+* Built-in lisp editor
+
+* Build singleton code

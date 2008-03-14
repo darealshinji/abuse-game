@@ -1,0 +1,5 @@
+(load_big_font     "art/fonts.spe" "screen11")
+(load_small_font   "art/fonts.spe" "small_font")
+(load_console_font "art/fonts.spe" "fnt5x7")
+(load_color_filter "art/back/backgrnd.spe")
+(load_palette      "art/back/backgrnd.spe")

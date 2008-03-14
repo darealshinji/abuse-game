@@ -1,0 +1,357 @@
+February 26, 2001
+-----------------
+	- Justin and I have been writing LISP code to do teamplay
+		and capture the flag.  The CTF objects all function
+		correctly; it'd be cool if we could get some better
+		artwork for them, and if they were tinted right, though.  :)
+	- Redefined the cons_cell and related structures to make it
+		easier to browse through the watch window in the debugger
+		without having to type-cast everything I want to see.
+
+February 18, 2001
+-----------------
+	- Changed lisp function (set_player_color x) to
+		(set_object_tint x)
+	- Added lisp function (get_object_tint)
+
+February 17, 2001
+-----------------
+	- Lots of playtesting recently
+	- Have fixed all of the window display problems (I think)
+	- Added lisp function (set_player_color x) to switch player
+		to color number x
+		see chat.lsp for details
+	- Modified cop.cpp with Leon's suggestion for player drawing
+	- Modified people.lsp to correspond to the change to cop.lsp
+	- added -window switch to allow play in a window (still
+		experimental -- only works with 32-bit desktop color
+		depth) -size still works the same.  Press alt-tab to
+		switch away from Abuse.
+
+February 04, 2001
+-----------------
+	- Finally got alt-tabbing to behave nicely.  Still minor
+		issues with the main menu, but it's at least much
+		better than it was.
+
+January 28, 2001
+----------------
+	- There's now only one place where a window_manager
+		is instantiated.  There are no functions which
+		take a window_manager parameter anymore.
+	- Well, in the process of adding changes necessary to
+		handle recovery from alt-tabbing away from Abuse
+		(which is why I was updating jwindow::redraw()),
+		the entire windowing system is getting an overhaul.
+		It's gonna be sweet when I'm done, though.
+	- jwindow::redraw() has been changed to a virtual
+		function requiring no parameters.  This'll make
+		it much easier to implement special specific-
+		purpose windows.
+	- renamed wm[] array in dev.cpp to WinMenus so that it
+		doesn't have a name collision with the satic wm
+		singleton.
+	- Starting work on singleton code; will get rid of all
+		references to an arbitrary window_manager* because
+		there's only going to be one, and it's not ever
+		going to change.
+	- Got rid of X-ish "control is only active when mouse is
+		over it"  Now you've gotta click on a control to make
+		it take focus, and you can hit tab to move between
+		controls even when one isn't currently selected.
+	- Fixed right/down arrow display in selection boxes...
+		Finally.  That bug had been eluding me forever.
+		(Accidentally Lock()ed again at the end of drawing
+		instead of UnLock()ing ...  Oops)
+
+January 27, 2001
+----------------
+	- I think I've figured out why the automap is crashing the
+		engine sometimes.  When I'm done with other stuff, I'll
+		take a look at fixing it.
+	- Got fRaBs' uninstall working.  I guess "company name" is
+		required before the uninstaller can initialize.  Dumb
+		limitation, if you ask me...
+	- Moving username.lsp, gamename.lsp, and some other LISP
+		files out of /addon/deathmat into /config.  Adding
+		more saved configuration stuff as well.
+	- Added net_configuration::save() function
+	- Modifying deathmatch startup code to look for -a switch,
+		allowing addons to redefine deathmatch settings.
+	- Added net_configuration::load() function
+	- fixed info_field->find() function
+	- fixed button_box->press_button() function
+	- Also found the foretile corruption display in the editor.
+		Will take a look at it soon -- for now just close the
+		window and re-open it and it'll be okay.
+
+File notes:
+	changed:
+		/
+			abuse.lsp
+		/lisp
+			people.lsp
+			startup.lsp
+		/addon/deathmat
+			deathmat.lsp
+			dstartup.lsp
+		/addon/fRaBs
+    !new->  netstart.lsp
+		/addon/fRaBs/lisp
+			startup.lsp
+		/addon/fRaBs/deathmat
+			deathmat.lsp
+			dstartup.lsp
+
+
+January 24, 2001
+----------------
+	- Engine now deletes lcachexx.tmp on exit, and doesn't
+		ever create end.mem in the release build.
+	- Working on Shareware/Retail/fRaBs InstallShield packages.
+		Can't get fRaBs' uninstall to start correctly...
+
+January 23, 2001
+----------------
+	- Finally fixed the sound so that Abuse doesn't crash when
+		it can't find a sound card...
+	- Fixed game_getter() so that lbreak() works.
+	- Removed *all* exit() calls and replaced with WriteErr().
+		Abuse should *never* shut down without giving a reason
+		anymore.  If it does, I've got an error somewhere that
+		isn't being taken into account.
+	- Fixed fRaBs so that it'll work within /addon/fRaBs with
+		the -a switch.  Now I just need to tell Justin how he
+		needs to do things from now on...  ;)
+
+January 19, 2001
+----------------
+	- I actually added this a while ago, but for anyone who's
+		interested, the GUID I'm using to create DirectPlay
+		sessions is:
+		{7FAABB28-D1AB-4b3b-957C-58A124E03542}
+		Not that anyone'll probably need this, but who knows?
+	- Added -module switch for specifying "add-on modules,"
+		which will be a more complete version of the -a switch.
+	- Tweaked with the re-worked DPlay stuff and it's much
+		better now.  Still works, and is far prettier.
+
+January 18, 2001
+----------------
+	- The entire Abuse engine now runs inside its own thread,
+		allowing WinMain() to do event processing --
+		Now alt-tab should *always* work, even in game loops
+		where it previously wasn't polling for Windows events.
+	- Re-worked some DirectPlay stuff to allow it to start
+		a new network game after it's done with another...
+		Not the best solution, but it works.
+	- DirectInput routines now run inside their own thread,
+		as part of an effort to make the entire engine multi-
+		threaded.  Currently working on moving Get/Translate/
+		DispatchMessage() out of the event handling code and
+		back into WinMain() where they belong.
+	- also had an idea to improve mouse wheel weapon switching
+		that works great except for one tiny problem.  I
+		doubt if anyone'll encounter this problem, tho'.  If
+		you find it, and it's a major problem, let me know
+		and I'll see if I can get to the bottom of it.
+	- worked on the lighting altorithm.  Got a 100% speedup
+		in one of the inner loops, according to the profiler.
+		Lighting now takes about 10% less processor time when
+		using hw acceleration.
+
+		Could still be sped up, though.  The 32-bit reads
+		are faster (and fewer), but they're still not
+		guaranteed to be on a DWORD boundary, so there's
+		still a potential performance hit.  I also need
+		to re-work the lighting table's functionality to
+		get rid of another good portion of the 8-bit
+		operations.
+
+January 17, 2001
+----------------
+	- fixed blinking player location dot not displaying in
+		automap.
+	- finally completely fixed the far right/bottom lines not
+		being drawn problem.  Really bizarre solution -- I'm
+		not entirely convinced that the problem doesn't lie
+		elsewhere -- but it's fixed.
+	- weaning functions from image::width() to use
+		image::Pitch instead...  DirectDraw aligns all scan
+		lines on DWORD boundaries, so width() doesn't
+		necessarily equal bytes/scan line.
+	- Right now I'm having a problem with system vs. local
+		video memory...  If I create any of my surfaces in
+		system memory, the hardware acceleration takes a
+		serious hit on non-AGP systems.  If I create surfaces
+		(one in particular representing the offscreen buffer)
+		in local video memory, any software rendering routines
+		(especially lighting) take serious performance hits.
+
+		Hardware acceleration blazes through all of Abuse's
+		drawing routines.  I can get upwards of 120 fps on my
+		computers with delays turned off ...  But more than 50%
+		of all processing time is spent in the lighting routine.
+		When using system memory, lighting takes about 15% of
+		the processing time...
+		
+		Methinks I'll have to do some work on the lighting
+		algorithm to make it more 32-bit friendly...
+
+January 10, 2001
+----------------
+	- fixed bug that made Abuse think that keys were being
+		pressed when they were released, and vice-versa.  It was
+		only by an incredible coincidence that the DirectInput
+		code was working at all before this.  Now everything
+		(should) work.
+
+January 08, 2001
+----------------
+
+Code Notes:
+	- changing file_manager::remote_file::unbuffered_read() so
+		that it won't overrun the read buffer anymore -- ever.
+	- trying to find a bug that's preventing files larger than
+		8k from transferring over the network correctly
+		(only a problem in the debug executable ... for now.
+		has potential to make things really bad later on.)
+
+
+January 07, 2001
+----------------
+	- Added automap, though it's crashed a test machine twice,
+		so I removed it again.
+	- Built InstallShield package for shareware install
+	- Added mouse wheel support for changing weapons (not
+		perfect yet)
+	- Other stuff, though I've forgotten what.
+
+January 06, 2001
+----------------
+	- DirectInput for mouse works.  Mouse sensitivity can be
+		changed, but needs a user interface still.
+	- Modified do_title() routine to no longer be hard-coded
+		for the original "intro" string ...  Any string should
+		now be shown in its entirety.  Mouse button click will
+		also exit the title screen.
+	- Started looking at LISP processing code to see about
+		adding functions that'll allow LISP scripts to do
+		intro/title-type stuff.  (Draw pictures, show
+		scrolling text, etc.)
+	- Fixed editor map mode ... again.  Forgot that I'd lost that
+		fix when I had a mini HD crash.
+	- Framerate is no longer "game tick" based.  The game tick
+		runs at a fixed rate of 15Hz, and all game objects run
+		at this rate.  This made the mouse move kinda choppy,
+		(as Bill pointed out) even if your computer is capable
+		of framerates much higher.  Screen is now updated as
+		fast as possible, and game ticks still happen at 15Hz.
+		Interesting note, though: all I've got to do to increase
+		or decrease the speed of the game is to change a
+		floating-point value to something other than 15 ...
+		Throw a user interface in for it, and "Turbo-mode Abuse,
+		anyone?"
+
+It's amazing how much I've been able to tinker with now that the
+DirectPlay code is more or less done...  It's also amazing how
+much of this engine's capabilities went unused by the original
+Abuse...
+
+
+January 05, 2001
+----------------
+	- Now using DirectInput for keyboard input.  Faster, better.
+		Doesn't rely on Windows messaging.  No more accidentally
+		hitting the Windows key when reaching for Ctrl, Josh...
+	- Working on DirectInput for mouse input.  Will be faster,
+		better.  Will support changing sensitivity and more
+		buttons.  (5-button/wheel mouses will be more useful
+		in Abuse, eventually...)
+
+
+January 04, 2001
+----------------
+	- Sound should never crash the Sound Server anymore (thus
+		crashing Abuse)
+	- Creating DirectPlay sessions with a much higher player limit
+		to allow for more simultaneous "virtual connections" that
+		I make with each client.  Fixes "Can't create player"
+		errors.
+
+January 03, 2001
+----------------
+	- My name's in the startup console view now...  :)
+    - Adding console view; throwing out text stat_man entirely
+	- preload.lsp now required.  This file contains startup
+	    configuration for game fonts, palette, and window
+		stuff.
+
+
+Code Notes:
+	- event_handler (eh) is now created only once immediately
+		after the video mode is initialized.  Same with the
+		status_manager (stat_man).  They're both destroyed
+		when the program exits.
+	- fixed up WriteErr macro
+	- moving exit(x)'s into WriteErr, which shuts down DirectDraw
+		and shows a message box describing the error.
+	- changed sprite::change_visual() to copy the image and then
+		unlink it.  jwindow::jwindow unlinks its screen.  Did this
+		to keep them from getting destroyed when lisp is reloaded.
+	- modified NF_set_file_server(net_address *addr) to use dprintf
+		for console reporting.
+	- moving most printf's and fprintf's into dprintf to give the
+		Windows port a form of output for users to see as progress
+		indication and/or error messages.
+
+January 01, 2001
+----------------
+	- Networking supports more than 2 players
+
+December 26, 2000
+-----------------
+	- Networking is much better now.
+
+December 24, 2000
+-----------------
+	- Fixed extra line of garbage being drawn on display (really!)
+	- Networking works
+
+December 9, 2000
+----------------
+	- Fixed map display problem
+	- Added experimental logic to the sound server ...  It now 
+		tries to keep the number of playing sounds managed, so
+		hopefully it'll sound better.
+	- I've set the sound to play at 44.1 khz, 16-bit which helps 
+		a lot even without sound management.  Eventually this'll
+		be user-configurable, but for now it's hard-coded.
+	- And yet another improvement in the sound department -- it's
+		now in *stereo*!  If something's on your left, you'll hear
+		it from the left speaker, and vice versa.  This took me
+		*exactly* one line of code to implement.  The framework
+		already had support for panning, it just wasn't used for
+		some reason.
+	- Command line switches work now.  Try -size (and give it a
+		usable resolution, because it does no checking and will
+		just die if it can't switch modes)...  All other switches
+		should work, too.  Let me know if any don't.
+	- Fixed minor graphical glitch that made garbage show on the
+		far-right column and bottom scan line of the monitor.
+		(I think.)
+	- Threw out all of my old DirectPlay code and am starting
+		over.  I've got a better idea of what it needs to do now,
+		so I should be able to get a slightly more elegant
+		solution in place than the one I was working on before.
+		(also began reading up on Winsock 2 APIs, for possibility
+		of supporting non-Windows players)
+
+Known Bugs:
+	- Once, when I was playing around with the editor, the
+		foreground tile window filled itself with garbage.  I
+		closed it and re-opened it and it was fine.  I couldn't
+		reproduce it again.
+	- Also, once, the debugger found some bad memory allocations
+		in weird places, but it didn't affect the game, and I
+		can't get it to do it again.

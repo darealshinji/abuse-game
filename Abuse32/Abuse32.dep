@@ -1,0 +1,2819 @@
+# Microsoft Developer Studio Generated Dependency File, included by Abuse32.mak
+
+.\Win32src\video.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\Abuse32.h"\
+	".\imlib\include\bitmap.h"\
+	".\imlib\include\doscall.hpp"\
+	".\imlib\include\globals.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	".\Win32src\video.h"\
+	
+
+.\imlib\decoder.cpp : \
+	".\imlib\include\errs.h"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\dprint.cpp : \
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\filesel.cpp : \
+	".\imlib\include\filesel.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jdir.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\scroller.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\filter.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\fonts.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	
+
+.\imlib\gifread.cpp : \
+	".\imlib\include\dir.h"\
+	".\imlib\include\gifdecod.hpp"\
+	".\imlib\include\gifread.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\std.h"\
+	".\imlib\include\system.h"\
+	".\Win32src\video.h"\
+	
+
+.\imlib\glread.cpp : \
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	".\Win32src\video.h"\
+	
+
+.\imlib\guistat.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\guistat.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\status.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\imlib\include\visobj.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\image.cpp : \
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\image24.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\image24.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\include.cpp : \
+	".\imlib\include\image.hpp"\
+	".\imlib\include\include.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\input.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\jmalloc.cpp : \
+	".\imlib\include\jmalloc.hpp"\
+	
+
+.\imlib\jrand.cpp : \
+	".\imlib\include\jrand.hpp"\
+	
+
+.\imlib\jwindow.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\keys.cpp : \
+	".\imlib\include\keys.hpp"\
+	
+
+.\imlib\lbmread.cpp : \
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\lbmread.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\linked.cpp : \
+	".\imlib\include\linked.hpp"\
+	
+
+.\imlib\loader.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\glread.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\image24.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\lbmread.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\pcxread.hpp"\
+	".\imlib\include\ppmread.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\targa.hpp"\
+	".\imlib\include\xwdread.hpp"\
+	
+
+.\imlib\mdlread.cpp : \
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\packet.cpp : \
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\packet.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\palette.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	
+
+.\imlib\pcxread.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\image24.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\pcxread.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\pmenu.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\pmenu.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\ppmread.cpp : \
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\ppmread.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\readwav.cpp : \
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\readwav.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\scroller.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\scroller.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\specs.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\sprite.cpp : \
+	".\imlib\include\emm.hpp"\
+	".\imlib\include\gifread.hpp"\
+	".\imlib\include\glread.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\ppmread.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	
+
+.\imlib\status.cpp : \
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\status.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\imlib\include\visobj.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\supmorph.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	
+
+.\imlib\targa.cpp : \
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\imlib\texture.cpp : \
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\timage.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	
+
+.\imlib\tools.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\scroller.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\tools.hpp"\
+	".\imlib\include\video.hpp"\
+	".\imlib\include\visobj.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\visobj.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\imlib\include\visobj.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\xwdread.cpp : \
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\image24.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\main.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\port\dos4gw\bwtcp.cpp : \
+	".\imlib\include\doscall.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jnet.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\packet.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\port\dos4gw\bwtcp.hpp"\
+	
+
+.\imlib\port\dos4gw\event.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\imlib\port\dos4gw\jdir.cpp : \
+	".\imlib\include\jmalloc.hpp"\
+	
+
+.\imlib\port\dos4gw\jnet.cpp : \
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jnet.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\packet.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\port\dos4gw\bwtcp.hpp"\
+	".\imlib\port\dos4gw\ipx.hpp"\
+	
+
+.\imlib\port\dos4gw\joystick.cpp : \
+	".\imlib\include\joy.hpp"\
+	
+
+.\imlib\port\dos4gw\mouse.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\Abuse32.h"\
+	".\imlib\include\doscall.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	
+
+.\imlib\port\dos4gw\sound.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\Abuse32.h"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\readwav.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timing.hpp"\
+	
+
+.\imlib\port\dos4gw\timing.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\timing.hpp"\
+	
+
+.\abuse\src\net\unix\fileman.cpp : \
+	".\abuse\inc\netface.hpp"\
+	".\abuse\inc\specache.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\abuse\src\net\unix\fileman.hpp"\
+	".\abuse\src\net\unix\ghandler.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\abuse\src\net\unix\gclient.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\netcfg.hpp"\
+	".\abuse\inc\netface.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\abuse\src\net\unix\gclient.hpp"\
+	".\abuse\src\net\unix\ghandler.hpp"\
+	".\abuse\src\net\unix\undrv.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\net\unix\gserver.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\netcfg.hpp"\
+	".\abuse\inc\netface.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\abuse\src\net\unix\ghandler.hpp"\
+	".\abuse\src\net\unix\gserver.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\ability.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\ant.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\ant.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\compiled.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\automap.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\automap.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\cache.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\lcache.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\specache.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\exitproc.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\status.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\imlib\include\visobj.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\chars.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\intsect.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\chat.cpp : \
+	".\abuse\inc\chat.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\clisp.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\ant.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\chat.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\cop.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\demo.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\loadgame.hpp"\
+	".\abuse\inc\menu.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\netcfg.hpp"\
+	".\abuse\inc\netface.hpp"\
+	".\abuse\inc\nfserver.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\text_gui.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\image24.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jdir.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\joy.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\pcxread.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\collide.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\intsect.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\compiled.cpp : \
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\abuse\src\config.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\joy.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\console.cpp : \
+	".\abuse\inc\console.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\cop.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\ant.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\compiled.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\crc.cpp : \
+	".\abuse\inc\crc.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\abuse\src\demo.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\demo.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\netface.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\dev.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\chat.hpp"\
+	".\abuse\inc\compiled.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\demo.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\devsel.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\profile.hpp"\
+	".\abuse\inc\property.hpp"\
+	".\abuse\inc\sbar.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filesel.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\image24.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\pcxread.hpp"\
+	".\imlib\include\pmenu.hpp"\
+	".\imlib\include\scroller.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\tools.hpp"\
+	".\imlib\include\video.hpp"\
+	".\imlib\include\visobj.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\devsel.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\devsel.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\scroller.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\director.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\endgame.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\gui.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\menu.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\property.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\pmenu.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\extend.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\game.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\automap.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\chat.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\compiled.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\demo.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\gamma.hpp"\
+	".\abuse\inc\help.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\menu.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\netcfg.hpp"\
+	".\abuse\inc\netface.hpp"\
+	".\abuse\inc\nfserver.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\profile.hpp"\
+	".\abuse\inc\sbar.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\transp.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\guistat.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\joy.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\pmenu.hpp"\
+	".\imlib\include\scroller.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\status.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\imlib\include\visobj.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\gamma.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\language.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\scroller.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\gui.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\gui.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\help.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\help.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\netcfg.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\innet.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\demo.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\netcfg.hpp"\
+	".\abuse\inc\netface.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\abuse\src\net\unix\fileman.hpp"\
+	".\abuse\src\net\unix\gclient.hpp"\
+	".\abuse\src\net\unix\ghandler.hpp"\
+	".\abuse\src\net\unix\gserver.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\intsect.cpp : \
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\abuse\src\items.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\language.cpp : \
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	
+
+.\abuse\src\lcache.cpp : \
+	".\abuse\inc\bus_type.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\abuse\src\level.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\cop.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\demo.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\intsect.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\netface.hpp"\
+	".\abuse\inc\nfserver.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\profile.hpp"\
+	".\abuse\inc\sbar.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\image24.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\pcxread.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\status.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\imlib\include\visobj.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\light.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\status.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\imlib\include\visobj.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\lisp.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\bus_type.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\status.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\imlib\include\visobj.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\lisp_gc.cpp : \
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\abuse\src\lisp_opt.cpp : \
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\abuse\src\loader2.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\compiled.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\help.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\loadgame.hpp"\
+	".\abuse\inc\menu.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\netface.hpp"\
+	".\abuse\inc\nfserver.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\parse.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\sbar.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\specache.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\morph.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\loadgame.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\demo.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\gui.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\menu.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\demo.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\gamma.hpp"\
+	".\abuse\inc\gui.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\loadgame.hpp"\
+	".\abuse\inc\menu.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\netcfg.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\property.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\pmenu.hpp"\
+	".\imlib\include\scroller.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\morpher.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\netcfg.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\netcfg.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\nfclient.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\netface.hpp"\
+	".\abuse\inc\nfserver.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	
+
+.\abuse\src\objects.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\intsect.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\profile.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\parse.cpp : \
+	".\abuse\inc\parse.hpp"\
+	
+
+.\abuse\src\particle.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\points.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\profile.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\profile.hpp"\
+	".\abuse\inc\property.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\property.cpp : \
+	".\abuse\inc\property.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	
+
+.\abuse\src\sensor.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\compiled.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\seq.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\parse.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	
+
+.\abuse\src\specache.cpp : \
+	".\abuse\inc\specache.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\abuse\src\statbar.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\demo.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\sbar.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\abuse\src\text_gui.cpp : \
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_gc.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\stack.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	
+
+.\abuse\src\transp.cpp : \
+	".\abuse\inc\transp.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\abuse\src\version.cpp : \
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\system.h"\
+	
+
+.\abuse\src\view.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\chat.hpp"\
+	".\abuse\inc\clisp.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\console.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\demo.hpp"\
+	".\abuse\inc\dev.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\netface.hpp"\
+	".\abuse\inc\nfserver.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\sbar.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\transp.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\abuse\src\net\inc\sock.hpp"\
+	".\imlib\include\dprint.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jrand.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\scroller.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\Abuse32.cpp : \
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\Abuse32.h"\
+	".\abuse\inc\ability.hpp"\
+	".\abuse\inc\cache.hpp"\
+	".\abuse\inc\chars.hpp"\
+	".\abuse\inc\config.hpp"\
+	".\abuse\inc\crc.hpp"\
+	".\abuse\inc\director.hpp"\
+	".\abuse\inc\extend.hpp"\
+	".\abuse\inc\game.hpp"\
+	".\abuse\inc\id.hpp"\
+	".\abuse\inc\items.hpp"\
+	".\abuse\inc\level.hpp"\
+	".\abuse\inc\light.hpp"\
+	".\abuse\inc\lisp.hpp"\
+	".\abuse\inc\lisp_opt.hpp"\
+	".\abuse\inc\loader2.hpp"\
+	".\abuse\inc\morpher.hpp"\
+	".\abuse\inc\objects.hpp"\
+	".\abuse\inc\particle.hpp"\
+	".\abuse\inc\points.hpp"\
+	".\abuse\inc\seq.hpp"\
+	".\abuse\inc\view.hpp"\
+	".\imlib\include\filter.hpp"\
+	".\imlib\include\fonts.hpp"\
+	".\imlib\include\image.hpp"\
+	".\imlib\include\input.hpp"\
+	".\imlib\include\jmalloc.hpp"\
+	".\imlib\include\jwindow.hpp"\
+	".\imlib\include\keys.hpp"\
+	".\imlib\include\linked.hpp"\
+	".\imlib\include\loader.hpp"\
+	".\imlib\include\macs.hpp"\
+	".\imlib\include\mdlread.hpp"\
+	".\imlib\include\monoprnt.hpp"\
+	".\imlib\include\mouse.hpp"\
+	".\imlib\include\palette.hpp"\
+	".\imlib\include\sound.hpp"\
+	".\imlib\include\specs.hpp"\
+	".\imlib\include\sprite.hpp"\
+	".\imlib\include\supmorph.hpp"\
+	".\imlib\include\system.h"\
+	".\imlib\include\timage.hpp"\
+	".\imlib\include\timing.hpp"\
+	".\imlib\include\video.hpp"\
+	".\Win32src\video.h"\
+	{$(INCLUDE)}"event.hpp"\
+	
+
+.\Abuse32.rc : \
+	".\Abuse32.ico"\
+	".\small.ico"\
+	
