@@ -1,0 +1,168 @@
+#include "automap.hpp"
+#include "game.hpp"
+
+automap *current_automap = 0;
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+void automap::draw()
+{
+    if (!automap_window)
+        return;
+    image *screen = automap_window->screen;
+ 
+    long sx, ex, sy, ey, x, y, draw_xstart,draw_ystart, i, j,
+         window_xstart, window_ystart, window_xend, window_yend,
+         centerx, centery;
+    
+    x = the_game->first_view->x_center();
+    y = the_game->first_view->y_center();
+
+    window_xstart = automap_window->x1();       
+    window_ystart = automap_window->y1();
+    window_xend = automap_window->x2();       
+    window_yend = automap_window->y2();
+    centerx = (window_xstart + window_xend) / 2;
+    centery = (window_ystart + window_yend) / 2;
+    
+    sx = x / f_wid - w / 2;                // start drawing with this foretile  
+    sy = y / f_hi - h / 2;
+    ex = sx + w; 
+    ey = sy + h;  
+
+    if (sx < 0) {                      // does the map scroll past the left side ?
+        sx = 0;                         // yes, start drawing at 0  
+        draw_xstart = centerx - (x * AUTOTILE_WIDTH / f_wid);
+    }
+    else
+        draw_xstart = centerx - (x * AUTOTILE_WIDTH / f_wid - sx * AUTOTILE_WIDTH);
+    if (sy < 0) {
+        sy = 0;   
+        draw_ystart = centery - (y * AUTOTILE_HEIGHT / f_hi);
+    }
+    else
+        draw_ystart = centery - (y * AUTOTILE_HEIGHT / f_hi - sy * AUTOTILE_HEIGHT);
+
+  // if view position hasn't changed, only update the binking dot and return
+    if (draw_xstart == old_dx && draw_ystart == old_dy) {
+        automap_window->screen->Lock();
+        automap_window->screen->add_dirty(centerx, centery, centerx, centery);
+        if ((tick++) & 4)
+            automap_window->screen->putpixel((short) centerx, (short) centery - AUTOTILE_HEIGHT, (char) 255);
+        else
+            automap_window->screen->putpixel((short) centerx, (short) centery - AUTOTILE_HEIGHT, 27);
+        automap_window->screen->UnLock();
+        return;
+    }
+    old_dx = draw_xstart;
+    old_dy = draw_ystart;  
+
+
+    if (ex >= cur_lev->foreground_width())
+        ex = cur_lev->foreground_width() - 1;
+    if (ey >= cur_lev->foreground_height())
+        ey = cur_lev->foreground_height() - 1;
+
+    screen->bar((short) window_xstart, (short) window_ystart, (short) draw_xstart, (short) window_yend, 0);
+    screen->bar((short) window_xstart, (short) window_ystart, (short) window_xend, (short) draw_ystart, 0);
+
+
+  // we are going to redraw the whole map, so make the dirty rect work easier by marking
+  // everything dirty
+    screen->add_dirty(window_xstart, window_ystart, window_xend, window_yend);
+
+
+  // draw the tiles that will be around the border of the automap with put_image
+  // because it handles clipping, but for ths reason is slower, the rest
+  // we will slam on as fast as possible
+
+    screen->set_clip((short) window_xstart, (short) window_ystart, (short) window_xend, (short) window_yend);
+
+    unsigned short *fgline;
+    for (j = draw_ystart, y = sy; y <= ey; j += AUTOTILE_HEIGHT, y++) {
+        fgline = cur_lev->get_fgline(y) + sx;
+        for (i = draw_xstart, x = sx; x <= ex; i += AUTOTILE_WIDTH, x++, fgline++) {
+            if ((*fgline) & 0x8000) {
+	            int id = foretiles[(*fgline) & 0x7fff];
+	            if (id >= 0)
+                    cash.foret(id)->micro_image->put_image(screen, (short) i, (short) j, 0);
+	            else
+                    cash.foret(foretiles[0])->micro_image->put_image(screen, (short) i, (short) j, 0);
+            }
+            else
+                screen->bar((short) i, (short) j, (short) (i + AUTOTILE_WIDTH - 1), (short) (j + AUTOTILE_HEIGHT - 1), 0);
+        }
+    }
+  // draw the person as a dot, no need to add a dirty because we marked the whole screen already
+    automap_window->screen->Lock();
+    
+    if ((tick++) & 4)
+        automap_window->screen->putpixel((short) centerx, (short) centery - AUTOTILE_HEIGHT, (char) 255);
+    else 
+        automap_window->screen->putpixel((short) centerx, (short) centery - AUTOTILE_HEIGHT, 27);
+    automap_window->screen->UnLock();
+
+  // set the clip back to full window size because something else could mess with the area
+    automap_window->screen->set_clip(0, 0, screen->width() - 1, screen->height() - 1);
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+void automap::toggle_window()
+{
+    if (automap_window) {
+        wm->close_window(automap_window);
+        automap_window = NULL;
+    }
+    else {
+        old_dx = -1000;        // make sure the map gets drawn the first time
+        old_dy = -1000;
+
+        automap_window = wm->new_window(0, 0, w * AUTOTILE_WIDTH, h * AUTOTILE_HEIGHT, NULL, "Map");
+//        automap_window->screen->bar(17, 1, 17 + 8 * 6 + 3, 6, wm->medium_color());
+//        wm->font()->put_string(automap_window->screen, 20, 1, "Automap", wm->dark_color());
+        draw();
+    }
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+automap::automap(level *l, int width, int height)
+{
+    w = width;
+    h = height;
+  
+    tick = 0;  
+    cur_lev = l;
+    automap_window = NULL;
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+void automap::handle_event(event &ev)
+{
+  //only respond to stuff in our window or on the main screen
+    if (ev.window==NULL || ev.window==automap_window) {
+        switch (ev.type) {
+            case EV_KEY:
+                switch(ev.key) {
+                    case 'A':
+	                case 'a':
+  	                    toggle_window();
+	                    break;
+                }
+	            break;
+            case EV_CLOSE_WINDOW:
+                wm->close_window(automap_window);
+	            automap_window = NULL;
+	        break;
+        }
+    }
+}
+
+
+
+
+
+
+

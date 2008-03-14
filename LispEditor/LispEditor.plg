@@ -1,0 +1,42 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: LispEditor - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP187.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR"Debug/" /Fp"Debug/LispEditor.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"F:\My Documents\My Source\LispEditor\LispEditorView.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP187.tmp" 
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP188.tmp" with contents
+[
+/nologo /subsystem:windows /profile /debug /machine:I386 /out:"Debug/LispEditor.exe" 
+".\Debug\ChildFrm.obj"
+".\Debug\CntrItem.obj"
+".\Debug\LispEditor.obj"
+".\Debug\LispEditorDoc.obj"
+".\Debug\LispEditorView.obj"
+".\Debug\MainFrm.obj"
+".\Debug\StdAfx.obj"
+".\Debug\LispEditor.res"
+]
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP188.tmp"
+<h3>Output Window</h3>
+Compiling...
+LispEditorView.cpp
+Linking...
+Creating command line "bscmake.exe /nologo /o"Debug/LispEditor.bsc"  ".\Debug\StdAfx.sbr" ".\Debug\ChildFrm.sbr" ".\Debug\CntrItem.sbr" ".\Debug\LispEditor.sbr" ".\Debug\LispEditorDoc.sbr" ".\Debug\LispEditorView.sbr" ".\Debug\MainFrm.sbr""
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+LispEditor.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

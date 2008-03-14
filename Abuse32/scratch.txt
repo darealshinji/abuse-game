@@ -1,0 +1,390 @@
+/* --------------------------------------------------------------------------- 
+ -------------------------------------------------------------------------
+ DP_socket method definitions
+ ------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+void DP_socket::SendAckPacket(int PacketID)
+{
+    if (!Remote_ID || !BlockingReads)
+        return;
+    DPPACKET PacketAck;
+    PacketAck.DataSize = 0;
+    PacketAck.MessageNum = -1;
+    PacketAck.Port = SocketPort;
+    PacketAck.MessageType = PACKET_ACK;
+    PacketAck.Reserved = PacketID;
+//    OutQueue.AddPacketToQueue(&PacketAck);
+    HRESULT hRet;
+    hRet = g_pDP->Send(Local_ID, Remote_ID, 0, &PacketAck, PacketSize(&PacketAck));
+    _RPT3(_CRT_WARN, "DP_socket::SendAckPacket -- Sent acknowledgement of message #%d from player 0x%x to player 0x%x\n", PacketID, Local_ID, Remote_ID);
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+void DP_socket::AddConnection(DPPACKET* Packet, DWORD Size)
+{
+    DP_socket *OldSock = DP->FindSocket(Packet->Reserved);
+    if (OldSock) {
+        OldSock->SendAckPacket(Packet->MessageNum);
+        return;
+    }
+    
+    HRESULT hRet;
+    DP_address NewAddr;
+    NewAddr.Port = -1;
+    NewAddr.Remote_ID = Packet->Reserved;
+    DPNAME Name;
+    memset(&Name, 0, sizeof(Name));
+    Name.dwSize = sizeof(Name);
+    hRet = g_pDP->CreatePlayer(&NewAddr.Local_ID, &Name, NULL, NULL, 0, 0);
+    if (hRet != DP_OK)
+        return;
+    DP_socket *NewSock;
+    NewSock = new DP_socket(-1, &NewAddr);
+    NewSock->NextConnect = ConnectRequests;
+    ConnectRequests = NewSock;
+    NewSock->Remote_Fast_Socket = *((int*) &Packet->Data);
+    NewSock->SendAckPacket(Packet->MessageNum);
+    NewSock->SendConnectAck();
+    NewSock->InQueue.Serial = 1;
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+void DP_socket::SendConnectAck()
+{
+    DPPACKET ConnectAck;
+    ConnectAck.DataSize = 0;
+    ConnectAck.MessageNum = -1;
+    ConnectAck.Port = SocketPort;
+    ConnectAck.MessageType = PACKET_CONNECT_ACK;
+    ConnectAck.Reserved = Local_ID;
+    OutQueue.AddPacketToQueue(&ConnectAck);
+    Send();
+/*    HRESULT hRet;
+    hRet = g_pDP->Send(Local_ID, Remote_ID, 0, &ConnectAck, PacketSize(&ConnectAck));
+    _RPT2(_CRT_WARN, "DP_socket::write -- Sent connection acknowledgement from player 0x%x to player 0x%x\n", Local_ID, Remote_ID); */
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+void DP_socket::SendConnectRequest()
+{
+    DPPACKET ConnectRequest;
+    ConnectRequest.DataSize = 4;
+    ConnectRequest.Port = SocketPort;
+    ConnectRequest.MessageType = PACKET_CONNECT;
+    ConnectRequest.Reserved = Local_ID;
+    *((unsigned long*) ConnectRequest.Data) = FastID;
+    OutQueue.AddPacketToQueue(&ConnectRequest);
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+void DP_socket::Send() {
+    if (!OutQueue.DataSize())
+        return;
+    HRESULT hRet;
+    hRet = g_pDP->Send(Local_ID, Remote_ID, 0, OutQueue.Data, OutQueue.DataSize());
+    _RPT3(_CRT_WARN, "DP_socket::Send -- Sent %d bytes from player 0x%x to player 0x%x\n", OutQueue.DataSize(), Local_ID, Remote_ID);
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+int DP_socket::write(void* buf, int size, net_address *addr)
+{
+    DPPACKET Packet;
+    Packet.DataSize = size;
+    Packet.MessageType = PACKET_DATA;
+    Packet.Port = SocketPort;
+    Packet.Reserved = FastID;
+    memcpy(Packet.Data, buf, size);
+    if (!BlockingReads) {
+/*        OutQueue.Acknowledge(((DPPACKET*) OutQueue.Data)->MessageNum);
+        OutQueue.AddPacketToQueue(&Packet); */
+        HRESULT hRet;
+        if (!addr) {
+            hRet = g_pDP->Send(Local_ID, Remote_ID, 0, &Packet, PacketSize(&Packet));
+            _RPT3(_CRT_WARN, "DP_socket::write (fast) -- Sent %d bytes from player 0x%x to player 0x%x\n", OutQueue.DataSize(), Local_ID, Remote_ID);
+        }
+        else {
+            hRet = g_pDP->Send(Local_ID, ((DP_address*) addr)->Remote_ID, 0, &Packet, PacketSize(&Packet));
+            _RPT3(_CRT_WARN, "DP_socket::write (fast addr) -- Sent %d bytes from player 0x%x to player 0x%x\n", OutQueue.DataSize(), Local_ID, ((DP_address*) addr)->Remote_ID);
+        }
+    }
+    else {
+        OutQueue.AddPacketToQueue(&Packet);
+        Send();
+    }
+    return size;
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+int DP_socket::read(void *buf, int size, net_address **addr)
+{
+    DWORD BytesRead = 0;
+    time_marker Start, Now;
+    do {
+        while (!ready_to_read() && BlockingReads && Now.diff_time(&Start) < DPREAD_TIMEOUT) {
+            DP->select(0);
+        }
+        BytesRead += read_backup(buf, size);
+     } while (size && Now.diff_time(&Start) < DPREAD_TIMEOUT && BlockingReads);
+    _RPT2(_CRT_WARN, "DP_socket::read -- Read %d bytes from player 0x%x\n", BytesRead, Remote_ID);
+    if (addr) {
+        DP_address *NewAddr = new DP_address();
+        NewAddr->Local_ID = Local_ID;
+        NewAddr->Remote_ID = Last_Received_ID;
+        NewAddr->Port = -1;
+        *addr = NewAddr;
+    }
+    return BytesRead;
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+DP_socket::~DP_socket()
+{
+    _RPT2(_CRT_WARN, "Deleting socket from player 0x%x to player 0x%x\n", Local_ID, Remote_ID);
+    if (backup)
+        jfree(backup);
+    DP->remove_socket_from_list(this);
+    if (Local_ID == FastID)
+        FastID = 0;
+    if (Local_ID != ServerPlayer)
+        g_pDP->DestroyPlayer(Local_ID);
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+DP_socket::DP_socket(int port, DP_address *dest)
+{  
+    Connecting = 0;
+    ConnectRequests = NULL;
+    backup = NULL;
+    backup_size = backup_end = backup_start = 0;
+    BlockingReads = 1;
+
+    status = INIT;
+    DP->add_socket_to_list(this);
+    // setup an outgoing packet structure
+    if (dest) {
+        if (port != -1)
+            SocketPort = port;
+        else
+            SocketPort = dest->Port;
+        Remote_ID = dest->Remote_ID;
+        Local_ID = dest->Local_ID;
+    }
+    else {
+        SocketPort = port;
+        Remote_ID = DPID_ALLPLAYERS;
+        Local_ID = 0;
+    }
+    _ASSERT(SocketPort != 0xcdcdcdcd);
+	_RPT1(_CRT_WARN, "Creating new socket on port %d\n", SocketPort);
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+void DP_socket::send_ping_packet()
+{
+    //send_data(0);   // send a 0 length data packet to remote host
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+void DP_socket::clear()
+{
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+int DP_socket::ready_to_write() {
+    return 1;
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+int DP_socket::ProcessPacket()
+{
+    DPPACKET Packet;
+    InQueue.Read(&Packet);
+    switch (Packet.MessageType) {
+        case PACKET_ACK:
+            OutQueue.Acknowledge(Packet.Reserved);
+            _RPT1(_CRT_WARN, "Got acknowledgement for packet #%d\n", Packet.Reserved);
+            return 0;
+        case PACKET_CONNECT:
+            // Pitch it, we're getting a dupe connect from this player
+            if (BlockingReads)
+                SendAckPacket(Packet.MessageNum);
+            _RPT1(_CRT_WARN, "Got duplicate connect request from 0x%x\n", Packet.Reserved);
+            Send();
+            break;
+        case PACKET_CONNECT_ACK:
+            if (Remote_ID == ServerPlayer) {
+                Remote_ID = Packet.Reserved;
+                Connecting = 0;
+                _RPT1(_CRT_WARN, "Got connect acknowledgement from 0x%x\n", Packet.Reserved);
+//                SendAckPacket(Packet.MessageNum);
+            }
+            SendAckPacket(Packet.MessageNum);
+            break;
+        case PACKET_DATA:
+            if (BlockingReads)
+                SendAckPacket(Packet.MessageNum);
+            SendAckPacket(Packet.MessageNum);
+            add_backup((unsigned char*) &Packet.Data, Packet.DataSize);
+            _RPT3(_CRT_WARN, "Read %d bytes from packet 0x%x:%d\n", Packet.DataSize, Local_ID, Packet.MessageNum);
+            return Packet.DataSize;
+            break;
+        default:
+            break;
+    }
+    return 0;
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+int DP_socket::ready_to_read()     
+{ 
+    static time_marker Last;
+    time_marker Now;
+    if (backup_end - backup_start > 0) {
+        return backup_end - backup_start;
+    }
+/*    if (ConnectRequests)
+        return 1; */
+
+    if (BlockingReads)
+        if (OutQueue.DataSize() && Now.diff_time(&Last) > DPRESEND_TIMEOUT) {
+            Send();
+            Last.get_time();
+        }
+
+    DPID Source_ID, *From;
+    DWORD flags;
+    if (Remote_ID == DPID_ALLPLAYERS || Connecting) {
+        flags = DPRECEIVE_TOPLAYER;
+        From = &Source_ID;
+    }
+    else {
+        flags = DPRECEIVE_FROMPLAYER | DPRECEIVE_TOPLAYER;
+        From = &Remote_ID;
+    }
+    HRESULT hRet = DP_OK;
+//    while (hRet == DP_OK) {
+        DWORD DataSize = OVERSIZE_PACKET_SIZE + PACKET_HEADER_SIZE;
+        DPPACKET *Pack = (DPPACKET*) &BigPacket;
+        hRet = g_pDP->Receive(From, &Local_ID, flags, Pack, &DataSize);
+        if (hRet == DPERR_BUFFERTOOSMALL) {
+            Pack = (DPPACKET*) malloc(DataSize);
+            hRet = g_pDP->Receive(From, &Local_ID, flags, Pack, &DataSize);
+        }
+        if (hRet == DP_OK) {
+            Last_Received_ID = *From;
+            if (*From == Local_ID || *From == 0 || DataSize < PACKET_HEADER_SIZE) {
+                _RPT0(_CRT_WARN, "Useless network packet, tossed out...\n");
+//                return 0;
+            }
+            switch (Pack->MessageType) {
+                case PACKET_CONNECT:
+                    DP->HandlePacket(Pack, DataSize);
+                    break;
+                case PACKET_DATA:
+                case PACKET_ACK:
+                case PACKET_CONNECT_ACK:
+                    InQueue.AddPackets(Pack, DataSize);
+                    do {
+                        ProcessPacket();
+                    } while (InQueue.Count()); // && (backup_end - backup_start <= 0));
+                    break;
+            }
+        }
+        if (Pack != (DPPACKET*) &BigPacket)
+            delete Pack;
+//    } 
+    if (backup_end - backup_start > 0) {
+        return backup_end - backup_start;
+    }
+    if (ConnectRequests)
+        return 1;
+    return 0;
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+int DP_socket::read_backup(void *&buf, int &size)    // read previously buffered data
+{ 
+    int s = backup_end - backup_start;
+    if (s && size) {
+        if (size >= s) {
+            memcpy(buf, backup + backup_start, s);
+            buf = (void*) ((uchar*) buf + s);
+            backup_start = backup_end = 0;
+            size -= s;
+            return s;
+        }
+        else {
+            memcpy(buf, backup + backup_start, size);
+            buf = (void*) ((uchar*) + size);
+            int ret = size;
+            backup_start += size;
+            size = 0;
+            return ret;
+        }
+    } else return 0;
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+void DP_socket::add_backup(uchar *buf, int size)
+{
+    if (size) {
+        if (backup_size - backup_end >= size) {
+            memcpy(backup + backup_end, buf, size);
+            backup_end += size;
+        }
+        else {
+            backup_size += backup_end + size - backup_size;
+            backup = (uchar*) jrealloc(backup, backup_size, "backup buffer");
+            add_backup(buf, size);
+        }
+    }
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+DP_address *DP_socket::GetAddress()
+{
+    DP_address *NewAddr = new DP_address;
+    NewAddr->Local_ID = Local_ID;
+    NewAddr->Remote_ID = Remote_Fast_Socket;
+    NewAddr->Port = SocketPort;
+    NewAddr->SessionGUID = GUID_NULL;
+    return NewAddr;
+}
+
+/* --------------------------------------------------------------------------- 
+ ------------------------------------------------------------------------- /**/
+net_socket *DP_socket::accept(net_address *&from)
+{
+    if (ConnectRequests) {
+        DP_socket *last = NULL, *ret = ConnectRequests;
+        while (ret->NextConnect) {
+            last = ret;
+            ret = ret->NextConnect;
+        }
+        from = ret->GetAddress();
+        if (last)
+            last->NextConnect = NULL;
+        else
+            ConnectRequests = NULL;
+        return ret;
+    }
+    else
+        return NULL;
+}
+
