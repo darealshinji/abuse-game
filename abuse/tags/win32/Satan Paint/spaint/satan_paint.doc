@@ -1,0 +1,604 @@
+            Satan Paint 1.2 (beta), (C) 1994 Jonathan Clark
+	          "Beta means bugs in greek  :)"
+
+                 (very hard to descern) ** DOCS **
+
+----------------------------------------------------------------
+                      New features
+----------------------------------------------------------------
+Version 1.2
+     -  Broke all wildcards in DOS.
+     -  Fixed the problem of shared memory not getting de-allocated
+        on crash.  It is still not freed if you kill the program
+	(kill -9), but these blocks can be freed with ipcs and ipcrm.
+      - added reverse sequence command.
+      - you can start spaint with no command-line args now!
+      - 24 bit image merging replaced with slower 8 bit color
+        method from faster 5 bit method.
+      - fixed most bugs that occur when no images are loaded
+      - added a -seq option to auto-load, crop, center, and calculate
+        frame advancement from a dpaint sequence.  i.e.  pic0001.pcx ...
+	Usefull for loading long sequences on a system without virtual
+	memory.
+      - character format replaced (still reads old characters) to include
+        frame advancement.
+      - fixed window resizing for X shm version.      
+      - added particle animation type (see type command)
+
+
+New commands :
+	sat, light, merge_range
+
+
+Version 1.0
+----------------------------------------------------------------
+Pull down menus : pretty obvious how to use them
+	A couple of tricks : 
+	  On dialog entries asking for a color number you
+	  can just click on the palette color.
+	  On dialog entries asking for a single image number
+	  you can click on it wih the right mouse button during
+	  index mode.
+	I know about the redraw the problems, don't tell me.
+
+
+----------------------------------------------------------------
+                    To run satan paint
+----------------------------------------------------------------
+  type paint filename [filename] [filename] [options].  ex. 
+	paint figures.spe
+	the first file is loaded with it's palette and the rest are
+        merged in to best fit the palette.  Wildcards are permitted in
+        both DOS and UNIX.
+
+You can specify the following graphics modes to run in :  (SVGA and VESA)
+
+      -vmode G640x400x256
+      -vmode G640x480x256    (need 512k video card)
+      -vmode G800x600x256    (need 512k video card)
+      -vmode G1024x768x256   (need 1M video card)
+
+  For DOS, if your video card does not have the VESA driver built-in,
+  you must run a VESA driver for your card to run hi-res.
+
+  For XWindows, you can specify the initial size of the window with the
+    "-size" option.  Example spaint picture.pcx -size 800 560
+
+  NOTE : all flags should be at the end of the parameters.
+
+  Satan Paint currently reads the following file formats :
+
+
+  Bits  Type
+  -----------------------------------------------------------------------
+    8	MDL	 : One of my older paint programs...
+    8	XWD	 : Produced by the Unix xwd command. 
+	           (this can be used to load anything you can display 
+		    in an X window).
+    24  PPM      : portable pixmap format
+    8   PIC      : used by GL animations, and some Mac programs.
+  24,8  PCX      : PC Paint brush, Delux Paint
+  24,8  BMP      : Microsoft Bitmap format.
+    8   LBM      : Delux Paint
+    8   SPE      : Satan Paint SPEc format.
+    
+
+
+   To read a 24 bit file you must specify a 8 bit file first, so spaint knows
+what palette to quantize to.  i.e.  
+
+	spaint mypal.pcx my24pic.bmp
+
+
+-------------------------------------------------------------------
+	              Basic Editing
+-------------------------------------------------------------------
+
+Pixel mode :
+   left mouse button draws, right mouse button "picks" up the color
+
+Image mode :
+  You have to select an area (like brush in DPaint).  Use the SPACE-BAR
+  to select an area first, then select the image icon and you can use
+  the selected area like a brush. 
+
+Fill, line, rectangle, circle, bar mode : obvious
+  I know the circles aren't great, I never use them....
+
+Index mode :
+  Arrows scroll, left button selects.
+
+You can draw your own icons by editing spaint.spe.
+
+
+-------------------------------------------------------------------
+                       Definitions 
+-------------------------------------------------------------------
+
+  range : a list of image numbers, examples :
+         0,1,4,5-8     =  (0,1,4,5,6,7,8)
+         3-6,9-12      =  (3,4,5,6,9,10,11,12)
+         all           =  every image currently loaded
+	 this          =  current image
+	 last_on       =  last image selected (before this)
+
+  spe : short for Spec, as in a spec of dust.
+	The file format is a collections of specs of different types, mainly
+	images.  See end of this file for more info on the format.
+   	Has also been refered to as Small Penis Envy :)
+
+
+-----------------------------------------------------------------------
+                        Commands
+-----------------------------------------------------------------------
+Command line commands :
+  To type in a command hit the '/' key then type...
+  Commands :
+
+*****************************FILE OPERATIONS ***************************
+   load palette filename
+     loads the palette from another file, the current images are left
+     alone so if you load a different palette, they might look wierd.
+
+   merge filename
+     merges all the images from the filename.  New images are remapped to
+     best fit the current palatte.   
+
+   merge_range filename start end
+     merges image from start to end from the filename.  if end is -1 the
+     it is set to the last image in the file.
+
+   read filename
+	reads filename and processes each line as a command
+
+   saveas filename
+	saves all the images in SPEC (propritary) format to filename
+	the working filename is also altered to this name
+
+   write_ppm [filename]
+	saves the current image in Portable PixMap format. 
+
+   write_pcx [filename]
+	saves the current image in PCX 8 bit format
+
+   write_bmp [filename]
+	saves the current image in MS bitmap 8 bit format
+
+   write_include [filename]
+	saves the current image in 'C' code which can be compiled and included
+	in programs.  If the file already exists, then the current image is appended
+	to it and the palette is not written.  This can be used to write a series of
+	images to a single file.
+	
+   write_property [filename] range
+	appends a string to filename which contains all the property
+	information about an image, if you constantly reimport graphics data from
+	another format and want to keep the properties the same you cna
+	use this to save only the properties and load_properties to fetch them back
+
+  write_raw_gray filename
+        saves the current image as a raw series of bytes in gray scale.  Stored as you
+	would expect.  left-right to top-down.  Image dimensions are not stored!
+
+  write_raw_color filename
+	saveas as a raw 24 bit picture.  left-right to top-down,  3 byte RGB triplets.
+	Image dimensions are not stored!
+
+  merge_raw_gray width height filename
+        merges a raw 8 bit gray scale image.  Sice width and height are not stored in
+        the file you must input these.
+
+  Note : write_raw_gray and merge_ray_gray are usefully if you are playing with dec.c and
+	enc.c from the book Fractal Image Compression, of which the source can be found on
+	the net.
+
+
+************************* IMAGE OPERATIONS **************************
+
+   with range command
+     does the command 'command' on the specified image number
+     example : 
+	with all lower_name    (converts the names of all the images to lower case)
+     DO NOT USE WITH IN CONJUNCTION WITH DELETE, because image numbers change with
+	each delete commands.  Like wise the command 
+	with X-last copy 
+	should not be used because copy increments last and an infinite copy loop is
+	created.
+
+
+   at x y command
+     does the command 'command' at the location x y, useful
+     for command line fill and other commands that require the
+     location of the mouse
+
+   name [name]               ex. name gaint, frame #3
+      names the current image 'gaint, frame #3'
+
+   remove singles 
+     removes an single pixels in an image (makes them color 0)
+     this is usefull for cleaning up dirty digitized pictures
+ 
+   make color strip 
+     Creates an image 256x1 with every color in the palatte. Not very
+     usefull for the artist.
+ 
+   animate [frame1 frame2 ..]
+     will animate the named in the order you specified.
+     ex.  animate 0 4 3 2 1
+     while draw picture #0, #4, #3, #2, #1, repeatedly
+     to advance to the next frame, press the left mouse button, to quit
+     the animation mode, press any key.
+
+   palette on 
+     pops up the palette window if you closed it.
+     hotkey '1' toggles palette on and off
+
+   palette off
+     removes the palette window from the screen.
+     hotkey '1' toggles palette on and off
+
+   palette toggle    
+
+   flip [x or y] 
+     flips the current image about the x or y axis.   ex. flip x
+
+   chop [width height]
+     chops the current image up into peices that are exactly [widthxheight]
+     this is usefully for making tiles.  You can draw large image and
+     chop it up and use the peices in the map editor.
+
+   new or newb or newf or newc or news [width height name]
+     creates a new image size widthxheight and names it name
+       ex. new 40 30 green picture
+     newb creates a new background tile (don't worry about this for now)
+     newf creates a new foreground tile (don't worry about this for now)
+     newc creates a new character (don't worry about this for now)
+     new with no parameters brings up a pop-up window which will prompt
+     you for more info.
+     news creates a new image from the last selected area
+
+
+   scale [width height]
+     scales the current image to the new size
+
+   scalex [mult div]
+     scales image by a factor of mult/div, eg. scalex 1 2 scales the image
+     one half size.
+ 
+   where
+     tells exactly where the moose is located within the current image & screen
+     this is usefully for measuring pixels. (shotcut key 'w')
+
+   clip x1 y1 x2 y2
+     cuts away part of an image and leaves only the area in x1 y1 x2 y2
+     the new image size becomes (x2-x1+1)x(y2-y1+1)
+   
+   solid [x]
+     makes every non-black pixel in the current image the color x.
+     useful for making mask.
+
+   select
+     enters select mode.  The user then mouse the mouse to create a rectangle
+     around the part of the image they wish to copy into the select buffer.
+
+   select x1 y1 x2 y2
+     copies the specified area into the select buffer
+     You can use the 'P' & 'p' keys to paste the selection back.
+     If no paramters are specified then area is selected interactivly. 
+     Hot key is SPACE BAR.
+
+   swap x y
+     swaps the image numbers of images x & y.  Names are not changed.
+     ex. swap 4 3 
+     will swap the 5th and 4rth image. The first image is #0.
+
+   tile 
+     tiles the current image on the screen to fill the screen.
+     usefull to see how something repeats across boundaries.
+
+   go x
+     jumps the image #x
+
+   index 
+     same as the 'i' key
+     displays all the images on the screen and lets you pick one with the
+     mouse.  You can scroll up and down with the UP/DOWN arrow keys.
+     While in index mode you can also select image to animate by pressing 'a'
+     then clicking on the order of animation and the pressing 'a' again.
+     Pressing 'f' will show the properties of all images, incomplete polygons
+     are shown in green (if the current palette as a green in it).
+
+
+  set type|xcfg|attack|damage|body ..
+     examples include
+       set type foretile
+       set attack 2 4 4 8 2       ; 2 point (4,4) (8,2)
+       set attack -1              ; 5 points, guess to be the body outline
+       set xcfg 8
+       set xcfg -1                ; image width/2
+     you can combine more than one set in the same command, example
+       set type character xcfg 4 damage 3 0 0 0 4 5 4 
+     the above example reuires the type set to occur first in the list 
+       because the other things being set are dependant on being a character type.
+
+   type [image|character|foretile|backtile|particle]
+      changes the type associated with the current image, a litmited form of set
+      particle frames probably aren't to usefull for most people, I made a particle
+      animator which I use with spaint.  I don't know what features work with particle
+      frames, because I haven't tested this yet, see end of file of particle save format.
+
+
+  bevel amount
+        makes an image "beveled".  The boundary of the object must be color 0.  The
+        highlight is raised color intensity 'amount' anmd the darkened area is
+        lowered 'amount'.  Closest match is preformed on these values.
+
+  blend image# amount
+	blurs the current image with the image specified, amount is a percentage 
+	by which the current image is represented in blend, 50 is 50% half and
+	half.
+
+
+   blur x1 y1 x2 y2 blur_amount
+      does a blur on the specfied, blur with no parameters blurs the last selected area
+      with blur_amount 1.  if no parameters are given to blur then
+      the blur amount is 1 and hte area is used from the last select operation.
+  
+   blur_color amount color
+      takes all of the pixels of color [color] and blurs them into the
+      surronding image by a factor of [amount].  The area that is morphed
+      if the area selected by the last select operation (say as pressing 
+      'b').  If amount and color are not given then amount of 1 is used
+      and color is taken from the currently selected color.  See 'B' key.
+
+   anti x1 y1 x2 y2
+      antialeases, very similary to blur, but not as strong
+  
+   morph aneal_steps frames blur start_frame end_frame [start_hint] [end_hint]
+      creates [frames] images which morph from the starting
+      frame to the ending frame.
+      aneal_steps should be low for a blurry morph [10 or less]
+         and high for crisp morph [100+]
+      start_hint and end_hint are images which suggest ways the pixels
+         should move while morphing.
+      blur is a threshold used to decide weither or not to blur a pixel.
+	if the color space distance squared between two pixel is greater than this
+	value they averaged to become closer to each other.
+	Some values to try : 1000, 2000, 5000, 8000.  Low values (< 100) are not
+	advised :)
+
+   undo
+	undoes the last thing you did
+
+   undos x
+	sets the number of undos avaiable to x  (default is 4)
+	when editing large images, set undos to 0 or 1 because an entire copy
+	the image is saved for every undo level.
+
+   renumber starting_number "format string" range
+	renumbers a list of images, example
+	  renumber 10 "image #%d, JC" 3-10,12
+	format string is in the format of C printf functions, and should
+	contain a %d.
+	 
+   crop
+	clips an image to minimum size removing only color 0
+
+   crop_center	
+	if the current image type is character, then this command takes and image
+	searches for a lone pixel (non 0) above the image and skips it continuing to crop,
+	but after the operation is over, the center of gravity is set to where the
+	x position of that lone pixel was relative to the new start off the image.
+	If the image type is not character then all of the above occurs except no center
+	of gravity exsist to be set.
+
+   upper_name 
+	converts all of the letters in the image name to upper case
+
+   lower_name
+	converts all of the letter in the image name to lower case
+
+   prefix_name
+	adds the following string to the front of the current name
+
+   suffix_name
+	adds the following string to the end of the current name
+
+   calc_filter
+	Calculates a 5 bit color filter which will be saved when the file
+	is saved.
+
+   remap color1 color2 color3 ...
+        Remaps all the listed colors to the currently selected color
+
+   setkey keyname [command]
+	assigns a command to a key, valid keys are printables and F1 through F10
+	useful to have your favorite commands assigned to keys, this list of
+	setkeys can be read from $HOME/satan.rc or ./satan.rc at startup.
+	
+   delete range
+	deletes a range of images, range of 5-10,12  deletes images 5 through 10 and 12
+
+   rm_dups
+	scans all the images and removes duplicates based on image content.  If two
+	images have exactly the same picture, the second is deleted.  Image type and
+	properties are not taken into account when comparing.
+
+   clear_unsed 
+	sets all the unsed colors to black (0).  Scans all of your images for colors
+	that haven't been used yet and sets them to 0,0,0.
+
+   refresh off/on
+	if refresh is turned off then image opration will not be refreshed on the screen,
+	usefull for speeding up scripts which do not need to be seen on the screen.
+
+   grow xamount yamount
+	enlarges the image by abs(xamount) abs(yamount) pixels.  If xamount,yamount <0 then
+	the image is enlarged on the left,top else on the right bottom.  Grow addes blanks
+	space onto the new region.  See scale if you want to enlarge the image.
+ 
+   color_add amount
+	adds amount to the currently selected color, can be negative.
+	key short cuts,  '[' = color_add -1, ']' = color_add 1
+
+  add_bs amount
+	adds amount to the size of the color cells in the palette. I.e. makes the palette
+	window bigger or smaller by amount
+
+  mouse_shape image centerx centery
+	sets the shape of the mouse cursor.  image is the number of
+	the image to use.  (also valid are this, last_on, and "name").
+	centerx and centery are used as offsets into the image to
+	specify where the actual cursor points.
+	In your satan.rc file you can add the following lines to to set the
+	mouse cursor up every time you start.
+	------------
+	merge /u/me/mymouse.spe
+	mouse_shape "my_mouse_image_name" 0 0
+	delete "my_mouse_image_name"
+
+  copy_prop image property_name
+	copies a property from another item.
+	valid property names are :
+	  type
+	  attack   (only for character type)
+	  body     (only for character type)
+	  damage   (only for character type)
+	  frame    (only for foretile type)
+	  xcfg     (only for character type)
+	  name
+	example :
+	  copy_prop "frog_image" xcfg
+	  with 0-20 copy_prop 21 frame       (copies the frame from 
+	                                      foretile 21 to images 0 thru 20)
+
+  light r g b
+       remaps the selected area with ratios r g b.  If r>100 then all of
+       red components in the image are brightened, if r<100 then all of the 
+       red components are darkened.
+
+  sat
+       an interactive version of light.  Click on the scroll bar where you
+       want to try out a color mapping.  Close window when done.
+
+
+
+-------------------------------------------------------------------------
+                           Keys
+-------------------------------------------------------------------------
+
+keys :  Just press it stuff.
+  1     toggles palette window on/off
+  /     do a command, follow with command and enter   
+  n     go to the next image
+  z     (z)oom in X1
+  Z     (Z)oom out X1
+  m     make image (m)inimum size (zoom 1)
+  M     make image (M)aximum size to fit screen
+  e     toggles the edit window
+  s     saves the file you are working on.
+        do this periotically!  The program is not bug free :)
+	If no filename has been specifed with saveas, save uses
+	the first file on the command line.
+  D     delete the current image, command is caps so you don't
+        accidentally do this.  There is no undo!
+  c     copy the current image.
+  C     draws a circle.
+  f     flood fill with the current color at the spot where the mouse is.
+  p     paste the select buffer (transpaerent mode) 
+  P     paste the select buffer (non-transpaerent mode) 
+  +     make the brush bigger
+	if cursor is on palette window, it grows
+  -     make the brush smaller
+	if cursor is on palette window, it shrinks  
+
+  space see the select command
+  w     see the where command
+  t     see the tile command
+  i     see the index command
+  l     draws a line.
+  b     blurs the last selected area by amount 1 (see select)
+  B     blurs only the currently selected color by amount 1
+  A     antialieases the last selected area
+  r     see remap command
+  u     undo
+  [     color_add -1
+  ]     color_add 1
+
+  arrow keys scroll around while editing... 
+
+
+-------------------------------------------------------------------------
+                              File format
+-------------------------------------------------------------------------
+  I release this format as Public Domain and free from any restrictions.
+
+	all shorts, and intels stored in Intel format
+
+Signature  = "SPEC1.0",0   8 bytes
+
+short             number of directory entries
+                  [entries]
+
+byte              entry type
+byte              entry name length
+X                 entry name (with null terminator)
+byte              flags     SPEC_FLAG_LINK=1
+if (flags&LINK)
+  byte            link filename length
+   X              link filename
+ else
+   long           data size
+   long           offset
+
+
+(linked filenames are not implemented yet)
+
+Types :
+
+#define SPEC_INVALID_TYPE    0
+#define SPEC_COLOR_TABLE     1  (x=short followed by x*x*x bytes)
+#define SPEC_PALETTE         2  (x=short followed by x*3 bytes {r,g,b} )
+#define SPEC_IMAGE           4  (x,y=shorts followed by x*y bytes)
+#define SPEC_PARTICLE        22  (t=long followed by t*(short x, short y, char color) bytes)
+
+
+	                         (below are not documented yet .... )
+#define SPEC_FORETILE        5
+#define SPEC_BACKTILE        6
+#define SPEC_CHARACTER       7
+#define SPEC_MORPH_POINTS_8  8
+#define SPEC_MORPH_POINTS_16 9
+#define SPEC_GRUE_OBJS       10
+#define SPEC_EXTERN_SFX      11
+#define SPEC_DMX_MUS         12
+#define SPEC_PATCHED_MORPH   13
+#define SPEC_NORMAL_FILE     14
+#define SPEC_COMPRESS1_FILE  15
+#define SPEC_VECTOR_IMAGE    16
+#define SPEC_LIGHT_LIST      17
+#define SPEC_GRUE_FGMAP      18
+#define SPEC_GRUE_BGMAP      19
+#define SPEC_DATA_ARRAY      20
+#define SPEC_CHARACTER2      21
+#define SPEC_EXTERNAL_LCACHE 23
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
