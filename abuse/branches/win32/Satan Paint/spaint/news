@@ -1,0 +1,33 @@
+Introducing binaries for Satan Paint version 1.0 beta.
+This program is public domain, you can copy but not sell.
+Source is not available to the public.
+
+Description:    
+
+  A game developers paint program/sprite editor.  Tons of features
+including, script language, unlimited image size, unlimited number of
+images, animation, tiling, directed and undirected morphing,
+antialising, bluring, and scaling. 8 bit color editing, quantizes 24
+bit BMP's and PCX's.
+
+  - Reads PCX, BMP, PIC, LBM, SPE, and Xwindow dumps.
+  - Writes SPE, PCX, BMP, and "C code".
+
+
+  Features movable "palette" windows and self definable mouse shapes.
+
+
+Console and X11 versions available.  X11 uses shared memory extensions,
+so it's fast!
+
+Ports for DOS, Linux, Sun, SGI, and AIX.
+
+
+
+      Please let me know if/when you run across bugs. Thanks.
+
+
+                           JC
+
+
+

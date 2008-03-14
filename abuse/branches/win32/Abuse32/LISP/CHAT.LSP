@@ -1,0 +1,98 @@
+(enable_chatting)
+
+(setq color_list '(
+	("Brown" 0)
+	("Blue" 1)
+	("Yellow" 2)
+	("Fire" 3)
+	("Olive" 4)
+	("Pink" 5)
+	("Dark Blue" 6)
+	("Grape" 7)
+	("Africaan" 8)
+	("Toxik" 9)
+))
+
+(setq Color_help '"Colors: Br, Bl, Ye, Fi, Ol, Pi, Da, Gr, Af, To")
+
+(setq team_list '(
+	("Red" 0)
+	("Blue" 1)
+	("Green" 2)
+	("Yellow" 3)
+))
+
+(setq team_color_list '(
+     (0 (("Fire" 3) ("Pink" 5) ("Africaan" 8)))
+	 (1 (("Blue" 1) ("Grape" 7) ("Dark Blue" 6)))
+	 (2 (("Olive" 4) ("Toxik" 9)))
+	 (3 (("Yellow" 2) ("Brown" 0)))
+))
+
+(setq Team_help '"Teams: None, Red, Blue, Green, Yellow")
+
+(defun find_color (str colors)
+	(if (search str (car (car colors)))
+		(progn
+			(chat_print (concatenate 'string "# " (player_name) " is now " (car (car colors))))
+			(set_object_tint (car (cdr (car colors))))
+		)
+		(if (cdr colors)
+			(find_color str (cdr colors))
+			nil
+		)
+	)
+)
+
+(defun find_team (str team)
+	(if (search str (car (car team)))
+		(progn
+			(chat_print (concatenate 'string "# " (player_name) " is now on " (car (car team))))
+			(if (not (eq (get_object_team) (car (cdr (car team)))))
+				(progn
+					(set_hp 0)
+					(create_dead_parts cop_dead_parts (* (get_dead_part (me)) 3) (get_object_tint))
+;					(set_kills (- (get_kills) 1))
+					(set_object_team (car (cdr (car team))))
+					(set_object_tint (car (cdr (car (car (cdr (nth (get_object_team) team_color_list)))))))
+				)
+			)
+		)
+		(if (cdr team)
+			(find_team str (cdr team))
+			nil
+		)
+	)
+)
+
+(defun chat_input (str)
+	(if (and (> (length str) 0) (equal (elt str 0) #\/))
+		(if (and (search "/nick " str) (> (length str) 6))
+			(chat_print (concatenate 'string "# " (player_name) " is known as "
+				(progn
+					(set_player_name (substr 6 (- (length str) 1) str))
+                    (player_name)
+				)
+			))
+			(if (and (local_player) (search "/help" str))
+				(chat_print "Commands : /nick [name], /color, /team, /help")
+				(if (search "/color" str)
+					(if (> (length str) 7)
+						(find_color (substr 7 (- (length str) 1) str) color_list)
+						(chat_print Color_help)
+                    )
+					(if (search "/team" str)
+						(if (> (length str) 6)
+							(find_team (substr 6 (- (length str) 1) str) team_list)
+							(chat_print Team_help)
+						)
+						(if (local_player)
+							(chat_print (concatenate 'string "unknown command " str))
+						)
+					)
+				)
+			)
+		)
+		(chat_print (concatenate 'string "<" (player_name) "> " str))
+	)
+)
