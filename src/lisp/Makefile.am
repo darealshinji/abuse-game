@@ -9,6 +9,6 @@ liblisp_a_SOURCES = \
     stack.hpp \
     $(NULL)
 
-INCLUDES = -I$(srcdir) -I$(srcdir)/../ -I$(srcdir)/../imlib
+INCLUDES = -I$(srcdir) -I$(srcdir)/../ -I$(srcdir)/../imlib $(SDL_CFLAGS)
 
 CPPFLAGS = @CPPFLAGS@ -DMANAGE_MEM -DNO_CHECK

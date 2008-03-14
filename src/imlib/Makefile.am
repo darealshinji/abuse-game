@@ -44,6 +44,6 @@ libimlib_a_SOURCES = \
     jdir.hpp emm.hpp system.h std.h dos.h dir.h errs.h \
     $(NULL)
 
-INCLUDES = -I$(srcdir)
+INCLUDES = -I$(srcdir) $(SDL_CFLAGS)
 
 CPPFLAGS = @CPPFLAGS@ -DMANAGE_MEM -DNO_CHECK
