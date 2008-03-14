@@ -16,12 +16,11 @@
 class gui_status_node;
 class gui_status_manager : public status_manager
 {
-  window_manager *wm;
   char title[40];
   int last_perc;
   public :   
   gui_status_node *first;
-  gui_status_manager(window_manager *WM);
+  gui_status_manager();
   virtual void push(char const *name, visual_object *show);
   virtual void update(int percentage);
   virtual void pop();

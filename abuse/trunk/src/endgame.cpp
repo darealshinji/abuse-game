@@ -178,7 +178,7 @@ void show_end2()
   fade_out(16);
 
   image blank(2,2); blank.clear();
-  eh->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
+  wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
 
 
   screen->clear();
@@ -262,7 +262,7 @@ void show_end2()
         
       eoff+=2; if (eoff>=320) eoff-=320;
       coff+=1; if (coff>=320) coff-=320;      
-      eh->flush_screen();
+      wm->flush_screen();
       i++;
     }
   }
@@ -325,7 +325,7 @@ void show_end2()
 	}	  
       }
 
-      eh->flush_screen();
+      wm->flush_screen();
 
     }
 
@@ -355,12 +355,12 @@ void show_end2()
 	       p,cash.img(mask)->height(),eoff,coff);      
       eoff+=2; if (eoff>=320) eoff-=320;
       coff+=1; if (coff>=320) coff-=320;      
-      eh->flush_screen();
+      wm->flush_screen();
       i++;
     }
     
-    if (eh->event_waiting())
-      eh->get_event(ev);
+    if (wm->event_waiting())
+      wm->get_event(ev);
 
   } while (ev.type!=EV_KEY && ev.type!=EV_MOUSE_BUTTON);
 
@@ -386,11 +386,11 @@ void show_end2()
 	     cash.img(planet2),
 	     256,paddr,
 	     p,cash.img(mask)->height(),eoff,coff);      
-    text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),eh->font(),cmap,eh->bright_color());
-    eh->flush_screen();
+    text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),wm->font(),cmap,wm->bright_color());
+    wm->flush_screen();
     time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
 
-    while (eh->event_waiting() && ev.type!=EV_KEY) eh->get_event(ev);
+    while (wm->event_waiting() && ev.type!=EV_KEY) wm->get_event(ev);
   }
 
 
@@ -411,7 +411,7 @@ void show_end2()
   screen->clear();
 
 
-  eh->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
+  wm->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
   the_game->set_state(MENU_STATE);
 }
 
@@ -421,7 +421,7 @@ void share_end()
 {
   fade_out(16);
   image blank(2,2); blank.clear();
-  eh->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
+  wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
   screen->clear();
 
   image *im=cash.img(cash.reg("art/endgame.spe","tbc",SPEC_IMAGE,1));
@@ -452,25 +452,25 @@ void share_end()
     console_font->put_string(screen,xres/2+35,yres/2+100-console_font->height()-2,
 			   lstring_value(to_be));
 
-    text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(mid_plot),eh->font(),cmap,eh->bright_color());
-    eh->flush_screen();
+    text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(mid_plot),wm->font(),cmap,wm->bright_color());
+    wm->flush_screen();
     time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
-    while (eh->event_waiting() && ev.type!=EV_KEY) eh->get_event(ev);
+    while (wm->event_waiting() && ev.type!=EV_KEY) wm->get_event(ev);
   }
 
   if (ev.type!=EV_KEY)
   {
     do
     {
-      eh->flush_screen();
-      eh->get_event(ev);    
+      wm->flush_screen();
+      wm->get_event(ev);    
     } while (ev.type!=EV_KEY && ev.type!=EV_MOUSE_BUTTON);
   }
 
   fade_out(16);
-  eh->set_mouse_shape(blank.copy(),0,0);      // don't show mouse  
+  wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse  
   show_sell(1);
-  eh->push_event(new event(ID_SHOW_SELL,NULL));
+  wm->push_event(new event(ID_SHOW_SELL,NULL));
 }
 
 
@@ -478,7 +478,7 @@ void show_end()
 {
   fade_out(16);
   image blank(2,2); blank.clear();
-  eh->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
+  wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
   screen->clear();
 
   image *im=cash.img(cash.reg("art/endgame.spe","end.pcx",SPEC_IMAGE,1));
@@ -502,18 +502,18 @@ void show_end()
   {
     im->put_image(screen,dx,dy);
 
-    text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),eh->font(),cmap,eh->bright_color());
-    eh->flush_screen();
+    text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),wm->font(),cmap,wm->bright_color());
+    wm->flush_screen();
     time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
-    while (eh->event_waiting() && ev.type!=EV_KEY) eh->get_event(ev);
+    while (wm->event_waiting() && ev.type!=EV_KEY) wm->get_event(ev);
   }
 
   if (ev.type!=EV_KEY)
   {
     do
     {
-      eh->flush_screen();
-      eh->get_event(ev);    
+      wm->flush_screen();
+      wm->get_event(ev);    
     } while (ev.type!=EV_KEY && ev.type!=EV_MOUSE_BUTTON);
   }
 
@@ -525,7 +525,7 @@ void show_end()
 
   show_sell(1);
 
-  eh->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
+  wm->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
   the_game->set_state(MENU_STATE);
 }
 

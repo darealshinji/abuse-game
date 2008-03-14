@@ -18,11 +18,10 @@ class console
   JCFont *fnt;
   char *screen;
   jwindow *con_win;
-  window_manager *wm;
   char *name;
   public :
 
-  console(window_manager *WM, JCFont *font, int width, int height, char const *Name);
+  console(JCFont *font, int width, int height, char const *Name);
   int showing() { return con_win!=NULL; }
   void show();
   void hide();
@@ -45,9 +44,9 @@ class shell_term : public console
 {
   char shcmd[300];
   public :
-  shell_term(window_manager *WM, JCFont *font, int width, int height, char const *Name);
+  shell_term(JCFont *font, int width, int height, char const *Name);
   virtual ~shell_term() {};
-  int handle_event(event &ev, window_manager *wm);
+  int handle_event(event &ev);
   virtual void prompt();
   virtual void execute(char const *st);
 } ;

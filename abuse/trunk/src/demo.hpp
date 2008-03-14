@@ -37,8 +37,8 @@ class demo_manager
 
 extern demo_manager demo_man;
 
-extern void get_event(event &ev, window_manager *wm);
-extern int event_waiting(window_manager *wm);
+extern void get_event(event &ev);
+extern int event_waiting();
 
 
 

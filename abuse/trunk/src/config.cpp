@@ -160,7 +160,7 @@ void get_movement(int player, int &x, int &y, int &b1, int &b2, int &b3, int &b4
 			b3 = ( b1 && b2 );
 			b4 = 0;
 		}
-		else if( !eh )
+		else if( !wm )
 		{
 			x = y = b1 = b2 = b3 = b4 = 0;
 		}

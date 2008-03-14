@@ -49,7 +49,7 @@ uint8_t vs_down_arrow[8*10]={
     1, 1, 2, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0};
 
-void show_icon(image *screen, window_manager *wm, int x, int y, int icw, int ich, uint8_t *buf)
+void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
 {
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);
@@ -78,9 +78,9 @@ scroller::scroller(int X, int Y, int ID, int L, int H, int Vert, int Total_items
 }
 
 
-void scroller::area(int &x1, int &y1, int &x2, int &y2, window_manager *wm)
+void scroller::area(int &x1, int &y1, int &x2, int &y2)
 {  
-  area_config(wm);
+  area_config();
   x1=x-1; y1=y-1;  
   if (vert)
   { x2=x+l+bw();  y2=y+h; }
@@ -111,23 +111,23 @@ uint8_t *scroller::b2()
 }
 
 
-void scroller::draw_first(image *screen, window_manager *wm)
+void scroller::draw_first(image *screen)
 {
   if (sx>=t) sx=t-1;
-  draw(0,screen,wm);
+  draw(0,screen);
   screen->wiget_bar(b1x(),b1y(),b1x()+bw()-1,b1y()+bh()-1,
 		    wm->bright_color(),wm->medium_color(),wm->dark_color());
   screen->wiget_bar(b2x(),b2y(),b2x()+bw()-1,b2y()+bh()-1,
 		    wm->bright_color(),wm->medium_color(),wm->dark_color());
-  show_icon(screen,wm,b1x()+2,b1y()+2,bw()-4,bh()-4,b1());
-  show_icon(screen,wm,b2x()+2,b2y()+2,bw()-4,bh()-4,b2());
+  show_icon(screen,b1x()+2,b1y()+2,bw()-4,bh()-4,b1());
+  show_icon(screen,b2x()+2,b2y()+2,bw()-4,bh()-4,b2());
 
   int x1,y1,x2,y2;
   dragger_area(x1,y1,x2,y2);
   screen->bar(x1,y1,x2,y2,wm->black());
   screen->bar(x1+1,y1+1,x2-1,y2-1,wm->medium_color());   
-  draw_wiget(screen,wm,0);
-  scroll_event(sx,screen,wm);
+  draw_wiget(screen,0);
+  scroll_event(sx,screen);
 }
 
 void scroller::wig_area(int &x1, int &y1, int &x2, int &y2)
@@ -153,7 +153,7 @@ void scroller::wig_area(int &x1, int &y1, int &x2, int &y2)
 }
 
 
-void scroller::draw_wiget(image *screen, window_manager *wm, int erase)
+void scroller::draw_wiget(image *screen, int erase)
 { 
   int x1,y1,x2,y2;
   wig_area(x1,y1,x2,y2);
@@ -164,15 +164,15 @@ void scroller::draw_wiget(image *screen, window_manager *wm, int erase)
 		      wm->bright_color(),wm->medium_color(),wm->dark_color());
 }
 
-void scroller::draw(int active, image *screen, window_manager *wm)
+void scroller::draw(int active, image *screen)
 {
   int x1,y1,x2,y2;
-  area(x1,y1,x2,y2,wm);
+  area(x1,y1,x2,y2);
   screen->rectangle(x1,y1,x2,y2,active ? wm->bright_color() : wm->dark_color());
 }
 
 
-void scroller::handle_event(event &ev, image *screen, window_manager *wm, input_manager *inm)
+void scroller::handle_event(event &ev, image *screen, input_manager *inm)
 {
   int mx=ev.mouse_move.x,my=ev.mouse_move.y;
   switch (ev.type)
@@ -185,19 +185,19 @@ void scroller::handle_event(event &ev, image *screen, window_manager *wm, input_
 	{
 	  if (sx>0)
 	  {
-	    draw_wiget(screen,wm,1);
+	    draw_wiget(screen,1);
 	    sx--;
-	    draw_wiget(screen,wm,0);
-	    scroll_event(sx,screen,wm);
+	    draw_wiget(screen,0);
+	    scroll_event(sx,screen);
 	  }
 	} else if (mx>=b2x() && mx<b2x()+bw() && my>=b2y() && my<=b2y()+bh())
 	{
 	  if (sx<t-1)
 	  {
-	    draw_wiget(screen,wm,1);
+	    draw_wiget(screen,1);
 	    sx++;
-	    draw_wiget(screen,wm,0);
-	    scroll_event(sx,screen,wm);
+	    draw_wiget(screen,0);
+	    scroll_event(sx,screen);
 	  }	    
 	}
 	else
@@ -218,13 +218,13 @@ void scroller::handle_event(event &ev, image *screen, window_manager *wm, input_
 	      int nx=mouse_to_drag(mx,my);
 	      if (nx!=sx && nx>=0 && nx<t)
 	      {
-		draw_wiget(screen,wm,1);
+		draw_wiget(screen,1);
 		sx=nx;
-		draw_wiget(screen,wm,0);
-		scroll_event(sx,screen,wm);		
+		draw_wiget(screen,0);
+		scroll_event(sx,screen);		
 	      }		
 	    }
-	  } else handle_inside_event(ev,screen,wm,inm);
+	  } else handle_inside_event(ev,screen,inm);
 	}
       } else if (!ev.mouse_button && drag!=-1)
       {
@@ -241,17 +241,17 @@ void scroller::handle_event(event &ev, image *screen, window_manager *wm, input_
 	if (nx<0) nx=0; else if (nx>=t) nx=t-1;
 	if (nx!=sx)
 	{
-	  draw_wiget(screen,wm,1);
+	  draw_wiget(screen,1);
 	  sx=nx;
-	  draw_wiget(screen,wm,0);
-	  scroll_event(sx,screen,wm);
+	  draw_wiget(screen,0);
+	  scroll_event(sx,screen);
 	}
       } else if ( activate_on_mouse_move())
       {
 	int x1,y1,x2,y2;
 	wig_area(x1,y1,x2,y2);
 	if (mx>=x && mx<=x+l-1 && my>=y && my<=y+h-1)
-	  handle_inside_event(ev,screen,wm,inm);
+	  handle_inside_event(ev,screen,inm);
       }
 
     } break;
@@ -260,76 +260,76 @@ void scroller::handle_event(event &ev, image *screen, window_manager *wm, input_
       switch (ev.key)
       {
 	case JK_LEFT : 
-	{ handle_left(screen,wm,inm); } break;
+	{ handle_left(screen,inm); } break;
 	case JK_RIGHT : 
-	{ handle_right(screen,wm,inm); } break;
+	{ handle_right(screen,inm); } break;
 	case JK_UP : 
-	{ handle_up(screen,wm,inm); } break;
+	{ handle_up(screen,inm); } break;
 	case JK_DOWN : 
-	{ handle_down(screen,wm,inm); } break;
+	{ handle_down(screen,inm); } break;
 
 	default :
-	  handle_inside_event(ev,screen,wm,inm);
+	  handle_inside_event(ev,screen,inm);
       }
     } break;
   }
 }
 
 
-void scroller::handle_right(image *screen, window_manager *wm, input_manager *inm)
+void scroller::handle_right(image *screen, input_manager *inm)
 {
   if (!vert && sx<t-1)
   {
-    draw_wiget(screen,wm,1);
+    draw_wiget(screen,1);
     sx++;
-    draw_wiget(screen,wm,0);
-    scroll_event(sx,screen,wm);	    
+    draw_wiget(screen,0);
+    scroll_event(sx,screen);	    
   }
 }
 
-void scroller::handle_left(image *screen, window_manager *wm, input_manager *inm)
+void scroller::handle_left(image *screen, input_manager *inm)
 {
   if (!vert && sx>1)
   {
-    draw_wiget(screen,wm,1);
+    draw_wiget(screen,1);
     sx--;
-    draw_wiget(screen,wm,0);
-    scroll_event(sx,screen,wm);	    
+    draw_wiget(screen,0);
+    scroll_event(sx,screen);	    
   }
 }
 
-void scroller::handle_up(image *screen, window_manager *wm, input_manager *inm)
+void scroller::handle_up(image *screen, input_manager *inm)
 { 
   if (vert && sx>1)
   {
-    draw_wiget(screen,wm,1);
+    draw_wiget(screen,1);
     sx--;
-    draw_wiget(screen,wm,0);
-    scroll_event(sx,screen,wm);	    
+    draw_wiget(screen,0);
+    scroll_event(sx,screen);	    
   }
 }
 
-void scroller::handle_down(image *screen, window_manager *wm, input_manager *inm)
+void scroller::handle_down(image *screen, input_manager *inm)
 {
   if (vert && sx<t-1)
   {
-    draw_wiget(screen,wm,1);
+    draw_wiget(screen,1);
     sx++;
-    draw_wiget(screen,wm,0);
-    scroll_event(sx,screen,wm);	    
+    draw_wiget(screen,0);
+    scroll_event(sx,screen);	    
   }
 }
 
-void scroller::set_x (int x, image *screen, window_manager *wm)
+void scroller::set_x (int x, image *screen)
 {
   if (x<0) x=0;
   if (x>=t) x=t-1;
   if (x!=sx)
   {
-    draw_wiget(screen,wm,1);
+    draw_wiget(screen,1);
     sx=x;
-    draw_wiget(screen,wm,0);
-    scroll_event(sx,screen,wm);	    
+    draw_wiget(screen,0);
+    scroll_event(sx,screen);	    
   }
 }
 
@@ -355,7 +355,7 @@ int scroller::mouse_to_drag(int mx,int my)
 }
 
 
-void scroller::scroll_event(int newx, image *screen, window_manager *wm)
+void scroller::scroll_event(int newx, image *screen)
 {
   screen->bar(x,y,x+l-1,y+h-1,wm->black());
   int xa,ya,xo=0,yo;
@@ -369,7 +369,7 @@ void scroller::scroll_event(int newx, image *screen, window_manager *wm)
   }
 }
 
-void pick_list::area_config(window_manager *wm)
+void pick_list::area_config()
 {
   l=wid*wm->font()->width();
   h=th*(wm->font()->height()+1);  
@@ -406,7 +406,7 @@ pick_list::pick_list(int X, int Y, int ID, int height,
   cur_sel=sx=start_yoffset;
 }
 
-void pick_list::handle_inside_event(event &ev, image *screen, window_manager *wm, input_manager *inm)
+void pick_list::handle_inside_event(event &ev, image *screen, input_manager *inm)
 {
   if (ev.type==EV_MOUSE_MOVE && activate_on_mouse_move())
   {
@@ -414,7 +414,7 @@ void pick_list::handle_inside_event(event &ev, image *screen, window_manager *wm
     if (sel!=cur_sel && sel<t && sel>=0)
     {
       cur_sel=sel;
-      scroll_event(last_sel,screen,wm);
+      scroll_event(last_sel,screen);
     }    
   }
   else if (ev.type==EV_MOUSE_BUTTON)
@@ -427,7 +427,7 @@ void pick_list::handle_inside_event(event &ev, image *screen, window_manager *wm
       else 
       {
 	cur_sel=sel;
-	scroll_event(last_sel,screen,wm);
+	scroll_event(last_sel,screen);
       }      
     }
   } else if (ev.type==EV_KEY && ev.key==JK_ENTER)  
@@ -447,40 +447,40 @@ void pick_list::handle_inside_event(event &ev, image *screen, window_manager *wm
     {
       sx=found;
       cur_sel=found;
-      scroll_event(sx,screen,wm);
+      scroll_event(sx,screen);
     } else key_hist_total=0;
   }
 }
 
-void pick_list::handle_up(image *screen, window_manager *wm, input_manager *inm)
+void pick_list::handle_up(image *screen, input_manager *inm)
 {
   if (cur_sel>0)
     cur_sel--;
   else return ;
   if (cur_sel<sx)
   {
-    draw_wiget(screen,wm,1);
+    draw_wiget(screen,1);
     sx=cur_sel;
-    draw_wiget(screen,wm,0);
+    draw_wiget(screen,0);
   }
-  scroll_event(sx,screen,wm);	          
+  scroll_event(sx,screen);	          
 }
 
-void pick_list::handle_down(image *screen, window_manager *wm, input_manager *inm)
+void pick_list::handle_down(image *screen, input_manager *inm)
 {
   if (cur_sel<t-1)
     cur_sel++;
   else return ;
   if (cur_sel>sx+th-1)
   {
-    draw_wiget(screen,wm,1);
+    draw_wiget(screen,1);
     sx=cur_sel-th+1;
-    draw_wiget(screen,wm,0);
+    draw_wiget(screen,0);
   }
-  scroll_event(sx,screen,wm);	          
+  scroll_event(sx,screen);	          
 }
 
-void pick_list::scroll_event(int newx, image *screen, window_manager *wm)
+void pick_list::scroll_event(int newx, image *screen)
 {
   last_sel=newx;
   if (tex)
@@ -568,59 +568,59 @@ void spicker::reconfigure()
   } else cur_sel=0;
 }
 
-void spicker::draw_background(window_manager *wm, image *screen)
+void spicker::draw_background(image *screen)
 {
   screen->bar(x,y,x+l-1,y+h-1,wm->dark_color());
 }
 
 
-void spicker::area_config(window_manager *wm)
+void spicker::area_config()
 {
   if (vert)
-    l=item_width(wm)+4;
+    l=item_width()+4;
   else
-    l=item_width(wm)*c+4;
+    l=item_width()*c+4;
 
   if (vert)
-    h=item_height(wm)*r+4;
+    h=item_height()*r+4;
   else
-    h=item_height(wm)+4;
+    h=item_height()+4;
 
 }
 
-void spicker::set_x(int x, image *screen, window_manager *wm)
+void spicker::set_x(int x, image *screen)
 {
   cur_sel=x;
   sx=x;
-  scroll_event(x,screen,wm);
+  scroll_event(x,screen);
 }
 
 
-void spicker::scroll_event(int newx, image *screen, window_manager *wm)
+void spicker::scroll_event(int newx, image *screen)
 {
   last_sel=newx;
   int xa,ya,xo,yo;
   xo=x+2;
   yo=y+2;
-  if (vert) { xa=0; ya=item_height(wm); }
-  else { xa=item_width(wm); ya=0; }
-  draw_background(wm,screen);
+  if (vert) { xa=0; ya=item_height(); }
+  else { xa=item_width(); ya=0; }
+  draw_background(screen);
 
   for (int i=newx;i<newx+vis();i++)
   {
     if (i<t)
     {
       if (m)      
-        draw_item(wm,screen,xo,yo,i,get_select(i));
+        draw_item(screen,xo,yo,i,get_select(i));
       else
-        draw_item(wm,screen,xo,yo,i,i==cur_sel);
+        draw_item(screen,xo,yo,i,i==cur_sel);
     }
     xo+=xa; yo+=ya;
   }
 }
 
 
-void spicker::handle_inside_event(event &ev, image *screen, window_manager *wm, input_manager *inm)
+void spicker::handle_inside_event(event &ev, image *screen, input_manager *inm)
 {
   switch (ev.type)
   {
@@ -630,16 +630,16 @@ void spicker::handle_inside_event(event &ev, image *screen, window_manager *wm, 
       {
 	int me;      
 	if (vert)
-	  me=last_sel+(ev.mouse_move.y-y)/item_height(wm);
+	  me=last_sel+(ev.mouse_move.y-y)/item_height();
 	else
-	  me=last_sel+(ev.mouse_move.x-x)/item_width(wm);
+	  me=last_sel+(ev.mouse_move.x-x)/item_width();
 	if (me<t && me>=0)
 	{
 	  if (cur_sel!=me)
 	  {
 	    cur_sel=me;
-	    scroll_event(last_sel,screen,wm);
-	    note_new_current(wm,screen,inm,me);
+	    scroll_event(last_sel,screen);
+	    note_new_current(screen,inm,me);
 	  }
 	}
       }
@@ -648,9 +648,9 @@ void spicker::handle_inside_event(event &ev, image *screen, window_manager *wm, 
     {
       int me;      
       if (vert)
-	me=last_sel+(ev.mouse_move.y-y)/item_height(wm);
+	me=last_sel+(ev.mouse_move.y-y)/item_height();
       else
-	me=last_sel+(ev.mouse_move.x-x)/item_width(wm);
+	me=last_sel+(ev.mouse_move.x-x)/item_width();
       if (me<t && me>=0)
       {
 	if (m)
@@ -660,7 +660,7 @@ void spicker::handle_inside_event(event &ev, image *screen, window_manager *wm, 
 	    if (ok_to_select(me))
 	    {
 	      set_select(me,!get_select(me));
-	      scroll_event(last_sel,screen,wm);
+	      scroll_event(last_sel,screen);
 	      inm->grab_focus(this);
 	    }
 	  } else last_click=-1;
@@ -668,12 +668,12 @@ void spicker::handle_inside_event(event &ev, image *screen, window_manager *wm, 
 	} else if (ok_to_select(me))
 	{
 	  if (cur_sel==me)	    
-	    note_selection(wm,screen,inm,me);
+	    note_selection(screen,inm,me);
 	  else
 	  {
 	    cur_sel=me;
-	    scroll_event(last_sel,screen,wm);
-	    note_new_current(wm,screen,inm,me);
+	    scroll_event(last_sel,screen);
+	    note_new_current(screen,inm,me);
 	  }
 	}
       }
@@ -683,7 +683,7 @@ void spicker::handle_inside_event(event &ev, image *screen, window_manager *wm, 
 
 
 
-void spicker::handle_up(image *screen, window_manager *wm, input_manager *inm)
+void spicker::handle_up(image *screen, input_manager *inm)
 {
   if (vert && cur_sel>0)
   {
@@ -691,35 +691,35 @@ void spicker::handle_up(image *screen, window_manager *wm, input_manager *inm)
 
     if (cur_sel<sx)
     {
-      draw_wiget(screen,wm,1);
+      draw_wiget(screen,1);
       last_sel=sx=cur_sel;
-      draw_wiget(screen,wm,0);
+      draw_wiget(screen,0);
     }
-    scroll_event(last_sel,screen,wm);
-    note_new_current(wm,screen,inm,cur_sel);    
+    scroll_event(last_sel,screen);
+    note_new_current(screen,inm,cur_sel);    
   }
 }
 
-void spicker::handle_down(image *screen, window_manager *wm, input_manager *inm)
+void spicker::handle_down(image *screen, input_manager *inm)
 {
   if (vert && cur_sel<t-1)
     cur_sel++;
   else return ;
   if (cur_sel>sx+r-1)
   {
-    draw_wiget(screen,wm,1);
+    draw_wiget(screen,1);
     last_sel=sx=cur_sel-r+1;
-    draw_wiget(screen,wm,0);
+    draw_wiget(screen,0);
   }
-  scroll_event(sx,screen,wm);
-  note_new_current(wm,screen,inm,cur_sel);    
+  scroll_event(sx,screen);
+  note_new_current(screen,inm,cur_sel);    
 }
 
-void spicker::handle_left(image *screen, window_manager *wm, input_manager *inm)
+void spicker::handle_left(image *screen, input_manager *inm)
 {
 }
 
-void spicker::handle_right(image *screen, window_manager *wm, input_manager *inm)
+void spicker::handle_right(image *screen, input_manager *inm)
 {
 }
 

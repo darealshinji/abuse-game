@@ -486,10 +486,10 @@ void net_reload()
       base->mem_lock=0;
 
 
-      jwindow *j=eh->new_window(0,yres/2,-1,-1,new info_field(WINDOW_FRAME_LEFT,
+      jwindow *j=wm->new_window(0,yres/2,-1,-1,new info_field(WINDOW_FRAME_LEFT,
 								   WINDOW_FRAME_TOP,
 								   0,"Clients are re-syncing, please wait...",NULL));
-      eh->flush_screen();
+      wm->flush_screen();
       if (!reload_start()) return ;
 
       // wait for all client to reload the level with the new players
@@ -497,7 +497,7 @@ void net_reload()
       { 
 	next_process();
       } while (!reload_end());
-      eh->close_window(j);
+      wm->close_window(j);
 
     }      
   }
@@ -563,24 +563,24 @@ int get_inputs_from_server(unsigned char *buf)
 	total_retry++;
 	if (total_retry==10)    // 2 seconds and nothing
 	{
-	  abort=eh->new_window(0,yres/2,-1,eh->font()->height()*4,
+	  abort=wm->new_window(0,yres/2,-1,wm->font()->height()*4,
 			       new info_field(WINDOW_FRAME_LEFT,
 					      WINDOW_FRAME_TOP,
 					      0,"Waiting for data...",
 					      new button(WINDOW_FRAME_LEFT,
-							 WINDOW_FRAME_TOP+eh->font()->height()+5,ID_NET_DISCONNECT,
+							 WINDOW_FRAME_TOP+wm->font()->height()+5,ID_NET_DISCONNECT,
 							 "Disconnect slackers",NULL)),"Error");	  
-	  eh->flush_screen();
+	  wm->flush_screen();
 	}
       }
       if (abort)
       {
-	if (eh->event_waiting())
+	if (wm->event_waiting())
 	{
 	  event ev;
 	  do
 	  {
-	    eh->get_event(ev);
+	    wm->get_event(ev);
 	    if (ev.type==EV_MESSAGE && ev.message.id==ID_NET_DISCONNECT)
 	    kill_slackers();
 	    else if (ev.type!=EV_MOUSE_MOVE)  // no need to save mouse move events (likely to be a lot)
@@ -589,21 +589,21 @@ int get_inputs_from_server(unsigned char *buf)
 	      *e=ev;
 	      input.add_front(e);
 	    } 
-	  } while (eh->event_waiting());
+	  } while (wm->event_waiting());
 
-	  eh->flush_screen();
+	  wm->flush_screen();
 	}
       }
     }
 
     if (abort)
     {
-      eh->close_window(abort);
+      wm->close_window(abort);
       while (input.first())               // push all the key events
       {
 	event *ev=(event *)input.first();
 	input.unlink((linked_node *)ev);
-	eh->push_event(ev);
+	wm->push_event(ev);
       }
     }
   }

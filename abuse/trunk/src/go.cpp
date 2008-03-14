@@ -337,7 +337,7 @@ void sensor::draw()
   {    
     game_object::draw();
     int sx=the_game->screenx(x),sy=the_game->screeny(y);      
-    screen->rectangle(sx-xrange,sy-yrange,sx+xrange,sy+yrange,eh->bright_color());      
+    screen->rectangle(sx-xrange,sy-yrange,sx+xrange,sy+yrange,wm->bright_color());      
   }  
 }
 

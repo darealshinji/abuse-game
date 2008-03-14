@@ -1007,7 +1007,7 @@ void *score_draw()
     if (f->local_player()) local=f;
   }
 
-  JCFont *fnt=eh->font();
+  JCFont *fnt=wm->font();
   if (local)
   {
     qsort(sorted_players,tp,sizeof(view *),compare_players);
@@ -1038,23 +1038,23 @@ extern void fade_out(int steps);
 void *show_kills()
 {
   fade_out(8);
-  eh->set_mouse_position(0,0);
+  wm->set_mouse_position(0,0);
   screen->clear();
   image *im=cash.img(cash.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
   im->put_image(screen,0,0);
   int x1=im->width()+1,y1=0,y2=screen->height();
-  JCFont *fnt=eh->font();
+  JCFont *fnt=wm->font();
   
   view *v=player_list; int tp=0,i;
   for (v=player_list;v;v=v->next) tp++;
 
   int y=(y1+y2)/2-(tp+2)*fnt->height()/2,x=x1+10;
   char const *header_str = symbol_str("score_header");
-  fnt->put_string(screen,x,y,header_str,eh->bright_color());
+  fnt->put_string(screen,x,y,header_str,wm->bright_color());
   y+=fnt->height();
 
   screen->wiget_bar(x,y+2,x+strlen(header_str)*fnt->width(),y+fnt->height()-3,
-		     eh->bright_color(),eh->medium_color(),eh->dark_color());
+		     wm->bright_color(),wm->medium_color(),wm->dark_color());
   y+=fnt->height();
   v=player_list;
   for (i=0;i<tp;i++)
@@ -1074,7 +1074,7 @@ void *show_kills()
     v=v->next;
   }
   
-  eh->flush_screen();
+  wm->flush_screen();
   milli_wait(4000);   // wait 4 seconds
 
   return NULL;

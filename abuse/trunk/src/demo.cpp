@@ -34,7 +34,7 @@ extern void net_send(int force);
 extern void fade_in(image *im, int steps);
 extern void fade_out(int steps);
 
-void get_event(event &ev, window_manager *wm)
+void get_event(event &ev)
 { wm->get_event(ev); 
   switch (ev.type)
   {
@@ -56,7 +56,7 @@ void get_event(event &ev, window_manager *wm)
   idle_ticks=0;
 }
 
-int event_waiting(window_manager *wm)
+int event_waiting()
 { return wm->event_waiting(); }
 
 
@@ -119,7 +119,7 @@ void demo_manager::do_inputs()
         process_packet_commands(buf,size);      
 	int32_t mx,my;
 	the_game->game_to_mouse(player_list->pointer_x,player_list->pointer_y,player_list,mx,my);
-	eh->set_mouse_position(small_render ? mx*2 : mx, small_render ? my*2 : my);
+	wm->set_mouse_position(small_render ? mx*2 : mx, small_render ? my*2 : my);
       }
       else
       {
@@ -209,7 +209,7 @@ int demo_manager::set_state(demo_state new_state, char *filename)
       delete record_file;
       l_difficulty=initial_difficulty;
       the_game->set_state(MENU_STATE);
-      eh->push_event(new event(ID_NULL,NULL));
+      wm->push_event(new event(ID_NULL,NULL));
 
       view *v=player_list;
       for (;v;v=v->next)  // reset all the players

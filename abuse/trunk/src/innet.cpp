@@ -541,17 +541,17 @@ void net_reload()
       base->mem_lock=0;
 
 
-      jwindow *j=eh->new_window(0,yres/2,-1,-1,new info_field(WINDOW_FRAME_LEFT,
+      jwindow *j=wm->new_window(0,yres/2,-1,-1,new info_field(WINDOW_FRAME_LEFT,
 								   WINDOW_FRAME_TOP,
 								   0,symbol_str("resync"),
 					      new button(WINDOW_FRAME_LEFT,
-							 WINDOW_FRAME_TOP+eh->font()->height()+5,ID_NET_DISCONNECT,
+							 WINDOW_FRAME_TOP+wm->font()->height()+5,ID_NET_DISCONNECT,
 							 symbol_str("slack"),NULL)),symbol_str("hold!"))
 ;
 
   
 
-      eh->flush_screen();
+      wm->flush_screen();
       if (!reload_start()) return ;
 
       base->input_state=INPUT_RELOAD;    // if someone missed the game tick with the RELOAD data in it, make sure the get it
@@ -560,25 +560,25 @@ void net_reload()
       do  
       { 
 				service_net_request();
-				if (eh->event_waiting())
+				if (wm->event_waiting())
 				{
 				  event ev;
 				  do
 				  {
-				    eh->get_event(ev);
+				    wm->get_event(ev);
 				    if (ev.type==EV_MESSAGE && ev.message.id==ID_NET_DISCONNECT)
 				    {
 				      game_face->end_reload(1);
 				      base->input_state=INPUT_PROCESSING; 
 				    }
 			
-				  } while (eh->event_waiting()); 
+				  } while (wm->event_waiting()); 
 			
-				  eh->flush_screen();
+				  wm->flush_screen();
 				}
 
       } while (!reload_end());
-      eh->close_window(j);
+      wm->close_window(j);
       unlink(NET_STARTFILE);
 
       the_game->reset_keymap();
@@ -650,39 +650,39 @@ int get_inputs_from_server(unsigned char *buf)
 	total_retry++;
 	if (total_retry==12000)    // 2 minutes and nothing
 	{
-	  abort=eh->new_window(0,yres/2,-1,eh->font()->height()*4,
+	  abort=wm->new_window(0,yres/2,-1,wm->font()->height()*4,
 			       new info_field(WINDOW_FRAME_LEFT,
 					      WINDOW_FRAME_TOP,
 					      0,symbol_str("waiting"),
 					      new button(WINDOW_FRAME_LEFT,
-							 WINDOW_FRAME_TOP+eh->font()->height()+5,ID_NET_DISCONNECT,
+							 WINDOW_FRAME_TOP+wm->font()->height()+5,ID_NET_DISCONNECT,
 							 symbol_str("slack"),NULL)),symbol_str("Error"));	  
-	  eh->flush_screen();
+	  wm->flush_screen();
 	}
       }
       if (abort)
       {
-	if (eh->event_waiting())
+	if (wm->event_waiting())
 	{
 	  event ev;
 	  do
 	  {
-	    eh->get_event(ev);
+	    wm->get_event(ev);
 	    if (ev.type==EV_MESSAGE && ev.message.id==ID_NET_DISCONNECT)
 	    {
 	      kill_slackers();
 	      base->input_state=INPUT_PROCESSING; 
 	    }
-	  } while (eh->event_waiting());
+	  } while (wm->event_waiting());
 
-	  eh->flush_screen();
+	  wm->flush_screen();
 	}
       }
     }
 
     if (abort)
     {
-      eh->close_window(abort);
+      wm->close_window(abort);
       the_game->reset_keymap();
 
     }

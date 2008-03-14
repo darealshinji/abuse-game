@@ -147,23 +147,23 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   {
     int tl=strlen(title)*font->width();
     int tx=screen->width()/2-tl/2;
-    dark_wiget(tx-2,my-font->height()-4,tx+tl+2,my-2,eh->medium_color(),eh->dark_color(),180);
-    font->put_string(screen,tx+1,my-font->height()-2,title,eh->bright_color());
+    dark_wiget(tx-2,my-font->height()-4,tx+tl+2,my-2,wm->medium_color(),wm->dark_color(),180);
+    font->put_string(screen,tx+1,my-font->height()-2,title,wm->bright_color());
   }
   
-  dark_wiget(mx,my,mx+mw-1,my+mh-1,eh->medium_color(),eh->dark_color(),200);
+  dark_wiget(mx,my,mx+mw-1,my+mh-1,wm->medium_color(),wm->dark_color(),200);
 
 
   int y=my+5;
   for (c=(Cell *)args;!NILP(c);c=CDR(c))
   {
     char *ms=men_str(CAR(c));
-    font->put_string(screen,mx+10+1,y+1,ms,eh->black());
-    font->put_string(screen,mx+10,y,ms,eh->bright_color());
+    font->put_string(screen,mx+10+1,y+1,ms,wm->black());
+    font->put_string(screen,mx+10,y,ms,wm->bright_color());
     y+=font->height()+1;
   }
 
-  eh->flush_screen();
+  wm->flush_screen();
   event ev;
   int choice=0,done=0;
   int bh=font->height()+3;
@@ -175,10 +175,10 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
     choice=lnumber_value(def);
   do
   {
-    eh->flush_screen();
-    if (eh->event_waiting())
+    wm->flush_screen();
+    if (wm->event_waiting())
     {
-      eh->get_event(ev);
+      wm->get_event(ev);
       if (ev.type==EV_KEY)
       {
 	switch (ev.key)
@@ -227,9 +227,9 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       tint_area(mx+1,by1,mx+mw-2,by2,63,63,63,color);
 
       char *cur=men_str(nth(choice,args));
-      font->put_string(screen,mx+10+1,by1+3,cur,eh->black());
-      font->put_string(screen,mx+10,by1+2,cur,eh->bright_color());
-      screen->rectangle(mx+1,by1,mx+mw-2,by2,eh->bright_color());
+      font->put_string(screen,mx+10+1,by1+3,cur,wm->black());
+      font->put_string(screen,mx+10,by1+2,cur,wm->bright_color());
+      screen->rectangle(mx+1,by1,mx+mw-2,by2,wm->bright_color());
 
       color+=cdir;
 
@@ -238,7 +238,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
 	cdir=-cdir;
 	color+=cdir;
       }
-      eh->flush_screen();
+      wm->flush_screen();
       save->put_image(screen,mx+1,by1);
     } else milli_wait(10);
 
@@ -286,9 +286,9 @@ static void draw_music_vol(int slider)
 
 static void create_volume_window()
 {
-/*  int vx=WINDOW_FRAME_LEFT,vy=WINDOW_FRAME_TOP+eh->font()->height()*2,scroller_height=130,bh=eh->font()->height()+5;
+/*  int vx=WINDOW_FRAME_LEFT,vy=WINDOW_FRAME_TOP+wm->font()->height()*2,scroller_height=130,bh=wm->font()->height()+5;
 
-  volume_window=eh->new_window(prop->getd("volume_x",xres/2-20),
+  volume_window=wm->new_window(prop->getd("volume_x",xres/2-20),
 			       prop->getd("volume_y",yres/2-50),
 			       -1,
 			       -1,
@@ -298,11 +298,11 @@ static void create_volume_window()
   int done=0;
   do
   {
-    eh->flush_screen();
-    eh->get_event(ev);
+    wm->flush_screen();
+    wm->get_event(ev);
     if (ev.type==EV_CLOSE_WINDOW && ev.window==volume_window) done=1;    
   } while (!done);
-  eh->close_window(volume_window);
+  wm->close_window(volume_window);
   volume_window=NULL; */
 
 
@@ -319,7 +319,7 @@ static void create_volume_window()
       d_da=cash.reg(ff,"d_da",t,1),
       slider=cash.reg(ff,"volume_slide",t,1);
   
-  volume_window=eh->new_window(prop->getd("volume_x",xres/2-20),
+  volume_window=wm->new_window(prop->getd("volume_x",xres/2-20),
 			       prop->getd("volume_y",yres/2-50),
 			       41-WINDOW_FRAME_LEFT-WINDOW_FRAME_RIGHT-2,
 			       101-WINDOW_FRAME_TOP-WINDOW_FRAME_BOTTOM,
@@ -336,8 +336,8 @@ static void create_volume_window()
   draw_music_vol(slider);
   draw_sfx_vol(slider);
   volume_window->inm->redraw();
-  eh->grab_focus(volume_window);
-  eh->flush_screen();
+  wm->grab_focus(volume_window);
+  wm->flush_screen();
 
   volume_window->inm->allow_no_selections();
   volume_window->inm->clear_current();
@@ -345,8 +345,8 @@ static void create_volume_window()
   event ev;
   do
   {
-    do { eh->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && eh->event_waiting()); 
-    eh->flush_screen();
+    do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->event_waiting()); 
+    wm->flush_screen();
     if (ev.type==EV_MESSAGE)
     {
       switch (ev.message.id)
@@ -395,7 +395,7 @@ static void create_volume_window()
       }
     } else if (ev.type==EV_CLOSE_WINDOW || (ev.type==EV_KEY && ev.key==JK_ESC))
     {
-      eh->close_window(volume_window);
+      wm->close_window(volume_window);
       volume_window=NULL;
     }
   } while (volume_window);
@@ -447,7 +447,7 @@ void show_sell(int abortable)
   if (DEFINEDP(symbol_value(ss)))
   {
     image blank(2,2); blank.clear();
-    eh->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
+    wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
 
     ss=symbol_value(ss);
     int quit=0;
@@ -458,15 +458,15 @@ void show_sell(int abortable)
 
       event ev;
       do
-      { eh->flush_screen();
-	eh->get_event(ev);
+      { wm->flush_screen();
+	wm->get_event(ev);
       } while (ev.type!=EV_KEY);
       if (ev.key==JK_ESC && abortable)
         quit=1;
       fade_out(16);
       ss=CDR(ss);
     }
-    eh->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
+    wm->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
   }
 }
 
@@ -571,7 +571,7 @@ void menu_handler(event &ev, input_manager *inm)
 	  }
 	  inm->redraw();
 	  fade_in(NULL,8);
-	  eh->flush_screen(); 
+	  wm->flush_screen(); 
 
 	} break;
       } break;
@@ -579,7 +579,7 @@ void menu_handler(event &ev, input_manager *inm)
     case EV_CLOSE_WINDOW :
     {
       if (ev.window==volume_window)
-      { eh->close_window(volume_window); volume_window=NULL; }
+      { wm->close_window(volume_window); volume_window=NULL; }
     } break;
   }
 }
@@ -707,7 +707,7 @@ void main_menu()
 	ico_button *list=make_conditional_buttons(xres-33,y);
 	list=make_default_buttons(xres-33,y,list);
 
-	input_manager *inm=new input_manager(screen,eh,list);
+	input_manager *inm=new input_manager(screen,list);
 	inm->allow_no_selections();
 	inm->clear_current();
 
@@ -717,25 +717,25 @@ void main_menu()
 
 	int stop_menu=0;
 	time_marker start;
-	eh->flush_screen(); 
+	wm->flush_screen(); 
 	do
 	{
 		time_marker new_time;
 
-		if (eh->event_waiting())
+		if (wm->event_waiting())
 		{
 			do
 			{
-				eh->get_event(ev);
-			} while (ev.type==EV_MOUSE_MOVE && eh->event_waiting()); 
-			inm->handle_event(ev,NULL,eh);
+				wm->get_event(ev);
+			} while (ev.type==EV_MOUSE_MOVE && wm->event_waiting()); 
+			inm->handle_event(ev,NULL);
 			if (ev.type==EV_KEY && ev.key==JK_ESC)
-				eh->push_event(new event(ID_QUIT,NULL));
+				wm->push_event(new event(ID_QUIT,NULL));
 
 			menu_handler(ev,inm);
 			start.get_time();
 
-			eh->flush_screen();
+			wm->flush_screen();
 		}
 		else
 		{

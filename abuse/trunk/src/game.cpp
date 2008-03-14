@@ -59,7 +59,7 @@
 
 extern crc_manager *net_crcs;
 game *the_game;
-window_manager *eh = NULL;
+window_manager *wm = NULL;
 int dev, shift_down = SHIFT_DOWN_DEFAULT, shift_right = SHIFT_RIGHT_DEFAULT;
 double sum_diffs = 1, total_diffs = 12;
 int total_active = 0;
@@ -100,26 +100,26 @@ void handle_no_space()
         "The game cannot continue, please check this out\n"
         "and try again.\n";
 
-    if(!eh)
+    if(!wm)
     {
         fprintf(stderr, "%s\n", no_space_msg);
         exit(0);
     }
 
     info_field *inf = new info_field(WINDOW_FRAME_LEFT, WINDOW_FRAME_TOP +
-                                       eh->font()->height() * 2, ID_NULL,
+                                       wm->font()->height() * 2, ID_NULL,
                                      no_space_msg, NULL);
     button *b = new button(WINDOW_FRAME_LEFT, WINDOW_FRAME_TOP,
                            ID_QUIT_OK, "Quit", inf);
-    jwindow *no_space = eh->new_window(0, 0, -1, -1, b, "ERROR");
+    jwindow *no_space = wm->new_window(0, 0, -1, -1, b, "ERROR");
 
     event ev;
     do
     {
-        eh->flush_screen();
-        eh->get_event(ev);
+        wm->flush_screen();
+        wm->get_event(ev);
     } while(ev.type != EV_MESSAGE || ev.message.id != ID_QUIT_OK);
-    eh->close_window(no_space);
+    wm->close_window(no_space);
 
     close_graphics();
     exit(1);
@@ -429,9 +429,9 @@ void game::set_state(int new_state)
     // switching to / from scene mode cause the screen size to change and the border to change
     // so we need to redraw.
     if(window_state(new_state) && !window_state(state))
-        eh->show_windows();
+        wm->show_windows();
     else if(!window_state(new_state) && window_state(state))
-        eh->hide_windows();
+        wm->hide_windows();
 
     int old_state = state;
     state = new_state;
@@ -439,9 +439,9 @@ void game::set_state(int new_state)
     pal->load();    // restore old palette
 
     if(playing_state(state) &&  !(dev & EDIT_MODE))
-        eh->set_mouse_shape(cash.img(c_target)->copy(), 8, 8);
+        wm->set_mouse_shape(cash.img(c_target)->copy(), 8, 8);
     else
-        eh->set_mouse_shape(cash.img(c_normal)->copy(), 1, 1);
+        wm->set_mouse_shape(cash.img(c_normal)->copy(), 1, 1);
 
     if(old_state == SCENE_STATE && new_state != SCENE_STATE)
     {
@@ -472,7 +472,7 @@ void game::joy_calb(event &ev)
         if(but) but = 1;
         int dx = WINDOW_FRAME_LEFT + 20, dy = WINDOW_FRAME_TOP + 5;
         image *jim = cash.img(joy_picts[but * 9+(y + 1)*3 + x + 1]);
-        joy_win->screen->bar(dx, dy, dx + jim->width()+6, dy + jim->height()+6, eh->black());
+        joy_win->screen->bar(dx, dy, dx + jim->width()+6, dy + jim->height()+6, wm->black());
         jim->put_image(joy_win->screen, dx + 3, dy + 3);
 
         if(but)
@@ -480,7 +480,7 @@ void game::joy_calb(event &ev)
     }
     else if(ev.type == EV_MESSAGE && ev.message.id == JOY_OK)
     {
-        eh->close_window(joy_win);
+        wm->close_window(joy_win);
         joy_win = NULL;
         set_state(MENU_STATE);
     }
@@ -492,8 +492,8 @@ void game::menu_select(event &ev)
     if(top_menu)
     {
 #if 0
-        eh->push_event(new event(men_mess[((pick_list *)ev.message.data)->get_selection()], NULL));
-        eh->close_window(top_menu);
+        wm->push_event(new event(men_mess[((pick_list *)ev.message.data)->get_selection()], NULL));
+        wm->close_window(top_menu);
         top_menu = NULL;
 #endif
     }
@@ -510,8 +510,8 @@ void game::show_help(char const *st)
 void game::draw_value(image *screen, int x, int y, int w, int h,
                       int val, int max)
 {
-    screen->bar(x, y, x + w - 1, y + h, eh->dark_color());
-    screen->bar(x, y + 1, x + w * val / max, y + h - 1, eh->bright_color());
+    screen->bar(x, y, x + w - 1, y + h, wm->dark_color());
+    screen->bar(x, y + 1, x + w * val / max, y + h - 1, wm->bright_color());
 }
 
 
@@ -629,18 +629,18 @@ void game::dev_scroll()
     int xs, ys;
     if(mousex < xmargin &&  dev_cont->ok_to_scroll()) xs = -18;
     else if(mousex>(screen->width()-xmargin) &&  dev_cont->ok_to_scroll()) xs = 18;
-    else if(eh->key_pressed(JK_LEFT) && !last_input && !dev_cont->need_arrows())
+    else if(wm->key_pressed(JK_LEFT) && !last_input && !dev_cont->need_arrows())
       xs = -18;
-    else if(eh->key_pressed(JK_RIGHT) && !last_input && !dev_cont->need_arrows())
+    else if(wm->key_pressed(JK_RIGHT) && !last_input && !dev_cont->need_arrows())
       xs = 18;
     else xs = 0;
 
 
     if(mousey < ymargin && dev_cont->ok_to_scroll()) ys = -18;
     else if(mousey>(screen->height()-ymargin) &&  dev_cont->ok_to_scroll()) ys = 18;
-    else if(eh->key_pressed(JK_UP) && !last_input)
+    else if(wm->key_pressed(JK_UP) && !last_input)
       ys = -18;
-    else if(eh->key_pressed(JK_DOWN) && !last_input)
+    else if(wm->key_pressed(JK_DOWN) && !last_input)
       ys = 18;
     else ys = 0;
 
@@ -716,7 +716,7 @@ void game::draw_map(view *v, int interpolate)
                     screen->height()/2 - tit->height()/2);
       if(state == SCENE_STATE)
         screen->set_clip(cx1, cy1, cx2, cy2);
-      eh->flush_screen();
+      wm->flush_screen();
     }
     return;
   }
@@ -895,9 +895,9 @@ void game::draw_map(view *v, int interpolate)
     if(dev & MAP_MODE)
     {
       if(dev & EDIT_MODE)
-        screen->clear(eh->bright_color());
+        screen->clear(wm->bright_color());
       else
-        screen->clear(eh->black());
+        screen->clear(wm->black());
       for(y = y1, draw_y = yo; y <= y2; y++, draw_y += yinc)
       {
     if(!(draw_y < ncy1 ||draw_y + yinc >= ncy2))
@@ -1008,8 +1008,8 @@ void game::draw_map(view *v, int interpolate)
           current_level->mark_seen(x, y);
           else
           {
-        screen->line(draw_x, draw_y, draw_x + xinc, draw_y + yinc, eh->bright_color());
-        screen->line(draw_x + xinc, draw_y, draw_x, draw_y + yinc, eh->bright_color());
+        screen->line(draw_x, draw_y, draw_x + xinc, draw_y + yinc, wm->bright_color());
+        screen->line(draw_x + xinc, draw_y, draw_x, draw_y + yinc, wm->bright_color());
           }
         }
       }
@@ -1020,7 +1020,7 @@ void game::draw_map(view *v, int interpolate)
 
     if(dev & DRAW_FG_BOUND_LAYER)
     {
-      int b = eh->bright_color();
+      int b = wm->bright_color();
       int fg_h = current_level->foreground_height(), fg_w = current_level->foreground_width();
 
       for(y = y1, draw_y = yo; y <= y2; y++, draw_y += yinc)
@@ -1067,13 +1067,13 @@ void game::draw_map(view *v, int interpolate)
     else
         color = 2+(help_text_frames - 10);
 
-    int x1 = v->cx1, y1 = v->cy1, x2 = v->cx2, y2 = v->cy1 + eh->font()->height()+10;
+    int x1 = v->cx1, y1 = v->cy1, x2 = v->cx2, y2 = v->cy1 + wm->font()->height()+10;
 
     remap_area(screen, x1, y1, x2, y2, white_light + 40 * 256);
     screen->bar(x1, y1, x2, y1, color);
     screen->bar(x1, y2, x2, y2, color);
 
-    eh->font()->put_string(screen, x1 + 5, y1 + 5,
+    wm->font()->put_string(screen, x1 + 5, y1 + 5,
                    help_text, color);
     if(color > 30)
         help_text_frames = -1;
@@ -1197,7 +1197,7 @@ void fade_in(image *im, int steps)
       *(sl1)=((int)*(sl2))*v / 256;  sl1++; sl2++;
     }
     pal->load();
-    eh->flush_screen();
+    wm->flush_screen();
     milli_wait(25);
   }
   delete pal;
@@ -1221,11 +1221,11 @@ void fade_out(int steps)
       *(sl1)=((int)*(sl2))*v / 256;  sl1++; sl2++;
     }
     pal->load();
-    eh->flush_screen();
+    wm->flush_screen();
     milli_wait(25);
   }
   screen->clear();
-  eh->flush_screen();
+  wm->flush_screen();
   delete pal;
   pal = old_pal;
 
@@ -1260,7 +1260,7 @@ void do_title()
         // image_list in image.cpp) the image on the stack -> boom.
         image *blank = new image(2, 2);
         blank->clear();
-        eh->set_mouse_shape(blank->copy(), 0, 0); // hide mouse
+        wm->set_mouse_shape(blank->copy(), 0, 0); // hide mouse
         delete blank;
         fade_in(cash.img(cdc_logo), 32);
 
@@ -1312,8 +1312,8 @@ void do_title()
             {
                 gray->put_image(screen, dx, dy);
                 smoke[i % 5]->put_image(screen, dx + 24, dy + 5);
-                text_draw(205 - i, dx + 15, dy, dx + 320 - 15, dy + 199, str, eh->font(), cmap, eh->bright_color());
-                eh->flush_screen();
+                text_draw(205 - i, dx + 15, dy, dx + 320 - 15, dy + 199, str, wm->font(), cmap, wm->bright_color());
+                wm->flush_screen();
                 time_marker now;
 
                 while(now.diff_time(&start) < 0.18)
@@ -1324,9 +1324,9 @@ void do_title()
 
                 start.get_time();
 
-                while(eh->event_waiting() && ev.type != EV_KEY)
+                while(wm->event_waiting() && ev.type != EV_KEY)
                 {
-                    eh->get_event(ev);
+                    wm->get_event(ev);
                 }
                 if((i % 5) == 0 && DEFINEDP(space_snd) && (sound_avail & SFX_INITIALIZED))
                 {
@@ -1353,7 +1353,7 @@ void do_title()
         if(title_screen >= 0)
             fade_in(cash.img(title_screen), 32);
 
-        eh->set_mouse_shape(cash.img(c_normal)->copy(), 1, 1);
+        wm->set_mouse_shape(cash.img(c_normal)->copy(), 1, 1);
     }
 }
 
@@ -1482,20 +1482,20 @@ game::game(int argc, char **argv)
 
   console_font = new JCFont(cash.img(console_font_pict));
 
-  eh = new window_manager(screen, pal, bright_color,
+  wm = new window_manager(screen, pal, bright_color,
                                    med_color,
                                    dark_color,
                                    game_font);
 
   delete stat_man;  // move to a graphical status manager
-  gui_status_manager *gstat = new gui_status_manager(eh);
+  gui_status_manager *gstat = new gui_status_manager();
   gstat->set_window_title("status");
   stat_man = gstat;
 
 
-  chat = new chat_console(eh, console_font, 50, 6);
+  chat = new chat_console( console_font, 50, 6);
 
-  if(!eh->has_mouse())
+  if(!wm->has_mouse())
   {
     close_graphics();
     image_uninit();
@@ -1600,7 +1600,7 @@ void game::update_screen()
       if(interpolate_draw)
       {
             draw_map(f, 1);
-        eh->flush_screen();
+        wm->flush_screen();
       }
           draw_map(f, 0);
     }
@@ -1621,7 +1621,7 @@ void game::update_screen()
   if(state == RUN_STATE && cash.prof_is_on())
     cash.prof_poll_end();
 
-  eh->flush_screen();
+  wm->flush_screen();
 
 }
 
@@ -1698,9 +1698,9 @@ void game::get_input()
 {
     event ev;
     idle_ticks++;
-    while(event_waiting(eh))
+    while(event_waiting())
     {
-        get_event(ev, eh);
+        get_event(ev);
 
         if(ev.type == EV_MOUSE_MOVE)
         {
@@ -1780,7 +1780,7 @@ void game::get_input()
                         {
                             int wx = WINDOW_FRAME_LEFT, wy = WINDOW_FRAME_TOP;
 
-                            joy_win = eh->new_window(80, 50, -1, -1,
+                            joy_win = wm->new_window(80, 50, -1, -1,
                                     new button(wx + 70, wy + 9, JOY_OK, "OK",
                                     new info_field(wx, wy + 30, DEV_NULL,
                                     " Center joystick and\n"
@@ -1801,7 +1801,7 @@ void game::get_input()
             }
             else if(ev.type == EV_CLOSE_WINDOW && ev.window == top_menu)
             {
-                eh->close_window(top_menu);
+                wm->close_window(top_menu);
                 top_menu = NULL;
             }
 
@@ -1853,7 +1853,7 @@ void game::get_input()
                                     } break;
                                     case 'v':
                                     {
-                                        eh->push_event(new event(DO_VOLUME, NULL));
+                                        wm->push_event(new event(DO_VOLUME, NULL));
                                     } break;
                                     case 'p':
                                     {
@@ -1868,7 +1868,7 @@ void game::get_input()
                                     {
                                         if(start_edit)
                                         {
-                                            eh->push_event(new event(ID_LEVEL_SAVE, NULL));
+                                            wm->push_event(new event(ID_LEVEL_SAVE, NULL));
                                         }
                                     } break;
                                     case JK_TAB:
@@ -1892,7 +1892,7 @@ void game::get_input()
                                     {
                                         if(!dev_cont->need_plus_minus())
                                         {
-                                            if(eh->key_pressed(JK_CTRL_L))
+                                            if(wm->key_pressed(JK_CTRL_L))
                                                 grow_views(20);
                                             else
                                                 grow_views(5);
@@ -1908,7 +1908,7 @@ void game::get_input()
                                     {
                                         if(!dev_cont->need_plus_minus())
                                         {
-                                            if(eh->key_pressed(JK_CTRL_L))
+                                            if(wm->key_pressed(JK_CTRL_L))
                                                 grow_views(-20);
                                             else
                                                 grow_views(-5);
@@ -2185,7 +2185,7 @@ game::~game()
 
   config_cleanup();
   delete color_table;
-  delete eh;
+  delete wm;
   delete game_font;
   delete big_font;
   delete console_font;
@@ -2211,16 +2211,16 @@ void game::draw(int scene_mode)
     if(scene_mode)
     {
         char const *helpstr = "ARROW KEYS CHANGE TEXT SPEED";
-        eh->font()->put_string(screen, screen->width()/2-(eh->font()->width()*strlen(helpstr))/2 + 1,
-            screen->height()-eh->font()->height()-5 + 1, helpstr, eh->dark_color());
-        eh->font()->put_string(screen, screen->width()/2-(eh->font()->width()*strlen(helpstr))/2,
-            screen->height()-eh->font()->height()-5, helpstr, eh->bright_color());
+        wm->font()->put_string(screen, screen->width()/2-(wm->font()->width()*strlen(helpstr))/2 + 1,
+            screen->height()-wm->font()->height()-5 + 1, helpstr, wm->dark_color());
+        wm->font()->put_string(screen, screen->width()/2-(wm->font()->width()*strlen(helpstr))/2,
+            screen->height()-wm->font()->height()-5, helpstr, wm->bright_color());
     }
 /*    else
     {
         char *helpstr="PRESS h FOR HELP";
-        eh->font()->put_string(screen, screen->width()-eh->font()->width()*strlen(helpstr)-5,
-            screen->height()-eh->font()->height()-5, helpstr);
+        wm->font()->put_string(screen, screen->width()-wm->font()->width()*strlen(helpstr)-5,
+            screen->height()-wm->font()->height()-5, helpstr);
     }*/
 /*    int dc = cash.img(window_colors)->pixel(0, 2);
     int mc = cash.img(window_colors)->pixel(1, 2);
@@ -2283,7 +2283,7 @@ void game_getter(char *st, int max)
     event ev;
     do
     {
-      get_event(ev, eh);
+      get_event(ev);
       if(ev.type == EV_KEY)
       {
     if(ev.key == JK_BACKSPACE)
@@ -2306,7 +2306,7 @@ void game_getter(char *st, int max)
       *st = 0;
     }
       }
-      eh->flush_screen();
+      wm->flush_screen();
     } while(ev.type != EV_KEY || ev.key != JK_ENTER);
     dprintf("\n");
   }

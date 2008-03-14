@@ -74,9 +74,8 @@ console::~console()
   jfree(name);
 }
 
-console::console(window_manager *WM, JCFont *font, int width, int height, char const *Name)
+console::console(JCFont *font, int width, int height, char const *Name)
 {
-  wm=WM;
   con_win=NULL;
   w=width;
   h=height;
@@ -121,7 +120,7 @@ void console::do_cr()
       memmove(screen,screen+w,w*(h-1));
       memset(screen+w*(h-1),' ',w);
       redraw();
-      eh->flush_screen();
+      wm->flush_screen();
     }
   } else draw_cursor();    
 }
@@ -172,8 +171,8 @@ void console::print_f( const char *format, ...)
 }
 
 
-shell_term::shell_term(window_manager *WM, JCFont *font, int width, int height, char const *Name) :
-  console(WM,font,width,height,Name)
+shell_term::shell_term(JCFont *font, int width, int height, char const *Name) :
+  console(font,width,height,Name)
 {
   shcmd[0]=0;
   prompt();
@@ -190,7 +189,7 @@ void shell_term::execute(char const *st)
   put_string(" : unhandled\n");
 }
 
-int shell_term::handle_event(event &ev, window_manager *wm)
+int shell_term::handle_event(event &ev)
 {
   if (ev.window==con_win && con_win)
   {
