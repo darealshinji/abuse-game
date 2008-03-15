@@ -3027,10 +3027,6 @@ void pal_win::close_window()
   }
 }
 
-#ifdef __MWERKS__
-#pragma global_optimizer on
-#endif
-
 void pal_win::draw()
 {
   int i,find=-1,d=cur_fg;
@@ -3059,10 +3055,6 @@ void pal_win::draw()
     last_selected=d;
   }
 }
-
-#ifdef __MWERKS__
-#pragma global_optimizer reset
-#endif
 
 void pal_win::handle_event(event &ev) 
 {

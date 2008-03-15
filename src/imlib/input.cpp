@@ -254,10 +254,6 @@ char *text_field::read()
   return data;
 }
 
-#ifdef __MWERKS__
-#pragma global_optimizer on
-#endif
-
 void text_field::handle_event(event &ev, image *screen, input_manager *im)
 {
   int xx;
@@ -301,10 +297,6 @@ void text_field::handle_event(event &ev, image *screen, input_manager *im)
     }
   } 
 }
-
-#ifdef __MWERKS__
-#pragma global_optimizer reset
-#endif
 
 void text_field::draw(int active, image *screen)
 {
