@@ -46,10 +46,6 @@ gui_status_node::~gui_status_node()
   }
 }
 
-#ifdef __MWERKS__
-#pragma global_optimizer on
-#endif
-
 void gui_status_manager::draw_bar(gui_status_node *whom, int perc)
 {
   long l=whom->stat_win->x2()-whom->stat_win->x1()-6;
@@ -64,10 +60,6 @@ void gui_status_manager::draw_bar(gui_status_node *whom, int perc)
 				whom->stat_win->x1()+l*perc/100,
 				whom->stat_win->y2()-3,wm->bright_color());
 }
-
-#ifdef __MWERKS__
-#pragma global_optimizer reset
-#endif
 
 void gui_status_manager::push(char const *name, visual_object *show)
 {
