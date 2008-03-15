@@ -24,8 +24,6 @@ int frame_bottom() { return jw_bottom; }
 int frame_left() { return jw_left; }
 int frame_right() { return jw_right; }
 
-ifield::~ifield() { ; }
-
 void set_frame_size(int x)
 {  
   if (x<1) x=1;
@@ -78,9 +76,9 @@ void window_manager::hide_windows()
   jwindow *p;
   for (p=first;p;p=p->next)
   {
-    if (!p->property.hidden)
+    if (!p->is_hidden())
     {
-      p->property.hidden=1;
+      p->hide();
       screen->add_dirty(p->x,p->y,p->x+p->l-1,p->y+p->h-1);
     }
   }
@@ -90,7 +88,7 @@ void window_manager::show_windows()
 {
   jwindow *p;
   for (p=first;p;p=p->next)
-    if (p->property.hidden)
+    if (p->is_hidden())
       show_window(p);      
 }
 
@@ -109,14 +107,14 @@ void window_manager::hide_window(jwindow *j)
     k->next=j->next;
   }
   screen->add_dirty(j->x,j->y,j->x+j->l-1,j->y+j->h-1);
-  j->property.hidden=1;
+  j->hide();
 }
 
 void window_manager::show_window(jwindow *j)
 {
-  if (j->property.hidden)
+  if (j->is_hidden())
   {
-    j->property.hidden=0;
+    j->show();
     j->screen->add_dirty(0,0,j->l-1,j->h-1);
   }
 }
@@ -133,7 +131,7 @@ void window_manager::get_event(event &ev)
   if (state==inputing)
   {
     for (ev.window=NULL,j=first;j;j=j->next)
-      if (!j->property.hidden && ev.mouse_move.x>=j->x && ev.mouse_move.y>=j->y &&
+      if (!j->is_hidden() && ev.mouse_move.x>=j->x && ev.mouse_move.y>=j->y &&
           ev.mouse_move.x<j->x+j->l && ev.mouse_move.y<j->y+j->h)
         ev.window=j;
 
@@ -148,7 +146,7 @@ void window_manager::get_event(event &ev)
 	   ev.mouse_move.x<ev.window->x+ev.window->l && ev.mouse_move.y<ev.window->y+ev.window->y1()))
       {
 	if (ev.mouse_move.x-ev.window->x<11) closew=1;
-	else if (ev.window->property.moveable) movew=1;
+	else if (ev.window->is_moveable()) movew=1;
       } else if (grab)
         ev.window=grab;
 
@@ -275,7 +273,7 @@ jwindow *window_manager::new_window(int x, int y, int l, int h, ifield *fields, 
   if (y>screen->height()-4) y=screen->height()-10;
   
   jwindow *j=new jwindow(x,y,l,h,fields,Name),*k;
-  j->property.hidden=0;
+  j->show();
   if (!first)
     first=j;
   else
@@ -309,7 +307,7 @@ void window_manager::flush_screen()
   }
   
   for (p=first;p;p=p->next)
-    if (!p->property.hidden)
+    if (!p->is_hidden())
        screen->delete_dirty(p->x,p->y,p->x+p->l-1,p->y+p->h-1);
   update_dirty(screen);
 
@@ -319,7 +317,7 @@ void window_manager::flush_screen()
 
   for (p=first;p;p=p->next)
   {
-    if (!p->property.hidden)
+    if (!p->is_hidden())
     {
       if (has_mouse())
       {      
@@ -333,7 +331,7 @@ void window_manager::flush_screen()
 
 //      screen->delete_dirty(p->x,p->y,p->x+p->l-1,p->y+p->h-1);
       for (q=p->next;q;q=q->next)
-        if (!q->property.hidden)
+        if (!q->is_hidden())
           p->screen->delete_dirty(q->x-p->x,
                               q->y-p->y,
                               q->x+q->l-1-p->x,
@@ -345,53 +343,59 @@ void window_manager::flush_screen()
   }
 }
 
-void jwindow::set_moveability(int x)
-{
-  property.moveable=x;
-}
-
 jwindow::jwindow(int X, int Y, int L, int H, ifield *fields, char const *Name)
 {
-  ifield *i;
-  int x1,y1,x2,y2;
-  l=0; h=0; 
-  property.moveable=1;
-  if (fields)
-    for (i=fields;i;i=i->next)
+    ifield *i;
+    int x1, y1, x2, y2;
+
+    l = 0; h = 0; 
+    hidden = false;
+    moveable = true;
+    if(fields)
+        for(i = fields; i; i = i->next)
+        {
+            i->area(x1, y1, x2, y2);
+            if ((int)y2 > (int)h) 
+                h = y2 + 1;
+            if ((int)x2 > (int)l) 
+                l = x2 + 1;
+        }
+    else
     {
-      i->area(x1,y1,x2,y2);
-      if ((int)y2>(int)h) 
-        h=y2+1;
-      if ((int)x2>(int)l) 
-        l=x2+1;
+        l = 2;
+        h = 2;
     }
-  else { l=2; h=2; }
 
-  if (L<=0) { l=l-L; } else l=L+jw_left;
-  if (H<=0) { h=h-H; } else h=H+jw_top;
+    l = L > 0 ? L + jw_left : l - L;
+    l += WINDOW_FRAME_RIGHT;
+    if(l < 18)
+        l = 18;
+    h = H > 0 ? H + jw_top : h - h;
+    h += WINDOW_FRAME_BOTTOM;
+    if(h < 12)
+        h = 12;
+    //if (!fields) { l+=WINDOW_FRAME_LEFT; h+=WINDOW_FRAME_TOP; }
+    y = Y >= 0 ? Y : yres - h + Y - WINDOW_FRAME_TOP - WINDOW_FRAME_BOTTOM - 1;
+    x = X >= 0 ? X : xres - l + X - WINDOW_FRAME_LEFT - WINDOW_FRAME_RIGHT - 1;
 
- if (Y<0) y=yres-h+Y-WINDOW_FRAME_TOP-WINDOW_FRAME_BOTTOM-1; else y=Y;
- if (X<0) x=xres-l+X-WINDOW_FRAME_LEFT-WINDOW_FRAME_RIGHT-1; else x=X;
+    backg = wm->medium_color();
 
-  backg=wm->medium_color();
-  l+=WINDOW_FRAME_RIGHT; h+=WINDOW_FRAME_BOTTOM;
-//  if (!fields) { l+=WINDOW_FRAME_LEFT; h+=WINDOW_FRAME_TOP; }
-
-  if (l<18) l=18;
-  if (h<12) h=12;
-  screen=new image(l,h,NULL,2);
-  l=screen->width();
-  h=screen->height();
-  screen->clear(backg);
-  next=NULL;
-  inm=new input_manager(screen,fields);
-  if (Name==NULL)
-    name=strcpy((char *)jmalloc(strlen(" ")+1,"jwindow::window name")," ");  
-  else
-    name=strcpy((char *)jmalloc(strlen(Name)+1,"jwindow::window name"),Name);
+    screen=new image(l,h,NULL,2);
+    l = screen->width();
+    h = screen->height();
+    screen->clear(backg);
+    next = NULL;
+    inm = new input_manager(screen, fields);
+    if(Name == NULL)
+        name = strcpy((char *)jmalloc(strlen(" ") + 1, "jwindow::window name"), " ");  
+    else
+        name = strcpy((char *)jmalloc(strlen(Name) + 1, "jwindow::window name"), Name);
 }
 
-void jwindow::local_close() { ; }
+void jwindow::local_close()
+{
+    ;
+}
 
 void jwindow::redraw(int hi, int med, int low, JCFont *fnt)
 {
@@ -468,16 +472,21 @@ input_manager::~input_manager()
 
 void input_manager::clear_current()
 {
-  if (active)
-    active->draw(0,screen);
-
-  active=NULL;
+    if(owner)
+        screen = owner->screen;
+    if(active)
+        active->draw(0, screen);
+    active = NULL;
 }
 
 void input_manager::handle_event(event &ev, jwindow *j)
 {
   ifield *i,*in_area=NULL;
   int x1,y1,x2,y2;
+
+  if(owner)
+      screen = owner->screen;
+
   if (j)
   {
     ev.mouse_move.x-=j->x;
@@ -550,22 +559,39 @@ void input_manager::allow_no_selections()
 
 void input_manager::redraw()
 {
-  ifield *i;
-  for (i=first;i;i=i->next)
-    i->draw_first(screen);
-  if (active)
-    active->draw(1,screen);
+    ifield *i;
+    if(owner)
+        screen = owner->screen;
+    for(i = first; i; i = i->next)
+        i->draw_first(screen);
+    if(active)
+        active->draw(1, screen);
 }
 
 input_manager::input_manager(image *Screen, ifield *First)
 {
-  no_selections_allowed=0;
-  cur=NULL;
-  grab=NULL;
-  screen=Screen;
-  active=first=First;
-  while (active && !active->selectable()) active=active->next;
-  redraw();
+    no_selections_allowed = 0;
+    cur = NULL;
+    grab = NULL;
+    owner = NULL;
+    screen = Screen;
+    active = first = First;
+    while(active && !active->selectable())
+        active = active->next;
+    if(screen)
+        redraw();
+}
+
+input_manager::input_manager(jwindow *Owner, ifield *First)
+{
+    no_selections_allowed = 0;
+    cur = NULL;
+    grab = NULL;
+    owner = Owner;
+    screen = NULL;
+    active = first = First;
+    while(active && !active->selectable())
+        active = active->next;
 }
 
 void input_manager::grab_focus(ifield *i)
@@ -612,5 +638,27 @@ ifield *input_manager::get(int id)
   return NULL;
 }
 
+ifield::ifield()
+{
+    owner = NULL;
+    x = 0;
+    y = 0;
+    next = NULL;
+    id = 0;
+}
 
+ifield::~ifield()
+{
+    ;
+}
+
+/* re-position the control with respect to the "client" area of the window */
+void ifield::set_owner(jwindow * newowner)
+{
+    if(owner)
+        move(x - owner->x1(), y - owner->y1());
+    owner = newowner;
+    if(owner)
+        move(x + owner->x1(), y + owner->y1());
+}
 
