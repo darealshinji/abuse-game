@@ -89,6 +89,14 @@ void button_box::draw(int active, image *screen)
   return ;
 }
 
+void button_box::move(int newx, int newy)
+{
+    for(button * b = buttons; b; b = (button *)b->next)
+        b->move(newx + b->x, newy + b->y);
+    x = newx;
+    y = newy;
+}
+
 char *button_box::read()
 {
   for (button *b=buttons;b;b=(button *)b->next)

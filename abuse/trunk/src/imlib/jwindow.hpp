@@ -32,15 +32,19 @@ void set_frame_size(int x);
 #define WINDOW_FRAME_LEFT  frame_left()
 #define WINDOW_FRAME_RIGHT frame_right()
 
-
 class input_manager
 {
+  friend class jwindow;
+
+private:
   image *screen;
-  ifield *first,*active,*grab;
-  jwindow *cur;
+  ifield *first, *active, *grab;
+  jwindow *cur, *owner;
   int no_selections_allowed;
-public :
+
+public:
   input_manager(image *Screen, ifield *First);
+  input_manager(jwindow *owner, ifield *First);
   void handle_event(event &ev, jwindow *j);
   ifield *get(int id);
   void redraw();
@@ -57,59 +61,81 @@ public :
 
 class ifield
 {
-public :
-  int x,y;
+    friend class jwindow;
+    friend class input_manager;
 
-  int id;
-  ifield *next;
-  virtual void area(int &x1, int &y1, int &x2, int &y2) = 0;
-  virtual void draw_first(image *screen)              = 0;
-  virtual void draw(int active, image *screen)        = 0;
-  virtual void handle_event(event &ev, image *screen, input_manager *im) = 0;
-  virtual int selectable() { return 1; }
-  virtual void remap(filter *f) { ; }
-  virtual char *read() = 0;
-  virtual ifield *find(int search_id) { if (id==search_id) return this; else return NULL; }
-  virtual ifield *unlink(int id) { return NULL; } 
-  virtual ~ifield();
+protected:
+    jwindow *owner;
+
+public :
+    ifield();
+    int x, y;
+
+    int id;
+    ifield *next;
+    virtual void set_owner(jwindow *owner);
+    virtual void move(int newx, int newy) { x = newx; y = newy; }
+    virtual void area(int &x1, int &y1, int &x2, int &y2) = 0;
+    virtual void draw_first(image *screen) = 0;
+    virtual void draw(int active, image *screen) = 0;
+    virtual void handle_event(event &ev, image *screen, input_manager *im) = 0;
+    virtual int selectable() { return 1; }
+    virtual void remap(filter *f) { ; }
+    virtual char *read() = 0;
+    virtual ifield *find(int search_id) { if (id==search_id) return this; else return NULL; }
+    virtual ifield *unlink(int id) { return NULL; } 
+    virtual ~ifield();
 } ;
 
 struct jwindow_properties
 {
-  uint8_t moveable,
-          hidden;
-} ;
-
+    bool moveable, hidden;
+};
 
 class jwindow
 {
-public :
-  jwindow_properties property;
-  jwindow *next;
-  char *name;
-  int x,y,l,h,backg;
-  image *screen;
-  input_manager *inm;
-  void *local_info;     // pointer to info block for local system (may support windows)
-  jwindow(int X, int Y, int L, int H, ifield *fields, char const *Name=NULL);
-  void redraw(int hi, int med, int low, JCFont *fnt);
-  void resize(int L, int H);
-  void clear(int color=0) { screen->bar(x1(),y1(),x2(),y2(),color); }
-  int x1() { return WINDOW_FRAME_LEFT; }
-  int y1() { return WINDOW_FRAME_TOP; } 
-  int x2() { return l-WINDOW_FRAME_RIGHT-1; }
-  int y2() { return h-WINDOW_FRAME_BOTTOM-1; } 
-  void clip_in() { screen->set_clip(x1(),y1(),x2(),y2()); }
-  void clip_out() { screen->set_clip(0,0,l-1,h-1); }
-  char *read(int id) { return inm->get(id)->read(); }  
-  void local_close();
-  void set_moveability(int x);
-  ~jwindow() { local_close(); delete screen; delete inm; jfree(name); }
+    friend class input_manager;
+
+private:
+    bool hidden;
+    bool moveable;
+
+protected:
+    jwindow *owner;
+
+public:
+    jwindow *next;
+    char *name;
+    int x, y, l, h, backg;
+    image *screen;
+    input_manager *inm;
+    void *local_info;  // pointer to info block for local system (may support windows)
+    jwindow(int X, int Y, int L, int H, ifield *fields, char const *Name = NULL);
+    void redraw(int hi, int med, int low, JCFont *fnt);
+    void resize(int L, int H);
+    void clear(int color = 0) { screen->bar(x1(), y1(), x2(), y2(), color); }
+    void show() { hidden = false; }
+    void hide() { hidden = true; }
+    bool is_hidden() { return hidden; }
+    void freeze() { moveable = false; }
+    void thaw() { moveable = true; }
+    bool is_moveable() { return moveable; }
+    int x1() { return WINDOW_FRAME_LEFT; }
+    int y1() { return WINDOW_FRAME_TOP; } 
+    int x2() { return l-WINDOW_FRAME_RIGHT-1; }
+    int y2() { return h-WINDOW_FRAME_BOTTOM-1; } 
+    void clip_in() { screen->set_clip(x1(),y1(),x2(),y2()); }
+    void clip_out() { screen->set_clip(0,0,l-1,h-1); }
+    char *read(int id) { return inm->get(id)->read(); }  
+    void local_close();
+    ~jwindow() { local_close(); delete screen; delete inm; jfree(name); }
 } ;
 
 class window_manager
 {
-public :
+  friend class jwindow;
+
+public:
   event_handler *eh;
   jwindow *first,*grab;
   image *screen,*mouse_pic,*mouse_save;
