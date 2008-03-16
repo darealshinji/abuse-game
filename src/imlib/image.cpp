@@ -501,7 +501,7 @@ void image::put_part(image *screen, int16_t x, int16_t y,
   if (x1>x2 || y1>y2) return ;      // return if it was adjusted so that nothing will be put
     
 
-  // see if the image gets clipped of the screen
+  // see if the image gets clipped off the screen
   if (x>cx2 || y>cy2 || x+(x2-x1)<cx1 || y+(y2-y1)<cy1) return ;
 
   
