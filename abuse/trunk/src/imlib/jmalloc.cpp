@@ -318,12 +318,11 @@ void block_manager::init(void *block, int32_t Block_size, uint8_t type)
 {
   block_size=Block_size;
   addr=block;
-  /* 
-     I'm padding each block, because I'm comparing pointers against size
-     in jfree to determine weither a pointer is too a small object or a large alloc
-     and it must always be true that the address of the pointer is > JM_SMALL_SIZE 
-     All systems I know start pointer address pretty high, but this is a porting consern.     
-  */
+  /* I'm padding each block, because I'm comparing pointers against size
+   * in jfree to determine whether a pointer is too a small object or a large
+   * alloc and it must always be true that the address of the pointer is
+   * > JM_SMALL_SIZE. All systems I know start pointer address pretty high,
+   * but this can be a portability concern. */
   
   slast=sfirst=(memory_node *)(((char *)block)+JM_SMALL_SIZE);   
   sfirst->size=-(block_size-sizeof(memory_node)-JM_SMALL_SIZE);

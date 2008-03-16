@@ -15,7 +15,9 @@
 
 #include "linked.hpp"
 
-// unlink take a node out of the linked list, but does not dispose of the memory
+//
+// take a node out of the linked list, but do not dispose of the memory
+//
 int linked_list::unlink(linked_node *p)
 {
   linked_node *q;
@@ -48,8 +50,10 @@ int linked_list::unlink(linked_node *p)
 }
 
 
-// this function clears all the nodes in a linked list and dispose of the
-// memory for each one by calling is't destructor
+//
+// clear all the nodes in a linked list and dispose of the
+// memory for each one by calling its destructor
+//
 linked_list::~linked_list()
 {
   if (fn)
@@ -65,9 +69,10 @@ linked_list::~linked_list()
   nn=0;                     // set the number of nodes to 0
 }
 
-// this function returns the node number a node is in a linked list
-// it start at the node and goes backwards until it reaches the first
-// node
+//
+// return the index of a given node in a linked list, by starting at the
+// node and parsing backwards
+//
 int linked_list::node_number(linked_node *p)
 {
   int x;
@@ -138,7 +143,7 @@ void linked_list::insert(class linked_node *p)
 	p->set_last(q->last());     // insert it with pointers here
 	q->last()->set_next(p);
 	q->set_last(p);
-	q=fn->last();         // set q to the last node so we exit the loop
+	q=fn->last();         // set q to the last node so we finish the loop
       }
     }
   }

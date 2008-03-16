@@ -115,9 +115,9 @@ void scroller::draw_first(image *screen)
 {
   if (sx>=t) sx=t-1;
   draw(0,screen);
-  screen->wiget_bar(b1x(),b1y(),b1x()+bw()-1,b1y()+bh()-1,
+  screen->widget_bar(b1x(),b1y(),b1x()+bw()-1,b1y()+bh()-1,
 		    wm->bright_color(),wm->medium_color(),wm->dark_color());
-  screen->wiget_bar(b2x(),b2y(),b2x()+bw()-1,b2y()+bh()-1,
+  screen->widget_bar(b2x(),b2y(),b2x()+bw()-1,b2y()+bh()-1,
 		    wm->bright_color(),wm->medium_color(),wm->dark_color());
   show_icon(screen,b1x()+2,b1y()+2,bw()-4,bh()-4,b1());
   show_icon(screen,b2x()+2,b2y()+2,bw()-4,bh()-4,b2());
@@ -126,7 +126,7 @@ void scroller::draw_first(image *screen)
   dragger_area(x1,y1,x2,y2);
   screen->bar(x1,y1,x2,y2,wm->black());
   screen->bar(x1+1,y1+1,x2-1,y2-1,wm->medium_color());   
-  draw_wiget(screen,0);
+  draw_widget(screen,0);
   scroll_event(sx,screen);
 }
 
@@ -153,14 +153,14 @@ void scroller::wig_area(int &x1, int &y1, int &x2, int &y2)
 }
 
 
-void scroller::draw_wiget(image *screen, int erase)
+void scroller::draw_widget(image *screen, int erase)
 { 
   int x1,y1,x2,y2;
   wig_area(x1,y1,x2,y2);
   if (erase)
     screen->bar(x1,y1,x2,y2,wm->medium_color());
   else
-    screen->wiget_bar(x1,y1,x2,y2,
+    screen->widget_bar(x1,y1,x2,y2,
 		      wm->bright_color(),wm->medium_color(),wm->dark_color());
 }
 
@@ -185,18 +185,18 @@ void scroller::handle_event(event &ev, image *screen, input_manager *inm)
 	{
 	  if (sx>0)
 	  {
-	    draw_wiget(screen,1);
+	    draw_widget(screen,1);
 	    sx--;
-	    draw_wiget(screen,0);
+	    draw_widget(screen,0);
 	    scroll_event(sx,screen);
 	  }
 	} else if (mx>=b2x() && mx<b2x()+bw() && my>=b2y() && my<=b2y()+bh())
 	{
 	  if (sx<t-1)
 	  {
-	    draw_wiget(screen,1);
+	    draw_widget(screen,1);
 	    sx++;
-	    draw_wiget(screen,0);
+	    draw_widget(screen,0);
 	    scroll_event(sx,screen);
 	  }	    
 	}
@@ -218,9 +218,9 @@ void scroller::handle_event(event &ev, image *screen, input_manager *inm)
 	      int nx=mouse_to_drag(mx,my);
 	      if (nx!=sx && nx>=0 && nx<t)
 	      {
-		draw_wiget(screen,1);
+		draw_widget(screen,1);
 		sx=nx;
-		draw_wiget(screen,0);
+		draw_widget(screen,0);
 		scroll_event(sx,screen);		
 	      }		
 	    }
@@ -241,9 +241,9 @@ void scroller::handle_event(event &ev, image *screen, input_manager *inm)
 	if (nx<0) nx=0; else if (nx>=t) nx=t-1;
 	if (nx!=sx)
 	{
-	  draw_wiget(screen,1);
+	  draw_widget(screen,1);
 	  sx=nx;
-	  draw_wiget(screen,0);
+	  draw_widget(screen,0);
 	  scroll_event(sx,screen);
 	}
       } else if ( activate_on_mouse_move())
@@ -280,9 +280,9 @@ void scroller::handle_right(image *screen, input_manager *inm)
 {
   if (!vert && sx<t-1)
   {
-    draw_wiget(screen,1);
+    draw_widget(screen,1);
     sx++;
-    draw_wiget(screen,0);
+    draw_widget(screen,0);
     scroll_event(sx,screen);	    
   }
 }
@@ -291,9 +291,9 @@ void scroller::handle_left(image *screen, input_manager *inm)
 {
   if (!vert && sx>1)
   {
-    draw_wiget(screen,1);
+    draw_widget(screen,1);
     sx--;
-    draw_wiget(screen,0);
+    draw_widget(screen,0);
     scroll_event(sx,screen);	    
   }
 }
@@ -302,9 +302,9 @@ void scroller::handle_up(image *screen, input_manager *inm)
 { 
   if (vert && sx>1)
   {
-    draw_wiget(screen,1);
+    draw_widget(screen,1);
     sx--;
-    draw_wiget(screen,0);
+    draw_widget(screen,0);
     scroll_event(sx,screen);	    
   }
 }
@@ -313,9 +313,9 @@ void scroller::handle_down(image *screen, input_manager *inm)
 {
   if (vert && sx<t-1)
   {
-    draw_wiget(screen,1);
+    draw_widget(screen,1);
     sx++;
-    draw_wiget(screen,0);
+    draw_widget(screen,0);
     scroll_event(sx,screen);	    
   }
 }
@@ -326,9 +326,9 @@ void scroller::set_x (int x, image *screen)
   if (x>=t) x=t-1;
   if (x!=sx)
   {
-    draw_wiget(screen,1);
+    draw_widget(screen,1);
     sx=x;
-    draw_wiget(screen,0);
+    draw_widget(screen,0);
     scroll_event(sx,screen);	    
   }
 }
@@ -459,9 +459,9 @@ void pick_list::handle_up(image *screen, input_manager *inm)
   else return ;
   if (cur_sel<sx)
   {
-    draw_wiget(screen,1);
+    draw_widget(screen,1);
     sx=cur_sel;
-    draw_wiget(screen,0);
+    draw_widget(screen,0);
   }
   scroll_event(sx,screen);	          
 }
@@ -473,9 +473,9 @@ void pick_list::handle_down(image *screen, input_manager *inm)
   else return ;
   if (cur_sel>sx+th-1)
   {
-    draw_wiget(screen,1);
+    draw_widget(screen,1);
     sx=cur_sel-th+1;
-    draw_wiget(screen,0);
+    draw_widget(screen,0);
   }
   scroll_event(sx,screen);	          
 }
@@ -691,9 +691,9 @@ void spicker::handle_up(image *screen, input_manager *inm)
 
     if (cur_sel<sx)
     {
-      draw_wiget(screen,1);
+      draw_widget(screen,1);
       last_sel=sx=cur_sel;
-      draw_wiget(screen,0);
+      draw_widget(screen,0);
     }
     scroll_event(last_sel,screen);
     note_new_current(screen,inm,cur_sel);    
@@ -707,9 +707,9 @@ void spicker::handle_down(image *screen, input_manager *inm)
   else return ;
   if (cur_sel>sx+r-1)
   {
-    draw_wiget(screen,1);
+    draw_widget(screen,1);
     last_sel=sx=cur_sel-r+1;
-    draw_wiget(screen,0);
+    draw_widget(screen,0);
   }
   scroll_event(sx,screen);
   note_new_current(screen,inm,cur_sel);    

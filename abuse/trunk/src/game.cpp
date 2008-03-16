@@ -457,10 +457,10 @@ void game::set_state(int new_state)
 
 void game::joy_calb(event &ev)
 {
-    if(!joy_win) // make sure the joy stick calibration window is open
+    if(!joy_win) // make sure the joystick calibration window is open
         return;
 
-    if(ev.type == EV_SPURIOUS) // spurious means we should update your status
+    if(ev.type == EV_SPURIOUS) // spurious means we should update our status
     {
         int b1, b2, b3 = 0, x, y;
         joy_status(b1, b2, b2, x, y);
@@ -2449,7 +2449,7 @@ void game_net_init(int argc, char **argv)
       start_running = 1;
       else
       {
-                dprintf("Unable to attach to server, quiting\n");
+                dprintf("Unable to attach to server, quitting\n");
                 exit(0);
       }
     } else
@@ -2458,7 +2458,7 @@ void game_net_init(int argc, char **argv)
       for(i = 1; i < argc - 1; i++)
       if(!strcmp(argv[i], "-fs"))
       if(!set_file_server(argv[i + 1]))
-      dprintf("could not set defualt file server to %s\n", argv[i + 1]);
+      dprintf("could not set default file server to %s\n", argv[i + 1]);
     }
   }
 

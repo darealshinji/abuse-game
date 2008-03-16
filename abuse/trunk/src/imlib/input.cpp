@@ -412,8 +412,8 @@ void button::draw_first(image *screen)
     if (up)
     {
       screen->rectangle(x1,y1,x2,y2,wm->black());
-//      screen->wiget_bar(,wm->bright_color(),wm->medium_color(),wm->dark_color()); 
-      screen->wiget_bar(x1+1,y1+1,x2-1,y2-1,wm->bright_color(),wm->medium_color(),wm->dark_color()); 
+//      screen->widget_bar(,wm->bright_color(),wm->medium_color(),wm->dark_color()); 
+      screen->widget_bar(x1+1,y1+1,x2-1,y2-1,wm->bright_color(),wm->medium_color(),wm->dark_color()); 
       if (text)
       {
         wm->font()->put_string(screen,x+4,y+5,text,wm->black());

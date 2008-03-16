@@ -27,13 +27,13 @@ extern uint8_t current_background;
 char const *imerr_messages[] =
 {
     "No error",
-    "Error occured while reading",
+    "Error occurred while reading",
     "Incorrect file type",
     "File is corrupted",
     "File not found",
     "Memory allocation trouble",
     "Operation/file type not supported",
-    "Error occured while writing, (disk full?)"
+    "Error occurred while writing, (disk full?)"
 };
 			
                          
@@ -193,7 +193,7 @@ void image_init()
   up=(uint16_t *)bt;
   wrd=uint16_to_intel(*up);
   if (wrd!=0x01)
-  { printf("Compiled under wrong ENDING-nes, edit system.h and try again\n");
+  { printf("compiled with wrong endianness, edit system.h and try again\n");
     printf("1 (intel) = %d\n",(int)wrd);
     exit(1);
   }
@@ -721,15 +721,14 @@ void image::rectangle(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t col
 
 void image::set_clip(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-  // If the image does not already have an Image descriptor, allocate one.
+    // If the image does not already have an Image descriptor, allocate one
+    // with no dirty rectangle keeping.
+    if(!special)
+        special = new image_descriptor(width(), height(), 0);
 
-  if (!special)
-  { 
-    // create a new image descriptor withj no dirty rectangle keeping
-    special=new image_descriptor(width(),height(),0);
-  }
-  special->set_clip(x1,y1,x2,y2);  // set the image descriptor what the clip
-		       // should be it will adjust to fit wiothin the image.
+    // set the image descriptor what the clip
+    // should be it will adjust to fit within the image.
+    special->set_clip(x1, y1, x2, y2);
 }
 
 void image::get_clip (int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2)
@@ -755,9 +754,11 @@ void image::in_clip  (int16_t x1, int16_t y1, int16_t x2, int16_t y2)
   }
   set_clip(x1,y1,x2,y2);
 }
-// this function reduces the number of dirty rectanges
-// to 1 by find the minmum area that can contain all the rectangles and
-// making this the new dirty area
+
+//
+// reduce the number of dirty rectanges to 1 by finding the minmum area that
+// can contain all the rectangles and making this the new dirty area
+//
 void image_descriptor::reduce_dirties()
 {
   dirty_rect *p,*q;
@@ -1143,7 +1144,7 @@ image *image::create_smooth(int16_t smoothness)
   return im;
 }
 
-void image::wiget_bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2, 
+void image::widget_bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2, 
    	uint8_t light, uint8_t med, uint8_t dark)
 {
   line(x1,y1,x2,y1,light);

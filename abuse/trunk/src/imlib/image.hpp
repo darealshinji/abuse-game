@@ -138,7 +138,7 @@ public :
   image    *copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2);
   void     bar                (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
   void     xor_bar            (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
-  void 	   wiget_bar          (int16_t x1, int16_t y1, int16_t x2, int16_t y2, 
+  void 	   widget_bar          (int16_t x1, int16_t y1, int16_t x2, int16_t y2, 
 				     uint8_t light, uint8_t med, uint8_t dark);
   void     line               (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
   void     rectangle          (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);

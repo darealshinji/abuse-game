@@ -29,7 +29,7 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
 
   bar=wm->new_window(X, Y, w, 0, NULL);
   bar->freeze();  // can't drag this window
-  bar->screen->wiget_bar(0,0,w-1,h-1,wm->bright_color(),wm->medium_color(),
+  bar->screen->widget_bar(0,0,w-1,h-1,wm->bright_color(),wm->medium_color(),
 		    wm->dark_color());
 
 
@@ -196,7 +196,7 @@ void psub_menu::draw(jwindow *parent, int x, int y)
 		     h - jwindow::top_border() - jwindow::bottom_border(),
                      NULL);
   win->freeze();
-  win->screen->wiget_bar(0,0,w-1,h-1,wm->bright_color(),wm->medium_color(),wm->dark_color());
+  win->screen->widget_bar(0,0,w-1,h-1,wm->bright_color(),wm->medium_color(),wm->dark_color());
 
   int has_flags=0;
   pmenu_item *p=first;
@@ -217,7 +217,7 @@ void pmenu_item::draw_self(jwindow *parent, int x, int y, int w, int top, int ac
   if (!n)
   {
     int h=wm->font()->height();
-    parent->screen->wiget_bar(x,y+h/2-1,x+w-1,y+h/2,wm->dark_color(),wm->medium_color(),wm->bright_color());
+    parent->screen->widget_bar(x,y+h/2-1,x+w-1,y+h/2,wm->dark_color(),wm->medium_color(),wm->bright_color());
   } else
   {
     if (active)

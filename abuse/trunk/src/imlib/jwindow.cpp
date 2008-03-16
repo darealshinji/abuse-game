@@ -234,13 +234,13 @@ void window_manager::resize_window(jwindow *j, int l, int h)
 
 void window_manager::move_window(jwindow *j, int x, int y)
 {
-  jwindow *p;
-  screen->add_dirty(j->x,j->y,j->x+j->l-1,j->y+j->h-1);
-  for (p=first;p!=j;p=p->next)
-    p->screen->add_dirty(j->x-p->x,j->y-p->y,j->x+j->l-1-p->x,j->y+j->h-1-p->y);
-  j->x=x;
-  j->y=y;
-  j->screen->add_dirty(0,0,j->l-1,j->h-1);
+    screen->add_dirty(j->x, j->y, j->x + j->l - 1, j->y + j->h - 1);
+    for(jwindow *p = first; p != j; p = p->next)
+        p->screen->add_dirty(j->x - p->x, j->y - p->y, j->x + j->l - 1 - p->x,
+                             j->y + j->h - 1 - p->y);
+    j->x = x;
+    j->y = y;
+    j->screen->add_dirty(0, 0, j->l - 1, j->h - 1);
 }
 
 window_manager::window_manager(image *Screen, palette *Pal, int Hi, 
@@ -482,9 +482,9 @@ void jwindow::redraw()
     {
         if (right_border() >= 1)
         {
-            screen->wiget_bar (0, 0, l - 1, h - 1, hi, med, low);
+            screen->widget_bar (0, 0, l - 1, h - 1, hi, med, low);
             if (right_border() >= 3)
-                screen->wiget_bar (right_border() - 1, top_border() - 1,
+                screen->widget_bar (right_border() - 1, top_border() - 1,
                                 l - left_border(), h - bottom_border(), low,
                                 med, hi);
           
@@ -494,16 +494,16 @@ void jwindow::redraw()
         }
       screen->rectangle (2, 2, top_border() - 2, top_border() - 3,
                            wm->black ());
-      screen->wiget_bar (3, 3, top_border() - 3, top_border() - 4, hi, med, low);     // draws the 'close' button
+      screen->widget_bar (3, 3, top_border() - 3, top_border() - 4, hi, med, low);     // draws the 'close' button
     }
   
   else
     {
       if (right_border() >= 1)
         {
-          screen->wiget_bar (0, 0, l - 1, h - 1, hi, med, low);
+          screen->widget_bar (0, 0, l - 1, h - 1, hi, med, low);
           if (right_border() >= 3)
-            screen->wiget_bar (right_border() - 1, jw_top + 4,
+            screen->widget_bar (right_border() - 1, jw_top + 4,
                                 l - left_border(), h - bottom_border(), low,
                                 med, hi);
           
@@ -512,7 +512,7 @@ void jwindow::redraw()
                            jw_top + 4, low);
         }
       screen->rectangle (1, 1, 4, 4, wm->black ());
-      screen->wiget_bar (2, 2, 3, 3, hi, med, low);   // draws the 'close' button
+      screen->widget_bar (2, 2, 3, 3, hi, med, low);   // draws the 'close' button
     }
   if (_name && _name[0])
     {

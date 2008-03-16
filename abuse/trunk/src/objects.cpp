@@ -563,7 +563,7 @@ void game_object::damage_fun(int amount, game_object *from, int32_t hitx, int32_
       if (v && v!=c) v->kills++;
       else
       {
-	v=c;                                 // sucide
+	v=c;                                 // suicide
 	if (v) v->kills--;
       }
     }

@@ -46,7 +46,7 @@ public :
   enum debug_type
     { DB_OFF,                // no debug printing
       DB_MAJOR_EVENT,        // print major events
-      DB_IMPORTANT_EVENT,    // anything that would tell where a lockup occures
+      DB_IMPORTANT_EVENT,    // anything that would tell where a lockup occurs
       DB_MINOR_EVENT } ;     // anything you can think off
 
 private :

@@ -44,7 +44,8 @@ int game_client::process_server_command()
       fprintf(stderr,"request for resend tick %d (game cur=%d, pack=%d, last=%d)\n",
 	      tick,base->current_tick,base->packet.tick_received(),base->last_packet.tick_received());
 
-      if (tick==base->packet.tick_received() && !wait_local_input)    // asking for this tick?  make sure is collected
+      // asking for this tick?  make sure it is collected
+      if (tick==base->packet.tick_received() && !wait_local_input)
       {
 	fprintf(stderr,"resending client packet %d to server\n",base->packet.tick_received());
 	net_packet *pack=&base->packet;
