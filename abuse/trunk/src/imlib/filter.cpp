@@ -207,7 +207,7 @@ void filter::put_image(image *screen, image *im, short x, short y, char transpar
   short cx1,cy1,cx2,cy2,x1=0,y1=0,x2=im->width()-1,y2=im->height()-1;
   screen->get_clip(cx1,cy1,cx2,cy2);
   
-  // see if the image gets clipped of the screen
+  // see if the image gets clipped off the screen
   if (x>cx2 || y>cy2 || x+(x2-x1)<cx1 || y+(y2-y1)<cy1) return ;
   
   if (x<cx1)
