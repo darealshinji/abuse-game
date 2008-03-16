@@ -44,7 +44,7 @@ void add_panim(int id, long x, long y, int dir)
   {
     last_anim->next=pan;
     last_anim=pan;
-  }  
+  }
 }
 
 void delete_panims()
@@ -75,7 +75,7 @@ int defun_pseq(void *args)
 
   args=lcdr(args);
   pseqs[total_pseqs]=new part_sequence(args);
-  total_pseqs++;  
+  total_pseqs++;
   return total_pseqs;
 }
 
@@ -83,7 +83,7 @@ extern int total_files_open;
 
 part_sequence::part_sequence(void *args)
 {
-  char *fn=lstring_value(lcar(args)); 
+  char *fn=lstring_value(lcar(args));
   bFILE *fp=open_file(fn,"rb");
   if (fp->open_failure())
   {
@@ -105,10 +105,10 @@ part_sequence::part_sequence(void *args)
   for (;i<sd.total;i++)
     if (sd.entries[i]->type==SPEC_PARTICLE) tframes++;
   frames=(int *)jmalloc(sizeof(int)*tframes,"part_frame id list\n");
- 
+
   int on=0;
   for (i=0;i<sd.total;i++)
-    if (sd.entries[i]->type==SPEC_PARTICLE)     
+    if (sd.entries[i]->type==SPEC_PARTICLE)
       frames[on++]=cash.reg(fn,sd.entries[i]->name,SPEC_PARTICLE,1);
 
 }
@@ -127,8 +127,8 @@ part_frame::part_frame(bFILE *fp)
     if (x>x2) x2=x;
     if (y>y2) y2=x;
     data[i].x=x;
-    data[i].y=y;   
-    data[i].color=fp->read_uint8(); 
+    data[i].y=y;
+    data[i].color=fp->read_uint8();
   }
 }
 
@@ -147,7 +147,7 @@ void tick_panims()
       part_animation *d=p;
       p=p->next;
       delete d;
-    } else 
+    } else
     {
       last=p;
       p=p->next;
@@ -158,7 +158,7 @@ void tick_panims()
 
 void draw_panims(view *v)
 {
-  for (part_animation *p=first_anim;p;p=p->next)      
+  for (part_animation *p=first_anim;p;p=p->next)
   {
     cash.part(p->seq->frames[p->frame])->draw(screen,p->x-v->xoff()+v->cx1,p->y-v->yoff()+v->cy1,p->dir);
   }
@@ -177,6 +177,7 @@ void part_frame::draw(image *screen, int x, int y, int dir)
   int i=t;
   while (i && pon->y<cy1) { pon++; i--; }
   if (!i) return ;
+  screen->lock();
   if (dir>0)
   {
     while (i && pon->y<=cy2)
@@ -186,7 +187,7 @@ void part_frame::draw(image *screen, int x, int y, int dir)
       *(screen->scan_line(pon->y+y)+dx)=pon->color;
       i--;
       pon++;
-    }   
+    }
   } else
   {
     while (i && pon->y<=cy2)
@@ -196,70 +197,74 @@ void part_frame::draw(image *screen, int x, int y, int dir)
         *(screen->scan_line(pon->y+y)+dx)=pon->color;
       i--;
       pon++;
-    }   
+    }
   }
-
+  screen->unlock();
 }
-
-
-
 
 void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
 {
-	int16_t cx1, cy1, cx2, cy2;
-	screen->get_clip( cx1, cy1, cx2, cy2 );
+    int16_t cx1, cy1, cx2, cy2;
+    screen->get_clip( cx1, cy1, cx2, cy2 );
 
-	int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
-	long xo = x1 << 16, yo = y1 << 16, dx = ( ( x2 - x1 ) << 16 ) / t, dy = ( ( y2 - y1 ) << 16 ) / t, x, y;
+    int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
+    long xo = x1 << 16, yo = y1 << 16, dx = ( ( x2 - x1 ) << 16 ) / t, dy = ( ( y2 - y1 ) << 16 ) / t, x, y;
 
-	int xm = ( 1 << s );
-	int ym = ( 1 << s );
-	s = ( 15 - s );
+    int xm = ( 1 << s );
+    int ym = ( 1 << s );
+    s = ( 15 - s );
 
-	while( t-- )
-	{
-		x = ( xo >> 16 ) + ( jrand() >> s ) - xm;
-		y = ( yo >> 16 ) + ( jrand() >> s ) - ym;
-		if( !( x < cx1 || y < cy1 || x > cx2 || y > cy2 ) )
-		{
-			*(screen->scan_line( y ) + x ) = c;
-		}
-		xo += dx;
-		yo += dy;
-	}
+    screen->lock();
+    while( t-- )
+    {
+        x = ( xo >> 16 ) + ( jrand() >> s ) - xm;
+        y = ( yo >> 16 ) + ( jrand() >> s ) - ym;
+        if( !( x < cx1 || y < cy1 || x > cx2 || y > cy2 ) )
+        {
+            *(screen->scan_line( y ) + x ) = c;
+        }
+        xo += dx;
+        yo += dy;
+    }
+    screen->unlock();
 }
 
 
 
 void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
 {
-	int16_t cx1, cy1, cx2, cy2;
-	screen->get_clip( cx1, cy1, cx2, cy2 );
+    int16_t cx1, cy1, cx2, cy2;
+    screen->get_clip( cx1, cy1, cx2, cy2 );
 
-	int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
-	long xo = x1 << 16, yo = y1 << 16, dx = ( ( x2 - x1 ) << 16 ) / t, dy = ( ( y2 - y1 ) <<16 ) / t, x, y;
+    int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
+    long xo = x1 << 16, yo = y1 << 16, dx = ( ( x2 - x1 ) << 16 ) / t, dy = ( ( y2 - y1 ) <<16 ) / t, x, y;
 
-	int xm = ( 1 << s );
-	int ym = ( 1 << s );
-	s = ( 15 - s );
+    int xm = ( 1 << s );
+    int ym = ( 1 << s );
+    s = ( 15 - s );
 
-	int w = screen->width();
-	uint8_t *addr;
+    screen->lock();
 
-	while( t-- )
-	{
-		x = ( xo >> 16 ) + ( jrand() >> s ) - xm;
-		y = ( yo >> 16 ) + ( jrand() >> s ) - ym;
-		if( !( x <= cx1 || y <= cy1 || x >= cx2 || y >= cy2 ) )
-		{
-			addr = screen->scan_line( y ) + x;
-			*addr = c1;
-			*(addr + w) = c2;
-			*(addr - w) = c2;
-			*(addr - 1) = c2;
-			*(addr + 1) = c2;
-		}
-		xo += dx;
-		yo += dy;
-	}
+    int w = screen->width();
+    uint8_t *addr;
+
+    while( t-- )
+    {
+        x = ( xo >> 16 ) + ( jrand() >> s ) - xm;
+        y = ( yo >> 16 ) + ( jrand() >> s ) - ym;
+        if( !( x <= cx1 || y <= cy1 || x >= cx2 || y >= cy2 ) )
+        {
+            addr = screen->scan_line( y ) + x;
+            *addr = c1;
+            *(addr + w) = c2;
+            *(addr - w) = c2;
+            *(addr - 1) = c2;
+            *(addr + 1) = c2;
+        }
+        xo += dx;
+        yo += dy;
+    }
+
+    screen->unlock();
 }
+

@@ -58,11 +58,13 @@ void automap::draw()
   // if view position hasn't changed, only update the binking dot and return
   if (draw_xstart==old_dx && draw_ystart==old_dy)  
   {
+   automap_window->screen->lock();
    automap_window->screen->add_dirty(centerx,centery,centerx,centery);
     if ((tick++)&4)
       automap_window->screen->putpixel(centerx,centery,255);
     else 
       automap_window->screen->putpixel(centerx,centery,27);
+   automap_window->screen->unlock();
     return ;   
   }
 
@@ -137,11 +139,14 @@ void automap::draw()
   } 
 
 
-  // draw the person as a dot, no need to add a dirty because we marked the whole screen already
+  // draw the person as a dot, no need to add a dirty because we marked the
+  // whole screen already
+  automap_window->screen->lock();
   if ((tick++)&4)
     automap_window->screen->putpixel(centerx,centery,255);
   else 
     automap_window->screen->putpixel(centerx,centery,27);
+  automap_window->screen->unlock();
 
   // set the clip back to full window size because soemthing else could mess with the area
   automap_window->screen->set_clip(0,0,screen->width()-1,screen->height()-1);  

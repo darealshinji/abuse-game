@@ -40,11 +40,13 @@ image *read_glfont(char *fn)
   last=first+size-1;
   while (first<=last)
   {
+    sub->lock();
     for (y=0;(int)y<(int)height;y++)
     {
       fread(sub->scan_line(y),1,gsize/height,fp);
       sub->unpack_scanline(y);
     }
+    sub->unlock();
     sub->put_image(im,(first%32)*width,(first/32)*height);
     first++;
   }
@@ -54,13 +56,12 @@ image *read_glfont(char *fn)
 
 image *read_pic(char *fn, palette *&pal)
 {
-  image *im;
+  image *im = NULL;
   char x[4],bpp;
   uint8_t *sl=NULL,esc,c,n,marker,vmode;
   uint16_t w,h,len,bufsize,blocks,sn,esize,edesc;
   int xx,yy;
   FILE *fp;
-  im=NULL;
   fp=fopen(fn,"rb");
 
   fread(&x[0],1,2,fp);
@@ -73,7 +74,7 @@ image *read_pic(char *fn, palette *&pal)
   if (marker!=0xff)
   { fclose(fp); set_error(imFILE_CORRUPTED); return NULL; }
 
-  im=new image(w,h);
+  im = new image(w, h);
 
   fread(&vmode,1,1,fp);
   fread(&edesc,1,2,fp);
@@ -91,6 +92,8 @@ image *read_pic(char *fn, palette *&pal)
   blocks=uint16_to_local(blocks);
 
   yy=h; xx=w;
+
+  im->lock();
 
   while (blocks-- && w>=1 && yy>=0)
   {
@@ -136,6 +139,9 @@ image *read_pic(char *fn, palette *&pal)
       }
     }
   }
+
+  im->unlock();
+
   fclose(fp);
   return im;
 }

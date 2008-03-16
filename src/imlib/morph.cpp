@@ -32,6 +32,7 @@ void jmorph::show_step_frame(image *screen, int x, int y, int frame_on,
   if (small)
   {
     morph_point8 *m8=(morph_point8 *)p;
+    screen->lock();
     for (i=0;i<total;i++,m8++)
     {
       xx=x+trans(m8->x1,m8->x2,frame_on);
@@ -49,6 +50,7 @@ void jmorph::show_step_frame(image *screen, int x, int y, int frame_on,
         *(screen->scan_line(yy)+xx)=fli->lookup_color(r,g,b);
       }            
     }
+    screen->unlock();
   }    
 }
 
@@ -61,6 +63,7 @@ void patched_morph::show_frame(image *screen, int x, int y,
   unsigned char *p=pats[frame_on].patch_data;
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);    
+  screen->lock();
   while (tot--)
   {
     xx=*(p++)+x;
@@ -75,6 +78,7 @@ void patched_morph::show_frame(image *screen, int x, int y,
 	*(screen->scan_line(yy)+xx)=*(p++);
     }
   }      
+  screen->unlock();
 }
 
 void patched_morph::show_8(image *screen, int x, int y, int frame_on, color_filter *fli, palette *pal)
@@ -84,6 +88,7 @@ void patched_morph::show_8(image *screen, int x, int y, int frame_on, color_filt
   unsigned char *p=pats[frame_on].patch_data;
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);    
+  screen->lock();
   while (tot--)
   {
     xx=*(p++)+x;
@@ -98,6 +103,7 @@ void patched_morph::show_8(image *screen, int x, int y, int frame_on, color_filt
 	*(screen->scan_line(yy)+xx)=*(p++);
     }
   }      
+  screen->unlock();
 }
 
 

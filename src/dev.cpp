@@ -390,7 +390,8 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
   if (y+new_height>cy2)
     new_height-=y+new_height-cy2;
 
-
+  screen->lock();
+  im->lock();
   for (iy=iy_start;new_height>0;new_height--,y++,iy+=ystep)
   {
     sl1=im->scan_line(iy>>16);
@@ -398,6 +399,8 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
     for (ix=ix_start,sx=0;sx<new_width;sx++,ix+=xstep,sl2++)
       *sl2=sl1[ix>>16];
   }
+  im->unlock();
+  screen->unlock();
 }
 
 
@@ -430,6 +433,7 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
     new_height-=y+new_height-cy2;
 
   uint8_t d;
+  screen->lock();
   for (iy=iy_start;new_height>0;new_height--,y++,iy+=ystep)
   {
     sl1=im->scan_line(iy>>16);
@@ -441,6 +445,7 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
         *sl2=d;
     }
   }
+  screen->unlock();
 }
 
 int dev_controll::need_plus_minus()
