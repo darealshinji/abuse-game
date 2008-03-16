@@ -168,12 +168,12 @@ extern int start_running,demo_start,start_edit;
 /*int net_configuration::input()   // pulls up dialog box and input fileds
 {
   ifield *ilist=NULL;
-  int x=WINDOW_FRAME_LEFT,y=WINDOW_FRAME_TOP;
+  int x=0,y=0;
   
-  jwindow *sv=wm->new_window(50,80,-1,-1,new button(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP,NET_SERVER,symbol_str("server"),
-				     new button(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP+wm->font()->height()*2,NET_CLIENT,symbol_str("client"),
-				     new button(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP+wm->font()->height()*4,NET_SINGLE,symbol_str("single_play"),
-				     new button(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP+wm->font()->height()*6,NET_CANCEL,symbol_str("cancel_net"),
+  jwindow *sv=wm->new_window(50,80,-1,-1,new button(0,0,NET_SERVER,symbol_str("server"),
+				     new button(0,wm->font()->height()*2,NET_CLIENT,symbol_str("client"),
+				     new button(0,wm->font()->height()*4,NET_SINGLE,symbol_str("single_play"),
+				     new button(0,wm->font()->height()*6,NET_CANCEL,symbol_str("cancel_net"),
 						NULL)))),symbol_str("Networking"));
 
   event ev;

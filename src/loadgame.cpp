@@ -203,12 +203,12 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 	int i;
 /*  int ih=cash.img(save_buts[0])->height();
   ico_button *buts[MAX_SAVE_GAMES];
-  int y=WINDOW_FRAME_TOP;
+  int y=0;
 
 
   for (i=0;i<total_saved;i++,y+=ih)
   {
-    buts[i]=new ico_button(WINDOW_FRAME_LEFT,y,ID_LOAD_GAME_NUMBER+i,		       
+    buts[i]=new ico_button(0,y,ID_LOAD_GAME_NUMBER+i,		       
 			   save_buts[i*3+1],save_buts[i*3+1],save_buts[i*3+0],save_buts[i*3+2],NULL);
     buts[i]->set_act_id(ID_LOAD_GAME_PREVIEW+i);
   }

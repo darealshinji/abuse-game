@@ -286,7 +286,7 @@ static void draw_music_vol(int slider)
 
 static void create_volume_window()
 {
-/*  int vx=WINDOW_FRAME_LEFT,vy=WINDOW_FRAME_TOP+wm->font()->height()*2,scroller_height=130,bh=wm->font()->height()+5;
+/*  int vx=0,vy=wm->font()->height()*2,scroller_height=130,bh=wm->font()->height()+5;
 
   volume_window=wm->new_window(prop->getd("volume_x",xres/2-20),
 			       prop->getd("volume_y",yres/2-50),
