@@ -486,9 +486,7 @@ void net_reload()
       base->mem_lock=0;
 
 
-      jwindow *j=wm->new_window(0,yres/2,-1,-1,new info_field(WINDOW_FRAME_LEFT,
-								   WINDOW_FRAME_TOP,
-								   0,"Clients are re-syncing, please wait...",NULL));
+      jwindow *j=wm->new_window(0,yres/2,-1,-1,new info_field(0, 0, 0, "Clients are re-syncing, please wait...",NULL));
       wm->flush_screen();
       if (!reload_start()) return ;
 
@@ -564,11 +562,8 @@ int get_inputs_from_server(unsigned char *buf)
 	if (total_retry==10)    // 2 seconds and nothing
 	{
 	  abort=wm->new_window(0,yres/2,-1,wm->font()->height()*4,
-			       new info_field(WINDOW_FRAME_LEFT,
-					      WINDOW_FRAME_TOP,
-					      0,"Waiting for data...",
-					      new button(WINDOW_FRAME_LEFT,
-							 WINDOW_FRAME_TOP+wm->font()->height()+5,ID_NET_DISCONNECT,
+			       new info_field(0, 0, 0,"Waiting for data...",
+					      new button(0, wm->font()->height()+5,ID_NET_DISCONNECT,
 							 "Disconnect slackers",NULL)),"Error");	  
 	  wm->flush_screen();
 	}

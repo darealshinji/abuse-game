@@ -404,7 +404,6 @@ jwindow::jwindow(int X, int Y, int L, int H, ifield *f, char const *name)
 
     l = L >= 0 ? L + left_border() : l - L;
     h = H >= 0 ? H + top_border() : h - H;
-    //if (!f) { l+=WINDOW_FRAME_LEFT; h+=WINDOW_FRAME_TOP; }
     y = Y >= 0 ? Y : yres - h + Y - top_border() - bottom_border() - 1;
     x = X >= 0 ? X : xres - l + X - left_border() - right_border() - 1;
 

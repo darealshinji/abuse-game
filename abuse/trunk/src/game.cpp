@@ -1971,9 +1971,9 @@ void game::get_input()
 
                                         ((button *)ev.message.data)->push();
 /*                                        volume_window->inm->redraw();
-                                        draw_value(volume_window->screen, WINDOW_FRAME_LEFT + 2, WINDOW_FRAME_TOP + 43,
+                                        draw_value(volume_window->screen, 2, 43,
                                                 (volume_window->x2()-volume_window->x1()-1), 8, sfx_volume, 127);
-                                        draw_value(volume_window->screen, WINDOW_FRAME_LEFT + 2, WINDOW_FRAME_TOP + 94,
+                                        draw_value(volume_window->screen, 2, 94,
                                                 (volume_window->x2()-volume_window->x1()-1), 8, music_volume, 127);
 */
                                         break;
