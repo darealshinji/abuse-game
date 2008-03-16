@@ -95,13 +95,14 @@ void gui_status_manager::update(int percentage)
 	while (p && !p->stat_win) p=p->next;
 	if (p) wy=p->stat_win->y+p->stat_win->y2()+5;
 
-	int mx=WINDOW_FRAME_LEFT,my=WINDOW_FRAME_TOP;
-	first->stat_win=wm->new_window(wx,wy,len3, h1*2+h2,NULL,"status");
-	wm->font()->put_string(first->stat_win->screen,mx+1,my+1,first->name,wm->black());
-	wm->font()->put_string(first->stat_win->screen,mx,my,first->name,wm->bright_color());
+	int mx = first->stat_win->x1() + 1;
+	int my = first->stat_win->y1() + wm->font()->height() / 2;
+	first->stat_win=wm->new_window(wx, wy, len3, h1*2+h2, NULL, "status");
+	wm->font()->put_string(first->stat_win->screen, mx, my, first->name, wm->black());
+	wm->font()->put_string(first->stat_win->screen, mx, my, first->name, wm->bright_color());
 	if (first->show)
-	  first->show->draw(first->stat_win->screen,(first->stat_win->x2()-first->stat_win->x1())/2-
-			    first->show->width()/2,my+h1,NULL);
+	  first->show->draw(first->stat_win->screen, (first->stat_win->x2()-first->stat_win->x1())/2-
+			    first->show->width()/2, my+h1, NULL);
 
 	draw_bar(first,percentage);
 	wm->flush_screen();

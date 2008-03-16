@@ -120,16 +120,15 @@ jwindow *file_dialog(char const *prompt, char const *def,
                      char const *cancel_name, char const *FILENAME_str,
                      int filename_id)
 {
-  int wl=WINDOW_FRAME_LEFT,wh=WINDOW_FRAME_TOP;
-  int wh2=wh+5+wm->font()->height()+5;
-  int wh3=wh2+wm->font()->height()+12;
+  int wh2 = 5 + wm->font()->height() + 5;
+  int wh3 = wh2 + wm->font()->height() + 12;
   jwindow *j=wm->new_window(0,0,-1,-1,
-			    new info_field(wl+5,wh+5,0,prompt,
-                            new text_field(wl,wh2,filename_id,
+			    new info_field(5, 5, 0, prompt,
+                            new text_field(0, wh2, filename_id,
 					   ">","****************************************",def,
-			    new button(wl+50,wh3,ok_id,     ok_name,
-			    new button(wl+100,wh3,cancel_id,cancel_name,
-			    new file_picker(wl+15,wh3+wm->font()->height()+10,filename_id,8,
+			    new button(50, wh3, ok_id, ok_name,
+			    new button(100, wh3, cancel_id, cancel_name,
+			    new file_picker(15, wh3 + wm->font()->height() + 10, filename_id, 8,
 					  NULL))))),
 
 			    FILENAME_str);

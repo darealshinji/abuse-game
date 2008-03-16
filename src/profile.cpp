@@ -118,7 +118,7 @@ void profile_update()
   float time_scaler=(float)max_bar_length/prof_list[0].total_time;
   
   prof_win->screen->bar(0,prof_win->y1(),prof_win->screen->width()-1,prof_win->screen->height(),0);
-  int dy=WINDOW_FRAME_TOP; 
+  int dy = 0; 
   for (;i<prof_height;i++)
   {
     console_font->put_string(prof_win->screen,spliter+1,dy,object_names[prof_list[i].otype]);

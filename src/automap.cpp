@@ -150,21 +150,24 @@ void automap::draw()
 
 void automap::toggle_window()
 {
-  if (automap_window)
-  {    
-    wm->close_window(automap_window);
-    automap_window=NULL;
-  } 
-  else
-  {    
-    old_dx=-1000;        // make sure the map gets drawn the first time
-    old_dy=-1000;
+    if (automap_window)
+    {    
+        wm->close_window(automap_window);
+        automap_window = NULL;
+    }
+    else
+    {    
+        old_dx = -1000; // make sure the map gets drawn the first time
+        old_dy = -1000;
 
-    automap_window=wm->new_window(0,0,w*AUTOTILE_WIDTH,h*AUTOTILE_HEIGHT);
-    automap_window->screen->bar(17,1,17+8*6+3,6,wm->medium_color());    
-    wm->font()->put_string(automap_window->screen,20,2,"AUTOMAP");
-    draw();    
-  }  
+        automap_window = wm->new_window(0, 0, w * AUTOTILE_WIDTH,
+                                        h * AUTOTILE_HEIGHT, NULL, "Map");
+        automap_window->screen->bar(17, 1, 17 + 8 * 6 + 3, 6,
+                                    wm->medium_color());    
+        wm->font()->put_string(automap_window->screen, 20, 2, "Automap",
+                               wm->dark_color());
+        draw();    
+    }  
 }
 
 

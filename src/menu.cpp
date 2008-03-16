@@ -321,8 +321,7 @@ static void create_volume_window()
   
   volume_window=wm->new_window(prop->getd("volume_x",xres/2-20),
 			       prop->getd("volume_y",yres/2-50),
-			       41-WINDOW_FRAME_LEFT-WINDOW_FRAME_RIGHT-2,
-			       101-WINDOW_FRAME_TOP-WINDOW_FRAME_BOTTOM,
+			       39, 101,
 			     new ico_button(10,27,ID_SFX_DOWN,d_u,d_d,d_ua,d_da,
 			     new ico_button(21,27,ID_SFX_UP,u_u,u_d,u_ua,u_da,
                              new info_field(15,42,0,symbol_str("SFXv"),
