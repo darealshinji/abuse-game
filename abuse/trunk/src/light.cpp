@@ -775,8 +775,6 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
   light_patch *first=make_patch_list(cx2-cx1+1,cy2-cy1+1,screenx,screeny);
 
-  int scr_w=screen->width();
-
   int prefix_x=(screenx&7);
   int prefix=screenx&7;
   if (prefix)
@@ -790,6 +788,10 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
   uint8_t *remap_line=(uint8_t *)jmalloc(remap_size,"light remap line");
 
   light_patch *f=first;
+
+  screen->lock();
+
+  int scr_w=screen->width();
   uint8_t *screen_line=screen->scan_line(cy1)+cx1;
 
   for (int y=cy1;y<=cy2;)
@@ -879,11 +881,8 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
 
     screen_line-=prefix;
-
-
-
   }
-
+  screen->unlock();
 
   while (first)
   {

@@ -896,6 +896,7 @@ void game::draw_map(view *v, int interpolate)
         screen->clear(wm->bright_color());
       else
         screen->clear(wm->black());
+      screen->lock();
       for(y = y1, draw_y = yo; y <= y2; y++, draw_y += yinc)
       {
     if(!(draw_y < ncy1 ||draw_y + yinc >= ncy2))
@@ -920,6 +921,7 @@ void game::draw_map(view *v, int interpolate)
       }
     }
       }
+      screen->unlock();
 
       if(dev & EDIT_MODE)
         current_level->draw_areas(v);

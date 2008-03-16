@@ -35,7 +35,7 @@ char const *imerr_messages[] =
     "Operation/file type not supported",
     "Error occurred while writing, (disk full?)"
 };
-			
+            
                          
 int16_t imerror=0;
 int16_t swpfile_num=0;
@@ -48,7 +48,7 @@ void clear_errors()
   if (imerror)
   { printf("Program stopped, error : ");
     if (imerror<=imMAX_ERROR)
-      printf("%s\n",imerr_messages[imerror]);
+      printf("%s\n", imerr_messages[imerror]);
     else
       printf("Unsonsponsered error code, you got trouble\n"); 
 #ifdef __DOS_ONLY
@@ -56,7 +56,7 @@ void clear_errors()
     delay(100);
     nosound();
 #else
-    printf("%c%c\n",7,8);
+    printf("%c%c\n", 7, 8);
 #endif
     exit(1);
   }
@@ -77,7 +77,7 @@ linked_list image_list;
 
 
 image_descriptor::image_descriptor(int16_t length, int16_t height,
-				   int keep_dirties, int static_memory)
+                   int keep_dirties, int static_memory)
 
 { clipx1=0; clipy1=0; 
   l=length; h=height; 
@@ -91,23 +91,28 @@ void image::change_size(int16_t new_width, int16_t new_height, uint8_t *page)
   delete_page();
   w=new_width;
   h=new_height;
-  make_page(new_width,new_height,page);
+  make_page(new_width, new_height, page);
 }
 
 image::~image()
 {
-  image_list.unlink((linked_node *)this);
-  delete_page();
-  if (special)
-    delete special;
+    if(_locked)
+    {
+        fprintf(stderr, "Error: image is locked upon deletion\n");
+        unlock();
+    }
 
+    image_list.unlink((linked_node *)this);
+    delete_page();
+    if(special)
+        delete special;
 }
 
 
 void make_block(size_t size)
 {
-  void *dat=jmalloc(size,"make_block : tmp");
-  CONDITION(dat,"Memory error : could not make block\n");
+  void *dat=jmalloc(size, "make_block : tmp");
+  CONDITION(dat, "Memory error : could not make block\n");
   if (dat) jfree((char *)dat);
 }
 
@@ -124,7 +129,7 @@ void image::putpixel(int16_t x, int16_t y, char color)
      "image::putpixel Bad pixel xy");
   if (special)
   { if (x>=special->x1_clip() && x<=special->x2_clip() &&
-	y>=special->y1_clip() && y<=special->y2_clip())
+    y>=special->y1_clip() && y<=special->y2_clip())
       (*(scan_line(y)+x))=color;
   } else (*(scan_line(y)+x))=color;
 }
@@ -137,24 +142,26 @@ image::image(int16_t width, int16_t height, uint8_t *page_buffer, int16_t create
   if (create_descriptor || page_buffer)
   { 
     if (create_descriptor==2)
-      special=new image_descriptor(width,height,1,(page_buffer!=NULL));
-    else special=new image_descriptor(width,height,0,(page_buffer!=NULL));
+      special=new image_descriptor(width, height, 1, (page_buffer!=NULL));
+    else special=new image_descriptor(width, height, 0, (page_buffer!=NULL));
   } else special=NULL;
-  make_page(width,height,page_buffer);
+  make_page(width, height, page_buffer);
   image_list.add_end((linked_node *) this);
+    _locked = false;
 }
 
 image::image(spec_entry *e, bFILE *fp)
 {
   int16_t i; 
-  fp->seek(e->offset,0);
+  fp->seek(e->offset, 0);
   w=fp->read_uint16();
   h=fp->read_uint16();
   special=NULL;
-  make_page(w,h,NULL);
-  for (i=0;i<h;i++)
-    fp->read(scan_line(i),w);
+  make_page(w, h, NULL);
+  for (i=0; i<h; i++)
+    fp->read(scan_line(i), w);
   image_list.add_end((linked_node *) this); 
+    _locked = false;
 }
 
 image::image(bFILE *fp)
@@ -163,14 +170,34 @@ image::image(bFILE *fp)
   w=fp->read_uint16();
   h=fp->read_uint16();
   special=NULL;
-  make_page(w,h,NULL);
-  for (i=0;i<h;i++)
-    fp->read(scan_line(i),w);
+  make_page(w, h, NULL);
+  for (i=0; i<h; i++)
+    fp->read(scan_line(i), w);
   image_list.add_end((linked_node *) this); 
+    _locked = false;
+}
+
+void image::lock()
+{
+    /* This is currently a no-op, because it's unneeded with SDL */
+
+    if(_locked)
+        fprintf(stderr, "Trying to lock a locked picture!\n");
+    _locked = true;
+}
+
+void image::unlock()
+{
+    /* This is currently a no-op, because it's unneeded with SDL */
+
+    if(!_locked)
+        fprintf(stderr, "Trying to unlock an unlocked picture!\n");
+    _locked = false;
 }
 
 void image_uninit()
 {
+    /* FIXME: is this used at all? */
 /*  image *im;
   while (image_list.first())
   {
@@ -187,14 +214,14 @@ void image_cleanup(int ret, void *arg)
 void image_init()
 {
   uint8_t bt[2];
-  uint16_t wrd,*up;
+  uint16_t wrd, *up;
   bt[0]=1;
   bt[1]=0;
   up=(uint16_t *)bt;
   wrd=uint16_to_intel(*up);
   if (wrd!=0x01)
   { printf("compiled with wrong endianness, edit system.h and try again\n");
-    printf("1 (intel) = %d\n",(int)wrd);
+    printf("1 (intel) = %d\n", (int)wrd);
     exit(1);
   }
   imerror=0;
@@ -203,63 +230,75 @@ void image_init()
 
 int32_t image::total_pixels(uint8_t background)
 {
-  int16_t i,j;
-  int32_t co;
-  uint8_t *c;
-  for (co=0,i=height()-1;i>=0;i--)
-  { c=scan_line(i);
-    for (j=width()-1;j>=0;j--,c++)
-      if (*c!=background) co++;
-  }
-  return co;
+    int16_t i, j;
+    int32_t co;
+    uint8_t *c;
+
+    lock();
+    for(co = 0, i = height() - 1; i >= 0; i--)
+    {
+        c = scan_line(i);
+        for(j = width() - 1; j >= 0; j--, c++)
+            if(*c != background) co++;
+    }
+    unlock();
+    return co;
 }
 
 void image::clear(int16_t color)
 {
-  int16_t i;
-  if (color==-1) color=current_background;
-  if (special)
-  { if (special->x1_clip()<=special->x2_clip())
-      for (i=special->y2_clip();i>=special->y1_clip();i--)
-	memset(scan_line(i)+special->x1_clip(),color,
-	       special->x2_clip()-special->x1_clip()+1);
-  }
-  else
-    for (i=height()-1;i>=0;i--)
-      memset(scan_line(i),color,width());
-  add_dirty(0,0,width()-1,height()-1);
-}
+    int16_t i;
 
+    lock();
+    if(color == -1)
+        color = current_background;
+    if(special)
+    {
+        if(special->x1_clip() <= special->x2_clip())
+            for(i = special->y2_clip(); i >= special->y1_clip(); i--)
+                memset(scan_line(i) + special->x1_clip(), color,
+                       special->x2_clip() - special->x1_clip() + 1);
+    }
+    else
+        for(i = height() - 1; i >= 0; i--)
+            memset(scan_line(i), color, width());
+    add_dirty(0, 0, width() - 1, height() - 1);
+    unlock();
+}
 
 image *image::copy()
 {
-  image *im;
-  uint8_t *c,*dat;
-  int i;
-  dat=(uint8_t *)jmalloc(width(),"image copy");
-  im=new image(width(),height());
-  for (i=height()-1;i>=0;i--)
-  { c=scan_line(i);
-    memcpy(dat,c,width());
-    c=im->scan_line(i);
-    memcpy(c,dat,width());
-  }
-  jfree((char *)dat);
-  return im;
+    image *im;
+    uint8_t *c, *dat;
+    int i;
+
+    lock();
+    dat = (uint8_t *)jmalloc(width(), "image copy");
+    im = new image(width(), height());
+    im->lock();
+    for(i = height() - 1; i >= 0; i--)
+    {
+        c = scan_line(i);
+        memcpy(dat, c, width());
+        c = im->scan_line(i);
+        memcpy(c, dat, width());
+    }
+    im->unlock();
+    unlock();
+    jfree((char *)dat);
+    return im;
 }
 
-
-
-void image::line(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t color)
+void image::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 {
-  int16_t i,xc,yc,er,n,m,xi,yi,xcxi,ycyi,xcyi;
-  unsigned dcy,dcx;
+  int16_t i, xc, yc, er, n, m, xi, yi, xcxi, ycyi, xcyi;
+  unsigned dcy, dcx;
   // check to make sure that both endpoint are on the screen
 
-  int16_t cx1,cy1,cx2,cy2;
+  int16_t cx1, cy1, cx2, cy2;
 
   // check to see if the line is completly clipped off
-  get_clip(cx1,cy1,cx2,cy2);  
+  get_clip(cx1, cy1, cx2, cy2);  
   if ((x1<cx1 && x2<cx1) || (x1>cx2 && x2>cx2) || 
       (y1<cy1 && y2<cy1) || (y1>cy2 && y2>cy2))
     return ;
@@ -274,7 +313,7 @@ void image::line(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t color)
   if (x1<cx1)
   {  
     int my=(y2-y1);       
-    int mx=(x2-x1),b;
+    int mx=(x2-x1), b;
     if (!mx) return ;
     if (my)
     {
@@ -289,7 +328,7 @@ void image::line(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t color)
   if (x2>cx2)
   {  
     int my=(y2-y1);       
-    int mx=(x2-x1),b;
+    int mx=(x2-x1), b;
     if (!mx) return ;
     if (my)
     {
@@ -310,7 +349,7 @@ void image::line(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t color)
   if (y2>cy2)
   {  
     int mx=(x2-x1);       
-    int my=(y2-y1),b;
+    int my=(y2-y1), b;
     if (!my)
       return ;
     if (mx)
@@ -326,7 +365,7 @@ void image::line(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t color)
   if (y1<cy1)
   {  
     int mx=(x2-x1);       
-    int my=(y2-y1),b;
+    int my=(y2-y1), b;
     if (!my) return ;
     if (mx)
     {
@@ -352,7 +391,7 @@ void image::line(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t color)
   // assume y1<=y2 from above swap operation
   yi=y2; yc=y1;
 
-  add_dirty(xc,yc,xi,yi);
+  add_dirty(xc, yc, xi, yi);
   dcx=x1; dcy=y1;
   xc=(x2-x1); yc=(y2-y1);
   if (xc<0) xi=-1; else xi=1;
@@ -361,15 +400,16 @@ void image::line(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t color)
   ycyi=abs(2*yc*xi);
   er=0;
 
+  lock();
   if (n>m)
   {
     xcxi=abs(2*xc*xi);
-    for (i=0;i<=n;i++)
+    for (i=0; i<=n; i++)
     {
       *(scan_line(dcy)+dcx)=color;
       if (er>0)
       { dcy+=yi;
-	er-=xcxi;
+    er-=xcxi;
       }
       er+=ycyi;
       dcx+=xi;
@@ -378,63 +418,86 @@ void image::line(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t color)
   else
   {
     xcyi=abs(2*xc*yi);
-    for (i=0;i<=m;i++)
+    for (i=0; i<=m; i++)
     {
       *(scan_line(dcy)+dcx)=color;
       if (er>0)
       { dcx+=xi;
-	er-=ycyi;
+    er-=ycyi;
       }
       er+=xcyi;
       dcy+=yi;
     }
   }
+  unlock();
 }
 
 
 void image::put_image(image *screen, int16_t x, int16_t y, char transparent)
 {
-  int16_t i,j,xl,yl;
-  uint8_t *pg1,*pg2,*source,*dest;
-  if (screen->special)  // the screen is clipped then we onl want to put
-		    // part of the image
-    put_part(screen,x,y,0,0,width()-1,height()-1,transparent);
-  else
-  {
-    if (x<screen->width() && y<screen->height())
+    int16_t i, j, xl, yl;
+    uint8_t *pg1, *pg2, *source, *dest;
+
+    // the screen is clipped then we only want to put part of the image
+    if(screen->special)
     {
-      xl=width();
-      if (x+xl>screen->width())     // clip to the border of the screen
-	xl=screen->width()-x;
-      yl=height();
-      if (y+yl>screen->height())
-	yl=screen->height()-y;
-
-      int startx=0,starty=0;
-      if (x<0) { startx=-x; x=0; }
-      if (y<0) { starty=-y; y=0; }
-
-      if (xl<0 || yl<0) return ;
-
-      screen->add_dirty(x,y,x+xl-1,y+yl-1);
-      for (j=starty;j<yl;j++,y++)
-      {
-	pg1=screen->scan_line(y);
-	pg2=scan_line(j);
-	if (transparent)
-	{
-	  for (i=startx,source=pg2+startx,dest=pg1+x;i<xl;i++,source++,dest++)
-            if (*source!=current_background) *dest=*source;
-	} else memcpy(&pg1[x],pg2,xl);   // strait copy
-      }
+        put_part(screen, x, y, 0, 0, width()-1, height()-1, transparent);
+        return;
     }
-  }
+
+    if(x < screen->width() && y < screen->height())
+    {
+        xl = width();
+        if(x + xl > screen->width()) // clip to the border of the screen
+            xl = screen->width() - x;
+        yl = height();
+        if(y + yl > screen->height())
+            yl = screen->height() - y;
+
+        int startx = 0, starty = 0;
+        if(x < 0)
+        {
+            startx = -x;
+            x = 0;
+        }
+        if(y < 0)
+        {
+            starty = -y;
+            y = 0;
+        }
+
+        if(xl < 0 || yl < 0)
+            return;
+
+        screen->add_dirty(x, y, x + xl - 1, y + yl - 1);
+        screen->lock();
+        lock();
+        for(j = starty; j < yl; j++, y++)
+        {
+            pg1 = screen->scan_line(y);
+            pg2 = scan_line(j);
+            if(transparent)
+            {
+                for(i = startx, source = pg2+startx, dest = pg1 + x;
+                    i < xl;
+                    i++, source++, dest++)
+                {
+                    if(*source != current_background)
+                        *dest = *source;
+                }
+            }
+            else
+                memcpy(&pg1[x], pg2, xl); // straight copy
+        }
+        unlock();
+        screen->unlock();
+    }
 }
 
 void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t align)
 {
-  int16_t i,j,w,xx,start,xl,starty;
-  uint8_t *pg1,*pg2;
+  int16_t i, j, w, xx, start, xl, starty;
+  uint8_t *pg1, *pg2;
   CHECK(x1<=x2 && y1<=y2);  // we should have gotten this
 
   if (screen->special)
@@ -451,7 +514,7 @@ void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_
   }
   if (x2<0 || y2<0 || x1>=screen->width() || y1>=screen->height())
     return ;
-  screen->add_dirty(x1,y1,x2,y2);
+  screen->add_dirty(x1, y1, x2, y2);
   w=width();
   if (align)
   {
@@ -462,7 +525,9 @@ void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_
   { start=0;
     starty=0;
   }
-  for (j=y1;j<=y2;j++)
+  screen->lock();
+  lock();
+  for (j=y1; j<=y2; j++)
   {
     pg1=screen->scan_line(j);
     pg2=scan_line(starty++);
@@ -471,25 +536,27 @@ void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_
     xx=start;
     while (i<=x2)
     {
-      xl=min(w-xx,x2-i+1);
+      xl=min(w-xx, x2-i+1);
 
-      memcpy(&pg1[i],&pg2[xx],xl);
+      memcpy(&pg1[i], &pg2[xx], xl);
       xx=0;
       i+=xl;
     }
   }
+  unlock();
+  screen->unlock();
 }
 
 
 void image::put_part(image *screen, int16_t x, int16_t y,
-		int16_t x1, int16_t y1, int16_t x2, int16_t y2, char transparent)
+        int16_t x1, int16_t y1, int16_t x2, int16_t y2, char transparent)
 {
-  int16_t xl,yl,j,i;
-  int16_t cx1,cy1,cx2,cy2;
-  uint8_t *pg1,*pg2,*source,*dest;
+  int16_t xlen, ylen, j, i;
+  int16_t cx1, cy1, cx2, cy2;
+  uint8_t *pg1, *pg2, *source, *dest;
   CHECK(x1<=x2 && y1<=y2);
 
-  screen->get_clip(cx1,cy1,cx2,cy2);
+  screen->get_clip(cx1, cy1, cx2, cy2);
 
 
   // see if the are to be put is outside of actual image, if so adjust 
@@ -520,39 +587,43 @@ void image::put_part(image *screen, int16_t x, int16_t y,
   
 
 
-  xl=x2-x1+1;
-  yl=y2-y1+1;
+  xlen=x2-x1+1;
+  ylen=y2-y1+1;
 
-  screen->add_dirty(x,y,x+xl-1,y+yl-1);
+  screen->add_dirty(x, y, x+xlen-1, y+ylen-1);
 
+  screen->lock();
+  lock();
   pg1=screen->scan_line(y);
   pg2=scan_line(y1);
 
   if (transparent)
   {
-    for (j=0;j<yl;j++)        
+    for (j=0; j<ylen; j++)        
     {
-      for (i=0,source=&pg2[x1],dest=&pg1[x];i<xl;i++,source++,dest++)	
+      for (i=0, source=&pg2[x1], dest=&pg1[x]; i<xlen; i++, source++, dest++)    
         if (*source!=current_background) *dest=*source;
-      pg1=screen->next_line(y+j,pg1);  
-      pg2=next_line(y1+j,pg2);
+      pg1=screen->next_line(y+j, pg1);  
+      pg2=next_line(y1+j, pg2);
     }      
   }
   else
-  for (j=0;j<yl;j++)
-  {	
-    memcpy(&pg1[x],&pg2[x1],xl);   // strait copy
-    pg1=screen->next_line(y+j,pg1);  
-    pg2=next_line(y1+j,pg2);
+  for (j=0; j<ylen; j++)
+  {    
+    memcpy(&pg1[x], &pg2[x1], xlen);   // strait copy
+    pg1=screen->next_line(y+j, pg1);  
+    pg2=next_line(y1+j, pg2);
   }    
+  unlock();
+  screen->unlock();
 }
 
 void image::put_part_xrev(image *screen, int16_t x, int16_t y,
-		int16_t x1, int16_t y1, int16_t x2, int16_t y2, char transparent)
+        int16_t x1, int16_t y1, int16_t x2, int16_t y2, char transparent)
 {
-  int16_t xl,yl,j,i;
-  int16_t cx1,cy1,cx2,cy2;
-  uint8_t *pg1,*pg2,*source,*dest;
+  int16_t xl, yl, j, i;
+  int16_t cx1, cy1, cx2, cy2;
+  uint8_t *pg1, *pg2, *source, *dest;
   CHECK(x1<=x2 && y1<=y2);
 
   i=x1; x1=width()-x2-1;  // reverse the x locations
@@ -565,7 +636,7 @@ void image::put_part_xrev(image *screen, int16_t x, int16_t y,
 
   if (screen->special)
   {
-    screen->special->get_clip(cx1,cy1,cx2,cy2);
+    screen->special->get_clip(cx1, cy1, cx2, cy2);
     if (x>cx2 || y>cy2 || x+(x2-x1)<0 || y+(y2-y1)<0) return ;
     if (x<cx1)
     { x1+=(cx1-x); x=cx1; }
@@ -592,36 +663,40 @@ void image::put_part_xrev(image *screen, int16_t x, int16_t y,
     yl=y2-y1+1;
     if (y+yl>screen->height())
       yl=screen->height()-y;
-    screen->add_dirty(x,y,x+xl-1,y+yl-1);
-    for (j=0;j<yl;j++)
+    screen->add_dirty(x, y, x+xl-1, y+yl-1);
+    screen->lock();
+    lock();
+    for (j=0; j<yl; j++)
     {
       pg1=screen->scan_line(y+j);
       pg2=scan_line(y1+j);
       if (transparent)
       {
-	for (i=0,source=&pg2[x1],dest=&pg1[x+xl-1];i<xl;i++,source++,dest--)
+    for (i=0, source=&pg2[x1], dest=&pg1[x+xl-1]; i<xl; i++, source++, dest--)
           if (*source!=current_background) *dest=*source;
       }
       else 
-	for (i=0,source=&pg2[x1],dest=&pg1[x+xl-1];i<xl;i++,source++,dest++)
+    for (i=0, source=&pg2[x1], dest=&pg1[x+xl-1]; i<xl; i++, source++, dest++)
           *dest=*source;
     }
+    unlock();
+    screen->unlock();
   }
 }
 
 
 void image::put_part_masked(image *screen, image *mask, int16_t x, int16_t y,
-		int16_t maskx, int16_t masky,
-		int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+        int16_t maskx, int16_t masky,
+        int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-  int16_t xl,yl,j,i,ml,mh;
-  int16_t cx1,cy1,cx2,cy2;
-  uint8_t *pg1,*pg2,*pg3;
+  int16_t xl, yl, j, i, ml, mh;
+  int16_t cx1, cy1, cx2, cy2;
+  uint8_t *pg1, *pg2, *pg3;
   CHECK(x1<=x2 && y1<=y2);
 
   if (screen->special)
   {
-    screen->special->get_clip(cx1,cy1,cx2,cy2);
+    screen->special->get_clip(cx1, cy1, cx2, cy2);
     if (x>cx2 || y>cy2 || x+(x2-x1)<0 || y+(y2-y1)<0) return ;
     if (x<cx1)
     { x1+=(cx1-x); x=cx1; }
@@ -651,72 +726,82 @@ void image::put_part_masked(image *screen, image *mask, int16_t x, int16_t y,
     yl=y2-y1+1;
     if (y+yl>screen->height())
       yl=screen->height()-y-1;
-    screen->add_dirty(x,y,x+xl-1,y+yl-1);
-    for (j=0;j<yl;j++)
+    screen->add_dirty(x, y, x+xl-1, y+yl-1);
+    screen->lock();
+    mask->lock();
+    lock();
+    for (j=0; j<yl; j++)
     {
       pg1=screen->scan_line(y+j);
       pg2=scan_line(y1+j);
       pg3=mask->scan_line(masky++);
       if (masky>=mh)           // wrap the mask around if out of bounds
-	masky=0;
-      for (i=0;i<xl;i++)
+    masky=0;
+      for (i=0; i<xl; i++)
       {
-	if (pg3[maskx+i])          // check to make sure not 0 before putting
-	  pg1[x+i]=pg2[x1+i];
-	if (maskx>=ml)            // wrap x around if it goes to far
-	  maskx=0;
+    if (pg3[maskx+i])          // check to make sure not 0 before putting
+      pg1[x+i]=pg2[x1+i];
+    if (maskx>=ml)            // wrap x around if it goes to far
+      maskx=0;
       }
     }
+    unlock();
+    mask->unlock();
+    screen->unlock();
   }
 }
 
 
 
 uint8_t image::brightest_color(palette *pal)
-{ uint8_t *p,r,g,b,bri;
-  int16_t i,j;
+{ uint8_t *p, r, g, b, bri;
+  int16_t i, j;
   int32_t brv;
   brv=0; bri=0;
-  for (j=0;j<h;j++)
+  lock();
+  for (j=0; j<h; j++)
   {
     p=scan_line(j);
-    for (i=0;i<w;i++)
-    { pal->get(p[i],r,g,b);
+    for (i=0; i<w; i++)
+    { pal->get(p[i], r, g, b);
       if ((int32_t)r*(int32_t)g*(int32_t)b>brv)
       { brv=(int32_t)r*(int32_t)g*(int32_t)b;
-	bri=p[i];
+    bri=p[i];
       }
     }
   }
+  unlock();
   return bri;
 }
 
 uint8_t image::darkest_color(palette *pal, int16_t noblack)
-{ uint8_t *p,r,g,b,bri;
-  int16_t i,j;
-  int32_t brv,x;
+{ uint8_t *p, r, g, b, bri;
+  int16_t i, j;
+  int32_t brv, x;
   brv=(int32_t)258*(int32_t)258*(int32_t)258; bri=0;
-  for (j=0;j<h;j++)
+  lock();
+  for (j=0; j<h; j++)
   {
     p=scan_line(j);
-    for (i=0;i<w;i++)
-    { pal->get(p[i],r,g,b);
+    for (i=0; i<w; i++)
+    { pal->get(p[i], r, g, b);
       x=(int32_t)r*(int32_t)g*(int32_t)b;
       if (x<brv && (x || !noblack))
       { brv=x;
-	bri=p[i];
+    bri=p[i];
       }
     }
   }
+  unlock();
   return bri;
 }
 
-void image::rectangle(int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint8_t color)
+void image::rectangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 {
-  line(x1,y1,x2,y1,color);
-  line(x2,y1,x2,y2,color);
-  line(x1,y2,x2,y2,color);
-  line(x1,y1,x1,y2,color);
+  line(x1, y1, x2, y1, color);
+  line(x2, y1, x2, y2, color);
+  line(x1, y2, x2, y2, color);
+  line(x1, y1, x1, y2, color);
 }
 
 void image::set_clip(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
@@ -734,7 +819,7 @@ void image::set_clip(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 void image::get_clip (int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2)
 {
   if (special)
-    special->get_clip(x1,y1,x2,y2);
+    special->get_clip(x1, y1, x2, y2);
   else
   { x1=0; y1=0; x2=width()-1; y2=height()-1; }
 }
@@ -752,7 +837,7 @@ void image::in_clip  (int16_t x1, int16_t y1, int16_t x2, int16_t y2)
     if (y2>special->y2_clip())
       y2=special->y2_clip();
   }
-  set_clip(x1,y1,x2,y2);
+  set_clip(x1, y1, x2, y2);
 }
 
 //
@@ -761,8 +846,8 @@ void image::in_clip  (int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 //
 void image_descriptor::reduce_dirties()
 {
-  dirty_rect *p,*q;
-  int16_t x1,y1,x2,y2,nn;
+  dirty_rect *p, *q;
+  int16_t x1, y1, x2, y2, nn;
   x1=6000; y1=6000;
   x2=0; y2=0;
   p=(dirty_rect *)dirties.first();
@@ -779,13 +864,13 @@ void image_descriptor::reduce_dirties()
     delete q;
     nn--;
   }
-  dirties.add_front((linked_node *) new dirty_rect(x1,y1,x2,y2));
+  dirties.add_front((linked_node *) new dirty_rect(x1, y1, x2, y2));
 }
 
 void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
 {
-  int16_t i,ax1,ay1,ax2,ay2;
-  dirty_rect *p,*next;
+  int16_t i, ax1, ay1, ax2, ay2;
+  dirty_rect *p, *next;
   if (keep_dirt)
   {
     if (x1<0) x1=0;
@@ -800,11 +885,11 @@ void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
       return ;
     else
     {
-      for (p=(dirty_rect *)dirties.first();i;i--,p=(dirty_rect *)next)
+      for (p=(dirty_rect *)dirties.first(); i; i--, p=(dirty_rect *)next)
       {
         next=(dirty_rect *)p->next();
         // are the two touching?
-	if (!(x2<p->dx1 || y2<p->dy1 || x1>p->dx2 || y1>p->dy2))
+    if (!(x2<p->dx1 || y2<p->dy1 || x1>p->dx2 || y1>p->dy2))
         {
           // does it take a x slice off? (across)
           if (x2>=p->dx2 && x1<=p->dx1)
@@ -820,7 +905,7 @@ void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
               p->dy1=y2+1;
             else
             {
-              dirties.add_front((linked_node *) new dirty_rect(p->dx1,p->dy1,p->dx2,y1-1));
+              dirties.add_front((linked_node *) new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
               p->dy1=y2+1;
             }
           } 
@@ -833,7 +918,7 @@ void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
               p->dx1=x2+1;
             else 
             {
-              dirties.add_front((linked_node *) new dirty_rect(p->dx1,p->dy1,x1-1,p->dy2));
+              dirties.add_front((linked_node *) new dirty_rect(p->dx1, p->dy1, x1-1, p->dy2));
               p->dx1=x2+1;
             }
           }
@@ -846,7 +931,7 @@ void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
             if (y2>=p->dy2)      { ay1=y1; ay2=p->dy2; }
             else if (y1<=p->dy1) { ay1=p->dy1; ay2=y2; }
             else                { ay1=y1; ay2=y2; }
-            dirties.add_front((linked_node *) new dirty_rect(ax1,ay1,ax2,ay2));
+            dirties.add_front((linked_node *) new dirty_rect(ax1, ay1, ax2, ay2));
           
             if (x2>=p->dx2 || x1<=p->dx1)  { ax1=p->dx1; ax2=p->dx2; }
             else                         { ax1=x2+1; ax2=p->dx2; } 
@@ -858,20 +943,20 @@ void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
                                              else  { ay1=p->dy1; ay2=y2; } }
             else           { if (ax1==p->dx1) { ay1=p->dy1; ay2=y1-1; }
                              else { ay1=y1; ay2=y2; } }
-            dirties.add_front((linked_node *) new dirty_rect(ax1,ay1,ax2,ay2));
+            dirties.add_front((linked_node *) new dirty_rect(ax1, ay1, ax2, ay2));
 
             if (x1>p->dx1 && x2<p->dx2)
             {
               if (y1>p->dy1 && y2<p->dy2)
               {
-                dirties.add_front((linked_node *) new dirty_rect(p->dx1,p->dy1,p->dx2,y1-1));
-                dirties.add_front((linked_node *) new dirty_rect(p->dx1,y2+1,p->dx2,p->dy2));
+                dirties.add_front((linked_node *) new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
+                dirties.add_front((linked_node *) new dirty_rect(p->dx1, y2+1, p->dx2, p->dy2));
               } else if (y1<=p->dy1)
-                dirties.add_front((linked_node *) new dirty_rect(p->dx1,y2+1,p->dx2,p->dy2));
+                dirties.add_front((linked_node *) new dirty_rect(p->dx1, y2+1, p->dx2, p->dy2));
               else 
-                dirties.add_front((linked_node *) new dirty_rect(p->dx1,p->dy1,p->dx2,y1-1));
+                dirties.add_front((linked_node *) new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
             } else if (y1>p->dy1 && y2<p->dy2)
-              dirties.add_front((linked_node *) new dirty_rect(p->dx1,y2+1,p->dx2,p->dy2));
+              dirties.add_front((linked_node *) new dirty_rect(p->dx1, y2+1, p->dx2, p->dy2));
             dirties.unlink((linked_node *) p);
             delete p;
           }
@@ -896,62 +981,62 @@ void image_descriptor::add_dirty(int x1, int y1, int x2, int y2)
     if (y1>y2) return ;
     i=dirties.number_nodes();
     if (!i)
-      dirties.add_front((linked_node *) new dirty_rect(x1,y1,x2,y2));
+      dirties.add_front((linked_node *) new dirty_rect(x1, y1, x2, y2));
     else if (i>=MAX_DIRTY)
     {
-      dirties.add_front((linked_node *) new dirty_rect(x1,y1,x2,y2));
+      dirties.add_front((linked_node *) new dirty_rect(x1, y1, x2, y2));
       reduce_dirties();  // reduce to one dirty rectangle, we have to many
     }
     else
     {  
-      for (p=(dirty_rect *)dirties.first();i>0;i--)
+      for (p=(dirty_rect *)dirties.first(); i>0; i--)
       {
 
         // check to see if this new rectangle completly encloses the check rectangle
-	if (x1<=p->dx1 && y1<=p->dy1 && x2>=p->dx2 && y2>=p->dy2)
-	{
-	  dirty_rect *tmp=(dirty_rect*) p->next();
-	  dirties.unlink((linked_node *)p);
-	  delete p;
-	  if (!dirties.first())
-  	    i=0;
-	  else p=tmp;	  
-	}	
-	else if (!(x2<p->dx1 || y2<p->dy1 || x1>p->dx2 || y1>p->dy2))
-	{	  
+    if (x1<=p->dx1 && y1<=p->dy1 && x2>=p->dx2 && y2>=p->dy2)
+    {
+      dirty_rect *tmp=(dirty_rect*) p->next();
+      dirties.unlink((linked_node *)p);
+      delete p;
+      if (!dirties.first())
+          i=0;
+      else p=tmp;      
+    }    
+    else if (!(x2<p->dx1 || y2<p->dy1 || x1>p->dx2 || y1>p->dy2))
+    {      
 
 
-	 
+     
 /*          if (x1<=p->dx1) { a+=p->dx1-x1; ax1=x1; } else ax1=p->dx1;
           if (y1<=p->dy1) { a+=p->dy1-y1; ay1=y1; } else ay1=p->dy1; 
           if (x2>=p->dx2) { a+=x2-p->dx2; ax2=x2; } else ax2=p->dx2;
           if (y2>=p->dy2) { a+=y2-p->dy2; ay2=y2; } else ay2=p->dy2;
-	  
-	  if (a<50) 
-	  { p->dx1=ax1;	  			       // then expand the dirty
-	    p->dy1=ay1;
-	    p->dx2=ax2;
-	    p->dy2=ay2;
-	    return ;
-	  } 
-	  else */
-	    {
-	      if (x1<p->dx1)
-	        add_dirty(x1,max(y1,p->dy1),p->dx1-1,min(y2,p->dy2));
-	      if (x2>p->dx2)
-	        add_dirty(p->dx2+1,max(y1,p->dy1),x2,min(y2,p->dy2));
-	      if (y1<p->dy1)
-	        add_dirty(x1,y1,x2,p->dy1-1);
-	      if (y2>p->dy2)
-	        add_dirty(x1,p->dy2+1,x2,y2);
-	      return ;
-	    }
-	    p=(dirty_rect *)p->next();
-	  } else p=(dirty_rect *)p->next();      
-	
+      
+      if (a<50) 
+      { p->dx1=ax1;                         // then expand the dirty
+        p->dy1=ay1;
+        p->dx2=ax2;
+        p->dy2=ay2;
+        return ;
+      } 
+      else */
+        {
+          if (x1<p->dx1)
+            add_dirty(x1, max(y1, p->dy1), p->dx1-1, min(y2, p->dy2));
+          if (x2>p->dx2)
+            add_dirty(p->dx2+1, max(y1, p->dy1), x2, min(y2, p->dy2));
+          if (y1<p->dy1)
+            add_dirty(x1, y1, x2, p->dy1-1);
+          if (y2>p->dy2)
+            add_dirty(x1, p->dy2+1, x2, y2);
+          return ;
+        }
+        p=(dirty_rect *)p->next();
+      } else p=(dirty_rect *)p->next();      
+    
       } 
       CHECK(x1<=x2 && y1<=y2);
-      dirties.add_end((linked_node *)new dirty_rect(x1,y1,x2,y2)); 
+      dirties.add_end((linked_node *)new dirty_rect(x1, y1, x2, y2)); 
     }
   }
 }
@@ -974,14 +1059,16 @@ void image::bar      (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t co
   }
   if (x2<0 || y2<0 || x1>=width() || y1>=height() || x2<x1 || y2<y1)
     return ;
-  for (y=y1;y<=y2;y++)
-    memset(scan_line(y)+x1,color,(x2-x1+1));
-  add_dirty(x1,y1,x2,y2);
+  lock();
+  for (y=y1; y<=y2; y++)
+    memset(scan_line(y)+x1, color, (x2-x1+1));
+  unlock();
+  add_dirty(x1, y1, x2, y2);
 }
 
 void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 {
-  int16_t y,x;
+  int16_t y, x;
   if (x1>x2 || y1>y2) return ;
   if (special)
   { x1=special->bound_x1(x1);
@@ -998,32 +1085,37 @@ void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t co
   if (x2<0 || y2<0 || x1>=width() || y1>=height() || x2<x1 || y2<y1)
     return ;
 
+  lock();
   uint8_t *sl=scan_line(y1)+x1; 
-  for (y=y1;y<=y2;y++)
+  for (y=y1; y<=y2; y++)
   {
     uint8_t *s=sl;
-    for (x=x1;x<=x2;x++,s++)
+    for (x=x1; x<=x2; x++, s++)
       *s=(*s)^color;
     sl+=w;
   }
+  unlock();
 
-  add_dirty(x1,y1,x2,y2);
+  add_dirty(x1, y1, x2, y2);
 }
 
 
 void image::unpack_scanline(int16_t line, char bitsperpixel)
 {
   int16_t x;
-  uint8_t *sl,*ex,mask,bt,sh;
-  ex=(uint8_t *)jmalloc(width(),"image::unpacked scanline");
+  uint8_t *sl, *ex, mask, bt, sh;
+  ex=(uint8_t *)jmalloc(width(), "image::unpacked scanline");
+
+  lock();
   sl=scan_line(line);
-  memcpy(ex,sl,width());
+  memcpy(ex, sl, width());
+  unlock();
 
   if (bitsperpixel==1)      { mask=128;           bt=8; }
   else if (bitsperpixel==2) { mask=128+64;        bt=4; }
-  else 			    {  mask=128+64+32+16; bt=2; }
+  else                 {  mask=128+64+32+16; bt=2; }
 
-  for (x=0;x<width();x++)
+  for (x=0; x<width(); x++)
   { sh=((x%bt)<<(bitsperpixel-1));
     sl[x]=(ex[x/bt]&(mask>>sh))>>(bt-sh-1);
   }
@@ -1033,24 +1125,26 @@ void image::unpack_scanline(int16_t line, char bitsperpixel)
 
 void image::dither(palette *pal)
 {
-  int16_t x,y,i,j;
-  uint8_t dt_matrix[]={0,  136,24, 170,
-		   68, 204,102,238,
-		   51, 187, 17,153,
-		   119,255, 85,221};
+  int16_t x, y, i, j;
+  uint8_t dt_matrix[]={0,  136, 24, 170,
+           68, 204, 102, 238,
+           51, 187, 17, 153,
+           119, 255, 85, 221};
 
   uint8_t *sl;
-  for (y=height()-1;y>=0;y--)
+  lock();
+  for (y=height()-1; y>=0; y--)
   {
     sl=scan_line(y);
-    for (i=0,j=y%4,x=width()-1;x>=0;x--)
+    for (i=0, j=y%4, x=width()-1; x>=0; x--)
     {
       if (pal->red(sl[x])>dt_matrix[j*4+i])
-	sl[x]=255;
+    sl[x]=255;
       else sl[x]=0;
       if (i==3) i=0; else i++;
     }
   }
+  unlock();
 }
 
 void image_descriptor::clear_dirties()
@@ -1066,98 +1160,100 @@ void image_descriptor::clear_dirties()
 
 void image::resize(int16_t new_width, int16_t new_height)
 {
-  int old_width=width(),old_height=height();
-  uint8_t *im=(uint8_t *)jmalloc(width()*height(),"image::resized");
-  memcpy(im,scan_line(0),width()*height());
+  int old_width=width(), old_height=height();
+  uint8_t *im=(uint8_t *)jmalloc(width()*height(), "image::resized");
+  lock();
+  memcpy(im, scan_line(0), width()*height());
 
   delete_page();
-  make_page(new_width,new_height,NULL);
+  make_page(new_width, new_height, NULL);
   w=new_width;      // set the new hieght and width
   h=new_height;
 
-  uint8_t *sl1,*sl2;
-  int16_t y,y2,x2;
-  double yc,xc,yd,xd;
+  uint8_t *sl1, *sl2;
+  int16_t y, y2, x2;
+  double yc, xc, yd, xd;
 
 
 
   yc=(double)old_height/(double)new_height;
   xc=(double)old_width/(double)new_width;
-  for (y2=0,yd=0;y2<new_height;yd+=yc,y2++)
+  for (y2=0, yd=0; y2<new_height; yd+=yc, y2++)
   {
     y=(int)yd;
     sl1=im+y*old_width;
     sl2=scan_line(y2);
-    for (xd=0,x2=0;x2<new_width;xd+=xc,x2++)
+    for (xd=0, x2=0; x2<new_width; xd+=xc, x2++)
     { sl2[x2]=sl1[(int)xd]; }
   }
   jfree(im);
-  if (special) special->resize(new_width,new_height);
+  if (special) special->resize(new_width, new_height);
+  unlock();
 }
 
 void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, int16_t yd)
 {
-  int16_t cx1,cy1,cx2,cy2;
+  int16_t cx1, cy1, cx2, cy2;
   CHECK(x1>=0 && y1>=0 && x1<x2 && y1<y2 && x2<width() && y2<height());
   if (special)
   {
-    special->get_clip(cx1,cy1,cx2,cy2);
-    x1=max(x1,cx1); y1=max(cy1,y1); x2=min(x2,cx2); y2=min(y2,cy2);
+    special->get_clip(cx1, cy1, cx2, cy2);
+    x1=max(x1, cx1); y1=max(cy1, y1); x2=min(x2, cx2); y2=min(y2, cy2);
   }
-  int16_t xsrc,ysrc,xdst,ydst,xtot=x2-x1-abs(xd)+1,ytot,xt;
-  uint8_t *src,*dst;
+  int16_t xsrc, ysrc, xdst, ydst, xtot=x2-x1-abs(xd)+1, ytot, xt;
+  uint8_t *src, *dst;
   if (xd<0) { xsrc=x1-xd; xdst=x1; } else { xsrc=x2-xd; xdst=x2; }
   if (yd<0) { ysrc=y1-yd; ydst=y1; } else { ysrc=y2-yd; ydst=y2; }
-  for (ytot=y2-y1-abs(yd)+1;ytot;ytot--)
+  for (ytot=y2-y1-abs(yd)+1; ytot; ytot--)
   { src=scan_line(ysrc)+xsrc;
     dst=scan_line(ydst)+xdst;
     if (xd<0)
-      for (xt=xtot;xt;xt--)
+      for (xt=xtot; xt; xt--)
         *(dst++)=*(src++);
-      else for (xt=xtot;xt;xt--)
+      else for (xt=xtot; xt; xt--)
         *(dst--)=*(src--);
     if (yd<0) { ysrc++; ydst++; } else { ysrc--; ydst--; }
   }
-  add_dirty(x1,y1,x2,y2);
+  add_dirty(x1, y1, x2, y2);
 }
 
 
 image *image::create_smooth(int16_t smoothness)
 {
-  int16_t i,j,k,l,t,d;
+  int16_t i, j, k, l, t, d;
   image *im;
   CHECK(smoothness>=0);
   if (!smoothness) return NULL;
   d=smoothness*2+1;
   d=d*d;
-  im=new image(width(),height());
-  for (i=0;i<width();i++)
-    for (j=0;j<height();j++)
+  im=new image(width(), height());
+  for (i=0; i<width(); i++)
+    for (j=0; j<height(); j++)
     {
-      for (t=0,k=-smoothness;k<=smoothness;k++)
-	for (l=-smoothness;l<=smoothness;l++)
-	  if (i+k>smoothness && i+k<width()-smoothness && j+l<height()-smoothness && j+l>smoothness)
-	    t+=pixel(i+k,j+l);
-	  else t+=pixel(i,j);
-      im->putpixel(i,j,t/d);
+      for (t=0, k=-smoothness; k<=smoothness; k++)
+    for (l=-smoothness; l<=smoothness; l++)
+      if (i+k>smoothness && i+k<width()-smoothness && j+l<height()-smoothness && j+l>smoothness)
+        t+=pixel(i+k, j+l);
+      else t+=pixel(i, j);
+      im->putpixel(i, j, t/d);
     }
   return im;
 }
 
 void image::widget_bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2, 
-   	uint8_t light, uint8_t med, uint8_t dark)
+       uint8_t light, uint8_t med, uint8_t dark)
 {
-  line(x1,y1,x2,y1,light);
-  line(x1,y1,x1,y2,light);
-  line(x2,y1+1,x2,y2,dark);
-  line(x1+1,y2,x2-1,y2,dark);
-  bar(x1+1,y1+1,x2-1,y2-1,med);
+  line(x1, y1, x2, y1, light);
+  line(x1, y1, x1, y2, light);
+  line(x2, y1+1, x2, y2, dark);
+  line(x1+1, y2, x2-1, y2, dark);
+  bar(x1+1, y1+1, x2-1, y2-1, med);
 }
 
 class fill_rec
 {
 public :
-  int16_t x,y;
+  int16_t x, y;
   fill_rec *last;
   fill_rec(int16_t X, int16_t Y, fill_rec *Last)
   { x=X; y=Y; last=Last; }
@@ -1165,9 +1261,10 @@ public :
 
 void image::flood_fill(int16_t x, int16_t y, uint8_t color)
 {
-  uint8_t *sl,*above,*below;
-  fill_rec *recs=NULL,*r;
+  uint8_t *sl, *above, *below;
+  fill_rec *recs=NULL, *r;
   uint8_t fcolor;
+  lock();
   sl=scan_line(y);
   fcolor=sl[x];
   if (fcolor==color) return ;
@@ -1188,7 +1285,7 @@ void image::flood_fill(int16_t x, int16_t y, uint8_t color)
       {
         above=scan_line(y-1);
         if (above[x]==fcolor)
-        { r=new fill_rec(x,y-1,recs);
+        { r=new fill_rec(x, y-1, recs);
           recs=r;  
         }
       }
@@ -1196,7 +1293,7 @@ void image::flood_fill(int16_t x, int16_t y, uint8_t color)
       {
         above=scan_line(y+1);
         if (above[x]==fcolor)
-        { r=new fill_rec(x,y+1,recs);
+        { r=new fill_rec(x, y+1, recs);
           recs=r;
         }
       }
@@ -1209,14 +1306,14 @@ void image::flood_fill(int16_t x, int16_t y, uint8_t color)
         if (y>0)
         { above=scan_line(y-1);
           if (x>0 && above[x-1]!=fcolor && above[x]==fcolor)
-          { r=new fill_rec(x,y-1,recs);
+          { r=new fill_rec(x, y-1, recs);
             recs=r;  
           }
         }
         if (y<height()-1)
         { below=scan_line(y+1);
           if (x>0 && below[x-1]!=fcolor && below[x]==fcolor)
-          { r=new fill_rec(x,y+1,recs);
+          { r=new fill_rec(x, y+1, recs);
             recs=r;  
           }
         }
@@ -1227,7 +1324,7 @@ void image::flood_fill(int16_t x, int16_t y, uint8_t color)
       {
         above=scan_line(y-1);
         if (above[x]==fcolor)
-        { r=new fill_rec(x,y-1,recs);
+        { r=new fill_rec(x, y-1, recs);
           recs=r;
         }
       }
@@ -1235,12 +1332,13 @@ void image::flood_fill(int16_t x, int16_t y, uint8_t color)
       {
         above=scan_line(y+1);
         if (above[x]==fcolor)
-        { r=new fill_rec(x,y+1,recs);
+        { r=new fill_rec(x, y+1, recs);
           recs=r;
         }
       }
     }
   } while (recs);
+  unlock();
 }
 
 
@@ -1249,110 +1347,127 @@ void image::flood_fill(int16_t x, int16_t y, uint8_t color)
 void image::burn_led(int16_t x, int16_t y, int32_t num, int16_t color, int16_t scale)
 {
   char st[100];
-  int16_t ledx[]={1,2,1,2,3,3,3,3,1,2,0,0,0,0};
-  int16_t ledy[]={3,3,0,0,1,2,4,6,7,7,4,6,1,2};
+  int16_t ledx[]={1, 2, 1, 2, 3, 3, 3, 3, 1, 2, 0, 0, 0, 0};
+  int16_t ledy[]={3, 3, 0, 0, 1, 2, 4, 6, 7, 7, 4, 6, 1, 2};
 
-  int16_t dig[]={2+4+8+16+32+64,4+8,2+4+1+32+16,2+4+1+8+16,64+1+4+8,
-             2+64+1+8+16,64+32+1+8+16,2+4+8,1+2+4+8+16+32+64,64+2+4+1+8,1};
-  int16_t xx,yy,zz;
-  sprintf(st,"%8ld",(long int)num);
-  for (xx=0;xx<8;xx++)
+  int16_t dig[]={2+4+8+16+32+64, 4+8, 2+4+1+32+16, 2+4+1+8+16, 64+1+4+8,
+             2+64+1+8+16, 64+32+1+8+16, 2+4+8, 1+2+4+8+16+32+64, 64+2+4+1+8, 1};
+  int16_t xx, yy, zz;
+  sprintf(st, "%8ld", (long int)num);
+  for (xx=0; xx<8; xx++)
   {
     if (st[xx]!=' ')
     {
       if (st[xx]=='-')
-	zz=10;
+    zz=10;
       else
-	zz=st[xx]-'0';
-      for (yy=0;yy<7;yy++)
-	if ((1<<yy)&dig[zz])
-	  line(x+ledx[yy*2]*scale,y+ledy[yy*2]*scale,x+ledx[yy*2+1]*scale,
-	    y+ledy[yy*2+1]*scale,color);
+    zz=st[xx]-'0';
+      for (yy=0; yy<7; yy++)
+    if ((1<<yy)&dig[zz])
+      line(x+ledx[yy*2]*scale, y+ledy[yy*2]*scale, x+ledx[yy*2+1]*scale,
+        y+ledy[yy*2+1]*scale, color);
     }
     x+=6*scale;
   }
 }
 
-uint8_t dither_matrix[]={0,  136,24, 170,
-		     68, 204,102,238,
-		     51, 187, 17,153,
-		     119,255, 85,221};
+uint8_t dither_matrix[]={0,  136, 24, 170,
+             68, 204, 102, 238,
+             51, 187, 17, 153,
+             119, 255, 85, 221};
 
 image *image::copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-  int16_t x,y,cx1,cy1,cx2,cy2,ry,rx,bo,dity,ditx;
+  int16_t x, y, cx1, cy1, cx2, cy2, ry, rx, bo, dity, ditx;
   image *ret;
-  uint8_t *sl1,*sl2;
-  get_clip(cx1,cy1,cx2,cy2);
+  uint8_t *sl1, *sl2;
+  get_clip(cx1, cy1, cx2, cy2);
   if (y1<cy1) y1=cy1;
   if (x1<cx1) x1=cx1;
   if (y2>cy2) y2=cy2;
   if (x2>cx2) x2=cx2;
   CHECK(x2>=x1 && y2>=y1);
   if (x2<x1 || y2<y1) return NULL;
-  ret=new image((x2-x1+8)/8,(y2-y1+1));
+  ret=new image((x2-x1+8)/8, (y2-y1+1));
   if (!last_loaded())
     ret->clear();
   else 
-    for (y=y1,ry=0,dity=(y1%4)*4;y<=y2;y++,ry++)
+  {
+    ret->lock();
+    lock();
+    for (y=y1, ry=0, dity=(y1%4)*4; y<=y2; y++, ry++)
     {
       sl1=ret->scan_line(ry);     // sl1 is the scan linefo the return image
       sl2=scan_line(y);          // sl2 is the orginal image scan line
-      memset(sl1,0,(x2-x1+8)/8);
-      for (bo=7,rx=0,x=x1,ditx=x1%4;x<=x2;x++)
+      memset(sl1, 0, (x2-x1+8)/8);
+      for (bo=7, rx=0, x=x1, ditx=x1%4; x<=x2; x++)
       {
         if (last_loaded()->red(sl2[x])>dither_matrix[ditx+dity]) 
-    	  sl1[rx]|=1<<bo;
+          sl1[rx]|=1<<bo;
         if (bo!=0)
-  	bo--;
+      bo--;
         else
         {
-  	  rx++;
-	  bo=7;
+        rx++;
+      bo=7;
         }
         ditx+=1; if (ditx>3) ditx=0;
       }
       dity+=4; if (dity>12) dity=0;
     }
+    unlock();
+    ret->unlock();
+  }
   return ret;
 }
 
 void image::flip_x()
 {
-  uint8_t *rev=(uint8_t *)jmalloc(width(),"image tmp::flipped_x"),*sl;
-  CONDITION(rev,"memory allocation"); 
-  int y,x,i;
-  for (y=0;y<height();y++)
+  uint8_t *rev=(uint8_t *)jmalloc(width(), "image tmp::flipped_x"), *sl;
+  CONDITION(rev, "memory allocation"); 
+  int y, x, i;
+
+  /* FIXME: Abuse Win32 uses RestoreSurface() here instead of locking */
+  lock();
+  for (y=0; y<height(); y++)
   { sl=scan_line(y);
-    for (i=0,x=width()-1;x>=0;x--,i++)
+    for (i=0, x=width()-1; x>=0; x--, i++)
       rev[i]=sl[x]; 
-    memcpy(sl,rev,width());
+    memcpy(sl, rev, width());
   }
+  unlock();
   jfree(rev);
 }
 
 void image::flip_y()
 {
-  uint8_t *rev=(uint8_t *)jmalloc(width(),"image::flipped_y"),*sl;
-  CONDITION(rev,"memory allocation"); 
+  uint8_t *rev=(uint8_t *)jmalloc(width(), "image::flipped_y"), *sl;
+  CONDITION(rev, "memory allocation"); 
   int y;
-  for (y=0;y<height()/2;y++)
+
+  /* FIXME: Abuse Win32 uses RestoreSurface() here instead of locking */
+  lock();
+  for (y=0; y<height()/2; y++)
   { sl=scan_line(y);
-    memcpy(rev,sl,width());
-    memcpy(sl,scan_line(height()-y-1),width());
-    memcpy(scan_line(height()-y-1),rev,width());
+    memcpy(rev, sl, width());
+    memcpy(sl, scan_line(height()-y-1), width());
+    memcpy(scan_line(height()-y-1), rev, width());
   }
+  unlock();
+  jfree(rev);
 }
 
 void image::make_color(uint8_t color)
 {
   uint8_t *sl;
-  int y,x;
-  for (y=0;y<height();y++)
+  int y, x;
+  lock();
+  for (y=0; y<height(); y++)
   {
     sl=scan_line(y);
-    for (x=width();x;x--,sl++)
+    for (x=width(); x; x--, sl++)
       if (*sl) 
         *sl=color;
   }
+  unlock();
 }

@@ -48,6 +48,7 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
 
   percent=256-percent;
 
+  screen->lock();
   for (y=y1;y<=y2;y++)
   {
     uint8_t *sl=screen->scan_line(y)+x1;
@@ -61,6 +62,7 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
     }
   }
   screen->add_dirty(x1,y1,x2,y2);  
+  screen->unlock();
 }
 
 void darken_area(int x1, int y1, int x2, int y2, int amount)
@@ -74,6 +76,7 @@ void darken_area(int x1, int y1, int x2, int y2, int amount)
   if (y2>cy2) y2=cy2;
   if (x2<x1 || y2<y1) return ;
 
+  screen->lock();
   for (y=y1;y<=y2;y++)
   {
     uint8_t *sl=screen->scan_line(y)+x1;
@@ -87,6 +90,7 @@ void darken_area(int x1, int y1, int x2, int y2, int amount)
     }
   }
   screen->add_dirty(x1,y1,x2,y2);
+  screen->unlock();
 }
 
 void dark_widget(int x1, int y1, int x2, int y2, int br, int dr, int amount)

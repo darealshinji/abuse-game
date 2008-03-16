@@ -1656,9 +1656,11 @@ void level::write_thumb_nail(bFILE *fp, image *im)
 
   fp->write_uint16(i->width());
   fp->write_uint16(i->height());
-  int y=0;
-  for (;y<i->height();y++)
+
+  i->lock();
+  for(int y = 0; y < i->height(); y++)
     fp->write(i->scan_line(y),i->width());
+  i->unlock();
 
   delete i;
 }

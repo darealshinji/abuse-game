@@ -58,6 +58,7 @@ void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
   remap[1]=wm->bright_color();
   remap[2]=wm->dark_color();
 
+  screen->lock();
   for (int yc=ich;yc;yc--,y++)
   {
     if (y>=cy1 && y<=cy2)
@@ -71,6 +72,7 @@ void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
     }
   }
   screen->add_dirty(x,y,x+icw-1,y+ich-1);
+  screen->unlock();
 }
 
 scroller::scroller(int X, int Y, int ID, int L, int H, int Vert, int Total_items, ifield *Next)
