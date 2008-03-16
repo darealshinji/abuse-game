@@ -842,16 +842,18 @@ int write_string(bFILE *fp, char const *st)
 
 long spec_directory::data_start_offset()
 {
-  long i;
-  for (i=0;i<total;i++) 
-    return entries[i]->offset;
+    /* FIXME: no need for a for loop here! */
+    long i;
+    for(i = 0; i < total; i++) 
+        return entries[i]->offset;
 
-  return SPEC_SIG_SIZE+2;     // if no entries, then no data, but return where it would
-                              // start anyway
+    // If no entries, then no data, but return where it would start anyway
+    return SPEC_SIG_SIZE + 2;
 } 
 
 long spec_directory::data_end_offset()
 {
+    /* FIXME: no need for a for loop here! */
   spec_entry **e;
   long i;
   for (i=total-1,e=entries;i>=0;i--,e++)
@@ -994,20 +996,18 @@ void spec_directory::delete_entries()   // if the directory was created by hand 
     jfree(entries);
 }
 
-
 void note_open_fd(int fd, char const *str)
 {
-  total_files_open++;
+    total_files_open++;
 }
 
 void note_close_fd(int fd)
 {
-  total_files_open--;
+    total_files_open--;
 }
-
 
 void list_open_fds()
 {
-  printf("Total open dos fds=%d\n",total_files_open);
+    printf("Total open file descriptors: %d\n", total_files_open);
 }
 

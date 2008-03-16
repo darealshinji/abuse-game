@@ -386,7 +386,7 @@ void server::collect_inputs()
     }
 		       
     if (!client_do_packet(pk))
-      printf("Error occured while processing packet from server\n");
+      printf("Error occurred while processing packet from server\n");
   }
 
   if (is_server && in)
@@ -542,7 +542,7 @@ void server::check_for_new_players()
 
 int server::join_game(out_socket *os, char *name, char *server_name)
 {
-  char *re="Error occured while reading from server\n";
+  char *re="Error occurred while reading from server\n";
   packet pk;
 
   if (!get_pkt(os,pk))                  // read join status packet, 0 means we can't join
@@ -588,7 +588,7 @@ int server::join_game(out_socket *os, char *name, char *server_name)
   current_level=new level(os);
   if (current_level->load_failed())
   {
-    printf("Error occured while downloading level\n");
+    printf("Error occurred while downloading level\n");
     exit(1);
   }
 

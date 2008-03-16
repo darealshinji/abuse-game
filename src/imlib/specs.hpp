@@ -103,18 +103,17 @@ class bFILE     // base file type which other files should be derived from (jFIL
 
   virtual ~bFILE();
 
-
-  // these read and writes, allways read/write Intel endian-ness
-  uint16_t read_uint16();
-  uint32_t read_uint32();
-  uint8_t read_uint8();
-  double read_double();
-  void write_uint16(uint16_t x);
-  void write_uint32(uint32_t x);
-  void write_uint8(uint8_t x);
-  void write_double(double x);
-  void set_read_buffer_size(long size);
-} ;
+    // read and write using little-endianness
+    uint16_t read_uint16();
+    uint32_t read_uint32();
+    uint8_t read_uint8();
+    double read_double();
+    void write_uint16(uint16_t x);
+    void write_uint32(uint32_t x);
+    void write_uint8(uint8_t x);
+    void write_double(double x);
+    void set_read_buffer_size(long size);
+};
 
 class jFILE : public bFILE     // this file type will use virtual opens inside of a spe
 {
@@ -186,7 +185,7 @@ public :
   void remove(spec_entry *e);
   void add_by_hand(spec_entry *e);
   void calc_offsets(); 
-  long data_start_offset();  // returns the firsyt offset past directory items
+  long data_start_offset();  // returns the first offset past directory items
   long data_end_offset();    // this should be the end of the file
   long type_total(int type);
   jFILE *write(char const *filename); 

@@ -89,7 +89,7 @@ void darken_area(int x1, int y1, int x2, int y2, int amount)
   screen->add_dirty(x1,y1,x2,y2);
 }
 
-void dark_wiget(int x1, int y1, int x2, int y2, int br, int dr, int amount)
+void dark_widget(int x1, int y1, int x2, int y2, int br, int dr, int amount)
 {
   screen->add_dirty(x1,y1,x2,y2);
   screen->line(x1,y1,x1,y2,br);
@@ -147,11 +147,11 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   {
     int tl=strlen(title)*font->width();
     int tx=screen->width()/2-tl/2;
-    dark_wiget(tx-2,my-font->height()-4,tx+tl+2,my-2,wm->medium_color(),wm->dark_color(),180);
+    dark_widget(tx-2,my-font->height()-4,tx+tl+2,my-2,wm->medium_color(),wm->dark_color(),180);
     font->put_string(screen,tx+1,my-font->height()-2,title,wm->bright_color());
   }
   
-  dark_wiget(mx,my,mx+mw-1,my+mh-1,wm->medium_color(),wm->dark_color(),200);
+  dark_widget(mx,my,mx+mw-1,my+mh-1,wm->medium_color(),wm->dark_color(),200);
 
 
   int y=my+5;

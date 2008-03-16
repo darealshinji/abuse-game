@@ -68,7 +68,7 @@ public:
 };
 
 // this is the basic class for all linked_list
-// it's features should beself explanitory
+// its features should be self-explanatory.
 // openly use the functions listed after the keyword PUBLIC
 // type conversions may be nessary if you derive a class of nodes of your own
 // for example shape is an class derived from linked_node.

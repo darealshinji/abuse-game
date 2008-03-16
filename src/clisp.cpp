@@ -800,11 +800,12 @@ void *l_caller(long number, void *args)
 #ifdef __linux__
       return make_find_symbol("LINUX");
 #endif
-
 #ifdef __sgi
       return make_find_symbol("IRIX");
 #endif
-
+#ifdef __WIN32
+      return make_find_symbol("WIN32");
+#endif
     } break;
     case 26 :
     {

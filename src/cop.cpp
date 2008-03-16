@@ -670,7 +670,8 @@ void *cop_mover(int xm, int ym, int but)
     {
       if (!o->controller() || o->controller()->key_down(JK_SPACE))
       {
-	eval_function((lisp_symbol *)l_restart_player,NULL);  // call teh user function to reset the player
+        // call the user function to reset the player
+	eval_function((lisp_symbol *)l_restart_player,NULL);
 	o->controller()->reset_player();
 	o->set_aistate(0);     
       } else if (o->controller() && o->controller()->local_player())
@@ -1053,7 +1054,7 @@ void *show_kills()
   fnt->put_string(screen,x,y,header_str,wm->bright_color());
   y+=fnt->height();
 
-  screen->wiget_bar(x,y+2,x+strlen(header_str)*fnt->width(),y+fnt->height()-3,
+  screen->widget_bar(x,y+2,x+strlen(header_str)*fnt->width(),y+fnt->height()-3,
 		     wm->bright_color(),wm->medium_color(),wm->dark_color());
   y+=fnt->height();
   v=player_list;

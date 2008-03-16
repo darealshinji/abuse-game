@@ -146,7 +146,7 @@ void event_handler::get_event( event &ev )
 	else
 	{
 		// NOTE : that the mouse status should be known
-		// even if another event has occured.
+		// even if another event has occurred.
 		ev.mouse_move.x = mouse->x();
 		ev.mouse_move.y = mouse->y();
 		ev.mouse_button = mouse->button();

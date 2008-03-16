@@ -67,7 +67,7 @@ void mdie(char *reason)
 
 void comm_failed()  // general communication failure with engine
 {
-  fprintf(stderr,"net driver : Error occured while trying to communicate with the engine\n");
+  fprintf(stderr,"net driver : Error occurred while trying to communicate with the engine\n");
   if (driver) { delete driver; driver=NULL; }
   exit(0);
 }

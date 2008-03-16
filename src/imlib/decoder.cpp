@@ -67,7 +67,7 @@ short top_slot;                      /* Highest code for current size */
 short slot;                          /* Last read code */
 
 /* The following static variables are used
- * for seperating out codes
+ * for separating out codes
  */
 short navail_bytes = 0;              /* # bytes left in block */
 short nbits_left = 0;                /* # bits left in current byte */
@@ -174,7 +174,7 @@ short get_next_code()
    }
 
 
-/* The reason we have these seperated like this instead of using
+/* The reason we have these separated like this instead of using
  * a structure like the original Wilhite code did, is because this
  * stuff generally produces significantly faster code when compiled...
  * This code is full of similar speedups...  (For a good book on writing
@@ -191,9 +191,9 @@ short get_next_code()
  * - This function decodes an LZW image, according to the method used
  * in the GIF spec.  Every *linewidth* "characters" (ie. pixels) decoded
  * will generate a call to out_line(), which is a user specific function
- * to display a line of pixels.  The function gets it's codes from
+ * to display a line of pixels.  The function gets its codes from
  * get_next_code() which is responsible for reading blocks of data and
- * seperating them into the proper size codes.  Finally, get_byte() is
+ * separating them into the proper size codes.  Finally, get_byte() is
  * the global routine to read the next byte from the GIF file.
  *
  * It is generally a good idea to have linewidth correspond to the actual
@@ -281,7 +281,7 @@ short decode_gif_data(image *im, FILE *fp)
 	  * result from this, but I doubt it will look good...) then set it
 	  * to color zero.
 	  */
-	CONDITION(c<slot,"Error occured while reading gif");
+	CONDITION(c<slot,"Error occurred while reading gif");
 	 if (c >= slot)
 	    c = 0;
 

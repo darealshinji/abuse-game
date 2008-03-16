@@ -32,7 +32,7 @@ protected :
 
   int wig_x();
   int darea() { return (l-bw()-2)-bw()-bw(); }
-  void draw_wiget(image *screen, int erase);
+  void draw_widget(image *screen, int erase);
   int mouse_to_drag(int mx,int my);
 public :
   int t,sx;

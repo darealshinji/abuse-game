@@ -207,22 +207,22 @@ backtile::backtile(spec_entry *e, bFILE *fp)
 
 foretile::foretile(bFILE *fp)
 {
-  uint8_t *sl; 
-  image *img=load_image(fp);
+    uint8_t *sl; 
+    image *img = load_image(fp);
 
+    // create the micro image of the fore tile by averaging the color values
+    // in 2×2 space and storing the closest match
 
-  // create the micro image of the fore tile by aveginging the color values in 2 x 2 space
-  // and storeing teh closest match
-//  uint8_t *buffer=(uint8_t *)&micro_image;
-  int x,y,w=img->width(),h=img->height(),l;
-  int r[AUTOTILE_WIDTH*AUTOTILE_HEIGHT],
-      g[AUTOTILE_WIDTH*AUTOTILE_HEIGHT],
-      b[AUTOTILE_WIDTH*AUTOTILE_HEIGHT],
-      t[AUTOTILE_WIDTH*AUTOTILE_HEIGHT];
-  memset(t,0,AUTOTILE_WIDTH*AUTOTILE_HEIGHT*sizeof(int));
-  memset(r,0,AUTOTILE_WIDTH*AUTOTILE_HEIGHT*sizeof(int));
-  memset(g,0,AUTOTILE_WIDTH*AUTOTILE_HEIGHT*sizeof(int));
-  memset(b,0,AUTOTILE_WIDTH*AUTOTILE_HEIGHT*sizeof(int));
+    //uint8_t *buffer=(uint8_t *)&micro_image;
+    int x, y, w = img->width(), h = img->height(), l;
+    int r[AUTOTILE_WIDTH * AUTOTILE_HEIGHT],
+        g[AUTOTILE_WIDTH * AUTOTILE_HEIGHT],
+        b[AUTOTILE_WIDTH * AUTOTILE_HEIGHT],
+        t[AUTOTILE_WIDTH * AUTOTILE_HEIGHT];
+    memset(t, 0, AUTOTILE_WIDTH * AUTOTILE_HEIGHT * sizeof(int));
+    memset(r, 0, AUTOTILE_WIDTH * AUTOTILE_HEIGHT * sizeof(int));
+    memset(g, 0, AUTOTILE_WIDTH * AUTOTILE_HEIGHT * sizeof(int));
+    memset(b, 0, AUTOTILE_WIDTH * AUTOTILE_HEIGHT * sizeof(int));
   
   if (!pal)
   {

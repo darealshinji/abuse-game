@@ -159,7 +159,7 @@ patched_morph::patched_morph(image *i1, image *hint1, image *i2, image *hint2, i
 	      b+=pal->blue(im->pixel(x,y+1));
 	    }
 
-	    if (*sl && tot==0)  // kill any seperate pixels	    
+	    if (*sl && tot==0)  // kill any separate pixels	    
 	      mark_color=0;
 	    else if (*sl)
 	    {
