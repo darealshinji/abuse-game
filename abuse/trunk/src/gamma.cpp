@@ -129,12 +129,11 @@ void gamma_correct(palette *&pal, int force_menu)
             gray_pal->find_closest(md_r, md_g, md_b),
             gray_pal->find_closest(dr_r, dr_g, dr_b));
 
-        int wl = WINDOW_FRAME_LEFT, wh = WINDOW_FRAME_TOP;
         int sh = wm->font()->height() + 35;
-        button *but = new button(wl + 5, wh + 5 + sh * 3, ID_GAMMA_OK, cash.img(ok_button),
-            new info_field(wl + 35, wh + 10 + sh * 3, ID_NULL, lang_string("gamma_msg"), 0));
+        button *but = new button(5, 5 + sh * 3, ID_GAMMA_OK, cash.img(ok_button),
+            new info_field(35, 10 + sh * 3, ID_NULL, lang_string("gamma_msg"), 0));
 
-        gray_picker *gp = new gray_picker(wl + 2, wh + 5 + sh * 1, ID_GREEN_PICKER, 0, dg / 4, but);
+        gray_picker *gp = new gray_picker(2, 5 + sh, ID_GREEN_PICKER, 0, dg / 4, but);
         gp->set_pos(dg / 4);
 
         jwindow *gw = wm->new_window(xres / 2 - 190, yres / 2 - 90, -1, -1, gp);

@@ -12,17 +12,18 @@
 #include "chat.hpp"
 #include "dev.hpp"
 
+chat_console *chat = NULL;
+
 chat_console::chat_console(JCFont *font, int width, int height) :
   console(font,width,height<4 ? 4 : height,symbol_str("CHAT"))
 {
-  clear();
-  cx=0;
-  cy=h-1;
-  lastx=xres/2-screen_w()/2;
-  lasty=yres-screen_h()-WINDOW_FRAME_TOP-WINDOW_FRAME_BOTTOM;
+    hide();
+    clear();
+    cx = 0;
+    cy = h - 1;
+    lastx = xres / 2 - screen_w() / 2;
+    lasty = yres - h;
 }
-
-chat_console *chat=NULL;
 
 void chat_console::clear()
 {

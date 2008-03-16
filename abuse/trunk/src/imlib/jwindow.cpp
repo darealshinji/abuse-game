@@ -17,20 +17,24 @@
 #include "event.hpp"
 #include "jwindow.hpp"
 
-int jw_left=5,jw_right=5,jw_top=15,jw_bottom=5;
+static int jw_left = 3, jw_right = 3, jw_top = 2, jw_bottom = 3;
 
 int frame_top() { return jw_top; }
 int frame_bottom() { return jw_bottom; }
 int frame_left() { return jw_left; }
 int frame_right() { return jw_right; }
 
+//
+//  Sets the size of the border around each window
+//
 void set_frame_size(int x)
 {  
-  if (x<1) x=1;
-  jw_left=x;
-  jw_right=x;
-  jw_top=10+x;
-  jw_bottom=x;
+    if(x < 1)
+        x = 1;
+    jw_left = x;
+    jw_right = x;
+    jw_top = 2;
+    jw_bottom = x;
 }
 
  // true if a window lies in this area
@@ -51,24 +55,7 @@ void window_manager::release_focus()
 
 void window_manager::close_window(jwindow *j)
 {
-  jwindow *k;
-  if (grab==j) grab=NULL;
-  if (state==dragging && j==drag_window)  // close the window we were dragging
-    state=inputing;
-
-  if (j==first)
-    first=first->next;
-  else
-  {
-    for (k=first;k->next!=j;k=k->next)
-      k->screen->add_dirty(j->x-k->x,j->y-k->y, 
-                   j->x+j->l-1-k->x,j->y+j->h-1-k->y);
-    k->screen->add_dirty(j->x-k->x,j->y-k->y, 
-                   j->x+j->l-1-k->x,j->y+j->h-1-k->y);
-    k->next=j->next;
-  }
-  screen->add_dirty(j->x,j->y,j->x+j->l-1,j->y+j->h-1);
-  delete j;
+    delete j;
 }
 
 void window_manager::hide_windows()
@@ -242,7 +229,7 @@ void window_manager::resize_window(jwindow *j, int l, int h)
     p->screen->add_dirty(j->x-p->x,j->y-p->y,j->x+j->l-1-p->x,j->y+j->h-1-p->y);
   j->resize(l,h);
   if (!frame_suppress)
-  j->redraw(hi,med,low,frame_font());
+  j->redraw();
 }
 
 void window_manager::move_window(jwindow *j, int x, int y)
@@ -259,33 +246,79 @@ void window_manager::move_window(jwindow *j, int x, int y)
 window_manager::window_manager(image *Screen, palette *Pal, int Hi, 
                                int Med, int Low, JCFont *Font)
 {
-  screen=Screen; hi=Hi; low=Low; med=Med; first=NULL; pal=Pal; grab=NULL;
-  bk=pal->find_closest(0,0,0);
-  state=inputing; fnt=Font;  wframe_fnt=Font;
-  memset(key_state,0,sizeof(key_state));
-  eh=new event_handler(screen,pal);
-  frame_suppress=0;
+    wm = this;
+    screen = Screen;
+    hi = Hi; low = Low; med = Med; first = NULL; pal = Pal; grab = NULL;
+    bk = pal->find_closest(0, 0, 0);
+    state = inputing; fnt = Font;  wframe_fnt = Font;
+    memset(key_state, 0, sizeof(key_state));
+    eh = new event_handler(screen, pal);
+    frame_suppress = 0;
 }
 
-jwindow *window_manager::new_window(int x, int y, int l, int h, ifield *fields, char const *Name)
+window_manager::~window_manager()
 {
-  if (x>screen->width()-4) x=screen->width()-25;
-  if (y>screen->height()-4) y=screen->height()-10;
-  
-  jwindow *j=new jwindow(x,y,l,h,fields,Name),*k;
-  j->show();
-  if (!first)
-    first=j;
-  else
-  {
-    k=first;
-    while (k->next) k=k->next;
-    k->next=j;
-    j->next=NULL;
-  }
-  if (!frame_suppress)
-    j->redraw(hi,med,low,frame_font());
-  return j;
+    delete eh;
+    while(first)
+        close_window(first);
+    wm = NULL;
+}
+
+void window_manager::add_window(jwindow *win)
+{
+    if(!first)
+        first = win;
+    else
+    {
+        jwindow *tmp = first;
+        while(tmp->next)
+            tmp = tmp->next;
+        tmp->next = win;
+        win->next = NULL;
+    }
+}
+
+void window_manager::remove_window(jwindow *win)
+{
+    if(grab == win)
+        grab = NULL;
+
+    // close the window we were dragging
+    if(state == dragging && win == drag_window)
+        state = inputing;
+
+    if(first == win)
+        first = first->next;
+    else
+    {
+        jwindow * search;
+        for(search = first; search->next != win; search = search->next)
+            search->screen->add_dirty(win->x - search->x,
+                                      win->y - search->y,
+                                      win->x + win->l - 1 - search->x,
+                                      win->y + win->h - 1 - search->y);
+        search->screen->add_dirty(win->x - search->x, win->y - search->y,
+                                  win->x + win->l - 1 - search->x,
+                                  win->y + win->h - 1 - search->y);
+        search->next = win->next;
+    }
+
+    screen->add_dirty(win->x, win->y, win->x + win->l - 1,
+                      win->y + win->h - 1);
+}
+
+jwindow * window_manager::new_window(int x, int y, int l, int h,
+                                     ifield * fields, char const *name)
+{
+    if(x > screen->width () - 4)
+        x = screen->width () - 25;
+    if(y > screen->height () - 4)
+        y = screen->height () - 10;
+ 
+    jwindow * j = new jwindow (x, y, l, h, fields, name);
+    j->show();
+
+    return j;
 }
 
 void window_manager::flush_screen()
@@ -343,53 +376,94 @@ void window_manager::flush_screen()
   }
 }
 
-jwindow::jwindow(int X, int Y, int L, int H, ifield *fields, char const *Name)
+jwindow::jwindow()
 {
-    ifield *i;
-    int x1, y1, x2, y2;
+    _x1 = _y1 = _x2 = _y2 = 0;
+    _hidden = true;
+    _moveable = true;
+    // property.flags = JWINDOW_NOAUTOHIDE_FLAG;
+    inm = new input_manager (this, NULL);
+    screen = NULL;
+    _name = NULL;
+    wm->add_window(this);
+}
 
-    l = 0; h = 0; 
-    hidden = false;
-    moveable = true;
-    if(fields)
-        for(i = fields; i; i = i->next)
-        {
-            i->area(x1, y1, x2, y2);
-            if ((int)y2 > (int)h) 
-                h = y2 + 1;
-            if ((int)x2 > (int)l) 
-                l = x2 + 1;
-        }
-    else
-    {
-        l = 2;
-        h = 2;
-    }
+jwindow::jwindow(int X, int Y, int L, int H, ifield *f, char const *name)
+{
+    l = 0;
+    h = 0; 
+    _hidden = false;
+    _moveable = true;
 
-    l = L > 0 ? L + jw_left : l - L;
-    l += WINDOW_FRAME_RIGHT;
-    if(l < 18)
-        l = 18;
-    h = H > 0 ? H + jw_top : h - h;
-    h += WINDOW_FRAME_BOTTOM;
-    if(h < 12)
-        h = 12;
-    //if (!fields) { l+=WINDOW_FRAME_LEFT; h+=WINDOW_FRAME_TOP; }
-    y = Y >= 0 ? Y : yres - h + Y - WINDOW_FRAME_TOP - WINDOW_FRAME_BOTTOM - 1;
-    x = X >= 0 ? X : xres - l + X - WINDOW_FRAME_LEFT - WINDOW_FRAME_RIGHT - 1;
+    _x1 = left_border();
+    _y1 = name ? top_border() : jw_top + 5;
+
+    screen = NULL;
+    inm = new input_manager(screen, f);
+    reconfigure(); /* FIXME: TODO */
+
+    l = L >= 0 ? L + left_border() : l - L;
+    h = H >= 0 ? H + top_border() : h - H;
+    //if (!f) { l+=WINDOW_FRAME_LEFT; h+=WINDOW_FRAME_TOP; }
+    y = Y >= 0 ? Y : yres - h + Y - top_border() - bottom_border() - 1;
+    x = X >= 0 ? X : xres - l + X - left_border() - right_border() - 1;
 
     backg = wm->medium_color();
 
-    screen=new image(l,h,NULL,2);
-    l = screen->width();
-    h = screen->height();
+    _x2 = l - 1;
+    _y2 = h - 1;
+    l += right_border();
+    h += bottom_border();
+
+    if(L == -1)
+        if(l < 15 + left_border() + right_border())
+            l = 15 + left_border() + right_border();
+    if(H == -1)
+        if(h < top_border() + bottom_border())
+            h = top_border() + bottom_border();
+    screen = new image(l, h, NULL, 2);
     screen->clear(backg);
+    // Keep this from getting destroyed when image list is cleared
+    image_list.unlink(screen);
+
+    inm->screen = screen;
     next = NULL;
-    inm = new input_manager(screen, fields);
-    if(Name == NULL)
-        name = strcpy((char *)jmalloc(strlen(" ") + 1, "jwindow::window name"), " ");  
-    else
-        name = strcpy((char *)jmalloc(strlen(Name) + 1, "jwindow::window name"), Name);
+
+    _name = NULL;
+    if(name)
+        _name = strcpy((char *)jmalloc(strlen(name) + 1,
+                                       "jwindow::window name"), name);
+
+    wm->add_window(this);
+    if(!wm->frame_suppress)
+        redraw();
+}
+
+jwindow::~jwindow()
+{
+    wm->remove_window(this);
+    local_close();
+    delete screen;
+    delete inm;
+    if(_name)
+        jfree(_name);
+}
+
+void jwindow::reconfigure()
+{
+    int x1, y1, x2, y2;
+    ifield *i;
+    l = 2;
+    h = 2;
+    for(i = inm->first; i; i = i->next)
+    {
+        i->set_owner(this);
+        i->area(x1, y1, x2, y2);
+        if ((int)y2 > (int)h) 
+            h = y2;
+        if ((int)x2 > (int)l) 
+            l = x2;
+    }
 }
 
 void jwindow::local_close()
@@ -397,46 +471,78 @@ void jwindow::local_close()
     ;
 }
 
-void jwindow::redraw(int hi, int med, int low, JCFont *fnt)
+void jwindow::redraw()
 {
-  if (jw_right>=3)
-    screen->rectangle(0,0,l-3,h-3,low);
-  if (jw_right>=2)
-    screen->rectangle(1,1,l-2,h-2,med);
-  if (jw_right>=1)
-    screen->rectangle(2,2,l-1,h-1,hi);
+    int hi = wm->bright_color ();
+    int med = wm->medium_color ();
+    int low = wm->dark_color ();
+    JCFont * fnt = wm->frame_font ();
 
-
+    if(_name)
+    {
+        if (right_border() >= 1)
+        {
+            screen->wiget_bar (0, 0, l - 1, h - 1, hi, med, low);
+            if (right_border() >= 3)
+                screen->wiget_bar (right_border() - 1, top_border() - 1,
+                                l - left_border(), h - bottom_border(), low,
+                                med, hi);
+          
+          else
+            screen->line (left_border() - 1, top_border() - 1,
+                           right_border() - 1, top_border() - 1, low);
+        }
+      screen->rectangle (2, 2, top_border() - 2, top_border() - 3,
+                           wm->black ());
+      screen->wiget_bar (3, 3, top_border() - 3, top_border() - 4, hi, med, low);     // draws the 'close' button
+    }
   
-  screen->wiget_bar(0,0,l-1,8,hi,med,low);
-  screen->line(1,1,l-2,1,low);
-  screen->line(1,3,l-2,3,low);
-  screen->line(1,5,l-2,5,low);
-  screen->line(1,7,l-2,7,low);
+  else
+    {
+      if (right_border() >= 1)
+        {
+          screen->wiget_bar (0, 0, l - 1, h - 1, hi, med, low);
+          if (right_border() >= 3)
+            screen->wiget_bar (right_border() - 1, jw_top + 4,
+                                l - left_border(), h - bottom_border(), low,
+                                med, hi);
+          
+          else
+            screen->line (left_border() - 1, jw_top + 4, right_border() - 1,
+                           jw_top + 4, low);
+        }
+      screen->rectangle (1, 1, 4, 4, wm->black ());
+      screen->wiget_bar (2, 2, 3, 3, hi, med, low);   // draws the 'close' button
+    }
+  if (_name && _name[0])
+    {
+      screen->bar (top_border(), 1,
+                    top_border() + fnt->width () * strlen (_name) + 1,
+                    top_border() - 2, med);
+      fnt->put_string (screen, top_border() + 1, 1, _name, low);
+    }
+  screen->bar (x1 (), y1 (), x2 (), y2 (), backg);  // clear 'client' region
+  inm->redraw ();
+}
 
-  screen->wiget_bar(4,3,10,5,hi,med,low);
-  screen->rectangle(3,2,11,6,0);  
+int jwindow::left_border()
+{
+    return frame_left();
+}
 
-  screen->line(0,8,l-1,8,0);
-  if (jw_right>=1)
-    screen->wiget_bar(0,9,l-1,h-1,hi,med,low);  
-    screen->wiget_bar(0,9,l-1,h-1,hi,med,low);
-  if (jw_right>=2)
-    screen->wiget_bar(4,13,l-jw_right,h-jw_right,low,med,hi);
+int jwindow::right_border()
+{
+    return frame_right();
+}
 
+int jwindow::top_border()
+{
+    return wm->font()->height() + frame_top();
+}
 
-  if (name && name[0] && (name[0]!=' ' || name[1]))
-  {
-    short cx1,cy1,cx2,cy2;
-    screen->get_clip(cx1,cy1,cx2,cy2);
-    screen->set_clip(14,1,l-2,WINDOW_FRAME_TOP-4);
-    screen->bar(14,1,14+fnt->width()*strlen(name),15-8,med);
-    fnt->put_string(screen,14,1,name,low);  
-    screen->set_clip(cx1,cy1,cx2,cy2);
-  }
-  
-  screen->bar(x1(),y1(),x2(),y2(),backg);
-  inm->redraw();
+int jwindow::bottom_border()
+{
+    return frame_bottom();
 }
 
 

@@ -106,11 +106,9 @@ void handle_no_space()
         exit(0);
     }
 
-    info_field *inf = new info_field(WINDOW_FRAME_LEFT, WINDOW_FRAME_TOP +
-                                       wm->font()->height() * 2, ID_NULL,
+    info_field *inf = new info_field(0, wm->font()->height() * 2, ID_NULL,
                                      no_space_msg, NULL);
-    button *b = new button(WINDOW_FRAME_LEFT, WINDOW_FRAME_TOP,
-                           ID_QUIT_OK, "Quit", inf);
+    button *b = new button(0, 0, ID_QUIT_OK, "Quit", inf);
     jwindow *no_space = wm->new_window(0, 0, -1, -1, b, "ERROR");
 
     event ev;
@@ -470,7 +468,7 @@ void game::joy_calb(event &ev)
         if(x > 0) x = 1; else if(x < 0) x = -1;
         if(y > 0) y = 1; else if(y < 0) y = -1;
         if(but) but = 1;
-        int dx = WINDOW_FRAME_LEFT + 20, dy = WINDOW_FRAME_TOP + 5;
+        int dx = 20, dy = 5;
         image *jim = cash.img(joy_picts[but * 9+(y + 1)*3 + x + 1]);
         joy_win->screen->bar(dx, dy, dx + jim->width()+6, dy + jim->height()+6, wm->black());
         jim->put_image(joy_win->screen, dx + 3, dy + 3);
@@ -1778,11 +1776,9 @@ void game::get_input()
                     {
                         if(!joy_win)
                         {
-                            int wx = WINDOW_FRAME_LEFT, wy = WINDOW_FRAME_TOP;
-
                             joy_win = wm->new_window(80, 50, -1, -1,
-                                    new button(wx + 70, wy + 9, JOY_OK, "OK",
-                                    new info_field(wx, wy + 30, DEV_NULL,
+                                    new button(70, 9, JOY_OK, "OK",
+                                    new info_field(0, 30, DEV_NULL,
                                     " Center joystick and\n"
                                     "press the fire button", NULL)),
                                     "Joystick");

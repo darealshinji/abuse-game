@@ -52,8 +52,8 @@ enum { NET_OK=1, NET_CANCEL, NET_SERVER_NAME, NET_NAME, NET_PORT, NET_SERVER_POR
 
 void net_configuration::cfg_error(char const *msg)
 {
-  jwindow *j=wm->new_window(-1,0,-1,-1,new info_field(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP,0,msg,
-      new button(WINDOW_FRAME_LEFT,WINDOW_FRAME_TOP+30,CFG_ERR_OK,symbol_str("ok_button"),NULL)),symbol_str("input_error"));
+  jwindow *j=wm->new_window(-1,0,-1,-1,new info_field(0, 0, 0, msg,
+      new button(0, 30,CFG_ERR_OK,symbol_str("ok_button"),NULL)),symbol_str("input_error"));
   event ev;
   do
   {

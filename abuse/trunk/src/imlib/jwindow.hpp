@@ -20,17 +20,12 @@ class ifield;
 class window_manager;
 class jwindow;
 
-int frame_top();
-int frame_bottom();
-int frame_left();
-int frame_right();
+extern int frame_top();
+extern int frame_bottom();
+extern int frame_left();
+extern int frame_right();
 
 void set_frame_size(int x);
-
-#define WINDOW_FRAME_TOP  frame_top()
-#define WINDOW_FRAME_BOTTOM frame_bottom()
-#define WINDOW_FRAME_LEFT  frame_left()
-#define WINDOW_FRAME_RIGHT frame_right()
 
 class input_manager
 {
@@ -87,103 +82,115 @@ public :
     virtual ~ifield();
 } ;
 
-struct jwindow_properties
-{
-    bool moveable, hidden;
-};
-
 class jwindow
 {
     friend class input_manager;
 
 private:
-    bool hidden;
-    bool moveable;
+    char *_name;
+    bool _hidden;
+    bool _moveable;
+
+    void reconfigure();
 
 protected:
     jwindow *owner;
+    int _x1, _y1, _x2, _y2;
 
 public:
     jwindow *next;
-    char *name;
     int x, y, l, h, backg;
     image *screen;
     input_manager *inm;
     void *local_info;  // pointer to info block for local system (may support windows)
-    jwindow(int X, int Y, int L, int H, ifield *fields, char const *Name = NULL);
-    void redraw(int hi, int med, int low, JCFont *fnt);
+
+    jwindow();
+    jwindow(int X, int Y, int L, int H, ifield *f, char const *name = NULL);
+    ~jwindow();
+
+    void redraw();
     void resize(int L, int H);
     void clear(int color = 0) { screen->bar(x1(), y1(), x2(), y2(), color); }
-    void show() { hidden = false; }
-    void hide() { hidden = true; }
-    bool is_hidden() { return hidden; }
-    void freeze() { moveable = false; }
-    void thaw() { moveable = true; }
-    bool is_moveable() { return moveable; }
-    int x1() { return WINDOW_FRAME_LEFT; }
-    int y1() { return WINDOW_FRAME_TOP; } 
-    int x2() { return l-WINDOW_FRAME_RIGHT-1; }
-    int y2() { return h-WINDOW_FRAME_BOTTOM-1; } 
-    void clip_in() { screen->set_clip(x1(),y1(),x2(),y2()); }
-    void clip_out() { screen->set_clip(0,0,l-1,h-1); }
+    void show() { _hidden = false; }
+    void hide() { _hidden = true; }
+    bool is_hidden() { return _hidden; }
+    void freeze() { _moveable = false; }
+    void thaw() { _moveable = true; }
+    bool is_moveable() { return _moveable; }
+    int x1() { return _x1; }
+    int y1() { return _y1; }
+    int x2() { return _x2; }
+    int y2() { return _y2; }
+    void clip_in() { screen->set_clip(x1(), y1(), x2(), y2()); }
+    void clip_out() { screen->set_clip(0, 0, l - 1, h - 1); }
     char *read(int id) { return inm->get(id)->read(); }  
     void local_close();
-    ~jwindow() { local_close(); delete screen; delete inm; jfree(name); }
-} ;
+
+    static int left_border();
+    static int right_border();
+    static int top_border();
+    static int bottom_border();
+};
 
 class window_manager
 {
-  friend class jwindow;
+    friend class jwindow;
+
+protected:
+    void add_window(jwindow *);
+    void remove_window(jwindow *);
 
 public:
-  event_handler *eh;
-  jwindow *first,*grab;
-  image *screen,*mouse_pic,*mouse_save;
-  palette *pal;
-  int hi,med,low,bk;                            // bright, medium, dark and black colors
-  int key_state[512];
-  enum { inputing,dragging } state;
-  int drag_mousex, drag_mousey,frame_suppress;
-  jwindow *drag_window;
-  JCFont *fnt,*wframe_fnt;
+    event_handler *eh;
+    jwindow *first, *grab;
+    image *screen, *mouse_pic, *mouse_save;
+    palette *pal;
+    int hi, med, low, bk; // bright, medium, dark and black colors
+    int key_state[512];
+    enum { inputing, dragging } state;
+    int drag_mousex, drag_mousey, frame_suppress;
+    jwindow *drag_window;
+    JCFont *fnt, *wframe_fnt;
 
-  window_manager(image *Screen, palette *Pal, int Hi, int Med, int Low, JCFont *Font); 
+    window_manager(image *, palette *, int hi, int med, int low, JCFont *); 
+    ~window_manager();
 
-  jwindow *new_window(int x, int y, int l, int h, ifield *fields=NULL, char const *Name=NULL);
-  void set_frame_font(JCFont *fnt) { wframe_fnt=fnt; }
-  JCFont *frame_font() { return wframe_fnt; }
-  void close_window(jwindow *j);
-  void resize_window(jwindow *j, int l, int h);
-  void move_window(jwindow *j, int x, int y);
-  void get_event(event &ev);
-  void push_event(event *ev) { eh->push_event(ev); }
-  int event_waiting() { return eh->event_waiting(); }
-  void flush_screen();
-  int bright_color() { return hi; }
-  int medium_color() { return med; }
-  int dark_color() { return low; }
-  int black() { return bk; }
-  void set_colors(int Hi, int Med, int Low) { hi=Hi; med=Med; low=Low; }
-  JCFont *font() { return fnt; }
-  int has_mouse() { return eh->has_mouse(); }
-  void mouse_status(int &x, int &y, int &button) {eh->mouse_status(x,y,button); }	       
-  void set_mouse_shape(image *im, int centerx, int centery) 
-  { eh->set_mouse_shape(im,centerx,centery); }
+    jwindow *new_window(int x, int y, int l, int h,
+                        ifield *fields = NULL, char const *Name = NULL);
 
-  void set_mouse_position(int mx, int my)
-  { eh->set_mouse_position(mx,my); }
+    void set_frame_font(JCFont *fnt) { wframe_fnt = fnt; }
+    JCFont *frame_font() { return wframe_fnt; }
+    void close_window(jwindow *j);
+    void resize_window(jwindow *j, int l, int h);
+    void move_window(jwindow *j, int x, int y);
+    void get_event(event &ev);
+    void push_event(event *ev) { eh->push_event(ev); }
+    int event_waiting() { return eh->event_waiting(); }
+    void flush_screen();
+    int bright_color() { return hi; }
+    int medium_color() { return med; }
+    int dark_color() { return low; }
+    int black() { return bk; }
+    void set_colors(int Hi, int Med, int Low) { hi=Hi; med=Med; low=Low; }
+    JCFont *font() { return fnt; }
+    int has_mouse() { return eh->has_mouse(); }
+    void mouse_status(int &x, int &y, int &button) {eh->mouse_status(x,y,button); }	       
+    void set_mouse_shape(image *im, int centerx, int centery) 
+    { eh->set_mouse_shape(im,centerx,centery); }
 
-  int key_pressed(int x) { return key_state[x]; }
-  ~window_manager() { delete eh; while (first) close_window(first); }
-  void hide_windows();
-  void show_windows();
-  void hide_window(jwindow *j);
-  void show_window(jwindow *j);
-  void set_frame_suppress(int x) { frame_suppress=x; }
-  void grab_focus(jwindow *j);
-  void release_focus();
-  int window_in_area(int x1, int y1, int x2, int y2); // true if a window lies in this area
-} ;
+    void set_mouse_position(int mx, int my)
+    { eh->set_mouse_position(mx,my); }
+
+    int key_pressed(int x) { return key_state[x]; }
+    void hide_windows();
+    void show_windows();
+    void hide_window(jwindow *j);
+    void show_window(jwindow *j);
+    void set_frame_suppress(int x) { frame_suppress=x; }
+    void grab_focus(jwindow *j);
+    void release_focus();
+    int window_in_area(int x1, int y1, int x2, int y2); // true if a window lies in this area
+};
 
 #endif
 

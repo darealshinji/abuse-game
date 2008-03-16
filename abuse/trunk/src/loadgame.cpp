@@ -57,13 +57,13 @@ void last_savegame_name(char *buf)
 jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
 {
   ico_button *buts[MAX_SAVE_GAMES];
-  int y=WINDOW_FRAME_TOP,i;
+  int y = 0, i;
   int ih=cash.img(save_buts[0])->height();
   int x=0;
   for (i=0;i<total_saved;i++,y+=ih)
   {
     if (thumb_nails) { while (!thumb_nails[x]) x++; }
-    buts[i]=new ico_button(WINDOW_FRAME_LEFT,y,ID_LOAD_GAME_NUMBER+x,
+    buts[i]=new ico_button(0, y, ID_LOAD_GAME_NUMBER + x,
 			   save_buts[x*3+0],save_buts[x*3+0],save_buts[x*3+1],save_buts[x*3+2],NULL);
     buts[i]->set_act_id(ID_LOAD_GAME_PREVIEW+x);
     x++;
@@ -72,7 +72,7 @@ jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
   for (i=0;i<total_saved-1;i++)
     buts[i]->next=buts[i+1];
 
-  return wm->new_window(mx,yres/2-(WINDOW_FRAME_TOP+ih*5)/2,-1,-1,buts[0]);
+  return wm->new_window(mx,yres/2-(jwindow::top_border()+ih*5)/2,-1,-1,buts[0]);
 }
 
 int get_save_spot()

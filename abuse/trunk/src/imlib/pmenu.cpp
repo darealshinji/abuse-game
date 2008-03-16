@@ -24,12 +24,10 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);
   if (cx1<X) cx1=X;
-  int w=cx2-cx1+1;
-  int h=wm->font()->height()+4;
+  int w = cx2 - cx1 - jwindow::left_border() - jwindow::right_border() + 1;
+  int h = jwindow::top_border() + jwindow::bottom_border();
 
-
-  bar=wm->new_window(X,Y,w-WINDOW_FRAME_LEFT-WINDOW_FRAME_RIGHT,
-		     h-WINDOW_FRAME_TOP-WINDOW_FRAME_BOTTOM,NULL);
+  bar=wm->new_window(X, Y, w, 0, NULL);
   bar->freeze();  // can't drag this window
   bar->screen->wiget_bar(0,0,w-1,h-1,wm->bright_color(),wm->medium_color(),
 		    wm->dark_color());
@@ -194,8 +192,9 @@ void psub_menu::draw(jwindow *parent, int x, int y)
      
 
   win=wm->new_window(parent->x+x,parent->y+y,
-		     w-WINDOW_FRAME_LEFT-WINDOW_FRAME_RIGHT,
-		     h-WINDOW_FRAME_TOP-WINDOW_FRAME_BOTTOM,NULL);
+		     w - jwindow::left_border() - jwindow::right_border(),
+		     h - jwindow::top_border() - jwindow::bottom_border(),
+                     NULL);
   win->freeze();
   win->screen->wiget_bar(0,0,w-1,h-1,wm->bright_color(),wm->medium_color(),wm->dark_color());
 
