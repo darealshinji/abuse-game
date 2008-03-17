@@ -59,7 +59,7 @@
 
 extern crc_manager *net_crcs;
 game *the_game;
-window_manager *wm = NULL;
+WindowManager *wm = NULL;
 int dev, shift_down = SHIFT_DOWN_DEFAULT, shift_right = SHIFT_RIGHT_DEFAULT;
 double sum_diffs = 1, total_diffs = 12;
 int total_active = 0;
@@ -109,7 +109,7 @@ void handle_no_space()
     info_field *inf = new info_field(0, wm->font()->height() * 2, ID_NULL,
                                      no_space_msg, NULL);
     button *b = new button(0, 0, ID_QUIT_OK, "Quit", inf);
-    jwindow *no_space = wm->new_window(0, 0, -1, -1, b, "ERROR");
+    Jwindow *no_space = wm->new_window(0, 0, -1, -1, b, "ERROR");
 
     event ev;
     do
@@ -1482,10 +1482,8 @@ game::game(int argc, char **argv)
 
   console_font = new JCFont(cash.img(console_font_pict));
 
-  wm = new window_manager(screen, pal, bright_color,
-                                   med_color,
-                                   dark_color,
-                                   game_font);
+  wm = new WindowManager(screen, pal, bright_color,
+                         med_color, dark_color, game_font);
 
   delete stat_man;  // move to a graphical status manager
   gui_status_manager *gstat = new gui_status_manager();

@@ -25,7 +25,7 @@ class file_picker : public spicker
   virtual int item_width() { return wm->font()->width()*wid; }
   virtual int item_height() { return wm->font()->height()+1; }
   virtual void draw_item(image *screen, int x, int y, int num, int active);
-  virtual void note_selection(image *screen, input_manager *inm, int x);
+  virtual void note_selection(image *screen, InputManager *inm, int x);
   void free_up();
   ~file_picker() { free_up(); }
 } ; 
@@ -41,7 +41,7 @@ void file_picker::free_up()
   if (td) jfree(d);
 }
 
-void file_picker::note_selection(image *screen, input_manager *inm, int x)
+void file_picker::note_selection(image *screen, InputManager *inm, int x)
 {
   if (x<td)
   {
@@ -115,14 +115,14 @@ file_picker::file_picker(int X, int Y, int ID, int Rows, ifield *Next)
   reconfigure();  
 }
 
-jwindow *file_dialog(char const *prompt, char const *def,
+Jwindow *file_dialog(char const *prompt, char const *def,
 		     int ok_id, char const *ok_name, int cancel_id,
                      char const *cancel_name, char const *FILENAME_str,
                      int filename_id)
 {
   int wh2 = 5 + wm->font()->height() + 5;
   int wh3 = wh2 + wm->font()->height() + 12;
-  jwindow *j=wm->new_window(0,0,-1,-1,
+  Jwindow *j=wm->new_window(0,0,-1,-1,
 			    new info_field(5, 5, 0, prompt,
                             new text_field(0, wh2, filename_id,
 					   ">","****************************************",def,

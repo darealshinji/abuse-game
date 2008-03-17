@@ -20,7 +20,7 @@ class gui_status_node
   char *name;
   gui_status_node *next;
   visual_object *show;
-  jwindow *stat_win;
+  Jwindow *stat_win;
   int last_update;
   time_marker last_time;
   gui_status_node(char const *Name, visual_object *Show, gui_status_node *Next) 

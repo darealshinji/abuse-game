@@ -45,7 +45,7 @@
 #define BLACK 0
 
 /* Cleaned-up externs */
-extern window_manager *wm;
+extern WindowManager *wm;
 
 
 #define tile_type unsigned short
@@ -76,7 +76,7 @@ class game
   int has_joystick,no_delay;
 
 
-  jwindow *top_menu,*joy_win,*last_input;
+  Jwindow *top_menu,*joy_win,*last_input;
   JCFont *game_font;
   uint8_t keymap[512/8];
 

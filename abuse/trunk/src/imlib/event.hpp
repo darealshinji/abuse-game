@@ -28,7 +28,7 @@
 #include "sprite.hpp"
 #include "mouse.hpp"
 
-class jwindow;
+class Jwindow;
 
 class event : public linked_node
 {
@@ -40,7 +40,7 @@ public :
   struct { char alt,ctrl,shift; } key_special;
   struct { int x1,y1,x2,y2;
 	   void *start; }         redraw;
-  jwindow                        *window;      // NULL is root
+  Jwindow                        *window;      // NULL is root
   struct { int x,y; }             window_position;
   struct { int id; char *data; }  message;
   event(int id, char *data) { type=EV_MESSAGE; message.id=id; message.data=data; }

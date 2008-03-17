@@ -62,7 +62,7 @@ public :
   int decide();        // returns 0 if you want to be deleted
   int type() { return otype; }
   ifield *make_fields(int ystart, ifield *Next) { return NULL ; }
-  void gather_input(input_manager *inm) { ; }
+  void gather_input(InputManager *inm) { ; }
   int hurt_all() { return figures[otype]->get_cflag(CFLAG_HURT_ALL); }
   int stoppable() { return figures[otype]->get_cflag(CFLAG_STOPPABLE); }
   int can_block() { return figures[otype]->get_cflag(CFLAG_CAN_BLOCK); }

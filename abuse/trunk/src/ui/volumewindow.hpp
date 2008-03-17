@@ -11,7 +11,7 @@
 
 #include "dev.hpp"
 
-class VolumeWindow : public jwindow
+class VolumeWindow : public Jwindow
 {
 private:
     int slider, u_u, u_d, u_ua, u_da, d_u, d_d, d_ua, d_da;

@@ -415,7 +415,7 @@ void show_sell(int abortable)
 }
 
 
-void menu_handler(event &ev, input_manager *inm)
+void menu_handler(event &ev, InputManager *inm)
 {
   switch (ev.type)
   {
@@ -651,7 +651,7 @@ void main_menu()
 	ico_button *list=make_conditional_buttons(xres-33,y);
 	list=make_default_buttons(xres-33,y,list);
 
-	input_manager *inm=new input_manager(screen,list);
+	InputManager *inm=new InputManager(screen,list);
 	inm->allow_no_selections();
 	inm->clear_current();
 

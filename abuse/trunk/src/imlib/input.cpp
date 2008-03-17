@@ -107,7 +107,7 @@ char *button_box::read()
   return NULL;
 }
 
-void button_box::handle_event(event &ev, image *screen, input_manager *im)
+void button_box::handle_event(event &ev, image *screen, InputManager *im)
 {
   switch (ev.type)
   {
@@ -262,7 +262,7 @@ char *text_field::read()
   return data;
 }
 
-void text_field::handle_event(event &ev, image *screen, input_manager *im)
+void text_field::handle_event(event &ev, image *screen, InputManager *im)
 {
   int xx;
   if (ev.type==EV_KEY)
@@ -360,7 +360,7 @@ text_field::text_field(int X, int Y, int ID, char const *Prompt,
 void button::push()
 { up=!up; }
 
-void button::handle_event(event &ev, image *screen, input_manager *im)
+void button::handle_event(event &ev, image *screen, InputManager *im)
 {
   if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
                                          ev.mouse_button))

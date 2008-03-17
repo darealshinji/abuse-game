@@ -24,8 +24,8 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);
   if (cx1<X) cx1=X;
-  int w = cx2 - cx1 - jwindow::left_border() - jwindow::right_border() + 1;
-  int h = jwindow::top_border() + jwindow::bottom_border();
+  int w = cx2 - cx1 - Jwindow::left_border() - Jwindow::right_border() + 1;
+  int h = Jwindow::top_border() + Jwindow::bottom_border();
 
   bar=wm->new_window(X, Y, w, 0, NULL);
   bar->freeze();  // can't drag this window
@@ -135,7 +135,7 @@ pmenu_item *psub_menu::find_key(int key)
 }
 
 
-void psub_menu::hide(jwindow *parent, int x, int y)
+void psub_menu::hide(Jwindow *parent, int x, int y)
 {
   int w,h;
   calc_size(w,h);
@@ -175,7 +175,7 @@ void psub_menu::calc_size(int &w, int &h)
   h=h*(th+1)+8;
 }
 
-void psub_menu::draw(jwindow *parent, int x, int y)
+void psub_menu::draw(Jwindow *parent, int x, int y)
 {
   if (win) wm->close_window(win);
 
@@ -192,8 +192,8 @@ void psub_menu::draw(jwindow *parent, int x, int y)
      
 
   win=wm->new_window(parent->x+x,parent->y+y,
-		     w - jwindow::left_border() - jwindow::right_border(),
-		     h - jwindow::top_border() - jwindow::bottom_border(),
+		     w - Jwindow::left_border() - Jwindow::right_border(),
+		     h - Jwindow::top_border() - Jwindow::bottom_border(),
                      NULL);
   win->freeze();
   win->screen->widget_bar(0,0,w-1,h-1,wm->bright_color(),wm->medium_color(),wm->dark_color());
@@ -209,7 +209,7 @@ void psub_menu::draw(jwindow *parent, int x, int y)
 
 }
 
-void pmenu_item::draw_self(jwindow *parent, int x, int y, int w, int top, int active)
+void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int active)
 {
   int bx=x;
   if (on_off) bx=x-wm->font()->width();
@@ -244,7 +244,7 @@ void pmenu_item::draw_self(jwindow *parent, int x, int y, int w, int top, int ac
   }
 }
 
-void pmenu_item::draw(jwindow *parent, int x, int y, int w, int top,
+void pmenu_item::draw(Jwindow *parent, int x, int y, int w, int top,
 		      int active)
 {  
   if (n)
@@ -300,7 +300,7 @@ void pmenu::draw(image *screen, int top_only)
 }
 
 
-int psub_menu::handle_event(jwindow *parent, int x, int y, event &ev)
+int psub_menu::handle_event(Jwindow *parent, int x, int y, event &ev)
 {
   int w,h;
   calc_size(w,h);
@@ -341,7 +341,7 @@ int psub_menu::handle_event(jwindow *parent, int x, int y, event &ev)
 
 }
 
-int pmenu_item::handle_event(jwindow *parent, int x, int y, int w, int top, 
+int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top, 
 			     event &ev)
 {
   x+=parent->x;

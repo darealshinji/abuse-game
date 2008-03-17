@@ -67,7 +67,7 @@ ifield *ico_switch_button::unlink(int id)
   return NULL;
 }
 
-void ico_switch_button::handle_event(event &ev, image *screen, input_manager *im)
+void ico_switch_button::handle_event(event &ev, image *screen, InputManager *im)
 {
   if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
                                          ev.mouse_button))
@@ -115,7 +115,7 @@ void ico_button::draw(int active, image *screen)
 extern long S_BUTTON_PRESS_SND;
 extern int sfx_volume;
 
-void ico_button::handle_event(event &ev, image *screen, input_manager *im)
+void ico_button::handle_event(event &ev, image *screen, InputManager *im)
 {
   if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
                                          ev.mouse_button))

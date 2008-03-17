@@ -37,7 +37,7 @@ ifield *elevator::make_fields(int ystart, ifield *Next)
 			NULL)));
 }  
 
-void elevator::gather_input(input_manager *inm) 
+void elevator::gather_input(InputManager *inm) 
 { 
   dir=atoi(inm->get(ELEVATOR_DIR)->read());  
   speed=atoi(inm->get(ELEVATOR_SPEED)->read());  
@@ -53,7 +53,7 @@ ifield *elcontrol::make_fields(int ystart,ifield *Next)
   return new text_field(5,ystart+H*0,ELCONTROL_ALLOW_DIR,"stop dir","#####",allow_dir,NULL);  
 }
 
-void elcontrol::gather_input(input_manager *inm)
+void elcontrol::gather_input(InputManager *inm)
 {
   allow_dir=atoi(inm->get(ELCONTROL_ALLOW_DIR)->read());  
 }
@@ -353,7 +353,7 @@ ifield *sensor::make_fields(int ystart, ifield *Next)
 }
 
 
-void sensor::gather_input(input_manager *inm)
+void sensor::gather_input(InputManager *inm)
 {
   xrange=atoi(inm->get(SENSOR_XRANGE)->read());
   yrange=atoi(inm->get(SENSOR_XRANGE)->read());
