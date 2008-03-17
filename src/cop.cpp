@@ -823,7 +823,7 @@ void *bottom_draw()
       {
 	player_draw(just_fired,o->controller()->player_number);
 	if (o->controller() && o->controller()->local_player())
-	  cash.img(S_health_image)->put_image(screen,o->controller()->cx2-20,
+	  cache.img(S_health_image)->put_image(screen,o->controller()->cx2-20,
 					    o->controller()->cy1+5,1);
       } break;
       case FAST_POWER :
@@ -844,7 +844,7 @@ void *bottom_draw()
 	player_draw(just_fired,o->controller()->player_number);
 	o->state=(character_state)old_state;
 	if (o->controller() && o->controller()->local_player())
-	  cash.img(S_fast_image)->put_image(screen,o->controller()->cx2-20,
+	  cache.img(S_fast_image)->put_image(screen,o->controller()->cx2-20,
 					    o->controller()->cy1+5,1);
       } break;
       case FLY_POWER :
@@ -865,7 +865,7 @@ void *bottom_draw()
 	o->state=(character_state)old_state;
 
 	if (o->controller() && o->controller()->local_player())
-	  cash.img(S_fly_image)->put_image(screen,o->controller()->cx2-20,
+	  cache.img(S_fly_image)->put_image(screen,o->controller()->cx2-20,
 					    o->controller()->cy1+5,1);
       } break;
       case SNEAKY_POWER :
@@ -878,7 +878,7 @@ void *bottom_draw()
 	  o->draw_predator();
 	  
 	if (o->controller() && o->controller()->local_player())
-	  cash.img(S_sneaky_image)->put_image(screen,o->controller()->cx2-20,
+	  cache.img(S_sneaky_image)->put_image(screen,o->controller()->cx2-20,
 					    o->controller()->cy1+5,1);
       } break;
     }    
@@ -1041,7 +1041,7 @@ void *show_kills()
   fade_out(8);
   wm->set_mouse_position(0,0);
   screen->clear();
-  image *im=cash.img(cash.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
+  image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
   im->put_image(screen,0,0);
   int x1=im->width()+1,y1=0,y2=screen->height();
   JCFont *fnt=wm->font();

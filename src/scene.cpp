@@ -63,7 +63,7 @@ public :
 
   scene_frame *next;  
   scene_frame(char *&s);
-  ~scene_frame() { cash.unreg(picture); }
+  ~scene_frame() { cache.unreg(picture); }
 } ;
 
 
@@ -72,7 +72,7 @@ scene_frame::scene_frame(char *&s)
   char tmp_name[50];
   expect(get_token(s,tmp_name),sWORD,s);
 
-  picture=cash.reg(scene_filename,tmp_name);
+  picture=cache.reg(scene_filename,tmp_name);
   if (picture<0) 
   {
     printf("Frame image not found (%s)\n",tmp_name);
@@ -212,8 +212,8 @@ public :
   scene_character(char *&s);  
   void set_seq(char *seq_name) 
   { current_seq=seq_list->get_seq(seq_name); }
-  int x() { return the_game->screenx(me->x)-cash.fig(current_frame->picture)->xcfg; } 	     
-  int y() { return the_game->screeny(me->y)-cash.fig(current_frame->picture)->forward->height(); }
+  int x() { return the_game->screenx(me->x)-cache.fig(current_frame->picture)->xcfg; } 	     
+  int y() { return the_game->screeny(me->y)-cache.fig(current_frame->picture)->forward->height(); }
   int next_frame();  // true if sequence is done
   ~scene_character() { jfree(n); delete seq_list; if (last_frame) delete last_frame; }     
 } ;
@@ -249,10 +249,10 @@ void scene_character::area(int &x1, int &y1, int &x2, int &y2)
   scene_frame *p=current_seq->first;
   while (p)
   {    
-    if (x()+cash.fig(p->picture)->width()-1>x2)
-      x2=x()+cash.fig(p->picture)->width()-1;
-    if (y()+cash.fig(p->picture)->height()-1>y2)
-      y2=y()+cash.fig(p->picture)->height()-1;
+    if (x()+cache.fig(p->picture)->width()-1>x2)
+      x2=x()+cache.fig(p->picture)->width()-1;
+    if (y()+cache.fig(p->picture)->height()-1>y2)
+      y2=y()+cache.fig(p->picture)->height()-1;
     p=p->next;
   }  
 }
@@ -260,7 +260,7 @@ void scene_character::area(int &x1, int &y1, int &x2, int &y2)
 
 void scene_character::draw()
 {
-  cash.fig(current_frame->picture)->forward->put_image(screen,x(),y());
+  cache.fig(current_frame->picture)->forward->put_image(screen,x(),y());
   
 }
 

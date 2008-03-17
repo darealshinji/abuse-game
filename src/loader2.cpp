@@ -148,13 +148,13 @@ void insert_tiles(char *filename)
       {
 	if (sd.entries[i]->type==SPEC_FORETILE)
 	{
-	  foretiles[fon]=cash.reg(filename,sd.entries[i]->name);
+	  foretiles[fon]=cache.reg(filename,sd.entries[i]->name);
 	  fon++;
 	  nforetiles++;
 	}
 	if (sd.entries[i]->type==SPEC_BACKTILE)
 	{
-	  backtiles[bon]=cash.reg(filename,sd.entries[i]->name);
+	  backtiles[bon]=cache.reg(filename,sd.entries[i]->name);
 	  bon++;
 	  nbacktiles++;
 	}
@@ -251,9 +251,9 @@ void load_tiles(Cell *file_list)
 	      if (backtiles[num]>=0)
 	      {
 		dprintf("Warning : background tile %d redefined\n",num);
-		cash.unreg(backtiles[num]);
+		cache.unreg(backtiles[num]);
 	      }
-	      backtiles[num]=cash.reg(fn,spe->name,SPEC_BACKTILE);	      
+	      backtiles[num]=cache.reg(fn,spe->name,SPEC_BACKTILE);	      
 	    }
             break;
           case SPEC_FORETILE : 
@@ -262,9 +262,9 @@ void load_tiles(Cell *file_list)
 	      if (foretiles[num]>=0)
 	      {
 		dprintf("Warning : foreground tile %d redefined\n",num);
-		cash.unreg(foretiles[num]);
+		cache.unreg(foretiles[num]);
 	      }
-	      foretiles[num]=cash.reg(fn,spe->name,SPEC_FORETILE);
+	      foretiles[num]=cache.reg(fn,spe->name,SPEC_FORETILE);
 	    }
             break;
         }
@@ -333,10 +333,10 @@ void load_data(int argc, char **argv)
   char prog[100];
   char const *cs;
 
-  c_mouse1=cash.reg("art/dev.spe","c_mouse1",SPEC_IMAGE,0);
-  c_mouse2=cash.reg("art/dev.spe","c_mouse2",SPEC_IMAGE,0);
-  c_normal=cash.reg("art/dev.spe","c_normal",SPEC_IMAGE,0);
-  c_target=cash.reg("art/dev.spe","c_target",SPEC_IMAGE,0);
+  c_mouse1=cache.reg("art/dev.spe","c_mouse1",SPEC_IMAGE,0);
+  c_mouse2=cache.reg("art/dev.spe","c_mouse2",SPEC_IMAGE,0);
+  c_normal=cache.reg("art/dev.spe","c_normal",SPEC_IMAGE,0);
+  c_target=cache.reg("art/dev.spe","c_target",SPEC_IMAGE,0);
 
 
   sprintf(prog,"(load \"%s\")\n",lsf);
@@ -356,7 +356,7 @@ void load_data(int argc, char **argv)
   {
     char nm[10];
     sprintf(nm,"l%d",z);
-    light_buttons[z]=cash.reg("art/dev.spe",nm,SPEC_IMAGE,0);
+    light_buttons[z]=cache.reg("art/dev.spe",nm,SPEC_IMAGE,0);
   }
 
 
@@ -371,22 +371,22 @@ void load_data(int argc, char **argv)
   else
     ff="art/frame.spe";
 
-  ok_button   =      cash.reg(ff,"dev_ok",SPEC_IMAGE);
-  cancel_button  =   cash.reg(ff,"cancel",SPEC_IMAGE);
+  ok_button   =      cache.reg(ff,"dev_ok",SPEC_IMAGE);
+  cancel_button  =   cache.reg(ff,"cancel",SPEC_IMAGE);
 
-//  clouds      =      cash.reg(ff,"clouds",SPEC_IMAGE);
+//  clouds      =      cache.reg(ff,"clouds",SPEC_IMAGE);
 
-  lower_volume=      cash.reg(ff,"lower_volume",SPEC_IMAGE);
-  raise_volume=      cash.reg(ff,"raise_volume",SPEC_IMAGE);
-  music_button=      cash.reg(ff,"music",SPEC_IMAGE);
-  sfx_button=        cash.reg(ff,"sound_fx",SPEC_IMAGE);
-  record_button=     cash.reg(ff,"record",SPEC_IMAGE);  
-  play_button=       cash.reg(ff,"play",SPEC_IMAGE);
-  window_colors=     cash.reg(ff,"window_colors",SPEC_IMAGE);
-  pause_image=       cash.reg(ff,"pause_image",SPEC_IMAGE);
-  vmm_image=         cash.reg(ff,"vmm",SPEC_IMAGE);
-  border_tile=       cash.reg(ff,"border_tile",SPEC_IMAGE);
-  window_texture=    cash.reg(ff,"window_texture",SPEC_IMAGE);
+  lower_volume=      cache.reg(ff,"lower_volume",SPEC_IMAGE);
+  raise_volume=      cache.reg(ff,"raise_volume",SPEC_IMAGE);
+  music_button=      cache.reg(ff,"music",SPEC_IMAGE);
+  sfx_button=        cache.reg(ff,"sound_fx",SPEC_IMAGE);
+  record_button=     cache.reg(ff,"record",SPEC_IMAGE);  
+  play_button=       cache.reg(ff,"play",SPEC_IMAGE);
+  window_colors=     cache.reg(ff,"window_colors",SPEC_IMAGE);
+  pause_image=       cache.reg(ff,"pause_image",SPEC_IMAGE);
+  vmm_image=         cache.reg(ff,"vmm",SPEC_IMAGE);
+  border_tile=       cache.reg(ff,"border_tile",SPEC_IMAGE);
+  window_texture=    cache.reg(ff,"window_texture",SPEC_IMAGE);
   
 
   help_screens=NULL;
@@ -404,7 +404,7 @@ void load_data(int argc, char **argv)
       v=CDR(symbol_value(l_help_screens));
       int i=0;
       for (;v;v=CDR(v),i++)
-        help_screens[i]=cash.reg(ff,lstring_value(CAR(v)),SPEC_IMAGE);      
+        help_screens[i]=cache.reg(ff,lstring_value(CAR(v)),SPEC_IMAGE);      
     } 
     else
       dprintf("Warning no help images following filename\n");
@@ -423,11 +423,11 @@ void load_data(int argc, char **argv)
   }
 
   if (DEFINEDP(symbol_value(l_title_screen)))
-    title_screen=cash.reg_object(NULL,symbol_value(l_title_screen),SPEC_IMAGE,1);
+    title_screen=cache.reg_object(NULL,symbol_value(l_title_screen),SPEC_IMAGE,1);
   else title_screen=-1;
 
   if (DEFINEDP(symbol_value(l_cdc_logo)))
-    cdc_logo=cash.reg_object(NULL,symbol_value(l_cdc_logo),SPEC_IMAGE,1);
+    cdc_logo=cache.reg_object(NULL,symbol_value(l_cdc_logo),SPEC_IMAGE,1);
   else cdc_logo=-1;
   
   start_position_type=0xffff;
@@ -451,10 +451,10 @@ void load_data(int argc, char **argv)
   ERROR(backtiles[0]>=0,"No black (0) background tile defined!");
   ERROR(big_font_pict!=-1 || small_font_pict!=-1,
 	"No font loaded (use load_big_font or load_small_font)!");
-  f_wid=cash.foret(foretiles[0])->im->width();
-  f_hi=cash.foret(foretiles[0])->im->height();
-  b_wid=cash.backt(backtiles[0])->im->width();
-  b_hi=cash.backt(backtiles[0])->im->height();
+  f_wid=cache.foret(foretiles[0])->im->width();
+  f_hi=cache.foret(foretiles[0])->im->height();
+  b_wid=cache.backt(backtiles[0])->im->width();
+  b_hi=cache.backt(backtiles[0])->im->height();
 
 #if 0
 	if( should_save_sd_cache )

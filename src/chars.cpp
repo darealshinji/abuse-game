@@ -418,7 +418,7 @@ character_type::character_type(void *args, void *name)
     {
       char *fn=lstring_value(eval(CAR(CDR(CAR(field)))));
       char *o=lstring_value(eval(CAR(CDR(CDR(CAR(field))))));
-      logo=cash.reg(fn,o,SPEC_IMAGE,1);
+      logo=cache.reg(fn,o,SPEC_IMAGE,1);
     } else if (f==l_vars)
     {
       void *l=CDR(CAR(field));
@@ -455,7 +455,7 @@ character_type::character_type(void *args, void *name)
   if (!NILP(mrph))
   {
     mrph=lcdr(mrph);
-    morph_mask=cash.reg_object(fn,lcar(mrph),SPEC_IMAGE,1);
+    morph_mask=cache.reg_object(fn,lcar(mrph),SPEC_IMAGE,1);
     morph_power=lnumber_value(lcar(lcdr(mrph)));
   } else morph_mask=-1;
 
@@ -535,7 +535,7 @@ character_type::character_type(void *args, void *name)
     logo=-1;
   }
   else 
-    logo=cash.reg_object(fn,lcdr(lg),SPEC_IMAGE,1);  
+    logo=cache.reg_object(fn,lcdr(lg),SPEC_IMAGE,1);  
     */
 }
 

@@ -43,7 +43,7 @@ void load_number_icons()
   for (i=0;i<MAX_SAVE_GAMES*3;i++)
   {
     sprintf(name,"nums%04d.pcx",i+1);
-    save_buts[i]=cash.reg("art/icons.spe",name,SPEC_IMAGE,1); 
+    save_buts[i]=cache.reg("art/icons.spe",name,SPEC_IMAGE,1); 
   }
 }
 
@@ -58,7 +58,7 @@ Jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
 {
   ico_button *buts[MAX_SAVE_GAMES];
   int y = 0, i;
-  int ih=cash.img(save_buts[0])->height();
+  int ih=cache.img(save_buts[0])->height();
   int x=0;
   for (i=0;i<total_saved;i++,y+=ih)
   {
@@ -91,7 +91,7 @@ int get_save_spot()
 
   if (last_free) return last_free;    // if there are any slots not created yet...
         
-  int w=cash.img(save_buts[0])->width();
+  int w=cache.img(save_buts[0])->width();
   int mx=last_demo_mx-w/2;
   if((unsigned)(mx + w + 10) > xres) mx = xres - w - 10;
   if( mx < 0) mx = 0;
@@ -201,7 +201,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 		total_saved=MAX_SAVE_GAMES;
 
 	int i;
-/*  int ih=cash.img(save_buts[0])->height();
+/*  int ih=cache.img(save_buts[0])->height();
   ico_button *buts[MAX_SAVE_GAMES];
   int y=0;
 

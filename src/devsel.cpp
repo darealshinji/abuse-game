@@ -29,11 +29,11 @@ int tile_picker::picw()
   {
     case SPEC_FORETILE :
     {
-      return cash.foret(foretiles[0])->im->width()/scale;
+      return cache.foret(foretiles[0])->im->width()/scale;
     } break;
     case SPEC_BACKTILE :
     {
-      return cash.backt(backtiles[0])->im->width()/scale;
+      return cache.backt(backtiles[0])->im->width()/scale;
     } break;
     default :
       return 30/scale; 
@@ -46,11 +46,11 @@ int tile_picker::pich()
   {
     case SPEC_FORETILE :
     {
-      return cash.foret(foretiles[0])->im->height()/scale;
+      return cache.foret(foretiles[0])->im->height()/scale;
     } break;
     case SPEC_BACKTILE :
     {
-      return cash.backt(backtiles[0])->im->height()/scale;
+      return cache.backt(backtiles[0])->im->height()/scale;
     } break;
     default :
       return 40/scale; 

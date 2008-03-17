@@ -146,10 +146,10 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
 void show_end2()
 {
   int i;
-  int planet=cash.reg("art/endgame.spe","planet",SPEC_IMAGE,1);
-  int planet2=cash.reg("art/endgame.spe","dead_planet",SPEC_IMAGE,1);
-  int mask=cash.reg("art/endgame.spe","mask",SPEC_IMAGE,1);
-  int ship=cash.reg("art/endgame.spe","ship",SPEC_IMAGE,1);
+  int planet=cache.reg("art/endgame.spe","planet",SPEC_IMAGE,1);
+  int planet2=cache.reg("art/endgame.spe","dead_planet",SPEC_IMAGE,1);
+  int mask=cache.reg("art/endgame.spe","mask",SPEC_IMAGE,1);
+  int ship=cache.reg("art/endgame.spe","ship",SPEC_IMAGE,1);
 
 
   int explo_snd=lnumber_value(symbol_value(make_find_symbol("P_EXPLODE_SND")));
@@ -157,24 +157,24 @@ void show_end2()
   int zip_snd=lnumber_value(symbol_value(make_find_symbol("SHIP_ZIP_SND")));
   
 
-  mask_line *p=make_mask_lines(cash.img(mask),cash.img(planet)->width());  
+  mask_line *p=make_mask_lines(cache.img(mask),cache.img(planet)->width());  
 
   int explo_frames1[8],explo_frames2[7];
 
   for (i=0;i<8;i++)
   { char nm[100]; sprintf(nm,"small_wite%04d.pcx",i+1);
-    explo_frames1[i]=cash.reg("art/exp1.spe",nm,SPEC_CHARACTER,1);
+    explo_frames1[i]=cache.reg("art/exp1.spe",nm,SPEC_CHARACTER,1);
   }
 
   for (i=0;i<7;i++)
   { char nm[100]; sprintf(nm,"small_fire%04d.pcx",i+1);
-    explo_frames2[i]=cash.reg("art/exp1.spe",nm,SPEC_CHARACTER,1);
+    explo_frames2[i]=cache.reg("art/exp1.spe",nm,SPEC_CHARACTER,1);
   }
 
   int eoff=0,coff=0;
 
-  int ex=xres/2-cash.img(mask)->width()/2;
-  int ey=yres/2-cash.img(mask)->height()/2;
+  int ex=xres/2-cache.img(mask)->width()/2;
+  int ey=yres/2-cache.img(mask)->height()/2;
   fade_out(16);
 
   image blank(2,2); blank.clear();
@@ -210,8 +210,8 @@ void show_end2()
   int dx=(xres+1)/2-320/2,dy=(yres+1)/2-200/2;
 
 
-  scan_map(screen,ex,ey,cash.img(planet),cash.img(planet2),0,paddr,p,cash.img(mask)->height(),eoff,coff);      
-  image *tcopy=cash.img(planet)->copy();
+  scan_map(screen,ex,ey,cache.img(planet),cache.img(planet2),0,paddr,p,cache.img(mask)->height(),eoff,coff);      
+  image *tcopy=cache.img(planet)->copy();
   fade_in(NULL,32);
 
   time_marker old_time;
@@ -224,7 +224,7 @@ void show_end2()
     if (new_time.diff_time(&old_time)>0.1)
     {
       if ((i%10)==0 && (sound_avail&SFX_INITIALIZED))
-        cash.sfx(space_snd)->play(64);
+        cache.sfx(space_snd)->play(64);
 
       old_time.get_time();
       screen->clear();
@@ -234,30 +234,30 @@ void show_end2()
 
       if (i>=30 && i<=37)
       {
-	cash.img(planet)->put_image(tcopy,0,0);
-	cash.fig(explo_frames1[i-30])->forward->put_image(tcopy,100,50);
+	cache.img(planet)->put_image(tcopy,0,0);
+	cache.fig(explo_frames1[i-30])->forward->put_image(tcopy,100,50);
         scan_map(screen,ex,ey,tcopy,
-	       cash.img(planet2),
+	       cache.img(planet2),
 	       0,paddr,
-	       p,cash.img(mask)->height(),eoff,coff);      
+	       p,cache.img(mask)->height(),eoff,coff);      
       } 
       else
-        scan_map(screen,ex,ey,cash.img(planet),
-	       cash.img(planet2),
+        scan_map(screen,ex,ey,cache.img(planet),
+	       cache.img(planet2),
 	       0,paddr,
-	       p,cash.img(mask)->height(),eoff,coff);      
+	       p,cache.img(mask)->height(),eoff,coff);      
       if (i>38)
       {
 	int t=i-38;
-	image *s=cash.img(ship);
+	image *s=cache.img(ship);
 	int nw=s->width()*(t+2)/16,
 	    nh=s->height()*(t+2)/16;
 
 
-        scale_put_trans(s,screen,ex-(i-38)*5,ey+cash.img(mask)->height()/2+t*4,nw,nh);
+        scale_put_trans(s,screen,ex-(i-38)*5,ey+cache.img(mask)->height()/2+t*4,nw,nh);
 	if (i==77)
 	  if (sound_avail&SFX_INITIALIZED)
-            cash.sfx(zip_snd)->play(127);
+            cache.sfx(zip_snd)->play(127);
       }
         
       eoff+=2; if (eoff>=320) eoff-=320;
@@ -276,7 +276,7 @@ void show_end2()
     if (new_time.diff_time(&old_time)>0.1)
     {
       if ((i%10)==0 && (sound_avail&SFX_INITIALIZED))
-        cash.sfx(space_snd)->play(64);
+        cache.sfx(space_snd)->play(64);
 
       old_time.get_time();
       screen->clear();
@@ -285,8 +285,8 @@ void show_end2()
         screen->putpixel(dx+si[0],dy+si[1],si[2]);
 
       
-      scan_map(screen,ex,ey,cash.img(planet),
-	       cash.img(planet2),i*256/200,paddr,p,cash.img(mask)->height(),eoff,coff);      
+      scan_map(screen,ex,ey,cache.img(planet),
+	       cache.img(planet2),i*256/200,paddr,p,cache.img(mask)->height(),eoff,coff);      
 
       eoff+=2; if (eoff>=320) eoff-=320;
       coff+=1; if (coff>=320) coff-=320;      
@@ -294,14 +294,14 @@ void show_end2()
       i++;
       if (i<150 || (i<170 && ((i-149)%2)==0) || (i<180 && ((i-149)%4)==0) || (i<190 && ((i-149)%8)==0))
       {
-        clist=new ex_char(ex+jrand()%(cash.img(mask)->width()-cash.img(mask)->width()/3),
-			ey+jrand()%(cash.img(mask)->height()-cash.img(mask)->height()/3),0,1,clist);
+        clist=new ex_char(ex+jrand()%(cache.img(mask)->width()-cache.img(mask)->width()/3),
+			ey+jrand()%(cache.img(mask)->height()-cache.img(mask)->height()/3),0,1,clist);
 	if (sound_avail&SFX_INITIALIZED)
-          cash.sfx(explo_snd)->play(127);
+          cache.sfx(explo_snd)->play(127);
       }
 
-//      clist=new ex_char(ex+jrand()%(cash.img(mask)->width(),
-//			ey+jrand()%(cash.img(mask)->height(),0,1,clist);
+//      clist=new ex_char(ex+jrand()%(cache.img(mask)->width(),
+//			ey+jrand()%(cache.img(mask)->height(),0,1,clist);
 
       ex_char *c=clist,*last=NULL;
       for (;c;)
@@ -318,7 +318,7 @@ void show_end2()
 	{ 
 	  last=c; 
 	  if (c->char_num)	
-	    cash.fig(explo_frames2[c->frame])->forward->put_image(screen,c->x,c->y);	  
+	    cache.fig(explo_frames2[c->frame])->forward->put_image(screen,c->x,c->y);	  
 
 	  c->x-=3;
 	  c=c->next; 
@@ -346,13 +346,13 @@ void show_end2()
     if (new_time.diff_time(&old_time)>0.1)
     {
       if ((i%10)==0 && (sound_avail&SFX_INITIALIZED))
-        cash.sfx(space_snd)->play(64);
+        cache.sfx(space_snd)->play(64);
 
       old_time.get_time();
-      scan_map(screen,ex,ey,cash.img(planet),
-	       cash.img(planet2),
+      scan_map(screen,ex,ey,cache.img(planet),
+	       cache.img(planet2),
 	       256,paddr,
-	       p,cash.img(mask)->height(),eoff,coff);      
+	       p,cache.img(mask)->height(),eoff,coff);      
       eoff+=2; if (eoff>=320) eoff-=320;
       coff+=1; if (coff>=320) coff-=320;      
       wm->flush_screen();
@@ -382,10 +382,10 @@ void show_end2()
     for (si=sinfo,j=0;j<800;j++,si+=3)
       screen->putpixel(dx+si[0],dy+si[1],si[2]);
 
-    scan_map(screen,ex,ey,cash.img(planet),
-	     cash.img(planet2),
+    scan_map(screen,ex,ey,cache.img(planet),
+	     cache.img(planet2),
 	     256,paddr,
-	     p,cash.img(mask)->height(),eoff,coff);      
+	     p,cache.img(mask)->height(),eoff,coff);      
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),wm->font(),cmap,wm->bright_color());
     wm->flush_screen();
     time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
@@ -395,7 +395,7 @@ void show_end2()
 
 
 
-  for (i=0;i<cash.img(mask)->height();i++)
+  for (i=0;i<cache.img(mask)->height();i++)
   {
     jfree(p[i].remap);
     jfree(p[i].light);
@@ -411,7 +411,7 @@ void show_end2()
   screen->clear();
 
 
-  wm->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
+  wm->set_mouse_shape(cache.img(c_normal)->copy(),1,1);
   the_game->set_state(MENU_STATE);
 }
 
@@ -424,7 +424,7 @@ void share_end()
   wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
   screen->clear();
 
-  image *im=cash.img(cash.reg("art/endgame.spe","tbc",SPEC_IMAGE,1));
+  image *im=cache.img(cache.reg("art/endgame.spe","tbc",SPEC_IMAGE,1));
 
   void *to_be=symbol_value(make_find_symbol("to_be_continued"));
   p_ref r1(to_be);
@@ -481,7 +481,7 @@ void show_end()
   wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
   screen->clear();
 
-  image *im=cash.img(cash.reg("art/endgame.spe","end.pcx",SPEC_IMAGE,1));
+  image *im=cache.img(cache.reg("art/endgame.spe","end.pcx",SPEC_IMAGE,1));
 
   int dx=(xres+1)/2-320/2,dy=(yres+1)/2-200/2;
 
@@ -525,7 +525,7 @@ void show_end()
 
   show_sell(1);
 
-  wm->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
+  wm->set_mouse_shape(cache.img(c_normal)->copy(),1,1);
   the_game->set_state(MENU_STATE);
 }
 

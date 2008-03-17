@@ -118,7 +118,7 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
       dprintf("nfs open %s,%s\n",fn,perm);
       packet opk;
       int fail;
-      uint32_t my_crc=crc_man.get_crc(crc_man.get_filenumber(fn),fail);
+      uint32_t my_crc=crc_manager.get_crc(crc_manager.get_filenumber(fn),fail);
       if (fail)
       {
 	jFILE *fp=new jFILE(squash_path(fn,newfn),perm);
@@ -131,7 +131,7 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
 	} else      
 	{
 	  my_crc=crc_file(fp);
-	  crc_man.set_crc(crc_man.get_filenumber(fn),my_crc);
+	  crc_manager.set_crc(crc_manager.get_filenumber(fn),my_crc);
 	  delete fp;
 	}	
       }

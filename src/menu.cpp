@@ -309,7 +309,7 @@ static void create_volume_window()
                 volume_window->draw_sfx_vol();
                 s = "sfx/ambtech1.wav";
                 if(sound_avail & SFX_INITIALIZED) 
-                    cash.sfx(cash.reg(s, s, SPEC_EXTERN_SFX, 1))
+                    cache.sfx(cache.reg(s, s, SPEC_EXTERN_SFX, 1))
                         ->play(sfx_volume);
                 break;
             case ID_SFX_DOWN:
@@ -319,7 +319,7 @@ static void create_volume_window()
                 volume_window->draw_sfx_vol();
                 s = "sfx/ambtech1.wav";
                 if(sound_avail & SFX_INITIALIZED) 
-                    cash.sfx(cash.reg(s, s, SPEC_EXTERN_SFX, 1))
+                    cache.sfx(cache.reg(s, s, SPEC_EXTERN_SFX, 1))
                         ->play(sfx_volume);
                 break;
 
@@ -397,8 +397,8 @@ void show_sell(int abortable)
     int quit=0;
     while (ss && !quit)
     {
-      int im=cash.reg_object("art/help.spe",CAR(ss),SPEC_IMAGE,1);
-      fade_in(cash.img(im),16);
+      int im=cache.reg_object("art/help.spe",CAR(ss),SPEC_IMAGE,1);
+      fade_in(cache.img(im),16);
 
       event ev;
       do
@@ -410,7 +410,7 @@ void show_sell(int abortable)
       fade_out(16);
       ss=CDR(ss);
     }
-    wm->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
+    wm->set_mouse_shape(cache.img(c_normal)->copy(),1,1);
   }
 }
 
@@ -509,7 +509,7 @@ void menu_handler(event &ev, InputManager *inm)
 	  screen->clear();
 	  if (title_screen>=0)
 	  {
-	    image *tit=cash.img(title_screen);
+	    image *tit=cache.img(title_screen);
 	      tit->put_image(screen,screen->width()/2-tit->width()/2,
 					      screen->height()/2-tit->height()/2);
 	  }
@@ -536,15 +536,15 @@ static ico_button *load_icon(int num, int id, int x, int y, int &h, ifield *next
   char const *base = "newi";
   int a,b,c;
   sprintf(name,"%s%04d.pcx",base,num*3+1);
-  a=cash.reg("art/icons.spe",name,SPEC_IMAGE,1);
+  a=cache.reg("art/icons.spe",name,SPEC_IMAGE,1);
 
   sprintf(name,"%s%04d.pcx",base,num*3+2);
-  b=cash.reg("art/icons.spe",name,SPEC_IMAGE,1);
+  b=cache.reg("art/icons.spe",name,SPEC_IMAGE,1);
 
   sprintf(name,"%s%04d.pcx",base,num*3+3);
-  c=cash.reg("art/icons.spe",name,SPEC_IMAGE,1);
+  c=cache.reg("art/icons.spe",name,SPEC_IMAGE,1);
 
-  h=cash.img(a)->height();
+  h=cache.img(a)->height();
 
   return new ico_button(x,y,id,b,b,a,c,next,-1,key);
 }

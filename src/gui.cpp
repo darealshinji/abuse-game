@@ -89,12 +89,12 @@ void ico_button::draw(int active, image *screen)
     wm->push_event(new event(activate_id,NULL));
  
   if (up && !active)
-    cash.img(u)->put_image(screen,x1,y1);
+    cache.img(u)->put_image(screen,x1,y1);
   else if (up && active)
-    cash.img(ua)->put_image(screen,x1,y1);
+    cache.img(ua)->put_image(screen,x1,y1);
   else if (!up && !active)
-    cash.img(d)->put_image(screen,x1,y1);
-  else cash.img(da)->put_image(screen,x1,y1);
+    cache.img(d)->put_image(screen,x1,y1);
+  else cache.img(da)->put_image(screen,x1,y1);
 
   if (act!=active && active && activate_id!=-1)
     wm->push_event(new event(activate_id,NULL));
@@ -126,15 +126,15 @@ void ico_button::handle_event(event &ev, image *screen, InputManager *im)
     draw(act,screen);
     wm->push_event(new event(id,(char *)this));
     if (S_BUTTON_PRESS_SND)
-      cash.sfx(S_BUTTON_PRESS_SND)->play(sfx_volume);
+      cache.sfx(S_BUTTON_PRESS_SND)->play(sfx_volume);
   }
 }
 
 void ico_button::area(int &x1, int &y1, int &x2, int &y2)
 {
   x1=x; y1=y;
-  x2=x+cash.img(u)->width()-1;
-  y2=y+cash.img(u)->height()-1;
+  x2=x+cache.img(u)->width()-1;
+  y2=y+cache.img(u)->height()-1;
 }
 
 ico_button::ico_button(int X, int Y, int ID, int Up, int down, int upa, int downa, ifield *Next, int act_id, char const *help_key)

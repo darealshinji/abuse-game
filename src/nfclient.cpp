@@ -29,7 +29,7 @@
 
 void remove_client(int client_number) { ; }
 
-crc_manager *net_crcs=NULL;
+CrcManager *net_crcs = NULL;
 extern net_protocol *prot;
 
 class nfs_file : public bFILE 
@@ -87,15 +87,15 @@ nfs_file::nfs_file(char const *filename, char const *mode)
     uint32_t remote_crc=net_crcs->get_crc(remote_file_num,fail2);
     if (!fail2)
     {   
-      int local_file_num=crc_man.get_filenumber(local_filename);
-      uint32_t local_crc=crc_man.get_crc(local_file_num,fail1);
+      int local_file_num=crc_manager.get_filenumber(local_filename);
+      uint32_t local_crc=crc_manager.get_crc(local_file_num,fail1);
       if (fail1)
       {
 	bFILE *fp=new jFILE(local_filename,"rb");      
 	if (!fp->open_failure())
 	{
 	  local_crc=crc_file(fp);
-	  crc_man.set_crc(local_file_num,local_crc);
+	  crc_manager.set_crc(local_file_num,local_crc);
 	} else fail3=1;
 	delete fp;	
       }
@@ -213,7 +213,7 @@ int set_file_server(net_address *addr)
       delete net_crcs;
     }
 
-    net_crcs=new crc_manager();
+    net_crcs=new CrcManager();
     if (!net_crcs->load_crc_file(NET_CRC_FILENAME))
     { 
       delete net_crcs; 

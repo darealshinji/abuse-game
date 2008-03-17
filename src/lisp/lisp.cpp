@@ -2191,8 +2191,8 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       void *block_list=CDR(CDR(arg_list));
 
 #ifndef NO_LIBS
-      intptr_t a=cash.reg_lisp_block(lcar(lcdr(arg_list)));
-      intptr_t b=cash.reg_lisp_block(block_list);
+      intptr_t a=cache.reg_lisp_block(lcar(lcdr(arg_list)));
+      intptr_t b=cache.reg_lisp_block(block_list);
       lisp_user_function *ufun=new_lisp_user_function(a,b);
 #else
       lisp_user_function *ufun=new_lisp_user_function(lcar(lcdr(arg_list)),block_list);
@@ -2447,7 +2447,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
 				char msg[100];
 				sprintf(msg,"(load \"%s\")",st);
 				if (stat_man) stat_man->push(msg,NULL);
-				crc_man.get_filenumber(st);               // make sure this file gets crc'ed
+				crc_manager.get_filenumber(st);               // make sure this file gets crc'ed
 			#endif
 				void *compiled_form=NULL;
 				p_ref r11(compiled_form);
@@ -2950,8 +2950,8 @@ void *eval_user_fun(lisp_symbol *sym, void *arg_list)
 #endif
 
 #ifndef NO_LIBS
-  void *fun_arg_list=cash.lblock(fun->alist);
-  void *block_list=cash.lblock(fun->blist); 
+  void *fun_arg_list=cache.lblock(fun->alist);
+  void *block_list=cache.lblock(fun->blist); 
   p_ref r9(block_list),r10(fun_arg_list);
 #else
   void *fun_arg_list=fun->arg_list;

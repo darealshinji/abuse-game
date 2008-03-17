@@ -99,11 +99,11 @@ public :
   void draw(int scene_mode=0);
 
   backtile *get_bg(int x) { if (x<0 || x>=nbacktiles || backtiles[x]<0) 
-                           return cash.backt(backtiles[BLACK]); 
-                           else return cash.backt(backtiles[x]); }
+                           return cache.backt(backtiles[BLACK]); 
+                           else return cache.backt(backtiles[x]); }
   foretile *get_fg(int x) { if (x<0 || x>=nforetiles || foretiles[x]<0) 
-                           return cash.foret(foretiles[BLACK]); else 
-			   return cash.foret(foretiles[x]); }
+                           return cache.foret(foretiles[BLACK]); else 
+			   return cache.foret(foretiles[x]); }
 
   void ftile_on(int screenx, int screeny, int32_t &x, int32_t &y);
   void btile_on(int screenx, int screeny, int32_t &x, int32_t &y);

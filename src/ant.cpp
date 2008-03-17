@@ -444,7 +444,7 @@ void show_stats()
     fade_out(8);
     wm->set_mouse_position(0,0);
     screen->clear();
-    image *im=cash.img(cash.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
+    image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
     im->put_image(screen,0,0);
 
 

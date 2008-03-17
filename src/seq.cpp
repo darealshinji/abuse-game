@@ -18,8 +18,8 @@ int sequence::size()
   int t=0;
   for (int i=0;i<total;i++)
   {
-    if (cash.loaded(seq[i]))
-      t+=cash.fig(seq[i])->size();   
+    if (cache.loaded(seq[i]))
+      t+=cache.fig(seq[i])->size();   
   }
   return t;
 }
@@ -29,7 +29,7 @@ int sequence::cache_in()
   int i;
   for (i=0;i<total;i++)
   {
-    cash.note_need(seq[i]);
+    cache.note_need(seq[i]);
   }
   return 1;
 }
@@ -43,13 +43,13 @@ sequence::sequence(char *filename, void *pict_list, void *advance_list)
 
   seq=(int *) jmalloc(sizeof(int)*total,"sequence ptr array");
   if (item_type(pict_list)==L_STRING)
-    seq[0]=cash.reg_object(filename,pict_list,SPEC_CHARACTER2,1);
+    seq[0]=cache.reg_object(filename,pict_list,SPEC_CHARACTER2,1);
   else
   {
     int i;
     for (i=0;i<total;i++) 
     {
-      seq[i]=cash.reg_object(filename,lcar(pict_list),SPEC_CHARACTER2,1);
+      seq[i]=cache.reg_object(filename,lcar(pict_list),SPEC_CHARACTER2,1);
       pict_list=lcdr(pict_list);
     }
   }
@@ -105,12 +105,12 @@ sequence::~sequence()
       for (j=start;j<=end;j++)
       {
 	sprintf(imname,"%s%04d.pcx",t,j);
-	seq[i++]=cash.reg(filename,imname,SPEC_CHARACTER,1);
+	seq[i++]=cache.reg(filename,imname,SPEC_CHARACTER,1);
       }           
       get_token(s,t);      // right paren
     }
     else
-      seq[i++]=cash.reg(filename,t,SPEC_CHARACTER,1);
+      seq[i++]=cache.reg(filename,t,SPEC_CHARACTER,1);
   }
 }*/
 
