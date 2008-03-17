@@ -202,7 +202,7 @@ int demo_manager::set_state(demo_state new_state, char *filename)
     case PLAYING :
     {
 /*
-      fade_in(cash.img(cash.reg("art/help.spe","sell6",SPEC_IMAGE,1)),8);
+      fade_in(cache.img(cache.reg("art/help.spe","sell6",SPEC_IMAGE,1)),8);
       milli_wait(2000);
       fade_out(8);
 */

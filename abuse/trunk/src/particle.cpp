@@ -109,7 +109,7 @@ part_sequence::part_sequence(void *args)
   int on=0;
   for (i=0;i<sd.total;i++)
     if (sd.entries[i]->type==SPEC_PARTICLE)
-      frames[on++]=cash.reg(fn,sd.entries[i]->name,SPEC_PARTICLE,1);
+      frames[on++]=cache.reg(fn,sd.entries[i]->name,SPEC_PARTICLE,1);
 
 }
 
@@ -160,7 +160,7 @@ void draw_panims(view *v)
 {
   for (part_animation *p=first_anim;p;p=p->next)
   {
-    cash.part(p->seq->frames[p->frame])->draw(screen,p->x-v->xoff()+v->cx1,p->y-v->yoff()+v->cy1,p->dir);
+    cache.part(p->seq->frames[p->frame])->draw(screen,p->x-v->xoff()+v->cx1,p->y-v->yoff()+v->cy1,p->dir);
   }
 }
 

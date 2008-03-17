@@ -130,7 +130,7 @@ void gamma_correct(palette *&pal, int force_menu)
             gray_pal->find_closest(dr_r, dr_g, dr_b));
 
         int sh = wm->font()->height() + 35;
-        button *but = new button(5, 5 + sh * 3, ID_GAMMA_OK, cash.img(ok_button),
+        button *but = new button(5, 5 + sh * 3, ID_GAMMA_OK, cache.img(ok_button),
             new info_field(35, 10 + sh * 3, ID_NULL, lang_string("gamma_msg"), 0));
 
         gray_picker *gp = new gray_picker(2, 5 + sh, ID_GREEN_PICKER, 0, dg / 4, but);

@@ -29,13 +29,13 @@ public :
   int next_frame(short &current) { current++; if (current>=total) { current=0; return 0; } return 1; }
   int last_frame(short &current) { current--; if (current<0) { current=total-1; return 0; } return 1; }
   trans_image  *get_frame(short current, int direction) 
-   { if (direction>0) return cash.fig(seq[current])->forward; 
-                 else return cash.fig(seq[current])->backward; }
-  figure *get_figure(short current) { return cash.fig(seq[current]); }
+   { if (direction>0) return cache.fig(seq[current])->forward; 
+                 else return cache.fig(seq[current])->backward; }
+  figure *get_figure(short current) { return cache.fig(seq[current]); }
   int cache_in();
-  int x_center(short current) { return (short) (cash.fig(seq[current])->xcfg); }
+  int x_center(short current) { return (short) (cache.fig(seq[current])->xcfg); }
   int length() { return total; }
-  int get_advance(int current) { return cash.fig(seq[current])->advance; }
+  int get_advance(int current) { return cache.fig(seq[current])->advance; }
   int size();
   ~sequence();
 };

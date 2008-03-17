@@ -57,7 +57,8 @@
 #define SHIFT_RIGHT_DEFAULT 0
 #define SHIFT_DOWN_DEFAULT 30
 
-extern crc_manager *net_crcs;
+extern CrcManager *net_crcs;
+
 game *the_game;
 WindowManager *wm = NULL;
 int dev, shift_down = SHIFT_DOWN_DEFAULT, shift_right = SHIFT_RIGHT_DEFAULT;
@@ -171,7 +172,7 @@ void game::play_sound(int id, int vol, int32_t x, int32_t y)
     if(p > 255) p = 255;
 
     if(v > 0)
-        cash.sfx(id)->play(v, 128, p);
+        cache.sfx(id)->play(v, 128, p);
 }
 
 int get_option(char const *name)
@@ -437,9 +438,9 @@ void game::set_state(int new_state)
     pal->load();    // restore old palette
 
     if(playing_state(state) &&  !(dev & EDIT_MODE))
-        wm->set_mouse_shape(cash.img(c_target)->copy(), 8, 8);
+        wm->set_mouse_shape(cache.img(c_target)->copy(), 8, 8);
     else
-        wm->set_mouse_shape(cash.img(c_normal)->copy(), 1, 1);
+        wm->set_mouse_shape(cache.img(c_normal)->copy(), 1, 1);
 
     if(old_state == SCENE_STATE && new_state != SCENE_STATE)
     {
@@ -469,7 +470,7 @@ void game::joy_calb(event &ev)
         if(y > 0) y = 1; else if(y < 0) y = -1;
         if(but) but = 1;
         int dx = 20, dy = 5;
-        image *jim = cash.img(joy_picts[but * 9+(y + 1)*3 + x + 1]);
+        image *jim = cache.img(joy_picts[but * 9+(y + 1)*3 + x + 1]);
         joy_win->screen->bar(dx, dy, dx + jim->width()+6, dy + jim->height()+6, wm->black());
         jim->put_image(joy_win->screen, dx + 3, dy + 3);
 
@@ -709,7 +710,7 @@ void game::draw_map(view *v, int interpolate)
     {
       if(state == SCENE_STATE)
         screen->set_clip(v->cx1, v->cy1, v->cx2, v->cy2);
-      image *tit = cash.img(title_screen);
+      image *tit = cache.img(title_screen);
       tit->put_image(screen, screen->width()/2 - tit->width()/2,
                     screen->height()/2 - tit->height()/2);
       if(state == SCENE_STATE)
@@ -1084,8 +1085,8 @@ void game::draw_map(view *v, int interpolate)
 
     if(dev_cont)
     dev_cont->dev_draw(v);
-    if(cash.in_use())
-    cash.img(vmm_image)->put_image(screen, v->cx1, v->cy2 - cash.img(vmm_image)->height()+1);
+    if(cache.in_use())
+    cache.img(vmm_image)->put_image(screen, v->cx1, v->cy2 - cache.img(vmm_image)->height()+1);
 
     if(dev & DRAW_LIGHTS)
     {
@@ -1252,7 +1253,7 @@ void do_title()
         void *logo_snd = symbol_value(make_find_symbol("LOGO_SND"));
 
         if(DEFINEDP(logo_snd) && (sound_avail & SFX_INITIALIZED))
-            cash.sfx(lnumber_value(logo_snd))->play(sfx_volume);
+            cache.sfx(lnumber_value(logo_snd))->play(sfx_volume);
 
         // This must be a dynamic allocated image because if it
         // is not and the window gets closed during do_title, then
@@ -1262,7 +1263,7 @@ void do_title()
         blank->clear();
         wm->set_mouse_shape(blank->copy(), 0, 0); // hide mouse
         delete blank;
-        fade_in(cash.img(cdc_logo), 32);
+        fade_in(cache.img(cdc_logo), 32);
 
         milli_wait(900);
 
@@ -1330,7 +1331,7 @@ void do_title()
                 }
                 if((i % 5) == 0 && DEFINEDP(space_snd) && (sound_avail & SFX_INITIALIZED))
                 {
-                    cash.sfx(lnumber_value(space_snd))->play(sfx_volume * 90 / 127);
+                    cache.sfx(lnumber_value(space_snd))->play(sfx_volume * 90 / 127);
                 }
             }
 
@@ -1351,9 +1352,9 @@ void do_title()
         }
 
         if(title_screen >= 0)
-            fade_in(cash.img(title_screen), 32);
+            fade_in(cache.img(title_screen), 32);
 
-        wm->set_mouse_shape(cash.img(c_normal)->copy(), 1, 1);
+        wm->set_mouse_shape(cache.img(c_normal)->copy(), 1, 1);
     }
 }
 
@@ -1449,13 +1450,13 @@ game::game(int argc, char **argv)
 
   recalc_local_view_space();   // now that we know what size the screen is...
 
-  dark_color = get_color(cash.img(window_colors)->pixel(2, 0));
-  bright_color = get_color(cash.img(window_colors)->pixel(0, 0));
-  med_color = get_color(cash.img(window_colors)->pixel(1, 0));
+  dark_color = get_color(cache.img(window_colors)->pixel(2, 0));
+  bright_color = get_color(cache.img(window_colors)->pixel(0, 0));
+  med_color = get_color(cache.img(window_colors)->pixel(1, 0));
 
-  morph_dark_color = get_color(cash.img(window_colors)->pixel(2, 1));
-  morph_bright_color = get_color(cash.img(window_colors)->pixel(0, 1));
-  morph_med_color = get_color(cash.img(window_colors)->pixel(1, 1));
+  morph_dark_color = get_color(cache.img(window_colors)->pixel(2, 1));
+  morph_bright_color = get_color(cache.img(window_colors)->pixel(0, 1));
+  morph_med_color = get_color(cache.img(window_colors)->pixel(1, 1));
   morph_sel_frame_color = pal->find_closest(255, 255, 0);
   light_connection_color = morph_sel_frame_color;
 
@@ -1478,9 +1479,9 @@ game::game(int argc, char **argv)
   } else font_pict = small_font_pict;
 
   if(console_font_pict == -1) console_font_pict = font_pict;
-  game_font = new JCFont(cash.img(font_pict));
+  game_font = new JCFont(cache.img(font_pict));
 
-  console_font = new JCFont(cash.img(console_font_pict));
+  console_font = new JCFont(cache.img(console_font_pict));
 
   wm = new WindowManager(screen, pal, bright_color,
                          med_color, dark_color, game_font);
@@ -1531,7 +1532,7 @@ game::game(int argc, char **argv)
     screen->clear();
     if(title_screen >= 0)
     {
-      image *tit = cash.img(title_screen);
+      image *tit = cache.img(title_screen);
       tit->put_image(screen, screen->width()/2 - tit->width()/2,
                     screen->height()/2 - tit->height()/2);
     }
@@ -1609,15 +1610,15 @@ void game::update_screen()
     if(state == PAUSE_STATE)
     {
       for(view *f = first_view; f; f = f->next)
-        cash.img(pause_image)->put_image(screen, (f->cx1 + f->cx2)/2 - cash.img(pause_image)->width()/2,
+        cache.img(pause_image)->put_image(screen, (f->cx1 + f->cx2)/2 - cache.img(pause_image)->width()/2,
                    f->cy1 + 5, 1);
     }
 
     show_time();
   }
 
-  if(state == RUN_STATE && cash.prof_is_on())
-    cash.prof_poll_end();
+  if(state == RUN_STATE && cache.prof_is_on())
+    cache.prof_poll_end();
 
   wm->flush_screen();
 
@@ -2096,7 +2097,7 @@ void game::step()
       for(v = first_view; v; v = v->next)
         v->update_scroll();
 
-      cash.prof_poll_start();
+      cache.prof_poll_start();
       current_level->tick();
       sbar.step();
     } else
@@ -2197,7 +2198,7 @@ game::~game()
 void game::draw(int scene_mode)
 {
     screen->add_dirty(0, 0, xres, yres);
-//    image *bt = cash.img(border_tile);
+//    image *bt = cache.img(border_tile);
 //    int tw = bt->width(), th = bt->height();
   screen->clear();
 //  for(y = 0; y < yt; y++, dy += th)
@@ -2218,9 +2219,9 @@ void game::draw(int scene_mode)
         wm->font()->put_string(screen, screen->width()-wm->font()->width()*strlen(helpstr)-5,
             screen->height()-wm->font()->height()-5, helpstr);
     }*/
-/*    int dc = cash.img(window_colors)->pixel(0, 2);
-    int mc = cash.img(window_colors)->pixel(1, 2);
-    int bc = cash.img(window_colors)->pixel(2, 2);
+/*    int dc = cache.img(window_colors)->pixel(0, 2);
+    int mc = cache.img(window_colors)->pixel(1, 2);
+    int bc = cache.img(window_colors)->pixel(2, 2);
     screen->line(0, 0, screen->width()-1, 0, dc);
     screen->line(0, 0, 0, screen->height()-1, dc);
     screen->line(0, screen->height()-1, screen->width()-1, screen->height()-1, bc);
@@ -2732,7 +2733,7 @@ int main(int argc, char **argv)
     }
 
 
-    cash.empty();
+    cache.empty();
 
 
     if(dev_console)

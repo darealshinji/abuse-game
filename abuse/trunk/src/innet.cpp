@@ -309,7 +309,7 @@ void service_net_request()
 				      } break;
 				      case CLIENT_CRC_WAITER :
 				      {		
-								crc_man.write_crc_file(NET_CRC_FILENAME);       // return 0 on failure
+								crc_manager.write_crc_file(NET_CRC_FILENAME);       // return 0 on failure
 								client_type=1;                                  // confirmation byte
 								new_sock->write(&client_type,1);
 								delete new_sock;                                // done with this socket now

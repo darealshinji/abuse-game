@@ -691,7 +691,7 @@ void game_object::draw_tint(int tint_id)
 		       (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
 		       y-cpict->height()+1-current_vyadd,
 		       fade_count(),fade_max(),
-		       cash.ctint(tint_id)->data,
+		       cache.ctint(tint_id)->data,
 		       color_table,the_game->current_palette());
 
 
@@ -699,7 +699,7 @@ void game_object::draw_tint(int tint_id)
     cpict->put_remaped(screen,
 		       (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
 		       y-cpict->height()+1-current_vyadd,
-		       cash.ctint(tint_id)->data);
+		       cache.ctint(tint_id)->data);
 }
 
 
@@ -711,7 +711,7 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 		       (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
 		       y-cpict->height()+1-current_vyadd,
 		       fade_count(),fade_max(),
-		       cash.ctint(tint_id)->data,
+		       cache.ctint(tint_id)->data,
 		       color_table,the_game->current_palette());
 
 
@@ -719,8 +719,8 @@ void game_object::draw_double_tint(int tint_id, int tint2)
     cpict->put_double_remaped(screen,
 		       (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
 		       y-cpict->height()+1-current_vyadd,
-		       cash.ctint(tint_id)->data,
-		       cash.ctint(tint2)->data);
+		       cache.ctint(tint_id)->data,
+		       cache.ctint(tint2)->data);
 }
 
 

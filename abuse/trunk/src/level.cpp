@@ -2157,7 +2157,7 @@ void level::load_options(spec_directory *sd, bFILE *fp)
 
 void level::write_cache_prof_info()
 {
-  if (cash.prof_is_on())
+  if (cache.prof_is_on())
   {
     char pf_name[100];
     if (first_name)
@@ -2167,14 +2167,14 @@ void level::write_cache_prof_info()
 
 
     spec_directory sd;
-    sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"cache profile info",NULL,cash.prof_size(),0));
+    sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"cache profile info",NULL,cache.prof_size(),0));
     sd.calc_offsets();
     jFILE *fp2=sd.write(pf_name);
     if (!fp2)
       the_game->show_help("Unable to open cache profile output file");
     else
     {
-      cash.prof_write(fp2);
+      cache.prof_write(fp2);
       delete fp2;
     }
     sd.delete_entries();
@@ -2193,7 +2193,7 @@ void level::load_cache_info(spec_directory *sd, bFILE *fp)
       get_prof_assoc_filename(Name,pf_name);
 
 
-    cash.load_cache_prof_info(pf_name,this);
+    cache.load_cache_prof_info(pf_name,this);
   }
 }
 

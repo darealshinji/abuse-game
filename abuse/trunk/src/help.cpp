@@ -22,7 +22,7 @@ void fade_out(int steps);
 
 void draw_help()
 {
-  image *im=cash.img(help_screens[help_page]);
+  image *im=cache.img(help_screens[help_page]);
   int x1=xres/2-im->width()/2,y1=yres/2-im->height()/2;
   int x2=x1+im->width(),y2=y1+im->height();
   im->put_image(screen,x1,y1);

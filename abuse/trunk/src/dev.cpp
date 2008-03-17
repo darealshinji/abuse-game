@@ -102,12 +102,12 @@ class cached_image : public visual_object
   virtual void draw(image *screen, int x, int y, filter *f)
   {
     if (f)
-      f->put_image(screen,cash.img(id),x,y,1);
+      f->put_image(screen,cache.img(id),x,y,1);
     else
-      cash.img(id)->put_image(screen,x,y);
+      cache.img(id)->put_image(screen,x,y);
   }
-  virtual int width() { return cash.img(id)->width(); }
-  virtual int height() { return cash.img(id)->height(); }
+  virtual int width() { return cache.img(id)->width(); }
+  virtual int height() { return cache.img(id)->height(); }
 } ;
 
 
@@ -157,9 +157,9 @@ int confirm_quit()
     Jwindow *quitw;
     image *ok_image, *cancel_image;
 
-    ok_image = cash.img(cash.reg("art/frame.spe", "dev_ok",
+    ok_image = cache.img(cache.reg("art/frame.spe", "dev_ok",
                                  SPEC_IMAGE, 1))->copy();
-    cancel_image = cash.img(cash.reg("art/frame.spe", "cancel",
+    cancel_image = cache.img(cache.reg("art/frame.spe", "cancel",
                                      SPEC_IMAGE, 1))->copy();
 
     quitw = wm->new_window(xres / 2 + 40, yres / 2, 80, -1,
@@ -342,23 +342,23 @@ void dev_term::execute(char *st)
 static void load_dev_icons()
 {
   char const *artf="art/dev.spe";
-  dev_del=cash.reg(artf,"dev_del",SPEC_IMAGE,0);
-  dev_move=cash.reg(artf,"dev_move",SPEC_IMAGE,0);
-  dev_char_left=cash.reg(artf,"dev_char_left",SPEC_IMAGE,0);
-  dev_char_right=cash.reg(artf,"dev_char_right",SPEC_IMAGE,0);
-  dev_back=cash.reg(artf,"dev_back",SPEC_IMAGE,0);
-  dev_front=cash.reg(artf,"dev_front",SPEC_IMAGE,0);
-  dev_ok=cash.reg(artf,"dev_ok",SPEC_IMAGE,0);
-  dev_copy=cash.reg(artf,"dev_copy",SPEC_IMAGE,0);
-  dev_brain=cash.reg(artf,"brain",SPEC_IMAGE,0);
-  dev_lights=cash.reg(artf,"lights",SPEC_IMAGE,0);
-  dev_objects=cash.reg(artf,"objects",SPEC_IMAGE,0);
-  dev_ai=cash.reg(artf,"ai",SPEC_IMAGE,0);
-  dev_forward=cash.reg(artf,"forward",SPEC_IMAGE,0);
-  dev_backward=cash.reg(artf,"backward",SPEC_IMAGE,0);
+  dev_del=cache.reg(artf,"dev_del",SPEC_IMAGE,0);
+  dev_move=cache.reg(artf,"dev_move",SPEC_IMAGE,0);
+  dev_char_left=cache.reg(artf,"dev_char_left",SPEC_IMAGE,0);
+  dev_char_right=cache.reg(artf,"dev_char_right",SPEC_IMAGE,0);
+  dev_back=cache.reg(artf,"dev_back",SPEC_IMAGE,0);
+  dev_front=cache.reg(artf,"dev_front",SPEC_IMAGE,0);
+  dev_ok=cache.reg(artf,"dev_ok",SPEC_IMAGE,0);
+  dev_copy=cache.reg(artf,"dev_copy",SPEC_IMAGE,0);
+  dev_brain=cache.reg(artf,"brain",SPEC_IMAGE,0);
+  dev_lights=cache.reg(artf,"lights",SPEC_IMAGE,0);
+  dev_objects=cache.reg(artf,"objects",SPEC_IMAGE,0);
+  dev_ai=cache.reg(artf,"ai",SPEC_IMAGE,0);
+  dev_forward=cache.reg(artf,"forward",SPEC_IMAGE,0);
+  dev_backward=cache.reg(artf,"backward",SPEC_IMAGE,0);
 
   for (int i=0;i<DEV_MODES;i++)
-    dev_mode_icon[i]=cash.reg(artf,dev_mode_icon_names[i],SPEC_IMAGE,0);
+    dev_mode_icon[i]=cache.reg(artf,dev_mode_icon_names[i],SPEC_IMAGE,0);
 
 }
 
@@ -478,7 +478,7 @@ void dev_controll::dev_draw(view *v)
       {
     if (f->x-vx>=0 && f->x-vx<=(v->cx2-v->cx1+1) && f->y-vy>=0 && f->y-vy<=(v->cy2-v->cy1+1))
     {
-      image *im=cash.img(light_buttons[f->type]);
+      image *im=cache.img(light_buttons[f->type]);
       im->put_image(screen,f->x-vx+v->cx1-im->width()/2,f->y-vy+v->cy1-im->height()/2,1);
       screen->rectangle(f->x1-vx+v->cx1,f->y1-vy+v->cy1,f->x2-vx+v->cx1,f->y2-vy+v->cy1,
                 wm->medium_color());
@@ -495,7 +495,7 @@ void dev_controll::dev_draw(view *v)
 
     if (selected_light)
     {
-      image *i=cash.img(light_buttons[0]);
+      image *i=cache.img(light_buttons[0]);
       int l=i->width()/2,h=i->height()/2;
       int32_t rx1,ry1;
       the_game->game_to_mouse(selected_light->x,selected_light->y,v,rx1,ry1);
@@ -561,7 +561,7 @@ void dev_controll::dev_draw(view *v)
 
 static light_source *find_light(int32_t x, int32_t y)
 {
-  image *i=cash.img(light_buttons[0]);
+  image *i=cache.img(light_buttons[0]);
   int l=i->width()/2,h=i->height()/2;
   for (light_source *f=first_light_source;f;f=f->next)
   {
@@ -731,7 +731,7 @@ void dev_controll::toggle_omenu()
                            new pick_list(0, 0, DEV_CREATE,
                                          yres / wm->font()->height() / 2,
                                          listable_objs, total_listable, 0,
-                                         NULL, cash.img(window_texture)));
+                                         NULL, cache.img(window_texture)));
 }
 
 static int get_omenu_item(int x)
@@ -772,7 +772,7 @@ void dev_controll::toggle_pmenu()
                            new pick_list(0, 0, DEV_PALETTE,
                                          yres / wm->font()->height() / 2,
                                          pwin_list, total_pals, 0, NULL,
-                                         cash.img(window_texture)));
+                                         cache.img(window_texture)));
 }
 
 
@@ -852,7 +852,7 @@ void dev_controll::toggle_search_window()
         return;
     }
 
-    int bw = cash.img(dev_forward)->width();
+    int bw = cache.img(dev_forward)->width();
     /* FIXME: previous code had 1,1 instead of 0,0 -- investigate */
     search_window = wm->new_window(prop->getd("searchw x", -30),
                                    prop->getd("searchw y", 0), -1, -1,
@@ -860,9 +860,9 @@ void dev_controll::toggle_search_window()
                        "***************************",
                        prop->get("search name", ""),
         new button(bw, wm->font()->height() + 5, ID_SEARCH_BACKWARD,
-                   cash.img(dev_backward),
+                   cache.img(dev_backward),
         new button(bw * 3, wm->font()->height() + 5, ID_SEARCH_FOREWARD,
-                   cash.img(dev_forward), NULL))), "SEARCH");
+                   cache.img(dev_forward), NULL))), "SEARCH");
 
     /* FIXME: shouldn't this be 1? */
     searchw_on = 0;
@@ -1192,7 +1192,7 @@ void dev_controll::do_command(char const *command, event &ev)
     else
     {
       current_level->delete_object(selected_object);
-      if (S_DELETE_SND>0) cash.sfx(S_DELETE_SND)->play(sfx_volume/2);
+      if (S_DELETE_SND>0) cache.sfx(S_DELETE_SND)->play(sfx_volume/2);
       selected_object=NULL;
     }
       }
@@ -1203,7 +1203,7 @@ void dev_controll::do_command(char const *command, event &ev)
     if (current_level)
     {
           current_level->remove_light(selected_light);
-      if (S_DELETE_SND>0) cash.sfx(S_DELETE_SND)->play(sfx_volume/2);
+      if (S_DELETE_SND>0) cache.sfx(S_DELETE_SND)->play(sfx_volume/2);
     }
     else
           delete_light(selected_light);
@@ -1396,17 +1396,17 @@ void dev_controll::toggle_light_window()
     lightw = wm->new_window(prop->getd("light create x", 0),
                             prop->getd("light create y", 0), -1, -1,
         new button_box(0, 0, DEV_LIGHT_BUTTON_BOX, 1,
-            new button(bw * 0, bh * 0, DEV_LIGHT0, cash.img(light_buttons[0]),
-            new button(bw * 1, bh * 0, DEV_LIGHT1, cash.img(light_buttons[1]),
-            new button(bw * 2, bh * 0, DEV_LIGHT2, cash.img(light_buttons[2]),
-            new button(bw * 0, bh * 1, DEV_LIGHT3, cash.img(light_buttons[3]),
-            new button(bw * 1, bh * 1, DEV_LIGHT4, cash.img(light_buttons[4]),
-            new button(bw * 2, bh * 1, DEV_LIGHT5, cash.img(light_buttons[5]),
-            new button(bw * 0, bh * 2, DEV_LIGHT6, cash.img(light_buttons[6]),
-            new button(bw * 1, bh * 2, DEV_LIGHT7, cash.img(light_buttons[7]),
-            new button(bw * 2, bh * 2, DEV_LIGHT8, cash.img(light_buttons[8]),
-            new button(bw * 0, bh * 3, DEV_LIGHT9, cash.img(light_buttons[9]),
-            new button(bw * 1, bh * 3, DEV_AMBIENT, cash.img(light_buttons[11]),
+            new button(bw * 0, bh * 0, DEV_LIGHT0, cache.img(light_buttons[0]),
+            new button(bw * 1, bh * 0, DEV_LIGHT1, cache.img(light_buttons[1]),
+            new button(bw * 2, bh * 0, DEV_LIGHT2, cache.img(light_buttons[2]),
+            new button(bw * 0, bh * 1, DEV_LIGHT3, cache.img(light_buttons[3]),
+            new button(bw * 1, bh * 1, DEV_LIGHT4, cache.img(light_buttons[4]),
+            new button(bw * 2, bh * 1, DEV_LIGHT5, cache.img(light_buttons[5]),
+            new button(bw * 0, bh * 2, DEV_LIGHT6, cache.img(light_buttons[6]),
+            new button(bw * 1, bh * 2, DEV_LIGHT7, cache.img(light_buttons[7]),
+            new button(bw * 2, bh * 2, DEV_LIGHT8, cache.img(light_buttons[8]),
+            new button(bw * 0, bh * 3, DEV_LIGHT9, cache.img(light_buttons[9]),
+            new button(bw * 1, bh * 3, DEV_AMBIENT, cache.img(light_buttons[11]),
             NULL))))))))))),
         new text_field(0, bh * 4, DEV_LIGHTW, "W ", "******",
                        prop->getd("light create w", 0),
@@ -1453,7 +1453,7 @@ void dev_controll::make_ai_window(game_object *o)
     aiw=wm->new_window(prop->getd("ai x",0),
                prop->getd("ai y",0),
                -1,-1,
-       new button(wl,owh-20,DEV_AI_OK,cash.img(dev_ok),first),"ai");
+       new button(wl,owh-20,DEV_AI_OK,cache.img(dev_ok),first),"ai");
 
   }
   else
@@ -1461,7 +1461,7 @@ void dev_controll::make_ai_window(game_object *o)
     aiw=wm->new_window(prop->getd("ai x",0),
                prop->getd("ai y",0),
                -1,-1,
-       new button(wl,wh-20,DEV_AI_OK,cash.img(dev_ok),
+       new button(wl,wh-20,DEV_AI_OK,cache.img(dev_ok),
        new text_field(wl,wh+th*0, DEV_AI_XVEL,    symbol_str("ai_xvel"),"#####",(double)o->xvel(),
        new text_field(wl,wh+th*1, DEV_AI_YVEL,    symbol_str("ai_yvel"),"#####",(double)o->yvel(),
        new text_field(wl,wh+th*2, DEV_AI_XACEL,   symbol_str("ai_xacel"),"#####",(double)o->xacel(),
@@ -1634,13 +1634,13 @@ void dev_controll::pick_handle_input(event &ev)
     if (find && current_area && dc)
     {
       if (area_win) close_area_win(0);
-      int wl=0,wh=0,th=wm->font()->height()+12,bw=cash.img(dev_ok)->width()+10;
+      int wl=0,wh=0,th=wm->font()->height()+12,bw=cache.img(dev_ok)->width()+10;
       area_win=wm->new_window(prop->getd("area_box x",0),
                   prop->getd("area_box y",0),
                   -1,-1,
 
-                  new button(wl+bw*0,wh-8,DEV_AREA_OK,cash.img(dev_ok),
-                  new button(wl+bw*1,wh-8,DEV_AREA_DELETE,cash.img(dev_del),
+                  new button(wl+bw*0,wh-8,DEV_AREA_OK,cache.img(dev_ok),
+                  new button(wl+bw*1,wh-8,DEV_AREA_DELETE,cache.img(dev_del),
 
                   new text_field(wl,wh+th*1,DEV_AREA_AMBIENT,         symbol_str("a_ambient"),"******",current_area->ambient,
                               new text_field(wl,wh+th*2,DEV_AREA_AMBIENT_SPEED,   symbol_str("a_aspeed"),"******",current_area->ambient_speed,
@@ -1969,21 +1969,21 @@ void dev_controll::handle_event(event &ev)
         oedit=wm->new_window(prop->getd("oedit x",0),
                  prop->getd("oedit y",0),
                  -1,-1,new button_box(0,0,ID_NULL,1,
-        new button(bw*0,0,DEV_OEDIT_OK,cash.img(dev_ok),
-        new button(bw*1,0,DEV_OEDIT_MOVE,cash.img(dev_move),
-        new button(bw*2,0,DEV_OEDIT_FRONT,cash.img(dev_front),
-            new button(bw*3,0,DEV_OEDIT_BACK,cash.img(dev_back),
-            new button(bw*4,0,DEV_OEDIT_COPY,cash.img(dev_copy),
-        new button(bw*0,bh*1,DEV_OEDIT_DELETE,cash.img(dev_del),
+        new button(bw*0,0,DEV_OEDIT_OK,cache.img(dev_ok),
+        new button(bw*1,0,DEV_OEDIT_MOVE,cache.img(dev_move),
+        new button(bw*2,0,DEV_OEDIT_FRONT,cache.img(dev_front),
+            new button(bw*3,0,DEV_OEDIT_BACK,cache.img(dev_back),
+            new button(bw*4,0,DEV_OEDIT_COPY,cache.img(dev_copy),
+        new button(bw*0,bh*1,DEV_OEDIT_DELETE,cache.img(dev_del),
                NULL)))))),
-           new button(bw*5,bh*0,DEV_OEDIT_AI,cash.img(dev_ai),
+           new button(bw*5,bh*0,DEV_OEDIT_AI,cache.img(dev_ai),
 
            new button_box(bw*1,bh*1,DEV_OEDIT_CHAR_BOX,0,
-           new button(bw*1,bh*1,DEV_OEDIT_LEFT,cash.img(dev_char_left),
-           new button(bw*2,bh*1,DEV_OEDIT_RIGHT,cash.img(dev_char_right),NULL)),
+           new button(bw*1,bh*1,DEV_OEDIT_LEFT,cache.img(dev_char_left),
+           new button(bw*2,bh*1,DEV_OEDIT_RIGHT,cache.img(dev_char_right),NULL)),
 
-           new button(bw*3,bh*1,DEV_OBJECTS_DELETE,cash.img(dev_objects),
-           new button(bw*4,bh*1,DEV_LIGHTS_DELETE,cash.img(dev_lights),NULL))))),
+           new button(bw*3,bh*1,DEV_OBJECTS_DELETE,cache.img(dev_objects),
+           new button(bw*4,bh*1,DEV_LIGHTS_DELETE,cache.img(dev_lights),NULL))))),
                  symbol_str("l_EDIT"));
 
 
@@ -2007,10 +2007,10 @@ void dev_controll::handle_event(event &ev)
                  prop->getd("ledit y",0),
                  -1,-1,
               new button_box(0,0,ID_NULL,1,
-                   new button(bw*0,0,DEV_LEDIT_OK,cash.img(dev_ok),
-               new button(bw*1,0,DEV_LEDIT_MOVE,cash.img(dev_move),
-                  new button(bw*2,0,DEV_LEDIT_COPY,cash.img(dev_copy),
-            new button(bw*3,0,DEV_LEDIT_DEL,cash.img(dev_del),NULL)))),
+                   new button(bw*0,0,DEV_LEDIT_OK,cache.img(dev_ok),
+               new button(bw*1,0,DEV_LEDIT_MOVE,cache.img(dev_move),
+                  new button(bw*2,0,DEV_LEDIT_COPY,cache.img(dev_copy),
+            new button(bw*3,0,DEV_LEDIT_DEL,cache.img(dev_del),NULL)))),
             new text_field(0,bh,DEV_LEDIT_W,      "W ","******",edit_light->xshift,
             new text_field(0,bh+th*1,DEV_LEDIT_H, "H ","******",edit_light->yshift,
           new text_field(0,bh+th*2,DEV_LEDIT_R1,"R1","******",(int)(edit_light->inner_radius),
@@ -2151,9 +2151,9 @@ void dev_controll::handle_event(event &ev)
     } break;
     case ID_CACHE_PROFILE :
     {
-      if (current_level && !cash.prof_is_on())
+      if (current_level && !cache.prof_is_on())
       {
-        cash.prof_init();
+        cache.prof_init();
         the_game->show_help("Cache profiling is now on.");
       }
       else the_game->show_help("Cache profiling is already on!");
@@ -2161,9 +2161,9 @@ void dev_controll::handle_event(event &ev)
 
     case ID_CACHE_PROFILE_END :  // ask the user for a file name to save as
     {
-      if (cash.prof_is_on())
+      if (cache.prof_is_on())
       {
-        cash.prof_uninit();
+        cache.prof_uninit();
         the_game->show_help(symbol_str("prof_off"));
       } else the_game->show_help(symbol_str("prof"));
     } break;
@@ -2753,7 +2753,7 @@ void dev_controll::handle_event(event &ev)
         if (!edit_object && link_object && selected_object && link_object!=selected_object)
     {
       link_object->add_object(selected_object);
-      if (S_LINK_SND>0) cash.sfx(S_LINK_SND)->play(sfx_volume/2);
+      if (S_LINK_SND>0) cache.sfx(S_LINK_SND)->play(sfx_volume/2);
       the_game->need_refresh();
     }
 
@@ -3420,10 +3420,10 @@ void dev_controll::show_mem()
   {
     if (foretiles[i]>=0)
     {
-      if (cash.loaded(foretiles[i]))
+      if (cache.loaded(foretiles[i]))
       {
     t++;
-    s+=cash.foret(foretiles[i])->size();
+    s+=cache.foret(foretiles[i])->size();
       }
     }
   }
@@ -3434,10 +3434,10 @@ void dev_controll::show_mem()
   {
     if (backtiles[i]>=0)
     {
-      if (cash.loaded(foretiles[i]))
+      if (cache.loaded(foretiles[i]))
       {
     t++;
-    s+=cash.backt(backtiles[i])->size();
+    s+=cache.backt(backtiles[i])->size();
       }
     }
   }
@@ -3465,7 +3465,7 @@ void dev_cleanup()
     jfree(listable_objs);
     listable_objs=NULL;
   }
-  crc_man.clean_up();
+  crc_manager.clean_up();
 
 }
 
@@ -3640,13 +3640,13 @@ void toggle_edit_mode()
   dev=dev^EDIT_MODE;
   if (dev&EDIT_MODE)
   {
-    wm->set_mouse_shape(cash.img(c_normal)->copy(),1,1);
+    wm->set_mouse_shape(cache.img(c_normal)->copy(),1,1);
     pal->load();
   }
   else
   {
     if (dev&MAP_MODE) dev-=MAP_MODE;                        // no map mode while playing!
-    wm->set_mouse_shape(cash.img(c_target)->copy(),8,8);
+    wm->set_mouse_shape(cache.img(c_target)->copy(),8,8);
   }
   if ((dev&EDIT_MODE) && !dev_menu)
   {

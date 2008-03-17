@@ -16,15 +16,15 @@
 VolumeWindow::VolumeWindow() : Jwindow("Volume")
 {
     char const *ff = "art/frame.spe";
-    u_u = cash.reg(ff, "u_u", SPEC_IMAGE, 1),
-    u_d = cash.reg(ff, "u_u", SPEC_IMAGE, 1),
-    u_ua = cash.reg(ff, "u_ua", SPEC_IMAGE, 1),
-    u_da = cash.reg(ff, "u_da", SPEC_IMAGE, 1),
-    d_u = cash.reg(ff, "d_u", SPEC_IMAGE, 1),
-    d_d = cash.reg(ff, "d_u", SPEC_IMAGE, 1),
-    d_ua = cash.reg(ff, "d_ua", SPEC_IMAGE, 1),
-    d_da = cash.reg(ff, "d_da", SPEC_IMAGE, 1),
-    slider = cash.reg(ff, "volume_slide", SPEC_IMAGE, 1);
+    u_u = cache.reg(ff, "u_u", SPEC_IMAGE, 1),
+    u_d = cache.reg(ff, "u_u", SPEC_IMAGE, 1),
+    u_ua = cache.reg(ff, "u_ua", SPEC_IMAGE, 1),
+    u_da = cache.reg(ff, "u_da", SPEC_IMAGE, 1),
+    d_u = cache.reg(ff, "d_u", SPEC_IMAGE, 1),
+    d_d = cache.reg(ff, "d_u", SPEC_IMAGE, 1),
+    d_ua = cache.reg(ff, "d_ua", SPEC_IMAGE, 1),
+    d_da = cache.reg(ff, "d_da", SPEC_IMAGE, 1),
+    slider = cache.reg(ff, "volume_slide", SPEC_IMAGE, 1);
     x = prop->getd("volume_x", xres / 2 - 20);
     y = prop->getd("volume_y", yres / 2 - 50);
     inm->add(new ico_button(10, 27, ID_SFX_DOWN, d_u, d_d, d_ua, d_da,
@@ -35,16 +35,16 @@ VolumeWindow::VolumeWindow() : Jwindow("Volume")
                                   new info_field(10, 86, 0, symbol_str("MUSICv"), NULL)))))));
     
     //reconfigure();
-    bg = cash.reg(ff, "vcontrol", SPEC_IMAGE, 1);
-    l = cash.img(bg)->width();
-    h = cash.img(bg)->height();
+    bg = cache.reg(ff, "vcontrol", SPEC_IMAGE, 1);
+    l = cache.img(bg)->width();
+    h = cache.img(bg)->height();
     screen = new image(l, h, NULL, 2);
     redraw();
 }
 
 void VolumeWindow::redraw()
 {
-    cash.img(bg)->put_image(screen, 0, 0);
+    cache.img(bg)->put_image(screen, 0, 0);
     draw_music_vol();
     draw_sfx_vol();
     inm->redraw();
@@ -56,7 +56,7 @@ void VolumeWindow::draw_vol(int x1, int y1, int x2, int y2, int t,
     int dx = x1 + t * (x2 - x1) / max;
     if(t != 0)
     {
-        cash.img(slider)->put_image(screen, x1, y1);    
+        cache.img(slider)->put_image(screen, x1, y1);    
 //      screen->bar(x1,y1,dx,y2,c1);
     }
     else

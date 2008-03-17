@@ -35,16 +35,16 @@ char lfname[100]="";          // name of compiled lisp code cache file
 #define touch(x) { (x)->last_access=last_access++; \
 		   if ((x)->last_access<0) { normalize(); (x)->last_access=1; } }
 
-crc_manager crc_man;
+CrcManager crc_manager;
 
 int past_startup=0;
 
 int crc_man_write_crc_file(char const *filename)
 {
-  return crc_man.write_crc_file(filename);
+  return crc_manager.write_crc_file(filename);
 }
 
-int crc_manager::write_crc_file(char const *filename)  // return 0 on failure
+int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
 {
   char msg[100];
   sprintf(msg, "%s", symbol_str("calc_crc"));  // this may take some time, show the user a status indicator
@@ -97,7 +97,7 @@ int crc_manager::write_crc_file(char const *filename)  // return 0 on failure
   return 1;  
 }
 
-int crc_manager::load_crc_file(char const *filename)
+int CrcManager::load_crc_file(char const *filename)
 {
   bFILE *fp=open_file(filename,"rb");
   if (fp->open_failure())
@@ -121,7 +121,7 @@ int crc_manager::load_crc_file(char const *filename)
   return 1;  
 }
 
-void crc_manager::clean_up()
+void CrcManager::clean_up()
 {
   for (int i=0;i<total_files;i++)
     delete files[i];
@@ -131,40 +131,40 @@ void crc_manager::clean_up()
   files=NULL;
 }
 
-crced_file::~crced_file()
+CrcedFile::~CrcedFile()
 {
   jfree(filename);
 }
 
-crced_file::crced_file(char const *name) 
+CrcedFile::CrcedFile(char const *name) 
 { 
   filename=strcpy((char *)jmalloc(strlen(name)+1,"crc_file"),name);
   crc_calculated=0;
 }
 
-crc_manager::crc_manager()
+CrcManager::CrcManager()
 {
   total_files=0;
   files=NULL;
 }
 
-int crc_manager::get_filenumber(char const *filename)
+int CrcManager::get_filenumber(char const *filename)
 {
   for (int i=0;i<total_files;i++)
     if (!strcmp(filename,files[i]->filename)) return i;
   total_files++;
-  files=(crced_file **)jrealloc(files,total_files*sizeof(crced_file *),"crc_file_list");
-  files[total_files-1]=new crced_file(filename);
+  files=(CrcedFile **)jrealloc(files,total_files*sizeof(CrcedFile *),"crc_file_list");
+  files[total_files-1]=new CrcedFile(filename);
   return total_files-1;
 }
 
-char *crc_manager::get_filename(int32_t filenumber)
+char *CrcManager::get_filename(int32_t filenumber)
 {
   CHECK(filenumber>=0 && filenumber<total_files);
   return files[filenumber]->filename;
 }
 
-uint32_t crc_manager::get_crc(int32_t filenumber, int &failed)
+uint32_t CrcManager::get_crc(int32_t filenumber, int &failed)
 {    
   CHECK(filenumber>=0 && filenumber<total_files);
   if (files[filenumber]->crc_calculated) 
@@ -176,14 +176,14 @@ uint32_t crc_manager::get_crc(int32_t filenumber, int &failed)
   return 0;
 }
 
-void crc_manager::set_crc(int32_t filenumber, uint32_t crc)
+void CrcManager::set_crc(int32_t filenumber, uint32_t crc)
 {
   CHECK(filenumber>=0 && filenumber<total_files);
   files[filenumber]->crc_calculated=1;
   files[filenumber]->crc=crc;
 }
 
-void cache_list::unmalloc(cache_item *i)
+void CacheList::unmalloc(CacheItem *i)
 {
   switch (i->type)
   {
@@ -205,7 +205,7 @@ void cache_list::unmalloc(cache_item *i)
 
 
 
-void cache_list::prof_init()
+void CacheList::prof_init()
 {
   if (prof_data)
     jfree(prof_data);
@@ -216,10 +216,10 @@ void cache_list::prof_init()
 
 static int c_sorter(const void *a, const void *b)
 {
-  return cash.compare(*(int *)a,*(int *)b);
+  return cache.compare(*(int *)a,*(int *)b);
 }
 
-int cache_list::compare(int a, int b)
+int CacheList::compare(int a, int b)
 {
   if (prof_data[a]<prof_data[b])
     return 1;
@@ -229,13 +229,13 @@ int cache_list::compare(int a, int b)
 }
 
 
-int cache_list::prof_size()
+int CacheList::prof_size()
 {
   int size=0;     // count up the size for a spec enrty
   size+=2;        // total filenames
   int i;
-  for (i=0;i<crc_man.total_filenames();i++)
-      size+=strlen(crc_man.get_filename(i))+2;    // filename + 0 + size of string
+  for (i=0;i<crc_manager.total_filenames();i++)
+      size+=strlen(crc_manager.get_filename(i))+2;    // filename + 0 + size of string
 
   size+=4;       // number of entries saved
 
@@ -247,7 +247,7 @@ int cache_list::prof_size()
 }
 
 
-void cache_list::prof_write(bFILE *fp)
+void CacheList::prof_write(bFILE *fp)
 {
   if (prof_data)
   {
@@ -258,12 +258,12 @@ void cache_list::prof_write(bFILE *fp)
 
     if (fp)
     {
-      fp->write_uint16(crc_man.total_filenames());
-      for (i=0;i<crc_man.total_filenames();i++)
+      fp->write_uint16(crc_manager.total_filenames());
+      for (i=0;i<crc_manager.total_filenames();i++)
       {
-	int l=strlen(crc_man.get_filename(i))+1;
+	int l=strlen(crc_manager.get_filename(i))+1;
         fp->write_uint8(l);
-	fp->write(crc_man.get_filename(i),l);
+	fp->write(crc_manager.get_filename(i),l);
       }
 
       int tsaved=0;
@@ -289,7 +289,7 @@ void cache_list::prof_write(bFILE *fp)
   } else dprintf("Cache profiling was not initialized\n");
 }
 
-void cache_list::prof_uninit()
+void CacheList::prof_uninit()
 {
   if (prof_data)
   {
@@ -303,10 +303,10 @@ int *sorted_id_list;
 
 static int s_offset_compare(const void *a, const void *b)
 {
-  return cash.offset_compare(*(int *)a,*(int *)b);
+  return cache.offset_compare(*(int *)a,*(int *)b);
 }
 
-int cache_list::offset_compare(int a, int b)
+int CacheList::offset_compare(int a, int b)
 {
   if (list[a].offset<list[b].offset)
     return -1;
@@ -320,14 +320,14 @@ int cache_list::offset_compare(int a, int b)
 }
 
 
-int cache_list::search(int *sarray, uint16_t filenum, int32_t offset)
+int CacheList::search(int *sarray, uint16_t filenum, int32_t offset)
 {
   int x1=0,x2=total-1;
   int split;
   do
   {
     split=(x1+x2)/2;
-    cache_item *e=list+sarray[split];
+    CacheItem *e=list+sarray[split];
 
     if (e->offset<offset)      // search to the right    
       x1=split+1;
@@ -358,7 +358,7 @@ static int load_chars()  // returns 0 if cache filled
   
 }
 
-void cache_list::note_need(int id)
+void CacheList::note_need(int id)
 {
   if (list[id].last_access<0)
     list[id].last_access=-2;
@@ -366,7 +366,7 @@ void cache_list::note_need(int id)
     list[id].last_access=2;
 }
 
-void cache_list::preload_cache_object(int type)
+void CacheList::preload_cache_object(int type)
 {
   if (type<0xffff)
   {
@@ -383,12 +383,12 @@ void cache_list::preload_cache_object(int type)
 	void *call_with=NULL;
 	push_onto_list(new_lisp_number(type),call_with);
 
-	void *cache_list=eval_function((lisp_symbol *)cache_fun,call_with);
-	p_ref r1(cache_list);
+	void *CacheList=eval_function((lisp_symbol *)cache_fun,call_with);
+	p_ref r1(CacheList);
 
-	if (cache_list && lcar(cache_list))
+	if (CacheList && lcar(CacheList))
 	{
-	  void *obj_list=lcar(cache_list);
+	  void *obj_list=lcar(CacheList);
 	  while (obj_list)
 	  {
 	    int t=lnumber_value(CAR(obj_list));
@@ -399,9 +399,9 @@ void cache_list::preload_cache_object(int type)
 	    obj_list=CDR(obj_list);
 	  }
 	} 
-	if (cache_list && lcdr(cache_list))
+	if (CacheList && lcdr(CacheList))
 	{
-	  void *id_list=lcar(lcdr(cache_list));
+	  void *id_list=lcar(lcdr(CacheList));
 	  while (id_list)
 	  {
 	    int id=lnumber_value(CAR(id_list));
@@ -421,7 +421,7 @@ void cache_list::preload_cache_object(int type)
   }
 }
 
-void cache_list::preload_cache(level *lev)
+void CacheList::preload_cache(level *lev)
 {
   game_object *f;
   int i;
@@ -468,7 +468,7 @@ void cache_list::preload_cache(level *lev)
   load_chars();
 }
 
-void cache_list::load_cache_prof_info(char *filename, level *lev)
+void CacheList::load_cache_prof_info(char *filename, level *lev)
 {
   int j;
   for (j=0;j<this->total;j++)
@@ -503,8 +503,8 @@ void cache_list::load_cache_prof_info(char *filename, level *lev)
 	  fnum_remap[i]=-1;                    // initialize the map to no-map
 
 	  int j;
-	  for (j=0;j<crc_man.total_filenames();j++)
-	    if (!strcmp(crc_man.get_filename(j),name))
+	  for (j=0;j<crc_manager.total_filenames();j++)
+	    if (!strcmp(crc_manager.get_filename(j),name))
 	      fnum_remap[i]=j;
 	}
 	
@@ -633,12 +633,12 @@ void cache_list::load_cache_prof_info(char *filename, level *lev)
 }
 
 
-void cache_list::prof_poll_start()
+void CacheList::prof_poll_start()
 {
   poll_start_access=last_access;  
 }
 
-void cache_list::prof_poll_end()
+void CacheList::prof_poll_end()
 {
   if (prof_data)
   {
@@ -651,7 +651,7 @@ void cache_list::prof_poll_end()
   }
 }
 
-void cache_list::unreg(int id)
+void CacheList::unreg(int id)
 {
   if (list[id].file_number)
   {
@@ -670,7 +670,7 @@ static void cache_cleanup(int ret, void *arg)
 { unlink(lfname); 
 }
 
-void cache_list::create_lcache()
+void CacheList::create_lcache()
 {
 #ifdef WIN32
 	char *prefix="c:\\";
@@ -717,7 +717,7 @@ void cache_list::create_lcache()
 	lcache_number=-1;
 }
 
-cache_list::cache_list()
+CacheList::CacheList()
 {
   // start out with a decent sized cache buffer because it's going to get allocated anyway. 
   total=0; 
@@ -733,11 +733,11 @@ cache_list::cache_list()
   create_lcache();
 }
 
-cache_list::~cache_list()
+CacheList::~CacheList()
 { 
 }
 
-void cache_list::empty()
+void CacheList::empty()
 {
   for (int i=0;i<total;i++)
   {
@@ -777,22 +777,22 @@ void cache_list::empty()
   prof_data=NULL;
 }
 
-void cache_list::locate(cache_item *i, int local_only)
+void CacheList::locate(CacheItem *i, int local_only)
 {
-//  dprintf("cache in %s, type %d, offset %d\n",crc_man.get_filename(i->file_number),i->type,i->offset);
+//  dprintf("cache in %s, type %d, offset %d\n",crc_manager.get_filename(i->file_number),i->type,i->offset);
   if (i->file_number!=last_file)
   {
     if (fp) delete fp;
     if (last_dir) delete last_dir; 
     if (local_only)
-      fp=new jFILE(crc_man.get_filename(i->file_number),"rb");
+      fp=new jFILE(crc_manager.get_filename(i->file_number),"rb");
     else
-      fp=open_file(crc_man.get_filename(i->file_number),"rb");
+      fp=open_file(crc_manager.get_filename(i->file_number),"rb");
 
 
     if (fp->open_failure())
     {
-      printf("Ooch. Could not open file %s\n",crc_man.get_filename(i->file_number));
+      printf("Ooch. Could not open file %s\n",crc_manager.get_filename(i->file_number));
       delete fp;
       exit(0);
     }
@@ -809,7 +809,7 @@ void cache_list::locate(cache_item *i, int local_only)
   used=1;
 }
 
-int32_t cache_list::alloc_id()
+int32_t CacheList::alloc_id()
 {
   int id;
   if (prof_data)
@@ -826,7 +826,7 @@ int32_t cache_list::alloc_id()
   else
   {
     int i;
-    cache_item *ci=list;
+    CacheItem *ci=list;
     for (i=0,id=-1;i<total && id<0;i++,ci++)        // scan list for a free id
     {
       if (ci->file_number<0)
@@ -836,7 +836,7 @@ int32_t cache_list::alloc_id()
     if (id<0)                                 // if no free id's then make list bigger
     {
       int add_size=20;
-      list=(cache_item *)jrealloc(list,(sizeof(cache_item)*(total+add_size)),"Cache list");
+      list=(CacheItem *)jrealloc(list,(sizeof(CacheItem)*(total+add_size)),"Cache list");
       for (i=0;i<add_size;i++)
       {
         list[total+i].file_number=-1;         // mark new entries as new
@@ -855,11 +855,11 @@ int32_t cache_list::alloc_id()
 
 
 
-int32_t cache_list::reg_lisp_block(Cell *block)
+int32_t CacheList::reg_lisp_block(Cell *block)
 { 
   uint32_t s;
   if (lcache_number==-1)
-    lcache_number=crc_man.get_filenumber(lfname);
+    lcache_number=crc_manager.get_filenumber(lfname);
 
   if (can_cache_lisp())
   {
@@ -881,8 +881,8 @@ int32_t cache_list::reg_lisp_block(Cell *block)
       exit(0);
     }
   }
-  int id=alloc_id(),fn=crc_man.get_filenumber(lfname);
-  cache_item *ci=list+id;
+  int id=alloc_id(),fn=crc_manager.get_filenumber(lfname);
+  CacheItem *ci=list+id;
   CHECK(id<total && list[id].file_number<0);
 
   ci->file_number=fn;
@@ -902,7 +902,7 @@ int32_t cache_list::reg_lisp_block(Cell *block)
   return id;    
 }
 
-int32_t cache_list::reg_object(char const *filename, void *object, int type, int rm_dups)
+int32_t CacheList::reg_object(char const *filename, void *object, int type, int rm_dups)
 { 
   char *name;
   if (item_type(object)==L_CONS_CELL)      // see if we got a object with a filename included
@@ -916,10 +916,10 @@ int32_t cache_list::reg_object(char const *filename, void *object, int type, int
 
 extern int total_files_open;
 
-int32_t cache_list::reg(char const *filename, char const *name, int type, int rm_dups)
+int32_t CacheList::reg(char const *filename, char const *name, int type, int rm_dups)
 {
-	int id=alloc_id(),i,fn=crc_man.get_filenumber(filename);
-	cache_item *ci=list+id;
+	int id=alloc_id(),i,fn=crc_manager.get_filenumber(filename);
+	CacheItem *ci=list+id;
 	CHECK(id<total && list[id].file_number<0);
 
 	if( type == SPEC_EXTERN_SFX ) // If a extern sound effect then just make sure it's there
@@ -1001,10 +1001,10 @@ int32_t cache_list::reg(char const *filename, char const *name, int type, int rm
 }
 
 
-void cache_list::normalize()
+void CacheList::normalize()
 {
   int j;
-  cache_item *ci=list;
+  CacheItem *ci=list;
   last_access=-1;
   for (j=0;j<total;j++,ci++)
   {
@@ -1016,9 +1016,9 @@ void cache_list::normalize()
   last_access++;
 }
 
-backtile *cache_list::backt(int id)
+backtile *CacheList::backt(int id)
 {
-  cache_item *me=list+id;
+  CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
 
   if (me->last_access>=0)  
@@ -1039,9 +1039,9 @@ backtile *cache_list::backt(int id)
 }
 
 
-foretile *cache_list::foret(int id)
+foretile *CacheList::foret(int id)
 {
-  cache_item *me=list+id;
+  CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
 
   if (me->last_access>=0)  
@@ -1061,9 +1061,9 @@ foretile *cache_list::foret(int id)
   }  
 }
 
-figure *cache_list::fig(int id)
+figure *CacheList::fig(int id)
 {
-  cache_item *me=list+id;
+  CacheItem *me=list+id;
 //  CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
   if (me->last_access>=0)  
   {
@@ -1082,9 +1082,9 @@ figure *cache_list::fig(int id)
   }  
 }
 
-image *cache_list::img(int id)
+image *CacheList::img(int id)
 {
-  cache_item *me=list+id;
+  CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
   if (me->last_access>=0)  
   {
@@ -1105,9 +1105,9 @@ image *cache_list::img(int id)
   }  
 }
 
-sound_effect *cache_list::sfx(int id)
+sound_effect *CacheList::sfx(int id)
 {
-  cache_item *me=list+id;
+  CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
   if (me->last_access>=0)  
   {
@@ -1117,7 +1117,7 @@ sound_effect *cache_list::sfx(int id)
   else
   {
     touch(me);                                           // hold me, feel me, be me!
-    char *fn=crc_man.get_filename(me->file_number);
+    char *fn=crc_manager.get_filename(me->file_number);
     int sp=alloc_space; alloc_space=ALLOC_SPACE_CACHE;
     me->data=(void *)new sound_effect(fn);
     alloc_space=sp;
@@ -1126,9 +1126,9 @@ sound_effect *cache_list::sfx(int id)
 }
 
 
-part_frame *cache_list::part(int id)
+part_frame *CacheList::part(int id)
 {
-  cache_item *me=list+id;
+  CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
   if (me->last_access>=0)  
   {
@@ -1148,9 +1148,9 @@ part_frame *cache_list::part(int id)
 }
 
 
-Cell *cache_list::lblock(int id)
+Cell *CacheList::lblock(int id)
 {
-  cache_item *me=list+id;
+  CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
   if (!can_cache_lisp()) return (Cell *)me->data;
   if (me->last_access>=0)  
@@ -1169,7 +1169,7 @@ Cell *cache_list::lblock(int id)
 
     if (!cache_read_file)
     {
-      cache_read_file=new jFILE(crc_man.get_filename(me->file_number),"rb");
+      cache_read_file=new jFILE(crc_manager.get_filename(me->file_number),"rb");
       
       int cache_size=80*1024;                   // 80K
       cache_read_file->set_read_buffer_size(cache_size); 
@@ -1201,17 +1201,17 @@ Cell *cache_list::lblock(int id)
   }  
 }
 
-cache_list cash;
+CacheList cache;
 
 void free_up_memory()
 {
-  cash.free_oldest();
+  cache.free_oldest();
 }
 
-void cache_list::free_oldest()
+void CacheList::free_oldest()
 {
   uint32_t i,old_time=last_access;
-  cache_item *ci=list,*oldest=NULL;
+  CacheItem *ci=list,*oldest=NULL;
   ful=1;
 
   for (i=0;i<total;i++,ci++)
@@ -1237,10 +1237,10 @@ void cache_list::free_oldest()
 }
 
 
-void cache_list::show_accessed()
+void CacheList::show_accessed()
 {
   int old=last_access,new_old_accessed;
-  cache_item *ci,*new_old;
+  CacheItem *ci,*new_old;
   
   do
   {
@@ -1260,16 +1260,16 @@ void cache_list::show_accessed()
       ci=new_old;
       old=ci->last_access;
       printf("type=(%20s) file=(%20s) access=(%6ld)\n",spec_types[ci->type],
-	     crc_man.get_filename(ci->file_number),
+	     crc_manager.get_filename(ci->file_number),
 	     (long int)ci->last_access);
     }
   } while (new_old);
 }
 
 
-int cache_list::loaded(int id)
+int CacheList::loaded(int id)
 {
-  cache_item *me=list+id;
+  CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
   if (me->last_access>=0)  
     return 1;
@@ -1278,9 +1278,9 @@ int cache_list::loaded(int id)
 
 
 
-char_tint *cache_list::ctint(int id)
+char_tint *CacheList::ctint(int id)
 {
-  cache_item *me=list+id;
+  CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id" && me->type==SPEC_PALETTE);
   if (me->last_access>=0)  
   {

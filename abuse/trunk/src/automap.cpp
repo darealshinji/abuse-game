@@ -126,9 +126,9 @@ void automap::draw()
       {
 	int id=foretiles[ (*fgline)&0x7fff];
 	if (id>=0)
-          cash.foret(id)->micro_image->put_image(screen,i,j,0);
+          cache.foret(id)->micro_image->put_image(screen,i,j,0);
 	else
-          cash.foret(foretiles[0])->micro_image->put_image(screen,i,j,0);
+          cache.foret(foretiles[0])->micro_image->put_image(screen,i,j,0);
       }
       else
         screen->bar(i,j,i+AUTOTILE_WIDTH-1,j+AUTOTILE_HEIGHT-1,0);

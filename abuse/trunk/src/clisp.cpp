@@ -1384,7 +1384,7 @@ long c_caller(long number, void *args)
 
       int sp=current_space;
       current_space=PERM_SPACE;
-      int id=cash.reg(lstring_value(lcar(args)),NULL,SPEC_EXTERN_SFX,1);
+      int id=cache.reg(lstring_value(lcar(args)),NULL,SPEC_EXTERN_SFX,1);
       if (sym)
         set_symbol_number(sym,id);    // set the symbol value to sfx id				     
       current_space=sp;
@@ -1398,7 +1398,7 @@ long c_caller(long number, void *args)
       if (id<0) return 0;
       a=CDR(a);
       if (!a)
-        cash.sfx(id)->play(127);
+        cache.sfx(id)->play(127);
       else
       {
 	int vol=lnumber_value(lcar(a)); a=CDR(a);
@@ -1413,7 +1413,7 @@ long c_caller(long number, void *args)
 	  }
 	  int32_t y=lnumber_value(lcar(a));
 	  the_game->play_sound(id,vol,x,y);
-	} else cash.sfx(id)->play(vol);        
+	} else cache.sfx(id)->play(vol);        
       }
 
     } break;
@@ -1660,7 +1660,7 @@ long c_caller(long number, void *args)
     case 191 : 
     {
 //      char *fn=lstring_value(CAR(args)); args=CDR(args);      
-//      stat_bar=cash.reg_object(fn,CAR(args),SPEC_IMAGE,1);
+//      stat_bar=cache.reg_object(fn,CAR(args),SPEC_IMAGE,1);
     } break;
     case 192 : 
     {     
@@ -1787,19 +1787,19 @@ long c_caller(long number, void *args)
     {
       char *fn=lstring_value(CAR(args)); args=CDR(args);
       char *name=lstring_value(CAR(args));
-      big_font_pict=cash.reg(fn,name,SPEC_IMAGE,1);     
+      big_font_pict=cache.reg(fn,name,SPEC_IMAGE,1);     
     } break;
     case 204 :
     {
       char *fn=lstring_value(CAR(args)); args=CDR(args);
       char *name=lstring_value(CAR(args));
-      small_font_pict=cash.reg(fn,name,SPEC_IMAGE,1);     
+      small_font_pict=cache.reg(fn,name,SPEC_IMAGE,1);     
     } break;
     case 205 :
     {
       char *fn=lstring_value(CAR(args)); args=CDR(args);
       char *name=lstring_value(CAR(args));
-      console_font_pict=cash.reg(fn,name,SPEC_IMAGE,1);     
+      console_font_pict=cache.reg(fn,name,SPEC_IMAGE,1);     
     } break;
     case 206 :
     {
@@ -1837,14 +1837,14 @@ long c_caller(long number, void *args)
     {
       char *fn=lstring_value(CAR(args)); args=CDR(args);
       char *name=lstring_value(CAR(args)); args=CDR(args);
-      return cash.reg(fn,name,SPEC_IMAGE,1);
+      return cache.reg(fn,name,SPEC_IMAGE,1);
     } break;
     case 216 :
     {
       int32_t x1=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t y1=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t id=lnumber_value(CAR(args));
-      cash.img(id)->put_image(screen,x1,y1,1);
+      cache.img(id)->put_image(screen,x1,y1,1);
     } break;
     case 217 :
     {
@@ -1911,7 +1911,7 @@ long c_caller(long number, void *args)
     } break;
     case 227 :
     {
-      return cash.reg(lstring_value(CAR(args)),"palette",SPEC_PALETTE,1);
+      return cache.reg(lstring_value(CAR(args)),"palette",SPEC_PALETTE,1);
     } break;
     case 228 :
     {
@@ -2151,11 +2151,11 @@ long c_caller(long number, void *args)
     } break;
     case 268 :
     {
-      return cash.img(lnumber_value(CAR(args)))->width();
+      return cache.img(lnumber_value(CAR(args)))->width();
     } break;
     case 269 :
     {
-      return cash.img(lnumber_value(CAR(args)))->height();
+      return cache.img(lnumber_value(CAR(args)))->height();
     } break;
     case 270 :
     {
@@ -2184,7 +2184,7 @@ long c_caller(long number, void *args)
       int y=lnumber_value(CAR(args));
       c_target=id;
       if (screen)
-        wm->set_mouse_shape(cash.img(c_target)->copy(),x,y);
+        wm->set_mouse_shape(cache.img(c_target)->copy(),x,y);
     } break;
     case 276 :
     {      
