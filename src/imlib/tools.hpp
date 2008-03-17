@@ -36,7 +36,7 @@ class tool_picker : public spicker
   virtual int total() { return total_icons; }
   virtual int item_width() { return iw; } 
   virtual int item_height() { return ih; }
-  virtual void note_new_current(image *screen, input_manager *inm, int x) 
+  virtual void note_new_current(image *screen, InputManager *inm, int x) 
   { wm->push_event(new event(ids[x],NULL)); }
 
   void remap(palette *pal, image *screen);

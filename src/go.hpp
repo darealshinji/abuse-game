@@ -20,7 +20,7 @@ public:
   virtual int size() { return game_object::size()+2; }
   virtual game_objects type() { return O_elcontrol; }  
   virtual ifield *make_fields(int ystart, ifield *Next);
-  virtual void gather_input(input_manager *inm);
+  virtual void gather_input(InputManager *inm);
   virtual void save(FILE *fp) { game_object::save(fp); write_short(fp,allow_dir); }
   virtual int decide() { return 1; }  // not dead
   virtual int move(int cx, int cy, int button)  { return 0; }  // not blocked          
@@ -40,7 +40,7 @@ public :
   virtual void recieve_signal(long signal) { ; }
   virtual game_objects type() { return O_elevator; }
   virtual ifield *make_fields(int ystart, ifield *Next);  
-  virtual void gather_input(input_manager *inm);  
+  virtual void gather_input(InputManager *inm);  
   virtual void save(FILE *fp);
   virtual int can_block(game_object *who);
   virtual int decide();
@@ -56,7 +56,7 @@ public :
   virtual int size();
   virtual game_objects type() { return O_sensor; }
   virtual ifield *make_fields(int ystart, ifield *Next);
-  virtual void gather_input(input_manager *inm);  
+  virtual void gather_input(InputManager *inm);  
   virtual void save(FILE *fp);
 
   virtual void draw();  // only show when DEV mode is on    

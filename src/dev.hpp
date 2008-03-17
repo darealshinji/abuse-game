@@ -35,7 +35,7 @@ class pal_win
   void draw();
 
 public : 
-  jwindow *me;
+  Jwindow *me;
   void close_window();
   void open_window();
   char *name;
@@ -76,7 +76,7 @@ class dev_controll
   area_controller *current_area;
   time_marker last_area_click;
 public :
-  jwindow *backw,*forew,*commandw,*modew,*omenu,*oedit,*ledit,
+  Jwindow *backw,*forew,*commandw,*modew,*omenu,*oedit,*ledit,
           *music_window,*pmenu,*show_menu,*lightw,*aiw,*ambw,*tbw,*area_win,
           *search_window,*memprof;
 
@@ -102,7 +102,7 @@ public :
   dev_controll();
   void handle_event(event &ev);
   void do_command(char const *st, event &ev);
-  int is_pal_win(jwindow *win);
+  int is_pal_win(Jwindow *win);
   void dev_draw(view *v);
   void load_stuff();
   int repeat_key_mode();

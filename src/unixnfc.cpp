@@ -486,7 +486,7 @@ void net_reload()
       base->mem_lock=0;
 
 
-      jwindow *j=wm->new_window(0,yres/2,-1,-1,new info_field(0, 0, 0, "Clients are re-syncing, please wait...",NULL));
+      Jwindow *j=wm->new_window(0,yres/2,-1,-1,new info_field(0, 0, 0, "Clients are re-syncing, please wait...",NULL));
       wm->flush_screen();
       if (!reload_start()) return ;
 
@@ -537,7 +537,7 @@ int get_inputs_from_server(unsigned char *buf)
     gettimeofday(&start,NULL);
 
     int total_retry=0;
-    jwindow *abort=NULL;
+    Jwindow *abort=NULL;
     linked_list input;
     while (base->input_state!=INPUT_PROCESSING)
     { 

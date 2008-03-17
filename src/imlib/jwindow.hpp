@@ -17,8 +17,8 @@
 #include "fonts.hpp"
 
 class ifield;
-class window_manager;
-class jwindow;
+class WindowManager;
+class Jwindow;
 
 extern int frame_top();
 extern int frame_bottom();
@@ -27,20 +27,20 @@ extern int frame_right();
 
 void set_frame_size(int x);
 
-class input_manager
+class InputManager
 {
-  friend class jwindow;
+  friend class Jwindow;
 
 private:
   image *screen;
   ifield *first, *active, *grab;
-  jwindow *cur, *owner;
+  Jwindow *cur, *owner;
   int no_selections_allowed;
 
 public:
-  input_manager(image *Screen, ifield *First);
-  input_manager(jwindow *owner, ifield *First);
-  void handle_event(event &ev, jwindow *j);
+  InputManager(image *Screen, ifield *First);
+  InputManager(Jwindow *owner, ifield *First);
+  void handle_event(event &ev, Jwindow *j);
   ifield *get(int id);
   void redraw();
   void add(ifield *i);
@@ -51,16 +51,16 @@ public:
   void grab_focus(ifield *i);
   void release_focus();
   void allow_no_selections();
-  ~input_manager(); 
+  ~InputManager(); 
 } ;
 
 class ifield
 {
-    friend class jwindow;
-    friend class input_manager;
+    friend class Jwindow;
+    friend class InputManager;
 
 protected:
-    jwindow *owner;
+    Jwindow *owner;
 
 public :
     ifield();
@@ -68,12 +68,12 @@ public :
 
     int id;
     ifield *next;
-    virtual void set_owner(jwindow *owner);
+    virtual void set_owner(Jwindow *owner);
     virtual void move(int newx, int newy) { x = newx; y = newy; }
     virtual void area(int &x1, int &y1, int &x2, int &y2) = 0;
     virtual void draw_first(image *screen) = 0;
     virtual void draw(int active, image *screen) = 0;
-    virtual void handle_event(event &ev, image *screen, input_manager *im) = 0;
+    virtual void handle_event(event &ev, image *screen, InputManager *im) = 0;
     virtual int selectable() { return 1; }
     virtual void remap(filter *f) { ; }
     virtual char *read() = 0;
@@ -82,9 +82,9 @@ public :
     virtual ~ifield();
 } ;
 
-class jwindow
+class Jwindow
 {
-    friend class input_manager;
+    friend class InputManager;
 
 private:
     char *_name;
@@ -94,19 +94,19 @@ private:
     void reconfigure();
 
 protected:
-    jwindow *owner;
+    Jwindow *owner;
     int _x1, _y1, _x2, _y2;
 
 public:
-    jwindow *next;
+    Jwindow *next;
     int x, y, l, h, backg;
     image *screen;
-    input_manager *inm;
+    InputManager *inm;
     void *local_info;  // pointer to info block for local system (may support windows)
 
-    jwindow(char const *name = NULL);
-    jwindow(int X, int Y, int L, int H, ifield *f, char const *name = NULL);
-    ~jwindow();
+    Jwindow(char const *name = NULL);
+    Jwindow(int X, int Y, int L, int H, ifield *f, char const *name = NULL);
+    ~Jwindow();
 
     virtual void redraw();
     void resize(int L, int H);
@@ -132,37 +132,37 @@ public:
     static int bottom_border();
 };
 
-class window_manager
+class WindowManager
 {
-    friend class jwindow;
+    friend class Jwindow;
 
 protected:
-    void add_window(jwindow *);
-    void remove_window(jwindow *);
+    void add_window(Jwindow *);
+    void remove_window(Jwindow *);
 
 public:
     event_handler *eh;
-    jwindow *first, *grab;
+    Jwindow *first, *grab;
     image *screen, *mouse_pic, *mouse_save;
     palette *pal;
     int hi, med, low, bk; // bright, medium, dark and black colors
     int key_state[512];
     enum { inputing, dragging } state;
     int drag_mousex, drag_mousey, frame_suppress;
-    jwindow *drag_window;
+    Jwindow *drag_window;
     JCFont *fnt, *wframe_fnt;
 
-    window_manager(image *, palette *, int hi, int med, int low, JCFont *); 
-    ~window_manager();
+    WindowManager(image *, palette *, int hi, int med, int low, JCFont *); 
+    ~WindowManager();
 
-    jwindow *new_window(int x, int y, int l, int h,
+    Jwindow *new_window(int x, int y, int l, int h,
                         ifield *fields = NULL, char const *Name = NULL);
 
     void set_frame_font(JCFont *fnt) { wframe_fnt = fnt; }
     JCFont *frame_font() { return wframe_fnt; }
-    void close_window(jwindow *j);
-    void resize_window(jwindow *j, int l, int h);
-    void move_window(jwindow *j, int x, int y);
+    void close_window(Jwindow *j);
+    void resize_window(Jwindow *j, int l, int h);
+    void move_window(Jwindow *j, int x, int y);
     void get_event(event &ev);
     void push_event(event *ev) { eh->push_event(ev); }
     int event_waiting() { return eh->event_waiting(); }
@@ -184,10 +184,10 @@ public:
     int key_pressed(int x) { return key_state[x]; }
     void hide_windows();
     void show_windows();
-    void hide_window(jwindow *j);
-    void show_window(jwindow *j);
+    void hide_window(Jwindow *j);
+    void show_window(Jwindow *j);
     void set_frame_suppress(int x) { frame_suppress=x; }
-    void grab_focus(jwindow *j);
+    void grab_focus(Jwindow *j);
     void release_focus();
     int window_in_area(int x1, int y1, int x2, int y2); // true if a window lies in this area
 };

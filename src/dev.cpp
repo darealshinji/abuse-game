@@ -83,7 +83,7 @@ char const *symbol_str(char const *name)
 static game_object *copy_object=NULL;
 
 pmenu *dev_menu=NULL;
-jwindow *mess_win=NULL,*warn_win=NULL;
+Jwindow *mess_win=NULL,*warn_win=NULL;
 
 game_object *edit_object;
 dev_controll *dev_cont=NULL;
@@ -154,7 +154,7 @@ class amb_cont : public scroller
 
 int confirm_quit()
 {
-    jwindow *quitw;
+    Jwindow *quitw;
     image *ok_image, *cancel_image;
 
     ok_image = cash.img(cash.reg("art/frame.spe", "dev_ok",
@@ -3268,7 +3268,7 @@ void dev_controll::save()
 
 }
 
-int dev_controll::is_pal_win(jwindow *win)
+int dev_controll::is_pal_win(Jwindow *win)
 {
   int i;
   for (i=0;i<total_pals;i++)

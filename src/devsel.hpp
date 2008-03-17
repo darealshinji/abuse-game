@@ -17,7 +17,7 @@ class tile_picker : public scroller
   public :
   tile_picker(int X, int Y, int ID, int spec_type, 
 		 int scale, int scroll_h, int Wid, ifield *Next);
-  virtual void handle_inside_event(event &ev, image *screen, input_manager *inm);
+  virtual void handle_inside_event(event &ev, image *screen, InputManager *inm);
   virtual void scroll_event(int newx, image *screen);
   virtual char *read() { return (char *)this; }
   int picw();

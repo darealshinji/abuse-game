@@ -54,7 +54,7 @@ void last_savegame_name(char *buf)
 	sprintf(buf,"%ssave%04d.spe",get_save_filename_prefix(), (last_save_game_number+MAX_SAVE_GAMES-1)%MAX_SAVE_GAMES+1);
 }
 
-jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
+Jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
 {
   ico_button *buts[MAX_SAVE_GAMES];
   int y = 0, i;
@@ -72,7 +72,7 @@ jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
   for (i=0;i<total_saved-1;i++)
     buts[i]->next=buts[i+1];
 
-  return wm->new_window(mx,yres/2-(jwindow::top_border()+ih*5)/2,-1,-1,buts[0]);
+  return wm->new_window(mx,yres/2-(Jwindow::top_border()+ih*5)/2,-1,-1,buts[0]);
 }
 
 int get_save_spot()
@@ -96,7 +96,7 @@ int get_save_spot()
   if((unsigned)(mx + w + 10) > xres) mx = xres - w - 10;
   if( mx < 0) mx = 0;
 
-  jwindow *l_win=create_num_window(mx,MAX_SAVE_GAMES,NULL);
+  Jwindow *l_win=create_num_window(mx,MAX_SAVE_GAMES,NULL);
   event ev;
   int got_level=0;
   int quit=0;
@@ -218,8 +218,8 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 */
 
 
-	jwindow *l_win=create_num_window(0,total_saved,thumb_nails);
-	jwindow *preview=wm->new_window(l_win->x+l_win->l+5,l_win->y,max_w,max_h,NULL,title);
+	Jwindow *l_win=create_num_window(0,total_saved,thumb_nails);
+	Jwindow *preview=wm->new_window(l_win->x+l_win->l+5,l_win->y,max_w,max_h,NULL,title);
 
 	first->put_image(preview->screen,preview->x1(),preview->y1());
 

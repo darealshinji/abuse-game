@@ -52,7 +52,7 @@ enum { NET_OK=1, NET_CANCEL, NET_SERVER_NAME, NET_NAME, NET_PORT, NET_SERVER_POR
 
 void net_configuration::cfg_error(char const *msg)
 {
-  jwindow *j=wm->new_window(-1,0,-1,-1,new info_field(0, 0, 0, msg,
+  Jwindow *j=wm->new_window(-1,0,-1,-1,new info_field(0, 0, 0, msg,
       new button(0, 30,CFG_ERR_OK,symbol_str("ok_button"),NULL)),symbol_str("input_error"));
   event ev;
   do
@@ -93,7 +93,7 @@ int net_configuration::notify_reset()
 }
 
 
-int net_configuration::confirm_inputs(input_manager *i, int server)
+int net_configuration::confirm_inputs(InputManager *i, int server)
 {
   if (server)
   {
@@ -170,7 +170,7 @@ extern int start_running,demo_start,start_edit;
   ifield *ilist=NULL;
   int x=0,y=0;
   
-  jwindow *sv=wm->new_window(50,80,-1,-1,new button(0,0,NET_SERVER,symbol_str("server"),
+  Jwindow *sv=wm->new_window(50,80,-1,-1,new button(0,0,NET_SERVER,symbol_str("server"),
 				     new button(0,wm->font()->height()*2,NET_CLIENT,symbol_str("client"),
 				     new button(0,wm->font()->height()*4,NET_SINGLE,symbol_str("single_play"),
 				     new button(0,wm->font()->height()*6,NET_CANCEL,symbol_str("cancel_net"),
@@ -232,7 +232,7 @@ extern int start_running,demo_start,start_edit;
   }
 
 
-  jwindow *nw=wm->new_window(0,0,-1,-1,ilist,symbol_str("Networking"));
+  Jwindow *nw=wm->new_window(0,0,-1,-1,ilist,symbol_str("Networking"));
 
   done=0;
   do
@@ -287,7 +287,7 @@ void net_configuration::error(char const *message)
     
     button *sb=new button(bx,by,NET_SERVER,ok,NULL);
 
-    input_manager inm(screen,sb);
+    InputManager inm(screen,sb);
     inm.allow_no_selections();
     inm.clear_current();
 
@@ -407,7 +407,7 @@ int net_configuration::get_options(int server)
   int ret=0;
 
   {
-    input_manager inm(screen,list);
+    InputManager inm(screen,list);
     inm.allow_no_selections();
     inm.clear_current();
    
@@ -462,7 +462,7 @@ int net_configuration::input()   // pulls up dialog box and input fileds
     if (main_net_cfg && (main_net_cfg->state==CLIENT || main_net_cfg->state==SERVER))
       sb=new button(x+40,y+ns_h-9-fnt->height(),NET_SINGLE,symbol_str("single_play"),sb);
 
-    input_manager inm(screen,sb);
+    InputManager inm(screen,sb);
 
     inm.allow_no_selections();
     inm.clear_current();

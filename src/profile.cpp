@@ -18,7 +18,7 @@
 #include "objects.hpp"
 
 
-jwindow *prof_win=NULL;
+Jwindow *prof_win=NULL;
 int prof_height=10;
 
 struct prof_info

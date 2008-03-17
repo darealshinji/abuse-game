@@ -174,7 +174,7 @@ void scroller::draw(int active, image *screen)
 }
 
 
-void scroller::handle_event(event &ev, image *screen, input_manager *inm)
+void scroller::handle_event(event &ev, image *screen, InputManager *inm)
 {
   int mx=ev.mouse_move.x,my=ev.mouse_move.y;
   switch (ev.type)
@@ -278,7 +278,7 @@ void scroller::handle_event(event &ev, image *screen, input_manager *inm)
 }
 
 
-void scroller::handle_right(image *screen, input_manager *inm)
+void scroller::handle_right(image *screen, InputManager *inm)
 {
   if (!vert && sx<t-1)
   {
@@ -289,7 +289,7 @@ void scroller::handle_right(image *screen, input_manager *inm)
   }
 }
 
-void scroller::handle_left(image *screen, input_manager *inm)
+void scroller::handle_left(image *screen, InputManager *inm)
 {
   if (!vert && sx>1)
   {
@@ -300,7 +300,7 @@ void scroller::handle_left(image *screen, input_manager *inm)
   }
 }
 
-void scroller::handle_up(image *screen, input_manager *inm)
+void scroller::handle_up(image *screen, InputManager *inm)
 { 
   if (vert && sx>1)
   {
@@ -311,7 +311,7 @@ void scroller::handle_up(image *screen, input_manager *inm)
   }
 }
 
-void scroller::handle_down(image *screen, input_manager *inm)
+void scroller::handle_down(image *screen, InputManager *inm)
 {
   if (vert && sx<t-1)
   {
@@ -408,7 +408,7 @@ pick_list::pick_list(int X, int Y, int ID, int height,
   cur_sel=sx=start_yoffset;
 }
 
-void pick_list::handle_inside_event(event &ev, image *screen, input_manager *inm)
+void pick_list::handle_inside_event(event &ev, image *screen, InputManager *inm)
 {
   if (ev.type==EV_MOUSE_MOVE && activate_on_mouse_move())
   {
@@ -454,7 +454,7 @@ void pick_list::handle_inside_event(event &ev, image *screen, input_manager *inm
   }
 }
 
-void pick_list::handle_up(image *screen, input_manager *inm)
+void pick_list::handle_up(image *screen, InputManager *inm)
 {
   if (cur_sel>0)
     cur_sel--;
@@ -468,7 +468,7 @@ void pick_list::handle_up(image *screen, input_manager *inm)
   scroll_event(sx,screen);	          
 }
 
-void pick_list::handle_down(image *screen, input_manager *inm)
+void pick_list::handle_down(image *screen, InputManager *inm)
 {
   if (cur_sel<t-1)
     cur_sel++;
@@ -622,7 +622,7 @@ void spicker::scroll_event(int newx, image *screen)
 }
 
 
-void spicker::handle_inside_event(event &ev, image *screen, input_manager *inm)
+void spicker::handle_inside_event(event &ev, image *screen, InputManager *inm)
 {
   switch (ev.type)
   {
@@ -685,7 +685,7 @@ void spicker::handle_inside_event(event &ev, image *screen, input_manager *inm)
 
 
 
-void spicker::handle_up(image *screen, input_manager *inm)
+void spicker::handle_up(image *screen, InputManager *inm)
 {
   if (vert && cur_sel>0)
   {
@@ -702,7 +702,7 @@ void spicker::handle_up(image *screen, input_manager *inm)
   }
 }
 
-void spicker::handle_down(image *screen, input_manager *inm)
+void spicker::handle_down(image *screen, InputManager *inm)
 {
   if (vert && cur_sel<t-1)
     cur_sel++;
@@ -717,11 +717,11 @@ void spicker::handle_down(image *screen, input_manager *inm)
   note_new_current(screen,inm,cur_sel);    
 }
 
-void spicker::handle_left(image *screen, input_manager *inm)
+void spicker::handle_left(image *screen, InputManager *inm)
 {
 }
 
-void spicker::handle_right(image *screen, input_manager *inm)
+void spicker::handle_right(image *screen, InputManager *inm)
 {
 }
 

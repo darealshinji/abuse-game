@@ -17,7 +17,7 @@ class console
   int lastx,lasty,w,h,cx,cy;
   JCFont *fnt;
   char *screen;
-  jwindow *con_win;
+  Jwindow *con_win;
   char *name;
   public :
 
