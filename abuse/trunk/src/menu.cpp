@@ -13,6 +13,8 @@
 
 #include "dev.hpp"
 
+#include "ui/volumewindow.hpp"
+
 #include "menu.hpp"
 #include "lisp.hpp"
 #include "game.hpp"
@@ -32,7 +34,8 @@
 #include "sock.hpp"
 
 extern net_protocol *prot;
-jwindow *volume_window=NULL;
+
+static VolumeWindow *volume_window;
 
 //percent is 0..256
 void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int percent)
@@ -261,149 +264,87 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   return choice;
 }
 
-
-static void draw_vol(image *screen, int x1, int y1, int x2, int y2, int t, int max, int c1, int c2, int slider)
-{
-  int dx=x1+t*(x2-x1)/max;
-  if (t!=0)
-  {
-    cash.img(slider)->put_image(screen,x1,y1);    
-//    screen->bar(x1,y1,dx,y2,c1);
-  }
-  else dx--;
-
-  if (dx<x2)
-    screen->bar(dx+1,y1,x2,y2,c2);
-}
-
-static void draw_sfx_vol(int slider)
-{
-  draw_vol(volume_window->screen,6,16,34,22,sfx_volume,127,pal->find_closest(200,75,19),
-	   pal->find_closest(40,0,0),slider);
-}
-
-static void draw_music_vol(int slider)
-{
-  draw_vol(volume_window->screen,6,61,34,67,music_volume,127,pal->find_closest(255,0,0),
-	   pal->find_closest(40,0,0),slider);
-}
-
 static void create_volume_window()
 {
-/*  int vx=0,vy=wm->font()->height()*2,scroller_height=130,bh=wm->font()->height()+5;
+    volume_window = new VolumeWindow();
+    volume_window->inm->allow_no_selections();
+    volume_window->inm->clear_current();
+    volume_window->show();
 
-  volume_window=wm->new_window(prop->getd("volume_x",xres/2-20),
-			       prop->getd("volume_y",yres/2-50),
-			       -1,
-			       -1,
-			       new scroller(vx,vy,LOWER_SFX,0,scroller_height,0,127,
-			       new scroller(vx+30,vy,LOWER_MUSIC,0,scroller_height,0,127,NULL)),symbol_str("VOLUME"));
-  event ev;
-  int done=0;
-  do
-  {
+    wm->grab_focus(volume_window);
     wm->flush_screen();
-    wm->get_event(ev);
-    if (ev.type==EV_CLOSE_WINDOW && ev.window==volume_window) done=1;    
-  } while (!done);
-  wm->close_window(volume_window);
-  volume_window=NULL; */
 
-
-  char const *ff = "art/frame.spe";
-  int t=SPEC_IMAGE;
-  int u_u=cash.reg(ff,"u_u",t,1),
-      u_d=cash.reg(ff,"u_u",t,1),
-      u_ua=cash.reg(ff,"u_ua",t,1),
-      u_da=cash.reg(ff,"u_da",t,1),
-
-      d_u=cash.reg(ff,"d_u",t,1),
-      d_d=cash.reg(ff,"d_u",t,1),
-      d_ua=cash.reg(ff,"d_ua",t,1),
-      d_da=cash.reg(ff,"d_da",t,1),
-      slider=cash.reg(ff,"volume_slide",t,1);
-  
-  volume_window=wm->new_window(prop->getd("volume_x",xres/2-20),
-			       prop->getd("volume_y",yres/2-50),
-			       39, 101,
-			     new ico_button(10,27,ID_SFX_DOWN,d_u,d_d,d_ua,d_da,
-			     new ico_button(21,27,ID_SFX_UP,u_u,u_d,u_ua,u_da,
-                             new info_field(15,42,0,symbol_str("SFXv"),
-
-			     new ico_button(10,72,ID_MUSIC_DOWN,d_u,d_d,d_ua,d_da,
-			     new ico_button(21,72,ID_MUSIC_UP,u_u,u_d,u_ua,u_da,
-                             new info_field(10,86,0,symbol_str("MUSICv"),
-					    NULL)))))));
-
-  cash.img(cash.reg(ff,"vcontrol",t,1))->put_image(volume_window->screen,0,0);
-  draw_music_vol(slider);
-  draw_sfx_vol(slider);
-  volume_window->inm->redraw();
-  wm->grab_focus(volume_window);
-  wm->flush_screen();
-
-  volume_window->inm->allow_no_selections();
-  volume_window->inm->clear_current();
-
-  event ev;
-  do
-  {
-    do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->event_waiting()); 
-    wm->flush_screen();
-    if (ev.type==EV_MESSAGE)
+    while(volume_window)
     {
-      switch (ev.message.id)
-      {
-      	case ID_SFX_UP :
-	{ if (volume_window) 
-	  {
-	    sfx_volume+=16;
-	    if (sfx_volume>127) sfx_volume=127;
-	    draw_sfx_vol(slider);
-	    char const *s = "sfx/ambtech1.wav";
-	    if (sound_avail&SFX_INITIALIZED) 
-	      cash.sfx(cash.reg(s,s,SPEC_EXTERN_SFX,1))->play(sfx_volume);
-	  }
-	} break;
-      	case ID_SFX_DOWN :
-	{ if (volume_window) 
-	  {
-	    sfx_volume-=16;
-	    if (sfx_volume<0) sfx_volume=0;
-	    draw_sfx_vol(slider);
-	    char const *s = "sfx/ambtech1.wav";
-	    if (sound_avail&SFX_INITIALIZED) 
-	      cash.sfx(cash.reg(s,s,SPEC_EXTERN_SFX,1))->play(sfx_volume);
-	  }
-	} break;
+        event ev;
 
-      	case ID_MUSIC_UP :
-	{ if (volume_window) 
-	  {
-	    music_volume+=16;
-	    if (music_volume>127) music_volume=127;
-	    draw_music_vol(slider);
-	    if (current_song) current_song->set_volume(music_volume);
-	  }
-	} break;
-      	case ID_MUSIC_DOWN :
-	{ if (volume_window) 
-	  {
-	    music_volume-=16;
-	    if (music_volume<0) music_volume=0;
-	    draw_music_vol(slider);
-	    if (current_song) current_song->set_volume(music_volume);
-	  }
-	} break;
-      }
-    } else if (ev.type==EV_CLOSE_WINDOW || (ev.type==EV_KEY && ev.key==JK_ESC))
-    {
-      wm->close_window(volume_window);
-      volume_window=NULL;
+        do
+        {
+            wm->get_event(ev);
+        }
+        while(ev.type == EV_MOUSE_MOVE && wm->event_waiting());
+
+        wm->flush_screen();
+
+        if(ev.type == EV_CLOSE_WINDOW
+                 || (ev.type == EV_KEY && ev.key == JK_ESC))
+        {
+            wm->close_window(volume_window);
+            volume_window = NULL;
+        }
+
+        if(!volume_window)
+            break;
+
+        if(ev.type == EV_MESSAGE)
+        {
+            char const *s;
+
+            switch(ev.message.id)
+            {
+            case ID_SFX_UP:
+                sfx_volume += 16;
+                if(sfx_volume > 127)
+                    sfx_volume = 127;
+                volume_window->draw_sfx_vol();
+                s = "sfx/ambtech1.wav";
+                if(sound_avail & SFX_INITIALIZED) 
+                    cash.sfx(cash.reg(s, s, SPEC_EXTERN_SFX, 1))
+                        ->play(sfx_volume);
+                break;
+            case ID_SFX_DOWN:
+                sfx_volume -= 16;
+                if(sfx_volume < 0)
+                    sfx_volume = 0;
+                volume_window->draw_sfx_vol();
+                s = "sfx/ambtech1.wav";
+                if(sound_avail & SFX_INITIALIZED) 
+                    cash.sfx(cash.reg(s, s, SPEC_EXTERN_SFX, 1))
+                        ->play(sfx_volume);
+                break;
+
+            case ID_MUSIC_UP:
+                music_volume += 16;
+                if(music_volume > 127)
+                    music_volume = 127;
+                volume_window->draw_music_vol();
+                if(current_song)
+                    current_song->set_volume(music_volume);
+                break;
+            case ID_MUSIC_DOWN:
+                music_volume -= 16;
+                if(music_volume < 0)
+                    music_volume = 0;
+                volume_window->draw_music_vol();
+                if(current_song)
+                    current_song->set_volume(music_volume);
+                break;
+            }
+        }
     }
-  } while (volume_window);
-}
 
+    wm->close_window(volume_window);
+}
 
 void save_difficulty()
 {
