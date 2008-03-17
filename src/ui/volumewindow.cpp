@@ -13,7 +13,7 @@
 #include "property.hpp"     // class property_manager
 #include "gui.hpp"          // ico_button
 
-VolumeWindow::VolumeWindow()
+VolumeWindow::VolumeWindow() : jwindow("Volume")
 {
     char const *ff = "art/frame.spe";
     u_u = cash.reg(ff, "u_u", SPEC_IMAGE, 1),
