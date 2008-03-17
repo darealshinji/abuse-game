@@ -382,8 +382,11 @@ jwindow::jwindow()
     _hidden = true;
     _moveable = true;
     // property.flags = JWINDOW_NOAUTOHIDE_FLAG;
-    inm = new input_manager (this, NULL);
+    inm = new input_manager(this, NULL);
+    reconfigure();
+
     screen = NULL;
+    next = NULL;
     _name = NULL;
     wm->add_window(this);
 }
@@ -424,8 +427,8 @@ jwindow::jwindow(int X, int Y, int L, int H, ifield *f, char const *name)
     screen->clear(backg);
     // Keep this from getting destroyed when image list is cleared
     image_list.unlink(screen);
-
     inm->screen = screen;
+
     next = NULL;
 
     _name = NULL;
@@ -442,7 +445,8 @@ jwindow::~jwindow()
 {
     wm->remove_window(this);
     local_close();
-    delete screen;
+    if(screen)
+        delete screen;
     delete inm;
     if(_name)
         jfree(_name);
