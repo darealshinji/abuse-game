@@ -58,6 +58,8 @@ abuse_SOURCES = \
     language.cpp language.hpp \
     bus_type.hpp id.hpp netface.hpp isllist.hpp sbar.hpp \
     nfserver.hpp exitproc.hpp \
+    \
+    ui/volumewindow.cpp volumewindow.hpp \
     $(NULL)
 
 EXTRALIBS = lisp/liblisp.a sdlport/libsdlport.a imlib/libimlib.a net/libnet.a
