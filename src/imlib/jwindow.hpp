@@ -108,7 +108,7 @@ public:
     jwindow(int X, int Y, int L, int H, ifield *f, char const *name = NULL);
     ~jwindow();
 
-    void redraw();
+    virtual void redraw();
     void resize(int L, int H);
     void clear(int color = 0) { screen->bar(x1(), y1(), x2(), y2(), color); }
     void show() { _hidden = false; }

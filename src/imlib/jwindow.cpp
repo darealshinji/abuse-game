@@ -378,10 +378,14 @@ void window_manager::flush_screen()
 
 jwindow::jwindow()
 {
-    _x1 = _y1 = _x2 = _y2 = 0;
+    _x1 = left_border();
+    _y1 = jw_top + 5;
+    _x2 = _y2 = 0;
+
     _hidden = true;
     _moveable = true;
     // property.flags = JWINDOW_NOAUTOHIDE_FLAG;
+
     inm = new input_manager(this, NULL);
     reconfigure();
 
