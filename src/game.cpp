@@ -2747,7 +2747,12 @@ int main(int argc, char **argv)
       dev_menu = NULL;
     }
 
-    delete g;
+    if(g)
+    {
+        delete g;
+        g = NULL;
+    }
+
     if(old_pal) delete old_pal; old_pal = NULL;
     compiled_uninit();
     delete_all_lights();
@@ -2757,7 +2762,11 @@ int main(int argc, char **argv)
 
 
     dev_cleanup();
-    delete dev_cont; dev_cont = NULL;
+    if(dev_cont)
+    {
+        delete dev_cont;
+        dev_cont = NULL;
+    }
     delete stat_man;
     stat_man = new text_status_manager();
 
