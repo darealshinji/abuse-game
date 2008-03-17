@@ -376,7 +376,7 @@ void window_manager::flush_screen()
   }
 }
 
-jwindow::jwindow()
+jwindow::jwindow(char const *name)
 {
     _x1 = left_border();
     _y1 = jw_top + 5;
@@ -391,7 +391,11 @@ jwindow::jwindow()
 
     screen = NULL;
     next = NULL;
+
     _name = NULL;
+    if(name)
+        _name = strcpy((char *)jmalloc(strlen(name) + 1,
+                                       "jwindow::window name"), name);
     wm->add_window(this);
 }
 

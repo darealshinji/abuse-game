@@ -104,7 +104,7 @@ public:
     input_manager *inm;
     void *local_info;  // pointer to info block for local system (may support windows)
 
-    jwindow();
+    jwindow(char const *name = NULL);
     jwindow(int X, int Y, int L, int H, ifield *f, char const *name = NULL);
     ~jwindow();
 
