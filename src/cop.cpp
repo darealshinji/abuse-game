@@ -754,12 +754,12 @@ void *top_draw()
       void *ret=NULL;
       p_ref r1(ret);
 
-      push_onto_list(new_lisp_number(bot->controller()->player_number),ret);
+      push_onto_list(new_lisp_number(bot->get_tint()),ret);
 
       if (bot->lvars[special_power]==SNEAKY_POWER)
       {
     if (bot->lvars[used_special_power]==0)
-      player_draw(top_just_fired,bot->controller()->player_number);
+      player_draw(top_just_fired,bot->get_tint());
     else if (bot->lvars[used_special_power]<15)
       o->draw_trans(bot->lvars[used_special_power],16);
     else
@@ -817,11 +817,11 @@ void *bottom_draw()
     switch (o->lvars[special_power])
     {
       case NO_POWER :
-      { player_draw(just_fired,o->controller()->player_number); } break;
+      { player_draw(just_fired,o->get_tint()); } break;
 
       case HEALTH_POWER :
       {
-    player_draw(just_fired,o->controller()->player_number);
+    player_draw(just_fired,o->get_tint());
     if (o->controller() && o->controller()->local_player())
       cache.img(S_health_image)->put_image(screen,o->controller()->cx2-20,
                         o->controller()->cy1+5,1);
@@ -841,7 +841,7 @@ void *bottom_draw()
       default: break;
     }
 
-    player_draw(just_fired,o->controller()->player_number);
+    player_draw(just_fired,o->get_tint());
     o->state=(character_state)old_state;
     if (o->controller() && o->controller()->local_player())
       cache.img(S_fast_image)->put_image(screen,o->controller()->cx2-20,
@@ -861,7 +861,7 @@ void *bottom_draw()
       default: break;
     }
 
-    player_draw(just_fired,o->controller()->player_number);
+    player_draw(just_fired,o->get_tint());
     o->state=(character_state)old_state;
 
     if (o->controller() && o->controller()->local_player())
@@ -871,7 +871,7 @@ void *bottom_draw()
       case SNEAKY_POWER :
       {
     if (o->lvars[used_special_power]==0)
-      player_draw(just_fired,o->controller()->player_number);
+      player_draw(just_fired,o->get_tint());
     else if (o->lvars[used_special_power]<15)
       o->draw_trans(o->lvars[used_special_power],16);
     else
@@ -1020,7 +1020,7 @@ void *score_draw()
     int i;
     for (i=0;i<tp;i++)
     {
-      int color=lnumber_value(lget_array_element(symbol_value(l_player_text_color),sorted_players[i]->player_number));
+      int color=lnumber_value(lget_array_element(symbol_value(l_player_text_color),sorted_players[i]->get_tint()));
       sprintf(msg,"%3ld %s",(long)sorted_players[i]->kills,sorted_players[i]->name);
       if (sorted_players[i]==local)
         strcat(msg," <<");
@@ -1061,7 +1061,7 @@ void *show_kills()
   for (i=0;i<tp;i++)
   {
     enum { NAME_LEN=18 } ;
-    int color=lnumber_value(lget_array_element(symbol_value(l_player_text_color),v->player_number));
+    int color=lnumber_value(lget_array_element(symbol_value(l_player_text_color),v->get_tint()));
     char max_name[NAME_LEN];
     strncpy(max_name,v->name,NAME_LEN-1);
     max_name[NAME_LEN-1]=0;

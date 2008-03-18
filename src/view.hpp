@@ -46,6 +46,7 @@ class view
 
   int god;                                // :) if you believe in such things
   int player_number;
+  int _tint, _team;
 
   int draw_solid;                         // -1 if don't draw solid
 
@@ -67,6 +68,7 @@ class view
 
 
   short ambient;                        // ambient lighting setting, used by draw
+
   int32_t pan_x,pan_y,no_xleft,no_xright,no_ytop,no_ybottom,
        last_x,last_y,last_last_x,last_last_y,view_percent;
 
@@ -75,6 +77,8 @@ class view
   int32_t secrets,kills,tsecrets,tkills;
 
   view(game_object *Focus, view *Next, int number);
+  ~view();
+
   void draw_character_damage();           // draws the characters 'status' on the viewer
 
   int32_t x_center();                        // center of attention
@@ -115,8 +119,12 @@ class view
   int32_t get_view_var_value(int num);
   int32_t set_view_var_value(int num, int32_t x);
   void configure_for_area(area_controller *a);
-  ~view();
-} ;
+
+  void set_tint(int);
+  int get_tint();
+  void set_team(int);
+  int get_team();
+};
 
 extern view *player_list;
 void set_local_players(int total);

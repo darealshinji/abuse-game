@@ -263,6 +263,8 @@ view::view(game_object *Focus, view *Next, int number)
     weapons[0]=0;
   if (local_player())
     sbar.associate(this);
+  set_tint(number);
+  set_team(-1);
   sbar.need_refresh();
 }
 
@@ -859,9 +861,11 @@ void view::reset_player()
     {
       focus->x=start->x;
       focus->y=start->y;
-      dprintf("reset position to %d %d\n",start->x,start->y);
+      dprintf("reset player position to %d %d\n",start->x,start->y);
     }
     focus->set_state(stopped);
+    focus->set_tint(_tint);
+    focus->set_team(_team);
     memset(weapons,0xff,total_weapons*sizeof(int32_t));
     memset(last_weapons,0xff,total_weapons*sizeof(int32_t));
 
@@ -1252,3 +1256,30 @@ void process_packet_commands(uint8_t *pk, int size)
     }
   } while (cmd!=SCMD_END_OF_PACKET);
 }
+
+void view::set_tint(int tint)
+{
+    if(tint < 0)
+        tint = 0;
+    _tint = tint;
+    focus->set_tint(tint);
+}
+
+int view::get_tint()
+{
+    return _tint;
+}
+
+void view::set_team(int team)
+{
+    if(team < 0)
+        team = 0;
+    _team = team;
+    focus->set_team(team);
+}
+
+int view::get_team()
+{
+    return _team;
+}
+

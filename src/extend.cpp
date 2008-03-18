@@ -62,6 +62,10 @@ void simple_object::add_object(game_object *o)
   if (!o) return ;
   for (int i=0;i<tobjs;i++) if (objs[i]==o) return;
   o->set_flags(o->flags()|KNOWN_FLAG);
+  if(_team != -1)
+    o->set_team(_team);
+  if(_tint != -1)
+    o->set_tint(_tint);
   tobjs++;
   objs=(game_object **)jrealloc(objs,sizeof(game_object *)*tobjs,"Object list");
   objs[tobjs-1]=o;
@@ -125,6 +129,8 @@ simple_object::simple_object()
   Fx=Fy=Fxvel=Fyvel=Fxacel=Fyacel=Aitype=0;
   Aistate=Aistate_time=0;
   Hp=Mp=Fmp=0;
+  _tint = -1;
+  _team = -1;
   grav_on=1;
   targetable_on=1;
 }

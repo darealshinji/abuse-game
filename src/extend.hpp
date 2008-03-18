@@ -31,7 +31,7 @@ class light_source;
 
 class simple_object
 {
-  public :
+public:
   int8_t Fade_dir;
   uint8_t Fade_count,Fade_max;
   uint8_t Flags,grav_on,targetable_on;
@@ -41,7 +41,7 @@ class simple_object
   uint16_t Aistate,Aistate_time;
   uint16_t Hp,Mp,Fmp;
   int8_t Frame_dir;
-
+  int _tint, _team;
 
   uint8_t tobjs,tlights;
   game_object **objs,*link;
