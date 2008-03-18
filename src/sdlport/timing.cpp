@@ -37,7 +37,7 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 //
 time_marker::time_marker()
 {
-	get_time();
+    get_time();
 }
 
 //
@@ -46,10 +46,10 @@ time_marker::time_marker()
 //
 void time_marker::get_time()
 {
-	struct timeval tv = { 0, 0 };
-	gettimeofday( &tv, NULL );
-	seconds = tv.tv_sec;
-	micro_seconds = tv.tv_usec;
+    struct timeval tv = { 0, 0 };
+    gettimeofday( &tv, NULL );
+    seconds = tv.tv_sec;
+    micro_seconds = tv.tv_usec;
 }
 
 //
@@ -58,22 +58,22 @@ void time_marker::get_time()
 //
 double time_marker::diff_time( time_marker *other )
 {
-	return (double)(seconds - other->seconds) + (double)(micro_seconds - other->micro_seconds) / 1000000;
+    return (double)(seconds - other->seconds) + (double)(micro_seconds - other->micro_seconds) / 1000000;
 }
 
 void timer_init()
 {
-	/* Do Nothing */
+    /* Do Nothing */
 }
 
 void timer_uninit()
 {
-	/* Do Nothing */
+    /* Do Nothing */
 }
 
 void milli_wait( unsigned wait_time )
 {
-	struct timespec ts = { 0, wait_time * 1000000 };
-	nanosleep( &ts, NULL );
+    struct timespec ts = { 0, wait_time * 1000000 };
+    nanosleep( &ts, NULL );
 }
 

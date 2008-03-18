@@ -47,7 +47,7 @@ void *l_difficulty,*l_easy,*l_hard,*l_medium,*l_main_menu,*l_extreme,
      *l_help_screens,*l_player_draw,*l_sneaky_draw,*l_health_image,*l_fly_image,
      *l_sneaky_image,*l_draw_fast,*l_player_tints,*l_save_order,*l_next_song,
      *l_level_load_start,
-     *l_level_load_end,	    *l_cdc_logo,
+     *l_level_load_end,        *l_cdc_logo,
      *l_keep_backup,
      *l_switch_to_powerful,
      *l_mouse_can_switch,
@@ -65,14 +65,14 @@ void *sensor_ai();
 // variables for the status bar
 void        *l_statbar_ammo_x,*l_statbar_ammo_y,
             *l_statbar_ammo_w,*l_statbar_ammo_h,
-	    *l_statbar_ammo_bg_color,
+        *l_statbar_ammo_bg_color,
 
             *l_statbar_health_x,*l_statbar_health_y,
             *l_statbar_health_w,*l_statbar_health_h,
-	    *l_statbar_health_bg_color,
+        *l_statbar_health_bg_color,
 
-	    *l_statbar_logo_x,*l_statbar_logo_y;
-uint8_t chatting_enabled=0; 
+        *l_statbar_logo_x,*l_statbar_logo_y;
+uint8_t chatting_enabled=0;
 
 extern void scatter_line(int x1, int y1, int x2, int y2, int c, int s);
 extern void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s);
@@ -188,7 +188,7 @@ void clisp_init()                            // call by lisp_init, defines symbo
   for (i=0;i<TOTAL_CFLAGS;i++)
     set_symbol_number(make_find_symbol(cflag_names[i]),i);
 
-  l_song_list=make_find_symbol("song_list");  
+  l_song_list=make_find_symbol("song_list");
   l_post_render=make_find_symbol("post_render");
 
   add_c_function("distx",0,0,                   1);
@@ -223,7 +223,7 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_c_function("x",0,0,                      30);
   add_c_function("y",0,0,                      31);
   add_c_bool_fun("set_x",1,1,                  32);
-  add_c_bool_fun("set_y",1,1,                  33);  
+  add_c_bool_fun("set_y",1,1,                  33);
   add_c_bool_fun("push_characters",2,2,        34);
 
 
@@ -251,10 +251,10 @@ void clisp_init()                            // call by lisp_init, defines symbo
 
   add_c_bool_fun("freeze_player",1,1,          58);   // freeze time
 
-  add_c_function("menu",1,-1,                  59); 
+  add_c_function("menu",1,-1,                  59);
   add_c_bool_fun("do_command",1,1,             60);   // command string
   add_c_bool_fun("set_game_state",1,1,         61);
-  
+
 
 // scene control functions, game must first be set to scene mode.
   add_c_bool_fun("scene:set_text_region",4,4,  62);
@@ -284,18 +284,18 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_c_bool_fun("set_morph_detail",1,1,       88);
   add_c_function("morph_detail",0,0,           89);
   add_c_bool_fun("morph_into",3,3,             90);       // type aneal frames
-  add_c_bool_fun("link_object",1,1,            91); 
+  add_c_bool_fun("link_object",1,1,            91);
 
-  add_c_bool_fun("draw_line",5,5,              92); 
-  add_c_function("dark_color",0,0,             93); 
-  add_c_function("medium_color",0,0,           94); 
-  add_c_function("bright_color",0,0,           95); 
+  add_c_bool_fun("draw_line",5,5,              92);
+  add_c_function("dark_color",0,0,             93);
+  add_c_function("medium_color",0,0,           94);
+  add_c_function("bright_color",0,0,           95);
 
-  add_c_bool_fun("remove_object",1,1,          99); 
-  add_c_bool_fun("link_light",1,1,            100);  
-  add_c_bool_fun("remove_light",1,1,          101); 
-  add_c_function("total_objects",0,0,         102); 
-  add_c_function("total_lights",0,0,          103); 
+  add_c_bool_fun("remove_object",1,1,          99);
+  add_c_bool_fun("link_light",1,1,            100);
+  add_c_bool_fun("remove_light",1,1,          101);
+  add_c_function("total_objects",0,0,         102);
+  add_c_function("total_lights",0,0,          103);
 
   add_c_bool_fun("set_light_r1",2,2,          104);
   add_c_bool_fun("set_light_r2",2,2,          105);
@@ -313,7 +313,7 @@ void clisp_init()                            // call by lisp_init, defines symbo
 
   add_c_function("xacel",0,0,                 116);
   add_c_function("yacel",0,0,                 117);
-  add_c_bool_fun("delete_light",1,1,          118); 
+  add_c_bool_fun("delete_light",1,1,          118);
 
   add_c_bool_fun("set_fx",1,1,                119);
   add_c_bool_fun("set_fy",1,1,                120);
@@ -335,7 +335,7 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_c_function("weapon_to_type",1,1,        142);  // returns total for type weapon
   add_c_bool_fun("hurt_radius",6,6,           143);  // x y radius max_damage exclude_object max_push
 
-  add_c_bool_fun("add_ammo",2,2,              144);  // weapon_type, amount 
+  add_c_bool_fun("add_ammo",2,2,              144);  // weapon_type, amount
   add_c_function("ammo_total",1,1,            145);  // returns total for type weapon
   add_c_function("current_weapon",0,0,        146);  // weapon_type, amount
   add_c_function("current_weapon_type",0,0,   147);  // returns total for type weapon
@@ -348,7 +348,7 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_c_function("site_angle",1,1,            153);
   add_c_bool_fun("set_course",2,2,            154);  // angle, magnitude
   add_c_bool_fun("set_frame_angle",3,3,       155);  // ang1,ang2, ang
-  add_c_bool_fun("jump_state",1,1,            156);  // don't reset current_frame  
+  add_c_bool_fun("jump_state",1,1,            156);  // don't reset current_frame
 
   add_c_bool_fun("morphing",0,0,              168);
   add_c_bool_fun("damage_fun",6,6,            169);
@@ -368,7 +368,7 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_c_bool_fun("has_object",1,1,            181);  // true if linked with object x
   add_c_bool_fun("set_otype",1,1,             182);  // otype
 
-  add_c_function("current_frame",0,0,         184);  
+  add_c_function("current_frame",0,0,         184);
   add_c_function("fx",0,0,                    185);
   add_c_function("fy",0,0,                    186);
   add_c_function("fxvel",0,0,                 187);
@@ -390,7 +390,7 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_c_function("load_big_font",2,2,         203);  // filename, name
   add_c_function("load_small_font",2,2,       204);  // filename, name
   add_c_function("load_console_font",2,2,     205);  // filename, name
-  add_c_function("set_current_frame",1,1,     206);  
+  add_c_function("set_current_frame",1,1,     206);
 
   add_c_bool_fun("draw_transparent",2,2,      208);  // count, max
   add_c_bool_fun("draw_tint",1,1,             209);  // tint id number
@@ -414,7 +414,7 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_c_bool_fun("set_first_level",1,1,       226);  // filename
   add_c_function("def_tint",1,1,              227);  // filename
   add_c_function("tint_palette",3,3,          228);  // radd,gadd,badd
-  add_c_function("player_number",0,0,         229);  
+  add_c_function("player_number",0,0,         229);
   add_c_bool_fun("set_current_weapon",1,1,    230);  // type
   add_c_bool_fun("has_weapon",1,1,            231);  // type
   add_c_bool_fun("ambient_ramp",1,1,          232);
@@ -481,11 +481,11 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_c_bool_fun("enable_chatting",0,0,       290);
   add_c_bool_fun("demo_break_enable",0,0,     291);
   add_c_bool_fun("am_a_client",0,0,           292);
-  add_c_bool_fun("time_for_next_level",0,0,   293); 
+  add_c_bool_fun("time_for_next_level",0,0,   293);
   add_c_bool_fun("reset_kills",0,0,           294);
   add_c_bool_fun("set_game_name",1,1,         295);  // name
-  add_c_bool_fun("set_net_min_players",1,1,   296); 
-  
+  add_c_bool_fun("set_net_min_players",1,1,   296);
+
 
   add_lisp_function("go_state",1,1,              0);
   add_lisp_function("with_object",2,-1,          1);
@@ -493,8 +493,8 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_lisp_function("me",0,0,                    3);
   add_lisp_function("bg",0,0,                    4);
   add_lisp_function("find_closest",1,1,          5);
-  add_lisp_function("find_xclosest",1,1,         6); 
-  add_lisp_function("find_xrange",2,2,           7); 
+  add_lisp_function("find_xclosest",1,1,         6);
+  add_lisp_function("find_xrange",2,2,           7);
   add_lisp_function("add_object",3,4,            8);    // type, x,y (type)
   add_lisp_function("first_focus",0,0,           9);
   add_lisp_function("next_focus",1,1,           10);
@@ -553,8 +553,8 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_lisp_function("respawn_ai",0,0,           60);
 
   add_lisp_function("score_draw",0,0,           61);
-  add_lisp_function("show_kills",0,0,           62); 
-  add_lisp_function("mkptr",1,1,                63);  
+  add_lisp_function("show_kills",0,0,           62);
+  add_lisp_function("mkptr",1,1,                63);
   add_lisp_function("seq",3,3,                  64);
 }
 
@@ -565,23 +565,23 @@ void *l_caller(long number, void *args)
   p_ref r1(args);
   switch (number)
   {
-    case 0 : 
+    case 0 :
     {
-      current_object->set_aistate(lnumber_value(eval(CAR(args)))); 
+      current_object->set_aistate(lnumber_value(eval(CAR(args))));
       current_object->set_aistate_time(0);
       void *ai=figures[current_object->otype]->get_fun(OFUN_AI);
       if (!ai)
       {
-	lbreak("hrump... call to go_state, and no ai function defined?\n"
-	       "Are you calling from move function (not mover)?\n");
-	exit(0);
+    lbreak("hrump... call to go_state, and no ai function defined?\n"
+           "Are you calling from move function (not mover)?\n");
+    exit(0);
       }
       return eval_function((lisp_symbol *)ai,NULL);
     } break;
     case 1 :
     {
       game_object *old_cur=current_object;
-      current_object=(game_object *)lpointer_value(eval(CAR(args))); 
+      current_object=(game_object *)lpointer_value(eval(CAR(args)));
       void *ret=eval_block(CDR(args));
       current_object=old_cur;
       return ret;
@@ -603,30 +603,30 @@ void *l_caller(long number, void *args)
     } break;
 
     case 3 : return new_lisp_pointer(current_object); break;
-    case 4 : 
+    case 4 :
     { if (player_list->next)
         return new_lisp_pointer(current_level->attacker(current_object));
       else return new_lisp_pointer(player_list->focus); } break;
     case 5 : return new_lisp_pointer(current_level->find_closest(current_object->x,
-								 current_object->y,
-						       lnumber_value(eval(CAR(args))),
-				                       current_object)); break;
+                                 current_object->y,
+                               lnumber_value(eval(CAR(args))),
+                                       current_object)); break;
     case 6 : return new_lisp_pointer(current_level->find_xclosest(current_object->x,
-								  current_object->y,
-								  lnumber_value(eval(CAR(args))),
-								  current_object
-								  )); break;
-    case 7 : 
+                                  current_object->y,
+                                  lnumber_value(eval(CAR(args))),
+                                  current_object
+                                  )); break;
+    case 7 :
     {
       long n1=lnumber_value(eval(CAR(args)));
       long n2=lnumber_value(eval(CAR(CDR(args))));
       return new_lisp_pointer(current_level->find_xrange(current_object->x,
-							 current_object->y,
-							 n1,
-							 n2
-							 ));
+                             current_object->y,
+                             n1,
+                             n2
+                             ));
     } break;
-    case 8 : 
+    case 8 :
     {
       int type=lnumber_value(eval(CAR(args)));          args=CDR(args);
       long x=lnumber_value(eval(CAR(args)));       args=CDR(args);
@@ -640,7 +640,7 @@ void *l_caller(long number, void *args)
         current_level->add_object(o);
       return new_lisp_pointer(o);
     } break;
-    case 22 : 
+    case 22 :
     {
       int type=lnumber_value(eval(CAR(args)));          args=CDR(args);
       long x=lnumber_value(eval(CAR(args)));       args=CDR(args);
@@ -656,20 +656,20 @@ void *l_caller(long number, void *args)
     } break;
 
     case 9 : return new_lisp_pointer(the_game->first_view->focus); break;
-    case 10 : 
+    case 10 :
     {
       view *v=((game_object *)lpointer_value(eval(CAR(args))))->controller()->next;
       if (v)
         return new_lisp_pointer(v->focus);
       else return NULL;
     } break;
-    case 11 : 
-    { 
+    case 11 :
+    {
       return new_lisp_pointer
       ((void *)current_object->get_object(lnumber_value(eval(CAR(args)))));
     } break;
-    case 12 : 
-    { 
+    case 12 :
+    {
       return new_lisp_pointer
       ((void *)current_object->get_light(lnumber_value(eval(CAR(args)))));
     } break;
@@ -678,9 +678,9 @@ void *l_caller(long number, void *args)
       game_object *old_cur=current_object;
       void *ret=NULL;
       for (int i=0;i<old_cur->total_objects();i++)
-      {	
-	current_object=old_cur->get_object(i);
-	ret=eval(CAR(args));
+      {    
+    current_object=old_cur->get_object(i);
+    ret=eval(CAR(args));
       }
       current_object=old_cur;
       return ret;
@@ -704,7 +704,7 @@ void *l_caller(long number, void *args)
     {
       void *f=figures[current_object->otype]->get_fun(OFUN_USER_FUN);
       if (!f) return NULL;
-      return eval_function((lisp_symbol *)f,args);      
+      return eval_function((lisp_symbol *)f,args);
     } break;
     case 17 :
     {
@@ -713,8 +713,8 @@ void *l_caller(long number, void *args)
       time_marker start;
       for (int x=0;x<trials;x++)
       {
-	clear_tmp();
-	eval(CAR(args));
+    clear_tmp();
+    eval(CAR(args));
       }
       time_marker end;
       return new_lisp_fixed_point((long)(end.diff_time(&start)*(1<<16)));
@@ -732,9 +732,9 @@ void *l_caller(long number, void *args)
 
       void *list=eval(CAR(args));
       game_object *find=current_level->find_object_in_area(current_object->x,
-					      current_object->y,
-					      x1,y1,x2,y2,list,current_object);
-      if (find) return new_lisp_pointer(find); 
+                          current_object->y,
+                          x1,y1,x2,y2,list,current_object);
+      if (find) return new_lisp_pointer(find);
       else return NULL;
     } break;
 
@@ -746,9 +746,9 @@ void *l_caller(long number, void *args)
       void *list=eval(CAR(args));
       p_ref r1(list);
       game_object *find=current_level->find_object_in_angle(current_object->x,
-							current_object->y,
-							a1,a2,list,current_object);
-      if (find) return new_lisp_pointer(find); 
+                            current_object->y,
+                            a1,a2,list,current_object);
+      if (find) return new_lisp_pointer(find);
       else return NULL;
     } break;
     case 23 :         // def_character
@@ -756,8 +756,8 @@ void *l_caller(long number, void *args)
       lisp_symbol *sym=(lisp_symbol *)lcar(args);
       if (item_type(sym)!=L_SYMBOL)
       {
-	lbreak("expecting first arg to def-character to be a symbol!\n");
-	exit(0);
+    lbreak("expecting first arg to def-character to be a symbol!\n");
+    exit(0);
       }
       int sp=current_space;
       current_space=PERM_SPACE;
@@ -766,19 +766,19 @@ void *l_caller(long number, void *args)
       if (!total_objects)
       {
         object_names=(char **)jmalloc(sizeof(char *)*(total_objects+1),"object name list");
-	figures=(character_type **)jmalloc(sizeof(character_type *)*(total_objects+1),"character types");
+    figures=(character_type **)jmalloc(sizeof(character_type *)*(total_objects+1),"character types");
       }
       else
       {
         object_names=(char **)jrealloc(object_names,sizeof(char *)*(total_objects+1),
-				       "object name list");
-	figures=(character_type **)jrealloc(figures,sizeof(character_type *)*(total_objects+1),
-					    "character types");
+                       "object name list");
+    figures=(character_type **)jrealloc(figures,sizeof(character_type *)*(total_objects+1),
+                        "character types");
       }
 
       object_names[total_objects]=strcpy(
-	  (char *)jmalloc(strlen(lstring_value(symbol_name(sym)))+1,"object name"),
-					 lstring_value(symbol_name(sym)));
+      (char *)jmalloc(strlen(lstring_value(symbol_name(sym)))+1,"object name"),
+                     lstring_value(symbol_name(sym)));
       figures[total_objects]=new character_type(CDR(args),sym);
       total_objects++;
       return new_lisp_number(total_objects-1);
@@ -822,7 +822,7 @@ void *l_caller(long number, void *args)
     case 35 : return lsaber_ufun(args); break;
     case 36 :
     {
-      
+
       int32_t xm,ym,but;
       xm=lnumber_value(CAR(args)); args=CDR(args);
       ym=lnumber_value(CAR(args)); args=CDR(args);
@@ -888,12 +888,12 @@ void *l_caller(long number, void *args)
     {
       void *ret=NULL;
       {
-	p_ref r1(ret);
-	push_onto_list(new_lisp_number((last_demo_mbut&4)==4),ret);
-	push_onto_list(new_lisp_number((last_demo_mbut&2)==2),ret);
-	push_onto_list(new_lisp_number((last_demo_mbut&1)==1),ret);
-	push_onto_list(new_lisp_number(last_demo_my),ret);
-	push_onto_list(new_lisp_number(last_demo_mx),ret);
+    p_ref r1(ret);
+    push_onto_list(new_lisp_number((last_demo_mbut&4)==4),ret);
+    push_onto_list(new_lisp_number((last_demo_mbut&2)==2),ret);
+    push_onto_list(new_lisp_number((last_demo_mbut&1)==1),ret);
+    push_onto_list(new_lisp_number(last_demo_my),ret);
+    push_onto_list(new_lisp_number(last_demo_mx),ret);
       }
       return ret;
     } break;
@@ -906,9 +906,9 @@ void *l_caller(long number, void *args)
       the_game->mouse_to_game(x,y,rx,ry);
       void *ret=NULL;
       {
-	p_ref r1(ret);
-	push_onto_list(new_lisp_number(ry),ret);
-	push_onto_list(new_lisp_number(rx),ret);
+    p_ref r1(ret);
+    push_onto_list(new_lisp_number(ry),ret);
+    push_onto_list(new_lisp_number(rx),ret);
       }
       return ret;
     } break;
@@ -921,14 +921,14 @@ void *l_caller(long number, void *args)
       the_game->game_to_mouse(x,y,current_view,rx,ry);
       void *ret=NULL;
       {
-	p_ref r1(ret);
-	push_onto_list(new_lisp_number(ry),ret);
-	push_onto_list(new_lisp_number(rx),ret);
+    p_ref r1(ret);
+    push_onto_list(new_lisp_number(ry),ret);
+    push_onto_list(new_lisp_number(rx),ret);
       }
       return ret;
     } break;
     case 51 :   return new_lisp_pointer(wm->font()); break;
-    case 52 : 
+    case 52 :
     {
       view *c=current_object->controller();
       if (!c)
@@ -957,19 +957,19 @@ void *l_caller(long number, void *args)
       void *fn=eval(CAR(args)); args=CDR(args);
       char tmp[200];
       {
-	p_ref r1(fn);
-	char *slash=lstring_value(eval(CAR(args)));
-	char *filename=lstring_value(fn);
+    p_ref r1(fn);
+    char *slash=lstring_value(eval(CAR(args)));
+    char *filename=lstring_value(fn);
 
-	char *s=filename,*tp;
-	
-	for (tp=tmp;*s;s++,tp++)
-	{
-	  if (*s=='/' || *s=='\\') 
-	  *tp=*slash;
-	  else *tp=*s;
-	}
-	*tp=0;
+    char *s=filename,*tp;
+    
+    for (tp=tmp;*s;s++,tp++)
+    {
+      if (*s=='/' || *s=='\\')
+      *tp=*slash;
+      else *tp=*s;
+    }
+    *tp=0;
       }
       return new_lisp_string(tmp);
     } break;
@@ -985,18 +985,18 @@ void *l_caller(long number, void *args)
       get_directory(lstring_value(eval(CAR(args))),files,tfiles,dirs,tdirs);
       void *fl=NULL,*dl=NULL,*rl=NULL;
       {
-	p_ref r1(fl),r2(dl);
-	
-	for (i=tfiles-1;i>=0;i--) { push_onto_list(new_lisp_string(files[i]),fl); jfree(files[i]); }
-	jfree(files);
+    p_ref r1(fl),r2(dl);
+    
+    for (i=tfiles-1;i>=0;i--) { push_onto_list(new_lisp_string(files[i]),fl); jfree(files[i]); }
+    jfree(files);
 
-	for (i=tdirs-1;i>=0;i--) { push_onto_list(new_lisp_string(dirs[i]),dl); jfree(dirs[i]); }
-	jfree(dirs);
-	
-	push_onto_list(dl,rl);
-	push_onto_list(fl,rl);
+    for (i=tdirs-1;i>=0;i--) { push_onto_list(new_lisp_string(dirs[i]),dl); jfree(dirs[i]); }
+    jfree(dirs);
+    
+    push_onto_list(dl,rl);
+    push_onto_list(fl,rl);
       }
-      
+
       return rl;
     } break;
     case 59 :
@@ -1006,11 +1006,11 @@ void *l_caller(long number, void *args)
     case 60 : return respawn_ai(); break;
     case 61 : return score_draw();  break;
     case 62 : return show_kills(); break;
-    case 63 : 
+    case 63 :
     {
-    	long x;
-    	sscanf(lstring_value(eval(CAR(args))),"%lx",&x);
-    	return new_lisp_pointer((void *)(intptr_t)x);
+        long x;
+        sscanf(lstring_value(eval(CAR(args))),"%lx",&x);
+        return new_lisp_pointer((void *)(intptr_t)x);
     } break;
     case 64 :
     {
@@ -1036,7 +1036,7 @@ void *l_caller(long number, void *args)
           sprintf(name2,"%s%04ld.pcx",name,i);
           push_onto_list(new_lisp_string(name2),ret);
         }
-      }      
+      }
       return ret;
     }
   }
@@ -1048,91 +1048,91 @@ void *l_caller(long number, void *args)
 // arguments have already been evaled..
 long c_caller(long number, void *args)
 {
-	p_ref r1(args);
-	switch (number)
-	{
-		case 1:
-		{
-			return abs(current_object->x-current_level->attacker(current_object)->x);
-		} break;
-		case 2:
-		{
-			return abs(current_object->y-current_level->attacker(current_object)->y);
-		} break;
-		case 3:
-		{
-			if( !current_object->controller() )
-			{
-				lbreak("object is not a player, cannot determine keypresses");
-			}
-			else
-			{
-				return current_object->controller()->key_down(lnumber_value(CAR(args)));
-			}
-		} break;
-		case 4:
-		{
-			return the_game->key_down(lnumber_value(CAR(args)));
-		} break;
-		case 5:
-		{
-			return current_level->attacker(current_object)->state;
-		} break;
-		case 6:
-		{
-			return current_object->aitype();
-		} break;
-		case 7:
-		{
-			if (!current_object->keep_ai_info())
-				current_object->set_aistate(0);
-			return current_object->aistate();
-		} break;
-		case 8:
-		{
-			int ns=lnumber_value(CAR(args));
-			current_object->set_aistate_time(0);      
-			current_object->set_aistate(ns); return 1; 
-		} break;
-		case 9:
-		{
+    p_ref r1(args);
+    switch (number)
+    {
+        case 1:
+        {
+            return abs(current_object->x-current_level->attacker(current_object)->x);
+        } break;
+        case 2:
+        {
+            return abs(current_object->y-current_level->attacker(current_object)->y);
+        } break;
+        case 3:
+        {
+            if( !current_object->controller() )
+            {
+                lbreak("object is not a player, cannot determine keypresses");
+            }
+            else
+            {
+                return current_object->controller()->key_down(lnumber_value(CAR(args)));
+            }
+        } break;
+        case 4:
+        {
+            return the_game->key_down(lnumber_value(CAR(args)));
+        } break;
+        case 5:
+        {
+            return current_level->attacker(current_object)->state;
+        } break;
+        case 6:
+        {
+            return current_object->aitype();
+        } break;
+        case 7:
+        {
+            if (!current_object->keep_ai_info())
+                current_object->set_aistate(0);
+            return current_object->aistate();
+        } break;
+        case 8:
+        {
+            int ns=lnumber_value(CAR(args));
+            current_object->set_aistate_time(0);
+            current_object->set_aistate(ns); return 1;
+        } break;
+        case 9:
+        {
 /*      if (rcheck_lp)
       {
-	char str[100];
-	sprintf(str,"\n\nTick %d, Rand_on %d\n",current_level->tick_counter(),rand_on);
-	rcheck_lp->write(str,strlen(str)+1);
-	current_print_file=rcheck_lp;
-	print_trace_stack(6);
-	current_print_file=NULL;
+    char str[100];
+    sprintf(str,"\n\nTick %d, Rand_on %d\n",current_level->tick_counter(),rand_on);
+    rcheck_lp->write(str,strlen(str)+1);
+    current_print_file=rcheck_lp;
+    print_trace_stack(6);
+    current_print_file=NULL;
       }*/
 
-			return jrandom(lnumber_value(CAR(args)));
-		} break;
-		case 10 : return current_object->aistate_time(); break;
-		case 11 : return current_object->state; break;
-		case 12:
-		{
-			if (current_level->attacker(current_object)->x>current_object->x)
-				return 1;
-			else
-				return -1;
-		} break;
-		case 13:
-		{
-			return current_object->move(lnumber_value(CAR(args)),lnumber_value(CAR(CDR(args))), lnumber_value(CAR(CDR(CDR(args)))));
-		} break;
-		case 14:
-		{
-			if (current_object->direction>0)
-				return 1;
-			else
-				return -1;
-		} break;
+            return jrandom(lnumber_value(CAR(args)));
+        } break;
+        case 10 : return current_object->aistate_time(); break;
+        case 11 : return current_object->state; break;
+        case 12:
+        {
+            if (current_level->attacker(current_object)->x>current_object->x)
+                return 1;
+            else
+                return -1;
+        } break;
+        case 13:
+        {
+            return current_object->move(lnumber_value(CAR(args)),lnumber_value(CAR(CDR(args))), lnumber_value(CAR(CDR(CDR(args)))));
+        } break;
+        case 14:
+        {
+            if (current_object->direction>0)
+                return 1;
+            else
+                return -1;
+        } break;
     case 15 : return current_object->otype; break;
     case 16 : return current_object->next_picture(); break;
     case 17 : current_object->set_fade_dir(lnumber_value(CAR(args))); return 1; break;
-    case 18 : 
-    { 
+    case 18 :
+    {
       int cx=lnumber_value(CAR(args));
       args=CDR(args);
       int cy=lnumber_value(CAR(args));
@@ -1158,31 +1158,31 @@ long c_caller(long number, void *args)
     { current_object->drawer(); return 1; } break;
     case 28 :
     { return (dev & EDIT_MODE); } break;
-    case 29 : 
+    case 29 :
     { current_object->draw_above(current_view); return 1; } break;
     case 30 : return current_object->x; break;
     case 31 : return current_object->y; break;
-    case 32 : 
+    case 32 :
     { int32_t v=lnumber_value(CAR(args));
       current_object->x=v;
 //      current_object->last_x=v;
-      return 1; 
+      return 1;
     } break;
-    case 33 : 
+    case 33 :
     { int32_t v=lnumber_value(CAR(args));
       current_object->y=v;
 //      current_object->last_y=v;
-      return 1; 
+      return 1;
     } break;
 
     case 34 : { return current_level->push_characters(current_object,lnumber_value(CAR(args)),
-					    lnumber_value(CAR(CDR(args))));
-	      } break;
+                        lnumber_value(CAR(CDR(args))));
+          } break;
 
-    case 37 : 
+    case 37 :
     {
       int32_t s=lnumber_value(CAR(args));
-      current_object->set_state((character_state)s); 
+      current_object->set_state((character_state)s);
       return (s==current_object->state);
     } break;
 
@@ -1194,7 +1194,7 @@ long c_caller(long number, void *args)
     case 43 : return current_object->yvel(); break;
     case 44 : current_object->set_xvel(lnumber_value(CAR(args))); return 1; break;
     case 45 : current_object->set_yvel(lnumber_value(CAR(args))); return 1; break;
-    case 46 : if (current_level->attacker(current_object)->x>current_object->x) return -1; 
+    case 46 : if (current_level->attacker(current_object)->x>current_object->x) return -1;
               else return 1; break;
     case 47 : return lnumber_value(CAR(args))&BLOCKED_LEFT; break;
     case 48 : return lnumber_value(CAR(args))&BLOCKED_RIGHT; break;
@@ -1207,19 +1207,19 @@ long c_caller(long number, void *args)
 
     case 56 : return current_object->direction; break;
     case 57 : current_object->direction=lnumber_value(CAR(args)); break;
-    case 58 : 
+    case 58 :
     {
       int x1=lnumber_value(CAR(args));
-      if (!current_object->controller())      
+      if (!current_object->controller())
       { lbreak("set_freeze_time : object is not a focus\n"); }
       else current_object->controller()->freeze_time=x1; return 1;
     } break;
     case 59 : return menu(args,big_font); break;
-    case 60 : 
+    case 60 :
     { event ev; dev_cont->do_command(lstring_value(CAR(args)),ev); return 1; } break;
     case 61 : the_game->set_state(lnumber_value(CAR(args))); break;
 
-    case 62 : 
+    case 62 :
     {
       int x1=lnumber_value(CAR(args)); args=CDR(args);
       int y1=lnumber_value(CAR(args)); args=CDR(args);
@@ -1232,43 +1232,43 @@ long c_caller(long number, void *args)
     case 65 : scene_director.set_pan_speed(lnumber_value(CAR(args))); break;
     case 66 : scene_director.scroll_text(lstring_value(CAR(args))); break;
     case 67 : scene_director.set_pan(lnumber_value(CAR(args)),
-				 lnumber_value(CAR(CDR(args))),
-				 lnumber_value(CAR(CDR(CDR(args))))); break;
+                 lnumber_value(CAR(CDR(args))),
+                 lnumber_value(CAR(CDR(CDR(args))))); break;
     case 68 : scene_director.wait(CAR(args)); break;
 
 
     case 73 : the_game->set_level(new level(lnumber_value(CAR(args)),
-					    lnumber_value(CAR(CDR(args))),
-					    lstring_value(CAR(CDR(CDR(args)))))); break;
-    case 74 : 
-    { if (current_level) delete current_level; 
-      current_level=new level(100,100,"new_level"); 
+                        lnumber_value(CAR(CDR(args))),
+                        lstring_value(CAR(CDR(CDR(args)))))); break;
+    case 74 :
+    { if (current_level) delete current_level;
+      current_level=new level(100,100,"new_level");
     } break;
-    case 75 : 
+    case 75 :
     {
       int amount=lnumber_value(CAR(args)); args=CDR(args);
       game_object *o=((game_object *)lpointer_value(CAR(args))); args=CDR(args);
       int xv=0,yv=0;
       if (args)
       {
-	xv=lnumber_value(CAR(args)); args=CDR(args);
-	yv=lnumber_value(CAR(args));
+    xv=lnumber_value(CAR(args)); args=CDR(args);
+    yv=lnumber_value(CAR(args));
       }
       o->do_damage(amount,current_object,current_object->x,current_object->y,xv,yv);
     } break;
     case 76 : return current_object->hp(); break;
-    case 77 : 
+    case 77 :
     {
       game_object *o=(game_object *)lpointer_value(CAR(args));
-      if (!o->controller())      
-	printf("set shift : object is not a focus\n");
+      if (!o->controller())
+    printf("set shift : object is not a focus\n");
       else o->controller()->shift_down=lnumber_value(CAR(CDR(args))); return 1;
     } break;
-    case 78 : 
+    case 78 :
     {
       game_object *o=(game_object *)lpointer_value(CAR(args));
-      if (!o->controller())      
-	printf("set shift : object is not a focus\n");
+      if (!o->controller())
+    printf("set shift : object is not a focus\n");
       else o->controller()->shift_right=lnumber_value(CAR(CDR(args))); return 1;
     } break;
     case 79 : current_object->set_gravity(lnumber_value(CAR(args))); return 1; break;
@@ -1282,10 +1282,10 @@ long c_caller(long number, void *args)
     case 88 : morph_detail=lnumber_value(CAR(args)); return 1; break;
     case 89 : return morph_detail; break;
     case 90 : current_object->morph_into(lnumber_value(CAR(args)),NULL,
-					 lnumber_value(CAR(CDR(args))),
-					 lnumber_value(CAR(CDR(CDR(args))))); return 1; break;
+                     lnumber_value(CAR(CDR(args))),
+                     lnumber_value(CAR(CDR(CDR(args))))); return 1; break;
     case 91 : current_object->add_object((game_object *)lpointer_value(CAR(args))); return 1; break;
-    case 92 : 
+    case 92 :
     {
       int32_t cx1,x1=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t cy1,y1=lnumber_value(CAR(args)); args=lcdr(args);
@@ -1307,7 +1307,7 @@ long c_caller(long number, void *args)
     case 102 : return current_object->total_objects(); break;
     case 103 : return current_object->total_lights(); break;
 
-    case 104 :  
+    case 104 :
     { light_source *l=(light_source *)lpointer_value(CAR(args));
       int32_t x=lnumber_value(CAR(CDR(args)));
       if (x>=1)
@@ -1315,7 +1315,7 @@ long c_caller(long number, void *args)
       l->calc_range();
       return 1;
     } break;
-    case 105 :  
+    case 105 :
     { light_source *l=(light_source *)lpointer_value(CAR(args));
       int32_t x=lnumber_value(CAR(CDR(args)));
       if (x>l->inner_radius)
@@ -1323,25 +1323,25 @@ long c_caller(long number, void *args)
       l->calc_range();
       return 1;
     } break;
-    case 106 :  
+    case 106 :
     { light_source *l=(light_source *)lpointer_value(CAR(args));
       l->x=lnumber_value(CAR(CDR(args)));
       l->calc_range();
       return 1;
     } break;
-    case 107 :  
+    case 107 :
     { light_source *l=(light_source *)lpointer_value(CAR(args));
       l->y=lnumber_value(CAR(CDR(args)));
       l->calc_range();
       return 1;
     } break;
-    case 108 :  
+    case 108 :
     { light_source *l=(light_source *)lpointer_value(CAR(args));
       l->xshift=lnumber_value(CAR(CDR(args)));
       l->calc_range();
       return 1;
     } break;
-    case 109 :  
+    case 109 :
     { light_source *l=(light_source *)lpointer_value(CAR(args));
       l->yshift=lnumber_value(CAR(CDR(args)));
       l->calc_range();
@@ -1366,27 +1366,27 @@ long c_caller(long number, void *args)
     case 126 : return current_object->picture()->height(); break;
     case 127 : { dprintf("trap\n"); } break;   // I use this to set gdb break points
     case 128 : { return current_level->platform_push(current_object,lnumber_value(CAR(args)),
-					    lnumber_value(CAR(CDR(args))));
-					    } break;
+                        lnumber_value(CAR(CDR(args))));
+                        } break;
     case 133 :  // def_sound
     {
       lisp_symbol *sym=NULL;
       if (CDR(args))
       {
-	sym=(lisp_symbol *)lcar(args);
-	if (item_type(sym)!=L_SYMBOL)
-	{
-	  lbreak("expecting first arg to def-character to be a symbol!\n");
-	  exit(0);
-	}
-	args=CDR(args);
+    sym=(lisp_symbol *)lcar(args);
+    if (item_type(sym)!=L_SYMBOL)
+    {
+      lbreak("expecting first arg to def-character to be a symbol!\n");
+      exit(0);
+    }
+    args=CDR(args);
       }
 
       int sp=current_space;
       current_space=PERM_SPACE;
       int id=cache.reg(lstring_value(lcar(args)),NULL,SPEC_EXTERN_SFX,1);
       if (sym)
-        set_symbol_number(sym,id);    // set the symbol value to sfx id				     
+        set_symbol_number(sym,id);    // set the symbol value to sfx id                
       current_space=sp;
       return id;
     } break;
@@ -1401,19 +1401,19 @@ long c_caller(long number, void *args)
         cache.sfx(id)->play(127);
       else
       {
-	int vol=lnumber_value(lcar(a)); a=CDR(a);
-	if (a)
-	{
-	  int32_t x=lnumber_value(lcar(a)); a=CDR(a);
-	  if (!a)
-	  {
-	    lprint(args);
-	    lbreak("expecting y after x in play_sound\n");
-	    exit(1);
-	  }
-	  int32_t y=lnumber_value(lcar(a));
-	  the_game->play_sound(id,vol,x,y);
-	} else cache.sfx(id)->play(vol);        
+    int vol=lnumber_value(lcar(a)); a=CDR(a);
+    if (a)
+    {
+      int32_t x=lnumber_value(lcar(a)); a=CDR(a);
+      if (!a)
+      {
+        lprint(args);
+        lbreak("expecting y after x in play_sound\n");
+        exit(1);
+      }
+      int32_t y=lnumber_value(lcar(a));
+      the_game->play_sound(id,vol,x,y);
+    } else cache.sfx(id)->play(vol);
       }
 
     } break;
@@ -1430,9 +1430,9 @@ long c_caller(long number, void *args)
     {
       int32_t x=lnumber_value(CAR(args)); args=CDR(args);
       if (x<0 || x>=total_weapons)
-      { 
-	lbreak("weapon out of range (%d)\n",x);
-	exit(0);
+      {
+    lbreak("weapon out of range (%d)\n",x);
+    exit(0);
       }
       return weapon_types[x];
     } break;
@@ -1453,12 +1453,12 @@ long c_caller(long number, void *args)
       if (!v) dprintf("Can't add weapons for non-players\n");
       else
       {
-	int32_t x=lnumber_value(CAR(args)); args=CDR(args);
-	int32_t y=lnumber_value(CAR(args)); args=CDR(args);
-	if (x<0 || x>=total_weapons)
-	{ lbreak("weapon out of range (%d)\n",x); exit(0); }
-	v->add_ammo(x,y);
-      }      
+    int32_t x=lnumber_value(CAR(args)); args=CDR(args);
+    int32_t y=lnumber_value(CAR(args)); args=CDR(args);
+    if (x<0 || x>=total_weapons)
+    { lbreak("weapon out of range (%d)\n",x); exit(0); }
+    v->add_ammo(x,y);
+      }
     } break;
     case 145 :
     {
@@ -1475,7 +1475,7 @@ long c_caller(long number, void *args)
     {
       view *v=current_object->controller();
       if (!v) { lbreak("current_weapon_type : object cannot hold weapons\n");
-		return 0; } 
+        return 0; }
       else return v->current_weapon;
     } break;
     case 148 : return lnumber_value(CAR(args))&BLOCKED_UP; break;
@@ -1488,15 +1488,15 @@ long c_caller(long number, void *args)
       { lbreak("weapon out of range (%d)\n",x); exit(0); }
       if (v) v->give_weapon(x);
     } break;
-    case 151 : 
+    case 151 :
     {
       int a=lnumber_value(CAR(args));
       if (a<0 || a>=TOTAL_ABILITIES)
       {
-	lprint(args);
-	lbreak("bad ability number for get_ability, should be 0..%d, not %d\n",
-		TOTAL_ABILITIES,a);
-	exit(0);
+    lprint(args);
+    lbreak("bad ability number for get_ability, should be 0..%d, not %d\n",
+        TOTAL_ABILITIES,a);
+    exit(0);
       }
       return get_ability(current_object->otype,(ability)a);
     } break;
@@ -1505,7 +1505,7 @@ long c_caller(long number, void *args)
       view *v=current_object->controller();
       if (!v) dprintf("Can't use reset_player on non-players\n");
       else
-        v->reset_player();	      
+        v->reset_player();    
     } break;
     case 153 :
     {
@@ -1523,28 +1523,28 @@ long c_caller(long number, void *args)
       current_object->set_fxvel((xvel&0xffff)>>8);
       int32_t yvel=-(lisp_sin(ang)>>8)*(mag>>8);
       current_object->set_yvel(yvel>>16);
-      current_object->set_fyvel((yvel&0xffff)>>8);      
+      current_object->set_fyvel((yvel&0xffff)>>8);
     } break;
     case 155 :
     {
       int tframes=current_object->total_frames(),f;
 
-      int32_t ang1=lnumber_value(CAR(args)); args=CDR(args);      
-      if (ang1<0) ang1=(ang1%360)+360; 
+      int32_t ang1=lnumber_value(CAR(args)); args=CDR(args);
+      if (ang1<0) ang1=(ang1%360)+360;
       else if (ang1>=360) ang1=ang1%360;
-      int32_t ang2=lnumber_value(CAR(args)); args=CDR(args);      
-      if (ang2<0) ang2=(ang2%360)+360; 
+      int32_t ang2=lnumber_value(CAR(args)); args=CDR(args);
+      if (ang2<0) ang2=(ang2%360)+360;
       else if (ang2>=360) ang2=ang2%360;
 
       int32_t ang=(lnumber_value(CAR(args))+90/tframes)%360;
       if (ang1>ang2)
       {
-        if (ang<ang1 && ang>ang2) 	
-	  return 0;
-	else if (ang>=ang1)	
-	  f=(ang-ang1)*tframes/(359-ang1+ang2+1);
-	else 
-	  f=(359-ang1+ang)*tframes/(359-ang1+ang2+1);
+        if (ang<ang1 && ang>ang2)     
+      return 0;
+    else if (ang>=ang1)    
+      f=(ang-ang1)*tframes/(359-ang1+ang2+1);
+    else
+      f=(359-ang1+ang)*tframes/(359-ang1+ang2+1);
       } else if (ang<ang1 || ang>ang2)
         return 0;
       else f=(ang-ang1)*tframes/(ang2-ang1+1);
@@ -1566,9 +1566,9 @@ long c_caller(long number, void *args)
     {
       int32_t am=lnumber_value(CAR(args)); args=CDR(args);
       game_object *from=(game_object *)lpointer_value(CAR(args)); args=CDR(args);
-      int32_t hitx=lnumber_value(CAR(args)); args=CDR(args);      
-      int32_t hity=lnumber_value(CAR(args)); args=CDR(args);      
-      int32_t px=lnumber_value(CAR(args)); args=CDR(args);      
+      int32_t hitx=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t hity=lnumber_value(CAR(args)); args=CDR(args);
+      int32_t px=lnumber_value(CAR(args)); args=CDR(args);
       int32_t py=lnumber_value(CAR(args)); args=CDR(args);
       current_object->damage_fun(am,from,hitx,hity,px,py);
     } break;
@@ -1578,7 +1578,7 @@ long c_caller(long number, void *args)
       view *v=current_object->controller();
       if (!v) dprintf("make_view_solid : object has no view\n");
       else
-        v->draw_solid=lnumber_value(CAR(args));      
+        v->draw_solid=lnumber_value(CAR(args));
     } break;
     case 172 :
     {
@@ -1588,9 +1588,9 @@ long c_caller(long number, void *args)
       int b=lnumber_value(CAR(a));
       if (r<0 || b<0 || g<0 || r>255 || g>255 || b>255)
       {
-	lprint(args);
-	lbreak("color out of range (0..255) in color lookup\n");
-	exit(0);
+    lprint(args);
+    lbreak("color out of range (0..255) in color lookup\n");
+    exit(0);
       }
       return color_table->lookup_color(r>>3,g>>3,b>>3);
     } break;
@@ -1629,18 +1629,18 @@ long c_caller(long number, void *args)
       bg_xmul=lnumber_value(CAR(args)); args=CDR(args);
       bg_xdiv=lnumber_value(CAR(args)); args=CDR(args);
       bg_ymul=lnumber_value(CAR(args)); args=CDR(args);
-      bg_ydiv=lnumber_value(CAR(args)); 
+      bg_ydiv=lnumber_value(CAR(args));
       if (bg_xdiv==0) { bg_xdiv=1; lprint(args); dprintf("bg_set_scroll : cannot set xdiv to 0\n"); }
       if (bg_ydiv==0) { bg_ydiv=1; lprint(args); dprintf("bg_set_scroll : cannot set ydiv to 0\n"); }
     } break;
-    case 179 : 
+    case 179 :
     {
       view *v=lget_view(CAR(args),"set_ambient_light");       args=CDR(args);
       int32_t x=lnumber_value(CAR(args));
       if (x>=0 && x<64) v->ambient=x;
     } break;
     case 180 : return lget_view(CAR(args),"ambient_light")->ambient; break;
-    case 181 : 
+    case 181 :
     {
       int x=current_object->total_objects();
       game_object *who=(game_object *)lpointer_value(CAR(args));
@@ -1657,41 +1657,41 @@ long c_caller(long number, void *args)
     case 188 : return current_object->fyvel(); break;
     case 189 : return current_object->fxacel(); break;
     case 190 : return current_object->fyacel(); break;
-    case 191 : 
+    case 191 :
     {
-//      char *fn=lstring_value(CAR(args)); args=CDR(args);      
+//      char *fn=lstring_value(CAR(args)); args=CDR(args);
 //      stat_bar=cache.reg_object(fn,CAR(args),SPEC_IMAGE,1);
     } break;
-    case 192 : 
-    {     
+    case 192 :
+    {
       int32_t x=lnumber_value(CAR(args)); args=CDR(args);
       int32_t y=lnumber_value(CAR(args)); args=CDR(args);
       int32_t type=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->foreground_width() || y>=current_level->foreground_width())
         lbreak("%d %d is out of range of fg map",x,y);
-      else	
+      else    
         current_level->put_fg(x,y,type);
     } break;
     case 193 :
-    { 
+    {
       int32_t x=lnumber_value(CAR(args)); args=CDR(args);
       int32_t y=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->foreground_width() || y>=current_level->foreground_width())
         lbreak("%d %d is out of range of fg map",x,y);
       else return current_level->get_fg(x,y);
     } break;
-    case 194 : 
-    {     
+    case 194 :
+    {
       int32_t x=lnumber_value(CAR(args)); args=CDR(args);
       int32_t y=lnumber_value(CAR(args)); args=CDR(args);
       int32_t type=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->background_width() || y>=current_level->background_width())
         lbreak("%d %d is out of range of fg map",x,y);
-      else	
+      else    
         current_level->put_bg(x,y,type);
     } break;
     case 195 :
-    { 
+    {
       int32_t x=lnumber_value(CAR(args)); args=CDR(args);
       int32_t y=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->background_width() || y>=current_level->background_width())
@@ -1704,20 +1704,20 @@ long c_caller(long number, void *args)
       bFILE *fp=open_file(lstring_value(CAR(args)),"rb");
       if (fp->open_failure())
       {
-	delete fp;
+    delete fp;
         lbreak("load_palette : could not open file %s for reading",lstring_value(CAR(args)));
-	exit(1);
+    exit(1);
       } else
       {
-	spec_directory sd(fp);
-	spec_entry *se=sd.find(SPEC_PALETTE);
-	if (!se) lbreak("File %s has no palette!\n",lstring_value(CAR(args)));
-	else
-	{
-	  if (pal) delete pal;
-	  pal=new palette(se,fp);
-	}
-	delete fp;
+    spec_directory sd(fp);
+    spec_entry *se=sd.find(SPEC_PALETTE);
+    if (!se) lbreak("File %s has no palette!\n",lstring_value(CAR(args)));
+    else
+    {
+      if (pal) delete pal;
+      pal=new palette(se,fp);
+    }
+    delete fp;
       }
     } break;
     case 198 :
@@ -1725,20 +1725,20 @@ long c_caller(long number, void *args)
       bFILE *fp=open_file(lstring_value(CAR(args)),"rb");
       if (fp->open_failure())
       {
-	delete fp;
+    delete fp;
         lbreak("load_color_filter : could not open file %s for reading",lstring_value(CAR(args)));
-	exit(1);
+    exit(1);
       } else
       {
-	spec_directory sd(fp);
-	spec_entry *se=sd.find(SPEC_COLOR_TABLE);
-	if (!se) lbreak("File %s has no color filter!",lstring_value(CAR(args)));
-	else
-	{
-	  if (color_table) delete color_table;
-	  color_table=new color_filter(se,fp);
-	}
-	delete fp;
+    spec_directory sd(fp);
+    spec_entry *se=sd.find(SPEC_COLOR_TABLE);
+    if (!se) lbreak("File %s has no color filter!",lstring_value(CAR(args)));
+    else
+    {
+      if (color_table) delete color_table;
+      color_table=new color_filter(se,fp);
+    }
+    delete fp;
       }
     } break;
     case 199 :
@@ -1753,7 +1753,7 @@ long c_caller(long number, void *args)
       int top=2;
       if (args)
         if (!CAR(args)) top=0;
-        
+
       int32_t oxv=xv,oyv=yv;
       current_object->try_move(current_object->x,current_object->y,xv,yv,1|top);
       current_object->x+=xv;
@@ -1766,7 +1766,7 @@ long c_caller(long number, void *args)
       return figures[current_object->otype]->get_sequence((character_state)x)->length();
     } break;
     case 202 :
-    { 
+    {
       int32_t x1=lnumber_value(CAR(args)); args=CDR(args);
       int32_t y1=lnumber_value(CAR(args)); args=CDR(args);
       int32_t x2=lnumber_value(CAR(args)); args=CDR(args);
@@ -1775,7 +1775,7 @@ long c_caller(long number, void *args)
       int32_t nx2=x2,ny2=y2;
       current_level->foreground_intersect(x1,y1,x2,y2);
       if (x2!=nx2 || y2!=ny2) return 0;
-      
+
       if (block_all)
         current_level->all_boundary_setback(current_object,x1,y1,x2,y2);
       else
@@ -1787,29 +1787,29 @@ long c_caller(long number, void *args)
     {
       char *fn=lstring_value(CAR(args)); args=CDR(args);
       char *name=lstring_value(CAR(args));
-      big_font_pict=cache.reg(fn,name,SPEC_IMAGE,1);     
+      big_font_pict=cache.reg(fn,name,SPEC_IMAGE,1);
     } break;
     case 204 :
     {
       char *fn=lstring_value(CAR(args)); args=CDR(args);
       char *name=lstring_value(CAR(args));
-      small_font_pict=cache.reg(fn,name,SPEC_IMAGE,1);     
+      small_font_pict=cache.reg(fn,name,SPEC_IMAGE,1);
     } break;
     case 205 :
     {
       char *fn=lstring_value(CAR(args)); args=CDR(args);
       char *name=lstring_value(CAR(args));
-      console_font_pict=cache.reg(fn,name,SPEC_IMAGE,1);     
+      console_font_pict=cache.reg(fn,name,SPEC_IMAGE,1);
     } break;
     case 206 :
     {
       int32_t x=lnumber_value(CAR(args));
       if (x<current_object->total_frames())
         current_object->current_frame=x;
-      else      
-	lbreak("%d out of range for set_current_frame",x);
+      else
+    lbreak("%d out of range for set_current_frame",x);
     } break;
-    
+
     case 208 :
     {
       current_object->draw_trans(lnumber_value(CAR(args)),lnumber_value(CAR(CDR(args))));
@@ -1889,7 +1889,7 @@ long c_caller(long number, void *args)
     } break;
     case 224 :
     {
-      current_object->set_hp(lnumber_value(CAR(args)));   
+      current_object->set_hp(lnumber_value(CAR(args)));
     } break;
     case 225 :
     {
@@ -1923,9 +1923,9 @@ long c_caller(long number, void *args)
       int ba=lnumber_value(CAR(args));
       for (int i=0;i<256;i++)
       {
-	r=(int)*addr+ra; if (r>255) r=255; else if (r<0) r=0; *addr=(uint8_t)r; addr++;
-	g=(int)*addr+ga; if (g>255) g=255; else if (g<0) g=0; *addr=(uint8_t)g; addr++;
-	b=(int)*addr+ba; if (b>255) b=255; else if (b<0) b=0; *addr=(uint8_t)b; addr++;
+    r=(int)*addr+ra; if (r>255) r=255; else if (r<0) r=0; *addr=(uint8_t)r; addr++;
+    g=(int)*addr+ga; if (g>255) g=255; else if (g<0) g=0; *addr=(uint8_t)g; addr++;
+    b=(int)*addr+ba; if (b>255) b=255; else if (b<0) b=0; *addr=(uint8_t)b; addr++;
       }
       p->load();
       delete p;
@@ -1940,12 +1940,12 @@ long c_caller(long number, void *args)
     {
       view *v=current_object->controller();
       if (!v) lbreak("object has no view : local_player");
-      else 
+      else
       {
-	int32_t x=lnumber_value(CAR(args));
-	if (x<0 || x>=total_weapons)
-	{ lbreak("weapon out of range (%d)\n",x); exit(0); }
-	v->current_weapon=x;	
+    int32_t x=lnumber_value(CAR(args));
+    if (x<0 || x>=total_weapons)
+    { lbreak("weapon out of range (%d)\n",x); exit(0); }
+    v->current_weapon=x;    
       }
     } break;
     case 231 :
@@ -1959,7 +1959,7 @@ long c_caller(long number, void *args)
       ambient_ramp+=lnumber_value(CAR(args));
     } break;
 
-    case 233 : 
+    case 233 :
     { int x=0; view *v=player_list; for (;v;v=v->next,x++); return x; } break;
 
     case 234 :
@@ -1977,7 +1977,7 @@ long c_caller(long number, void *args)
 
     } break;
     case 235 :
-    { if (current_level) return current_level->tick_counter(); 
+    { if (current_level) return current_level->tick_counter();
       else return 0; } break;
     case 236 :
     {
@@ -1996,13 +1996,13 @@ long c_caller(long number, void *args)
     case 240 :
     { current_level->to_back(current_object); } break;
     case 241 :
-    { 
+    {
       view *v=current_object->controller();
       if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
       else return v->pointer_x;
     } break;
     case 242 :
-    { 
+    {
       view *v=current_object->controller();
       if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
       else return v->pointer_y;
@@ -2043,7 +2043,7 @@ long c_caller(long number, void *args)
       int32_t cy1=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t cx2=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t cy2=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t c1=lnumber_value(CAR(args)); args=lcdr(args);      
+      int32_t c1=lnumber_value(CAR(args)); args=lcdr(args);
       screen->bar(cx1,cy1,cx2,cy2,c1);
     } break;
     case 248 :
@@ -2054,16 +2054,16 @@ long c_caller(long number, void *args)
     {
       if ((sound_avail&MUSIC_INITIALIZED))
       {
-	char *fn=lstring_value(CAR(args));
-	if (current_song)
-	{
-	  if (current_song->playing())
-	  current_song->stop();
-	  delete current_song;
-	}
-	current_song=new song(fn);
-	current_song->play(music_volume);
-	dprintf("Playing %s at volume %d\n",fn,music_volume);
+    char *fn=lstring_value(CAR(args));
+    if (current_song)
+    {
+      if (current_song->playing())
+      current_song->stop();
+      delete current_song;
+    }
+    current_song=new song(fn);
+    current_song->play(music_volume);
+    dprintf("Playing %s at volume %d\n",fn,music_volume);
       }
     } break;
     case 250 :
@@ -2104,25 +2104,25 @@ long c_caller(long number, void *args)
     {
       view *v=current_object->controller();
       if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
-      else v->kills=lnumber_value(CAR(args)); 
+      else v->kills=lnumber_value(CAR(args));
     } break;
     case 259 :
     {
       view *v=current_object->controller();
       if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
-      else v->tkills=lnumber_value(CAR(args)); 
+      else v->tkills=lnumber_value(CAR(args));
     } break;
     case 260 :
     {
       view *v=current_object->controller();
       if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
-      else v->secrets=lnumber_value(CAR(args)); 
+      else v->secrets=lnumber_value(CAR(args));
     } break;
     case 261 :
     {
       view *v=current_object->controller();
       if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
-      else v->tsecrets=lnumber_value(CAR(args)); 
+      else v->tsecrets=lnumber_value(CAR(args));
     } break;
     case 262 :
     {
@@ -2187,7 +2187,7 @@ long c_caller(long number, void *args)
         wm->set_mouse_shape(cache.img(c_target)->copy(),x,y);
     } break;
     case 276 :
-    {      
+    {
       if (!main_net_cfg) return 0;
       return become_server(game_name);
     } break;
@@ -2209,7 +2209,7 @@ long c_caller(long number, void *args)
     {
       view *v=current_object->controller();
       if (!v) { lbreak("get_player_name : object has no view!\n"); }
-      else strcpy(v->name,lstring_value(CAR(args))); 
+      else strcpy(v->name,lstring_value(CAR(args)));
     } break;
     case 282 :
     {
@@ -2247,15 +2247,15 @@ long c_caller(long number, void *args)
     {
       if (change_dir(lstring_value(CAR(args))))
         return 1;
-      else return 0;      
+      else return 0;
     } break;
     case 287 :
     {
       void *title=CAR(args); args=CDR(args);
       void *source=CAR(args); args=CDR(args);
-      void *dest=CAR(args); args=CDR(args); 
+      void *dest=CAR(args); args=CDR(args);
 
-      return nice_copy(lstring_value(title),lstring_value(source),lstring_value(dest));      
+      return nice_copy(lstring_value(title),lstring_value(source),lstring_value(dest));
     } break;
     case 288 :
     {
@@ -2263,7 +2263,7 @@ long c_caller(long number, void *args)
     } break;
     case 289 :
     {
-      set_login(lstring_value(CAR(args)));    
+      set_login(lstring_value(CAR(args)));
     } break;
     case 290 :
     {
@@ -2282,11 +2282,11 @@ long c_caller(long number, void *args)
     {
       if (main_net_cfg && (main_net_cfg->state==net_configuration::CLIENT || main_net_cfg->state==net_configuration::SERVER))
       {
-	view *v=player_list;
-	for (;v;v=v->next)
-	   if (v->kills>=main_net_cfg->kills)
-	     return 1;
-	
+    view *v=player_list;
+    for (;v;v=v->next)
+       if (v->kills>=main_net_cfg->kills)
+         return 1;
+    
 
       } else return 0;
     } break;
@@ -2295,16 +2295,16 @@ long c_caller(long number, void *args)
       view *v=player_list;
       for (;v;v=v->next)
       {
-	v->tkills+=v->kills;
+    v->tkills+=v->kills;
 
         v->kills=0;
-	game_object *o=current_object;
-	current_object=v->focus;
+    game_object *o=current_object;
+    current_object=v->focus;
 
-	eval_function((lisp_symbol *)l_restart_player,NULL);
-	v->reset_player();
-	v->focus->set_aistate(0);
-	current_object=o;	
+    eval_function((lisp_symbol *)l_restart_player,NULL);
+    v->reset_player();
+    v->focus->set_aistate(0);
+    current_object=o;    
       }
 
     } break;
@@ -2336,9 +2336,9 @@ int get_lprop_number(void *symbol, int def)  // returns def if symbol undefined 
     switch (item_type(v))
     {
       case L_FIXED_POINT :
-      case L_NUMBER : 
-      { return lnumber_value(v); } break; 
-      default : return def;		      
+      case L_NUMBER :
+      { return lnumber_value(v); } break;
+      default : return def;        
     }
   } else return def;
 }

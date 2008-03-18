@@ -16,6 +16,6 @@
 short mdl_total_images(char *fn);
 image **read_mdl(char *fn, palette *&pal, short startn, short endn, short &total);
 void write_mdl(image **images, short total_images, palette *pal,char *fn,
-		short firstpage=0, short images_per_page=20);
+        short firstpage=0, short images_per_page=20);
 
 #endif

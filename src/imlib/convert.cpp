@@ -30,7 +30,7 @@ main(int argc, char **argv)
   for (i=2;i<argc;i++)
   {
     printf("  %s\n",argv[i]);
-    fp=fopen(argv[i],"r"); 
+    fp=fopen(argv[i],"r");
     o=fopen("testXDF.out","w");
     while (!feof(fp))
     {
@@ -39,13 +39,13 @@ main(int argc, char **argv)
       {
         if (c=='\n' && add) { fputc('\r',o); }
         if (!(c=='\r') || !strip)
-          fputc(c,o); 
+          fputc(c,o);
       }
     }
     fclose(o);
     fclose(fp);
     sprintf(st,"cp testXDF.out %s",argv[i]);
     system(st);
-    unlink("testXDF.out"); 
-  } 
+    unlink("testXDF.out");
+  }
 }

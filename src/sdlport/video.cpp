@@ -27,8 +27,8 @@
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
-#endif	/* __APPLE__ */
-#endif	/* HAVE_OPENGL */
+#endif    /* __APPLE__ */
+#endif    /* HAVE_OPENGL */
 #include "filter.hpp"
 #include "system.h"
 #include "video.hpp"
@@ -60,9 +60,9 @@ void update_window_done();
 //
 static int power_of_two(int input)
 {
-	int value;
-	for( value = 1 ; value < input ; value <<= 1);
-	return value;
+    int value;
+    for( value = 1 ; value < input ; value <<= 1);
+    return value;
 }
 
 //
@@ -71,142 +71,142 @@ static int power_of_two(int input)
 //
 void set_mode( int mode, int argc, char **argv )
 {
-	const SDL_VideoInfo *vidInfo;
-	int vidFlags = SDL_HWPALETTE;
+    const SDL_VideoInfo *vidInfo;
+    int vidFlags = SDL_HWPALETTE;
 
-	// Check for video capabilities
-	vidInfo = SDL_GetVideoInfo();
-	if( vidInfo->hw_available )
-	{
-		vidFlags |= SDL_HWSURFACE;
-	}
-	else
-	{
-		vidFlags |= SDL_SWSURFACE;
-	}
-	if( flags.fullscreen )
-	{
-		vidFlags |= SDL_FULLSCREEN;
-	}
-	if( flags.doublebuf )
-	{
-		vidFlags |= SDL_DOUBLEBUF;
-	}
+    // Check for video capabilities
+    vidInfo = SDL_GetVideoInfo();
+    if( vidInfo->hw_available )
+    {
+        vidFlags |= SDL_HWSURFACE;
+    }
+    else
+    {
+        vidFlags |= SDL_SWSURFACE;
+    }
+    if( flags.fullscreen )
+    {
+        vidFlags |= SDL_FULLSCREEN;
+    }
+    if( flags.doublebuf )
+    {
+        vidFlags |= SDL_DOUBLEBUF;
+    }
 
-	// Calculate the window scale
-	win_xscale = mouse_xscale = (flags.xres << 16) / xres;
-	win_yscale = mouse_yscale = (flags.yres << 16) / yres;
+    // Calculate the window scale
+    win_xscale = mouse_xscale = (flags.xres << 16) / xres;
+    win_yscale = mouse_yscale = (flags.yres << 16) / yres;
 
-	// Try using opengl hw accell
-	if( flags.gl ) {
+    // Try using opengl hw accell
+    if( flags.gl ) {
 #ifdef HAVE_OPENGL
-		printf( "Video : OpenGL enabled\n" );
-		// allow doublebuffering in with gl too
-		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, flags.doublebuf );
-		// set video gl capability
-		vidFlags |= SDL_OPENGL;
-		// force no scaling, let the hw do it
-		win_xscale = win_yscale = 1 << 16;
+        printf( "Video : OpenGL enabled\n" );
+        // allow doublebuffering in with gl too
+        SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, flags.doublebuf );
+        // set video gl capability
+        vidFlags |= SDL_OPENGL;
+        // force no scaling, let the hw do it
+        win_xscale = win_yscale = 1 << 16;
 #else
-		// ignore the option if not available
-		printf( "Video : OpenGL disabled (Support missing in executable)\n");
-		flags.gl = 0;
+        // ignore the option if not available
+        printf( "Video : OpenGL disabled (Support missing in executable)\n");
+        flags.gl = 0;
 #endif
-	}
+    }
 
-	// Set the icon for this window.  Looks nice on taskbars etc.
-	SDL_WM_SetIcon( SDL_LoadBMP("abuse.bmp"), NULL );
+    // Set the icon for this window.  Looks nice on taskbars etc.
+    SDL_WM_SetIcon( SDL_LoadBMP("abuse.bmp"), NULL );
 
-	// Create the window with a preference for 8-bit (palette animations!), but accept any depth */
-	window = SDL_SetVideoMode(flags.xres, flags.yres, 8, vidFlags | SDL_ANYFORMAT );
-	if( window == NULL )
-	{
-		printf( "Video : Unable to set video mode : %s\n", SDL_GetError() );
-		exit( 1 );
-	}
+    // Create the window with a preference for 8-bit (palette animations!), but accept any depth */
+    window = SDL_SetVideoMode(flags.xres, flags.yres, 8, vidFlags | SDL_ANYFORMAT );
+    if( window == NULL )
+    {
+        printf( "Video : Unable to set video mode : %s\n", SDL_GetError() );
+        exit( 1 );
+    }
 
-	// Create the screen image
-	screen = new image( xres, yres, NULL, 2 );
-	if( screen == NULL )
-	{
-		// Our screen image is no good, we have to bail.
-		printf( "Video : Unable to create screen image.\n" );
-		exit( 1 );
-	}
-	screen->clear();
+    // Create the screen image
+    screen = new image( xres, yres, NULL, 2 );
+    if( screen == NULL )
+    {
+        // Our screen image is no good, we have to bail.
+        printf( "Video : Unable to create screen image.\n" );
+        exit( 1 );
+    }
+    screen->clear();
 
-	if (flags.gl)
-	{
+    if (flags.gl)
+    {
 #ifdef HAVE_OPENGL
-		int w,h;
+        int w,h;
 
-		// texture width/height should be power of 2
-		w = power_of_two(xres);
-		h = power_of_two(yres);
+        // texture width/height should be power of 2
+        w = power_of_two(xres);
+        h = power_of_two(yres);
 
-		// create texture surface
-		texture = SDL_CreateRGBSurface( SDL_SWSURFACE, w ,h ,32, 
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN 
-				0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000 );
+        // create texture surface
+        texture = SDL_CreateRGBSurface( SDL_SWSURFACE, w ,h ,32,
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+                0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000 );
 #else
-				0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF );
+                0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF );
 #endif
 
-		// setup 2D gl environment
-		glPushAttrib(GL_ENABLE_BIT);
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
-		glEnable(GL_TEXTURE_2D);
+        // setup 2D gl environment
+        glPushAttrib(GL_ENABLE_BIT);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        glEnable(GL_TEXTURE_2D);
 
-		glViewport(0, 0, window->w, window->h);
+        glViewport(0, 0, window->w, window->h);
 
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
 
-		glOrtho(0.0, (GLdouble)window->w, (GLdouble)window->h, 0.0, 0.0,1.0);
+        glOrtho(0.0, (GLdouble)window->w, (GLdouble)window->h, 0.0, 0.0,1.0);
 
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-		glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
 
-		// texture coordinates
-		texcoord[0] = 0.0f;
-		texcoord[1] = 0.0f;
-		texcoord[2] = (GLfloat)xres / texture->w;
-		texcoord[3] = (GLfloat)yres / texture->h;
+        // texture coordinates
+        texcoord[0] = 0.0f;
+        texcoord[1] = 0.0f;
+        texcoord[2] = (GLfloat)xres / texture->w;
+        texcoord[3] = (GLfloat)yres / texture->h;
 
-		// create an RGBA texture for the texture surface
-		glGenTextures(1, &texid);
-		glBindTexture(GL_TEXTURE_2D, texid);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, flags.antialias);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, flags.antialias);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->pixels );
+        // create an RGBA texture for the texture surface
+        glGenTextures(1, &texid);
+        glBindTexture(GL_TEXTURE_2D, texid);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, flags.antialias);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, flags.antialias);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->pixels );
 #endif
-	}
+    }
 
-	// Create our 8-bit surface
-	surface = SDL_CreateRGBSurface( SDL_SWSURFACE, window->w, window->h, 8, 0xff, 0xff, 0xff, 0xff );
-	if( surface == NULL )
-	{
-		// Our surface is no good, we have to bail.
-		printf( "Video : Unable to create 8-bit surface.\n" );
-		exit( 1 );
-	}
+    // Create our 8-bit surface
+    surface = SDL_CreateRGBSurface( SDL_SWSURFACE, window->w, window->h, 8, 0xff, 0xff, 0xff, 0xff );
+    if( surface == NULL )
+    {
+        // Our surface is no good, we have to bail.
+        printf( "Video : Unable to create 8-bit surface.\n" );
+        exit( 1 );
+    }
 
-	printf( "Video : %dx%d %dbpp\n", window->w, window->h, window->format->BitsPerPixel );
+    printf( "Video : %dx%d %dbpp\n", window->w, window->h, window->format->BitsPerPixel );
 
-	// Set the window caption
-	SDL_WM_SetCaption( "Abuse-SDL", "Abuse-SDL" );
+    // Set the window caption
+    SDL_WM_SetCaption( "Abuse-SDL", "Abuse-SDL" );
 
-	// Grab and hide the mouse cursor
-	SDL_ShowCursor( 0 );
-	if( flags.grabmouse )
-	{
-		SDL_WM_GrabInput( SDL_GRAB_ON );
-	}
+    // Grab and hide the mouse cursor
+    SDL_ShowCursor( 0 );
+    if( flags.grabmouse )
+    {
+        SDL_WM_GrabInput( SDL_GRAB_ON );
+    }
 
-	update_dirty( screen );
+    update_dirty( screen );
 }
 
 //
@@ -215,23 +215,23 @@ void set_mode( int mode, int argc, char **argv )
 //
 void close_graphics()
 {
-	if( lastl )
-	{
-		delete lastl;
-	}
-	lastl = NULL;
-	// Free our 8-bit surface
-	if( surface )
-	{
-		SDL_FreeSurface( surface );
-	}
+    if( lastl )
+    {
+        delete lastl;
+    }
+    lastl = NULL;
+    // Free our 8-bit surface
+    if( surface )
+    {
+        SDL_FreeSurface( surface );
+    }
 #ifdef HAVE_OPENGL
-	if ( texture )
-	{
-		SDL_FreeSurface( texture );
-	}
+    if ( texture )
+    {
+        SDL_FreeSurface( texture );
+    }
 #endif
-	delete screen;
+    delete screen;
 }
 
 // put_part_image()
@@ -239,119 +239,119 @@ void close_graphics()
 //
 void put_part_image( image *im, int x, int y, int x1, int y1, int x2, int y2 )
 {
-	int xe, ye;
-	SDL_Rect srcrect, dstrect;
-	int ii, jj;
-	int srcx, srcy, xstep, ystep;
-	Uint8 *dpixel;
-	Uint16 dinset;
+    int xe, ye;
+    SDL_Rect srcrect, dstrect;
+    int ii, jj;
+    int srcx, srcy, xstep, ystep;
+    Uint8 *dpixel;
+    Uint16 dinset;
 
-	if( (unsigned)y > yres || (unsigned)x > xres )
-	{
-		return;
-	}
-	CHECK( x1 >= 0 && x2 >= x1 && y1 >= 0 && y2 >= y1 );
+    if( (unsigned)y > yres || (unsigned)x > xres )
+    {
+        return;
+    }
+    CHECK( x1 >= 0 && x2 >= x1 && y1 >= 0 && y2 >= y1 );
 
-	// Adjust if we are trying to draw off the screen
-	if( x < 0 )
-	{
-		x1 += -x;
-		x = 0;
-	}
-	srcrect.x = x1;
-	if( (unsigned)(x + ( x2 - x1 )) >= xres )
-	{
-		xe = xres - x + x1 - 1;
-	}
-	else
-	{
-		xe = x2;
-	}
-	if( y < 0 )
-	{
-		y1 += -y;
-		y = 0;
-	}
-	srcrect.y = y1;
-	if( (unsigned)(y + ( y2 - y1 )) >= yres )
-	{
-		ye = yres - y + y1 - 1;
-	}
-	else
-	{
-		ye = y2;
-	}
-	if( srcrect.x >= xe || srcrect.y >= ye )
-		return;
+    // Adjust if we are trying to draw off the screen
+    if( x < 0 )
+    {
+        x1 += -x;
+        x = 0;
+    }
+    srcrect.x = x1;
+    if( (unsigned)(x + ( x2 - x1 )) >= xres )
+    {
+        xe = xres - x + x1 - 1;
+    }
+    else
+    {
+        xe = x2;
+    }
+    if( y < 0 )
+    {
+        y1 += -y;
+        y = 0;
+    }
+    srcrect.y = y1;
+    if( (unsigned)(y + ( y2 - y1 )) >= yres )
+    {
+        ye = yres - y + y1 - 1;
+    }
+    else
+    {
+        ye = y2;
+    }
+    if( srcrect.x >= xe || srcrect.y >= ye )
+        return;
 
-	// Scale the image onto the surface
-	srcrect.w = xe - srcrect.x;
-	srcrect.h = ye - srcrect.y;
-	dstrect.x = ((x * win_xscale) >> 16);
-	dstrect.y = ((y * win_yscale) >> 16);
-	dstrect.w = ((srcrect.w * win_xscale) >> 16);
-	dstrect.h = ((srcrect.h * win_yscale) >> 16);
+    // Scale the image onto the surface
+    srcrect.w = xe - srcrect.x;
+    srcrect.h = ye - srcrect.y;
+    dstrect.x = ((x * win_xscale) >> 16);
+    dstrect.y = ((y * win_yscale) >> 16);
+    dstrect.w = ((srcrect.w * win_xscale) >> 16);
+    dstrect.h = ((srcrect.h * win_yscale) >> 16);
 
-	xstep = (srcrect.w << 16) / dstrect.w;
-	ystep = (srcrect.h << 16) / dstrect.h;
+    xstep = (srcrect.w << 16) / dstrect.w;
+    ystep = (srcrect.h << 16) / dstrect.h;
 
-	srcy = ((srcrect.y) << 16);
-	dinset = ((surface->w - dstrect.w)) * surface->format->BytesPerPixel;
+    srcy = ((srcrect.y) << 16);
+    dinset = ((surface->w - dstrect.w)) * surface->format->BytesPerPixel;
 
-	// Lock the surface if necessary
-	if( SDL_MUSTLOCK( surface ) )
-	{
-		SDL_LockSurface( surface );
-	}
-	dpixel = (Uint8 *)surface->pixels;
-	dpixel += (dstrect.x + ((dstrect.y) * surface->w)) * surface->format->BytesPerPixel;
+    // Lock the surface if necessary
+    if( SDL_MUSTLOCK( surface ) )
+    {
+        SDL_LockSurface( surface );
+    }
+    dpixel = (Uint8 *)surface->pixels;
+    dpixel += (dstrect.x + ((dstrect.y) * surface->w)) * surface->format->BytesPerPixel;
 
-	// Update surface part
-	if ((win_xscale==1<<16) && (win_yscale==1<<16)) // no scaling or hw scaling
-	{
-		srcy = srcrect.y;
-		dpixel = ((Uint8 *)surface->pixels) + y * surface->w + x ;
-		for( ii=0 ; ii < srcrect.h; ii++ )
-		{
-			memcpy( dpixel, im->scan_line( srcy ) + srcrect.x , srcrect.w );
-			dpixel += surface->w;
-			srcy ++;
-		}
-	}
-	else	// sw scaling
-	{
-		xstep = (srcrect.w << 16) / dstrect.w;
-		ystep = (srcrect.h << 16) / dstrect.h;
+    // Update surface part
+    if ((win_xscale==1<<16) && (win_yscale==1<<16)) // no scaling or hw scaling
+    {
+        srcy = srcrect.y;
+        dpixel = ((Uint8 *)surface->pixels) + y * surface->w + x ;
+        for( ii=0 ; ii < srcrect.h; ii++ )
+        {
+            memcpy( dpixel, im->scan_line( srcy ) + srcrect.x , srcrect.w );
+            dpixel += surface->w;
+            srcy ++;
+        }
+    }
+    else    // sw scaling
+    {
+        xstep = (srcrect.w << 16) / dstrect.w;
+        ystep = (srcrect.h << 16) / dstrect.h;
 
-		srcy = ((srcrect.y) << 16);
-		dinset = ((surface->w - dstrect.w)) * surface->format->BytesPerPixel;
+        srcy = ((srcrect.y) << 16);
+        dinset = ((surface->w - dstrect.w)) * surface->format->BytesPerPixel;
 
-		dpixel = (Uint8 *)surface->pixels + (dstrect.x + ((dstrect.y) * surface->w)) * surface->format->BytesPerPixel;
+        dpixel = (Uint8 *)surface->pixels + (dstrect.x + ((dstrect.y) * surface->w)) * surface->format->BytesPerPixel;
 
-		for( ii = 0; ii < dstrect.h; ii++ )
-		{
-			srcx = (srcrect.x << 16);
-			for( jj = 0; jj < dstrect.w; jj++ )
-			{
-				memcpy( dpixel, im->scan_line( (srcy >> 16) ) + ((srcx >> 16) * surface->format->BytesPerPixel), surface->format->BytesPerPixel );
-				dpixel += surface->format->BytesPerPixel;
-				srcx += xstep;
-			}
-			dpixel += dinset;
-			srcy += ystep;
-		}
-//		dpixel += dinset;
-//		srcy += ystep;
-	}
+        for( ii = 0; ii < dstrect.h; ii++ )
+        {
+            srcx = (srcrect.x << 16);
+            for( jj = 0; jj < dstrect.w; jj++ )
+            {
+                memcpy( dpixel, im->scan_line( (srcy >> 16) ) + ((srcx >> 16) * surface->format->BytesPerPixel), surface->format->BytesPerPixel );
+                dpixel += surface->format->BytesPerPixel;
+                srcx += xstep;
+            }
+            dpixel += dinset;
+            srcy += ystep;
+        }
+//        dpixel += dinset;
+//        srcy += ystep;
+    }
 
-	// Unlock the surface if we locked it.
-	if( SDL_MUSTLOCK( surface ) )
-	{
-		SDL_UnlockSurface( surface );
-	}
+    // Unlock the surface if we locked it.
+    if( SDL_MUSTLOCK( surface ) )
+    {
+        SDL_UnlockSurface( surface );
+    }
 
-	// Now blit the surface
-	update_window_part( &dstrect);
+    // Now blit the surface
+    update_window_part( &dstrect);
 }
 
 //
@@ -360,7 +360,7 @@ void put_part_image( image *im, int x, int y, int x1, int y1, int x2, int y2 )
 //
 void put_image( image * im, int x, int y )
 {
-	put_part_image( im, x, y, 0, 0, im->width() - 1, im->height() - 1 );
+    put_part_image( im, x, y, 0, 0, im->width() - 1, im->height() - 1 );
 }
 
 //
@@ -369,29 +369,29 @@ void put_image( image * im, int x, int y )
 //
 void update_dirty_window( image *im, int xoff, int yoff )
 {
-	int count;
-	dirty_rect *dr, *q;
-	CHECK( im->special ); // make sure the image has the ability to contain dirty areas
-	if( im->special->keep_dirt == 0 )
-	{
-		put_image( im, xoff, yoff );
-	}
-	else
-	{
-		count = im->special->dirties.number_nodes();
-		if( !count )
-			return;  // if nothing to update, return
-		dr = (dirty_rect *)( im->special->dirties.first() );
-		while( count > 0 )
-		{
-			put_part_image( im, xoff + dr->dx1, yoff + dr->dy1, dr->dx1, dr->dy1, dr->dx2 + 1, dr->dy2 + 1 );
-			q = dr;
-			dr = (dirty_rect *)( dr->next() );
-			im->special->dirties.unlink( ( linked_node *)q );
-			delete q;
-			count--;
-		}
-	}
+    int count;
+    dirty_rect *dr, *q;
+    CHECK( im->special ); // make sure the image has the ability to contain dirty areas
+    if( im->special->keep_dirt == 0 )
+    {
+        put_image( im, xoff, yoff );
+    }
+    else
+    {
+        count = im->special->dirties.number_nodes();
+        if( !count )
+            return;  // if nothing to update, return
+        dr = (dirty_rect *)( im->special->dirties.first() );
+        while( count > 0 )
+        {
+            put_part_image( im, xoff + dr->dx1, yoff + dr->dy1, dr->dx1, dr->dy1, dr->dx2 + 1, dr->dy2 + 1 );
+            q = dr;
+            dr = (dirty_rect *)( dr->next() );
+            im->special->dirties.unlink( ( linked_node *)q );
+            delete q;
+            count--;
+        }
+    }
 }
 
 //
@@ -400,8 +400,8 @@ void update_dirty_window( image *im, int xoff, int yoff )
 //
 void update_dirty( image *im, int xoff, int yoff )
 {
-	update_dirty_window( im, xoff, yoff );
-	update_window_done();
+    update_dirty_window( im, xoff, yoff );
+    update_window_done();
 }
 
 //
@@ -409,14 +409,14 @@ void update_dirty( image *im, int xoff, int yoff )
 //
 void image::make_page( short width, short height, unsigned char *page_buffer )
 {
-	if( page_buffer )
-	{
-		data = page_buffer;
-	}
-	else
-	{
-		data = (unsigned char *)jmalloc( width * height, "image::data" );
-	}
+    if( page_buffer )
+    {
+        data = page_buffer;
+    }
+    else
+    {
+        data = (unsigned char *)jmalloc( width * height, "image::data" );
+    }
 }
 
 //
@@ -424,10 +424,10 @@ void image::make_page( short width, short height, unsigned char *page_buffer )
 //
 void image::delete_page()
 {
-	if( !special || !special->static_mem )
-	{
-		jfree( data );
-	}
+    if( !special || !special->static_mem )
+    {
+        jfree( data );
+    }
 }
 
 //
@@ -436,35 +436,35 @@ void image::delete_page()
 //
 void palette::load()
 {
-	if( lastl )
-	{
-		delete lastl;
-	}
-	lastl = copy();
+    if( lastl )
+    {
+        delete lastl;
+    }
+    lastl = copy();
 
-	// Force to only 256 colours.
-	// Shouldn't be needed, but best to be safe.
-	if( ncolors > 256 )
-	{
-		ncolors = 256;
-	}
+    // Force to only 256 colours.
+    // Shouldn't be needed, but best to be safe.
+    if( ncolors > 256 )
+    {
+        ncolors = 256;
+    }
 
-	SDL_Color colors[ncolors];
-	for( int ii = 0; ii < ncolors; ii++ )
-	{
-		colors[ii].r = red(ii);
-		colors[ii].g = green(ii);
-		colors[ii].b = blue(ii);
-	}
-	SDL_SetColors( surface, colors, 0, ncolors );
-	if( window->format->BitsPerPixel == 8 )
-	{
-		SDL_SetColors( window, colors, 0, ncolors );
-	}
+    SDL_Color colors[ncolors];
+    for( int ii = 0; ii < ncolors; ii++ )
+    {
+        colors[ii].r = red(ii);
+        colors[ii].g = green(ii);
+        colors[ii].b = blue(ii);
+    }
+    SDL_SetColors( surface, colors, 0, ncolors );
+    if( window->format->BitsPerPixel == 8 )
+    {
+        SDL_SetColors( window, colors, 0, ncolors );
+    }
 
-	// Now redraw the surface
-	update_window_part( NULL );
-	update_window_done();
+    // Now redraw the surface
+    update_window_part( NULL );
+    update_window_done();
 }
 
 //
@@ -472,76 +472,76 @@ void palette::load()
 //
 void palette::load_nice()
 {
-	load();
+    load();
 }
 
 // ---- support functions ----
 
 void update_window_done()
 {
-	// opengl blit complete surface to window
-	if (flags.gl)
-	{
+    // opengl blit complete surface to window
+    if (flags.gl)
+    {
 #ifdef HAVE_OPENGL
-		// convert color-indexed surface to RGB texture
-		SDL_BlitSurface( surface, NULL, texture, NULL );
+        // convert color-indexed surface to RGB texture
+        SDL_BlitSurface( surface, NULL, texture, NULL );
 
-		// Texturemap complete texture to surface so we have free scaling 
-		// and antialiasing 
-		glTexSubImage2D( GL_TEXTURE_2D,0,
-			 0,0,texture->w,texture->h,
-			 GL_RGBA,GL_UNSIGNED_BYTE,texture->pixels);
-		glBegin(GL_TRIANGLE_STRIP);
-		glTexCoord2f(texcoord[0], texcoord[1]); glVertex3i(0, 0, 0);
-		glTexCoord2f(texcoord[2], texcoord[1]); glVertex3i(window->w, 0, 0);
-		glTexCoord2f(texcoord[0], texcoord[3]); glVertex3i(0, window->h, 0);
-		glTexCoord2f(texcoord[2], texcoord[3]); glVertex3i(window->w, window->h, 0);
-		glEnd();
+        // Texturemap complete texture to surface so we have free scaling
+        // and antialiasing
+        glTexSubImage2D( GL_TEXTURE_2D,0,
+             0,0,texture->w,texture->h,
+             GL_RGBA,GL_UNSIGNED_BYTE,texture->pixels);
+        glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2f(texcoord[0], texcoord[1]); glVertex3i(0, 0, 0);
+        glTexCoord2f(texcoord[2], texcoord[1]); glVertex3i(window->w, 0, 0);
+        glTexCoord2f(texcoord[0], texcoord[3]); glVertex3i(0, window->h, 0);
+        glTexCoord2f(texcoord[2], texcoord[3]); glVertex3i(window->w, window->h, 0);
+        glEnd();
 #endif
-	}
+    }
 
-	// swap buffers in case of double buffering
-	if (flags.doublebuf)
-	{
-		if (flags.gl)
-		{
+    // swap buffers in case of double buffering
+    if (flags.doublebuf)
+    {
+        if (flags.gl)
+        {
 #ifdef HAVE_OPENGL
-			SDL_GL_SwapBuffers();
+            SDL_GL_SwapBuffers();
 #endif
-		}
-		else
-		{
-			SDL_Flip(window);
-		}
-	}
+        }
+        else
+        {
+            SDL_Flip(window);
+        }
+    }
 
-	// do nothing in case of single buffering
+    // do nothing in case of single buffering
 }
 
 void update_window_part( SDL_Rect *rect)
 {
-	// no partial blit's in case of opengl
-	// complete blit + scaling just before flip
-	if (flags.gl)
-	{
-		return;
-	}
+    // no partial blit's in case of opengl
+    // complete blit + scaling just before flip
+    if (flags.gl)
+    {
+        return;
+    }
 
-	SDL_BlitSurface( surface, rect, window, rect );
+    SDL_BlitSurface( surface, rect, window, rect );
 
-	// no window update needed until end of run
-	if( flags.doublebuf)
-	{
-		return;
-	}
+    // no window update needed until end of run
+    if( flags.doublebuf)
+    {
+        return;
+    }
 
-	// update window part for single buffer
-	if( rect == NULL )
-	{
-		SDL_UpdateRect( window, 0, 0, 0, 0 );
-	}
-	else
-	{
-		SDL_UpdateRect( window, rect->x, rect->y, rect->w, rect->h );
-	}
+    // update window part for single buffer
+    if( rect == NULL )
+    {
+        SDL_UpdateRect( window, 0, 0, 0, 0 );
+    }
+    else
+    {
+        SDL_UpdateRect( window, rect->x, rect->y, rect->w, rect->h );
+    }
 }

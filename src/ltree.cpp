@@ -32,12 +32,12 @@ lisp_symbol *make_find_symbol(char *name)
   {
     int cmp=strcmp(name,((char *)((lisp_symbol *)cs->car)->name)+sizeof(lisp_string));
     if (cmp==0) return p;
-    else if (cmp<0) 
-    { 
+    else if (cmp<0)
+    {
       parent=&p->left;
       p=p->left;
     }
-    else 
+    else
     {
       parent=&p->right;
       p=p->right;

@@ -78,45 +78,45 @@ void game_server::receive_inputs()         // reads inputs from all non-local cl
 /*  client_descriptor *last=NULL;
   packet pk;
   for (client_descriptor *p=client_list;p;)
-  {    
+  {
     int delete_me=0;
     if (p->connection)
     {
       if (p->player)                        // clients with players are required to send input
       {
-	int error=!get_pkt(p->connection,pk);
-	if (!error)
+    int error=!get_pkt(p->connection,pk);
+    if (!error)
           pk.insert_into(next_out);
-	else                                // on error delete the client
-	  delete_me=1;
+    else                                // on error delete the client
+      delete_me=1;
       } else
       {
-	if (p->connection->ready_to_read())
-	{
-	  if (!p->connection->get(pk))
-	    delete_me=1;
-	  else
-	  {
-	    uchar cmd;
-	    long cx1,cy1,cx2,cy2;
-	    if (!pk.read((uchar *)&cmd,1) || cmd!=SCMD_JOIN_GAME || 
-		pk.read((uchar *)&cx1,4)!=4 ||
-		pk.read((uchar *)&cy1,4)!=4 ||
-		pk.read((uchar *)&cx2,4)!=4 ||
-		pk.read((uchar *)&cy2,4)!=4)
-	      delete_me=1;
-	    else 
-	    {
-	      p->cx1=lltl(cx1);
-	      p->cy1=lltl(cy1);
-	      p->cx2=lltl(cx2);
-	      p->cy2=lltl(cy2);
-	      p->requested_join=1;      // mark this client as wanting to join
-	      pk.insert_into(next_out);
-	    }
+    if (p->connection->ready_to_read())
+    {
+      if (!p->connection->get(pk))
+        delete_me=1;
+      else
+      {
+        uchar cmd;
+        long cx1,cy1,cx2,cy2;
+        if (!pk.read((uchar *)&cmd,1) || cmd!=SCMD_JOIN_GAME ||
+        pk.read((uchar *)&cx1,4)!=4 ||
+        pk.read((uchar *)&cy1,4)!=4 ||
+        pk.read((uchar *)&cx2,4)!=4 ||
+        pk.read((uchar *)&cy2,4)!=4)
+          delete_me=1;
+        else
+        {
+          p->cx1=lltl(cx1);
+          p->cy1=lltl(cy1);
+          p->cx2=lltl(cx2);
+          p->cy2=lltl(cy2);
+          p->requested_join=1;      // mark this client as wanting to join
+          pk.insert_into(next_out);
+        }
 
-	  }
-	}
+      }
+    }
       }
     }
 
@@ -127,7 +127,7 @@ void game_server::receive_inputs()         // reads inputs from all non-local cl
       if (last)
         last->next=p;
       else client_list=p;
-      delete del_me;	       
+      delete del_me;    
     } else { last=p; p=p->next; }
 
 
@@ -143,7 +143,7 @@ void game_server::send_inputs()            // pass collected inputs to all non-l
     next_out.write_uint8(SCMD_SYNC);
     next_out.write_uint32(make_sync_uint32());
   }
-    
+
   next_out.write_uint8(SCMD_END_OF_PACKET);        // so clients knows when to stop reading
 
   for (client_descriptor *p=client_list;p;)
@@ -153,14 +153,14 @@ void game_server::send_inputs()            // pass collected inputs to all non-l
       int error=!p->connection->send(next_out);
       if (error)
       {
-	client_descriptor *del_me=p;
-	p=p->next;
-	if (last)
-	  last->next=p;
-	else client_list=p;
-	delete del_me;	       
+    client_descriptor *del_me=p;
+    p=p->next;
+    if (last)
+      last->next=p;
+    else client_list=p;
+    delete del_me;    
       } else { last=p; p=p->next; }
-    } else 
+    } else
     {
       last=p;
       p=p->next;
@@ -179,7 +179,7 @@ void game_server::join_new_players()
 {
 /*  int wait=0;
   client_descriptor *p=client_list;
-  for (;p;p=p->next)  
+  for (;p;p=p->next)
     if (p->requested_join)
     {
 
@@ -188,14 +188,14 @@ void game_server::join_new_players()
       int i,st=0;
       for (i=0;i<total_objects;i++)
         if (!strcmp(object_names[i],"START"))
-	  st=i;
+      st=i;
 
       game_object *o=create(current_start_type,0,0);
       game_object *start=current_level->get_random_start(320,NULL);
       if (start) { o->x=start->x; o->y=start->y; }
       else { o->x=100; o->y=100; }
 
-      f->next=new view(o,NULL,f->player_number+1);            
+      f->next=new view(o,NULL,f->player_number+1);
       o->set_controller(f->next);
 
       if (start)
@@ -203,7 +203,7 @@ void game_server::join_new_players()
       else
         current_level->add_object(o);
 
-      view *v=f->next;      
+      view *v=f->next;
 
       v->cx1=p->cx1;
       v->cy1=p->cy1;
@@ -211,11 +211,11 @@ void game_server::join_new_players()
       v->cy2=p->cy2;
       p->player=v;
       v->Drawable=p->cnum;
-      
+
       wait=1;
       p->requested_join=0;
     }
-  
+
 
   if (wait)  // wait for acknowedgement from everone then delete net file
   {
@@ -228,22 +228,22 @@ void game_server::join_new_players()
     {
       if (p->player)
       {
-	pk.write_uint8(SCMD_JOIN_START);
-	int error=!p->connection->send(pk);
-	if (!error)
-	{
-	  while (!p->connection->ready_to_read()) 
+    pk.write_uint8(SCMD_JOIN_START);
+    int error=!p->connection->send(pk);
+    if (!error)
+    {
+      while (!p->connection->ready_to_read())
             service_net_request();
-	}
+    }
 
-	if (error || !p->connection->get(pk))
-	{
-	  if (!last)
-	    client_list=client_list->next;
-	  else last->next=p->next;
-	  delete p;
-	} else           
-   	  last=p;      
+    if (error || !p->connection->get(pk))
+    {
+      if (!last)
+        client_list=client_list->next;
+      else last->next=p->next;
+      delete p;
+    } else
+         last=p;
       }
     }
     unlink("netstart.spe");
@@ -261,21 +261,21 @@ void game_server::join_new_players()
 
   Server - receive inputs
            check for join request
-	   if join request add SCMD_JOIN_GAME to out packet
-	   send inputs
+       if join request add SCMD_JOIN_GAME to out packet
+       send inputs
 
   Client - read commands from server
            process commands
-	   tick_game
-	   draw
+       tick_game
+       draw
 
 
   Server (if join request) :
           create new_player
           save level to netstart.spe
-	  wait for all clients with views to send SCMD_NEW_ACK
-	  new player should read entire level, while old
-	  clients seek to "player_info" and read this.
+      wait for all clients with views to send SCMD_NEW_ACK
+      new player should read entire level, while old
+      clients seek to "player_info" and read this.
 
 
 

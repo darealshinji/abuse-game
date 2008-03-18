@@ -21,7 +21,7 @@ class chat_console : public console
   void put_all(char *st);
   void clear();
   chat_console(JCFont *font, int width, int height);
-  
+
 } ;
 
 extern chat_console *chat;

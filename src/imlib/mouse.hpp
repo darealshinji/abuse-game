@@ -36,9 +36,9 @@ public :
   sprite *mouse_sprite() { return sp; }
   void set_position(int new_mx, int new_my);
   ~JCMouse();
-  
+
 #ifdef __POWERPC__
-	int set_button(int b) { return (but = b); }
+    int set_button(int b) { return (but = b); }
 #endif
 } ;
 

@@ -11,17 +11,17 @@
 #define ABILITIES_HPP_
 
 enum ability
-{	start_hp,
-	start_accel,
-	stop_accel,
+{    start_hp,
+    start_accel,
+    stop_accel,
         jump_xvel,
-	jump_yvel,
-	run_top_speed,
-	jump_top_speed,
+    jump_yvel,
+    run_top_speed,
+    jump_top_speed,
 
-	tint_color,
-	push_xrange,
-	walk_top_speed                  // keep as last entry!
+    tint_color,
+    push_xrange,
+    walk_top_speed                  // keep as last entry!
 } ;
 
 #define TOTAL_ABILITIES (walk_top_speed+1)

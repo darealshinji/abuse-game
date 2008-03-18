@@ -28,7 +28,7 @@ int frame_right() { return jw_right; }
 //  Sets the size of the border around each window
 //
 void set_frame_size(int x)
-{  
+{
     if(x < 1)
         x = 1;
     jw_left = x;
@@ -40,7 +40,7 @@ void set_frame_size(int x)
  // true if a window lies in this area
 int WindowManager::window_in_area(int x1, int y1, int x2, int y2)
 {
-  for (Jwindow *f=first;f;f=f->next) 
+  for (Jwindow *f=first;f;f=f->next)
     if (f->x<=x2 && f->y<=y2 && f->x+f->l-1>=x1 && f->y+f->h-1>=y1)
       return 1;
   return 0;
@@ -76,7 +76,7 @@ void WindowManager::show_windows()
   Jwindow *p;
   for (p=first;p;p=p->next)
     if (p->is_hidden())
-      show_window(p);      
+      show_window(p);
 }
 
 void WindowManager::hide_window(Jwindow *j)
@@ -87,9 +87,9 @@ void WindowManager::hide_window(Jwindow *j)
   else
   {
     for (k=first;k->next!=j;k=k->next)
-      k->screen->add_dirty(j->x-k->x,j->y-k->y, 
+      k->screen->add_dirty(j->x-k->x,j->y-k->y,
                    j->x+j->l-1-k->x,j->y+j->h-1-k->y);
-    k->screen->add_dirty(j->x-k->x,j->y-k->y, 
+    k->screen->add_dirty(j->x-k->x,j->y-k->y,
                    j->x+j->l-1-k->x,j->y+j->h-1-k->y);
     k->next=j->next;
   }
@@ -129,56 +129,56 @@ void WindowManager::get_event(event &ev)
       int closew=0,movew=0;
 
       if ((ev.type==EV_MOUSE_BUTTON && ev.mouse_button==1 && ev.window &&
-	   ev.mouse_move.x>=ev.window->x && ev.mouse_move.y>=ev.window->y &&
-	   ev.mouse_move.x<ev.window->x+ev.window->l && ev.mouse_move.y<ev.window->y+ev.window->y1()))
+       ev.mouse_move.x>=ev.window->x && ev.mouse_move.y>=ev.window->y &&
+       ev.mouse_move.x<ev.window->x+ev.window->l && ev.mouse_move.y<ev.window->y+ev.window->y1()))
       {
-	if (ev.mouse_move.x-ev.window->x<11) closew=1;
-	else if (ev.window->is_moveable()) movew=1;
+    if (ev.mouse_move.x-ev.window->x<11) closew=1;
+    else if (ev.window->is_moveable()) movew=1;
       } else if (grab)
         ev.window=grab;
 
       if (ev.type==EV_KEY && ev.key==JK_ESC)
         closew=1;
 
-      
-    
+
+
       if (closew)
         ev.type=EV_CLOSE_WINDOW;
       else if (movew)
-      {	
-	int red=0;
-	if (ev.window==first)       // see if we need to raise the window
-	{
-	  first=first->next;
-	  if (first)
-	    red=1;
-	}
-	else
-	{
-	  Jwindow *last=first;
-	  for (;last->next!=ev.window;last=last->next);
-	  if (ev.window->next)
-	    red=1;
-	  last->next=ev.window->next;
-	}
-	if (!first)
-	  first=ev.window;
-	else
-	{
-	  Jwindow *last=first;
-	  for (;last->next;last=last->next);
-	  last->next=ev.window;
-	}
-	ev.window->next=NULL;
-	if (red)
-	{
-	  Jwindow *j=ev.window;
-/*	  screen->add_dirty(j->x,j->y,j->x+j->l-1,j->y+j->h-1);
-	  for (p=first;p!=j;p=p->next)
-	    p->screen->add_dirty(j->x-p->x,j->y-p->y,j->x+j->l-1-p->x,j->y+j->h-1-p->y);*/
-	  j->screen->add_dirty(0,0,j->l-1,j->h-1);
-	  flush_screen();
-	}
+      {    
+    int red=0;
+    if (ev.window==first)       // see if we need to raise the window
+    {
+      first=first->next;
+      if (first)
+        red=1;
+    }
+    else
+    {
+      Jwindow *last=first;
+      for (;last->next!=ev.window;last=last->next);
+      if (ev.window->next)
+        red=1;
+      last->next=ev.window->next;
+    }
+    if (!first)
+      first=ev.window;
+    else
+    {
+      Jwindow *last=first;
+      for (;last->next;last=last->next);
+      last->next=ev.window;
+    }
+    ev.window->next=NULL;
+    if (red)
+    {
+      Jwindow *j=ev.window;
+/*      screen->add_dirty(j->x,j->y,j->x+j->l-1,j->y+j->h-1);
+      for (p=first;p!=j;p=p->next)
+        p->screen->add_dirty(j->x-p->x,j->y-p->y,j->x+j->l-1-p->x,j->y+j->h-1-p->y);*/
+      j->screen->add_dirty(0,0,j->l-1,j->h-1);
+      flush_screen();
+    }
 
         state=dragging;
         drag_window=ev.window;
@@ -203,12 +203,12 @@ void WindowManager::get_event(event &ev)
        ev.window_position.x=ev.mouse_move.x+drag_mousex;
        ev.window_position.y=ev.mouse_move.y+drag_mousey;
     }
-  } 
+  }
   if (ev.type==EV_REDRAW)
   {
-    for (j=first;j;j=j->next) 
+    for (j=first;j;j=j->next)
        j->screen->add_dirty(ev.redraw.x1-j->x,ev.redraw.y1-j->y,
-		     ev.redraw.x2-j->x,ev.redraw.y2-j->y);
+             ev.redraw.x2-j->x,ev.redraw.y2-j->y);
     screen->add_dirty(ev.redraw.x1,ev.redraw.y1,ev.redraw.x2,ev.redraw.y2);
     flush_screen();
     ev.type=EV_SPURIOUS;   // we took care of this one by ourselves.
@@ -243,8 +243,8 @@ void WindowManager::move_window(Jwindow *j, int x, int y)
     j->screen->add_dirty(0, 0, j->l - 1, j->h - 1);
 }
 
-WindowManager::WindowManager(image *Screen, palette *Pal, int Hi, 
-                              int Med, int Low, JCFont *Font)
+WindowManager::WindowManager(image *Screen, palette *Pal, int Hi,
+                             int Med, int Low, JCFont *Font)
 {
     wm = this;
     screen = Screen;
@@ -314,7 +314,7 @@ Jwindow * WindowManager::new_window(int x, int y, int l, int h,
         x = screen->width () - 25;
     if(y > screen->height () - 4)
         y = screen->height () - 10;
- 
+
     Jwindow * j = new Jwindow (x, y, l, h, fields, name);
     j->show();
 
@@ -323,57 +323,56 @@ Jwindow * WindowManager::new_window(int x, int y, int l, int h,
 
 void WindowManager::flush_screen()
 {
-  Jwindow *p,*q;
+    Jwindow *p, *q;
 
-  int mx=0,my=0;
-  image *mouse_pic=NULL,*mouse_save=NULL;
-  
-  if (has_mouse())
-  {    
-    mouse_pic=eh->mouse_sprite()->visual;
-    mouse_save=eh->mouse_sprite()->save;
-    mx=eh->mouse->drawx();
-    my=eh->mouse->drawy();
+    int mx = 0, my = 0;
+    image *mouse_pic = NULL, *mouse_save = NULL;
 
-    screen->put_part(mouse_save,0,0,mx,my,mx+mouse_pic->width()-1,my+mouse_pic->height()-1);
-    mouse_pic->put_image(screen,mx,my,1);
-  }
-  
-  for (p=first;p;p=p->next)
-    if (!p->is_hidden())
-       screen->delete_dirty(p->x,p->y,p->x+p->l-1,p->y+p->h-1);
-  update_dirty(screen);
-
-  if (has_mouse())
-    mouse_save->put_image(screen,mx,my);
-
-
-  for (p=first;p;p=p->next)
-  {
-    if (!p->is_hidden())
+    if(has_mouse())
     {
-      if (has_mouse())
-      {      
-	p->screen->put_part(mouse_save,0,0,mx-p->x,my-p->y,
-			    mx-p->x+mouse_pic->width()-1,
-			    my-p->y+mouse_pic->height()-1);
-	if (has_mouse())
-        mouse_pic->put_image(p->screen,mx-p->x,my-p->y,1);
-      }
-      
+        mouse_pic = eh->mouse_sprite()->visual;
+        mouse_save = eh->mouse_sprite()->save;
+        mx = eh->mouse->drawx();
+        my = eh->mouse->drawy();
 
-//      screen->delete_dirty(p->x,p->y,p->x+p->l-1,p->y+p->h-1);
-      for (q=p->next;q;q=q->next)
-        if (!q->is_hidden())
-          p->screen->delete_dirty(q->x-p->x,
-                              q->y-p->y,
-                              q->x+q->l-1-p->x,
-                              q->y+q->h-1-p->y);
-      update_dirty(p->screen,p->x,p->y);
-      if (has_mouse())
-         mouse_save->put_image(p->screen,mx-p->x,my-p->y,0);
+        screen->put_part(mouse_save, 0, 0, mx, my,
+                         mx + mouse_pic->width() - 1,
+                         my + mouse_pic->height() - 1);
+        mouse_pic->put_image(screen, mx, my, 1);
     }
-  }
+
+    for(p = first; p; p = p->next)
+        if(!p->is_hidden())
+            screen->delete_dirty(p->x, p->y, p->x + p->l - 1, p->y + p->h - 1);
+    update_dirty(screen);
+
+    if(has_mouse())
+        mouse_save->put_image(screen, mx, my);
+
+    for(p = first; p; p = p->next)
+    {
+        if(p->is_hidden())
+            continue;
+
+        if(has_mouse())
+        {
+            p->screen->put_part(mouse_save, 0, 0, mx - p->x, my - p->y,
+                                mx - p->x + mouse_pic->width() - 1,
+                                my - p->y + mouse_pic->height() - 1);
+            if(has_mouse())
+                mouse_pic->put_image(p->screen, mx - p->x, my - p->y, 1);
+        }
+
+//          screen->delete_dirty(p->x, p->y, p->x+p->l-1, p->y+p->h-1);
+        for(q = p->next; q; q = q->next)
+            if(!q->is_hidden())
+                p->screen->delete_dirty(q->x - p->x, q->y - p->y,
+                                        q->x + q->l - 1 - p->x,
+                                        q->y + q->h - 1 - p->y);
+        update_dirty(p->screen, p->x, p->y);
+        if(has_mouse())
+            mouse_save->put_image(p->screen, mx - p->x, my - p->y, 0);
+    }
 }
 
 Jwindow::Jwindow(char const *name)
@@ -402,7 +401,7 @@ Jwindow::Jwindow(char const *name)
 Jwindow::Jwindow(int X, int Y, int L, int H, ifield *f, char const *name)
 {
     l = 0;
-    h = 0; 
+    h = 0;
     _hidden = false;
     _moveable = true;
 
@@ -470,9 +469,9 @@ void Jwindow::reconfigure()
     {
         i->set_owner(this);
         i->area(x1, y1, x2, y2);
-        if ((int)y2 > (int)h) 
+        if ((int)y2 > (int)h)
             h = y2;
-        if ((int)x2 > (int)l) 
+        if ((int)x2 > (int)l)
             l = x2;
     }
 }
@@ -491,6 +490,7 @@ void Jwindow::redraw()
 
     if(_name)
     {
+fprintf(stderr, "redrawing '%s'\n", _name);
         if (right_border() >= 1)
         {
             screen->widget_bar (0, 0, l - 1, h - 1, hi, med, low);
@@ -498,7 +498,7 @@ void Jwindow::redraw()
                 screen->widget_bar (right_border() - 1, top_border() - 1,
                                 l - left_border(), h - bottom_border(), low,
                                 med, hi);
-          
+
           else
             screen->line (left_border() - 1, top_border() - 1,
                            right_border() - 1, top_border() - 1, low);
@@ -507,9 +507,10 @@ void Jwindow::redraw()
                            wm->black ());
       screen->widget_bar (3, 3, top_border() - 3, top_border() - 4, hi, med, low);     // draws the 'close' button
     }
-  
+
   else
     {
+fprintf(stderr, "redrawing unknown'\n");
       if (right_border() >= 1)
         {
           screen->widget_bar (0, 0, l - 1, h - 1, hi, med, low);
@@ -517,7 +518,7 @@ void Jwindow::redraw()
             screen->widget_bar (right_border() - 1, jw_top + 4,
                                 l - left_border(), h - bottom_border(), low,
                                 med, hi);
-          
+
           else
             screen->line (left_border() - 1, jw_top + 4, right_border() - 1,
                            jw_top + 4, low);
@@ -558,13 +559,13 @@ int Jwindow::bottom_border()
 
 
 ifield *InputManager::unlink(int id)     // unlinks ID from fields list and return the pointer to it
-{ 
+{
   for (ifield *i=first,*last=NULL;i;i=i->next)
   {
-    if (i->id==id) 
+    if (i->id==id)
     {
       if (i==first)
-	first=first->next;
+    first=first->next;
       else
         last->next=i->next;
       if (active==i)
@@ -578,14 +579,14 @@ ifield *InputManager::unlink(int id)     // unlinks ID from fields list and retu
   return NULL;   // no such id
 }
 
-InputManager::~InputManager() 
-{ ifield *i; 
-  while (first) 
-  { i=first; 
-    first=first->next; 
-    delete i; 
-  } 
-} 
+InputManager::~InputManager()
+{ ifield *i;
+  while (first)
+  { i=first;
+    first=first->next;
+    delete i;
+  }
+}
 
 void InputManager::clear_current()
 {
@@ -617,29 +618,29 @@ void InputManager::handle_event(event &ev, Jwindow *j)
     {
       for (i=first;i;i=i->next)
       {
-	i->area(x1,y1,x2,y2);
-	if (ev.mouse_move.x>=x1 && ev.mouse_move.y>=y1 &&
-	    ev.mouse_move.x<=x2 && ev.mouse_move.y<=y2)
+    i->area(x1,y1,x2,y2);
+    if (ev.mouse_move.x>=x1 && ev.mouse_move.y>=y1 &&
+        ev.mouse_move.x<=x2 && ev.mouse_move.y<=y2)
         in_area=i;
       }
       if (in_area!=active && (no_selections_allowed || (in_area && in_area->selectable())))
       {
-	if (active)
+    if (active)
           active->draw(0,screen);
 
-	active=in_area; 
+    active=in_area;
 
-	if (active)
-	  active->draw(1,screen);
+    if (active)
+      active->draw(1,screen);
       }
-    } 
+    }
     if (ev.type==EV_KEY && ev.key==JK_TAB && active)
-    { 
+    {
       active->draw(0,screen);
       do
       {
-	active=active->next;
-	if (!active) active=first;
+    active=active->next;
+    if (!active) active=first;
       } while (active && !active->selectable());
       active->draw(1,screen);
     }
@@ -655,9 +656,9 @@ void InputManager::handle_event(event &ev, Jwindow *j)
       if (grab || (ev.mouse_move.x>=x1 && ev.mouse_move.y>=y1 &&
           ev.mouse_move.x<=x2 && ev.mouse_move.y<=y2))
       {
-	if (j)
-	  active->handle_event(ev,screen,j->inm);
-	else active->handle_event(ev,screen,this);
+    if (j)
+      active->handle_event(ev,screen,j->inm);
+    else active->handle_event(ev,screen,this);
       }
     }
   }
@@ -712,13 +713,13 @@ InputManager::InputManager(Jwindow *Owner, ifield *First)
 }
 
 void InputManager::grab_focus(ifield *i)
-{ grab=i; 
+{ grab=i;
   if (cur)
     wm->grab_focus(cur);
 }
 
 void InputManager::release_focus()
-{ grab=NULL; 
+{ grab=NULL;
   if (cur)
     wm->release_focus();
 }
@@ -730,7 +731,7 @@ void InputManager::remap(filter *f)
   redraw();
 }
 
-void InputManager::add(ifield *i) 
+void InputManager::add(ifield *i)
 { ifield *f=first;
   if (i->selectable())
   {
@@ -739,7 +740,7 @@ void InputManager::add(ifield *i)
     else
     {
       while (f->next) f=f->next;
-      f->next=i; 
+      f->next=i;
     }
   }
 }

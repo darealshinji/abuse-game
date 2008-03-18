@@ -37,10 +37,10 @@ class status_node
   status_node *next;
   visual_object *show;
   time_marker last_update;
-  status_node(char *Name, visual_object *Show, status_node *Next) 
-  { name=strcpy((char *)jmalloc(strlen(Name)+1,"status name"),Name); 
+  status_node(char *Name, visual_object *Show, status_node *Next)
+  { name=strcpy((char *)jmalloc(strlen(Name)+1,"status name"),Name);
     show=Show;
-    next=Next; 
+    next=Next;
   }
   ~status_node() { jfree(name); if (show) delete show; }
 }
@@ -50,7 +50,7 @@ class status_node
 
 void StatusManager::push(char *name, visual_object *show)
 {
-  first=new status_node(name,show,first);  
+  first=new status_node(name,show,first);
 }
 
 void StatusManager::update(int percentage)

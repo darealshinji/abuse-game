@@ -43,14 +43,14 @@ int current_sock_err;
 
 int net_init( int protocol )
 {
-	printf( "YO!\n" );
-	if( protocol == TCPIP_PROTOCOL )
-		return 1;
-	else
-		return 0;
+    printf( "YO!\n" );
+    if( protocol == TCPIP_PROTOCOL )
+        return 1;
+    else
+        return 0;
 }
 
 void net_uninit()
 {
-	// Nothing to do
+    // Nothing to do
 }

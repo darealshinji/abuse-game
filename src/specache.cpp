@@ -25,7 +25,7 @@ void spec_directory_cache::load(bFILE *fp)
     fp->read(&len,1);
     fp->read(fn,len);
     get_spec_directory(fn,fp);
-  }  
+  }
 }
 
 void spec_directory_cache::save(bFILE *fp)
@@ -55,23 +55,23 @@ spec_directory *spec_directory_cache::get_spec_directory(char const *filename, b
       parent=&p->left;
     else if (cmp>0)
       parent=&p->right;
-    else 
+    else
       return p->sd;
-    p=*parent;        
-  }  
-  
+    p=*parent;
+  }
+
   int need_close=0;
   if (!fp)
   {
     fp=open_file(filename,"rb");
-    if (fp->open_failure()) 
+    if (fp->open_failure())
     {
       delete fp;
       return 0;
     }
     need_close=1;
   }
-  
+
   filename_node *f=new filename_node(filename,new spec_directory(fp));
   f->next=fn_list;
   fn_list=f;
@@ -102,7 +102,7 @@ void spec_directory_cache::clear(filename_node *f)
     {
       clear(f->left);
       delete f->left;
-    } 
+    }
     if (f->right)
     {
       clear(f->right);

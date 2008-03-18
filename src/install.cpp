@@ -20,10 +20,10 @@
 enum { LINUX, WATCOM, AIX, SUN, SGI };
 
 char *plat_names[] = {"Linux (SVGA & X11)",
-		      "Watcom for MS-DOS",
-		      "IBM AIX for RS6000's",
-		      "Sun OS",
-		      "Silicon Graphics"};
+              "Watcom for MS-DOS",
+              "IBM AIX for RS6000's",
+              "Sun OS",
+              "Silicon Graphics"};
 
 char *plat_name[] = {"LINUX","WATCOM","AIX","SUN","SGI"};
 
@@ -65,20 +65,20 @@ long c_caller(long number, void *arg)  // exten c function switches on number
 {
   switch (number)
   {
-    case 0 : 
+    case 0 :
     {
       char cd[100];
       getcwd(cd,100);
       int t=change_dir(lstring_value(CAR(arg)));
       change_dir(cd);
       return t;
-    } break;    
+    } break;
     case 1 :
     {
       if (change_dir(lstring_value(eval(CAR(arg)))))
         return 1;
       else return 0;
-    } break; 
+    } break;
     case 2 :
     {
       return K_avail(lstring_value(CAR(arg)));
@@ -109,10 +109,10 @@ int nice_copy(char *title, char *source, char *dest);
  void l_obj_set(long number, void *arg) { ; }  // exten lisp function switches on number
  void l_obj_print(long number) { ; }  // exten lisp function switches on number
 
-void clisp_init() 
+void clisp_init()
 {                      // external initalizer call by lisp_init()
   void *platform=make_find_symbol("platform");
-  set_symbol_value(platform,make_find_symbol(plat_name[detect_platform()]));  
+  set_symbol_value(platform,make_find_symbol(plat_name[detect_platform()]));
   add_lisp_function("system",1,1,                   0);
   add_lisp_function("split_filename",2,2,           1);
   add_lisp_function("convert_slashes",2,2,          2);
@@ -124,14 +124,14 @@ void clisp_init()
   add_lisp_function("get_cwd",0,0,                  8);
   add_lisp_function("getenv",1,1,                   9);
   add_lisp_function("modify_install_path",1,1,     10);
- 
+
 
   add_c_bool_fun("dir_exsist",1,1,                  0);
-  add_c_bool_fun("chdir",1,1,                       1); 
+  add_c_bool_fun("chdir",1,1,                       1);
   add_c_function("K_avail",1,1,                     2);  // path
   add_c_bool_fun("nice_copy",3,3,                   3);  // source file, dest file
   add_c_bool_fun("file_exsist",1,1,                 4);
-  
+
   char esc_str[2]={27,0};
   set_symbol_value(make_find_symbol("ESC_string"),new_lisp_string(esc_str));
 }
@@ -139,7 +139,7 @@ void clisp_init()
 
 
 
-void *l_caller(long number, void *arg) 
+void *l_caller(long number, void *arg)
 {
   p_ref r1(arg);
   void *ret=NULL;
@@ -159,13 +159,13 @@ void *l_caller(long number, void *arg)
       while (*s) { if (*s=='\\' || *s=='/') last=s+1; s++; }
       if (last)
       {
-	for (dp=dir,s=filename;s!=last;dp++,s++) { *dp=*s; }
-	*dp=0;
-	strcpy(name,last);
+    for (dp=dir,s=filename;s!=last;dp++,s++) { *dp=*s; }
+    *dp=0;
+    strcpy(name,last);
       } else
       {
-	strcpy(dir,current_dir);
-	strcpy(name,filename);
+    strcpy(dir,current_dir);
+    strcpy(name,filename);
       }
       void *cs=(void *)new_cons_cell();
       p_ref r24(cs);
@@ -181,16 +181,16 @@ void *l_caller(long number, void *arg)
       char *filename=lstring_value(fn);
 
       char tmp[200],*s=filename,*tp;
-      
+
       for (tp=tmp;*s;s++,tp++)
       {
-	if (*s=='/' || *s=='\\') 
-	{
-	  *tp=*slash;
-//	  if (*slash=='\\') 
-//	  { tp++; *tp='\\'; }
-	}
-	else *tp=*s;
+    if (*s=='/' || *s=='\\')
+    {
+      *tp=*slash;
+//      if (*slash=='\\')
+//      { tp++; *tp='\\'; }
+    }
+    else *tp=*s;
       }
       *tp=0;
       ret=new_lisp_string(tmp);
@@ -207,18 +207,18 @@ void *l_caller(long number, void *arg)
       int err=0;
       while (*d && !err)
       {
-	if ((*d=='\\' || *d=='/') && d!=dir && *(d-1)!=':')
-	{
-	  ch=*d;
-	  *d=0;
-	  if (!change_dir(dir))
-	    if (make_dir(dir)!=0)
-	      err=1;
+    if ((*d=='\\' || *d=='/') && d!=dir && *(d-1)!=':')
+    {
+      ch=*d;
+      *d=0;
+      if (!change_dir(dir))
+        if (make_dir(dir)!=0)
+          err=1;
 
-	  *d=ch;
-	  
-	}
-	d++;
+      *d=ch;
+    
+    }
+    d++;
       }
       change_dir(cd);
 

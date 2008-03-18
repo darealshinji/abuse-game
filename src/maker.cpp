@@ -26,10 +26,10 @@
 enum { LINUX, WATCOM, AIX, SUN, SGI };
 
 char *plat_names[] = {"Linux (SVGA & X11)",
-		      "Watcom for MS-DOS",
-		      "IBM AIX for RS6000's",
-		      "Sun OS",
-		      "Silicon Graphics"};
+              "Watcom for MS-DOS",
+              "IBM AIX for RS6000's",
+              "Sun OS",
+              "Silicon Graphics"};
 
 char *plat_name[] = {"LINUX","WATCOM","AIX","SUN","SGI"};
 
@@ -71,10 +71,10 @@ int detect_platform()
  void l_obj_set(long number, void *arg) { ; }  // exten lisp function switches on number
  void l_obj_print(long number) { ; }  // exten lisp function switches on number
 
-void clisp_init() 
+void clisp_init()
 {                      // external initalizer call by lisp_init()
   void *platform=make_find_symbol("platform");
-  set_symbol_value(platform,make_find_symbol(plat_name[detect_platform()]));  
+  set_symbol_value(platform,make_find_symbol(plat_name[detect_platform()]));
   add_lisp_function("get_depends",3,3,              0);
   add_lisp_function("split_filename",2,2,           1);
   add_lisp_function("convert_slashes",2,2,          2);
@@ -85,7 +85,7 @@ void clisp_init()
 
   add_lisp_function("mangle_oname",1,1,             7);
 
-  add_c_bool_fun("chdir",1,1,                       1); 
+  add_c_bool_fun("chdir",1,1,                       1);
 }
 
 
@@ -111,23 +111,23 @@ long c_caller(long number, void *arg) // exten c function switches on number
 
 void get_depends(char *fn, char *slash, void *ilist, void *&ret)
 {
-  p_ref r8(ret);  
+  p_ref r8(ret);
   p_ref r1(ilist);
   void *v=ret;
   p_ref r2(v);
-  for (;v;v=CDR(v)) 
+  for (;v;v=CDR(v))
     if (!strcmp(fn,lstring_value(CAR(v)))) return ;     // check to see if file already in list
 
-  char tmp_name[200];  
+  char tmp_name[200];
   strcpy(tmp_name,fn);
   FILE *fp=fopen(fn,"rb");
   if (!fp)
   {
-    for (v=ilist;!fp && v;v=CDR(v))     
+    for (v=ilist;!fp && v;v=CDR(v))
     {
       sprintf(tmp_name,"%s%s%s",lstring_value(CAR(v)),slash,fn);
-      for (void *v=ret;v;v=CDR(v)) 
-        if (!strcmp(tmp_name,lstring_value(CAR(v)))) return ; 
+      for (void *v=ret;v;v=CDR(v))
+        if (!strcmp(tmp_name,lstring_value(CAR(v)))) return ;
       // check to see if file already in list
       fp=fopen(tmp_name,"rb");
     }
@@ -142,26 +142,26 @@ void get_depends(char *fn, char *slash, void *ilist, void *&ret)
       fgets(line,200,fp);
       if (!feof(fp))
       {
-	if (memcmp(line,"#include",8)==0)
-	{ 
-	  char *ch,*ch2;
-	  for (ch=line+8;*ch==' ' || *ch=='\t';ch++);
-	  if (*ch=='"')
-	  {
-	    ch++;
-	    for (ch2=line;*ch!='"';ch++,ch2++)
-	    { *ch2=*ch; }
-	    *ch2=0;
-	    get_depends(line,slash,ilist,ret);
-	  }
-	}
+    if (memcmp(line,"#include",8)==0)
+    {
+      char *ch,*ch2;
+      for (ch=line+8;*ch==' ' || *ch=='\t';ch++);
+      if (*ch=='"')
+      {
+        ch++;
+        for (ch2=line;*ch!='"';ch++,ch2++)
+        { *ch2=*ch; }
+        *ch2=0;
+        get_depends(line,slash,ilist,ret);
+      }
+    }
       }
     }
     fclose(fp);
   }
 }
 
-void *l_caller(long number, void *arg) 
+void *l_caller(long number, void *arg)
 {
   p_ref r1(arg);
   void *ret=NULL;
@@ -181,13 +181,13 @@ void *l_caller(long number, void *arg)
       strcpy(filename,lstring_value(fn));
 
       char slash[10];
-      strcpy(slash,lstring_value(sl)); 
+      strcpy(slash,lstring_value(sl));
 
       get_depends(filename,slash,ilist,ret);
       void *v=ret;
       if (v && CDR(v))
       {
-	for (;CDR(CDR(v));v=CDR(v)); CDR(v)=NULL;  //chop of self
+    for (;CDR(CDR(v));v=CDR(v)); CDR(v)=NULL;  //chop of self
       }
     } break;
     case 1 :
@@ -202,13 +202,13 @@ void *l_caller(long number, void *arg)
       while (*s) { if (*s=='\\' || *s=='/') last=s+1; s++; }
       if (last)
       {
-	for (dp=dir,s=filename;s!=last;dp++,s++) { *dp=*s; }
-	*dp=0;
-	strcpy(name,last);
+    for (dp=dir,s=filename;s!=last;dp++,s++) { *dp=*s; }
+    *dp=0;
+    strcpy(name,last);
       } else
       {
-	strcpy(dir,current_dir);
-	strcpy(name,filename);
+    strcpy(dir,current_dir);
+    strcpy(name,filename);
       }
       void *cs=(void *)new_cons_cell();
       p_ref r24(cs);
@@ -224,16 +224,16 @@ void *l_caller(long number, void *arg)
       char *filename=lstring_value(fn);
 
       char tmp[200],*s=filename,*tp;
-      
+
       for (tp=tmp;*s;s++,tp++)
       {
-	if (*s=='/' || *s=='\\') 
-	{
-	  *tp=*slash;
-//	  if (*slash=='\\') 
-//	  { tp++; *tp='\\'; }
-	}
-	else *tp=*s;
+    if (*s=='/' || *s=='\\')
+    {
+      *tp=*slash;
+//      if (*slash=='\\')
+//      { tp++; *tp='\\'; }
+    }
+    else *tp=*s;
       }
       *tp=0;
       ret=new_lisp_string(tmp);
@@ -246,15 +246,15 @@ void *l_caller(long number, void *arg)
       d=dir;
       while (*d)
       {
-	if (*d=='\\' || *d=='/')
-	{
-	  ch=*d;
-	  *d=0;
-	  make_dir(dir);
-	  *d=ch;
-	  
-	}
-	d++;
+    if (*d=='\\' || *d=='/')
+    {
+      ch=*d;
+      *d=0;
+      make_dir(dir);
+      *d=ch;
+    
+    }
+    d++;
       }
       ret=NULL;
     } break;
@@ -282,15 +282,15 @@ void *l_caller(long number, void *arg)
       uchar c1=0,c2=0,c3=0,c4=0;
       while (*fn)
       {
-	c1+=*fn;
-	c2+=c1;
-	c3+=c2;
-	c4+=c3;
-	fn++;
+    c1+=*fn;
+    c2+=c1;
+    c3+=c2;
+    c4+=c3;
+    fn++;
       }
       char st[15];
       sprintf(st,"%02x%02x%02x%02x",c1,c2,c3,c4);
-      return new_lisp_string(st);            
+      return new_lisp_string(st);
     } break;
   }
   return ret;

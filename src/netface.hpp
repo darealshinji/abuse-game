@@ -35,10 +35,10 @@ enum { NFCMD_OPEN,
        NFCMD_PROCESS_LSF,       // remote engine sends to driver with lsf name, when get_lsf is set in base_mem
        NFCMD_REQUEST_ENTRY,     // sent from joining client engine to driver, who then connects as client_abuse
        NFCMD_BECOME_SERVER,
-       NFCMD_BLOCK,             // used by UNIX version to have engine give it up it's time-slice  
+       NFCMD_BLOCK,             // used by UNIX version to have engine give it up it's time-slice
        NFCMD_RELOAD_START,
        NFCMD_RELOAD_END,
-       NFCMD_SEND_INPUT, 
+       NFCMD_SEND_INPUT,
        NFCMD_INPUT_MISSING,     // when engine is waiting for input and suspects packets are missing
        NFCMD_KILL_SLACKERS,     // when the user decides the clients are taking too long to respond
        EGCMD_DIE
@@ -46,13 +46,13 @@ enum { NFCMD_OPEN,
 
 // client commands
 enum { CLCMD_JOIN_FAILED,
-       CLCMD_JOIN_SUCCESS,     
+       CLCMD_JOIN_SUCCESS,
        CLCMD_RELOAD_START,           // will you please load netstart.spe
        CLCMD_RELOAD_END,            // netstart.spe has been loaded, please continue
        CLCMD_REQUEST_RESEND,        // input didn't arrive, please resend
        CLCMD_UNJOIN                 // causes server to delete you (addes your delete command to next out packet)
      } ;
-       
+
 
 // return codes for NFCMD_OPEN
 enum { NF_OPEN_FAILED,
@@ -65,8 +65,8 @@ enum { CLIENT_NFS=50,           // client can read one remote files
        CLIENT_ABUSE,            // waits for entry into a game
        CLIENT_CRC_WAITER,       // client waits for crcs to be saved
        CLIENT_LSF_WAITER        // waits for lsf to be transmitted
-       
-     } ; 
+
+     } ;
 
 // base->input_state will be one of the following
 
@@ -79,7 +79,7 @@ enum { INPUT_COLLECTING,       // waiting for driver to receive input from clien
 
 // the net driver should not use any of these except SCMD_DELETE_CLIENT (0) because
 // they are subject to change
-enum { 
+enum {
        SCMD_DELETE_CLIENT,
        SCMD_VIEW_RESIZE,
        SCMD_SET_INPUT,
@@ -107,7 +107,7 @@ struct net_packet
   uint8_t data[PACKET_MAX_SIZE];
   int packet_prefix_size()                 { return 5; }    // 2 byte size, 2 byte check sum, 1 byte packet order
   uint16_t packet_size()             { uint16_t size=(*(uint16_t *)data); return lstl(size); }
-  uint8_t tick_received()            { return data[4]; }  
+  uint8_t tick_received()            { return data[4]; }
   void set_tick_received(uint8_t x)  { data[4]=x; }
   uint8_t *packet_data()             { return data+packet_prefix_size(); }
   uint16_t get_checksum()            { uint16_t cs=*((uint16_t *)data+1); return lstl(cs); }
@@ -128,9 +128,9 @@ struct net_packet
 
 
   void packet_reset()    { set_packet_size(0); }     // 2 bytes for size, 1 byte for tick
-  
-  void add_to_packet(void *buf, int size) 
-  { 
+
+  void add_to_packet(void *buf, int size)
+  {
     if (size && size+packet_size()+packet_prefix_size()<PACKET_MAX_SIZE)
     {
       memcpy(data+packet_size()+packet_prefix_size(),buf,size);
@@ -158,7 +158,7 @@ struct base_memory_struct
   int16_t need_reload;
   int16_t input_state;          // COLLECTING or PROCESSING
   int16_t current_tick;         // set by engine, used by driver to confirm packet is not left over
-  
+
   join_struct *join_list;
 } ;
 

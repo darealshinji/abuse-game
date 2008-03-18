@@ -11,7 +11,7 @@
 #define __EMM_H_
 #include "system.h"
 #ifdef __DOS            // this stuff is DOS specific, don't include
-			// on other systems
+            // on other systems
 #include "linked.hpp"
 
 class emblock : public linked_node
@@ -48,7 +48,7 @@ int      EMM_version();
 int      EMM_num_active_handles();
 long     EMM_free_memory();
 int      EMM_alloc(int pages);  // remeber pages are 16K, 16384 bytes
-		// returns handle or -1
+        // returns handle or -1
 int      EMM_free(int handle);   // returns true for success
 unsigned EMM_frame_address();
 void     EMM_map_page(int handle);

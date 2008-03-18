@@ -15,7 +15,7 @@ main()
 {
 #if BYTE_ORDER==LITTLE_ENDIAN
   printf("Hello little\n");
-#else 
+#else
   printf("hi big\n");
 #endif
 }

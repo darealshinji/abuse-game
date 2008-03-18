@@ -24,9 +24,9 @@ main()
   printf("};\n");
 
   printf("uint16_t atan_table[1662]={\n  ");
- 
+
   for (i=1;i<1662;i++)
-  {    
+  {
     if (i<29) x=0;
     else x=(long)(atan(i/(double)29)/3.14152654*180)-45;
     if (x<0) x+=360;
@@ -34,5 +34,5 @@ main()
     if (i!=1661) printf(", ");
     if ((i%12)==11) printf("\n  ");
   }
-  printf("};\n");  
+  printf("};\n");
 }

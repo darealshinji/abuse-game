@@ -45,14 +45,14 @@ static mask_line *make_mask_lines(image *mask, int map_width)
   for (int y=0;y<mask->height();y++)
   {
     // find the start of the run..
-    uint8_t *sl=mask->scan_line(y);    
+    uint8_t *sl=mask->scan_line(y);
     int x=0;
     while (*sl==0) { sl++; x++; }
     p[y].x=x;
 
-   
+
     // find the length of the run
-    int size=0; 
+    int size=0;
     uint8_t *sl_start=sl;
     while (*sl!=0 && x<mask->width()) { sl++; x++; size++; }
     p[y].size=size;
@@ -67,7 +67,7 @@ static mask_line *make_mask_lines(image *mask, int map_width)
       *(lrem++)=*(sl_start++);
 /*      if (x==size/2 || x==size/2-1 || x==size/2+1)
         *rem=(int)(sqrt(0.5)*map_width/2.0);
-      else*/ 
+      else*/
       if (x<=size/2)
         *rem=(int)(sqrt(x/(double)(size*2.0))*map_width/2.0);
       else
@@ -80,11 +80,11 @@ static mask_line *make_mask_lines(image *mask, int map_width)
 }
 
 
-void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256, int32_t *paddr, mask_line *p, int mask_height, 
-	      int xoff, int coff)
-{  
+void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256, int32_t *paddr, mask_line *p, int mask_height,
+          int xoff, int coff)
+{
   int x1=10000,x2=0;
-  int iw=im1->width();  
+  int iw=im1->width();
   uint16_t r,off;
   int y=0;
   uint8_t *l;
@@ -97,9 +97,9 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
     uint8_t *sl3=im2->scan_line(y);
     l=n->light;
     uint16_t *rem=n->remap;
-    if (sx+n->x<x1) x1=sx+n->x;    
+    if (sx+n->x<x1) x1=sx+n->x;
     int x=0;
-    for (;x<n->size;x++,sl++,rem++,l++)   
+    for (;x<n->size;x++,sl++,rem++,l++)
     {
       r=*rem;
 
@@ -116,12 +116,12 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
           b3=b1+(b2-b1)*fade256/256;
 
       uint8_t c=color_table->lookup_color(r3>>3,g3>>3,b3>>3);
-				
-      *sl=*(white_light+((*l)/2+28+jrand()%4)*256+c); 
-      
+                
+      *sl=*(white_light+((*l)/2+28+jrand()%4)*256+c);
+
     }
     if (sx+n->x+x>x2) x2=sx+n->x+x;
-    
+
   }
   screen->add_dirty(x1,sy,x2,sy+mask_height-1);
 
@@ -132,11 +132,11 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
 void fade_in(image *im, int steps);
 void fade_out(int steps);
 
-class ex_char { 
+class ex_char {
   public :
   uint8_t frame,char_num;
   int x,y;
-  ex_char *next; 
+  ex_char *next;
   ex_char (int X, int Y, int Frame, int Char_num, ex_char *Next) { x=X; y=Y; frame=Frame; char_num=Char_num; next=Next; }
 } ;
 
@@ -155,9 +155,9 @@ void show_end2()
   int explo_snd=lnumber_value(symbol_value(make_find_symbol("P_EXPLODE_SND")));
   int space_snd=lnumber_value(symbol_value(make_find_symbol("SPACE_SND")));
   int zip_snd=lnumber_value(symbol_value(make_find_symbol("SHIP_ZIP_SND")));
-  
 
-  mask_line *p=make_mask_lines(cache.img(mask),cache.img(planet)->width());  
+
+  mask_line *p=make_mask_lines(cache.img(mask),cache.img(planet)->width());
 
   int explo_frames1[8],explo_frames2[7];
 
@@ -183,44 +183,44 @@ void show_end2()
 
   screen->clear();
   int c[4]={pal->find_closest(222,222,22),
-	    pal->find_closest(200,200,200),
-	    pal->find_closest(100,100,100),
-	    pal->find_closest(64,64,64)};
+        pal->find_closest(200,200,200),
+        pal->find_closest(100,100,100),
+        pal->find_closest(64,64,64)};
   uint16_t sinfo[800*3],*si;
 
   for (si=sinfo,i=0;i<800;i++)
   {
-    *(si++)=jrand()%320; 
-    *(si++)=jrand()%200;     
-    *(si++)=c[jrand()%4];     
+    *(si++)=jrand()%320;
+    *(si++)=jrand()%200;
+    *(si++)=c[jrand()%4];
     screen->putpixel(si[-3],si[-2],si[-1]);
   }
   int32_t paddr[256];
   if (old_pal)
   {
-    for (i=0;i<256;i++) 
-      paddr[i]=(old_pal->red(i)<<16)|(old_pal->green(i)<<8)|(old_pal->blue(i)); 
+    for (i=0;i<256;i++)
+      paddr[i]=(old_pal->red(i)<<16)|(old_pal->green(i)<<8)|(old_pal->blue(i));
   }
   else
   {
-    for (i=0;i<256;i++) 
+    for (i=0;i<256;i++)
       paddr[i]=(pal->red(i)<<16)|(pal->green(i)<<8)|(pal->blue(i));
   }
 
   int dx=(xres+1)/2-320/2,dy=(yres+1)/2-200/2;
 
 
-  scan_map(screen,ex,ey,cache.img(planet),cache.img(planet2),0,paddr,p,cache.img(mask)->height(),eoff,coff);      
+  scan_map(screen,ex,ey,cache.img(planet),cache.img(planet2),0,paddr,p,cache.img(mask)->height(),eoff,coff);
   image *tcopy=cache.img(planet)->copy();
   fade_in(NULL,32);
 
   time_marker old_time;
 
 
-  
+
   for (i=0;i<80;)
   {
-    time_marker new_time;    
+    time_marker new_time;
     if (new_time.diff_time(&old_time)>0.1)
     {
       if ((i%10)==0 && (sound_avail&SFX_INITIALIZED))
@@ -234,34 +234,34 @@ void show_end2()
 
       if (i>=30 && i<=37)
       {
-	cache.img(planet)->put_image(tcopy,0,0);
-	cache.fig(explo_frames1[i-30])->forward->put_image(tcopy,100,50);
+    cache.img(planet)->put_image(tcopy,0,0);
+    cache.fig(explo_frames1[i-30])->forward->put_image(tcopy,100,50);
         scan_map(screen,ex,ey,tcopy,
-	       cache.img(planet2),
-	       0,paddr,
-	       p,cache.img(mask)->height(),eoff,coff);      
-      } 
+           cache.img(planet2),
+           0,paddr,
+           p,cache.img(mask)->height(),eoff,coff);
+      }
       else
         scan_map(screen,ex,ey,cache.img(planet),
-	       cache.img(planet2),
-	       0,paddr,
-	       p,cache.img(mask)->height(),eoff,coff);      
+           cache.img(planet2),
+           0,paddr,
+           p,cache.img(mask)->height(),eoff,coff);
       if (i>38)
       {
-	int t=i-38;
-	image *s=cache.img(ship);
-	int nw=s->width()*(t+2)/16,
-	    nh=s->height()*(t+2)/16;
+    int t=i-38;
+    image *s=cache.img(ship);
+    int nw=s->width()*(t+2)/16,
+        nh=s->height()*(t+2)/16;
 
 
         scale_put_trans(s,screen,ex-(i-38)*5,ey+cache.img(mask)->height()/2+t*4,nw,nh);
-	if (i==77)
-	  if (sound_avail&SFX_INITIALIZED)
+    if (i==77)
+      if (sound_avail&SFX_INITIALIZED)
             cache.sfx(zip_snd)->play(127);
       }
-        
+
       eoff+=2; if (eoff>=320) eoff-=320;
-      coff+=1; if (coff>=320) coff-=320;      
+      coff+=1; if (coff>=320) coff-=320;
       wm->flush_screen();
       i++;
     }
@@ -284,45 +284,45 @@ void show_end2()
       for (si=sinfo,j=0;j<800;j++,si+=3)
         screen->putpixel(dx+si[0],dy+si[1],si[2]);
 
-      
+
       scan_map(screen,ex,ey,cache.img(planet),
-	       cache.img(planet2),i*256/200,paddr,p,cache.img(mask)->height(),eoff,coff);      
+           cache.img(planet2),i*256/200,paddr,p,cache.img(mask)->height(),eoff,coff);
 
       eoff+=2; if (eoff>=320) eoff-=320;
-      coff+=1; if (coff>=320) coff-=320;      
+      coff+=1; if (coff>=320) coff-=320;
 
       i++;
       if (i<150 || (i<170 && ((i-149)%2)==0) || (i<180 && ((i-149)%4)==0) || (i<190 && ((i-149)%8)==0))
       {
         clist=new ex_char(ex+jrand()%(cache.img(mask)->width()-cache.img(mask)->width()/3),
-			ey+jrand()%(cache.img(mask)->height()-cache.img(mask)->height()/3),0,1,clist);
-	if (sound_avail&SFX_INITIALIZED)
+            ey+jrand()%(cache.img(mask)->height()-cache.img(mask)->height()/3),0,1,clist);
+    if (sound_avail&SFX_INITIALIZED)
           cache.sfx(explo_snd)->play(127);
       }
 
 //      clist=new ex_char(ex+jrand()%(cache.img(mask)->width(),
-//			ey+jrand()%(cache.img(mask)->height(),0,1,clist);
+//            ey+jrand()%(cache.img(mask)->height(),0,1,clist);
 
       ex_char *c=clist,*last=NULL;
       for (;c;)
       {
-	c->frame++;
-	if (c->frame>6)
-	{
-	  ex_char *d=c;
-	  if (last) last->next=c->next;
-	  else clist=c->next;
-	  c=c->next;
-	  delete d;
-	} else
-	{ 
-	  last=c; 
-	  if (c->char_num)	
-	    cache.fig(explo_frames2[c->frame])->forward->put_image(screen,c->x,c->y);	  
+    c->frame++;
+    if (c->frame>6)
+    {
+      ex_char *d=c;
+      if (last) last->next=c->next;
+      else clist=c->next;
+      c=c->next;
+      delete d;
+    } else
+    {
+      last=c;
+      if (c->char_num)    
+        cache.fig(explo_frames2[c->frame])->forward->put_image(screen,c->x,c->y);    
 
-	  c->x-=3;
-	  c=c->next; 
-	}	  
+      c->x-=3;
+      c=c->next;
+    }    
       }
 
       wm->flush_screen();
@@ -350,15 +350,15 @@ void show_end2()
 
       old_time.get_time();
       scan_map(screen,ex,ey,cache.img(planet),
-	       cache.img(planet2),
-	       256,paddr,
-	       p,cache.img(mask)->height(),eoff,coff);      
+           cache.img(planet2),
+           256,paddr,
+           p,cache.img(mask)->height(),eoff,coff);
       eoff+=2; if (eoff>=320) eoff-=320;
-      coff+=1; if (coff>=320) coff-=320;      
+      coff+=1; if (coff>=320) coff-=320;
       wm->flush_screen();
       i++;
     }
-    
+
     if (wm->event_waiting())
       wm->get_event(ev);
 
@@ -383,9 +383,9 @@ void show_end2()
       screen->putpixel(dx+si[0],dy+si[1],si[2]);
 
     scan_map(screen,ex,ey,cache.img(planet),
-	     cache.img(planet2),
-	     256,paddr,
-	     p,cache.img(mask)->height(),eoff,coff);      
+         cache.img(planet2),
+         256,paddr,
+         p,cache.img(mask)->height(),eoff,coff);
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),wm->font(),cmap,wm->bright_color());
     wm->flush_screen();
     time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
@@ -436,7 +436,7 @@ void share_end()
   int dx=(xres+1)/2-im->width()/2,dy=(yres+1)/2-im->height()/2;
   im->put_image(screen,dx,dy);
   console_font->put_string(screen,xres/2+35,yres/2+100-console_font->height()-2,
-			   lstring_value(to_be));
+               lstring_value(to_be));
   fade_in(NULL,32);
 
   uint8_t cmap[32];
@@ -450,7 +450,7 @@ void share_end()
   {
     im->put_image(screen,dx,dy);
     console_font->put_string(screen,xres/2+35,yres/2+100-console_font->height()-2,
-			   lstring_value(to_be));
+               lstring_value(to_be));
 
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(mid_plot),wm->font(),cmap,wm->bright_color());
     wm->flush_screen();
@@ -463,12 +463,12 @@ void share_end()
     do
     {
       wm->flush_screen();
-      wm->get_event(ev);    
+      wm->get_event(ev);
     } while (ev.type!=EV_KEY && ev.type!=EV_MOUSE_BUTTON);
   }
 
   fade_out(16);
-  wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse  
+  wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
   show_sell(1);
   wm->push_event(new event(ID_SHOW_SELL,NULL));
 }
@@ -513,7 +513,7 @@ void show_end()
     do
     {
       wm->flush_screen();
-      wm->get_event(ev);    
+      wm->get_event(ev);
     } while (ev.type!=EV_KEY && ev.type!=EV_MOUSE_BUTTON);
   }
 

@@ -20,7 +20,7 @@
 //  this defaults to 1
 
 
-#ifndef linkman         
+#ifndef linkman
 #define linkman
 #include <stdio.h>
 #include <stdlib.h>

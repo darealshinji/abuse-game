@@ -37,10 +37,10 @@
 
   Complex objects          (can controll lights, other characters, and have a neural net ai)
     uint8_t tobjs,tlights;
-    object_list *                       
+    object_list *
     light_list *
     nnet_info *
-    int8_t fade_dir, frame_dir;        
+    int8_t fade_dir, frame_dir;
     uint8_t fade_count,fade_max;
     morph_char *morph_status;
 
@@ -48,11 +48,11 @@
 */
 
 void simple_object::add_light(light_source *ls)
-{ 
+{
   if (!ls) return ;
   ls->known=1;
   for (int i=0;i<tlights;i++) if (lights[i]==ls) return;
-  tlights++; 
+  tlights++;
   lights=(light_source **)jrealloc(lights,sizeof(light_source *)*tlights,"Light list");
   lights[tlights-1]=ls;
 }
@@ -70,7 +70,7 @@ void simple_object::add_object(game_object *o)
 
 void simple_object::remove_light(light_source *ls)
 {
-  for (int i=0;i<tlights;i++) 
+  for (int i=0;i<tlights;i++)
   {
     if (lights[i]==ls)
     {
@@ -85,7 +85,7 @@ void simple_object::remove_light(light_source *ls)
 
 void simple_object::remove_object(game_object *o)
 {
-  for (int i=0;i<tobjs;i++) 
+  for (int i=0;i<tobjs;i++)
   {
     if (objs[i]==o)
     {
@@ -101,7 +101,7 @@ void simple_object::remove_object(game_object *o)
 
 simple_object::simple_object()
 {
-  
+
   x=y=0;
   direction=1;
   otype=0;

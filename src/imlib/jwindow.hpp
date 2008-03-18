@@ -51,7 +51,7 @@ public:
   void grab_focus(ifield *i);
   void release_focus();
   void allow_no_selections();
-  ~InputManager(); 
+  ~InputManager();
 } ;
 
 class ifield
@@ -78,7 +78,7 @@ public :
     virtual void remap(filter *f) { ; }
     virtual char *read() = 0;
     virtual ifield *find(int search_id) { if (id==search_id) return this; else return NULL; }
-    virtual ifield *unlink(int id) { return NULL; } 
+    virtual ifield *unlink(int id) { return NULL; }
     virtual ~ifield();
 } ;
 
@@ -123,7 +123,7 @@ public:
     int y2() { return _y2; }
     void clip_in() { screen->set_clip(x1(), y1(), x2(), y2()); }
     void clip_out() { screen->set_clip(0, 0, l - 1, h - 1); }
-    char *read(int id) { return inm->get(id)->read(); }  
+    char *read(int id) { return inm->get(id)->read(); }
     void local_close();
 
     static int left_border();
@@ -152,7 +152,7 @@ public:
     Jwindow *drag_window;
     JCFont *fnt, *wframe_fnt;
 
-    WindowManager(image *, palette *, int hi, int med, int low, JCFont *); 
+    WindowManager(image *, palette *, int hi, int med, int low, JCFont *);
     ~WindowManager();
 
     Jwindow *new_window(int x, int y, int l, int h,
@@ -174,8 +174,8 @@ public:
     void set_colors(int Hi, int Med, int Low) { hi=Hi; med=Med; low=Low; }
     JCFont *font() { return fnt; }
     int has_mouse() { return eh->has_mouse(); }
-    void mouse_status(int &x, int &y, int &button) {eh->mouse_status(x,y,button); }	       
-    void set_mouse_shape(image *im, int centerx, int centery) 
+    void mouse_status(int &x, int &y, int &button) {eh->mouse_status(x,y,button); }    
+    void set_mouse_shape(image *im, int centerx, int centery)
     { eh->set_mouse_shape(im,centerx,centery); }
 
     void set_mouse_position(int mx, int my)

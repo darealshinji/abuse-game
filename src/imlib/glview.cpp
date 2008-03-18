@@ -38,11 +38,11 @@ main(int argc, char **argv)
   {
     pal=NULL;
     printf("reading %s",argv[i]);
-    im[t]=read_pic(argv[i],pal); 
+    im[t]=read_pic(argv[i],pal);
     printf(" %d %d\n",im[t]->width(),im[t]->height());
     if (pal)
     { pal->load();
-	delete pal;
+    delete pal;
     }
     if (*(argv[i]+strlen(argv[i])-3)=='c')
       t++;
@@ -53,7 +53,7 @@ main(int argc, char **argv)
     for (k=1;k<t;k++)
     {
       im[k]->put_image(screen,0,0);
-	printf("put image\n");
+    printf("put image\n");
       update_dirty(screen);
       screen->bar(0,0,im[k]->width(),im[k]->height(),0);
     }

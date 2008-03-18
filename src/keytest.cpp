@@ -42,14 +42,14 @@ int fd_ready_to_read(int fd)
 
 int key_fifo()
 {
-  int fd,child_pid; 
+  int fd,child_pid;
   FILE *fp;
   fp=popen("keydrv","r");
-  fscanf(fp,"%d",&child_pid);  
+  fscanf(fp,"%d",&child_pid);
   pclose(fp);
   do
   { usleep(10000);
-  } while (access("/tmp/jckey-driver",R_OK)); 
+  } while (access("/tmp/jckey-driver",R_OK));
   fd=open("/tmp/jckey-driver",O_RDONLY);
   return fd;
 }
@@ -58,14 +58,14 @@ int key_fifo()
 main()
 {
   unsigned char key;
-  
+
   int console_fd=key_fifo();
   while (1)
   {
     if (fd_ready_to_read(console_fd))
     {
-      read(console_fd,&key,1);      
+      read(console_fd,&key,1);
       printf("read key (%d)\n\r",(int)key);
-    } else usleep(10000);          
-  }  
+    } else usleep(10000);
+  }
 }

@@ -92,7 +92,7 @@ int palette::find_color(unsigned char r, unsigned char g, unsigned char b)
   {
     if (usd[ub]&mask)
       if (r==pal[i].red && b==pal[i].blue && g==pal[i].green)
-	find=i;
+    find=i;
     mask>>=1;
     if (mask==0)
     { mask=128; ub++; }
@@ -219,7 +219,7 @@ int palette::add_color(unsigned int r, int unsigned g, int unsigned b, int close
       if (used(i))
       {
         if (pal[i].red==r && pal[i].green==g && pal[i].blue==b)
-	f=i;
+    f=i;
       }
       else
         u=i;
@@ -238,15 +238,15 @@ int palette::add_color(unsigned int r, int unsigned g, int unsigned b, int close
     {
       for (i=0,f=0,u=10000;i<ncolors;i++)
       { c=(pal[i].red-r)*(pal[i].red-r)+
-	  (pal[i].green-g)*(pal[i].green-g)+
-	  (pal[i].blue-b)*(pal[i].blue-b);
-	if (c<u)
-	{ f=i;
-	  u=c;
-	}
+      (pal[i].green-g)*(pal[i].green-g)+
+      (pal[i].blue-b)*(pal[i].blue-b);
+    if (c<u)
+    { f=i;
+      u=c;
+    }
       }
     }
-  } 
+  }
   return f;
 }
 
@@ -292,7 +292,7 @@ void palette::shift(int amount)
 void palette::set(int x, unsigned char red, char unsigned green, char unsigned blue)
 { CONDITION(x>=0 && x<ncolors,"Pallete::set passed bad x");
   CONDITION((int)red<=ncolors && (int)green<=ncolors && (int)blue<=ncolors,
-	    "pallette::set color values bigger than palette");
+        "pallette::set color values bigger than palette");
   pal[x].red=red; pal[x].green=green; pal[x].blue=blue;
 }
 
@@ -322,8 +322,8 @@ quant_node::~quant_node()
 /*  if (!is_leaf())
   { for (i=0;i<8;i++)
       if (children[i])
-      {	delete children[i];
-	children[i]=NULL;
+      {    delete children[i];
+    children[i]=NULL;
       }
   } */
 }
@@ -352,12 +352,12 @@ void quant_node::total(int &tnodes, int &tr, int &tg, int &tb)
   else
   { for (i=0;i<8;i++)
       if (children[i])
-	children[i]->total(tnodes,tr,tg,tb);
+    children[i]->total(tnodes,tr,tg,tb);
   }
 }
 
 quant_node::quant_node(int level, quant_node *dad,
-	unsigned char r, unsigned char g, unsigned char b)
+    unsigned char r, unsigned char g, unsigned char b)
 {
   int i;
   CONDITION(level<=8,"Tree cannot have more than eight levels");
@@ -379,13 +379,13 @@ void quant_palette::re_delete(quant_node *who, int lev)  // removes all children
   {
     if (!who->is_leaf())
     { for (x=0;x<8;x++)
-	if (who->children[x])
-	{
-	  CONDITION(lev<8,"Levl > 7");
-	  re_delete(who->children[x],lev+1);
-	  level[lev].unlink((linked_node *)who->children[x]);
-	  delete who->children[x];
-	}
+    if (who->children[x])
+    {
+      CONDITION(lev<8,"Levl > 7");
+      re_delete(who->children[x],lev+1);
+      level[lev].unlink((linked_node *)who->children[x]);
+      delete who->children[x];
+    }
     }
   }
 }
@@ -400,11 +400,11 @@ void quant_palette::prune()
     if (p)
     { do
       {
-	f=p->father();
-	for (x=0;x<8 && !pruned;x++)
-	  if (f->children[x])
-	    if (f->children[x]->next()!=p->next())        // if this son is not me!
-	    pruned=1;                   //  I have a brother! stop
+    f=p->father();
+    for (x=0;x<8 && !pruned;x++)
+      if (f->children[x])
+        if (f->children[x]->next()!=p->next())        // if this son is not me!
+        pruned=1;                   //  I have a brother! stop
        p=(quant_node *)p->next();
       } while ((linked_node *) p!=level[lev-1].first() && !pruned);
     }
@@ -441,9 +441,9 @@ void quant_palette::add_color(unsigned char r, unsigned char g, unsigned char b)
   {
     lev++;
     if (!(*p))
-    { 
+    {
       if (lev>2 && !fat)
-	printf("h");
+    printf("h");
       (*p)=new quant_node(lev,fat);
       level[lev-1].add_end((linked_node *)(*p));
     }
@@ -472,9 +472,9 @@ palette *quant_palette::create_pal()
   p=new palette(mx);
   for (x=0,i=7;i>=0;i++)
     for (pn=(quant_node *)level[i].first();
-	 pn!=(quant_node *)level[i].first();pn=(quant_node *)pn->next())
+     pn!=(quant_node *)level[i].first();pn=(quant_node *)pn->next())
       if (pn->is_leaf())
-	p->set(x++,pn->red,pn->green,pn->blue);
+    p->set(x++,pn->red,pn->green,pn->blue);
   return p;
 }
 
@@ -499,7 +499,7 @@ unsigned char palette::brightest(int all)
       get(i,r,g,b);
       if ((long)r*(long)g*(long)b>brv)
       { brv=(long)r*(long)g*(long)b;
-	bri=i;
+    bri=i;
       }
     }
   }
@@ -520,7 +520,7 @@ unsigned char palette::darkest(int all, int noblack)
       x=(long)r*(long)g*(long)b;
       if (x<brv && (x || !noblack))
       { brv=(long)r*(long)g*(long)b;
-	bri=i;
+    bri=i;
       }
     }
   }
@@ -543,7 +543,7 @@ void palette::fade_to(int total_fades, int fade_on, int dest_r, int dest_g, int 
     *(sl++)=x;
     x=(( dest_g-(int)*sl)*fade_on/total_fades+*sl);
     *(sl++)=x;
-    x=(( dest_b-(int)*sl)*fade_on/total_fades+*sl);    
+    x=(( dest_b-(int)*sl)*fade_on/total_fades+*sl);
     *(sl++)=x;
-  }  
+  }
 }

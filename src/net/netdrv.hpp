@@ -22,7 +22,7 @@ class game_handler;
 class net_driver
 {
   net_socket *in,*out;
-  int shm_seg_id;  
+  int shm_seg_id;
   void *shm_addr;
 
   int connect_to_engine(int argc, char **argv);
@@ -41,14 +41,14 @@ class net_driver
     net_socket *sock;
     lsf_waiter *next;
     lsf_waiter(net_socket *sock, lsf_waiter *next) : sock(sock), next(next)
-    { 
-      sock->read_selectable();  // set in case socket dies   
+    {
+      sock->read_selectable();  // set in case socket dies
     } ;
-    ~lsf_waiter() 
-    { 
+    ~lsf_waiter()
+    {
       sock->read_unselectable();
       delete sock;
-    }    
+    }
   } *lsf_wait_list;
 
 
@@ -58,14 +58,14 @@ class net_driver
     net_socket *sock;
     crc_waiter *next;
     crc_waiter(net_socket *sock, crc_waiter *next) : sock(sock), next(next)
-    { 
+    {
       sock->read_selectable();  // set in case socket dies
     } ;
-    ~crc_waiter() 
-    { 
+    ~crc_waiter()
+    {
       sock->read_unselectable();
       delete sock;
-    }    
+    }
   } *crc_wait_list;
 
   int fetch_crcs(char *server);
@@ -80,10 +80,10 @@ class net_driver
   int check_commands();
   int add_client(int type, net_socket *sock, net_address *from);
   int add_joiner(int client_id, char *name);
-  net_socket *connect_to_server(char *&name, 
-				int port=DEFAULT_COMM_PORT, 
-				int force_port=0, 
-				net_socket::socket_type sock_type=net_socket::SOCKET_SECURE);
+  net_socket *connect_to_server(char *&name,
+                int port=DEFAULT_COMM_PORT,
+                int force_port=0,
+                net_socket::socket_type sock_type=net_socket::SOCKET_SECURE);
   net_protocol *get_protocol() { return proto; }
   int become_server();
   int get_game_port() { return game_port; }

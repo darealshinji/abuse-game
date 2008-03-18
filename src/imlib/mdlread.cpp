@@ -23,7 +23,7 @@
 // images.  All images should be sized so they will fit on an mdl screen
 // but no checking of that is done hhere.
 void write_mdl(image **images, int16_t total_images, palette *pal,char *fn,
-		int16_t firstpage, int16_t images_per_page)
+        int16_t firstpage, int16_t images_per_page)
 {
   FILE *fp;
   char buf[18];
@@ -63,7 +63,7 @@ void write_mdl(image **images, int16_t total_images, palette *pal,char *fn,
 
       fwrite(&page,1,1,fp);         // put all of the image on the first page
       xy[0]=uint16_to_intel(images[i]->width()*images[i]->height()+4);  // calc the size of the image
-    
+
       fwrite(xy,2,1,fp);
       xy[0]=uint16_to_intel(images[i]->width());
       fwrite(xy,2,1,fp);
@@ -71,7 +71,7 @@ void write_mdl(image **images, int16_t total_images, palette *pal,char *fn,
       fwrite(xy,2,1,fp);
       for (x=0;x<(uint16_t)images[i]->height();x++)   // write all the scan_lines for the
       { c=images[i]->scan_line(x);            // image
-	fwrite(c,images[i]->width(),1,fp);
+    fwrite(c,images[i]->width(),1,fp);
       }
     }
     fclose(fp);                // close the file and make sure buffers empty
@@ -156,39 +156,39 @@ image **read_mdl(char *fn, palette *&pal, int16_t startn, int16_t endn, int16_t 
       pal->set_all_used();
       while (startn && !current_error())
       { if (fread(buf,1,23,fp)!=23)
-	  set_error(imFILE_CORRUPTED);
-	fread(xy,2,1,fp);
-	xy[0]=uint16_to_local(xy[0]);
-	fseek(fp,xy[0],SEEK_CUR);
-	startn--; if (endn>0) endn--;
+      set_error(imFILE_CORRUPTED);
+    fread(xy,2,1,fp);
+    xy[0]=uint16_to_local(xy[0]);
+    fseek(fp,xy[0],SEEK_CUR);
+    startn--; if (endn>0) endn--;
       }
       if (!current_error())
-	im=(image **)jmalloc(sizeof(image *)*endn,"mdl_read::image * array");
+    im=(image **)jmalloc(sizeof(image *)*endn,"mdl_read::image * array");
 
       while ((startn<endn || endn==-1) && !feof(fp) && !current_error())
       {
-	if (fread(buf,1,23,fp)==23) 
+    if (fread(buf,1,23,fp)==23)
         {
-  	  if (fread(&j,1,2,fp)!=2) set_error(imFILE_CORRUPTED);
-	  else
-	  {
-	    j=uint16_to_local(j);
-	    j-=4;
+        if (fread(&j,1,2,fp)!=2) set_error(imFILE_CORRUPTED);
+      else
+      {
+        j=uint16_to_local(j);
+        j-=4;
             xy[0]=5; xy[1]=5;
-	    if (fread(xy,1,4,fp)!=4) set_error(imFILE_CORRUPTED);
-	    make_block(sizeof(image));
-	    xy[0]=uint16_to_local(xy[0]);
-	    xy[1]=uint16_to_local(xy[1]);
-	    im[startn]=new image(xy[0],xy[1]);
-	    total++;
-	    for (i=0;i<xy[1];i++)
-	      if (fread(im[startn]->scan_line(i),xy[0],1,fp)!=1)
-	        set_error(imFILE_CORRUPTED);
-	      else j-=xy[0];
-	    if (j)
-	      fseek(fp,j,SEEK_CUR);
-	  }
-	  startn++;
+        if (fread(xy,1,4,fp)!=4) set_error(imFILE_CORRUPTED);
+        make_block(sizeof(image));
+        xy[0]=uint16_to_local(xy[0]);
+        xy[1]=uint16_to_local(xy[1]);
+        im[startn]=new image(xy[0],xy[1]);
+        total++;
+        for (i=0;i<xy[1];i++)
+          if (fread(im[startn]->scan_line(i),xy[0],1,fp)!=1)
+            set_error(imFILE_CORRUPTED);
+          else j-=xy[0];
+        if (j)
+          fseek(fp,j,SEEK_CUR);
+      }
+      startn++;
         }
       }
     }

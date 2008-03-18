@@ -25,6 +25,6 @@ char const *get_username()
       return pw->pw_name;
     else
       return "UNIX user";
-  } else return name; 
+  } else return name;
 }
 

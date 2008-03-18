@@ -40,7 +40,7 @@ extern bFILE *current_print_file;
 
 
 enum { L_BAD_CELL,   // error catching type
-       L_CONS_CELL, L_NUMBER, L_SYMBOL,     L_SYS_FUNCTION, L_USER_FUNCTION, 
+       L_CONS_CELL, L_NUMBER, L_SYMBOL,     L_SYS_FUNCTION, L_USER_FUNCTION,
        L_STRING, L_CHARACTER, L_C_FUNCTION, L_C_BOOL,       L_L_FUNCTION, L_POINTER,
        L_OBJECT_VAR, L_1D_ARRAY,
        L_FIXED_POINT, L_COLLECTED_OBJECT };
@@ -49,9 +49,9 @@ typedef uint64_t ltype;    // make sure structures aren't packed differently on 
                        // and sure that word, etc are word aligned
 
 struct lisp_object_var
-{  
+{
   ltype type;
-  long number;  
+  long number;
 } ;
 
 struct cons_cell
@@ -102,13 +102,13 @@ struct lisp_user_function
 struct lisp_1d_array
 {
   ltype type;
-  unsigned short size; 
+  unsigned short size;
   // size * sizeof (void *) follows1
 } ;
 
 struct lisp_string
 {
-  ltype type; 
+  ltype type;
 } ;
 
 struct lisp_character
@@ -120,7 +120,7 @@ struct lisp_character
 
 struct lisp_pointer
 {
-  ltype type; 
+  ltype type;
   void *addr;
 } ;
 

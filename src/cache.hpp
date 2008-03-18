@@ -69,7 +69,7 @@ struct CacheItem
 
 protected:
     void *data;
-    int32_t last_access;   
+    int32_t last_access;
     uint8_t type;
     int16_t file_number;
     int32_t offset;

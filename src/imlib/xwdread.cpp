@@ -26,7 +26,7 @@
 #include "macs.hpp"
 #include "image24.hpp"
 
-#define MAXCOLORS 256  
+#define MAXCOLORS 256
 //#define MC(x) (((x)<3)==0)
 #define MC(x) (x!=0)
 
@@ -39,54 +39,54 @@ int ca[8]={1,1,1,1,0,0,0,0},
 #define RGB2Y(r,g,b) (char)(ya[MC(b)|MC(g)<<1|MC(r)<<2])
 #define RGB2M(r,g,b) (char)(ma[MC(b)|MC(g)<<1|MC(r)<<2])
 
-#define LSBFirst	0
-#define MSBFirst	1
+#define LSBFirst    0
+#define MSBFirst    1
 
-#define XYBitmap	0
-#define XYPixmap	1
-#define ZPixmap		2
+#define XYBitmap    0
+#define XYPixmap    1
+#define ZPixmap        2
 
-#define StaticGray	0
-#define GrayScale	1
-#define StaticColor	2
-#define PseudoColor	3
-#define TrueColor	4
-#define DirectColor	5
+#define StaticGray    0
+#define GrayScale    1
+#define StaticColor    2
+#define PseudoColor    3
+#define TrueColor    4
+#define DirectColor    5
 
 typedef unsigned long xwdval;
 #define X11WD_FILE_VERSION 7
 typedef struct {
-    xwdval header_size;		/* Size of the entire file header (bytes). */
-    xwdval file_version;	/* X11WD_FILE_VERSION */
-    xwdval pixmap_format;	/* Pixmap format */
-    xwdval pixmap_depth;	/* Pixmap depth */
-    xwdval pixmap_width;	/* Pixmap width */
-    xwdval pixmap_height;	/* Pixmap height */
-    xwdval xoffset;		/* Bitmap x offset */
-    xwdval byte_order;		/* MSBFirst, LSBFirst */
-    xwdval bitmap_unit;		/* Bitmap unit */
-    xwdval bitmap_bit_order;	/* MSBFirst, LSBFirst */
-    xwdval bitmap_pad;		/* Bitmap scanline pad */
-    xwdval bits_per_pixel;	/* Bits per pixel */
-    xwdval bytes_per_line;	/* Bytes per scanline */
-    xwdval visual_class;	/* Class of colormap */
-    xwdval red_mask;		/* Z red mask */
-    xwdval green_mask;		/* Z green mask */
-    xwdval blue_mask;		/* Z blue mask */
-    xwdval bits_per_rgb;	/* Log base 2 of distinct color values */
-    xwdval colormap_entries;	/* Number of entries in colormap */
-    xwdval ncolors;		/* Number of Color structures */
-    xwdval window_width;	/* Window width */
-    xwdval window_height;	/* Window height */
-    long window_x;		/* Window upper left X coordinate */
-    long window_y;		/* Window upper left Y coordinate */
-    xwdval window_bdrwidth;	/* Window border width */
+    xwdval header_size;        /* Size of the entire file header (bytes). */
+    xwdval file_version;    /* X11WD_FILE_VERSION */
+    xwdval pixmap_format;    /* Pixmap format */
+    xwdval pixmap_depth;    /* Pixmap depth */
+    xwdval pixmap_width;    /* Pixmap width */
+    xwdval pixmap_height;    /* Pixmap height */
+    xwdval xoffset;        /* Bitmap x offset */
+    xwdval byte_order;        /* MSBFirst, LSBFirst */
+    xwdval bitmap_unit;        /* Bitmap unit */
+    xwdval bitmap_bit_order;    /* MSBFirst, LSBFirst */
+    xwdval bitmap_pad;        /* Bitmap scanline pad */
+    xwdval bits_per_pixel;    /* Bits per pixel */
+    xwdval bytes_per_line;    /* Bytes per scanline */
+    xwdval visual_class;    /* Class of colormap */
+    xwdval red_mask;        /* Z red mask */
+    xwdval green_mask;        /* Z green mask */
+    xwdval blue_mask;        /* Z blue mask */
+    xwdval bits_per_rgb;    /* Log base 2 of distinct color values */
+    xwdval colormap_entries;    /* Number of entries in colormap */
+    xwdval ncolors;        /* Number of Color structures */
+    xwdval window_width;    /* Window width */
+    xwdval window_height;    /* Window height */
+    long window_x;        /* Window upper left X coordinate */
+    long window_y;        /* Window upper left Y coordinate */
+    xwdval window_bdrwidth;    /* Window border width */
     } X11WDFileHeader;
 
 typedef struct {
     unsigned long pixel;
     unsigned short red, green, blue;
-    char flags;			/* do_red, do_green, do_blue */
+    char flags;            /* do_red, do_green, do_blue */
     char pad;
     } X11XColor;
 
@@ -113,9 +113,9 @@ image *readxwd(char *input_file,palette *&pal)
   /* get X info from file */
   if (!ifd)
   {
-#ifndef __WINDOWS    
+#ifndef __WINDOWS
     printf("Unable to open %s\n"
-	   "Get your story strait and try again.\n",input_file);
+       "Get your story strait and try again.\n",input_file);
     exit(0);
 #endif
   }
@@ -252,33 +252,33 @@ maxred = 0;
   for ( i = 0; i < h11P->colormap_entries; i++ )
     {
       if ( fread( &x11col, sizeof(X11XColor), 1, file ) != 1 )
-	{
+    {
           fclose(file);
           set_error(imFILE_CORRUPTED);
           delete pal;
           return NULL;
-	}
-	else
-	{
-	  x11col.pixel=bltl(x11col.pixel);
-	  x11col.red=bstl(x11col.red);
-	  x11col.green=bstl(x11col.green);
-	  x11col.blue=bstl(x11col.blue);
-	}
+    }
+    else
+    {
+      x11col.pixel=bltl(x11col.pixel);
+      x11col.red=bstl(x11col.red);
+      x11col.green=bstl(x11col.green);
+      x11col.blue=bstl(x11col.blue);
+    }
       if (x11col.pixel < 256)
-	{
-	  if (minred > x11col.red) minred = x11col.red;
-	  if (maxred < x11col.red) maxred = x11col.red;
-	  dummy1 = (unsigned) x11col.red>>8;
-	  dummy2 = (unsigned) x11col.green>>8;
-	  dummy3 = (unsigned) x11col.blue>>8;
-	  pal->set(i,dummy1,dummy2,dummy3);
-	}
+    {
+      if (minred > x11col.red) minred = x11col.red;
+      if (maxred < x11col.red) maxred = x11col.red;
+      dummy1 = (unsigned) x11col.red>>8;
+      dummy2 = (unsigned) x11col.green>>8;
+      dummy3 = (unsigned) x11col.blue>>8;
+      pal->set(i,dummy1,dummy2,dummy3);
+    }
       else
-	{
-	  fprintf(stderr,"pixel value outside of valid HDF palette\n");
-	  exit(-1);
-	}
+    {
+      fprintf(stderr,"pixel value outside of valid HDF palette\n");
+      exit(-1);
+    }
     }
   /* rest of stuff for getpixnum */
   bits_per_item = h11P->bitmap_unit;
@@ -303,10 +303,10 @@ void getimage(FILE *file,image *im,int pad)
     {
       sl=im->scan_line(i);
       for (j=0; j<im->width(); j++)
-	sl[j]= getpixnum(file);
+    sl[j]= getpixnum(file);
 
       for ( j = 0; j < pad; j++ )
-	getpixnum( file );
+    getpixnum( file );
     }
 }
 
@@ -317,26 +317,26 @@ int getpixnum(FILE *file)
   if ( bits_used == bits_per_item )
     {
       if ( fread( buf, bits_per_item / 8, 1, file ) != 1 )
-	fprintf(stderr, "couldn't read bits" );
+    fprintf(stderr, "couldn't read bits" );
       if ( byte_swap )
-	switch ( bits_per_item )
-	  {
-	  case 8:
-	    break;
+    switch ( bits_per_item )
+      {
+      case 8:
+        break;
 
-	  case 16: *shortP=uint16_swap(*shortP); break;
+      case 16: *shortP=uint16_swap(*shortP); break;
 
-	  case 32: *longP=uint32_swap(*longP); break;
+      case 32: *longP=uint32_swap(*longP); break;
 
-	  default:
-	    fprintf(stderr, "can't happen" );
-	  }
+      default:
+        fprintf(stderr, "can't happen" );
+      }
       bits_used = 0;
 
 //      if ( bit_order == MSBFirst )
-	bit_shift = bits_per_item - bits_per_pixel;
+    bit_shift = bits_per_item - bits_per_pixel;
 //      else
-//	bit_shift = 0;
+//    bit_shift = 0;
     }
 
   switch ( bits_per_item )
@@ -425,7 +425,7 @@ int read_BMP_header(FILE *fp)
   bmp.biclrused=read_uint32(fp);                  // 4 48
   bmp.biclrimportant=read_uint32(fp);             // 4 52
   return 1;
-  
+
 }
 
 
@@ -436,10 +436,10 @@ int bmp_bits(char *filename)
   FILE *fp;
   fp=fopen(filename,"rb");
   if (!fp) return 0;
-  if (!read_BMP_header(fp)) return 0; 
+  if (!read_BMP_header(fp)) return 0;
   fclose(fp);
 
-  if (bmp.id[0]!='B' || bmp.id[1]!='M')  
+  if (bmp.id[0]!='B' || bmp.id[1]!='M')
     return 0;
   else return bmp.bits;
 }
@@ -453,18 +453,18 @@ image24 *read_bmp24(char *filename)
   if (!fp)
     return NULL;
   if (!read_BMP_header(fp)) return NULL;
-  
-  if (bmp.id[0]!='B' || bmp.id[1]!='M')  
+
+  if (bmp.id[0]!='B' || bmp.id[1]!='M')
     return NULL;
 
   if (bmp.bits!=24)
     return NULL;
-  
+
   im=new image24((bmp.width+3)&(0xffffffff-3),
-		 (bmp.height+3)&0xffffffff-3);
+         (bmp.height+3)&0xffffffff-3);
   if (!im)
     return NULL;
-  
+
   uint8_t *sl;
   int trailer=im->width()%4;
   if (trailer==1) trailer=3;
@@ -473,19 +473,19 @@ image24 *read_bmp24(char *filename)
   for (i=im->height();i;i--)
   {
     sl=im->scan_line(i-1);
-    for (j=0;j<im->width();j++)    
-    { 
+    for (j=0;j<im->width();j++)
+    {
       fread(sl+2,1,1,fp);
-      fread(sl+1,1,1,fp);      
-      fread(sl,1,1,fp); 
-      sl+=3;  
-    }    
+      fread(sl+1,1,1,fp);
+      fread(sl,1,1,fp);
+      sl+=3;
+    }
     if (trailer)
       fread(buf,trailer*3,1,fp);
   }
   fclose(fp);
 
-  return im; 
+  return im;
 }
 
 image *read_bmp(palette *&pal, char *filename)
@@ -500,15 +500,15 @@ image *read_bmp(palette *&pal, char *filename)
     return NULL;
 
   if (!read_BMP_header(fp)) return NULL;
-  
-  if (bmp.id[0]!='B' || bmp.id[1]!='M')  
+
+  if (bmp.id[0]!='B' || bmp.id[1]!='M')
     return NULL;
 
   if (bmp.bits!=8)
     return NULL;
-  
+
   im=new image((bmp.width+3)&(0xffffffff-3),
-		 (bmp.height+3)&0xffffffff-3);
+         (bmp.height+3)&0xffffffff-3);
 
   if (!im)
     return NULL;
@@ -534,11 +534,11 @@ image *read_bmp(palette *&pal, char *filename)
 
 int write_BMP_header(FILE *fp)
 {
-  if (!fwrite(&bmp.id,1,2,fp)) return 0;  
-  write_uint32(fp,bmp.filesize);  
-  if (!fwrite(bmp.reserved,1,4,fp)) return 0;   
+  if (!fwrite(&bmp.id,1,2,fp)) return 0;
+  write_uint32(fp,bmp.filesize);
+  if (!fwrite(bmp.reserved,1,4,fp)) return 0;
   write_uint32(fp,bmp.headersize);
-  write_uint32(fp,bmp.infosize);  
+  write_uint32(fp,bmp.infosize);
   write_uint32(fp,bmp.width);
   write_uint32(fp,bmp.height);
   write_uint16(fp,bmp.biplanes);
@@ -548,9 +548,9 @@ int write_BMP_header(FILE *fp)
   write_uint32(fp,bmp.bixpelspermeter);
   write_uint32(fp,bmp.biypelspermeter);
   write_uint32(fp,bmp.biclrused);
-  write_uint32(fp,bmp.biclrimportant);   
+  write_uint32(fp,bmp.biclrimportant);
   return 1;
-  
+
 }
 
 void write_bmp(image *im, palette *pal, char *filename)
@@ -577,7 +577,7 @@ void write_bmp(image *im, palette *pal, char *filename)
   bmp.biclrused=256;
   bmp.biclrimportant=256;
   write_BMP_header(fp);
-  
+
   pal_quad[3]=0;
   for (i=0;i<256;i++)
   {

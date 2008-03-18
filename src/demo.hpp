@@ -20,13 +20,13 @@ class demo_manager
 
   public :
   enum demo_state { NORMAL,
-		    RECORDING,
-		    PLAYING    } state;
+            RECORDING,
+            PLAYING    } state;
   int set_state(demo_state new_state, char *filename=NULL);
   demo_state current_state() { return state; }
   int save_packet(void *packet, int packet_size);   // returns non 0 if actually saved
   int get_packet(void *packet, int &packet_size);   // returns non 0 if actually loaded
-  
+
   int start_playing(char *filename);
   int start_recording(char *filename);
   void reset_game();

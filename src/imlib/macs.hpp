@@ -17,8 +17,8 @@
 
 // These macros should be removed for the non-debugging version
 #ifdef NO_CHECK
-#define CONDITION(x,st) 
-#define CHECK(x) 
+#define CONDITION(x,st)
+#define CHECK(x)
 #else
 #define CONDITION(x,st) ERROR(x,st)
 #define CHECK(x) CONDITION(x,"Check stop");

@@ -42,17 +42,17 @@ void write_include(image *im, palette *pal, char *filename, char *name)
       unsigned char *p=(unsigned char *)pal->addr();
       for (i=0;i<768;i++,p++)
       {
-	fprintf(fp,"%d",(int)*p);
-	if (i==767) 
+    fprintf(fp,"%d",(int)*p);
+    if (i==767)
         fprintf(fp,"};\n\n");
-	else
+    else
         if (i%15==14)
-	fprintf(fp,",\n    ");
+    fprintf(fp,",\n    ");
         else fprintf(fp,", ");
       }
     }
     fprintf(fp,"unsigned char %s[%d*%d]={\n    ",tmp_name,
-            im->width(),im->height()); 
+            im->width(),im->height());
     int x,y,max=im->width()*im->height()-1;
     for (y=0,i=0;y<im->height();y++)
       for (x=0;x<im->width();x++,i++)

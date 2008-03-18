@@ -91,18 +91,18 @@ void createRCFile( char *rcfile )
     {
         fputs( "; Abuse-SDL Configuration file\n\n", fd );
         fputs( "; Startup fullscreen\nfullscreen=0\n\n", fd );
-		#ifdef __APPLE__
+        #ifdef __APPLE__
         fputs( "; Use DoubleBuffering\ndoublebuf=1\n\n", fd );
         fputs( "; Use OpenGL\ngl=1\n\n", fd );
         #else
-		fputs( "; Use DoubleBuffering\ndoublebuf=0\n\n", fd );
+        fputs( "; Use DoubleBuffering\ndoublebuf=0\n\n", fd );
         fputs( "; Use OpenGL\ngl=0\n\n", fd );
         fputs( "; Location of the datafiles\ndatadir=/var/games/abuse\n\n", fd );
-		#endif
-		fputs( "; Use mono audio only\nmono=0\n\n", fd );
+        #endif
+        fputs( "; Use mono audio only\nmono=0\n\n", fd );
         fputs( "; Grab the mouse to the window\ngrabmouse=0\n\n", fd );
         fputs( "; Set the scale factor\nscale=2\n\n", fd );
-		fputs( "; Use anti-aliasing (with gl=1 only)\nantialias=1\n\n", fd );
+        fputs( "; Use anti-aliasing (with gl=1 only)\nantialias=1\n\n", fd );
 //        fputs( "; Set the width of the window\nx=320\n\n", fd );
 //        fputs( "; Set the height of the window\ny=200\n\n", fd );
         fputs( "; Disable the SDL parachute in the case of a crash\nnosdlparachute=0\n\n", fd );
@@ -350,13 +350,13 @@ void setup( int argc, char **argv )
     flags.nosdlparachute    = 0;            // SDL error handling
     flags.xres = xres        = 320;            // Default window width
     flags.yres = yres        = 200;            // Default window height
-#ifdef __APPLE__	
+#ifdef __APPLE__    
     flags.gl                = 1;            // Use opengl
     flags.doublebuf            = 1;            // Do double buffering
 #else
     flags.gl                = 0;            // Don't use opengl
     flags.doublebuf            = 0;            // No double buffering
-	#endif
+    #endif
 #ifdef HAVE_OPENGL
     flags.antialias            = GL_NEAREST;    // Don't anti-alias
 #endif
@@ -413,21 +413,21 @@ void setup( int argc, char **argv )
 
     // Set the datadir to a default value
     // (The current directory)
-	#ifdef __APPLE__
-	UInt8 buffer[255];
+    #ifdef __APPLE__
+    UInt8 buffer[255];
     CFURLRef bundleurl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-	CFURLRef url = CFURLCreateCopyAppendingPathComponent(kCFAllocatorDefault, bundleurl, CFSTR("Contents/Resources/data"), true);
-	
-	if (!CFURLGetFileSystemRepresentation(url, true, buffer, 255))
-	{
-		exit(1);
-	}
-	else
-		set_filename_prefix( (const char*)buffer );
-	#else
+    CFURLRef url = CFURLCreateCopyAppendingPathComponent(kCFAllocatorDefault, bundleurl, CFSTR("Contents/Resources/data"), true);
+    
+    if (!CFURLGetFileSystemRepresentation(url, true, buffer, 255))
+    {
+        exit(1);
+    }
+    else
+        set_filename_prefix( (const char*)buffer );
+    #else
     set_filename_prefix( EXPDATADIR );
-	#endif
-	
+    #endif
+    
     // Load the users configuration
     readRCFile();
 

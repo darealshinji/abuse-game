@@ -42,16 +42,16 @@ int game_client::process_server_command()
       if (client_sock->read(&tick,1)!=1) return 0;
 
       fprintf(stderr,"request for resend tick %d (game cur=%d, pack=%d, last=%d)\n",
-	      tick,base->current_tick,base->packet.tick_received(),base->last_packet.tick_received());
+          tick,base->current_tick,base->packet.tick_received(),base->last_packet.tick_received());
 
       // asking for this tick?  make sure it is collected
       if (tick==base->packet.tick_received() && !wait_local_input)
       {
-	fprintf(stderr,"resending client packet %d to server\n",base->packet.tick_received());
-	net_packet *pack=&base->packet;
-	game_sock->write(pack->data,pack->packet_size()+pack->packet_prefix_size(),server_data_port); 
+    fprintf(stderr,"resending client packet %d to server\n",base->packet.tick_received());
+    net_packet *pack=&base->packet;
+    game_sock->write(pack->data,pack->packet_size()+pack->packet_prefix_size(),server_data_port);
 
-	{ time_marker now,start; while (now.diff_time(&start)<3.0) now.get_time(); } 
+    { time_marker now,start; while (now.diff_time(&start)<3.0) now.get_time(); }
       }
       return 1;
     } break;
@@ -79,13 +79,13 @@ int game_client::process_net()
       uint16_t rec_crc=tmp.get_checksum();
       if (rec_crc==tmp.calc_checksum())
       {
-	if (base->current_tick==tmp.tick_received())  
-	{
-	  base->packet=tmp;
-	  wait_local_input=1;
-	  base->input_state=INPUT_PROCESSING;   // tell engine to start processing
-	}
-//	else fprintf(stderr,"received stale packet (got %d, expected %d)\n",tmp.tick_received(),base->current_tick);
+    if (base->current_tick==tmp.tick_received())
+    {
+      base->packet=tmp;
+      wait_local_input=1;
+      base->input_state=INPUT_PROCESSING;   // tell engine to start processing
+    }
+//    else fprintf(stderr,"received stale packet (got %d, expected %d)\n",tmp.tick_received(),base->current_tick);
       } else fprintf(stderr,"received packet with bad checksum\n");
     } else fprintf(stderr,"incomplete packet, read %d, should be %d\n",bytes_received,tmp.packet_size()+tmp.packet_prefix_size());
 
@@ -109,7 +109,7 @@ int game_client::process_net()
 }
 
 
-game_client::game_client(net_socket *client_sock, net_address *server_addr) : 
+game_client::game_client(net_socket *client_sock, net_address *server_addr) :
   client_sock(client_sock)
 {
  server_data_port=server_addr->copy();
@@ -124,7 +124,7 @@ int game_client::input_missing()
   net_packet *pack=&base->packet;
   game_sock->write(pack->data,pack->packet_size()+pack->packet_prefix_size(),server_data_port);
 //  fprintf(stderr,"2");
-//  { time_marker now,start; while (now.diff_time(&start)<3.0) now.get_time(); } 
+//  { time_marker now,start; while (now.diff_time(&start)<3.0) now.get_time(); }
 
 /*
   unsigned char pk[2]={CLCMD_REQUEST_RESEND,base->packet.tick_received()};

@@ -65,12 +65,12 @@ long K_avail(char *path)
 
     long a;
     sscanf(s,"%d",&a);
-    
+
     pclose(fp);
     return a;
   }
 #endif
-	return 0;
+    return 0;
 }
 
 void *show_yes_no(void *t, void *msg, void *y, void *n)
@@ -105,7 +105,7 @@ void *nice_menu(void *main_title, void *menu_title, void *list)
   do
   {
     printf("\n\n\n\n\n%s\n\n%s\n-----------------------------------\n",
-	   lstring_value(main_title),lstring_value(menu_title));
+       lstring_value(main_title),lstring_value(menu_title));
 
     void *v=list;
     for (;v;v=CDR(v),i++)
@@ -121,19 +121,19 @@ void *nice_menu(void *main_title, void *menu_title, void *list)
 
 void *nice_input(char *t, char *p, char *d)
 {
-	unsigned int x;
-	for( x = 0; x < ( 40 - strlen( t ) / 2 ); x++ ) printf(" ");
-	printf("%s\n",t);
-	for( x = 0; x < 78; x++ ) printf("-"); printf("\n");
-	fprintf( stderr, "%s (ENTER=%s) > ", p, d );
-	char ln[100];
-	fgets( ln, 100, stdin ); ln[strlen(ln) - 1] = 0;
-	if( ln[0] == 0 )
-	{
-		strcpy(ln,d);                  // d might get collect in next new
-		return new_lisp_string(ln);
-	}
-	else
-		return new_lisp_string(ln);
+    unsigned int x;
+    for( x = 0; x < ( 40 - strlen( t ) / 2 ); x++ ) printf(" ");
+    printf("%s\n",t);
+    for( x = 0; x < 78; x++ ) printf("-"); printf("\n");
+    fprintf( stderr, "%s (ENTER=%s) > ", p, d );
+    char ln[100];
+    fgets( ln, 100, stdin ); ln[strlen(ln) - 1] = 0;
+    if( ln[0] == 0 )
+    {
+        strcpy(ln,d);                  // d might get collect in next new
+        return new_lisp_string(ln);
+    }
+    else
+        return new_lisp_string(ln);
 }
 

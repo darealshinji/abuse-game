@@ -25,7 +25,7 @@ void *ladder_ai();
 void *top_draw();
 void *bottom_draw();
 void *mover_ai();
-void *respawn_ai(); 
+void *respawn_ai();
 void *score_draw();
 void *show_kills();
 

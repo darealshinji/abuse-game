@@ -64,7 +64,7 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
       *sl=color_table->lookup_color((r)>>3,(g)>>3,(b)>>3);
     }
   }
-  screen->add_dirty(x1,y1,x2,y2);  
+  screen->add_dirty(x1,y1,x2,y2);
   screen->unlock();
 }
 
@@ -103,18 +103,18 @@ void dark_widget(int x1, int y1, int x2, int y2, int br, int dr, int amount)
   screen->line(x1+1,y1,x2,y1,br);
   screen->line(x2,y1+1,x2,y2,dr);
   screen->line(x1+1,y2,x2,y2,dr);
-  darken_area(x1+1,y1+1,x2-1,y2-1,amount);  
+  darken_area(x1+1,y1+1,x2-1,y2-1,amount);
 }
 
 char *men_str(void *arg)
 {
   switch (item_type(arg))
   {
-    case L_STRING : 
+    case L_STRING :
     { return lstring_value(arg); } break;
-    case L_CONS_CELL : 
+    case L_CONS_CELL :
     { return lstring_value(CAR(arg)); } break;
-    default : 
+    default :
     {
       lprint(arg);
       printf(" is not a valid menu option\n");
@@ -142,11 +142,11 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
     if( strlen(men_str(CAR(c))) > (unsigned)maxw)
       maxw = strlen(men_str(CAR(c)));
   }
-  
+
   int mw=(font->width())*maxw+20;
   int mx=screen->width()/2-mw/2,
       my=screen->height()/2-mh/2;
-  
+
 
   screen->add_dirty(mx,my,mx+mw-1,my+mh-1);
 
@@ -157,7 +157,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
     dark_widget(tx-2,my-font->height()-4,tx+tl+2,my-2,wm->medium_color(),wm->dark_color(),180);
     font->put_string(screen,tx+1,my-font->height()-2,title,wm->bright_color());
   }
-  
+
   dark_widget(mx,my,mx+mw-1,my+mh-1,wm->medium_color(),wm->dark_color(),200);
 
 
@@ -176,8 +176,8 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   int bh=font->height()+3;
   image *save=new image(mw-2,bh);
   int color=128,cdir=50;
-  
-  time_marker *last_color_time=NULL; 
+
+  time_marker *last_color_time=NULL;
   if (!NILP(def))
     choice=lnumber_value(def);
   do
@@ -188,41 +188,41 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       wm->get_event(ev);
       if (ev.type==EV_KEY)
       {
-	switch (ev.key)
-	{
-	  case JK_ESC : 
-	  { choice=-1; done=1; } break;
-	  case JK_ENTER :
-	  { done=1; } break;
-	  case JK_DOWN : 
-	  { if (choice<options-1) 
-	    choice++;
-	  else choice=0;
-	  } break;
-	  case JK_UP :
-	  {
-	    if (choice>0)
-	    choice--;
-	    else choice=options-1;
-	  } break;		      
-	}
+    switch (ev.key)
+    {
+      case JK_ESC :
+      { choice=-1; done=1; } break;
+      case JK_ENTER :
+      { done=1; } break;
+      case JK_DOWN :
+      { if (choice<options-1)
+        choice++;
+      else choice=0;
+      } break;
+      case JK_UP :
+      {
+        if (choice>0)
+        choice--;
+        else choice=options-1;
+      } break;        
+    }
       } else if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
       {
-	if (ev.mouse_move.x>mx && ev.mouse_move.x<mx+mw && ev.mouse_move.y>my &&
-	    ev.mouse_move.y<my+mh)
-	{
-	  int msel=(ev.mouse_move.y-my)/(font->height()+1);
-	  if (msel>=options) msel=options-1;
-	  if (msel==choice)                    // clicked on already selected item, return it
-	    done=1;
-	  else choice=msel;                    // selects an item
-	}
+    if (ev.mouse_move.x>mx && ev.mouse_move.x<mx+mw && ev.mouse_move.y>my &&
+        ev.mouse_move.y<my+mh)
+    {
+      int msel=(ev.mouse_move.y-my)/(font->height()+1);
+      if (msel>=options) msel=options-1;
+      if (msel==choice)                    // clicked on already selected item, return it
+        done=1;
+      else choice=msel;                    // selects an item
+    }
       }
     }
 
     time_marker cur_time;
     if (!last_color_time || (int)(cur_time.diff_time(last_color_time)*1000)>120)
-    {       
+    {
       if (last_color_time)
         delete last_color_time;
       last_color_time=new time_marker;
@@ -242,8 +242,8 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
 
       if (color<12 || color>256)
       {
-	cdir=-cdir;
-	color+=cdir;
+    cdir=-cdir;
+    color+=cdir;
       }
       wm->flush_screen();
       save->put_image(screen,mx+1,by1);
@@ -259,7 +259,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   {
     void *val=nth(choice,args);
     if (item_type(val)==L_CONS_CELL)   // is there another value that the user want us to return?
-      return lnumber_value(lcdr(val));  
+      return lnumber_value(lcdr(val));
   }
   return choice;
 }
@@ -308,7 +308,7 @@ static void create_volume_window()
                     sfx_volume = 127;
                 volume_window->draw_sfx_vol();
                 s = "sfx/ambtech1.wav";
-                if(sound_avail & SFX_INITIALIZED) 
+                if(sound_avail & SFX_INITIALIZED)
                     cache.sfx(cache.reg(s, s, SPEC_EXTERN_SFX, 1))
                         ->play(sfx_volume);
                 break;
@@ -318,7 +318,7 @@ static void create_volume_window()
                     sfx_volume = 0;
                 volume_window->draw_sfx_vol();
                 s = "sfx/ambtech1.wav";
-                if(sound_avail & SFX_INITIALIZED) 
+                if(sound_avail & SFX_INITIALIZED)
                     cache.sfx(cache.reg(s, s, SPEC_EXTERN_SFX, 1))
                         ->play(sfx_volume);
                 break;
@@ -351,7 +351,7 @@ void save_difficulty()
   FILE *fp=open_FILE("hardness.lsp","wb");
   if (!fp)
     dprintf("Unable to write to file hardness.lsp\n");
-  else 
+  else
   {
     fprintf(fp,"(setf difficulty '");
     if (DEFINEDP(symbol_value(l_difficulty)))
@@ -362,9 +362,9 @@ void save_difficulty()
         fprintf(fp,"hard)\n");
       else if (symbol_value(l_difficulty)==l_easy)
         fprintf(fp,"easy)\n");
-      else 
+      else
         fprintf(fp,"medium)\n");
-    } else 
+    } else
        fprintf(fp,"medium)\n");
     fclose(fp);
   }
@@ -403,7 +403,7 @@ void show_sell(int abortable)
       event ev;
       do
       { wm->flush_screen();
-	wm->get_event(ev);
+    wm->get_event(ev);
       } while (ev.type!=EV_KEY);
       if (ev.key==JK_ESC && abortable)
         quit=1;
@@ -423,101 +423,101 @@ void menu_handler(event &ev, InputManager *inm)
     {
       switch (ev.message.id)
       {
-	case ID_LIGHT_OFF :
-	if (!volume_window)
-	{
-	  gamma_correct(pal,1);
-	} break;
-	case ID_RETURN :
-	if (!volume_window)
-	{
-	  the_game->set_state(RUN_STATE);
-	} break;
-	case ID_START_GAME :
-	if (!volume_window)
-	{        
-	  the_game->load_level(level_file);
-	  the_game->set_state(RUN_STATE);
-	  view *v;
-	  for (v=player_list;v;v=v->next)
-	    if (v->focus)
-	      v->reset_player();
-	   
-	} break;
+    case ID_LIGHT_OFF :
+    if (!volume_window)
+    {
+      gamma_correct(pal,1);
+    } break;
+    case ID_RETURN :
+    if (!volume_window)
+    {
+      the_game->set_state(RUN_STATE);
+    } break;
+    case ID_START_GAME :
+    if (!volume_window)
+    {
+      the_game->load_level(level_file);
+      the_game->set_state(RUN_STATE);
+      view *v;
+      for (v=player_list;v;v=v->next)
+        if (v->focus)
+          v->reset_player();
+    
+    } break;
 
-   
+
         case ID_LOAD_PLAYER_GAME :
-	if (!volume_window)
-	{
-	  int got_level=load_game(0,symbol_str("LOAD"));
-	  the_game->reset_keymap();
-	  if (got_level)
-	  {
-	    char name[255];
-	    sprintf(name,"%ssave%04d.spe", get_save_filename_prefix(), got_level);
+    if (!volume_window)
+    {
+      int got_level=load_game(0,symbol_str("LOAD"));
+      the_game->reset_keymap();
+      if (got_level)
+      {
+        char name[255];
+        sprintf(name,"%ssave%04d.spe", get_save_filename_prefix(), got_level);
 
-	    the_game->load_level(name);
-	    the_game->set_state(RUN_STATE);	    
-	  }
-	} break;
+        the_game->load_level(name);
+        the_game->set_state(RUN_STATE);    
+      }
+    } break;
 
 
-	case ID_VOLUME : 
-	if (!volume_window)
-	{ create_volume_window(); } break;
+    case ID_VOLUME :
+    if (!volume_window)
+    { create_volume_window(); } break;
 
-	case ID_MEDIUM :
-	{
-	  set_symbol_value(l_difficulty,l_medium);
-	  save_difficulty();
-	} break;
-	case ID_HARD :
-	{
-	  set_symbol_value(l_difficulty,l_hard);
-	  save_difficulty();
-	} break;
-	case ID_EXTREME :
-	{
-	  set_symbol_value(l_difficulty,l_extreme);
-	  save_difficulty();
-	} break;
-	case ID_EASY :
-	{
-	  set_symbol_value(l_difficulty,l_easy);
-	  save_difficulty();
-	} break;
+    case ID_MEDIUM :
+    {
+      set_symbol_value(l_difficulty,l_medium);
+      save_difficulty();
+    } break;
+    case ID_HARD :
+    {
+      set_symbol_value(l_difficulty,l_hard);
+      save_difficulty();
+    } break;
+    case ID_EXTREME :
+    {
+      set_symbol_value(l_difficulty,l_extreme);
+      save_difficulty();
+    } break;
+    case ID_EASY :
+    {
+      set_symbol_value(l_difficulty,l_easy);
+      save_difficulty();
+    } break;
 
-	case ID_NETWORKING :
-	{
-	  if (!volume_window)
-	  {
-	    net_configuration *cfg=new net_configuration;
-	    if (cfg->input())
-	    {
-	      if (main_net_cfg) delete main_net_cfg;
-	      main_net_cfg=cfg;
-	    } else delete cfg;
-	    the_game->draw(0);
-	    inm->redraw();
-	  }
-	} break;
-		      
-	case ID_SHOW_SELL :
-	if (!volume_window)
-	{ 
-	  show_sell(1); 
-	  screen->clear();
-	  if (title_screen>=0)
-	  {
-	    image *tit=cache.img(title_screen);
-	      tit->put_image(screen,screen->width()/2-tit->width()/2,
-					      screen->height()/2-tit->height()/2);
-	  }
-	  inm->redraw();
-	  fade_in(NULL,8);
-	  wm->flush_screen(); 
+    case ID_NETWORKING :
+    {
+      if (!volume_window)
+      {
+        net_configuration *cfg=new net_configuration;
+        if (cfg->input())
+        {
+          if (main_net_cfg) delete main_net_cfg;
+          main_net_cfg=cfg;
+        } else delete cfg;
+        the_game->draw(0);
+        inm->redraw();
+      }
+    } break;
+        
+    case ID_SHOW_SELL :
+    if (!volume_window)
+    {
+      show_sell(1);
+      screen->clear();
+      if (title_screen>=0)
+      {
+        image *tit=cache.img(title_screen);
+          tit->put_image(screen,screen->width()/2-tit->width()/2,
+                          screen->height()/2-tit->height()/2);
+      }
+      inm->redraw();
+      fade_in(NULL,8);
+      wm->flush_screen();
 
-	} break;
+    } break;
       } break;
     } break;
     case EV_CLOSE_WINDOW :
@@ -562,37 +562,37 @@ ico_button *make_default_buttons(int x,int &y, ico_button *append_list)
       diff_on=2;
     else if (symbol_value(l_difficulty)==l_easy)
       diff_on=0;
-    else 
+    else
       diff_on=1;
   } else  diff_on=3;
 
-  
+
   ico_button *start=load_icon(0,ID_START_GAME,x,y,h,NULL,"ic_start");                         y+=h;
 
   ico_switch_button *set=NULL;
   if (!main_net_cfg || (main_net_cfg->state!=net_configuration::SERVER && main_net_cfg->state!=net_configuration::CLIENT))
   {
     set=new ico_switch_button(x,y,ID_NULL,diff_on,
-						 load_icon(3,ID_EASY,x,y,h,
-						 load_icon(8,ID_MEDIUM,x,y,h,
-					         load_icon(9,ID_HARD,x,y,h,
-			                         load_icon(10,ID_EXTREME,x,y,h,NULL,"ic_extreme"),
-				                  "ic_hard"),"ic_medium"),"ic_easy"),NULL);         y+=h;
+                         load_icon(3,ID_EASY,x,y,h,
+                         load_icon(8,ID_MEDIUM,x,y,h,
+                             load_icon(9,ID_HARD,x,y,h,
+                                     load_icon(10,ID_EXTREME,x,y,h,NULL,"ic_extreme"),
+                                  "ic_hard"),"ic_medium"),"ic_easy"),NULL);         y+=h;
 
   }
 
-  ico_button *color=load_icon(4,ID_LIGHT_OFF,x,y,h,NULL,"ic_gamma");                          y+=h;  
+  ico_button *color=load_icon(4,ID_LIGHT_OFF,x,y,h,NULL,"ic_gamma");                          y+=h;
   ico_button *volume=load_icon(5,ID_VOLUME,x,y,h,NULL,"ic_volume");                            y+=h;
   ico_button *sell=NULL;
 
   if (prot)
   {
     sell=load_icon(11,ID_NETWORKING,x,y,h,NULL,"ic_networking");
-    y+=h;  
+    y+=h;
   } else
   {
-    sell=load_icon(2,ID_SHOW_SELL,x,y,h,NULL,"ic_sell");                           
-    y+=h;  
+    sell=load_icon(2,ID_SHOW_SELL,x,y,h,NULL,"ic_sell");
+    y+=h;
   }
   ico_button *quit=load_icon(6,ID_QUIT,x,y,h,NULL,"ic_quit");                                y+=h;
 
@@ -604,36 +604,36 @@ ico_button *make_default_buttons(int x,int &y, ico_button *append_list)
   else start->next=color;
 
 
-  color->next=volume;  
+  color->next=volume;
   if (sell)
   {
-    volume->next=sell;  
+    volume->next=sell;
     sell->next=quit;
   } else volume->next=quit;
 
   ico_button *list=append_list;
 
-  if (append_list) 
-  { 
-    while (append_list->next) 
-      append_list=(ico_button *)append_list->next; 
+  if (append_list)
+  {
+    while (append_list->next)
+      append_list=(ico_button *)append_list->next;
     append_list->next=start;
   } else list=start;
-  
-  return list;  
+
+  return list;
 }
 
 
 ico_button *make_conditional_buttons(int x,int &y)
-{  
+{
   ico_button *start_list=NULL;
   int h;
   if (current_level)       // should we include a return icon?
   {
     start_list=load_icon(7,ID_RETURN,x,y,h,NULL,"ic_return");                       y+=h;
   }
-    
-  
+
+
   ico_button *load;
   if (show_load_icon())
   { load= load_icon(1,ID_LOAD_PLAYER_GAME,x,y,h,NULL,"ic_load");                     y+=h;}
@@ -642,96 +642,96 @@ ico_button *make_conditional_buttons(int x,int &y)
   if (start_list) start_list->next=load;
   else start_list=load;
 
-  return start_list;   
+  return start_list;
 }
 
 void main_menu()
 {
-	int y=yres/2-100;
-	ico_button *list=make_conditional_buttons(xres-33,y);
-	list=make_default_buttons(xres-33,y,list);
+    int y=yres/2-100;
+    ico_button *list=make_conditional_buttons(xres-33,y);
+    list=make_default_buttons(xres-33,y,list);
 
-	InputManager *inm=new InputManager(screen,list);
-	inm->allow_no_selections();
-	inm->clear_current();
+    InputManager *inm=new InputManager(screen,list);
+    inm->allow_no_selections();
+    inm->clear_current();
 
-	screen->add_dirty(0,0,319,199);
+    screen->add_dirty(0,0,319,199);
 
-	event ev;
+    event ev;
 
-	int stop_menu=0;
-	time_marker start;
-	wm->flush_screen(); 
-	do
-	{
-		time_marker new_time;
+    int stop_menu=0;
+    time_marker start;
+    wm->flush_screen();
+    do
+    {
+        time_marker new_time;
 
-		if (wm->event_waiting())
-		{
-			do
-			{
-				wm->get_event(ev);
-			} while (ev.type==EV_MOUSE_MOVE && wm->event_waiting()); 
-			inm->handle_event(ev,NULL);
-			if (ev.type==EV_KEY && ev.key==JK_ESC)
-				wm->push_event(new event(ID_QUIT,NULL));
+        if (wm->event_waiting())
+        {
+            do
+            {
+                wm->get_event(ev);
+            } while (ev.type==EV_MOUSE_MOVE && wm->event_waiting());
+            inm->handle_event(ev,NULL);
+            if (ev.type==EV_KEY && ev.key==JK_ESC)
+                wm->push_event(new event(ID_QUIT,NULL));
 
-			menu_handler(ev,inm);
-			start.get_time();
+            menu_handler(ev,inm);
+            start.get_time();
 
-			wm->flush_screen();
-		}
-		else
-		{
-			// ECS - Added so that main menu doesn't grab 100% of CPU
-			milli_wait(30);
-		}
+            wm->flush_screen();
+        }
+        else
+        {
+            // ECS - Added so that main menu doesn't grab 100% of CPU
+            milli_wait(30);
+        }
 
-		if (new_time.diff_time(&start)>10)
-		{
-			if (volume_window)
-				start.get_time();
-			else
-			{
-				if (!current_demo)
-				{
-					void *d=make_find_symbol("demos");
-					if (DEFINEDP(symbol_value(d)))
-						current_demo=symbol_value(d);
-				}
-				if (current_demo)
-				{
-					demo_man.set_state(demo_manager::PLAYING,lstring_value(CAR(current_demo)));
-					stop_menu=1;
-					current_demo=CDR(current_demo);
-				}
-			}
-		}
+        if (new_time.diff_time(&start)>10)
+        {
+            if (volume_window)
+                start.get_time();
+            else
+            {
+                if (!current_demo)
+                {
+                    void *d=make_find_symbol("demos");
+                    if (DEFINEDP(symbol_value(d)))
+                        current_demo=symbol_value(d);
+                }
+                if (current_demo)
+                {
+                    demo_man.set_state(demo_manager::PLAYING,lstring_value(CAR(current_demo)));
+                    stop_menu=1;
+                    current_demo=CDR(current_demo);
+                }
+            }
+        }
 
-		if (volume_window) stop_menu=0;  // can't exit with volume window open
-		else if (main_net_cfg && main_net_cfg->restart_state()) stop_menu=1;
-		else if (the_game->state==RUN_STATE) stop_menu=1;
-		else if (ev.type==EV_MESSAGE)
-		{
-			if (ev.message.id==ID_START_GAME || ev.message.id==ID_RETURN)
-				stop_menu=1;
-			else if (ev.message.id==ID_QUIT)
-			{
-				if (confirm_quit())
-					stop_menu=1;
-				else
-				{
-					ev.type=EV_SPURIOUS;
-					start.get_time();
-				}
-			}
-		}
-	} while (!stop_menu);
+        if (volume_window) stop_menu=0;  // can't exit with volume window open
+        else if (main_net_cfg && main_net_cfg->restart_state()) stop_menu=1;
+        else if (the_game->state==RUN_STATE) stop_menu=1;
+        else if (ev.type==EV_MESSAGE)
+        {
+            if (ev.message.id==ID_START_GAME || ev.message.id==ID_RETURN)
+                stop_menu=1;
+            else if (ev.message.id==ID_QUIT)
+            {
+                if (confirm_quit())
+                    stop_menu=1;
+                else
+                {
+                    ev.type=EV_SPURIOUS;
+                    start.get_time();
+                }
+            }
+        }
+    } while (!stop_menu);
 
-	delete inm;
+    delete inm;
 
-	if (ev.type==EV_MESSAGE && ev.message.id==ID_QUIT)   // propogate the quit message
-		the_game->end_session();
+    if (ev.type==EV_MESSAGE && ev.message.id==ID_QUIT)   // propogate the quit message
+        the_game->end_session();
 }
 
 

@@ -14,9 +14,9 @@ class time_marker
 {
 public:
     long seconds;
-    long micro_seconds;  
+    long micro_seconds;
     void get_time();
-    time_marker();  
+    time_marker();
     double diff_time(time_marker *other); // return time diff in seconds
 };
 

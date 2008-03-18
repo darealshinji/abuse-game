@@ -13,11 +13,11 @@
 
 
 
-tool_picker::~tool_picker() 
-{ delete old_pal; 
-  delete map; 
+tool_picker::~tool_picker()
+{ delete old_pal;
+  delete map;
   for (int i=0;i<total_icons;i++)
-    delete icons[i];                   // delete visual object, which should be a "shell"  
+    delete icons[i];                   // delete visual object, which should be a "shell"
 }
 
 void tool_picker::remap(palette *pal, image *screen)
@@ -27,9 +27,9 @@ void tool_picker::remap(palette *pal, image *screen)
   draw_first(screen);
 }
 
-tool_picker::tool_picker(int X, int Y, int ID, 
-	      int show_h, visual_object **Icons, int *Ids, int total_ic, 
-			 palette *icon_palette, palette *pal, ifield *Next) :
+tool_picker::tool_picker(int X, int Y, int ID,
+          int show_h, visual_object **Icons, int *Ids, int total_ic,
+             palette *icon_palette, palette *pal, ifield *Next) :
   spicker(X,Y,ID,show_h,1,1,0,Next)
 {
   iw=ih=0;

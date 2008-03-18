@@ -44,7 +44,7 @@ public:
       return 1;
     else return 0;
   }
-	//}}}
+    //}}}
   virtual int set_port(int port)  { addr.sin_port=htons(port); return 1; }
   ip_address(sockaddr_in *Addr) { memcpy(&addr,Addr,sizeof(addr)); }
   virtual void print()
@@ -53,7 +53,7 @@ public:
     unsigned char *c=(unsigned char *) (&addr.sin_addr.s_addr);
     fprintf(stderr,"%d.%d.%d.%d",c[0],c[1],c[2],c[3]);
   }
-	//}}}
+    //}}}
   int get_port() { return htons(addr.sin_port); }
   net_address *copy()  { return new ip_address(&addr); }
   ip_address() {} ;
@@ -75,8 +75,8 @@ protected:
   // Request Data
   struct RequestItem
   {
-  	ip_address *addr;
-  	char name[256];   //name
+      ip_address *addr;
+      char name[256];   //name
   };
   typedef isllist<RequestItem *>::iterator p_request;
   isllist<RequestItem*> servers,returned;

@@ -38,8 +38,8 @@ void console::redraw()
     {
       for (i=0,dx=wx();i<w;i++,s++,dx+=xa)
       {
-	if (*s)
-	  fnt->put_char(con_win->screen,dx,dy,*s);
+    if (*s)
+      fnt->put_char(con_win->screen,dx,dy,*s);
       }
     }
     fnt->put_char(con_win->screen,wx()+cx*xa,wy()+cy*ya,'_');
@@ -103,7 +103,7 @@ void console::draw_char(int x, int y, char ch)
     int fw=fnt->width(),fh=fnt->height();
     int dx=wx()+x*fw,dy=wy()+y*fh;
     con_win->screen->bar(dx,dy,dx+fw-1,dy+fh-1,wm->black());
-    fnt->put_char(con_win->screen,dx,dy,ch); 
+    fnt->put_char(con_win->screen,dx,dy,ch);
   }
 }
 
@@ -111,7 +111,7 @@ void console::do_cr()
 {
   if (cx<w && cy<h)  draw_char(cx,cy,screen[cy*w+cx]);
   cx=0;
-  cy++;  
+  cy++;
   if (cy>=h)
   {
     cy=h-1;
@@ -122,24 +122,24 @@ void console::do_cr()
       redraw();
       wm->flush_screen();
     }
-  } else draw_cursor();    
+  } else draw_cursor();
 }
 
 void console::put_char(char ch)
 {
 
-  
+
   switch (ch)
   {
     case JK_BACKSPACE :
     {
       if (cx)
       {
-	if (con_win)
-	  draw_char(cx,cy,screen[cy*w+cx]);
-	cx--;
-	if (con_win)
-	  draw_cursor();
+    if (con_win)
+      draw_char(cx,cy,screen[cy*w+cx]);
+    cx--;
+    if (con_win)
+      draw_cursor();
       }
     } break;
     case '\n' :
@@ -153,10 +153,10 @@ void console::put_char(char ch)
       if (con_win)
         draw_char(cx,cy,ch);
       cx++;
-      if (cx>=w) do_cr(); else 
+      if (cx>=w) do_cr(); else
       if (con_win) draw_cursor();
     }
-  }  
+  }
 }
 
 
@@ -197,38 +197,38 @@ int shell_term::handle_event(event &ev)
     {
       case EV_KEY :
       {
-	switch (ev.key)
-	{
-	  case JK_BACKSPACE:
-	  {
-	    if (shcmd[0]!=0)
-	    {
-	      shcmd[strlen(shcmd)-1]=0;
-	      put_char(ev.key);
-	    }
-	  } break;
-	  case JK_ENTER :
-	  {
-	    put_char(ev.key);
-	    execute(shcmd);
-	    prompt();
-	    shcmd[0]=0;
-	  } break;
-	  default :
-	  {
-	    if (ev.key<256 && isprint(ev.key))
-	    {
-	      int x=strlen(shcmd);
-	      shcmd[x+1]=0;
-	      shcmd[x]=ev.key;
-	      put_char(ev.key);
-	    }
-	  } break;
-	} break;
+    switch (ev.key)
+    {
+      case JK_BACKSPACE:
+      {
+        if (shcmd[0]!=0)
+        {
+          shcmd[strlen(shcmd)-1]=0;
+          put_char(ev.key);
+        }
+      } break;
+      case JK_ENTER :
+      {
+        put_char(ev.key);
+        execute(shcmd);
+        prompt();
+        shcmd[0]=0;
+      } break;
+      default :
+      {
+        if (ev.key<256 && isprint(ev.key))
+        {
+          int x=strlen(shcmd);
+          shcmd[x+1]=0;
+          shcmd[x]=ev.key;
+          put_char(ev.key);
+        }
+      } break;
+    } break;
       }
     }
     return 1;
-  } 
+  }
   return 0;
 }
 

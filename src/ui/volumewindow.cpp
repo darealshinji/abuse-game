@@ -33,7 +33,7 @@ VolumeWindow::VolumeWindow() : Jwindow("Volume")
                           new ico_button(10, 72, ID_MUSIC_DOWN, d_u, d_d, d_ua, d_da,
                               new ico_button(21, 72, ID_MUSIC_UP, u_u, u_d, u_ua, u_da,
                                   new info_field(10, 86, 0, symbol_str("MUSICv"), NULL)))))));
-    
+
     //reconfigure();
     bg = cache.reg(ff, "vcontrol", SPEC_IMAGE, 1);
     l = cache.img(bg)->width();
@@ -56,7 +56,7 @@ void VolumeWindow::draw_vol(int x1, int y1, int x2, int y2, int t,
     int dx = x1 + t * (x2 - x1) / max;
     if(t != 0)
     {
-        cache.img(slider)->put_image(screen, x1, y1);    
+        cache.img(slider)->put_image(screen, x1, y1);
 //      screen->bar(x1,y1,dx,y2,c1);
     }
     else

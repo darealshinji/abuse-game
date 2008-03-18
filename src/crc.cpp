@@ -17,7 +17,7 @@ uint16_t calc_crc(uint8_t *buf, int len)
   while (len)
   {
     len--;
-    c1+=*buf; 
+    c1+=*buf;
     c2+=c1;
     buf++;
   }
@@ -25,7 +25,7 @@ uint16_t calc_crc(uint8_t *buf, int len)
 }
 
 
- 
+
 uint32_t crc_file(bFILE *fp)
 {
   uint8_t crc1=0,crc2=0,crc3=0,crc4=0;
@@ -43,11 +43,11 @@ uint32_t crc_file(bFILE *fp)
     {
       l-=nr;
       for (c=buffer;nr;nr--,c++)
-      {      
-	crc1+=*c;
-	crc2+=crc1;
-	crc3+=crc2;
-	crc4+=crc3;
+      {
+    crc1+=*c;
+    crc2+=crc1;
+    crc3+=crc2;
+    crc4+=crc3;
       }
     }
   }

@@ -33,12 +33,12 @@ enum { point_angle, fire_delay1 };
 signed char small_fire_off[24*2]=  // x & y offset from character to end of gun.
   { 17,20,     // 1
     17,23,     // 2
-    17,28,     
-    15,33,     
+    17,28,
+    15,33,
     11,39,     // 5
     7,43,
     -3,44,     // 7
-    -10,42,    
+    -10,42,
     -16,39,
     -20,34,
     -20,28,
@@ -81,18 +81,18 @@ signed char large_fire_off[24*2]=
     14,16,
     15,18,
     16,21 };
-  
+
 
 enum { in_climbing_area,
-	disable_top_draw,
-	just_hit,
-	ship_pan_x,
-	special_power,
-	used_special_power,
-	last1_x, last1_y,
-	last2_x, last2_y,
-	has_saved_this_level,
-	r_ramp, g_ramp, b_ramp,
+    disable_top_draw,
+    just_hit,
+    ship_pan_x,
+    special_power,
+    used_special_power,
+    last1_x, last1_y,
+    last2_x, last2_y,
+    has_saved_this_level,
+    r_ramp, g_ramp, b_ramp,
         is_teleporting,
        just_fired};
 
@@ -111,8 +111,8 @@ enum { NO_POWER,
        SNEAKY_POWER,
        HEALTH_POWER } ;
 
-enum { top_point_angle, 
-       top_fire_delay1, 
+enum { top_point_angle,
+       top_fire_delay1,
        top_just_fired };
 
 inline int angle_diff(int a1, int a2)
@@ -134,7 +134,7 @@ void *top_ai()
 {
   game_object *o=current_object;
   if (o->total_objects())            // make sure we are linked to the main character
-  {  
+  {
     game_object *q=o->get_object(0);
 
     view *v=q->controller();
@@ -142,53 +142,53 @@ void *top_ai()
     {
       if (!v->freeze_time)
       {
-	o->direction=1;                 // always face right
+    o->direction=1;                 // always face right
 
-	if (q->direction<0)
+    if (q->direction<0)
           q->x+=4;
-	int i; 
-	signed char *fire_off=o->otype==S_DFRIS_TOP ? large_fire_off :
-	                                (o->otype==S_ROCKET_TOP ? large_fire_off :
-					 (o->otype==S_BFG_TOP ? large_fire_off : small_fire_off));
-	signed char *f=fire_off,*fb=NULL;
-	int best_diff=200,best_num=0;
-	int iy=f[1],ix=f[6*2];
-	
-	int best_angle=lisp_atan2(q->y-iy-v->pointer_y,v->pointer_x-q->x-ix);
-	for (i=0;i<24;i++,f+=2)             // check all the angles to see which would best fit animation wise
-	{
-	  int this_angle=lisp_atan2(f[1]-iy,f[0]-ix);
-	  int this_diff=angle_diff(this_angle,best_angle);
-	  if (this_diff<best_diff)
-	  {
-	    best_diff=this_diff;
-	    best_num=i;
-	    fb=f;
-	  }
-	}
+    int i;
+    signed char *fire_off=o->otype==S_DFRIS_TOP ? large_fire_off :
+                                    (o->otype==S_ROCKET_TOP ? large_fire_off :
+                     (o->otype==S_BFG_TOP ? large_fire_off : small_fire_off));
+    signed char *f=fire_off,*fb=NULL;
+    int best_diff=200,best_num=0;
+    int iy=f[1],ix=f[6*2];
+    
+    int best_angle=lisp_atan2(q->y-iy-v->pointer_y,v->pointer_x-q->x-ix);
+    for (i=0;i<24;i++,f+=2)             // check all the angles to see which would best fit animation wise
+    {
+      int this_angle=lisp_atan2(f[1]-iy,f[0]-ix);
+      int this_diff=angle_diff(this_angle,best_angle);
+      if (this_diff<best_diff)
+      {
+        best_diff=this_diff;
+        best_num=i;
+        fb=f;
+      }
+    }
 
 
-	// if the pointer is too close to the player go with the angle shown, not the angle through the pointer
-	if (abs(q->y-fb[1]-v->pointer_y)<45 & abs(v->pointer_x-q->x+fb[0])<40)
-	  o->lvars[point_angle]=lisp_atan2(fb[1]-iy,fb[0]-ix);
-	else
-	  o->lvars[point_angle]=lisp_atan2(q->y-fb[1]-v->pointer_y,v->pointer_x-(q->x+fb[0]));
-	
+    // if the pointer is too close to the player go with the angle shown, not the angle through the pointer
+    if (abs(q->y-fb[1]-v->pointer_y)<45 & abs(v->pointer_x-q->x+fb[0])<40)
+      o->lvars[point_angle]=lisp_atan2(fb[1]-iy,fb[0]-ix);
+    else
+      o->lvars[point_angle]=lisp_atan2(q->y-fb[1]-v->pointer_y,v->pointer_x-(q->x+fb[0]));
+    
 
-	if (q->direction<0)
+    if (q->direction<0)
           q->x-=4;
 
-	o->x=q->x;
-	o->y=q->y+29-q->picture()->height();
+    o->x=q->x;
+    o->y=q->y+29-q->picture()->height();
 
-	rand_on+=o->lvars[point_angle];
-	o->current_frame=best_num;
+    rand_on+=o->lvars[point_angle];
+    o->current_frame=best_num;
 
 
-	if (o->lvars[fire_delay1])
-	  o->lvars[fire_delay1]--;
+    if (o->lvars[fire_delay1])
+      o->lvars[fire_delay1]--;
 
-	o->otype=weapon_types[v->current_weapon];  // switch to correct top part    
+    o->otype=weapon_types[v->current_weapon];  // switch to correct top part
       }
     }
   }
@@ -206,9 +206,9 @@ static int player_fire_weapon(game_object *o, int type, game_object *target, int
 
   int firex=other->x+fire_off[o->current_frame*2];
   int firey=other->y-fire_off[o->current_frame*2+1];
- 
 
- 
+
+
   // fire try to move up to gun level
 
   int32_t x2=o->x,y2=firey;
@@ -257,15 +257,15 @@ void *laser_ufun(void *args)
       int32_t value=lnumber_value(eval(CAR(args)));
       if (value)                                   // do we have ammo ?
       {
-	o->lvars[fire_delay1]=3;
-	if (player_fire_weapon(o,SHOTGUN,NULL,o->lvars[point_angle],small_fire_off))
+    o->lvars[fire_delay1]=3;
+    if (player_fire_weapon(o,SHOTGUN,NULL,o->lvars[point_angle],small_fire_off))
           ret=new_lisp_number(-1);
-	else ret=new_lisp_number(0);
+    else ret=new_lisp_number(0);
       } else
       {
-	o->lvars[fire_delay1]=5;                  // no ammo, set large fire delay for next shot
-	player_fire_weapon(o,SHOTGUN,NULL,o->lvars[point_angle],small_fire_off);
-	ret=new_lisp_number(0);
+    o->lvars[fire_delay1]=5;                  // no ammo, set large fire delay for next shot
+    player_fire_weapon(o,SHOTGUN,NULL,o->lvars[point_angle],small_fire_off);
+    ret=new_lisp_number(0);
       }
     } else ret=new_lisp_number(0);                // can't fire yet, return 0 ammo subtract
   }
@@ -299,11 +299,11 @@ void *top_ufun(void *args)                       // generic top character ai GRE
       int32_t value=lnumber_value(eval(CAR(args)));
       if (value)                                   // do we have ammo ?
       {
-	o->lvars[fire_delay1]=6;
-	if (player_fire_weapon(o,ammo_type(o->otype),NULL,o->lvars[point_angle],
-			       o->otype==DFRIS ? large_fire_off : small_fire_off ))	  
+    o->lvars[fire_delay1]=6;
+    if (player_fire_weapon(o,ammo_type(o->otype),NULL,o->lvars[point_angle],
+                   o->otype==DFRIS ? large_fire_off : small_fire_off ))    
           ret=new_lisp_number(-1);
-	else ret=new_lisp_number(0);
+    else ret=new_lisp_number(0);
       } else ret=new_lisp_number(0);
     } else ret=new_lisp_number(0);                // can't fire yet, return 0 ammo subtract
   }
@@ -326,10 +326,10 @@ void *plaser_ufun(void *args)
       int32_t value=lnumber_value(eval(CAR(args)));
       if (value)                                   // do we have ammo ?
       {
-	o->lvars[fire_delay1]=2;
-	if (player_fire_weapon(o,PLASMA,NULL,o->lvars[point_angle],small_fire_off))	  
+    o->lvars[fire_delay1]=2;
+    if (player_fire_weapon(o,PLASMA,NULL,o->lvars[point_angle],small_fire_off))    
           ret=new_lisp_number(-1);
-	else ret=new_lisp_number(0);
+    else ret=new_lisp_number(0);
       } else ret=new_lisp_number(0);
     } else ret=new_lisp_number(0);                // can't fire yet, return 0 ammo subtract
   }
@@ -350,11 +350,11 @@ void *lsaber_ufun(void *args)
       int32_t value=lnumber_value(eval(CAR(args)));
       if (value)                                   // do we have ammo ?
       {
-	o->lvars[fire_delay1]=1;
-	if (player_fire_weapon(o,LSABER,NULL,o->lvars[point_angle]+(current_level->tick_counter()&7)-8,
-			       small_fire_off))
+    o->lvars[fire_delay1]=1;
+    if (player_fire_weapon(o,LSABER,NULL,o->lvars[point_angle]+(current_level->tick_counter()&7)-8,
+                   small_fire_off))
           ret=new_lisp_number(-1);
-	else ret=new_lisp_number(0);
+    else ret=new_lisp_number(0);
       } else ret=new_lisp_number(0);
     } else ret=new_lisp_number(0);                // can't fire yet, return 0 ammo subtract
   }
@@ -377,33 +377,33 @@ void *player_rocket_ufun(void *args)
       int32_t value=lnumber_value(eval(CAR(args)));
       if (value)                                   // do we have ammo ?
       {
-	o->lvars[fire_delay1]=6;
-	game_object *target=NULL,*p,*bot=o->total_objects() ? o->get_object(0) : 0;
-	if (bad_guy_array)
-	{
-	  game_object *other=current_object->total_objects() ? current_object->get_object(0) : 0;
-	  for (p=current_level->first_active_object();p;p=p->next_active)
-	  {
-	    xd=abs(p->x-o->x);
-	    yd=abs(p->y-o->y);
-	    if (xd<160 && yd<130 && bad_guy_array[p->otype] && p!=other)
-	    {
-	      if (p->targetable() &&		  
-		  !(p->otype==S_ROCKET && p->total_objects() && p->get_object(0)==bot))  // don't track onto own missles
-	      {
-		d=xd*xd+yd*yd;
-		if (d<cl)
-		{
-		  cl=d;
-		  target=p;
-		}
-	      }
-	    }
-	  }
-	}
-	if (player_fire_weapon(o,ROCKET,target,o->lvars[point_angle],large_fire_off))	  
+    o->lvars[fire_delay1]=6;
+    game_object *target=NULL,*p,*bot=o->total_objects() ? o->get_object(0) : 0;
+    if (bad_guy_array)
+    {
+      game_object *other=current_object->total_objects() ? current_object->get_object(0) : 0;
+      for (p=current_level->first_active_object();p;p=p->next_active)
+      {
+        xd=abs(p->x-o->x);
+        yd=abs(p->y-o->y);
+        if (xd<160 && yd<130 && bad_guy_array[p->otype] && p!=other)
+        {
+          if (p->targetable() &&        
+          !(p->otype==S_ROCKET && p->total_objects() && p->get_object(0)==bot))  // don't track onto own missles
+          {
+        d=xd*xd+yd*yd;
+        if (d<cl)
+        {
+          cl=d;
+          target=p;
+        }
+          }
+        }
+      }
+    }
+    if (player_fire_weapon(o,ROCKET,target,o->lvars[point_angle],large_fire_off))    
           ret=new_lisp_number(-1);
-	else ret=new_lisp_number(0);
+    else ret=new_lisp_number(0);
 
       } else ret=new_lisp_number(0);
     } else ret=new_lisp_number(0);                // can't fire yet, return 0 ammo subtract
@@ -423,7 +423,7 @@ static int player_move(game_object *o, int xm, int ym, int but)
     o->next_picture();
     return o->mover(xm,ym,but);
   } else return climb_handler(o,xm,ym,but);
-     
+
 }
 
 
@@ -456,7 +456,7 @@ static void do_special_power(game_object *o, int xm, int ym, int but, game_objec
       o->set_gravity(1);
       o->set_yacel(0);
       if (o->yvel()>0) o->set_yvel(o->yvel()/2);
-      if (ym<0) 
+      if (ym<0)
         o->set_yvel(o->yvel()-3);
       else
         o->set_yvel(o->yvel()-2);
@@ -520,7 +520,7 @@ static int climb_handler(game_object *o, int xm, int ym, int but)
   if (o->state==S_climb_off)
     climb_off_handler(o);
   else if (o->state==S_climb_on)
-    climb_on_handler(o);  
+    climb_on_handler(o);
   else
   {
     if (o->state==S_climbing)
@@ -528,48 +528,48 @@ static int climb_handler(game_object *o, int xm, int ym, int but)
       if (ym>0)                       // going down
       {
 
-	if (o->current_frame==0) o->current_frame=9;
-	  o->current_frame--;	
+    if (o->current_frame==0) o->current_frame=9;
+      o->current_frame--;    
 
-/*	if (o->lvars[special_power]==FAST_POWER)
-	{
-	  int32_t xv=0,yv=4;
-	  o->try_move(o->x,o->y,xv,yv,1);
-	  if (yv==4)
-	    o->y+=3;
-	  else 
-	  {
-	    o->set_gravity(1);
-  	    o->set_state(run_jump_fall);
-	  }
-	}
-	else */ o->y+=3;
-	
+/*    if (o->lvars[special_power]==FAST_POWER)
+    {
+      int32_t xv=0,yv=4;
+      o->try_move(o->x,o->y,xv,yv,1);
+      if (yv==4)
+        o->y+=3;
+      else
+      {
+        o->set_gravity(1);
+          o->set_state(run_jump_fall);
+      }
+    }
+    else */ o->y+=3;
+    
 
       } else if (ym<0)
       {
-	if (yd<32)
-	  o->set_state((character_state)S_climb_off);
-	else
-	{
-	  if (!o->next_picture()) o->set_state((character_state)S_climbing);
-	  o->y-=3;
-	}
+    if (yd<32)
+      o->set_state((character_state)S_climb_off);
+    else
+    {
+      if (!o->next_picture()) o->set_state((character_state)S_climbing);
+      o->y-=3;
+    }
       }
       if (xm)                     // trying to get off the ladder, check to see if that's ok
       {
-	int32_t x2=0,y2=-20;
-	o->try_move(o->x,o->y,x2,y2,3);
-	if (y2==-20)
-	{
-	  o->set_gravity(1);
-	  if (ym>=0)
-	    o->set_state(run_jump_fall);
-	  else 
-	  { o->set_state(run_jump);
-	    o->set_yvel(get_ability(o->otype,jump_yvel));	  
-	  }
-	}
+    int32_t x2=0,y2=-20;
+    o->try_move(o->x,o->y,x2,y2,3);
+    if (y2==-20)
+    {
+      o->set_gravity(1);
+      if (ym>=0)
+        o->set_state(run_jump_fall);
+      else
+      { o->set_state(run_jump);
+        o->set_yvel(get_ability(o->otype,jump_yvel));    
+      }
+    }
       }
     }  else if (ym>0 && yd<10)
     {
@@ -587,8 +587,8 @@ static int climb_handler(game_object *o, int xm, int ym, int but)
       o->set_xacel(0);
       o->set_yacel(0);
       return 0;
-    } else 
-    { 
+    } else
+    {
       o->next_picture();
       return o->mover(xm,ym,but);
     }
@@ -602,10 +602,10 @@ void *cop_mover(int xm, int ym, int but)
 
   int ret=0;
   game_object *o=current_object,*top;
-  if (o->controller() && o->controller()->freeze_time)  
+  if (o->controller() && o->controller()->freeze_time)
   {
     o->controller()->freeze_time--;
-    if (but || o->controller()->key_down(JK_SPACE) || o->controller()->key_down(JK_ENTER)) 
+    if (but || o->controller()->key_down(JK_SPACE) || o->controller()->key_down(JK_ENTER))
       o->controller()->freeze_time=0;
   }
   else
@@ -613,12 +613,12 @@ void *cop_mover(int xm, int ym, int but)
     if (!o->total_objects())                  // if no top create one
     {
       top=create(S_MGUN_TOP,o->x,o->y,0,0);
-      current_level->add_object_after(top,o);    
+      current_level->add_object_after(top,o);
       o->add_object(top);
       top->add_object(o);
     } else top=o->get_object(0);
 
-    if (o->yvel()>10) 
+    if (o->yvel()>10)
     {
       o->set_yacel(0);
       o->set_yvel(o->yvel()-1);            // terminal velocity
@@ -626,54 +626,54 @@ void *cop_mover(int xm, int ym, int but)
 
     if (o->aistate()==0)  // just started, wait for button
     {
-      o->set_aistate(1);    
+      o->set_aistate(1);
     } else if (o->aistate()==1)         // normal play
     {
       if (o->hp()==0)
       {
-	o->set_aistate(2);                // go to deing state
-	o->set_state(dead);	
+    o->set_aistate(2);                // go to deing state
+    o->set_state(dead);    
       }
       else
       {
-	if (o->hp()<40 && (current_level->tick_counter()%16)==0) // if low on health play heart beat	
-	  the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
-	else if (o->hp()<15 && (current_level->tick_counter()%8)==0) // if low on health play heart beat
-	  the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
-	else if (o->hp()<7 && (current_level->tick_counter()%4)==0) // if low on health play heart beat
-	  the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
+    if (o->hp()<40 && (current_level->tick_counter()%16)==0) // if low on health play heart beat    
+      the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
+    else if (o->hp()<15 && (current_level->tick_counter()%8)==0) // if low on health play heart beat
+      the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
+    else if (o->hp()<7 && (current_level->tick_counter()%4)==0) // if low on health play heart beat
+      the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
 
-	if (but&1)
+    if (but&1)
         do_special_power(o,xm,ym,but,top);
-	else
-	undo_special_power(o);
-	ret=player_move(o,xm,ym,but);
-	top->x=o->x;
-	top->y=o->y+29-top->picture()->height();
-	
-	if ((but&2) && !o->lvars[is_teleporting] && o->state!=S_climbing && o->state!=S_climb_off)
-	{
-	  void *args=NULL;
-	  p_ref r1(args);
-	  view *v=o->controller();
+    else
+    undo_special_power(o);
+    ret=player_move(o,xm,ym,but);
+    top->x=o->x;
+    top->y=o->y+29-top->picture()->height();
+    
+    if ((but&2) && !o->lvars[is_teleporting] && o->state!=S_climbing && o->state!=S_climb_off)
+    {
+      void *args=NULL;
+      p_ref r1(args);
+      view *v=o->controller();
 
-	  push_onto_list(new_lisp_number(v->weapon_total(v->current_weapon)),args);
-	  push_onto_list(l_FIRE,args);
+      push_onto_list(new_lisp_number(v->weapon_total(v->current_weapon)),args);
+      push_onto_list(l_FIRE,args);
 
-	  current_object=top;
-	  void *ret=eval_function((lisp_symbol *)figures[top->otype]->get_fun(OFUN_USER_FUN),args);	  
-	  current_object=o;
-	  v->add_ammo(v->current_weapon,lnumber_value(ret));	
-	}
-      }	
+      current_object=top;
+      void *ret=eval_function((lisp_symbol *)figures[top->otype]->get_fun(OFUN_USER_FUN),args);    
+      current_object=o;
+      v->add_ammo(v->current_weapon,lnumber_value(ret));    
+    }
+      }    
     } else if (o->aistate()==3)
     {
       if (!o->controller() || o->controller()->key_down(JK_SPACE))
       {
         // call the user function to reset the player
-	eval_function((lisp_symbol *)l_restart_player,NULL);
-	o->controller()->reset_player();
-	o->set_aistate(0);     
+    eval_function((lisp_symbol *)l_restart_player,NULL);
+    o->controller()->reset_player();
+    o->set_aistate(0);
       } else if (o->controller() && o->controller()->local_player())
         the_game->show_help(symbol_str("space_cont"));
 
@@ -696,12 +696,12 @@ void *ladder_ai()
     {
       int mex=f->focus->x;
       int mey=f->focus->y;
-      
+
       if (o->x<=mex && o->y<=mey && other->x>=mex && other->y>=mey)
       {
-	if (f->focus->state==S_climbing)
-	  f->focus->x=(o->x+other->x)/2;
-        f->focus->lvars[in_climbing_area]=mey-o->y;	
+    if (f->focus->state==S_climbing)
+      f->focus->x=(o->x+other->x)/2;
+        f->focus->lvars[in_climbing_area]=mey-o->y;    
       }
     }
   }
@@ -713,7 +713,7 @@ void *ladder_ai()
 void *player_draw(int just_fired_var, int num)
 {
   game_object *o=current_object;
-  if (num==0) 
+  if (num==0)
   {
     if (o->lvars[just_fired_var])
     {
@@ -722,7 +722,7 @@ void *player_draw(int just_fired_var, int num)
     } else
       o->drawer();
   }
-  else 
+  else
   {
     if (o->lvars[just_fired_var])
     {
@@ -741,9 +741,9 @@ void *top_draw()
   if (o->total_objects())
   {
     game_object *bot=o->get_object(0);
-    if (bot->state==stopped  || bot->state==running || 
-	bot->state==run_jump || bot->state==run_jump_fall ||
-	bot->state==end_run_jump)
+    if (bot->state==stopped  || bot->state==running ||
+    bot->state==run_jump || bot->state==run_jump_fall ||
+    bot->state==end_run_jump)
     {
       int oldy=o->y;
       o->x=bot->x;
@@ -758,15 +758,15 @@ void *top_draw()
 
       if (bot->lvars[special_power]==SNEAKY_POWER)
       {
-	if (bot->lvars[used_special_power]==0)
-	  player_draw(top_just_fired,bot->controller()->player_number);
-	else if (bot->lvars[used_special_power]<15)
-	  o->draw_trans(bot->lvars[used_special_power],16);
-	else
-	  o->draw_predator();
+    if (bot->lvars[used_special_power]==0)
+      player_draw(top_just_fired,bot->controller()->player_number);
+    else if (bot->lvars[used_special_power]<15)
+      o->draw_trans(bot->lvars[used_special_power],16);
+    else
+      o->draw_predator();
       } else
         eval_function((lisp_symbol *)l_player_draw,ret);
-      
+
       o->y=oldy;
       if (bot->direction<0)
         o->x-=4;
@@ -801,7 +801,7 @@ void *bottom_draw()
     palette *p=pal->copy();
     uint8_t *addr=(uint8_t *)p->addr();
     int ra,ga,ba;
-    
+
     for (int i=0;i<256;i++)
     {
       ra=(int)*addr+r; if (ra>255) ra=255; else if (ra<0) r=0; *addr=(uint8_t)ra; addr++;
@@ -816,72 +816,72 @@ void *bottom_draw()
   {
     switch (o->lvars[special_power])
     {
-      case NO_POWER : 
+      case NO_POWER :
       { player_draw(just_fired,o->controller()->player_number); } break;
 
       case HEALTH_POWER :
       {
-	player_draw(just_fired,o->controller()->player_number);
-	if (o->controller() && o->controller()->local_player())
-	  cache.img(S_health_image)->put_image(screen,o->controller()->cx2-20,
-					    o->controller()->cy1+5,1);
+    player_draw(just_fired,o->controller()->player_number);
+    if (o->controller() && o->controller()->local_player())
+      cache.img(S_health_image)->put_image(screen,o->controller()->cx2-20,
+                        o->controller()->cy1+5,1);
       } break;
       case FAST_POWER :
       {
-	eval_function((lisp_symbol *)l_draw_fast,NULL);
-	int old_state=o->state;
-	switch (o->state)
-	{
-	  case stopped : o->state=(character_state)S_fast_stopped; break;
-	  case running : o->state=(character_state)S_fast_running; break;
-	  case start_run_jump : o->state=(character_state)S_fast_start_run_jump; break;
-	  case run_jump : o->state=(character_state)S_fast_run_jump; break;
-	  case run_jump_fall : o->state=(character_state)S_fast_run_jump_fall; break;
-	  case end_run_jump : o->state=(character_state)S_fast_end_run_jump; break;
-	  default: break;
-	}
+    eval_function((lisp_symbol *)l_draw_fast,NULL);
+    int old_state=o->state;
+    switch (o->state)
+    {
+      case stopped : o->state=(character_state)S_fast_stopped; break;
+      case running : o->state=(character_state)S_fast_running; break;
+      case start_run_jump : o->state=(character_state)S_fast_start_run_jump; break;
+      case run_jump : o->state=(character_state)S_fast_run_jump; break;
+      case run_jump_fall : o->state=(character_state)S_fast_run_jump_fall; break;
+      case end_run_jump : o->state=(character_state)S_fast_end_run_jump; break;
+      default: break;
+    }
 
-	player_draw(just_fired,o->controller()->player_number);
-	o->state=(character_state)old_state;
-	if (o->controller() && o->controller()->local_player())
-	  cache.img(S_fast_image)->put_image(screen,o->controller()->cx2-20,
-					    o->controller()->cy1+5,1);
+    player_draw(just_fired,o->controller()->player_number);
+    o->state=(character_state)old_state;
+    if (o->controller() && o->controller()->local_player())
+      cache.img(S_fast_image)->put_image(screen,o->controller()->cx2-20,
+                        o->controller()->cy1+5,1);
       } break;
       case FLY_POWER :
       {
-	int old_state=o->state;
-	switch (o->state)
-	{
-	  case stopped : o->state=(character_state)S_fly_stopped; break;
-	  case running : o->state=(character_state)S_fly_running; break;
-	  case start_run_jump : o->state=(character_state)S_fly_start_run_jump; break;
-	  case run_jump : o->state=(character_state)S_fly_run_jump; break;
-	  case run_jump_fall : o->state=(character_state)S_fly_run_jump_fall; break;
-	  case end_run_jump : o->state=(character_state)S_fly_end_run_jump; break;
-	  default: break;
-	}
+    int old_state=o->state;
+    switch (o->state)
+    {
+      case stopped : o->state=(character_state)S_fly_stopped; break;
+      case running : o->state=(character_state)S_fly_running; break;
+      case start_run_jump : o->state=(character_state)S_fly_start_run_jump; break;
+      case run_jump : o->state=(character_state)S_fly_run_jump; break;
+      case run_jump_fall : o->state=(character_state)S_fly_run_jump_fall; break;
+      case end_run_jump : o->state=(character_state)S_fly_end_run_jump; break;
+      default: break;
+    }
 
-	player_draw(just_fired,o->controller()->player_number);
-	o->state=(character_state)old_state;
+    player_draw(just_fired,o->controller()->player_number);
+    o->state=(character_state)old_state;
 
-	if (o->controller() && o->controller()->local_player())
-	  cache.img(S_fly_image)->put_image(screen,o->controller()->cx2-20,
-					    o->controller()->cy1+5,1);
+    if (o->controller() && o->controller()->local_player())
+      cache.img(S_fly_image)->put_image(screen,o->controller()->cx2-20,
+                        o->controller()->cy1+5,1);
       } break;
       case SNEAKY_POWER :
       {
-	if (o->lvars[used_special_power]==0)
-	  player_draw(just_fired,o->controller()->player_number);
-	else if (o->lvars[used_special_power]<15)
-	  o->draw_trans(o->lvars[used_special_power],16);
-	else
-	  o->draw_predator();
-	  
-	if (o->controller() && o->controller()->local_player())
-	  cache.img(S_sneaky_image)->put_image(screen,o->controller()->cx2-20,
-					    o->controller()->cy1+5,1);
+    if (o->lvars[used_special_power]==0)
+      player_draw(just_fired,o->controller()->player_number);
+    else if (o->lvars[used_special_power]<15)
+      o->draw_trans(o->lvars[used_special_power],16);
+    else
+      o->draw_predator();
+    
+    if (o->controller() && o->controller()->local_player())
+      cache.img(S_sneaky_image)->put_image(screen,o->controller()->cx2-20,
+                        o->controller()->cy1+5,1);
       } break;
-    }    
+    }
   }
   return NULL;
 }
@@ -899,7 +899,7 @@ void *sgun_ai()
   o->lvars[sgb_lastx]=o->x;
   o->lvars[sgb_lasty]=o->y;
   o->lvars[sgb_speed]=o->lvars[sgb_speed]*6/5;
-  
+
   int32_t ang=o->lvars[sgb_angle];
   int32_t mag=o->lvars[sgb_speed];
 
@@ -908,23 +908,23 @@ void *sgun_ai()
   current_object->set_fxvel((xvel&0xffff)>>8);
   int32_t yvel=-(lisp_sin(ang))*(mag);
   current_object->set_yvel(yvel>>16);
-  current_object->set_fyvel((yvel&0xffff)>>8);      
+  current_object->set_fyvel((yvel&0xffff)>>8);
 
 
   int whit=0;
   game_object *who=o->bmove(whit, o->total_objects() ? o->get_object(0) : 0);
 
   if (whit || (who && figures[who->otype]->get_cflag(CFLAG_UNACTIVE_SHIELD) && who->total_objects() &&
-	       who->get_object(0)->aistate()==0))
+           who->get_object(0)->aistate()==0))
   {
     o->lvars[sgb_lifetime]=0;
     game_object *n=create(S_EXPLODE5,o->x+jrand()%4,o->y+jrand()%4);
-    current_level->add_object(n);    
+    current_level->add_object(n);
   } else if (who && figures[who->otype]->get_cflag(CFLAG_HURTABLE))
   {
     o->lvars[sgb_lifetime]=0;
     game_object *n=create(S_EXPLODE3,o->x+jrand()%4,o->y+jrand()%4);
-    current_level->add_object(n);        
+    current_level->add_object(n);
      who->do_damage(5,o,o->x,o->y,(lisp_cos(ang)*10)>>16,(lisp_sin(ang)*10)>>16);
   }
   return true_symbol;
@@ -937,7 +937,7 @@ void *mover_ai()
   game_object *o=current_object;
   if (o->total_objects()==2)
   {
-    if (o->aistate()<2) 
+    if (o->aistate()<2)
     {
       game_object *obj=o->get_object(1);
       o->remove_object(obj);
@@ -948,18 +948,18 @@ void *mover_ai()
     {
       o->set_aistate(o->aistate()-1);
       game_object *d=o->get_object(0);
-      game_object *obj=o->get_object(1);      
+      game_object *obj=o->get_object(1);
 
       obj->x=d->x-(d->x-o->x)*o->aistate()/o->aitype();
       obj->y=d->y-(d->y-o->y)*o->aistate()/o->aitype();
     }
   }
   return true_symbol;
-}	
+}    
 
 
 void *respawn_ai()
-{ 
+{
  game_object *o=current_object;
  int x=o->total_objects();
  if (x)
@@ -978,22 +978,22 @@ void *respawn_ai()
      o->add_object(n);
      n->set_fade_count(15);
      o->set_aistate_time(0);
-   } 
+   }
  }
  return true_symbol;
 }
 
 static int compare_players(const void *a, const void *b)
 {
-  if  ( ((view **)a)[0]->kills > ((view **)b)[0]->kills) 
+  if  ( ((view **)a)[0]->kills > ((view **)b)[0]->kills)
     return -1;
-  else if  ( ((view **)a)[0]->kills < ((view **)b)[0]->kills) 
+  else if  ( ((view **)a)[0]->kills < ((view **)b)[0]->kills)
     return 1;
   else if (((view **)a)[0]->player_number > ((view **)b)[0]->player_number)
     return -1;
   else if (((view **)a)[0]->player_number < ((view **)b)[0]->player_number)
     return 1;
-  else return 0;  
+  else return 0;
 }
 
 void *score_draw()
@@ -1001,8 +1001,8 @@ void *score_draw()
   view *sorted_players[16],*local=NULL;
   int tp=0;
   view *f=player_list;
-  for (;f;f=f->next) 
-  { 
+  for (;f;f=f->next)
+  {
     sorted_players[tp]=f;
     tp++;
     if (f->local_player()) local=f;
@@ -1020,7 +1020,7 @@ void *score_draw()
     int i;
     for (i=0;i<tp;i++)
     {
-      int color=lnumber_value(lget_array_element(symbol_value(l_player_text_color),sorted_players[i]->player_number));  
+      int color=lnumber_value(lget_array_element(symbol_value(l_player_text_color),sorted_players[i]->player_number));
       sprintf(msg,"%3ld %s",(long)sorted_players[i]->kills,sorted_players[i]->name);
       if (sorted_players[i]==local)
         strcat(msg," <<");
@@ -1045,7 +1045,7 @@ void *show_kills()
   im->put_image(screen,0,0);
   int x1=im->width()+1,y1=0,y2=screen->height();
   JCFont *fnt=wm->font();
-  
+
   view *v=player_list; int tp=0,i;
   for (v=player_list;v;v=v->next) tp++;
 
@@ -1055,13 +1055,13 @@ void *show_kills()
   y+=fnt->height();
 
   screen->widget_bar(x,y+2,x+strlen(header_str)*fnt->width(),y+fnt->height()-3,
-		     wm->bright_color(),wm->medium_color(),wm->dark_color());
+             wm->bright_color(),wm->medium_color(),wm->dark_color());
   y+=fnt->height();
   v=player_list;
   for (i=0;i<tp;i++)
   {
     enum { NAME_LEN=18 } ;
-    int color=lnumber_value(lget_array_element(symbol_value(l_player_text_color),v->player_number));  
+    int color=lnumber_value(lget_array_element(symbol_value(l_player_text_color),v->player_number));
     char max_name[NAME_LEN];
     strncpy(max_name,v->name,NAME_LEN-1);
     max_name[NAME_LEN-1]=0;
@@ -1074,7 +1074,7 @@ void *show_kills()
     y+=fnt->height();
     v=v->next;
   }
-  
+
   wm->flush_screen();
   milli_wait(4000);   // wait 4 seconds
 

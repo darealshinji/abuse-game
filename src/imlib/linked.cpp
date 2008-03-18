@@ -37,12 +37,12 @@ int linked_list::unlink(linked_node *p)
     {
       q=first()->next();
       while (q!=p && q!=first())    // find the node in the list
-	q=q->next();
+    q=q->next();
       if (q!=first())                  // is it in the list at all?
       {  q->last()->set_next(q->next());   // yes unlink the pointers
-	 q->next()->set_last(q->last());
-	 nn--;
- 	 return 1;
+     q->next()->set_last(q->last());
+     nn--;
+      return 1;
       }                                    // decrement the number of nodes
     }
   }
@@ -140,10 +140,10 @@ void linked_list::insert(class linked_node *p)
     { q=q->next();
       if (p->compare(q,sortby)>0)  // repeat until we find a value greater than the one we are inserting
       { p->set_next(q);
-	p->set_last(q->last());     // insert it with pointers here
-	q->last()->set_next(p);
-	q->set_last(p);
-	q=fn->last();         // set q to the last node so we finish the loop
+    p->set_last(q->last());     // insert it with pointers here
+    q->last()->set_next(p);
+    q->set_last(p);
+    q=fn->last();         // set q to the last node so we finish the loop
       }
     }
   }

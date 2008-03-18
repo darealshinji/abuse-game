@@ -107,34 +107,34 @@ image *read_pic(char *fn, palette *&pal)
       fread(&c,1,1,fp);
       if (c!=esc)
       {
-	if (xx>=w) { yy--; xx=0; sl=im->scan_line(yy);
-	if (yy==h) printf("bufsize=%d\n",bufsize); CHECK(yy<h); }
-	sl[xx++]=c;     len--;
+    if (xx>=w) { yy--; xx=0; sl=im->scan_line(yy);
+    if (yy==h) printf("bufsize=%d\n",bufsize); CHECK(yy<h); }
+    sl[xx++]=c;     len--;
       }
       else
       {
-	fread(&n,1,1,fp);
-	if (n!=0)
-	{
-	  fread(&c,1,1,fp);
-	  while (n-- && yy>=0 && len)
-	  {
-	    if (xx>=w) { yy--; xx=0; sl=im->scan_line(yy);
-	      if (yy==h) printf("bufsize=%d\n",bufsize); CHECK(yy<h); }
-	    sl[xx++]=c; len--;
-	  }
-	}
-	else
-	{
-	  fread(&sn,1,2,fp);
-	  sn=uint16_to_local(sn);
-	  fread(&c,1,1,fp);
-	  while (sn-- && yy>=0 && len)
-	  {
-	    if (xx>=w) { yy--; xx=0; sl=im->scan_line(yy); CHECK(yy<h); }
-	    sl[xx++]=c; len--;
-	  }
-	}
+    fread(&n,1,1,fp);
+    if (n!=0)
+    {
+      fread(&c,1,1,fp);
+      while (n-- && yy>=0 && len)
+      {
+        if (xx>=w) { yy--; xx=0; sl=im->scan_line(yy);
+          if (yy==h) printf("bufsize=%d\n",bufsize); CHECK(yy<h); }
+        sl[xx++]=c; len--;
+      }
+    }
+    else
+    {
+      fread(&sn,1,2,fp);
+      sn=uint16_to_local(sn);
+      fread(&c,1,1,fp);
+      while (sn-- && yy>=0 && len)
+      {
+        if (xx>=w) { yy--; xx=0; sl=im->scan_line(yy); CHECK(yy<h); }
+        sl[xx++]=c; len--;
+      }
+    }
 
       }
     }

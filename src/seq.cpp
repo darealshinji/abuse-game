@@ -19,7 +19,7 @@ int sequence::size()
   for (int i=0;i<total;i++)
   {
     if (cache.loaded(seq[i]))
-      t+=cache.fig(seq[i])->size();   
+      t+=cache.fig(seq[i])->size();
   }
   return t;
 }
@@ -47,7 +47,7 @@ sequence::sequence(char *filename, void *pict_list, void *advance_list)
   else
   {
     int i;
-    for (i=0;i<total;i++) 
+    for (i=0;i<total;i++)
     {
       seq[i]=cache.reg_object(filename,lcar(pict_list),SPEC_CHARACTER2,1);
       pict_list=lcdr(pict_list);
@@ -56,15 +56,15 @@ sequence::sequence(char *filename, void *pict_list, void *advance_list)
 }
 
 sequence::~sequence()
-{ 
-  jfree(seq); 
+{
+  jfree(seq);
 }
 
 /*sequence::sequence(char *filename, char *picts)
 {
-  char t[100],*s=picts,imname[100];  
+  char t[100],*s=picts,imname[100];
   int i,j;
-  total=0;  
+  total=0;
 
   // first count the images
   while (token_type(s)!=sRIGHT_PAREN)
@@ -74,20 +74,20 @@ sequence::~sequence()
       get_token(s,t);    // left paren
       get_token(s,t);    // seq
       get_token(s,t);    // name
-      i=get_number(s);      
-      total+=get_number(s)-i+1;      
+      i=get_number(s);
+      total+=get_number(s)-i+1;
       get_token(s,t);    // right paren
-    }  
-    else 
+    }
+    else
     { get_token(s,t);
-      total++;    
-    }    
+      total++;
+    }
   }
-  
 
-  s=picts;  
+
+  s=picts;
   seq=(int *) jmalloc(sizeof(int)*total,"sequence ptr array");
-  
+
   for (i=0;i<total;)
   {
     if (get_token(s,t)==sLEFT_PAREN)
@@ -95,8 +95,8 @@ sequence::~sequence()
       get_token(s,t);      // left paren
       if (strcmp(t,"seq"))
       {
-	printf("Expected seq at %s\n",s);
-	exit(0);	
+    printf("Expected seq at %s\n",s);
+    exit(0);    
       }
       get_token(s,t);
       int start,end;
@@ -104,9 +104,9 @@ sequence::~sequence()
       end=get_number(s);
       for (j=start;j<=end;j++)
       {
-	sprintf(imname,"%s%04d.pcx",t,j);
-	seq[i++]=cache.reg(filename,imname,SPEC_CHARACTER,1);
-      }           
+    sprintf(imname,"%s%04d.pcx",t,j);
+    seq[i++]=cache.reg(filename,imname,SPEC_CHARACTER,1);
+      }
       get_token(s,t);      // right paren
     }
     else

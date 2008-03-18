@@ -35,17 +35,17 @@ extern void fade_in(image *im, int steps);
 extern void fade_out(int steps);
 
 void get_event(event &ev)
-{ wm->get_event(ev); 
+{ wm->get_event(ev);
   switch (ev.type)
   {
     case EV_KEY :
     {
       if (demo_man.state==demo_manager::PLAYING)
-        demo_man.set_state(demo_manager::NORMAL);    
+        demo_man.set_state(demo_manager::NORMAL);
       else if (ev.key==JK_ENTER && demo_man.state==demo_manager::RECORDING)
       {
         demo_man.set_state(demo_manager::NORMAL);
-	the_game->show_help("Finished recording");
+    the_game->show_help("Finished recording");
       }
     } break;
   }
@@ -74,8 +74,8 @@ int demo_manager::start_recording(char *filename)
   record_file->write((void *)"DEMO,VERSION:2",14);
   record_file->write_uint8(strlen(name)+1);
   record_file->write(name,strlen(name)+1);
-  
-  
+
+
   if (DEFINEDP(symbol_value(l_difficulty)))
   {
     if (symbol_value(l_difficulty)==l_easy) record_file->write_uint8(0);
@@ -83,7 +83,7 @@ int demo_manager::start_recording(char *filename)
     else if (symbol_value(l_difficulty)==l_hard) record_file->write_uint8(2);
     else record_file->write_uint8(3);
   } else record_file->write_uint8(3);
-  
+
 
   state=RECORDING;
 
@@ -116,15 +116,15 @@ void demo_manager::do_inputs()
       int size;
       if (get_packet(buf,size))              // get starting inputs
       {
-        process_packet_commands(buf,size);      
-	int32_t mx,my;
-	the_game->game_to_mouse(player_list->pointer_x,player_list->pointer_y,player_list,mx,my);
-	wm->set_mouse_position(small_render ? mx*2 : mx, small_render ? my*2 : my);
+        process_packet_commands(buf,size);
+    int32_t mx,my;
+    the_game->game_to_mouse(player_list->pointer_x,player_list->pointer_y,player_list,mx,my);
+    wm->set_mouse_position(small_render ? mx*2 : mx, small_render ? my*2 : my);
       }
       else
       {
-	set_state(NORMAL);
-	return ;
+    set_state(NORMAL);
+    return ;
       }
     } break;
     default :
@@ -150,7 +150,7 @@ int demo_manager::start_playing(char *filename)
 {
   uint8_t sig[15];
   record_file=open_file(filename,"rb");
-  if (record_file->open_failure()) { delete record_file; return 0; }  
+  if (record_file->open_failure()) { delete record_file; return 0; }
   char name[100],nsize,diff;
   if (record_file->read(sig,14)!=14        ||
       memcmp(sig,"DEMO,VERSION:2",14)!=0   ||
@@ -167,19 +167,19 @@ int demo_manager::start_playing(char *filename)
   bFILE *probe=open_file(tname,"rb");   // see if the level still exsist?
   if (probe->open_failure()) { delete record_file; delete probe; return 0; }
   delete probe;
- 
+
   the_game->load_level(tname);
   initial_difficulty=l_difficulty;
 
   switch (diff)
   {
-    case 0 : 
+    case 0 :
     { set_symbol_value(l_difficulty,l_easy); } break;
-    case 1 : 
+    case 1 :
     { set_symbol_value(l_difficulty,l_medium); } break;
-    case 2 : 
+    case 2 :
     { set_symbol_value(l_difficulty,l_hard); } break;
-    case 3 : 
+    case 3 :
     { set_symbol_value(l_difficulty,l_extreme); } break;
   }
 
@@ -197,7 +197,7 @@ int demo_manager::set_state(demo_state new_state, char *filename)
 
   switch (state)
   {
-    case RECORDING : 
+    case RECORDING :
     { delete record_file; } break;
     case PLAYING :
     {
@@ -213,7 +213,7 @@ int demo_manager::set_state(demo_state new_state, char *filename)
 
       view *v=player_list;
       for (;v;v=v->next)  // reset all the players
-      { if (v->focus) { v->reset_player(); v->focus->set_aistate(0); } }      
+      { if (v->focus) { v->reset_player(); v->focus->set_aistate(0); } }
       delete current_level;
       current_level=NULL;
       the_game->reset_keymap();
@@ -234,7 +234,7 @@ int demo_manager::set_state(demo_state new_state, char *filename)
     case NORMAL :
     { state=NORMAL; } break;
   }
-  
+
   return 1;
 }
 
@@ -244,7 +244,7 @@ int demo_manager::save_packet(void *packet, int packet_size)   // returns non 0 
   {
     uint16_t ps=lstl(packet_size);
     if (record_file->write(&ps,2)!=2 ||
-	record_file->write(packet,packet_size)!=packet_size)
+    record_file->write(packet,packet_size)!=packet_size)
     {
       set_state(NORMAL);
       return 0;

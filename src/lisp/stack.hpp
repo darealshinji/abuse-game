@@ -20,7 +20,7 @@
 
 // A fixed-size stack class
 template<class T> class grow_stack
-{ 
+{
 public:
     T **sdata;
     long son;
@@ -36,7 +36,7 @@ public:
         sdata = (T **)jmalloc(sizeof(T *) * smax, "pointer stack");
     }
 
-    void push(T *data) 
+    void push(T *data)
     {
         if(son >= smax)
         {
@@ -46,8 +46,8 @@ public:
         sdata[son] = data;
         son++;
     }
-     
-    T *pop(long total) 
+
+    T *pop(long total)
     {
         if (total > son)
         {
@@ -58,13 +58,13 @@ public:
         return sdata[son];
     }
 
-    void clean_up() 
-    { 
+    void clean_up()
+    {
         if(son != 0)
             fprintf(stderr, "warning: cleaning up stack and not empty\n");
-        jfree(sdata); 
+        jfree(sdata);
         sdata = NULL;
-        son = 0; 
+        son = 0;
     }
 };
 

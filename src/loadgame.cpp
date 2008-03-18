@@ -43,15 +43,15 @@ void load_number_icons()
   for (i=0;i<MAX_SAVE_GAMES*3;i++)
   {
     sprintf(name,"nums%04d.pcx",i+1);
-    save_buts[i]=cache.reg("art/icons.spe",name,SPEC_IMAGE,1); 
+    save_buts[i]=cache.reg("art/icons.spe",name,SPEC_IMAGE,1);
   }
 }
 
 
 void last_savegame_name(char *buf)
 {
-	printf( "last_savegame_name()\n" );
-	sprintf(buf,"%ssave%04d.spe",get_save_filename_prefix(), (last_save_game_number+MAX_SAVE_GAMES-1)%MAX_SAVE_GAMES+1);
+    printf( "last_savegame_name()\n" );
+    sprintf(buf,"%ssave%04d.spe",get_save_filename_prefix(), (last_save_game_number+MAX_SAVE_GAMES-1)%MAX_SAVE_GAMES+1);
 }
 
 Jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
@@ -64,7 +64,7 @@ Jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
   {
     if (thumb_nails) { while (!thumb_nails[x]) x++; }
     buts[i]=new ico_button(0, y, ID_LOAD_GAME_NUMBER + x,
-			   save_buts[x*3+0],save_buts[x*3+0],save_buts[x*3+1],save_buts[x*3+2],NULL);
+               save_buts[x*3+0],save_buts[x*3+0],save_buts[x*3+1],save_buts[x*3+2],NULL);
     buts[i]->set_act_id(ID_LOAD_GAME_PREVIEW+x);
     x++;
   }
@@ -82,7 +82,7 @@ int get_save_spot()
   {
     char name[20];
     sprintf(name,"%ssave%04d.spe", get_save_filename_prefix(),i);
-    FILE *fp=open_FILE(name,"rb");  
+    FILE *fp=open_FILE(name,"rb");
     if (fp)
       i=0;
     else { last_free=i; i--; }
@@ -90,7 +90,7 @@ int get_save_spot()
   }
 
   if (last_free) return last_free;    // if there are any slots not created yet...
-        
+
   int w=cache.img(save_buts[0])->width();
   int mx=last_demo_mx-w/2;
   if((unsigned)(mx + w + 10) > xres) mx = xres - w - 10;
@@ -119,7 +119,7 @@ int get_save_spot()
 
 void get_savegame_name(char *buf)  // buf should be at least 50 bytes
 {
-	sprintf(buf,"save%04d.spe",(last_save_game_number++)%MAX_SAVE_GAMES+1);
+    sprintf(buf,"save%04d.spe",(last_save_game_number++)%MAX_SAVE_GAMES+1);
 /*  FILE *fp=open_FILE("lastsave.lsp","wb");
   if (fp)
   {
@@ -128,79 +128,79 @@ void get_savegame_name(char *buf)  // buf should be at least 50 bytes
   } else dprintf("Warning unable to open lastsave.lsp for writing\n"); */
 }
 
-int show_load_icon() 
+int show_load_icon()
 {
-	int i;
-	for( i = 0; i < MAX_SAVE_GAMES; i++ )
-	{
-		char nm[255];
-		sprintf( nm, "%ssave%04d.spe", get_save_filename_prefix(), i + 1 );
-		bFILE *fp = open_file( nm, "rb" );
-		if( fp->open_failure() )
-		{
-			delete fp;
-		}
-		else
-		{
-			delete fp;
-			return 1;
-		}
-	}
-	return 0;
+    int i;
+    for( i = 0; i < MAX_SAVE_GAMES; i++ )
+    {
+        char nm[255];
+        sprintf( nm, "%ssave%04d.spe", get_save_filename_prefix(), i + 1 );
+        bFILE *fp = open_file( nm, "rb" );
+        if( fp->open_failure() )
+        {
+            delete fp;
+        }
+        else
+        {
+            delete fp;
+            return 1;
+        }
+    }
+    return 0;
 }
 
 int load_game(int show_all, char const *title)   // return 0 if the player escapes, else return the number of the game to load
 {
-	int total_saved=0;
-	image *thumb_nails[MAX_SAVE_GAMES];
-	int start_num=0;
-	int max_w=160,max_h=100;
-	memset(thumb_nails,0,sizeof(thumb_nails));
+    int total_saved=0;
+    image *thumb_nails[MAX_SAVE_GAMES];
+    int start_num=0;
+    int max_w=160,max_h=100;
+    memset(thumb_nails,0,sizeof(thumb_nails));
 
-	image *first=NULL;
+    image *first=NULL;
 
-	for (start_num=0;start_num<MAX_SAVE_GAMES;start_num++)
-	{
-		char name[255];
-		int fail=0;
+    for (start_num=0;start_num<MAX_SAVE_GAMES;start_num++)
+    {
+        char name[255];
+        int fail=0;
 
-		sprintf(name,"%ssave%04d.spe", get_save_filename_prefix(), start_num+1);
-		bFILE *fp=open_file(name,"rb");
-		if (fp->open_failure())
-		{
-			fail=1;
-		}
-		else
-		{
-			spec_directory sd(fp);
-			spec_entry *se=sd.find("thumb nail");
-			if (se && se->type==SPEC_IMAGE)
-			{
-				thumb_nails[start_num]=new image(se,fp);
-				if (thumb_nails[start_num]->width()>max_w) max_w=thumb_nails[start_num]->width();
-				if (thumb_nails[start_num]->height()>max_h) max_h=thumb_nails[start_num]->height();
-				if (!first) first=thumb_nails[start_num];
-				total_saved++;
-			}
-			else
-				fail=1;
-		}
-		if (fail && show_all)
-		{
-			thumb_nails[start_num]=new image(160,100);	
-			thumb_nails[start_num]->clear();
-			console_font->put_string(thumb_nails[start_num],0,0,symbol_str("no_saved"));
-			total_saved++;
-			if (!first) first=thumb_nails[start_num];
-		}
-		delete fp;
-	}
+        sprintf(name,"%ssave%04d.spe", get_save_filename_prefix(), start_num+1);
+        bFILE *fp=open_file(name,"rb");
+        if (fp->open_failure())
+        {
+            fail=1;
+        }
+        else
+        {
+            spec_directory sd(fp);
+            spec_entry *se=sd.find("thumb nail");
+            if (se && se->type==SPEC_IMAGE)
+            {
+                thumb_nails[start_num]=new image(se,fp);
+                if (thumb_nails[start_num]->width()>max_w) max_w=thumb_nails[start_num]->width();
+                if (thumb_nails[start_num]->height()>max_h) max_h=thumb_nails[start_num]->height();
+                if (!first) first=thumb_nails[start_num];
+                total_saved++;
+            }
+            else
+                fail=1;
+        }
+        if (fail && show_all)
+        {
+            thumb_nails[start_num]=new image(160,100);    
+            thumb_nails[start_num]->clear();
+            console_font->put_string(thumb_nails[start_num],0,0,symbol_str("no_saved"));
+            total_saved++;
+            if (!first) first=thumb_nails[start_num];
+        }
+        delete fp;
+    }
 
-	if (!total_saved) return 0; 
-	if (total_saved>MAX_SAVE_GAMES)
-		total_saved=MAX_SAVE_GAMES;
+    if (!total_saved) return 0;
+    if (total_saved>MAX_SAVE_GAMES)
+        total_saved=MAX_SAVE_GAMES;
 
-	int i;
+    int i;
 /*  int ih=cache.img(save_buts[0])->height();
   ico_button *buts[MAX_SAVE_GAMES];
   int y=0;
@@ -208,8 +208,8 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 
   for (i=0;i<total_saved;i++,y+=ih)
   {
-    buts[i]=new ico_button(0,y,ID_LOAD_GAME_NUMBER+i,		       
-			   save_buts[i*3+1],save_buts[i*3+1],save_buts[i*3+0],save_buts[i*3+2],NULL);
+    buts[i]=new ico_button(0,y,ID_LOAD_GAME_NUMBER+i,        
+               save_buts[i*3+1],save_buts[i*3+1],save_buts[i*3+0],save_buts[i*3+2],NULL);
     buts[i]->set_act_id(ID_LOAD_GAME_PREVIEW+i);
   }
 
@@ -218,38 +218,38 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 */
 
 
-	Jwindow *l_win=create_num_window(0,total_saved,thumb_nails);
-	Jwindow *preview=wm->new_window(l_win->x+l_win->l+5,l_win->y,max_w,max_h,NULL,title);
+    Jwindow *l_win=create_num_window(0,total_saved,thumb_nails);
+    Jwindow *preview=wm->new_window(l_win->x+l_win->l+5,l_win->y,max_w,max_h,NULL,title);
 
-	first->put_image(preview->screen,preview->x1(),preview->y1());
+    first->put_image(preview->screen,preview->x1(),preview->y1());
 
-	event ev;
-	int got_level=0;
-	int quit=0;
-	do
-	{
-		wm->flush_screen();
-		wm->get_event(ev);
-		if (ev.type==EV_MESSAGE && ev.message.id>=ID_LOAD_GAME_NUMBER && ev.message.id<ID_LOAD_GAME_PREVIEW)
-			got_level=ev.message.id-ID_LOAD_GAME_NUMBER+1;
+    event ev;
+    int got_level=0;
+    int quit=0;
+    do
+    {
+        wm->flush_screen();
+        wm->get_event(ev);
+        if (ev.type==EV_MESSAGE && ev.message.id>=ID_LOAD_GAME_NUMBER && ev.message.id<ID_LOAD_GAME_PREVIEW)
+            got_level=ev.message.id-ID_LOAD_GAME_NUMBER+1;
 
-		if (ev.type==EV_MESSAGE && ev.message.id>=ID_LOAD_GAME_PREVIEW && ev.message.id<ID_LOAD_PLAYER_GAME)
-		{
-			int draw_num=ev.message.id-ID_LOAD_GAME_PREVIEW;
-			preview->clear();
-			thumb_nails[draw_num]->put_image(preview->screen,preview->x1(),preview->y1());
-		}
+        if (ev.type==EV_MESSAGE && ev.message.id>=ID_LOAD_GAME_PREVIEW && ev.message.id<ID_LOAD_PLAYER_GAME)
+        {
+            int draw_num=ev.message.id-ID_LOAD_GAME_PREVIEW;
+            preview->clear();
+            thumb_nails[draw_num]->put_image(preview->screen,preview->x1(),preview->y1());
+        }
 
-		if ((ev.type==EV_CLOSE_WINDOW) || (ev.type==EV_KEY && ev.key==JK_ESC))
-			quit=1;
-	} while (!got_level && !quit);
+        if ((ev.type==EV_CLOSE_WINDOW) || (ev.type==EV_KEY && ev.key==JK_ESC))
+            quit=1;
+    } while (!got_level && !quit);
 
-	wm->close_window(l_win);
-	wm->close_window(preview);
+    wm->close_window(l_win);
+    wm->close_window(preview);
 
-	for (i=0;i<total_saved;i++)
-		if (thumb_nails[i])
-			delete thumb_nails[i];
+    for (i=0;i<total_saved;i++)
+        if (thumb_nails[i])
+            delete thumb_nails[i];
 
-	return got_level;
+    return got_level;
 }

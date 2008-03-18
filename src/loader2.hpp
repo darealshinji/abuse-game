@@ -41,24 +41,24 @@ extern ushort current_start_type,start_position_type;
 
 /******************************* SOUND EFFECTS **********************************/
 extern int raise_volume,lower_volume,record_button,play_button,music_button,sfx_button;
-           
+
 extern int sfx_volume,music_volume,sound_avail;
 extern song *current_song;
 
 /******************************** SCREEN FRAME **********************************/
 extern int border_tile,window_texture,
-	     record_button,play_button,window_colors,pause_image,vmm_image,
-	     earth,earth_mask,clouds,
-	     numbers[10], stat_bar,
-	     ok_button,cancel_button,
-	     cdc_logo;
+         record_button,play_button,window_colors,pause_image,vmm_image,
+         earth,earth_mask,clouds,
+         numbers[10], stat_bar,
+         ok_button,cancel_button,
+         cdc_logo;
 
 
 /******************************** TILES *****************************************/
 extern int *backtiles;                  // array of id's
 extern int *foretiles;
 extern int nforetiles,nbacktiles,       // total foreground tiles & background tiles
-	   f_wid,f_hi,b_wid,b_hi;       //  width and height of foreground/background tiles
+       f_wid,f_hi,b_wid,b_hi;       //  width and height of foreground/background tiles
 
 
 /******************************** COLOR *****************************************/
@@ -78,7 +78,7 @@ extern int start_running;
 
 
 image *load_image(spec_entry *e, bFILE *fp);      // preforms scaling
-image *load_image(bFILE *fp);    
+image *load_image(bFILE *fp);
 void load_data(int argc, char **argv);
 char *load_script(char *name);
 void load_tiles(Cell *file_list);

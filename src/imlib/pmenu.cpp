@@ -17,9 +17,9 @@ void pmenu::move(int new_x, int new_y)
 }
 
 pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
-{ 
-  top=first; 
-  active=NULL; 
+{
+  top=first;
+  active=NULL;
 
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);
@@ -30,7 +30,7 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
   bar=wm->new_window(X, Y, w, 0, NULL);
   bar->freeze();  // can't drag this window
   bar->screen->widget_bar(0,0,w-1,h-1,wm->bright_color(),wm->medium_color(),
-		    wm->dark_color());
+            wm->dark_color());
 
 
 
@@ -41,25 +41,25 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
   tw=w/(total+1);
   tx=tw/2;
 
-  for (p=top;p;p=p->next,tx+=tw) 
-    p->draw_self(bar,itemx(p),1,itemw(p),1,p==active);      
+  for (p=top;p;p=p->next,tx+=tw)
+    p->draw_self(bar,itemx(p),1,itemw(p),1,p==active);
 /*  }
   else
   {
-    for (p=top;p;p=p->next,tx+=tw) 
+    for (p=top;p;p=p->next,tx+=tw)
       p->draw(bar,itemx(p),1,itemw(p),1,p==active);
   }*/
-  
+
 }
 
 pmenu_item::pmenu_item(int ID, char const *Name, char const *on_off_flag, int Hotkey, pmenu_item *Next)
-{ 
+{
   xp=-1;
-  id=ID; 
+  id=ID;
   hotkey=Hotkey;
   on_off=on_off_flag;
   if (Name)
-    n=strcpy((char *)jmalloc(strlen(Name)+1,"pmenu_item::name"),Name); 
+    n=strcpy((char *)jmalloc(strlen(Name)+1,"pmenu_item::name"),Name);
   else n=NULL;
   next=Next;
   sub=NULL;
@@ -72,12 +72,12 @@ pmenu_item::pmenu_item(char const *Name, psub_menu *Sub, pmenu_item *Next, int x
   next=Next;
   on_off=NULL;
   CONDITION(Name,"Sub menu cannot have a NULL name");
-  n=strcpy((char *)jmalloc(strlen(Name)+1,"pmenu_item::name"),Name); 
+  n=strcpy((char *)jmalloc(strlen(Name)+1,"pmenu_item::name"),Name);
   sub=Sub;
 }
 
-pmenu_item *pmenu_item::find_id(int search_id) 
-{ 
+pmenu_item *pmenu_item::find_id(int search_id)
+{
   if (id==search_id) return this;
   else if (sub) return sub->find_id(search_id);
   else return NULL;
@@ -101,11 +101,11 @@ pmenu::~pmenu()
   if (bar) wm->close_window(bar);
 }
 
-psub_menu::~psub_menu() 
-{ 
-  if (win)   
+psub_menu::~psub_menu()
+{
+  if (win)
     wm->close_window(win);
-    
+
   while (first)
   {
     pmenu_item *tmp=first;
@@ -168,7 +168,7 @@ void psub_menu::calc_size(int &w, int &h)
     {
       int l=strlen(p->name())*tw+8;
       if (p->on_off) l+=tw*4;
-      if (l>w) w=l;   
+      if (l>w) w=l;
     }
     h++;
   }
@@ -189,11 +189,11 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
     if (parent->y+parent->h+wm->font()->height()>cy2)
       y=-h;
      else y=y-h+wm->font()->height()+5;
-     
+
 
   win=wm->new_window(parent->x+x,parent->y+y,
-		     w - Jwindow::left_border() - Jwindow::right_border(),
-		     h - Jwindow::top_border() - Jwindow::bottom_border(),
+             w - Jwindow::left_border() - Jwindow::right_border(),
+             h - Jwindow::top_border() - Jwindow::bottom_border(),
                      NULL);
   win->freeze();
   win->screen->widget_bar(0,0,w-1,h-1,wm->bright_color(),wm->medium_color(),wm->dark_color());
@@ -203,7 +203,7 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
   for (;p;p=p->next) if (p->on_off) has_flags=1;
   x=has_flags ? 3+wm->font()->width() : 3;
   y=3;
- 
+
   for (p=first;p;p=p->next,i++,y+=wm->font()->height()+1)
     p->draw(win,x,y,w-6,0,i==active);
 
@@ -226,9 +226,9 @@ void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int ac
         parent->screen->xor_bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->dark_color());
       else
       {
-	parent->screen->bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->dark_color());
-	wm->font()->put_string(parent->screen,x+1,y+1,n,wm->medium_color());	
-	if (on_off && *on_off) wm->font()->put_string(parent->screen,bx+1,y+1,"*",wm->medium_color());
+    parent->screen->bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->dark_color());
+    wm->font()->put_string(parent->screen,x+1,y+1,n,wm->medium_color());    
+    if (on_off && *on_off) wm->font()->put_string(parent->screen,bx+1,y+1,"*",wm->medium_color());
       }
     } else
     {
@@ -236,38 +236,38 @@ void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int ac
         parent->screen->xor_bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->dark_color());
       else
       {
-	parent->screen->bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->medium_color());
-	wm->font()->put_string(parent->screen,x+1,y+1,n,wm->bright_color());
-	if (on_off && *on_off) wm->font()->put_string(parent->screen,bx+1,y+1,"*",wm->bright_color());
+    parent->screen->bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->medium_color());
+    wm->font()->put_string(parent->screen,x+1,y+1,n,wm->bright_color());
+    if (on_off && *on_off) wm->font()->put_string(parent->screen,bx+1,y+1,"*",wm->bright_color());
       }
     }
   }
 }
 
 void pmenu_item::draw(Jwindow *parent, int x, int y, int w, int top,
-		      int active)
-{  
+              int active)
+{
   if (n)
   {
     if (active)
-    {      
+    {
       draw_self(parent,x,y,w,top,active);
       if (sub)
       {
-	if (top)
+    if (top)
           sub->draw(parent,x,y+wm->font()->height()+2);
-	else
-	  sub->draw(parent,x+w,y);
+    else
+      sub->draw(parent,x+w,y);
       }
     }
     else
     {
       if (sub)
       {
-	if (top)
+    if (top)
           sub->hide(parent,x,y+wm->font()->height()+2);
-	else
-	  sub->hide(parent,x+w,y);
+    else
+      sub->hide(parent,x+w,y);
       }
       draw_self(parent,x,y,w,top,active);
 
@@ -280,16 +280,16 @@ int pmenu::itemx(pmenu_item *p)
 {
   if (p->xp!=-1) return p->xp;
   int w=bar->screen->width();
-  
+
 
   int total=0,tw,i=0,x=0;
-  for (pmenu_item *pp=top;pp;pp=pp->next,i++) 
+  for (pmenu_item *pp=top;pp;pp=pp->next,i++)
   { if (pp==p) x=i;
     total++;
   }
 
-  
-  tw=w/(total+1); 
+
+  tw=w/(total+1);
   return tw/2+x*tw;
 }
 
@@ -341,8 +341,8 @@ int psub_menu::handle_event(Jwindow *parent, int x, int y, event &ev)
 
 }
 
-int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top, 
-			     event &ev)
+int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top,
+                 event &ev)
 {
   x+=parent->x;
   y+=parent->y;
@@ -350,28 +350,28 @@ int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top,
       ev.mouse_move.y<y+wm->font()->height()+2)
   {
     if (sub) return 1;
-    else 
+    else
     {
       if (ev.type==EV_MOUSE_BUTTON &&n)
         wm->push_event(new event(id,(char *)this));
       return 1;
-    }    
+    }
   } else if (sub)
-  { 
+  {
     if (top)
       return sub->handle_event(parent,x,y+wm->font()->height()+2,ev);
     else return sub->handle_event(parent,x+w,y,ev);
   } else return 0;
 }
 
-pmenu_item *pmenu::inarea(int mx, int my, image *screen) 
-{ 
+pmenu_item *pmenu::inarea(int mx, int my, image *screen)
+{
   short cx1,cy1,cx2,cy2;
-  screen->get_clip(cx1,cy1,cx2,cy2);  
+  screen->get_clip(cx1,cy1,cx2,cy2);
   mx-=bar->x;
   my-=bar->y;
   if (mx<0 || my<0 || mx>=bar->screen->width() || my>=bar->screen->height()) return NULL;
-  else 
+  else
   {
     for (pmenu_item *p=top;p;p=p->next)
     {
@@ -382,30 +382,30 @@ pmenu_item *pmenu::inarea(int mx, int my, image *screen)
   }
 }
 
-int psub_menu::own_event(event &ev) 
-{ 
+int psub_menu::own_event(event &ev)
+{
   if (win && ev.window==win) return 1; else
     for (pmenu_item *p=first;p;p=p->next)
-      if (p->own_event(ev)) 
-        return 1; 
-  return 0; 
+      if (p->own_event(ev))
+        return 1;
+  return 0;
 }
 
-int pmenu_item::own_event(event &ev) 
-{ 
-  if (sub) 
-    return sub->own_event(ev); 
-  else return 0; 
+int pmenu_item::own_event(event &ev)
+{
+  if (sub)
+    return sub->own_event(ev);
+  else return 0;
 }
 
-pmenu_item::~pmenu_item() 
-{ if (n) jfree(n); if (sub) delete sub; 
+pmenu_item::~pmenu_item()
+{ if (n) jfree(n); if (sub) delete sub;
 }
 
 int pmenu::handle_event(event &ev, image *screen)
 {
   if (!active && ev.window!=bar) return 0;
-/* 
+/*
     int yes=0;
     if (ev.window==bar) yes=1;    // event in top bar?
     else
@@ -421,43 +421,43 @@ int pmenu::handle_event(event &ev, image *screen)
     case EV_KEY :
     {
       for (pmenu_item *p=top;p;p=p->next)
-      { 
-	pmenu_item *r=p->find_key(ev.key);
-	if (r)
-	{ 
-	  wm->push_event(new event(r->id,(char *)r));
-	  return 1;
-	}
+      {
+    pmenu_item *r=p->find_key(ev.key);
+    if (r)
+    {
+      wm->push_event(new event(r->id,(char *)r));
+      return 1;
+    }
       }
       return 0;
     } break;
     case EV_MOUSE_MOVE :
     {
       pmenu_item *new_selection=inarea(ev.mouse_move.x,ev.mouse_move.y,screen);
-      if (!new_selection && active && 
-	  active->handle_event(bar,itemx(active),1,itemw(active),1,ev))
-	return 1;
+      if (!new_selection && active &&
+      active->handle_event(bar,itemx(active),1,itemw(active),1,ev))
+    return 1;
       else if (active!=new_selection)
       {
-	if (active)
-	  active->draw(bar,itemx(active),1,itemw(active),1,0);
-	active=new_selection;
-	if (active)
-	  active->draw(bar,itemx(active),1,itemw(active),1,1);
+    if (active)
+      active->draw(bar,itemx(active),1,itemw(active),1,0);
+    active=new_selection;
+    if (active)
+      active->draw(bar,itemx(active),1,itemw(active),1,1);
       }
       if (active) return 1;
       else return 0;
     } break;
     case EV_MOUSE_BUTTON :
     {
-      if (active) 
+      if (active)
       {
         if (active->handle_event(bar,itemx(active),1,itemw(active),1,ev))
-	{
-	  active->draw(bar,itemx(active),1,itemw(active),1,0);
-	  active=NULL;
-	  return 1;
-	} else return 0;
+    {
+      active->draw(bar,itemx(active),1,itemw(active),1,0);
+      active=NULL;
+      return 1;
+    } else return 0;
       }
       else return 0;
     } break;

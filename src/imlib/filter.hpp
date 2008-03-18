@@ -39,7 +39,7 @@ public:
   int write(bFILE *fp);
   color_filter(spec_entry *e, bFILE *fp);
   color_filter(palette *pal, int color_bits=6, void (*stat_fun)(int)=NULL);
-  unsigned char lookup_color(int r, int g, int b) 
+  unsigned char lookup_color(int r, int g, int b)
    { return color_table[r*32*32+g*32+b]; }
   unsigned char *table() { return color_table; }
   int total_colors() { return 32; }

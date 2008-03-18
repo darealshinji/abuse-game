@@ -54,13 +54,13 @@ int game_server_fd=-1,        // connection to server created by join_game()
 int packet_port;              // port used to send 'lossy' game data
 
 void clean_up()      // on exit unattach all shared memory links
-{  
+{
   base->input_state=INPUT_NET_DEAD;
   fprintf(stderr,"net driver : cleaning up\n");
   if (shm_seg_id!=-1)
     shmctl(shm_seg_id,IPC_RMID,NULL);
 
-  if (shm_addr!=(void *)-1) 
+  if (shm_addr!=(void *)-1)
   {
     shmdt((char *)shm_addr);
     shm_addr=(void *)-1;
@@ -79,7 +79,7 @@ void die(...)
 #else
 void die(int why)
 #endif
-{ 
+{
   fprintf(stderr,"dieing\n");
   clean_up();
   exit(0);
@@ -115,11 +115,11 @@ main(int argc, char **argv)
 
 
   // make sure this program was run by the abuse engine
-  if (argc<2 || strcmp(argv[1],"runme"))   
-  { 
+  if (argc<2 || strcmp(argv[1],"runme"))
+  {
     stand_alone=1;
     fprintf(stderr,"%s is normally run by abuse, running stand-alone file server\n"
-	           "Server will be killed by running abuse\n",argv[0]);
+               "Server will be killed by running abuse\n",argv[0]);
   }
 
 
@@ -135,18 +135,18 @@ main(int argc, char **argv)
       sprintf(proc_path,"/proc/%d",pid);
       if (!stat(proc_path,&st))
       {
-	fprintf(stderr,"net driver : warning, %s already running, attempting to kill...\n",argv[0]);
-	if (kill(pid,SIGKILL))
-	{
-	  fprintf(stderr,"net driver : unable to kill process %d, cannot run net-abuse\n",pid);
-	  fclose(fp);
-	  return 0;
-	}
-	fprintf(stderr,"killed process %d\n",pid);
+    fprintf(stderr,"net driver : warning, %s already running, attempting to kill...\n",argv[0]);
+    if (kill(pid,SIGKILL))
+    {
+      fprintf(stderr,"net driver : unable to kill process %d, cannot run net-abuse\n",pid);
+      fclose(fp);
+      return 0;
+    }
+    fprintf(stderr,"killed process %d\n",pid);
       }
     }
     fclose(fp);
-    unlink(DLOCK_NAME);    
+    unlink(DLOCK_NAME);
   }
 
 
@@ -172,35 +172,35 @@ main(int argc, char **argv)
     for (i=1;i<argc;i++)
     if (!strcmp(argv[i],"-no_fork"))    // use this to debug easier
       no_fork=1;
-    
+
     if (!no_fork)      // use this for debugging
     {
       int child_pid=fork();
       if (child_pid)
       {
-	FILE *fp=fopen(DLOCK_NAME,"wb");
-	if (!fp)
-	{ 
-	  fprintf(stderr,"Unable to open %s for writing, killing child\n",DLOCK_NAME);
-	  kill(child_pid,SIGKILL);
-	  return 0;
-	}
-	fprintf(fp,"%d\n",child_pid);
-	fclose(fp);
-	printf("%d\n",child_pid);         // tell parent the sound driver's process number
-	return 0;                         // exit, child will continue
+    FILE *fp=fopen(DLOCK_NAME,"wb");
+    if (!fp)
+    {
+      fprintf(stderr,"Unable to open %s for writing, killing child\n",DLOCK_NAME);
+      kill(child_pid,SIGKILL);
+      return 0;
+    }
+    fprintf(fp,"%d\n",child_pid);
+    fclose(fp);
+    printf("%d\n",child_pid);         // tell parent the sound driver's process number
+    return 0;                         // exit, child will continue
       }
-    }  
+    }
 
     driver_out_fd=open(DOUT_NAME,O_RDWR);  // open the pipe
     if (driver_out_fd<0)
-    { perror(DOUT_NAME); 
+    { perror(DOUT_NAME);
       exit(1);
     }
 
     driver_in_fd=open(DIN_NAME,O_RDWR);
     if (driver_in_fd<0)
-    { perror(DIN_NAME); 
+    { perror(DIN_NAME);
       exit(1);
     }
   } else driver_in_fd=driver_out_fd=-1;
@@ -208,9 +208,9 @@ main(int argc, char **argv)
 
 
   int catch_sigs[]={SIGHUP,SIGINT,SIGQUIT,SIGILL,SIGABRT,
-		    SIGIOT,SIGFPE,SIGKILL,SIGUSR1,SIGSEGV,
-		    SIGUSR2,SIGPIPE,SIGTERM,SIGCHLD,
-		    SIGCONT,SIGSTOP,SIGTSTP,SIGTTIN,SIGTTOU,-1};
+            SIGIOT,SIGFPE,SIGKILL,SIGUSR1,SIGSEGV,
+            SIGUSR2,SIGPIPE,SIGTERM,SIGCHLD,
+            SIGCONT,SIGSTOP,SIGTSTP,SIGTTIN,SIGTTOU,-1};
 
   for (i=0;catch_sigs[i]!=-1;i++)     // catch all signals in case we get
     signal(catch_sigs[i],die);            // interrupted before we remove shmid
@@ -232,7 +232,7 @@ main(int argc, char **argv)
 
 
   shm_addr=shmat(shm_seg_id,NULL,0);  // attach as read/write
-  if (shm_addr==(void *)-1) 
+  if (shm_addr==(void *)-1)
     mdie("could not attach shm seg");
 
   base=(base_memory_struct *)shm_addr;
@@ -261,7 +261,7 @@ main(int argc, char **argv)
       comm_failed();
   }
 
-  
+
   if (shmctl(shm_seg_id,IPC_RMID,NULL))  // remove the shm id
     mdie("could not remove shm id");
 
@@ -311,7 +311,7 @@ void setup_ports(int comm_port, int game_port)
 //  if (fcntl(game_fd,F_SETFL,FNDELAY)==-1)
 //    mdie("cound not set udp socket to non-blocking");
 
-  
+
   packet_port=game_port;   // save this port, so we can send it on joining a game
   memset( (char*) &host,0, sizeof(host));
   host.sin_family = AF_INET;
@@ -342,7 +342,7 @@ void setup_ports(int comm_port, int game_port)
 
   if (listen(comm_fd,5)==-1)
   {
-    fprintf(stderr,"net driver : could not listen to socket on port %d\n",comm_port);    
+    fprintf(stderr,"net driver : could not listen to socket on port %d\n",comm_port);
     die(0);
   }
 
@@ -376,16 +376,16 @@ class crc_waiter
   int socket_fd;
   crc_waiter *next;
   crc_waiter(int fd, crc_waiter *Next)
-  { 
+  {
     FD_SET(fd,&master_set);   // set in case socket dies
     socket_fd=fd;
     next=Next;
   } ;
-  ~crc_waiter() 
-  { 
-    close(socket_fd); 
+  ~crc_waiter()
+  {
+    close(socket_fd);
     FD_CLR(socket_fd,&master_set);
-  }    
+  }
 } *crc_wait_list=NULL;
 
 class lsf_waiter
@@ -394,16 +394,16 @@ class lsf_waiter
   int socket_fd;
   lsf_waiter *next;
   lsf_waiter(int fd, lsf_waiter *Next)
-  { 
+  {
     FD_SET(fd,&master_set);   // set in case socket dies
     socket_fd=fd;
     next=Next;
   } ;
-  ~lsf_waiter() 
-  { 
-    close(socket_fd); 
+  ~lsf_waiter()
+  {
+    close(socket_fd);
     FD_CLR(socket_fd,&master_set);
-  }    
+  }
 } *lsf_wait_list=NULL;
 
 
@@ -437,23 +437,23 @@ int connect_to_server(char *&server_name, int def_port, int stream_type, int for
     fprintf(stderr,"cannot connect to %s, is a local address\n");
     return -1;
   }
- 
+
   int socket_fd=socket(AF_INET,stream_type,0);
-  if (socket_fd<0) 
+  if (socket_fd<0)
   {
     fprintf(stderr,"unable to create socket (too many open files?)\n");
     return -1;
   }
 
- 
+
   hostent *hp=gethostbyname(name);
   if (!hp)
-  { 
+  {
     fprintf(stderr,"unable to locate server named '%s'\n",name);
-    close(socket_fd); 
+    close(socket_fd);
     return 0;
   }
-  
+
 
   sockaddr_in host;
   memset( (char*) &host,0, sizeof(host));
@@ -461,9 +461,9 @@ int connect_to_server(char *&server_name, int def_port, int stream_type, int for
   host.sin_port = lstl(def_port);
   host.sin_addr.s_addr = lltl (INADDR_ANY);
   memcpy(&host.sin_addr,hp->h_addr,hp->h_length);
-    
+
   if (connect(socket_fd, (struct sockaddr *) &host, sizeof(host))==-1)
-  { 
+  {
     fprintf(stderr,"unable to connect\n");
     close(socket_fd);
     return -1;
@@ -478,12 +478,12 @@ int get_lsf(char *name)  // contact remot host and ask for lisp startup file fil
   int fd=connect_to_server(name);
   if (fd<0) return 0;
   uint8_t ctype=CLIENT_LSF_WAITER;
-  if (write(fd,&ctype,1)!=1) { close(fd); return 0; } 
+  if (write(fd,&ctype,1)!=1) { close(fd); return 0; }
   uint8_t len;
   if (read(fd,&len,1)!=1 || len==0) { close(fd); return 0; }
   if (read(fd,name_start,len)!=len) { close(fd); return 0; }
   close(fd);
-  return 1;  
+  return 1;
 }
 
 int join_game(char *server_name)   // ask remote server for entry into game
@@ -493,7 +493,7 @@ int join_game(char *server_name)   // ask remote server for entry into game
 
   int fd=connect_to_server(server_name);
   uint8_t ctype=CLIENT_ABUSE;
-  if (write(fd,&ctype,1)!=1) { close(fd); return 0; } 
+  if (write(fd,&ctype,1)!=1) { close(fd); return 0; }
 
   // send server out game port
   uint16_t port=lstl(packet_port);
@@ -507,7 +507,7 @@ int join_game(char *server_name)   // ask remote server for entry into game
   if (read(fd,&cnum,2)!=2 || cnum==0) { close(fd); return 0; }
   cnum=lstl(cnum);
 
- 
+
   game_server_fd=fd;
 
   server_name=sn_start;
@@ -539,7 +539,7 @@ void join_new_players()  // during this section we are giving mem_lock by engine
   }
 
   base->join_list=NULL;  // all joiners have been added
- 
+
 }
 
 int waiting_server_input=1;
@@ -552,24 +552,24 @@ void add_client_input(char *buf, int size, client *c)
   {
     c->wait_input=0;
   }
-  else 
+  else
   {
     FD_SET(game_fd,&master_set);   // we are ready to accept other client's game data, so add the udp socket to the select list
     waiting_server_input=0;
   }
 
-  int got_all=1;  
+  int got_all=1;
   for (c=first_client;c;c=c->next)
     if (c->wait_input)
       got_all=0;
 
   if (got_all && !waiting_server_input)
-  {   
+  {
     base->packet.calc_checksum();
 
     for (c=first_client;c;c=c->next)      // setup for next time, wait for all the input
     {
-      c->wait_input=1;      
+      c->wait_input=1;
       send(c->data_fd,base->packet.data,base->packet.packet_size()+base->packet.packet_prefix_size(),0);
     }
 
@@ -587,7 +587,7 @@ void get_input_from_server()
   { mdie("read <= 0 bytes from server"); }
   if (base->packet.packet_size()+base->packet.packet_prefix_size()==size &&     // did we read the whole packet?
       base->packet.tick_received()==base->current_tick)    // if this was the correct tick packet, then tell server to go on
-    base->input_state=INPUT_PROCESSING;    
+    base->input_state=INPUT_PROCESSING;
 }
 
 void process_engine_command()
@@ -603,7 +603,7 @@ void process_engine_command()
     } break;
 
     case NFCMD_BLOCK :
-    {      
+    {
       if (!write(driver_out_fd,&cmd,1)) { mdie("could not write block ack1"); }  // send something to unblock engine
       if (!read(driver_in_fd,&cmd,1)) { mdie("could not read block ack1"); }  // send something to block ourself
     } break;
@@ -615,20 +615,20 @@ void process_engine_command()
       if (net_server[0])   // if we are connected to a server ask sever to resend
       {
         if (write(game_server_fd,pk,2)!=2) { mdie("attept to re-fetch input failed"); }
-	fprintf(stderr,"sending retry request to server (%d)\n",pk[1]);
+    fprintf(stderr,"sending retry request to server (%d)\n",pk[1]);
       } else
       {
-	client *c=first_client;
-	for (;c;c=c->next)
-	{
-	  if (!c->delete_me && c->wait_input)
-	  {
-	    fprintf(stderr,"sending retry request to client (%d)\n",pk[1]);
-	    if (write(c->socket_fd,pk,2)!=2) 
-	      c->delete_me=1;
-	  }
-	  if (c->delete_me) fprintf(stderr,"delete this client!\n");
-	}
+    client *c=first_client;
+    for (;c;c=c->next)
+    {
+      if (!c->delete_me && c->wait_input)
+      {
+        fprintf(stderr,"sending retry request to client (%d)\n",pk[1]);
+        if (write(c->socket_fd,pk,2)!=2)
+          c->delete_me=1;
+      }
+      if (c->delete_me) fprintf(stderr,"delete this client!\n");
+    }
       }
       if (!write(driver_out_fd,&cmd,1)) { mdie("could not write block ack1"); }  // send something to unblock engine
     } break;
@@ -636,27 +636,27 @@ void process_engine_command()
     case NFCMD_SEND_INPUT :
     {
       base->packet.set_tick_received(base->current_tick);
-      base->input_state=INPUT_COLLECTING;  
+      base->input_state=INPUT_COLLECTING;
       if (!net_server[0])
       {
         add_client_input(NULL,0,NULL);
       }
       else
       {
-	base->packet.calc_checksum();
+    base->packet.calc_checksum();
         send(game_server_data_fd,base->packet.data,base->packet.packet_size()+base->packet.packet_prefix_size(),0);
       }
       if (!write(driver_out_fd,&cmd,1)) { mdie("could not write send ack1"); }  // send something to unblock engine
-      if (!read(driver_in_fd,&cmd,1)) { mdie("could not read send ack2"); }	// read something to block ourselves for engine
+      if (!read(driver_in_fd,&cmd,1)) { mdie("could not read send ack2"); }    // read something to block ourselves for engine
     } break;
 
     case NFCMD_RELOADED :
     {
       if (game_server_fd>0)
       {
-	uint8_t ok=CLCMD_RELOADED;
-        if (!write(game_server_fd,&ok,1)) { mdie("could not send join_ok msg"); }	
-	next_process();
+    uint8_t ok=CLCMD_RELOADED;
+        if (!write(game_server_fd,&ok,1)) { mdie("could not send join_ok msg"); }    
+    next_process();
       }
     } break;
 
@@ -673,7 +673,7 @@ void process_engine_command()
       if (read(driver_in_fd,name,len)!=len) { mdie("could not read server name"); }
       strcpy(net_server,name);
       uint16_t success=join_game(name);
-      if (write(driver_out_fd,&success,2)!=2) mdie("cound not send lsf read failure");      
+      if (write(driver_out_fd,&success,2)!=2) mdie("cound not send lsf read failure");
       next_process();
     } break;
 
@@ -685,14 +685,14 @@ void process_engine_command()
       if (read(driver_in_fd,name,len)!=len) { mdie("could not read lsf name"); }
       if (!get_lsf(name))
       {
-	len=0;
+    len=0;
         if (write(driver_out_fd,&len,1)!=1) mdie("cound not send lsf read failure");
       } else
       {
-	len=strlen(name)+1;
-	if (write(driver_out_fd,&len,1)!=1) mdie("cound not send lsf name len");
-	if (write(driver_out_fd,name,len)!=len) mdie("cound not send lsf name");
-      }     
+    len=strlen(name)+1;
+    if (write(driver_out_fd,&len,1)!=1) mdie("cound not send lsf name len");
+    if (write(driver_out_fd,name,len)!=len) mdie("cound not send lsf name");
+      }
       next_process();
     } break;
 
@@ -703,25 +703,25 @@ void process_engine_command()
       if (read(driver_in_fd,name,len)!=len) { mdie("could not read lsf name"); }
       while (lsf_wait_list)
       {
-	lsf_waiter *c=lsf_wait_list;
-	lsf_wait_list=lsf_wait_list->next;
-	uint8_t status=1;
-	write(c->socket_fd,&len,1);
-	write(c->socket_fd,name,len);
-	delete c;
+    lsf_waiter *c=lsf_wait_list;
+    lsf_wait_list=lsf_wait_list->next;
+    uint8_t status=1;
+    write(c->socket_fd,&len,1);
+    write(c->socket_fd,name,len);
+    delete c;
       }
       next_process();
     } break;
 
-    case NFCMD_CRCS_CALCED : 
+    case NFCMD_CRCS_CALCED :
     {
       while (crc_wait_list)
       {
-	crc_waiter *c=crc_wait_list;
-	crc_wait_list=crc_wait_list->next;
-	uint8_t status=1;
-	write(c->socket_fd,&status,1);
-	delete c;
+    crc_waiter *c=crc_wait_list;
+    crc_wait_list=crc_wait_list->next;
+    uint8_t status=1;
+    write(c->socket_fd,&status,1);
+    delete c;
       }
       next_process();
     } break;
@@ -736,7 +736,7 @@ void process_engine_command()
       size=fetch_crcs(sn);  // return success
       if (write(driver_out_fd,&size,1)!=1) mdie("could not send ok to engine");
       next_process();
-    } break;    
+    } break;
 
     case NFCMD_OPEN :
     {
@@ -746,27 +746,27 @@ void process_engine_command()
       if (read(driver_in_fd,size,2)!=2) mdie("could not read fd on open");
       if (read(driver_in_fd,filename,size[0])!=size[0]) mdie("incomplete filename");
       if (read(driver_in_fd,mode,size[1])!=size[1]) mdie("incomplete mode string");
-      
+
       int fd=open_file(fn,mode);
       if (fd==-2)
       {
-	uint8_t st[2];
-	st[0]=NF_OPEN_LOCAL_FILE;
-	st[1]=strlen(fn)+1;
-	if (write(driver_out_fd,st,2)!=2) comm_failed();
-	int size=write(driver_out_fd,fn,st[1]);
-	if (size!=st[1]) comm_failed();
+    uint8_t st[2];
+    st[0]=NF_OPEN_LOCAL_FILE;
+    st[1]=strlen(fn)+1;
+    if (write(driver_out_fd,st,2)!=2) comm_failed();
+    int size=write(driver_out_fd,fn,st[1]);
+    if (size!=st[1]) comm_failed();
 
-	if (size!=st[1]) comm_failed();
+    if (size!=st[1]) comm_failed();
       } else if (fd==-1)
       {
-	uint8_t st=NF_OPEN_FAILED;
-	if (write(driver_out_fd,&st,1)!=1) comm_failed(); 
+    uint8_t st=NF_OPEN_FAILED;
+    if (write(driver_out_fd,&st,1)!=1) comm_failed();
       } else
       {
-	uint8_t st=NF_OPEN_REMOTE_FILE;
-	if (write(driver_out_fd,&st,1)!=1) comm_failed(); 	
-	if (write(driver_out_fd,&fd,sizeof(fd))!=sizeof(fd)) comm_failed(); 	
+    uint8_t st=NF_OPEN_REMOTE_FILE;
+    if (write(driver_out_fd,&st,1)!=1) comm_failed();     
+    if (write(driver_out_fd,&fd,sizeof(fd))!=sizeof(fd)) comm_failed();     
       }
       next_process();
     } break;
@@ -779,46 +779,46 @@ void process_engine_command()
       int fd;
       if (read(driver_in_fd,&fd,sizeof(fd))!=sizeof(fd)) comm_failed();
       remote_file *rf=find_rfile(fd);
-      if (!rf) 
-	mdie("bad fd for engine command");
+      if (!rf)
+    mdie("bad fd for engine command");
 
       switch (cmd)
       {
-	case NFCMD_CLOSE : 
-	{ 
-	  unlink_remote_file(rf);
-	  delete rf; 
-	  uint8_t st=1;
-	  if (write(driver_out_fd,&st,1)!=1) comm_failed(); 	
-	} break;
-	case NFCMD_SIZE  :
-	{
-	  if (write(driver_out_fd,&rf->size,sizeof(rf->size))!=sizeof(rf->size)) comm_failed(); 		  
-	} break;
-	case NFCMD_TELL :
-	{
-	  long offset=rf->unbuffered_tell();
-	  if (write(driver_out_fd,&offset,sizeof(offset))!=sizeof(offset)) comm_failed();  
-	} break;
-	case NFCMD_SEEK :
-	{
-	  long offset;
-	  if (read(driver_in_fd,&offset,sizeof(offset))!=sizeof(offset)) comm_failed();
-	  offset=rf->unbuffered_seek(offset);
-	  if (write(driver_out_fd,&offset,sizeof(offset))!=sizeof(offset)) comm_failed();  
-	} break;
-	case NFCMD_READ :
-	{
-	  long size;
-	  if (read(driver_in_fd,&size,sizeof(size))!=sizeof(size)) comm_failed();
-	  rf->unbuffered_read(driver_out_fd,size);
-	} break;
+    case NFCMD_CLOSE :
+    {
+      unlink_remote_file(rf);
+      delete rf;
+      uint8_t st=1;
+      if (write(driver_out_fd,&st,1)!=1) comm_failed();     
+    } break;
+    case NFCMD_SIZE  :
+    {
+      if (write(driver_out_fd,&rf->size,sizeof(rf->size))!=sizeof(rf->size)) comm_failed();         
+    } break;
+    case NFCMD_TELL :
+    {
+      long offset=rf->unbuffered_tell();
+      if (write(driver_out_fd,&offset,sizeof(offset))!=sizeof(offset)) comm_failed();
+    } break;
+    case NFCMD_SEEK :
+    {
+      long offset;
+      if (read(driver_in_fd,&offset,sizeof(offset))!=sizeof(offset)) comm_failed();
+      offset=rf->unbuffered_seek(offset);
+      if (write(driver_out_fd,&offset,sizeof(offset))!=sizeof(offset)) comm_failed();
+    } break;
+    case NFCMD_READ :
+    {
+      long size;
+      if (read(driver_in_fd,&size,sizeof(size))!=sizeof(size)) comm_failed();
+      rf->unbuffered_read(driver_out_fd,size);
+    } break;
       }
       next_process();
-    } break;    
+    } break;
     default :
     { fprintf(stderr,"net driver : unknown net command %d\n",cmd); die(0); }
-  }   
+  }
 }
 
 
@@ -844,26 +844,26 @@ int process_client_command(client *c)
 
 
       fprintf(stderr,"request for resend tick %d (game cur=%d, pack=%d, last=%d)\n",
-	      tick,base->current_tick,base->packet.tick_received(),base->last_packet.tick_received());
+          tick,base->current_tick,base->packet.tick_received(),base->last_packet.tick_received());
 
       if (tick==base->last_packet.tick_received())
       {
-	fprintf(stderr,"resending last game packet\n");
-	send(c->data_fd,base->last_packet.data,base->last_packet.packet_size()+base->last_packet.packet_prefix_size(),0); 
+    fprintf(stderr,"resending last game packet\n");
+    send(c->data_fd,base->last_packet.data,base->last_packet.packet_size()+base->last_packet.packet_prefix_size(),0);
       }
       else if (tick==base->packet.tick_received()) // asking for current tick, make sure it's collected
       {
-	int got_all=!waiting_server_input;
-	client *cc=first_client;
-	for (;cc;cc=cc->next)
-	  if (cc->wait_input) got_all=0;
-	  
-	if (got_all) 
-	{
-	  fprintf(stderr,"resending current game packet\n");
-	  send(c->data_fd,base->packet.data,base->packet.packet_size()+base->packet.packet_prefix_size(),0); 
-	} else fprintf(stderr,"current game packet not complete yet\n");
-      }      
+    int got_all=!waiting_server_input;
+    client *cc=first_client;
+    for (;cc;cc=cc->next)
+      if (cc->wait_input) got_all=0;
+    
+    if (got_all)
+    {
+      fprintf(stderr,"resending current game packet\n");
+      send(c->data_fd,base->packet.data,base->packet.packet_size()+base->packet.packet_prefix_size(),0);
+    } else fprintf(stderr,"current game packet not complete yet\n");
+      }
       return 1;
     } break;
   }
@@ -879,7 +879,7 @@ int isa_client(int client_id)    // sreach the list of active clients for this i
   client *c=first_client;
   for (;c;c=c->next)
     if (c->client_id==client_id) return 1;
-  return 0;  
+  return 0;
 }
 
 int join_game_client(int client_id)
@@ -887,30 +887,30 @@ int join_game_client(int client_id)
 }
 
 int add_game_client(int fd, sockaddr *from)     // returns false if could not join client
-{  
+{
   uint16_t port;
   if (read(fd,&port,2)!=2) { close(fd);  return 0; }
   port=lstl(port);
 
   uint16_t pport=lstl(packet_port);
-  if (write(fd,&pport,2)!=2) { close(fd);  return 0; }  
+  if (write(fd,&pport,2)!=2) { close(fd);  return 0; }
 
 
   int f=-1,i;
   for (i=0;f==-1 && i<MAX_JOINERS;i++)
-    if (!isa_client(i)) 
+    if (!isa_client(i))
       f=i;
 
   if (f===-1) { close(fd); return 0; }
 
   uint16_t client_id=lstl(f);
-  if (write(fd,&client_id,2)!=2) { close(fd);  return 0; }    
+  if (write(fd,&client_id,2)!=2) { close(fd);  return 0; }
 
 
   join_array[f].next=base->join_list;
   base->join_list=real2shm(join_struct,&join_array[f]);
-  join_array[f].client_id=first_free_client; 
-  
+  join_array[f].client_id=first_free_client;
+
   first_client=new client(fd,f,first_client);
   memcpy(&first_client->data_address,from,sizeof(first_client->data_address));
 
@@ -925,10 +925,10 @@ int add_game_client(int fd, sockaddr *from)     // returns false if could not jo
     fprintf(stderr,"net driver : could not create a socket.  (too many open files?)");
     return 0;
   }
-  
-  if (connect(first_client->data_fd, (struct sockaddr *) &first_client->data_address, 
-	      sizeof(first_client->data_address))==-1)
-  { 
+
+  if (connect(first_client->data_fd, (struct sockaddr *) &first_client->data_address,
+          sizeof(first_client->data_address))==-1)
+  {
     client *c=first_client;  first_client=first_client->next; delete c;
     fprintf(stderr,"unable to connect upd port\n");
     return 0;
@@ -952,31 +952,31 @@ void add_client()
     {
       case CLIENT_NFS : add_nfs_client(new_fd);    break;
       case CLIENT_ABUSE : add_game_client(new_fd,&from); break;
-      case CLIENT_CRC_WAITER : 
+      case CLIENT_CRC_WAITER :
       {
-	if (stand_alone)    // can't ask the engine if there is no engine
-	{
-	  char status=0;
-	  write(new_fd,&status,1);
-	  close(new_fd);
-	} else
-	{
-	  crc_wait_list=new crc_waiter(new_fd,crc_wait_list);
-	  base->calc_crcs=1;
-	}
+    if (stand_alone)    // can't ask the engine if there is no engine
+    {
+      char status=0;
+      write(new_fd,&status,1);
+      close(new_fd);
+    } else
+    {
+      crc_wait_list=new crc_waiter(new_fd,crc_wait_list);
+      base->calc_crcs=1;
+    }
       } break;
-      case CLIENT_LSF_WAITER : 
+      case CLIENT_LSF_WAITER :
       {
-	if (stand_alone)    // can't ask the engine if there is no engine
-	{
-	  char status=0;
-	  write(new_fd,&status,1);
-	  close(new_fd);
-	} else
-	{
-	  lsf_wait_list=new lsf_waiter(new_fd,lsf_wait_list);
-	  base->get_lsf=1;
-	}
+    if (stand_alone)    // can't ask the engine if there is no engine
+    {
+      char status=0;
+      write(new_fd,&status,1);
+      close(new_fd);
+    } else
+    {
+      lsf_wait_list=new lsf_waiter(new_fd,lsf_wait_list);
+      base->get_lsf=1;
+    }
       } break;
     }
   }
@@ -998,9 +998,9 @@ void net_watch()
   }
 
   fd_set read_set,exception_set,write_set;
-  
-  FD_ZERO(&master_set);  
-  FD_ZERO(&master_write_set);  
+
+  FD_ZERO(&master_set);
+  FD_ZERO(&master_write_set);
   FD_SET(comm_fd,&master_set);     // new incoming connections & nfs data
   if (net_server)
     FD_SET(game_fd,&master_set);     // new incoming connections & nfs data
@@ -1025,145 +1025,145 @@ void net_watch()
     {
       if (base->input_state==INPUT_COLLECTING)
       {
-	// any game related data (udp) waiting to be read?
-	if (FD_ISSET(game_fd,&read_set))
-	{
-	  tsel--;
-	  check_rest=0;
-	  net_packet scratch,*use;
-	  
-	  if (net_server[0]==0)    // if we are the server, read into scratch, then "add" into base
-	    use=&scratch;
-	  else use=&base->packet;    // otherwise read directly into base because it is a complete packet from the server
+    // any game related data (udp) waiting to be read?
+    if (FD_ISSET(game_fd,&read_set))
+    {
+      tsel--;
+      check_rest=0;
+      net_packet scratch,*use;
+    
+      if (net_server[0]==0)    // if we are the server, read into scratch, then "add" into base
+        use=&scratch;
+      else use=&base->packet;    // otherwise read directly into base because it is a complete packet from the server
 
-	  sockaddr_in from_addr;
-	  int addr_size=sizeof(from_addr);
-	  int bytes_received=recvfrom(game_fd,use->data,1024,0, (sockaddr *)&from_addr,&addr_size);
+      sockaddr_in from_addr;
+      int addr_size=sizeof(from_addr);
+      int bytes_received=recvfrom(game_fd,use->data,1024,0, (sockaddr *)&from_addr,&addr_size);
 
-	  // make sur we got a complete packet and the packet was not a previous game tick packet
-	  if (bytes_received==use->packet_size()+use->packet_prefix_size())
-	  {
-	    unsigned short rec_crc=use->get_checksum();
-	    use->calc_checksum();
-	    if (rec_crc==use->get_checksum())
-	    {
-	      if (base->current_tick==use->tick_received())  
-	      {
-		if (net_server[0])   // if we are a client, tell game to process input
-		base->input_state=INPUT_PROCESSING;   // tell engine to start processing
-		else
-		{
+      // make sur we got a complete packet and the packet was not a previous game tick packet
+      if (bytes_received==use->packet_size()+use->packet_prefix_size())
+      {
+        unsigned short rec_crc=use->get_checksum();
+        use->calc_checksum();
+        if (rec_crc==use->get_checksum())
+        {
+          if (base->current_tick==use->tick_received())
+          {
+        if (net_server[0])   // if we are a client, tell game to process input
+        base->input_state=INPUT_PROCESSING;   // tell engine to start processing
+        else
+        {
 
-		  client *f=first_client,*found=NULL;
-		  for (;!found &&f;f=f->next)
-		  if (!memcmp(&from_addr.sin_addr,&f->data_address.sin_addr,sizeof(from_addr.sin_addr)))
-		  found=f;
-		  
-		  if (!found)
-		  fprintf(stderr,"received data from unknown client\n");
-		  else
-		  add_client_input((char *)use->packet_data(),use->packet_size(),found);
-		}
-	      } else fprintf(stderr,"received stale packet (got %d, expected %d)\n",use->tick_received(),base->current_tick);
-	    } else fprintf(stderr,"received packet with bad checksum\n");
-	  } else fprintf(stderr,"received incomplete packet\n");
-	}
-	base->mem_lock=0;
+          client *f=first_client,*found=NULL;
+          for (;!found &&f;f=f->next)
+          if (!memcmp(&from_addr.sin_addr,&f->data_address.sin_addr,sizeof(from_addr.sin_addr)))
+          found=f;
+        
+          if (!found)
+          fprintf(stderr,"received data from unknown client\n");
+          else
+          add_client_input((char *)use->packet_data(),use->packet_size(),found);
+        }
+          } else fprintf(stderr,"received stale packet (got %d, expected %d)\n",use->tick_received(),base->current_tick);
+        } else fprintf(stderr,"received packet with bad checksum\n");
+      } else fprintf(stderr,"received incomplete packet\n");
+    }
+    base->mem_lock=0;
       }
 
       // see if we had any errors talking to the engine
       if (FD_ISSET(driver_in_fd,&exception_set) || FD_ISSET(driver_out_fd,&exception_set))
       {
-	tsel--;
-	check_rest=0;
+    tsel--;
+    check_rest=0;
         comm_failed();
       }
-      
+
       // see if the engine has anything to say before getting to anyone else
       if (FD_ISSET(driver_in_fd,&read_set))
       {
-	tsel--;
+    tsel--;
         process_engine_command();
-	check_rest=0;
+    check_rest=0;
       }
     }
- 
+
 
     if (check_rest && aquire_mem_lock())  // we need to change shared memory, make sure server is not using it.
     {
       if (game_server_fd==-1)    // we are a server, check all client connections
       {
-	client *c,*lastc=NULL;
+    client *c,*lastc=NULL;
 
-	for (c=first_client;c;)
-	{
-	  int del=0;
-	  if (FD_ISSET(c->socket_fd,&exception_set))  // error?
-	  {
-	    tsel--;
-	    del=1;
-	  }
+    for (c=first_client;c;)
+    {
+      int del=0;
+      if (FD_ISSET(c->socket_fd,&exception_set))  // error?
+      {
+        tsel--;
+        del=1;
+      }
 
-	  // waiting for engine to process command buffer, don't read anymore yet
-	  else if (FD_ISSET(c->socket_fd,&read_set))  // in comming commands data from client?
-	  { 
-	    tsel--;
-	    if (process_client_command(c)==0)
-	    del=1;
+      // waiting for engine to process command buffer, don't read anymore yet
+      else if (FD_ISSET(c->socket_fd,&read_set))  // in comming commands data from client?
+      {
+        tsel--;
+        if (process_client_command(c)==0)
+        del=1;
 
-	    if (del)
-	    {
-	      if (c->wait_reload)
-	      {
-		int done=1;
-		client *d=first_client;
-		for (;d;d=d->next)                // see if this was the last client to wait on reloading
-		if (d->wait_reload) done=0;
-		if (done) base->wait_reload=0;
-	      }
+        if (del)
+        {
+          if (c->wait_reload)
+          {
+        int done=1;
+        client *d=first_client;
+        for (;d;d=d->next)                // see if this was the last client to wait on reloading
+        if (d->wait_reload) done=0;
+        if (done) base->wait_reload=0;
+          }
 
-	      if (lastc) lastc->next=c->next;
-	      else first_client=c->next;
-	      client *cd=c; c=c->next; delete cd;
-	    } else
-	    {
-	      lastc=c;
-	      c=c->next;
-	    }	 
-	  } else c=c->next;
-	}
+          if (lastc) lastc->next=c->next;
+          else first_client=c->next;
+          client *cd=c; c=c->next; delete cd;
+        } else
+        {
+          lastc=c;
+          c=c->next;
+        }    
+      } else c=c->next;
+    }
       } else if (FD_ISSET(game_server_fd,&read_set))
       {
-	uint8_t cmd;
-	if (read(game_server_fd,&cmd,1)!=1) { mdie("unable to read command from server"); }
-	switch (cmd)
-	{
-	  case CLCMD_RELOAD :
-	  {
-	    base->need_reload=1;
-	  } break;
-	  case CLCMD_REQUEST_RESEND :
-	  {
-	    uint8_t tick;
-	    if (read(game_server_fd,&tick,1)!=1) { mdie("unable to read resend tick from server"); }
+    uint8_t cmd;
+    if (read(game_server_fd,&cmd,1)!=1) { mdie("unable to read command from server"); }
+    switch (cmd)
+    {
+      case CLCMD_RELOAD :
+      {
+        base->need_reload=1;
+      } break;
+      case CLCMD_REQUEST_RESEND :
+      {
+        uint8_t tick;
+        if (read(game_server_fd,&tick,1)!=1) { mdie("unable to read resend tick from server"); }
 
-	    fprintf(stderr,"request for resend tick %d (game cur=%d, pack=%d, last=%d)\n",
-	      tick,base->current_tick,base->packet.tick_received(),base->last_packet.tick_received());
+        fprintf(stderr,"request for resend tick %d (game cur=%d, pack=%d, last=%d)\n",
+          tick,base->current_tick,base->packet.tick_received(),base->last_packet.tick_received());
 
-	    if (tick==base->packet.tick_received() && !waiting_server_input)    // asking for this tick?  make sure is collected
-	    {
-	      fprintf(stderr,"resending client packet to server\n");
-	      send(game_server_data_fd,base->packet.data,base->packet.packet_size()+base->packet.packet_prefix_size(),0); 
-	    }
-	  } break;
-	}
+        if (tick==base->packet.tick_received() && !waiting_server_input)    // asking for this tick?  make sure is collected
+        {
+          fprintf(stderr,"resending client packet to server\n");
+          send(game_server_data_fd,base->packet.data,base->packet.packet_size()+base->packet.packet_prefix_size(),0);
+        }
+      } break;
+    }
       }
 
 
 
       if (FD_ISSET(comm_fd,&read_set))
       {
-	tsel--;
+    tsel--;
         add_client();
       }
 
@@ -1171,52 +1171,52 @@ void net_watch()
       for (nc=first_nfs_client;nc;)      // check for nfs request
       {
 
-	int ok=1;
+    int ok=1;
 
-	if (FD_ISSET(nc->socket_fd,&exception_set))
-	{
-	  tsel--;
-	  ok=0;
-	  fprintf(stderr,"Killing nfs client, socket went bad\n");
-	} 
-	else if (nc->size_to_read)
-	{
-	  if (FD_ISSET(nc->socket_fd,&write_set))
-	  {
-	    tsel--;
-	    ok=nc->send_read();
-	  }
-	}	    
-	else if (FD_ISSET(nc->socket_fd,&read_set))
-	{
-	  tsel--;
-	  ok=process_nfs_command(nc);    // if we couldn't process the packeted, delete the connection
-	}
-	    
-	if (ok)
-	{
-	  last=nc;
-	  nc=nc->next;
-	} else
-	{
-	  if (last) last->next=nc->next;
-	  else first_nfs_client=nc->next;
-	  nfs_client *c=nc;
-	  nc=nc->next;
-	  delete c;
-	}
+    if (FD_ISSET(nc->socket_fd,&exception_set))
+    {
+      tsel--;
+      ok=0;
+      fprintf(stderr,"Killing nfs client, socket went bad\n");
+    }
+    else if (nc->size_to_read)
+    {
+      if (FD_ISSET(nc->socket_fd,&write_set))
+      {
+        tsel--;
+        ok=nc->send_read();
+      }
+    }    
+    else if (FD_ISSET(nc->socket_fd,&read_set))
+    {
+      tsel--;
+      ok=process_nfs_command(nc);    // if we couldn't process the packeted, delete the connection
+    }
+    
+    if (ok)
+    {
+      last=nc;
+      nc=nc->next;
+    } else
+    {
+      if (last) last->next=nc->next;
+      else first_nfs_client=nc->next;
+      nfs_client *c=nc;
+      nc=nc->next;
+      delete c;
+    }
       }
 
       // check for bad sockets for people waiting on crc's
       crc_waiter *crcw=crc_wait_list,*last_crcw=NULL;
       for (;crcw;)
       {
-	if (FD_ISSET(crcw->socket_fd,&exception_set))
-	{
-	  tsel--;
-	  if (last_crcw) { last_crcw->next=crcw->next; crc_waiter *cc=crcw; crcw=crcw->next; delete cc; }
-	  else { crc_wait_list=crcw->next; delete crcw; crcw=crc_wait_list; }
-	} else crcw=crcw->next;
+    if (FD_ISSET(crcw->socket_fd,&exception_set))
+    {
+      tsel--;
+      if (last_crcw) { last_crcw->next=crcw->next; crc_waiter *cc=crcw; crcw=crcw->next; delete cc; }
+      else { crc_wait_list=crcw->next; delete crcw; crcw=crc_wait_list; }
+    } else crcw=crcw->next;
       }
       if (!crc_wait_list) base->calc_crcs=0;
 
@@ -1224,18 +1224,18 @@ void net_watch()
       lsf_waiter *lsfw=lsf_wait_list,*last_lsfw=NULL;
       for (;lsfw;)
       {
-	if (FD_ISSET(lsfw->socket_fd,&exception_set))
-	{
-	  tsel--;
-	  if (last_lsfw) { last_lsfw->next=lsfw->next; lsf_waiter *cc=lsfw; lsfw=lsfw->next; delete cc; }
-	  else { lsf_wait_list=lsfw->next; delete lsfw; lsfw=lsf_wait_list; }
-	} else lsfw=lsfw->next;
+    if (FD_ISSET(lsfw->socket_fd,&exception_set))
+    {
+      tsel--;
+      if (last_lsfw) { last_lsfw->next=lsfw->next; lsf_waiter *cc=lsfw; lsfw=lsfw->next; delete cc; }
+      else { lsf_wait_list=lsfw->next; delete lsfw; lsfw=lsf_wait_list; }
+    } else lsfw=lsfw->next;
       }
       if (!lsf_wait_list) base->get_lsf=0;
 
       base->mem_lock=0;
 
-    }   
+    }
     if (tsel)
     {
 //      fprintf(stderr,"%d",tsel);

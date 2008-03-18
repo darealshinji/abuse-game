@@ -19,7 +19,7 @@ void profile_add_time(int type, float amount);
 void profile_update();
 void profile_toggle();
 int profile_handle_event(event &ev);
-int profiling(); 
+int profiling();
 
 
 #endif

@@ -18,7 +18,7 @@ class gui_status_manager : public status_manager
 {
   char title[40];
   int last_perc;
-  public :   
+  public :
   gui_status_node *first;
   gui_status_manager();
   virtual void push(char const *name, visual_object *show);

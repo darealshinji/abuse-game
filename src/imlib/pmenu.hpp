@@ -49,7 +49,7 @@ public :
   void calc_size(int &w, int &h);
   pmenu_item *find_id(int search_id);
   pmenu_item *find_key(int key);
-  psub_menu(pmenu_item *First, psub_menu *Next) 
+  psub_menu(pmenu_item *First, psub_menu *Next)
   { first=First; Next=Next; win=0; active=0; }
   int handle_event(Jwindow *parent, int x, int y, event &ev);
   void draw(Jwindow *parent, int x, int y);
@@ -62,7 +62,7 @@ class pmenu
 {
   Jwindow *bar;
   pmenu_item *top,*active;
-  int itemw(pmenu_item *p) 
+  int itemw(pmenu_item *p)
   { return strlen(p->name())*wm->font()->width()+2; }
   int itemx(pmenu_item *p);
   pmenu_item *inarea(int mx, int my, image *screen);
@@ -71,7 +71,7 @@ public :
   pmenu(int X, int Y, pmenu_item *first, image *screen);
   void move(int new_x, int new_y);
   void draw(image *screen, int top_only=0);
-  int handle_event(event &ev, image *screen);  
+  int handle_event(event &ev, image *screen);
 
 } ;
 

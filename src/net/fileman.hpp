@@ -12,14 +12,14 @@ class file_manager
   net_address *default_fs;
   int no_security;
 
-  class nfs_client 
+  class nfs_client
   {
     public :
     net_socket *sock;
     int file_fd;
 
     nfs_client *next;
-    int32_t size_to_read;  
+    int32_t size_to_read;
     int32_t size;
     nfs_client(net_socket *sock, int file_fd, nfs_client *next);
     int send_read();     // flushes as much of size_to_read as possible
@@ -34,7 +34,7 @@ class file_manager
     void r_close(char const *reason);
     int32_t size;   // server tells us the size of the file when we open it
     int open_local;
-    remote_file *next; 
+    remote_file *next;
     remote_file(net_socket *sock, char const *filename, char const *mode, remote_file *Next);
 
     int unbuffered_read(void *buffer, size_t count);
@@ -42,7 +42,7 @@ class file_manager
     int32_t unbuffered_tell();
     int32_t unbuffered_seek(int32_t offset);
     int32_t file_size() { return size; }
-    int open_failure() { return sock==NULL; }    
+    int open_failure() { return sock==NULL; }
     ~remote_file();
     int fd() { if (sock) return sock->get_fd(); else return -1; }
   } ;

@@ -20,7 +20,7 @@ unsigned short rand_on=0;
 void jrand_init()
 {
   // make sure random table is always the same.
-  unsigned long rseed=('F'<<24)|('U'<<16)|('C'<<8)|'K'; 
+  unsigned long rseed=('F'<<24)|('U'<<16)|('C'<<8)|'K';
   int i;
   unsigned short *tp=rtable;
   for (i=0;i<RAND_TABLE_SIZE;i++,tp++)

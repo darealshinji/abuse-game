@@ -74,7 +74,7 @@ image *load_image(spec_entry *e, bFILE *fp)
   image *im=new image(e,fp);
   if (scale_mult!=1 || scale_div!=1)
     im->resize(im->width()*scale_mult/scale_div,im->height()*scale_mult/scale_div);
-  return im;  
+  return im;
 }
 
 image *load_image(bFILE *fp)
@@ -83,29 +83,29 @@ image *load_image(bFILE *fp)
   if (scale_mult!=1 || scale_div!=1)
     im->resize(im->width()*scale_mult/scale_div,im->height()*scale_mult/scale_div);
 
-  return im;  
+  return im;
 }
 
 void use_file(char *filename, bFILE *&fp, spec_directory *&sd)
 {
   char fn[100];
-  fp=open_file(filename,"rb"); 
-  if (fp->open_failure()) 
-  { 
+  fp=open_file(filename,"rb");
+  if (fp->open_failure())
+  {
     delete fp;
-    sprintf(fn,"art/%s",filename);  
+    sprintf(fn,"art/%s",filename);
     fp=open_file(fn,"rb");
-    if (fp->open_failure()) 
-    { 
-      printf("Unable to open file %s\n",filename); 
+    if (fp->open_failure())
+    {
+      printf("Unable to open file %s\n",filename);
       delete fp;
-      exit(1); 
-    } 
-  } 
+      exit(1);
+    }
+  }
   sd=new spec_directory(fp);
 }
 
-void done_file(bFILE *&fp, spec_directory *&sd) 
+void done_file(bFILE *&fp, spec_directory *&sd)
 {
   delete fp;
   delete sd;
@@ -120,21 +120,21 @@ void insert_tiles(char *filename)
     spec_directory sd(fp);
     delete fp;
     int i=0;
-    for (;i<sd.total;i++)    
+    for (;i<sd.total;i++)
     {
       spec_entry *se=sd.entries[i];
       if (se->type==SPEC_FORETILE)
         ft++;
       else if (se->type==SPEC_BACKTILE)
-        bt++;      
+        bt++;
     }
     if (bt)
       printf("%s : adding %d background tiles (range %d-%d)\n",
-	     filename,bt,nbacktiles,nbacktiles+bt-1);
+         filename,bt,nbacktiles,nbacktiles+bt-1);
     if (ft)
       printf("%s : adding %d foreground tiles (range %d-%d)\n",
-	     filename,ft,nforetiles,nforetiles+bt-1);
-    if (!ft && !bt)    
+         filename,ft,nforetiles,nforetiles+bt-1);
+    if (!ft && !bt)
       printf("Warning : file %s has no background or foreground tiles\n",filename);
     else
     {
@@ -146,31 +146,31 @@ void insert_tiles(char *filename)
 
       for (i=0;i<sd.total;i++)
       {
-	if (sd.entries[i]->type==SPEC_FORETILE)
-	{
-	  foretiles[fon]=cache.reg(filename,sd.entries[i]->name);
-	  fon++;
-	  nforetiles++;
-	}
-	if (sd.entries[i]->type==SPEC_BACKTILE)
-	{
-	  backtiles[bon]=cache.reg(filename,sd.entries[i]->name);
-	  bon++;
-	  nbacktiles++;
-	}
-      }    
+    if (sd.entries[i]->type==SPEC_FORETILE)
+    {
+      foretiles[fon]=cache.reg(filename,sd.entries[i]->name);
+      fon++;
+      nforetiles++;
+    }
+    if (sd.entries[i]->type==SPEC_BACKTILE)
+    {
+      backtiles[bon]=cache.reg(filename,sd.entries[i]->name);
+      bon++;
+      nbacktiles++;
+    }
+      }
     }
   } else
     printf("Warning : insert_tiles -> file %s could not be read from\n",filename);
 }
 
 void load_tiles(Cell *file_list)
-{  
+{
   bFILE *fp;
   spec_directory *sd;
   spec_entry *spe;
-  
-  
+
+
   int num;
 
 
@@ -182,34 +182,34 @@ void load_tiles(Cell *file_list)
   for (fl=file_list;!NILP(fl);fl=lcdr(fl))
   {
     fp=open_file(lstring_value(lcar(fl)),"rb");
-    if (fp->open_failure()) 
+    if (fp->open_failure())
     {
       printf("Warning : open %s for reading\n",lstring_value(lcar(fl)));
       delete fp;
     }
     else
     {
-      sd=new spec_directory(fp); 
+      sd=new spec_directory(fp);
       delete fp;
       int i;
       for (i=0;i<sd->total;i++)
       {
-	spe=sd->entries[i];
+    spe=sd->entries[i];
         switch (spe->type)
         {
-          case SPEC_BACKTILE : 
+          case SPEC_BACKTILE :
             if (!sscanf(spe->name,"%d",&num))
               printf("Warning : background tile %s has no number\n",spe->name);
             else if (nbacktiles<=num) nbacktiles=num+1;
           break;
 
-          case SPEC_FORETILE : 
+          case SPEC_FORETILE :
             if (!sscanf(spe->name,"%d",&num))
               printf("Warning : foreground tile %s has no number\n",spe->name);
             else if (nforetiles<=num) nforetiles=num+1;
           break;
         }
-      } 
+      }
       delete sd;
     }
   }
@@ -233,42 +233,42 @@ void load_tiles(Cell *file_list)
   {
     char const *fn=lstring_value(lcar(fl));
     fp=open_file(fn,"rb");
-    if (!fp->open_failure()) 
+    if (!fp->open_failure())
     {
-      sd=new spec_directory(fp); 
+      sd=new spec_directory(fp);
       delete fp;
 
       int i;
       for (i=0;i<sd->total;i++)
       {
-	spe=sd->entries[i];
+    spe=sd->entries[i];
         switch (spe->type)
         {
-          case SPEC_BACKTILE : 
-	    
+          case SPEC_BACKTILE :
+    
             if (sscanf(spe->name,"%d",&num))
-	    {
-	      if (backtiles[num]>=0)
-	      {
-		dprintf("Warning : background tile %d redefined\n",num);
-		cache.unreg(backtiles[num]);
-	      }
-	      backtiles[num]=cache.reg(fn,spe->name,SPEC_BACKTILE);	      
-	    }
+        {
+          if (backtiles[num]>=0)
+          {
+        dprintf("Warning : background tile %d redefined\n",num);
+        cache.unreg(backtiles[num]);
+          }
+          backtiles[num]=cache.reg(fn,spe->name,SPEC_BACKTILE);    
+        }
             break;
-          case SPEC_FORETILE : 
+          case SPEC_FORETILE :
             if (sscanf(spe->name,"%d",&num))
-	    {
-	      if (foretiles[num]>=0)
-	      {
-		dprintf("Warning : foreground tile %d redefined\n",num);
-		cache.unreg(foretiles[num]);
-	      }
-	      foretiles[num]=cache.reg(fn,spe->name,SPEC_FORETILE);
-	    }
+        {
+          if (foretiles[num]>=0)
+          {
+        dprintf("Warning : foreground tile %d redefined\n",num);
+        cache.unreg(foretiles[num]);
+          }
+          foretiles[num]=cache.reg(fn,spe->name,SPEC_FORETILE);
+        }
             break;
         }
-      } 
+      }
       delete sd;
     } else delete fp;
   }
@@ -281,33 +281,33 @@ char lsf[256]="abuse.lsp";
 
 void load_data(int argc, char **argv)
 {
-	total_objects=0;
-	total_weapons=0;
-	weapon_types=NULL;
-	figures=NULL;
-	nforetiles=nbacktiles=0;
-	foretiles=NULL;
-	backtiles=NULL;
-	pal=NULL;
-	color_table=NULL;
+    total_objects=0;
+    total_weapons=0;
+    weapon_types=NULL;
+    figures=NULL;
+    nforetiles=nbacktiles=0;
+    foretiles=NULL;
+    backtiles=NULL;
+    pal=NULL;
+    color_table=NULL;
 
 # if 0
-	int should_save_sd_cache = 0;
+    int should_save_sd_cache = 0;
 
-	char *cachepath;
-	cachepath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 12 + 1, "cachepath" );
-	sprintf( cachepath, "%ssd_cache.tmp", get_save_filename_prefix() );
+    char *cachepath;
+    cachepath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 12 + 1, "cachepath" );
+    sprintf( cachepath, "%ssd_cache.tmp", get_save_filename_prefix() );
 
-	bFILE *load = open_file( cachepath, "rb" );
-	if( !load->open_failure() )
-	{
-		sd_cache.load( load );
-	}
-	else
-	{
-		should_save_sd_cache = 1;
-	}
-	delete load;
+    bFILE *load = open_file( cachepath, "rb" );
+    if( !load->open_failure() )
+    {
+        sd_cache.load( load );
+    }
+    else
+    {
+        should_save_sd_cache = 1;
+    }
+    delete load;
 #endif
 
   if (!net_start())              // don't let them specify a startup file we are connect elsewhere
@@ -316,13 +316,13 @@ void load_data(int argc, char **argv)
     {
       if (!strcmp(argv[i],"-lsf"))
       {
-	i++;
-	strcpy(lsf,argv[i]);
+    i++;
+    strcpy(lsf,argv[i]);
       }
       if (!strcmp(argv[i],"-a"))
       {
-	i++;
-	sprintf(lsf,"addon/%s/%s.lsp",argv[i],argv[i]);      
+    i++;
+    sprintf(lsf,"addon/%s/%s.lsp",argv[i],argv[i]);
       }
     }
   } else if (!get_remote_lsf(net_server,lsf))
@@ -380,17 +380,17 @@ void load_data(int argc, char **argv)
   raise_volume=      cache.reg(ff,"raise_volume",SPEC_IMAGE);
   music_button=      cache.reg(ff,"music",SPEC_IMAGE);
   sfx_button=        cache.reg(ff,"sound_fx",SPEC_IMAGE);
-  record_button=     cache.reg(ff,"record",SPEC_IMAGE);  
+  record_button=     cache.reg(ff,"record",SPEC_IMAGE);
   play_button=       cache.reg(ff,"play",SPEC_IMAGE);
   window_colors=     cache.reg(ff,"window_colors",SPEC_IMAGE);
   pause_image=       cache.reg(ff,"pause_image",SPEC_IMAGE);
   vmm_image=         cache.reg(ff,"vmm",SPEC_IMAGE);
   border_tile=       cache.reg(ff,"border_tile",SPEC_IMAGE);
   window_texture=    cache.reg(ff,"window_texture",SPEC_IMAGE);
-  
+
 
   help_screens=NULL;
-  total_help_screens=0;  
+  total_help_screens=0;
 
   if (DEFINEDP(symbol_value(l_help_screens)))
   {
@@ -400,16 +400,16 @@ void load_data(int argc, char **argv)
     while (v) { total_help_screens++; v=CDR(v); }
     if (total_help_screens)
     {
-      help_screens=(int *)jmalloc(sizeof(int)*total_help_screens,"help image ids");      
+      help_screens=(int *)jmalloc(sizeof(int)*total_help_screens,"help image ids");
       v=CDR(symbol_value(l_help_screens));
       int i=0;
       for (;v;v=CDR(v),i++)
-        help_screens[i]=cache.reg(ff,lstring_value(CAR(v)),SPEC_IMAGE);      
-    } 
+        help_screens[i]=cache.reg(ff,lstring_value(CAR(v)),SPEC_IMAGE);
+    }
     else
       dprintf("Warning no help images following filename\n");
-  }  
-     
+  }
+
   int i;
   for (i=1;i<argc;i++)
   {
@@ -429,7 +429,7 @@ void load_data(int argc, char **argv)
   if (DEFINEDP(symbol_value(l_cdc_logo)))
     cdc_logo=cache.reg_object(NULL,symbol_value(l_cdc_logo),SPEC_IMAGE,1);
   else cdc_logo=-1;
-  
+
   start_position_type=0xffff;
   for(i=0;i<total_objects;i++)
     if (!strcmp(object_names[i],"START"))
@@ -441,7 +441,7 @@ void load_data(int argc, char **argv)
   }
 
   sbar.load();
-  
+
   load_number_icons();
 
 
@@ -450,28 +450,28 @@ void load_data(int argc, char **argv)
   ERROR(foretiles[0]>=0,"No black (0) foreground tile defined!");
   ERROR(backtiles[0]>=0,"No black (0) background tile defined!");
   ERROR(big_font_pict!=-1 || small_font_pict!=-1,
-	"No font loaded (use load_big_font or load_small_font)!");
+    "No font loaded (use load_big_font or load_small_font)!");
   f_wid=cache.foret(foretiles[0])->im->width();
   f_hi=cache.foret(foretiles[0])->im->height();
   b_wid=cache.backt(backtiles[0])->im->width();
   b_hi=cache.backt(backtiles[0])->im->height();
 
 #if 0
-	if( should_save_sd_cache )
-	{
-		bFILE *save = open_file( cachepath, "wb" );
-		if( !save->open_failure() )
-		{
-			sd_cache.save( save );
-		}
-		delete save;
-	}
+    if( should_save_sd_cache )
+    {
+        bFILE *save = open_file( cachepath, "wb" );
+        if( !save->open_failure() )
+        {
+            sd_cache.save( save );
+        }
+        delete save;
+    }
 #endif
 
-	sd_cache.clear();
-	past_startup = 1;
+    sd_cache.clear();
+    past_startup = 1;
 #if 0
-	jfree( cachepath );
+    jfree( cachepath );
 #endif
 }
 
@@ -483,7 +483,7 @@ char *load_script(char *name)
 {
   char fn[100];
   char *s;
-  
+
   sprintf(fn,"%s",name);
   bFILE *fp=open_file(fn,"rb");
   if (fp->open_failure())
@@ -491,15 +491,15 @@ char *load_script(char *name)
     delete fp;
     return NULL;
   }
-  
+
   long l=fp->file_size();
   s=(char *)jmalloc(l+1,"loaded script");
   ERROR(s,"Malloc error in load_script");
-  
-  fp->read(s,l);  
+
+  fp->read(s,l);
   s[l]=0;
   delete fp;
-  return s;  
+  return s;
 }
 
 

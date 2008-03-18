@@ -16,10 +16,10 @@ class property_manager
   property *first;
   property *find(char const *name);
   public :
-  property_manager() { first=0; } 
+  property_manager() { first=0; }
   void load(char const *filename);
   void save(char const *filename);
-  
+
   int getd(char const *name, int def) { return (int)get(name,def); }
   int get(char const *name, int def);
   char const *get(char const *name, char const *def);

@@ -75,18 +75,18 @@ int kill_old_driver(int argc, char **argv)
       sprintf(proc_path,"/proc/%d",pid);
       if (!stat(proc_path,&st))
       {
-	fprintf(stderr,"net driver : warning, %s already running, attempting to kill...\n",argv[0]);
-	if (kill(pid,SIGKILL))
-	{
-	  fprintf(stderr,"net driver : unable to kill process %d, cannot run net-abuse\n",pid);
-	  fclose(fp);
-	  return 0;
-	}
-	fprintf(stderr,"killed process %d\n",pid);
+    fprintf(stderr,"net driver : warning, %s already running, attempting to kill...\n",argv[0]);
+    if (kill(pid,SIGKILL))
+    {
+      fprintf(stderr,"net driver : unable to kill process %d, cannot run net-abuse\n",pid);
+      fclose(fp);
+      return 0;
+    }
+    fprintf(stderr,"killed process %d\n",pid);
       }
     }
     fclose(fp);
-    unlink(DLOCK_NAME);    
+    unlink(DLOCK_NAME);
   }
   unlink(DIN_NAME);    // remove any previous files if they exsists
   unlink(DOUT_NAME);
@@ -102,7 +102,7 @@ main(int argc, char **argv)
   for (i=1;i<argc;i++)
     if (!strcmp(argv[i],"-no_fork"))    // use this to debug easier
       no_fork=1;
-  
+
   if (!no_fork)      // use this for debugging
   {
     int child_pid=fork();
@@ -110,17 +110,17 @@ main(int argc, char **argv)
     {
       FILE *fp=fopen(DLOCK_NAME,"wb");
       if (!fp)
-      { 
-	fprintf(stderr,"Unable to open %s for writing, killing child\n",DLOCK_NAME);
-	kill(child_pid,SIGUSR2);
-	return 0;
+      {
+    fprintf(stderr,"Unable to open %s for writing, killing child\n",DLOCK_NAME);
+    kill(child_pid,SIGUSR2);
+    return 0;
       }
       fprintf(fp,"%d\n",child_pid);
       fclose(fp);
       printf("%d\n",child_pid);         // tell parent the sound driver's process number
       return 0;                         // exit, child will continue
     }
-  }  
+  }
 
   fman=new file_manager(argc,argv,&tcpip);
 
@@ -142,19 +142,19 @@ main(int argc, char **argv)
 
 
   if (game_port==-1) game_port=DEFAULT_GAME_PORT;
-  
+
   // make sure this program was run by the abuse engine
-  if (argc<2 || strcmp(argv[1],"runme"))   
-  { 
+  if (argc<2 || strcmp(argv[1],"runme"))
+  {
     fprintf(stderr,"%s is normally run by abuse, running stand-alone file server\n"
-	           "Server will be killed by running abuse\n",argv[0]);
+               "Server will be killed by running abuse\n",argv[0]);
   } else driver=new net_driver(argc,argv,comm_port,game_port,&tcpip);
 
   setup_ports(comm_port,game_port);
 
   while (1)
   {
-    tcpip.select_sockets(); 
+    tcpip.select_sockets();
     if (driver)
       driver->check_commands();
 
@@ -165,35 +165,35 @@ main(int argc, char **argv)
       net_socket *new_sock=comm_sock->accept(addr);
       if (debug)
       {
-	if (new_sock)
-	{
-	  fprintf(stderr,"accepting new connection from \n");
-	  addr->print();
-	} else
-	fprintf(stderr,"accept failed\n");
+    if (new_sock)
+    {
+      fprintf(stderr,"accepting new connection from \n");
+      addr->print();
+    } else
+    fprintf(stderr,"accept failed\n");
       }
 
-      
+
       if (new_sock)
       {
-	uchar client_type;
-	if (new_sock->read(&client_type,1)!=1)
-	{
-	  delete addr;	
-	  delete new_sock;
-	}
-	else if (client_type==CLIENT_NFS)
-	{
-	  delete addr;	
-	  fman->add_nfs_client(new_sock);
-	}
-	else if (!driver || !driver->add_client(client_type,new_sock,addr))
-	{
-	  delete addr;	
-	  delete new_sock;
-	}
+    uchar client_type;
+    if (new_sock->read(&client_type,1)!=1)
+    {
+      delete addr;    
+      delete new_sock;
+    }
+    else if (client_type==CLIENT_NFS)
+    {
+      delete addr;    
+      fman->add_nfs_client(new_sock);
+    }
+    else if (!driver || !driver->add_client(client_type,new_sock,addr))
+    {
+      delete addr;    
+      delete new_sock;
+    }
       }
-    }            
+    }
 
     fman->process_net();
   }

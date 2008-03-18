@@ -46,7 +46,7 @@ inline short vect::step()
 }
 
 void vect::init(short imagex1,  short imagey1,  short imagex2, short imagey2,
-	   short screenx1, short screeny1, short screenx2, short screeny2)
+       short screenx1, short screeny1, short screenx2, short screeny2)
 {
   steps=abs(screeny1-screeny2)+1;
   screenx=(long)screenx1<<SHB;
@@ -117,7 +117,7 @@ void texture_map(image *screen, image *tx, short *points)
   } else
   {
     right[0].init(0,tx->height()-1,0,0,                         points[6],points[7],points[0],points[1]);
-    right[1].init(0,0,tx->width()-1,0,				points[0],points[1],points[2],points[3]);
+    right[1].init(0,0,tx->width()-1,0,                points[0],points[1],points[2],points[3]);
 
     left[0].init(0,tx->height()-1,tx->width()-1,tx->height()-1, points[6],points[7],points[4],points[5]);
     left[1].init(tx->width()-1,tx->height()-1, tx->width()-1,0, points[4],points[5],points[2],points[3]);
@@ -138,36 +138,36 @@ void texture_map(image *screen, image *tx, short *points)
       else { sa=-1; steps=left[l].screenx-right[r].screenx; }
       steps+=1<<SHB;
       if (right[r].imagex>ix)
-	idx=((right[r].imagex-ix)<<SHB)/steps;
+    idx=((right[r].imagex-ix)<<SHB)/steps;
       else idx=((right[r].imagex-ix)<<SHB)/steps;
 
       if (right[r].imagey>iy)
-	idy=((right[r].imagey-iy)<<SHB)/steps;
+    idy=((right[r].imagey-iy)<<SHB)/steps;
       else idy=((right[r].imagey-iy)<<SHB)/steps;
       scx=left[l].screenx>>SHB;
 
       steps=steps>>SHB;
       if (left[l].screenx<right[r].screenx)
-	sa=1; else sa=-1;
+    sa=1; else sa=-1;
       while (steps--)
       {
-	if (scx>=cx1 && scx<=cx2)
-	  sl[scx]=tx->scan_line(iy>>SHB)[ix>>SHB];
-	ix+=idx; iy+=idy;
-	scx+=sa;
+    if (scx>=cx1 && scx<=cx2)
+      sl[scx]=tx->scan_line(iy>>SHB)[ix>>SHB];
+    ix+=idx; iy+=idy;
+    scx+=sa;
       }
     }
 
     do
     { y=right[r].screeny>>SHB;
       if (!right[r].step())
-	r++;
+    r++;
     } while (r!=2 && y==right[r].screeny>>SHB);
 
     do
     { y=left[l].screeny>>SHB;
       if (!left[l].step())
-	l++;
+    l++;
     } while (l!=2 && y==left[l].screeny>>SHB);
 
   } while (r!=2 && l!=2);
@@ -232,7 +232,7 @@ void clear_texture_map(image *screen, image *tx, short *points)
   } else
   {
     right[0].init(0,tx->height()-1,0,0,                         points[6],points[7],points[0],points[1]);
-    right[1].init(0,0,tx->width()-1,0,				points[0],points[1],points[2],points[3]);
+    right[1].init(0,0,tx->width()-1,0,                points[0],points[1],points[2],points[3]);
     right[2].init(tx->width()-1,0,tx->width()-1,tx->height(),   points[2],points[3],points[4],points[5]);
 
     left[0].init(0,tx->height()-1,tx->width()-1,tx->height()-1, points[6],points[7],points[4],points[5]);
@@ -255,40 +255,40 @@ void clear_texture_map(image *screen, image *tx, short *points)
       else { sa=-1; steps=left[l].screenx-right[r].screenx; }
       steps+=1<<SHB;
       if (right[r].imagex>ix)
-	idx=((right[r].imagex-ix)<<SHB)/steps;
+    idx=((right[r].imagex-ix)<<SHB)/steps;
       else idx=((right[r].imagex-ix)<<SHB)/steps;
 
       if (right[r].imagey>iy)
-	idy=((right[r].imagey-iy)<<SHB)/steps;
+    idy=((right[r].imagey-iy)<<SHB)/steps;
       else idy=((right[r].imagey-iy)<<SHB)/steps;
       scx=left[l].screenx>>SHB;
 
       steps=steps>>SHB;
       if (left[l].screenx<right[r].screenx)
-	sa=1; else sa=-1;
+    sa=1; else sa=-1;
       while (steps--)
       {
-	if (scx>=cx1 && scx<=cx2)
-	{
-	  unsigned char c=tx->scan_line(iy>>SHB)[ix>>SHB];
-	  if (c!=current_background)
-	    sl[scx]=c;
-	}
-	ix+=idx; iy+=idy;
-	scx+=sa;
+    if (scx>=cx1 && scx<=cx2)
+    {
+      unsigned char c=tx->scan_line(iy>>SHB)[ix>>SHB];
+      if (c!=current_background)
+        sl[scx]=c;
+    }
+    ix+=idx; iy+=idy;
+    scx+=sa;
       }
     }
 
     do
     { y=right[r].screeny>>SHB;
       if (!right[r].step())
-	r++;
+    r++;
     } while (r!=2 && y==(right[r].screeny>>SHB));
 
     do
     { y=left[l].screeny>>SHB;
       if (!left[l].step())
-	l++;
+    l++;
     } while (l!=2 && y==(left[l].screeny>>SHB));
 
   } while ((r!=2 || l==0) && (l!=2 || r==0));

@@ -36,38 +36,38 @@ class property
     next=NULL;
   }
 
-  void set(int x) 
-  { if (def_str) 
+  void set(int x)
+  { if (def_str)
     {
-      jfree(def_str); 
-      def_str=NULL; 
+      jfree(def_str);
+      def_str=NULL;
     }
     def_num=x;
   }
 
   void set(char const *x)
   {
-    if (def_str) 
-    { 
-      jfree(def_str); 
-      def_str=NULL; 
+    if (def_str)
+    {
+      jfree(def_str);
+      def_str=NULL;
     }
     def_str=strcpy((char *)jmalloc(strlen(x)+1,"Property text"),x);
   }
 
-  ~property() 
-  { 
-    if (def_str) 
+  ~property()
+  {
+    if (def_str)
       jfree(def_str);
-    jfree(name); 
+    jfree(name);
   }
   property *next;
 } ;
 
 property *property_manager::find(char const *name)
 {
-  for (property *i=first;i;i=i->next)  
-    if (!strcmp(i->name,name)) 
+  for (property *i=first;i;i=i->next)
+    if (!strcmp(i->name,name))
       return i;
   return NULL;
 }
@@ -86,7 +86,7 @@ property_manager::~property_manager()
 int property_manager::get(char const *name, int def)
 {
   property *f=find(name);
-  if (!f || f->def_str) 
+  if (!f || f->def_str)
     return def;
   else return f->def_num;
 }
@@ -95,7 +95,7 @@ int property_manager::get(char const *name, int def)
 char const *property_manager::get(char const *name,char const *def)
 {
   property *f=find(name);
-  if (!f || !f->def_str) 
+  if (!f || !f->def_str)
     return def;
   else return f->def_str;
 }
@@ -111,7 +111,7 @@ void property_manager::set(char const *name, double def)
     f=new property(name,(int)def);
     f->next=first;
     first=f;
-  }  
+  }
 }
 
 void property_manager::set(char const *name, char const *def)
@@ -124,7 +124,7 @@ void property_manager::set(char const *name, char const *def)
     f=new property(name,def);
     f->next=first;
     first=f;
-  }  
+  }
 }
 
 
@@ -141,7 +141,7 @@ void property_manager::save(char const *filename)
       if (i->def_str)
         fprintf(fp,"\"%s\"\n",i->def_str);
       else
-        fprintf(fp,"%d\n",i->def_num);      
+        fprintf(fp,"%d\n",i->def_num);
     }
     fclose(fp);
   }
@@ -158,32 +158,32 @@ void property_manager::load(char const *filename)
     {
       if (fgets(buf,100,fp))
       {
-	for (c1=buf,c2=name;*c1 && *c1!='=';c1++,c2++)
-	  *c2=*c1;
-	if (*c1==0) { fprintf(stderr,"Missing = for property line %s in file %s\n",buf,filename); 
-		      exit(1);}
-	*c2=' ';
-	while (*c2==' ') { *c2=0; c2--; }
-	c1++; while (*c1==' ') c1++;
-	if (*c1=='"')
-	{ c1++;
-	  for (c2=str;*c1 && *c1!='"';c1++,c2++)
-	    *c2=*c1;
-	  *c2=0;
-	  if (*c1!='"') { fprintf(stderr,"Missing \" for property name %s in file %s\n",name,filename);
-			  exit(1); }
-	  set(name,str);
-	} else
-	{
-	  double x;
-	  if (sscanf(c1,"%lg",&x))
-	    set(name,x);
-	  else 
-	  { 
-	    fprintf(stderr,"Bad number/string for property name %s in file %s\n",name,filename);
-	    exit(1); 
-	  }	  
-	}			  
+    for (c1=buf,c2=name;*c1 && *c1!='=';c1++,c2++)
+      *c2=*c1;
+    if (*c1==0) { fprintf(stderr,"Missing = for property line %s in file %s\n",buf,filename);
+              exit(1);}
+    *c2=' ';
+    while (*c2==' ') { *c2=0; c2--; }
+    c1++; while (*c1==' ') c1++;
+    if (*c1=='"')
+    { c1++;
+      for (c2=str;*c1 && *c1!='"';c1++,c2++)
+        *c2=*c1;
+      *c2=0;
+      if (*c1!='"') { fprintf(stderr,"Missing \" for property name %s in file %s\n",name,filename);
+              exit(1); }
+      set(name,str);
+    } else
+    {
+      double x;
+      if (sscanf(c1,"%lg",&x))
+        set(name,x);
+      else
+      {
+        fprintf(stderr,"Bad number/string for property name %s in file %s\n",name,filename);
+        exit(1);
+      }    
+    }            
       }
     }
   }
