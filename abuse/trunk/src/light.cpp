@@ -189,9 +189,9 @@ void calc_tint(uint8_t *tint, int rs, int gs, int bs, int ra, int ga, int ba, pa
   for (;i<256;i++)
   {
     npal.set(i,(int)rs,(int)gs,(int)bs);
-    rs+=ra; if (rs>255) rs=255; if (rs<0) rs=0;
-    gs+=ga; if (gs>255) gs=255; if (gs<0) gs=0;
-    bs+=ba; if (bs>255) bs=255; if (bs<0) bs=0;
+    rs+=ra; if (rs>255) rs=255; else if (rs<0) rs=0;
+    gs+=ga; if (gs>255) gs=255; else if (gs<0) gs=0;
+    bs+=ba; if (bs>255) bs=255; else if (bs<0) bs=0;
   }
   filter f(pal,&npal);
   filter f2(&npal,pal);
@@ -243,7 +243,7 @@ void calc_light_table(palette *pal)
 
     if( recalc )
     {
-        fprintf(stderr,"Palette has changed, recalculating light table...\n");
+        dprintf("Palette has changed, recalculating light table...\n");
         stat_man->push("white light",NULL);
         int color=0;
         for (;color<256;color++)

@@ -62,7 +62,7 @@ void file_manager::process_net()
     else if (nc->size_to_read && nc->sock->ready_to_write())
       ok=nc->send_read();
     else if (nc->sock->ready_to_read())
-      ok=process_nfs_command(nc);    // if we couldn't process the packeted, delete the connection
+      ok=process_nfs_command(nc);    // if we couldn't process the packet, delete the connection
 
     if (ok)
     {

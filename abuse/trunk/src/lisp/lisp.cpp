@@ -921,7 +921,8 @@ long list_length(void *i)
   }
 #endif
 
-  for (x=0;i;x++,i=CDR(i));
+  for(x = 0; i; i = CDR(i))
+    x++;
   return x;
 }
 
