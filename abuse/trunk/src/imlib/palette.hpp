@@ -60,7 +60,7 @@ public :
   void set_background(unsigned char b)  { bg=b; }
   int background(unsigned char b)  { return bg; }
   int add_color(unsigned int r, unsigned int g, unsigned int b,
-	         int closest_only=0);
+             int closest_only=0);
   int find_color(unsigned char r, unsigned char g, unsigned char b);
   int find_closest(unsigned char r, unsigned char g, unsigned char b);
   int find_closest_non0(unsigned char r, unsigned char g, unsigned char b);
@@ -73,7 +73,7 @@ public :
 } ;
 
 class quant_node : public linked_node
-{  
+{
   quant_node *padre;
 public :
   unsigned tot;
@@ -82,7 +82,7 @@ public :
   void be_childish() { children[0]=this; }
   quant_node *father() { return padre; }
   quant_node(int level, quant_node *dad,
-	unsigned char r=0, unsigned char g=0, unsigned char b=0);
+    unsigned char r=0, unsigned char g=0, unsigned char b=0);
   void total(int &tnodes, int &tr, int &tg, int &tb);
 //  void prune();
   void set(int r,int g,int b) {red=r; green=g; blue=b; }

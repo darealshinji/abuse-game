@@ -31,29 +31,29 @@ extern "C"
 
 typedef struct wadinfo_struct
 {
-  char	identification[4];		// should be IWAD
-  int	numlumps;
-  int	infotableofs;
+  char    identification[4];        // should be IWAD
+  int    numlumps;
+  int    infotableofs;
 } wadinfo_t;
 
 typedef struct filelump_struct
 {
-  int	filepos;
-  int	size;
-  char	name[8];
+  int    filepos;
+  int    size;
+  char    name[8];
 } filelump_t;
 
-static int mytime = 0;		// an internal time keeper
-int numsounds;			// number of sound effects
-int longsound;			// longest sound effect
-int lengths[NUMSFX];		// lengths of all sound effects
-uint8_t mixbuffer[MIXBUFFERSIZE];	// mixing buffer
-int sfxdevice;			// file descriptor of sfx device
-int musdevice;			// file descriptor of music device
-uint8_t *channels[8];	// the channel data pointers
-uint8_t *channelsend[8];	// the channel data end pointers
-int channelstart[8];		// time that the channel started playing
-int channelhandles[8];		// the channel handles
+static int mytime = 0;        // an internal time keeper
+int numsounds;            // number of sound effects
+int longsound;            // longest sound effect
+int lengths[NUMSFX];        // lengths of all sound effects
+uint8_t mixbuffer[MIXBUFFERSIZE];    // mixing buffer
+int sfxdevice;            // file descriptor of sfx device
+int musdevice;            // file descriptor of music device
+uint8_t *channels[8];    // the channel data pointers
+uint8_t *channelsend[8];    // the channel data end pointers
+int channelstart[8];        // time that the channel started playing
+int channelhandles[8];        // the channel handles
 
 static void derror(char *msg)
 {
@@ -227,7 +227,7 @@ int addsfx(int sfxid, int volume)
       if (channelstart[i] < oldest)
       {
         oldestnum = i;
-	oldest = channelstart[i];
+    oldest = channelstart[i];
       }
     }
   }
@@ -288,11 +288,11 @@ int main(int c, char **v)
   fd_set fdset, scratchset;
   struct timeval zerowait = { 0, 0 };
 
-  grabdata(c, v);	// get sound data
-  initdata();		// init any data
+  grabdata(c, v);    // get sound data
+  initdata();        // init any data
 
-  opensfxdev(c, v);	// open sfx device
-  openmusdev(c, v);	// open music device
+  opensfxdev(c, v);    // open sfx device
+  openmusdev(c, v);    // open music device
   fprintf(stderr, "ready\n");
 
   // parse commands and play sounds until done
@@ -307,43 +307,43 @@ int main(int c, char **v)
       if (rc > 0)
       {
   //      fprintf(stderr, "select is true\n");
-	// got a command
-	nrc = read(0, commandbuf, 1);
-	if (!nrc) { done = 1; rc = 0; }
-	else {
-	  switch (commandbuf[0])
-	  {
-	    case 'p': 		// play a new sound effect
-	      read(0, commandbuf, 3);
-	      commandbuf[0] -= commandbuf[0]>='a' ? 'a'-10 : '0';
-	      commandbuf[1] -= commandbuf[1]>='a' ? 'a'-10 : '0';
-	      sndnum = (commandbuf[0]<<4) + commandbuf[1];
-  //	    fprintf(stderr, "cmd: play sound %d\n", sndnum);
-	      handle = addsfx(sndnum, 127); // returns the handle
-//	      outputushort(handle);
-	      break;
-	    case 'q':
-	      read(0, commandbuf, 1);
-	      done = 1; rc = 0;
-	      break;
-	    case 's':
-	      {
-	        int fd;
-		read(0, commandbuf, 3);
-		commandbuf[2] = 0;
-		fd = open((char*)commandbuf, O_CREAT|O_WRONLY, 0644);
-		commandbuf[0] -= commandbuf[0]>='a' ? 'a'-10 : '0';
-		commandbuf[1] -= commandbuf[1]>='a' ? 'a'-10 : '0';
-		sndnum = (commandbuf[0]<<4) + commandbuf[1];
-		write(fd, S_sfx[sndnum].data, lengths[sndnum]);
-		close(fd);
-	      }
-	      break;
-	    default:
-	      fprintf(stderr, "Did not recognize command\n");
-	      break;
-	  }
-	}
+    // got a command
+    nrc = read(0, commandbuf, 1);
+    if (!nrc) { done = 1; rc = 0; }
+    else {
+      switch (commandbuf[0])
+      {
+        case 'p':         // play a new sound effect
+          read(0, commandbuf, 3);
+          commandbuf[0] -= commandbuf[0]>='a' ? 'a'-10 : '0';
+          commandbuf[1] -= commandbuf[1]>='a' ? 'a'-10 : '0';
+          sndnum = (commandbuf[0]<<4) + commandbuf[1];
+  //        fprintf(stderr, "cmd: play sound %d\n", sndnum);
+          handle = addsfx(sndnum, 127); // returns the handle
+//          outputushort(handle);
+          break;
+        case 'q':
+          read(0, commandbuf, 1);
+          done = 1; rc = 0;
+          break;
+        case 's':
+          {
+            int fd;
+        read(0, commandbuf, 3);
+        commandbuf[2] = 0;
+        fd = open((char*)commandbuf, O_CREAT|O_WRONLY, 0644);
+        commandbuf[0] -= commandbuf[0]>='a' ? 'a'-10 : '0';
+        commandbuf[1] -= commandbuf[1]>='a' ? 'a'-10 : '0';
+        sndnum = (commandbuf[0]<<4) + commandbuf[1];
+        write(fd, S_sfx[sndnum].data, lengths[sndnum]);
+        close(fd);
+          }
+          break;
+        default:
+          fprintf(stderr, "Did not recognize command\n");
+          break;
+      }
+    }
       }
     } while (rc > 0);
     updatesounds();

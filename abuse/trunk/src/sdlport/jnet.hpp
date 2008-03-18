@@ -17,7 +17,7 @@
 
 enum { SOCK_BAD_HOST       = -1,
        SOCK_CONNECT_FAIL   = -2,
-       SOCK_BIND_FAIL      = -3, 
+       SOCK_BIND_FAIL      = -3,
        SOCK_LISTEN_FAIL    = -4,
        SOCK_NAMELOOKUP_FAIL= -5,
        SOCK_ACCEPT_FAIL    = -6,

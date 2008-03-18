@@ -19,9 +19,9 @@
 #define AUTOTILE_WIDTH 6
 #define AUTOTILE_HEIGHT 3
 
-class boundary : public point_list      //  a list of points with 
+class boundary : public point_list      //  a list of points with
 {
-public :  
+public :
   boundary(bFILE *fp,char const *er_name);
   uint8_t *inside;     // tells which side of the line is on the inside
   boundary(boundary *p);      // flips the *inside list
@@ -72,17 +72,17 @@ public :
 
 /*  int32_t size(int type)         // taken from spaint items
   {
-    if 
+    if
     return forward->width()*backward->height()+4+
                        1+1+       // hit & xcfg
-		       touch->size()+
-		       hit->size()+
-		       damage->size(); 
+               touch->size()+
+               hit->size()+
+               damage->size();
   }*/
 
-  ~figure() { delete forward; delete backward; 
-	      delete hit;
-	      delete f_damage; delete b_damage; }
+  ~figure() { delete forward; delete backward;
+          delete hit;
+          delete f_damage; delete b_damage; }
 } ;
 
 class char_tint

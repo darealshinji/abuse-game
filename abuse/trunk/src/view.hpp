@@ -33,7 +33,7 @@ class view
 {
   uint8_t keymap[512/8];
   char chat_buf[60];
-  public : 
+  public :
   int key_down(int key) { return keymap[key/8]&(1<<(key%8)); }
   void set_key_down(int key, int x) { if (x) keymap[key/8]|=(1<<(key%8)); else keymap[key/8]&=~(1<<(key%8)); }
   void reset_keymap() { memset(keymap,0,sizeof(keymap)); }
@@ -46,7 +46,7 @@ class view
 
   int god;                                // :) if you believe in such things
   int player_number;
-  
+
   int draw_solid;                         // -1 if don't draw solid
 
   int32_t *weapons;                          // [0..total_weapons-1]
@@ -86,7 +86,7 @@ class view
   int drawable();                        // network viewables are not drawable
   int local_player();                    //  just in case I ever need non-viewable local players.
 
-  view *next;                             // next viewable player (singly linked list)  
+  view *next;                             // next viewable player (singly linked list)
   void get_input();
   int process_input(char cmd, uint8_t *&pk);
 

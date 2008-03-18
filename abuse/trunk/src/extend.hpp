@@ -40,7 +40,7 @@ class simple_object
   uint8_t Aitype;
   uint16_t Aistate,Aistate_time;
   uint16_t Hp,Mp,Fmp;
-  int8_t Frame_dir;        
+  int8_t Frame_dir;
 
 
   uint8_t tobjs,tlights;
@@ -103,9 +103,9 @@ class simple_object
   uint8_t total_lights()     { return tlights;    }
 
   morph_char *morph_status()     { return mc; }
-  light_source *get_light(int x)     
+  light_source *get_light(int x)
   { if (x>=tlights) { lbreak("bad x for light\n"); exit(0); } return lights[x]; }
-  game_object *get_object(int x)    
+  game_object *get_object(int x)
   { if (x>=tobjs) { lbreak("bad x for object\n"); exit(0); } return objs[x]; }
   view *controller()             { return Controller; }
 
@@ -145,10 +145,10 @@ class simple_object
 
   void set_gravity(int x)               { grav_on=x; }
   void set_floating(int x)
-  { if (x) 
-      set_flags(flags()|FLOATING_FLAG); 
-    else 
-      set_flags(flags()&(0xff-FLOATING_FLAG)); 
+  { if (x)
+      set_flags(flags()|FLOATING_FLAG);
+    else
+      set_flags(flags()&(0xff-FLOATING_FLAG));
   }
 
   void clean_up();

@@ -49,7 +49,7 @@ void read_chunk(wav_chunk &chunk, bFILE *fp)
 {
   fp->read(&chunk.id,4);
   chunk.size=fp->read_uint32();
-  fp->read(&chunk.type,4);  
+  fp->read(&chunk.type,4);
 }
 
 void read_tag(wav_tag &tag, bFILE *fp)
@@ -61,17 +61,17 @@ void read_tag(wav_tag &tag, bFILE *fp)
 void read_wav_format(wav_format &fmt, bFILE *fp)
 {
   fmt.fmt_tag=fp->read_uint16();
-  fmt.channels=fp->read_uint16(); 
+  fmt.channels=fp->read_uint16();
   fmt.samplesps=fp->read_uint32();
-  fmt.avg_bytesps=fp->read_uint32();  
-  fmt.align=fp->read_uint16();  
+  fmt.avg_bytesps=fp->read_uint32();
+  fmt.align=fp->read_uint16();
 }
 
 
 void read_pcm(pcm_wave &pcm, bFILE *fp)
 {
   read_wav_format(pcm.wf,fp);
-  pcm.bitsps=fp->read_uint16();  
+  pcm.bitsps=fp->read_uint16();
 }
 
 
@@ -87,7 +87,7 @@ void write_wav(char *filename, long sample_rate, long data_size, unsigned char *
   }
 
   /***************  Write the chunk ***************************/
-  fp->write((void *)"RIFF",4);  
+  fp->write((void *)"RIFF",4);
   fp->write_uint32(data_size+36);
   fp->write((void *)"WAVE",4);
 
@@ -95,8 +95,8 @@ void write_wav(char *filename, long sample_rate, long data_size, unsigned char *
   /************** Write the tag *******************************/
   fp->write((void *)"fmt ",4);
   fp->write_uint32(16);
-  
-  
+
+
   /************** Write PCM ***********************************/
   fp->write_uint16(1);          // format_tag
   fp->write_uint16(1);          // mono recording
@@ -104,7 +104,7 @@ void write_wav(char *filename, long sample_rate, long data_size, unsigned char *
   fp->write_uint32(sample_rate);   // average bytes per sec
   fp->write_uint16(1);    // alignment? Don't know what this does?
   fp->write_uint16(8);    // 8 bits per sample
-  
+
   /************* Write data tag ******************************/
   fp->write((void *)"data",4);
   fp->write_uint32(data_size);
@@ -127,14 +127,14 @@ unsigned char *read_wav(char *filename, long &sample_rate, long &data_size)
   bFILE *fp=open_file(filename,"rb");
   if (fp->open_failure())
   { delete fp; return NULL; }
-  read_chunk(chunk,fp);      
+  read_chunk(chunk,fp);
   if (memcmp(chunk.type,"WAVE",4)!=0)
   {
     printf("Bad WAV file (chunk) %s\n",filename);
     delete fp;
-    return NULL;    
+    return NULL;
   }
-  
+
   read_tag(tag,fp);
   if (memcmp(tag.id,"fmt ",4)!=0)
   {
@@ -156,16 +156,16 @@ unsigned char *read_wav(char *filename, long &sample_rate, long &data_size)
     delete fp;
     return NULL;
   }
-  
-  data_size=tag.size;  
+
+  data_size=tag.size;
   data=(unsigned char *)jmalloc(tag.size,"WAV data");
   ERROR(data,"Malloc error");
 
-  sample_rate=pcm.wf.samplesps;     
+  sample_rate=pcm.wf.samplesps;
   ERROR((unsigned int)fp->read(data,tag.size)==tag.size,"Premature end of file");
   ERROR(pcm.bitsps==8,"Only 8-bit samples supported");
-  ERROR(pcm.wf.channels==1,"Only mono samples supported");  
-  ERROR(pcm.wf.align==1,"Bad block alignment");   
+  ERROR(pcm.wf.channels==1,"Only mono samples supported");
+  ERROR(pcm.wf.align==1,"Bad block alignment");
   delete fp;
   return data;
 }

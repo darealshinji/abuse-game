@@ -25,7 +25,7 @@
 
 #define DEFAULT_COMM_PORT 20202
 #define DEFAULT_GAME_PORT 20203
-#define MAX_JOINERS 32  // maximum clients that can join at the same time                    
+#define MAX_JOINERS 32  // maximum clients that can join at the same time
 
 
 extern int no_security;
@@ -56,15 +56,15 @@ public :
   int wait_input;
   int delete_me;
   struct sockaddr_in data_address;  // where to send game data
-  
+
   client *next;
-  client(int sock, int id, client *Next) 
-  { 
+  client(int sock, int id, client *Next)
+  {
     data_fd=-1;
-    socket_fd=sock; 
-    client_id=id; 
-    next=Next; 
-    has_joined=0; 
+    socket_fd=sock;
+    client_id=id;
+    next=Next;
+    has_joined=0;
     delete_me=0;
     wait_reload=0;
     wait_input=1;
@@ -72,7 +72,7 @@ public :
   }
   ~client()
   {
-    close(socket_fd); 
+    close(socket_fd);
     FD_CLR(socket_fd,&master_set);
     if (data_fd>0)
       close(data_fd);

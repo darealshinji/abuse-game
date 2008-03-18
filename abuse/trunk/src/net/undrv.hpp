@@ -3,7 +3,7 @@
 
 #define DEFAULT_COMM_PORT 20202
 #define DEFAULT_GAME_PORT 20203
-#define MAX_JOINERS 32  // maximum clients that can join at the same time                    
+#define MAX_JOINERS 32  // maximum clients that can join at the same time
 
 #include "sock.hpp"
 

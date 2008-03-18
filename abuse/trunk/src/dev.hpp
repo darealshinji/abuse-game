@@ -34,7 +34,7 @@ class pal_win
   unsigned short *pat;
   void draw();
 
-public : 
+public :
   Jwindow *me;
   void close_window();
   void open_window();
@@ -49,18 +49,18 @@ public :
   ~pal_win();
 } ;
 
-enum dev_state { DEV_CREATE_OBJECT, 
-		 DEV_MOVE_OBJECT, 
-		 DEV_SELECT, 
-		 DEV_MOUSE_RELEASE, 
-		 DEV_MOVE_LIGHT, 
-		 DEV_CREATE_LIGHT,
-	         DEV_DRAG_AREA_TOP,
-	         DEV_DRAG_AREA_BOTTOM };
+enum dev_state { DEV_CREATE_OBJECT,
+         DEV_MOVE_OBJECT,
+         DEV_SELECT,
+         DEV_MOUSE_RELEASE,
+         DEV_MOVE_LIGHT,
+         DEV_CREATE_LIGHT,
+             DEV_DRAG_AREA_TOP,
+             DEV_DRAG_AREA_BOTTOM };
 
 extern char backw_on,forew_on,show_menu_on,ledit_on,pmenu_on,omenu_on,commandw_on,tbw_on,searchw_on,
             small_render_on,interpolate_draw,disable_autolight,fps_on,profile_on,show_names,fg_reversed,
-	    raise_all;
+        raise_all;
 
 
 class dev_controll
@@ -120,7 +120,7 @@ public :
   void notify_deleted_object(game_object *o);
   void notify_deleted_light(light_source *l);
   void set_state(int new_state);
-  void update_memprof();   
+  void update_memprof();
   ~dev_controll();
 } ;
 

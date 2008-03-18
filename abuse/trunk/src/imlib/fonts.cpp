@@ -59,25 +59,25 @@ void JCFont::put_char(image *screen,  int x, int y, char ch, int color)
 JCFont::JCFont(image *letters)
 {
   tl=(letters->width()+1)/32;
-  th=(letters->height()+1)/8;    
+  th=(letters->height()+1)/8;
 
   image tmp(tl,th);
-  
+
   int ch;
-  
+
   for (ch=0;ch<256;ch++)
-  {    
-    tmp.clear();    
+  {
+    tmp.clear();
     letters->put_part(&tmp,0,0,((int)ch%32)*tl,((int)ch/32)*th,
-		      ((int)ch%32)*tl+tl-1,((int)ch/32)*th+th-1,1);  
+              ((int)ch%32)*tl+tl-1,((int)ch/32)*th+th-1,1);
     let[ch]=new trans_image(&tmp,"JCfont");
-  } 
+  }
 }
 
 JCFont::~JCFont()
 {
   int ch;
-  for (ch=0;ch<256;ch++)  
-    delete let[ch];  
+  for (ch=0;ch<256;ch++)
+    delete let[ch];
 }
 

@@ -21,8 +21,8 @@
 #define p_dist(x1,y1,x2,y2) (((int)(x1)-(int)x2)*((int)(x1)-(int)x2)+      \
                              ((int)(y1)-(int)y2)*((int)(y1)-(int)y2))
 
-super_morph::super_morph(trans_image *hint1, trans_image *hint2, 
-			 int aneal_steps, void (*stat_fun)(int))
+super_morph::super_morph(trans_image *hint1, trans_image *hint2,
+             int aneal_steps, void (*stat_fun)(int))
 {
   int x,y,w1=hint1->width(),
           h1=hint1->height(),
@@ -42,13 +42,13 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
   {
     x=0;
     while (x<w1)
-    {      
+    {
       x+=*dp;      // skip over space
       dp++;
       if (x<w1)
       {
-	int rl=*(dp++);
-	while (rl--) { hints1[*(dp++)]++; x++; }
+    int rl=*(dp++);
+    while (rl--) { hints1[*(dp++)]++; x++; }
       }
     }
   }
@@ -59,13 +59,13 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
   {
     x=0;
     while (x<w2)
-    {      
+    {
       x+=*dp;      // skip over space
       dp++;
       if (x<w2)
       {
-	int rl=*(dp++);
-	while (rl--) { hints2[*(dp++)]++; x++; }
+    int rl=*(dp++);
+    while (rl--) { hints2[*(dp++)]++; x++; }
       }
     }
   }
@@ -80,67 +80,67 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
   for (y=0;y<256;y++,h1p++,h2p++)
     if (*h1p)
     {
-      if (*h2p==0)  
+      if (*h2p==0)
       {
-	t=0; 
-	return ;
+    t=0;
+    return ;
       }
       start1[y]=start2[y]=start;       // specify start of hint range
       if (*h1p>*h2p)
         totals[y]=*h1p;
       else totals[y]=*h2p;
       start+=totals[y];
-      hint_color[total_hints++]=y;      
+      hint_color[total_hints++]=y;
     }
 
   t=start;
   movers=(unsigned char *)jmalloc(t*4,"morph movers");
-  
-  
+
+
   /**************** Now scan the images again setup hints *********************/
   dp=hint1->t_data();
   for (y=0;y<h1;y++)
   {
     x=0;
     while (x<w1)
-    {      
+    {
       x+=*dp;      // skip over space
       dp++;
       if (x<w1)
       {
-	int rl=*(dp++);
-	while (rl--) 
-	{
-	  int maddr=(start1[*(dp++)]++)*4;
-	  movers[(maddr++)]=x;
-	  movers[maddr]=y;
-	  x++;
-	}
+    int rl=*(dp++);
+    while (rl--)
+    {
+      int maddr=(start1[*(dp++)]++)*4;
+      movers[(maddr++)]=x;
+      movers[maddr]=y;
+      x++;
+    }
       }
     }
-  }  
+  }
 
   dp=hint2->t_data();
   for (y=0;y<h2;y++)
   {
     x=0;
     while (x<w2)
-    {      
+    {
       x+=*dp;      // skip over space
       dp++;
       if (x<w2)
       {
-	int rl=*(dp++);
-	while (rl--) 
-	{
-	  int maddr=(start2[*(dp++)]++)*4+2;
-	  movers[(maddr++)]=x;
-	  movers[maddr]=y;
-	  x++;
-	}
+    int rl=*(dp++);
+    while (rl--)
+    {
+      int maddr=(start2[*(dp++)]++)*4+2;
+      movers[(maddr++)]=x;
+      movers[maddr]=y;
+      x++;
+    }
       }
     }
-  }  
+  }
 
   /********* if hint sizes don't match duplicate the smaller until sizes are equal **********/
   for (start=0,x=0;x<total_hints;x++)
@@ -151,7 +151,7 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
     {
       *dp=*(dp-4); dp++;      // copy previous x,y position
       *dp=*(dp-4); dp++;
-      dp+=2;	
+      dp+=2;    
     }
     start1[y]-=2*totals[y]-hints1[y];        // set the start back to the begining of hint range
   }
@@ -164,19 +164,19 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
     {
       *dp=*(dp-4); dp++;      // copy previous x,y position
       *dp=*(dp-4); dp++;
-      dp+=2;	
+      dp+=2;    
     }
     start2[y]-=hints2[y];        // set the start back to the begining of hint range
   }
 
 
-  /******* Now apply simulated annealing to solve for a smaller total distance ********/ 
+  /******* Now apply simulated annealing to solve for a smaller total distance ********/
   int rand_on=0;
   for (y=0;y<aneal_steps;y++)
   {
     if (stat_fun)
       stat_fun(y);
-    dp=movers;    
+    dp=movers;
     for (x=0;x<total_hints;x++)
     {
       int hc=hint_color[x];
@@ -184,17 +184,17 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
       unsigned char *range_start=dp;
       for (a=0;a<z;a++,dp+=4)
       {
-	unsigned char *swap=range_start+(rtable[((rand_on++)&(RAND_TABLE_SIZE-1))]%z)*4; 
-	int d_old=p_dist(dp[0],dp[1],dp[2],dp[3])+p_dist(swap[0],swap[1],swap[2],swap[3]);
-	int d_new=p_dist(dp[0],dp[1],swap[2],swap[3])+p_dist(swap[0],swap[1],dp[2],dp[3]);
-	if (d_new<d_old)
-	{
-	  unsigned char s;
-	  s=swap[2]; swap[2]=dp[2]; dp[2]=s;
-	  s=swap[3]; swap[3]=dp[3]; dp[3]=s;
-	}
-      }      
-    }    
+    unsigned char *swap=range_start+(rtable[((rand_on++)&(RAND_TABLE_SIZE-1))]%z)*4;
+    int d_old=p_dist(dp[0],dp[1],dp[2],dp[3])+p_dist(swap[0],swap[1],swap[2],swap[3]);
+    int d_new=p_dist(dp[0],dp[1],swap[2],swap[3])+p_dist(swap[0],swap[1],dp[2],dp[3]);
+    if (d_new<d_old)
+    {
+      unsigned char s;
+      s=swap[2]; swap[2]=dp[2]; dp[2]=s;
+      s=swap[3]; swap[3]=dp[3]; dp[3]=s;
+    }
+      }
+    }
   }
 }
 
@@ -210,18 +210,18 @@ smorph_player::smorph_player(super_morph *m, palette *pal, image *i1, image *i2,
   w=m->w; h=m->h;
 
   for (i=0;i<t;i++,p++)
-  {    
+  {
     x1=*(d++);
     y1=*(d++);
     x2=*(d++);
     y2=*(d++);
-    
+
     unsigned char r1,g1,b1,r2,g2,b2;
     pa=paddr+(int)(*(i1->scan_line(y1)+x1))*3;
     r1=*(pa++);
     g1=*(pa++);
     b1=*(pa++);
-    
+
     pa=paddr+(int)(*(i2->scan_line(y2)+x2))*3;
     r2=*(pa++);
     g2=*(pa++);
@@ -254,8 +254,8 @@ smorph_player::smorph_player(super_morph *m, palette *pal, image *i1, image *i2,
 
 
 int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette *pal,
-			int blur_threshold)
-{  
+            int blur_threshold)
+{
   if (f_left)
   {
     int i,px,py,ix,iy;
@@ -271,17 +271,17 @@ int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette 
       iy=(ss->y>>(16));
       px=ix+x;
       py=iy+y;
-      if (px>=x1 && px<=x2 && py>=y1 && py<=y2)                 
+      if (px>=x1 && px<=x2 && py>=y1 && py<=y2)
       {
         hole[ix+iy*w]=*(screen->scan_line(py)+px)=fil->lookup_color(ss->r>>(19),
-								    ss->g>>(19),
-								    ss->b>>(19));
+                                    ss->g>>(19),
+                                    ss->b>>(19));
       }
       ss->x+=ss->dx;
       ss->y+=ss->dy;
       ss->r+=ss->dr;
       ss->g+=ss->dg;
-      ss->b+=ss->db;          
+      ss->b+=ss->db;
     }
     f_left--;
     if (!f_left)    // skip hole fills and smoothing on last frame
@@ -292,41 +292,41 @@ int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette 
     {
       for (ix=1;ix<w-1;ix++,ll++,tl++,nl++)
       {
-	if (x+ix>=x1 && x+ix<=x2 && y+iy>=y1 && y+iy<=y2)
-	{
-	  int t=0;
-	  unsigned char *pa;
-	  int r=0,g=0,b=0;
-/*	  if (*(tl-1)) t++;
-	  if (*(tl+1)) t++;
-	  if (*ll) t++;
-	  if (*nl) t++;*/
+    if (x+ix>=x1 && x+ix<=x2 && y+iy>=y1 && y+iy<=y2)
+    {
+      int t=0;
+      unsigned char *pa;
+      int r=0,g=0,b=0;
+/*      if (*(tl-1)) t++;
+      if (*(tl+1)) t++;
+      if (*ll) t++;
+      if (*nl) t++;*/
 
-	  if (*(tl-1)) { t++; pa=paddr+(*(tl-1))*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
-	  if (*(tl+1)) { t++; pa=paddr+(*(tl+1))*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
-	  if (*(ll)) { t++; pa=paddr+(*ll)*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
-	  if (*(nl)) { t++; pa=paddr+(*nl)*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }	    
+      if (*(tl-1)) { t++; pa=paddr+(*(tl-1))*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
+      if (*(tl+1)) { t++; pa=paddr+(*(tl+1))*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
+      if (*(ll)) { t++; pa=paddr+(*ll)*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
+      if (*(nl)) { t++; pa=paddr+(*nl)*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }    
 
-	  if (*tl)
-	  {
-	    if (t)
-	    {
-	      pa=paddr+(*tl)*3;
-	      r/=t; g/=t; b/=t;
-	      int dist=((int)(*pa)-r)*((int)(*pa)-r); pa++;
-	      dist+=((int)(*pa)-g)*((int)(*pa)-g); pa++;
-	      dist+=((int)(*pa)-b)*((int)(*pa)-b);
-	      if (dist>blur_threshold)
-	        *(tl)=*(screen->scan_line(y+iy)+x+ix)=fil->lookup_color(r>>3,g>>3,b>>3);
-	    } else *(tl)=*(screen->scan_line(y+iy)+x+ix)=0; // kill single pixels
-	  }
-	  else if (t>=3)
-	    *(tl)=*(screen->scan_line(y+iy)+x+ix)=fil->lookup_color((r/t)>>3,(g/t)>>3,(b/t)>>3);
-	}
+      if (*tl)
+      {
+        if (t)
+        {
+          pa=paddr+(*tl)*3;
+          r/=t; g/=t; b/=t;
+          int dist=((int)(*pa)-r)*((int)(*pa)-r); pa++;
+          dist+=((int)(*pa)-g)*((int)(*pa)-g); pa++;
+          dist+=((int)(*pa)-b)*((int)(*pa)-b);
+          if (dist>blur_threshold)
+            *(tl)=*(screen->scan_line(y+iy)+x+ix)=fil->lookup_color(r>>3,g>>3,b>>3);
+        } else *(tl)=*(screen->scan_line(y+iy)+x+ix)=0; // kill single pixels
+      }
+      else if (t>=3)
+        *(tl)=*(screen->scan_line(y+iy)+x+ix)=fil->lookup_color((r/t)>>3,(g/t)>>3,(b/t)>>3);
+    }
       }
       ll+=2;
       tl+=2;
-      nl+=2;      
+      nl+=2;
     }
     return 1;
   } else return 0;
@@ -341,24 +341,24 @@ main(int argc, char **argv)
 {
   image_init();
   jrand_init();
-  FILE *fp=fopen("art/mrphmask.spe","rb"); 
+  FILE *fp=fopen("art/mrphmask.spe","rb");
   spec_directory sd(fp);
   image *h1=new image(sd.find("20 h"),fp),
         *h2=new image(sd.find("1h"),fp),
         *i1=new image(sd.find("20"),fp),
         *i2=new image(sd.find("1"),fp);
   palette *pal=new palette(sd.find(SPEC_PALETTE),fp);
-  color_filter *fil=new color_filter(sd.find(SPEC_COLOR_TABLE),fp);  
+  color_filter *fil=new color_filter(sd.find(SPEC_COLOR_TABLE),fp);
 
   int steps=atoi(argv[1]);
   if (steps<2) steps=50;
   trans_image *hh1=new trans_image(h1,"hint1"),*hh2=new trans_image(h2,"hint2");
 
   time_marker time1;
-  super_morph sm(hh1,hh2,steps); 
+  super_morph sm(hh1,hh2,steps);
   int frames=atoi(argv[2]);
   if (frames<2) frames=16;
-  smorph_player sp(&sm,pal,i1,i2,frames,-1); 
+  smorph_player sp(&sm,pal,i1,i2,frames,-1);
 
   time_marker time2;
   printf("time = %lf\n",time2.diff_time(&time1));
@@ -368,7 +368,7 @@ main(int argc, char **argv)
   i1->put_image(screen,30,30);
   update_dirty(screen);
   sleep(2);
-  while (sp.show(screen,30,30,fil,pal)) 
+  while (sp.show(screen,30,30,fil,pal))
   { update_dirty(screen);
     screen->bar(30,30,30+sp.w,30+sp.h,0);
   }

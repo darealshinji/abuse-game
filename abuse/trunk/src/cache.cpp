@@ -33,7 +33,7 @@
 char lfname[100]="";          // name of compiled lisp code cache file
 
 #define touch(x) { (x)->last_access=last_access++; \
-		   if ((x)->last_access<0) { normalize(); (x)->last_access=1; } }
+           if ((x)->last_access<0) { normalize(); (x)->last_access=1; } }
 
 CrcManager crc_manager;
 
@@ -61,8 +61,8 @@ int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
       jFILE *fp=new jFILE(get_filename(i),"rb");
       if (!fp->open_failure())
       {
-	set_crc(i,crc_file(fp));
-	total++;
+    set_crc(i,crc_file(fp));
+    total++;
       }
       delete fp;
     } else total++;
@@ -74,7 +74,7 @@ int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
   if (fp->open_failure())
   {
     delete fp;
-    return 0; 
+    return 0;
   }
 
   fp->write_uint16(total);
@@ -94,7 +94,7 @@ int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
     }
   }
   delete fp;
-  return 1;  
+  return 1;
 }
 
 int CrcManager::load_crc_file(char const *filename)
@@ -118,7 +118,7 @@ int CrcManager::load_crc_file(char const *filename)
     }
     delete fp;
   }
-  return 1;  
+  return 1;
 }
 
 void CrcManager::clean_up()
@@ -136,8 +136,8 @@ CrcedFile::~CrcedFile()
   jfree(filename);
 }
 
-CrcedFile::CrcedFile(char const *name) 
-{ 
+CrcedFile::CrcedFile(char const *name)
+{
   filename=strcpy((char *)jmalloc(strlen(name)+1,"crc_file"),name);
   crc_calculated=0;
 }
@@ -165,9 +165,9 @@ char *CrcManager::get_filename(int32_t filenumber)
 }
 
 uint32_t CrcManager::get_crc(int32_t filenumber, int &failed)
-{    
+{
   CHECK(filenumber>=0 && filenumber<total_files);
-  if (files[filenumber]->crc_calculated) 
+  if (files[filenumber]->crc_calculated)
   {
     failed=0;
     return files[filenumber]->crc;
@@ -209,7 +209,7 @@ void CacheList::prof_init()
 {
   if (prof_data)
     jfree(prof_data);
-  
+
   prof_data=(int *)jmalloc(sizeof(int)*total,"cache profile");
   memset(prof_data,0,sizeof(int)*total);
 }
@@ -261,9 +261,9 @@ void CacheList::prof_write(bFILE *fp)
       fp->write_uint16(crc_manager.total_filenames());
       for (i=0;i<crc_manager.total_filenames();i++)
       {
-	int l=strlen(crc_manager.get_filename(i))+1;
+    int l=strlen(crc_manager.get_filename(i))+1;
         fp->write_uint8(l);
-	fp->write(crc_manager.get_filename(i),l);
+    fp->write(crc_manager.get_filename(i),l);
       }
 
       int tsaved=0;
@@ -273,15 +273,15 @@ void CacheList::prof_write(bFILE *fp)
 
       for (i=0;i<total;i++)
       {
-	int id=ordered_ids[i];
-        if (list[id].last_access>0)       // don't save unaccessed counts      
-	{
-	  fp->write_uint8(list[id].type);    // save type, if type changed on reload 
-	                                    // don't cache in-> its a different refrence
-	  fp->write_uint16(list[id].file_number);
-	  fp->write_uint32(list[id].offset);
-	}
-      }      
+    int id=ordered_ids[i];
+        if (list[id].last_access>0)       // don't save unaccessed counts
+    {
+      fp->write_uint8(list[id].type);    // save type, if type changed on reload
+                                        // don't cache in-> its a different refrence
+      fp->write_uint16(list[id].file_number);
+      fp->write_uint32(list[id].offset);
+    }
+      }
     }
 
     jfree(ordered_ids);
@@ -329,7 +329,7 @@ int CacheList::search(int *sarray, uint16_t filenum, int32_t offset)
     split=(x1+x2)/2;
     CacheItem *e=list+sarray[split];
 
-    if (e->offset<offset)      // search to the right    
+    if (e->offset<offset)      // search to the right
       x1=split+1;
     else if (e->offset>offset)
       x2=split-1;
@@ -355,7 +355,7 @@ static int load_chars()  // returns 0 if cache filled
     }
   }
   return 1;
-  
+
 }
 
 void CacheList::note_need(int id)
@@ -371,50 +371,50 @@ void CacheList::preload_cache_object(int type)
   if (type<0xffff)
   {
     if (!figures[type]->get_cflag(CFLAG_NEED_CACHE_IN))  // see if it's already marked
-    {        
+    {
       figures[type]->set_cflag(CFLAG_NEED_CACHE_IN,1);
       void *cache_fun=figures[type]->get_fun(OFUN_GET_CACHE_LIST);
 
       if (cache_fun)
       {
-	int sp=current_space;
-	current_space=PERM_SPACE;
+    int sp=current_space;
+    current_space=PERM_SPACE;
 
-	void *call_with=NULL;
-	push_onto_list(new_lisp_number(type),call_with);
+    void *call_with=NULL;
+    push_onto_list(new_lisp_number(type),call_with);
 
-	void *CacheList=eval_function((lisp_symbol *)cache_fun,call_with);
-	p_ref r1(CacheList);
+    void *CacheList=eval_function((lisp_symbol *)cache_fun,call_with);
+    p_ref r1(CacheList);
 
-	if (CacheList && lcar(CacheList))
-	{
-	  void *obj_list=lcar(CacheList);
-	  while (obj_list)
-	  {
-	    int t=lnumber_value(CAR(obj_list));
-	    if (t<0 || t>=total_objects)
-	      lbreak("Get cache list returned a bad object number %d\n",t);
-	    else
-	      preload_cache_object(t);
-	    obj_list=CDR(obj_list);
-	  }
-	} 
-	if (CacheList && lcdr(CacheList))
-	{
-	  void *id_list=lcar(lcdr(CacheList));
-	  while (id_list)
-	  {
-	    int id=lnumber_value(CAR(id_list));
-	    if (id<0 || id>=total)
-	      lbreak("Get cache list returned a bad id number %d\n",id);
-	    else if (list[id].last_access<0)
-	      list[id].last_access=-2;
-	    else list[id].last_access=2;
+    if (CacheList && lcar(CacheList))
+    {
+      void *obj_list=lcar(CacheList);
+      while (obj_list)
+      {
+        int t=lnumber_value(CAR(obj_list));
+        if (t<0 || t>=total_objects)
+          lbreak("Get cache list returned a bad object number %d\n",t);
+        else
+          preload_cache_object(t);
+        obj_list=CDR(obj_list);
+      }
+    }
+    if (CacheList && lcdr(CacheList))
+    {
+      void *id_list=lcar(lcdr(CacheList));
+      while (id_list)
+      {
+        int id=lnumber_value(CAR(id_list));
+        if (id<0 || id>=total)
+          lbreak("Get cache list returned a bad id number %d\n",id);
+        else if (list[id].last_access<0)
+          list[id].last_access=-2;
+        else list[id].last_access=2;
 
-	    id_list=CDR(id_list);
-	  }
-	}
-	current_space=sp;
+        id_list=CDR(id_list);
+      }
+    }
+    current_space=sp;
 
       }
     }
@@ -442,11 +442,11 @@ void CacheList::preload_cache(level *lev)
       int id=foretiles[fgvalue(*fg_line)];
       if (id>=0 && id<nforetiles)
       {
-	if (list[id].last_access<0)
+    if (list[id].last_access<0)
           list[id].last_access=-2;
-	else list[id].last_access=2;      
+    else list[id].last_access=2;
       }
-    }      
+    }
   }
 
   uint16_t *bg_line;
@@ -454,15 +454,15 @@ void CacheList::preload_cache(level *lev)
   {
     bg_line=lev->get_bgline(j);
     for (i=0;i<lev->background_width();i++,bg_line++)
-    {    
+    {
       int id=backtiles[bgvalue(*bg_line)];
       if (id>=0 && id<nbacktiles)
       {
-	if (list[id].last_access<0)
+    if (list[id].last_access<0)
           list[id].last_access=-2;
-	else list[id].last_access=2;      
+    else list[id].last_access=2;
       }
-    }      
+    }
   }
 
   load_chars();
@@ -490,113 +490,113 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
       char name[255];
       int tnames=0;
       int *fnum_remap;    // remaps old filenumbers into current ones
-      
+
       tnames=fp->read_uint16();
       if (tnames)                     /// make sure there isn't bad info in the file
       {
-	fnum_remap=(int *)jmalloc(sizeof(int)*tnames,"pfname remap");
+    fnum_remap=(int *)jmalloc(sizeof(int)*tnames,"pfname remap");
 
-	int i;
-	for (i=0;i<tnames;i++)
-	{
-	  fp->read(name,fp->read_uint8());
-	  fnum_remap[i]=-1;                    // initialize the map to no-map
+    int i;
+    for (i=0;i<tnames;i++)
+    {
+      fp->read(name,fp->read_uint8());
+      fnum_remap[i]=-1;                    // initialize the map to no-map
 
-	  int j;
-	  for (j=0;j<crc_manager.total_filenames();j++)
-	    if (!strcmp(crc_manager.get_filename(j),name))
-	      fnum_remap[i]=j;
-	}
-	
-	uint32_t tsaved=fp->read_uint32();
-
-
-	int *priority=(int *)jmalloc(tsaved*sizeof(int),"priorities");
-	memset(priority,0xff,tsaved*sizeof(int));   // initialize to -1
-	int tmatches=0;
-
-	sorted_id_list=(int *)jmalloc(sizeof(int)*total,"sorted ids");
-	for (j=0;j<total;j++) sorted_id_list[j]=j;
-	qsort(sorted_id_list,total,sizeof(int),s_offset_compare);
-
-	for (i=0;i<tsaved;i++)
-	{
-	  uint8_t type=fp->read_uint8();
-	  short file_num=fp->read_uint16();
-	  if (file_num>=tnames)  // bad data?
-	    file_num=-1;
-	  else file_num=fnum_remap[file_num];
-
-	  uint32_t offset=fp->read_uint32();
-
-	  // search for a match 
-	  j=search(sorted_id_list,file_num,offset);	 
-	  if (j!=-1)
-	  {	      
-	    if (list[j].last_access<0)  // if not loaded
-	      list[j].last_access=-2;      // mark as needing loading
-	    else list[j].last_access=2;   // mark as loaded and needing to stay that way
-	    priority[i]=j;
-	    tmatches++;
-	  }
-	}
-
-	jfree(sorted_id_list);            // was used for searching, no longer needed
-
-	for (j=0;j<total;j++)
-	  if (list[j].last_access==0)
-	    unmalloc(list+j);             // free any cache entries that are not accessed at all in the level
+      int j;
+      for (j=0;j<crc_manager.total_filenames();j++)
+        if (!strcmp(crc_manager.get_filename(j),name))
+          fnum_remap[i]=j;
+    }
+    
+    uint32_t tsaved=fp->read_uint32();
 
 
-	ful=0;
-	int tcached=0;
-	for (j=0;j<total;j++)    // now load all of the objects until full
-	{
-//	  stat_man->update(j*70/total+25);
-	  if (list[j].file_number>=0 && list[j].last_access==-2)
-	  {
-	    list[j].last_access=-1;
-	    if (!ful)
-	    {
-	      switch (list[j].type)
-	      {
-		case SPEC_BACKTILE : backt(j); break;
-		case SPEC_FORETILE : foret(j); break;
-		case SPEC_CHARACTER :
-		case SPEC_CHARACTER2 : fig(j); break;
-		case SPEC_IMAGE : img(j); break;
-		case SPEC_PARTICLE : part(j); break;
-		case SPEC_EXTERN_SFX : sfx(j); break;
-		case SPEC_EXTERNAL_LCACHE : lblock(j); break;
-		case SPEC_PALETTE : ctint(j); break;
-	      }
-	      tcached++;
-	    }
-	  }
-	}
-	load_fail=0;
-//	if (full())
-//	  dprintf("Cache filled while loading\n");
+    int *priority=(int *)jmalloc(tsaved*sizeof(int),"priorities");
+    memset(priority,0xff,tsaved*sizeof(int));   // initialize to -1
+    int tmatches=0;
 
-	if (tsaved>tmatches)
-	  tmatches=tsaved+1;
+    sorted_id_list=(int *)jmalloc(sizeof(int)*total,"sorted ids");
+    for (j=0;j<total;j++) sorted_id_list[j]=j;
+    qsort(sorted_id_list,total,sizeof(int),s_offset_compare);
 
-	last_access=tmatches+1;
-	for (i=0;i<tsaved;i++)      // reorder the last access of each cache to reflect prioirties
-	{
-	  if (priority[i]!=-1)
-	  {
-	    if (list[priority[i]].last_access!=-1)            // make sure this wasn't the last item
-	      list[priority[i]].last_access=tmatches--;
-	  }
-	} 
+    for (i=0;i<tsaved;i++)
+    {
+      uint8_t type=fp->read_uint8();
+      short file_num=fp->read_uint16();
+      if (file_num>=tnames)  // bad data?
+        file_num=-1;
+      else file_num=fnum_remap[file_num];
 
-	jfree(priority);
-	jfree(fnum_remap);
+      uint32_t offset=fp->read_uint32();
+
+      // search for a match
+      j=search(sorted_id_list,file_num,offset);    
+      if (j!=-1)
+      {    
+        if (list[j].last_access<0)  // if not loaded
+          list[j].last_access=-2;      // mark as needing loading
+        else list[j].last_access=2;   // mark as loaded and needing to stay that way
+        priority[i]=j;
+        tmatches++;
+      }
+    }
+
+    jfree(sorted_id_list);            // was used for searching, no longer needed
+
+    for (j=0;j<total;j++)
+      if (list[j].last_access==0)
+        unmalloc(list+j);             // free any cache entries that are not accessed at all in the level
+
+
+    ful=0;
+    int tcached=0;
+    for (j=0;j<total;j++)    // now load all of the objects until full
+    {
+//      stat_man->update(j*70/total+25);
+      if (list[j].file_number>=0 && list[j].last_access==-2)
+      {
+        list[j].last_access=-1;
+        if (!ful)
+        {
+          switch (list[j].type)
+          {
+        case SPEC_BACKTILE : backt(j); break;
+        case SPEC_FORETILE : foret(j); break;
+        case SPEC_CHARACTER :
+        case SPEC_CHARACTER2 : fig(j); break;
+        case SPEC_IMAGE : img(j); break;
+        case SPEC_PARTICLE : part(j); break;
+        case SPEC_EXTERN_SFX : sfx(j); break;
+        case SPEC_EXTERNAL_LCACHE : lblock(j); break;
+        case SPEC_PALETTE : ctint(j); break;
+          }
+          tcached++;
+        }
+      }
+    }
+    load_fail=0;
+//    if (full())
+//      dprintf("Cache filled while loading\n");
+
+    if (tsaved>tmatches)
+      tmatches=tsaved+1;
+
+    last_access=tmatches+1;
+    for (i=0;i<tsaved;i++)      // reorder the last access of each cache to reflect prioirties
+    {
+      if (priority[i]!=-1)
+      {
+        if (list[priority[i]].last_access!=-1)            // make sure this wasn't the last item
+          list[priority[i]].last_access=tmatches--;
+      }
+    }
+
+    jfree(priority);
+    jfree(fnum_remap);
 
 
       }
-    }    
+    }
   }
 
   if (load_fail) // no cache file, go solely on above gueses
@@ -608,22 +608,22 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
 
       if (list[j].file_number>=0 && list[j].last_access==-2)
       {
-	list[j].last_access=-1;
-	if (!ful)
-	{
-	  switch (list[j].type)
-	  {
-	    case SPEC_BACKTILE : backt(j); break;
-	    case SPEC_FORETILE : foret(j); break;
-	    case SPEC_CHARACTER :
-	    case SPEC_CHARACTER2 : fig(j); break;
-	    case SPEC_IMAGE : img(j); break;
-	    case SPEC_PARTICLE : part(j); break;
-	    case SPEC_EXTERN_SFX : sfx(j); break;
-	    case SPEC_EXTERNAL_LCACHE : lblock(j); break;
-	    case SPEC_PALETTE : ctint(j); break;
-	  }
-	}
+    list[j].last_access=-1;
+    if (!ful)
+    {
+      switch (list[j].type)
+      {
+        case SPEC_BACKTILE : backt(j); break;
+        case SPEC_FORETILE : foret(j); break;
+        case SPEC_CHARACTER :
+        case SPEC_CHARACTER2 : fig(j); break;
+        case SPEC_IMAGE : img(j); break;
+        case SPEC_PARTICLE : part(j); break;
+        case SPEC_EXTERN_SFX : sfx(j); break;
+        case SPEC_EXTERNAL_LCACHE : lblock(j); break;
+        case SPEC_PALETTE : ctint(j); break;
+      }
+    }
       }
     }
     if (full())
@@ -635,7 +635,7 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
 
 void CacheList::prof_poll_start()
 {
-  poll_start_access=last_access;  
+  poll_start_access=last_access;
 }
 
 void CacheList::prof_poll_end()
@@ -658,72 +658,72 @@ void CacheList::unreg(int id)
     unmalloc(&list[id]);
     list[id].file_number=-1;
   }
-  else 
+  else
     printf("Error : trying to unregister free object\n");
 }
 
 static void cache_cleanup2()
-{ unlink(lfname); 
+{ unlink(lfname);
 }
 
 static void cache_cleanup(int ret, void *arg)
-{ unlink(lfname); 
+{ unlink(lfname);
 }
 
 void CacheList::create_lcache()
 {
 #ifdef WIN32
-	char *prefix="c:\\";
+    char *prefix="c:\\";
 #else
-	char const *prefix = "/tmp/";     // for UNIX store lisp cache in tmp dir
-	int flags = O_CREAT | O_RDWR;
+    char const *prefix = "/tmp/";     // for UNIX store lisp cache in tmp dir
+    int flags = O_CREAT | O_RDWR;
 #endif
 
-	int cfail = 1, num = 0;
-	do
-	{
-		sprintf(lfname,"%slcache%02d.tmp",prefix,num);
+    int cfail = 1, num = 0;
+    do
+    {
+        sprintf(lfname,"%slcache%02d.tmp",prefix,num);
 
 #if defined( __APPLE__ )
-		unlink(lfname);
-		FILE *fp=fopen(lfname,"wb");
-		if (fp)
-		{
-			fclose(fp);
-			cfail=0;
-		}
+        unlink(lfname);
+        FILE *fp=fopen(lfname,"wb");
+        if (fp)
+        {
+            fclose(fp);
+            cfail=0;
+        }
 #else
-		int fd=open(lfname,flags,S_IRWXU | S_IRWXG | S_IRWXO);     // can we get exclusive rights to this file?
-		if (fd<0) close(fd); else cfail=0;
+        int fd=open(lfname,flags,S_IRWXU | S_IRWXG | S_IRWXO);     // can we get exclusive rights to this file?
+        if (fd<0) close(fd); else cfail=0;
 #endif
 
-		if (cfail)
-			num++;
+        if (cfail)
+            num++;
 
-	} while (cfail && num<15);
+    } while (cfail && num<15);
 
-	if (cfail)
-	{
-		fprintf(stderr,"Error : Unable to open cache file for compiled code.\n"
-			"        Please delete all files named lcacheXX.tmp\n"
-			"        and make sure you have write permission to\n"
-			"        directory (%s)\n",prefix);
-		exit(0);
-	}
-	else
-	{
-		exit_proc(cache_cleanup,cache_cleanup2);    // make sure this file gets deleted on exit..
-	}
-	lcache_number=-1;
+    if (cfail)
+    {
+        fprintf(stderr,"Error : Unable to open cache file for compiled code.\n"
+            "        Please delete all files named lcacheXX.tmp\n"
+            "        and make sure you have write permission to\n"
+            "        directory (%s)\n",prefix);
+        exit(0);
+    }
+    else
+    {
+        exit_proc(cache_cleanup,cache_cleanup2);    // make sure this file gets deleted on exit..
+    }
+    lcache_number=-1;
 }
 
 CacheList::CacheList()
 {
-  // start out with a decent sized cache buffer because it's going to get allocated anyway. 
-  total=0; 
+  // start out with a decent sized cache buffer because it's going to get allocated anyway.
+  total=0;
   list=NULL;
-  last_registered=-1;   
-  cache_file=fp=NULL; 
+  last_registered=-1;
+  cache_file=fp=NULL;
   last_access=1;
   used=ful=0;
   last_dir=NULL;
@@ -734,7 +734,7 @@ CacheList::CacheList()
 }
 
 CacheList::~CacheList()
-{ 
+{
 }
 
 void CacheList::empty()
@@ -750,9 +750,9 @@ void CacheList::empty()
   if (cache_file)
   {
     delete cache_file;
-    cache_file=NULL;    
+    cache_file=NULL;
   }
-  unlink(lfname); 
+  unlink(lfname);
 
   if (prof_data)
   {
@@ -762,9 +762,9 @@ void CacheList::empty()
 
   total=0;                    // reinitalize
   list=NULL;
-  last_registered=-1;   
-  cache_file=fp=NULL; 
-  if (cache_read_file) 
+  last_registered=-1;
+  cache_file=fp=NULL;
+  if (cache_read_file)
   {
     delete cache_read_file;
     cache_read_file=NULL;
@@ -783,7 +783,7 @@ void CacheList::locate(CacheItem *i, int local_only)
   if (i->file_number!=last_file)
   {
     if (fp) delete fp;
-    if (last_dir) delete last_dir; 
+    if (last_dir) delete last_dir;
     if (local_only)
       fp=new jFILE(crc_manager.get_filename(i->file_number),"rb");
     else
@@ -819,7 +819,7 @@ int32_t CacheList::alloc_id()
   }
 
   // see if we previously allocated an id, if so check the next spot in the array
-  // otherwise we will have to scan the whole list for a free id and possible 
+  // otherwise we will have to scan the whole list for a free id and possible
   // grow the list.
   if (last_registered+1<total && list[last_registered+1].file_number<0)
     id=last_registered+1;
@@ -840,8 +840,8 @@ int32_t CacheList::alloc_id()
       for (i=0;i<add_size;i++)
       {
         list[total+i].file_number=-1;         // mark new entries as new
-	list[total+i].last_access=-1;
-	list[total+i].data=NULL;
+    list[total+i].last_access=-1;
+    list[total+i].data=NULL;
       }
       id=total;
       if (prof_data)                          // new id's have been added old prof_data size won't work
@@ -856,7 +856,7 @@ int32_t CacheList::alloc_id()
 
 
 int32_t CacheList::reg_lisp_block(Cell *block)
-{ 
+{
   uint32_t s;
   if (lcache_number==-1)
     lcache_number=crc_manager.get_filenumber(lfname);
@@ -867,14 +867,14 @@ int32_t CacheList::reg_lisp_block(Cell *block)
     {
       if (cache_read_file)
       {
-	delete cache_read_file;
-	cache_read_file=NULL;
+    delete cache_read_file;
+    cache_read_file=NULL;
 
-	cache_file=new jFILE(lfname,"ab");	
-      } else cache_file=new jFILE(lfname,"wb");	 // first time we opened
+    cache_file=new jFILE(lfname,"ab");    
+      } else cache_file=new jFILE(lfname,"wb");     // first time we opened
     }
-    if (cache_file->open_failure()) 
-    { 
+    if (cache_file->open_failure())
+    {
       delete cache_file;
       lprint(block);
       fprintf(stderr,"Unable to open lisp cache file name %s\n",lfname);
@@ -888,22 +888,22 @@ int32_t CacheList::reg_lisp_block(Cell *block)
   ci->file_number=fn;
   ci->last_access=-1;
   ci->type=SPEC_EXTERNAL_LCACHE;
-  if (!can_cache_lisp()) 
+  if (!can_cache_lisp())
   {
     ci->data=(void *)block;                // we can't cache it out so it must be in memory
     return id;
-  } 
+  }
   ci->data=NULL;                  // assume that it is in tmp memory, need to cache in on access
   ci->offset=cache_file->tell();
 
   s=block_size(block);
   cache_file->write_uint32(s);
   write_level(cache_file,block);
-  return id;    
+  return id;
 }
 
 int32_t CacheList::reg_object(char const *filename, void *object, int type, int rm_dups)
-{ 
+{
   char *name;
   if (item_type(object)==L_CONS_CELL)      // see if we got a object with a filename included
   {
@@ -918,86 +918,86 @@ extern int total_files_open;
 
 int32_t CacheList::reg(char const *filename, char const *name, int type, int rm_dups)
 {
-	int id=alloc_id(),i,fn=crc_manager.get_filenumber(filename);
-	CacheItem *ci=list+id;
-	CHECK(id<total && list[id].file_number<0);
+    int id=alloc_id(),i,fn=crc_manager.get_filenumber(filename);
+    CacheItem *ci=list+id;
+    CHECK(id<total && list[id].file_number<0);
 
-	if( type == SPEC_EXTERN_SFX ) // If a extern sound effect then just make sure it's there
-	{
-		bFILE *check=open_file(filename,"rb");
-		if (check->open_failure())
-		{
-			delete check;
-			if( sound_avail )
-			{
-				printf("Unable to open file '%s' for reading\n",filename);
-				exit(0);
-			}
-			else
-			{
-				// Sound is disabled, we don't really care if the sound file
-				// is there or not, just pretend it's all ok.
-				return id;
-			}
-		}
-		char buf[4];
-		check->read(buf,4);
-		delete check;
-		if (memcmp(buf,"RIFF",4))
-		{
-			printf("File %s is not a WAV file\n",filename);
-			exit(0);
-		}
-		ci->file_number=fn;
-		ci->last_access=-1;
-		ci->data=NULL;
-		ci->offset=0;
-		ci->type=type;
-		return id;
-	}
+    if( type == SPEC_EXTERN_SFX ) // If a extern sound effect then just make sure it's there
+    {
+        bFILE *check=open_file(filename,"rb");
+        if (check->open_failure())
+        {
+            delete check;
+            if( sound_avail )
+            {
+                printf("Unable to open file '%s' for reading\n",filename);
+                exit(0);
+            }
+            else
+            {
+                // Sound is disabled, we don't really care if the sound file
+                // is there or not, just pretend it's all ok.
+                return id;
+            }
+        }
+        char buf[4];
+        check->read(buf,4);
+        delete check;
+        if (memcmp(buf,"RIFF",4))
+        {
+            printf("File %s is not a WAV file\n",filename);
+            exit(0);
+        }
+        ci->file_number=fn;
+        ci->last_access=-1;
+        ci->data=NULL;
+        ci->offset=0;
+        ci->type=type;
+        return id;
+    }
 
-	spec_directory *sd=sd_cache.get_spec_directory(filename);
+    spec_directory *sd=sd_cache.get_spec_directory(filename);
 
-	if (!sd)
-	{
-		printf("Unable to open filename %s for requested item %s\n",filename,name);
-		exit(0);
-	}
+    if (!sd)
+    {
+        printf("Unable to open filename %s for requested item %s\n",filename,name);
+        exit(0);
+    }
 
-	spec_entry *se;
-	if (type!=-1)
-	{
-		se=sd->find(name,type);
-		if (!se) se=sd->find(name);
-	}
-	else se=sd->find(name);
+    spec_entry *se;
+    if (type!=-1)
+    {
+        se=sd->find(name,type);
+        if (!se) se=sd->find(name);
+    }
+    else se=sd->find(name);
 
 
-	if (!se)
-	{
-		printf("No such item %s in file %s\n",name,filename);
-		exit(0);
-	}
-	else if (type>=0 && (type!=se->type && ((type!=SPEC_CHARACTER2 && type!=SPEC_CHARACTER)  ||
-						(se->type!=SPEC_CHARACTER && se->type!=SPEC_CHARACTER2))))
-	{
-		printf("Item %s of file %s should be type %s\n",name,filename,spec_types[type]);
-		exit(0);
-	}
+    if (!se)
+    {
+        printf("No such item %s in file %s\n",name,filename);
+        exit(0);
+    }
+    else if (type>=0 && (type!=se->type && ((type!=SPEC_CHARACTER2 && type!=SPEC_CHARACTER)  ||
+                        (se->type!=SPEC_CHARACTER && se->type!=SPEC_CHARACTER2))))
+    {
+        printf("Item %s of file %s should be type %s\n",name,filename,spec_types[type]);
+        exit(0);
+    }
 
-	if (rm_dups)
-	{
-		for (i=0;i<total;i++)
-			if (list[i].file_number == fn && (unsigned)list[i].offset == se->offset)
-				return i;
-	}
+    if (rm_dups)
+    {
+        for (i=0;i<total;i++)
+            if (list[i].file_number == fn && (unsigned)list[i].offset == se->offset)
+                return i;
+    }
 
-	ci->file_number=fn;
-	ci->last_access=-1;
-	ci->data=NULL;
-	ci->offset=se->offset;
-	ci->type=se->type;  
-	return id;  
+    ci->file_number=fn;
+    ci->last_access=-1;
+    ci->data=NULL;
+    ci->offset=se->offset;
+    ci->type=se->type;
+    return id;
 }
 
 
@@ -1021,7 +1021,7 @@ backtile *CacheList::backt(int id)
   CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
 
-  if (me->last_access>=0)  
+  if (me->last_access>=0)
   {
     touch(me);
     return (backtile *)me->data;
@@ -1035,7 +1035,7 @@ backtile *CacheList::backt(int id)
     alloc_space=sp;
     last_offset=fp->tell();
     return (backtile *)me->data;
-  }  
+  }
 }
 
 
@@ -1044,7 +1044,7 @@ foretile *CacheList::foret(int id)
   CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
 
-  if (me->last_access>=0)  
+  if (me->last_access>=0)
   {
     touch(me);
     return (foretile *)me->data;
@@ -1058,14 +1058,14 @@ foretile *CacheList::foret(int id)
     alloc_space=sp;
     last_offset=fp->tell();
     return (foretile *)me->data;
-  }  
+  }
 }
 
 figure *CacheList::fig(int id)
 {
   CacheItem *me=list+id;
 //  CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
-  if (me->last_access>=0)  
+  if (me->last_access>=0)
   {
     touch(me);
     return (figure *)me->data;
@@ -1079,14 +1079,14 @@ figure *CacheList::fig(int id)
     alloc_space=sp;
     last_offset=fp->tell();
     return (figure *)me->data;
-  }  
+  }
 }
 
 image *CacheList::img(int id)
 {
   CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
-  if (me->last_access>=0)  
+  if (me->last_access>=0)
   {
     touch(me);
     return (image *)me->data;
@@ -1102,14 +1102,14 @@ image *CacheList::img(int id)
     last_offset=fp->tell();
 
     return (image *)me->data;
-  }  
+  }
 }
 
 sound_effect *CacheList::sfx(int id)
 {
   CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
-  if (me->last_access>=0)  
+  if (me->last_access>=0)
   {
     touch(me);                                           // hold me, feel me, be me!
     return (sound_effect *)me->data;
@@ -1122,7 +1122,7 @@ sound_effect *CacheList::sfx(int id)
     me->data=(void *)new sound_effect(fn);
     alloc_space=sp;
     return (sound_effect *)me->data;
-  }  
+  }
 }
 
 
@@ -1130,7 +1130,7 @@ part_frame *CacheList::part(int id)
 {
   CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
-  if (me->last_access>=0)  
+  if (me->last_access>=0)
   {
     touch(me);                                           // hold me, feel me, be me!
     return (part_frame *)me->data;
@@ -1144,7 +1144,7 @@ part_frame *CacheList::part(int id)
     alloc_space=sp;
     last_offset=fp->tell();
     return (part_frame *)me->data;
-  }  
+  }
 }
 
 
@@ -1153,7 +1153,7 @@ Cell *CacheList::lblock(int id)
   CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
   if (!can_cache_lisp()) return (Cell *)me->data;
-  if (me->last_access>=0)  
+  if (me->last_access>=0)
   {
     touch(me);
     return (Cell *)me->data;
@@ -1164,15 +1164,15 @@ Cell *CacheList::lblock(int id)
     {
       delete cache_file;
       cache_file=NULL;
-    } 
+    }
     touch(me);
 
     if (!cache_read_file)
     {
       cache_read_file=new jFILE(crc_manager.get_filename(me->file_number),"rb");
-      
+
       int cache_size=80*1024;                   // 80K
-      cache_read_file->set_read_buffer_size(cache_size); 
+      cache_read_file->set_read_buffer_size(cache_size);
       uint8_t mini_buf;
       cache_read_file->read(&mini_buf,1);       // prime the buffer
     }
@@ -1189,16 +1189,16 @@ Cell *CacheList::lblock(int id)
     else space=NULL;
 
     int cs=current_space;
-    use_user_space(space,size);    
+    use_user_space(space,size);
     load_block(cache_read_file);
     current_space=cs;
-    
+
     alloc_space=sp;
     if (size)
       me->data=(Cell *)space;
     else me->data=NULL;
     return (Cell *)me->data;
-  }  
+  }
 }
 
 CacheList cache;
@@ -1225,7 +1225,7 @@ void CacheList::free_oldest()
   if (oldest)
   {
     dprintf("mem_maker : freeing %s\n",spec_types[oldest->type]);
-    unmalloc(oldest);    
+    unmalloc(oldest);
   }
   else
   {
@@ -1233,7 +1233,7 @@ void CacheList::free_oldest()
     printf("Out of memory, please remove any TSR's device drivers you can\n");
     mem_report("out_of_mem");
     exit(0);
-  }         
+  }
 }
 
 
@@ -1241,18 +1241,18 @@ void CacheList::show_accessed()
 {
   int old=last_access,new_old_accessed;
   CacheItem *ci,*new_old;
-  
+
   do
   {
     new_old_accessed=-1;
     new_old=NULL;
     ci=list;
-    for (int i=0;i<total;i++,ci++)  
+    for (int i=0;i<total;i++,ci++)
     {
-      if (ci->last_access<old && ci->last_access>0 && ci->last_access>new_old_accessed)    
+      if (ci->last_access<old && ci->last_access>0 && ci->last_access>new_old_accessed)
       {
-	new_old_accessed=ci->last_access;
-        new_old=ci;    
+    new_old_accessed=ci->last_access;
+        new_old=ci;
       }
     }
     if (new_old)
@@ -1260,8 +1260,8 @@ void CacheList::show_accessed()
       ci=new_old;
       old=ci->last_access;
       printf("type=(%20s) file=(%20s) access=(%6ld)\n",spec_types[ci->type],
-	     crc_manager.get_filename(ci->file_number),
-	     (long int)ci->last_access);
+         crc_manager.get_filename(ci->file_number),
+         (long int)ci->last_access);
     }
   } while (new_old);
 }
@@ -1271,7 +1271,7 @@ int CacheList::loaded(int id)
 {
   CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
-  if (me->last_access>=0)  
+  if (me->last_access>=0)
     return 1;
   else return 0;
 }
@@ -1282,7 +1282,7 @@ char_tint *CacheList::ctint(int id)
 {
   CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id" && me->type==SPEC_PALETTE);
-  if (me->last_access>=0)  
+  if (me->last_access>=0)
   {
     touch(me);
     return (char_tint *)me->data;
@@ -1296,7 +1296,7 @@ char_tint *CacheList::ctint(int id)
     alloc_space=sp;
     last_offset=fp->tell();
     return (char_tint *)me->data;
-  }    
+  }
 }
 
 

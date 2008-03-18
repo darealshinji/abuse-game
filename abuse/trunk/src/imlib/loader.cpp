@@ -22,10 +22,10 @@
 
 int tell_color_size(char *filename)
 {
-  if (bmp_bits(filename)==24) return 24;  
+  if (bmp_bits(filename)==24) return 24;
   if (PCX_file_type(filename)==PCX_24) return 24;
-  clear_errors();  
-  return 8;  
+  clear_errors();
+  return 8;
 }
 
 image24 *load_any24(char *filename)
@@ -33,9 +33,9 @@ image24 *load_any24(char *filename)
   if (bmp_bits(filename)==24)
     return read_bmp24(filename);
   else if (PCX_file_type(filename)==PCX_24)
-    return read_PCX24(filename); 
+    return read_PCX24(filename);
   else return NULL;
-  
+
 }
 
 
@@ -46,45 +46,45 @@ short load_any(char *filename, image **&images, palette *&pal, short &total_read
   switch (tell_file_type(filename))
   {
     case LOADER_not_supported : break;
-    case LOADER_mdl :  
+    case LOADER_mdl :
       total_read=mdl_total_images(filename);
       if (!current_error())
         images=read_mdl(filename,pal,1,total_read,total_read);
       break;
-    case LOADER_xwd : 
+    case LOADER_xwd :
       images=(image **)jmalloc(sizeof(image *),"loader::xwd image * array");
-      total_read=1; 
+      total_read=1;
       images[0]=readxwd(filename,pal);
       break;
-    case LOADER_ppm :  
+    case LOADER_ppm :
       images=(image **)jmalloc(sizeof(image *),"loader::ppm image * array");
       total_read=1;
       pal=new palette;
       images[0]=read_ppm(filename,pal,PPM_REG);
       break;
-    case LOADER_pic :  
+    case LOADER_pic :
       images=(image **)jmalloc(sizeof(image *),"loader::pic image * array");
       total_read=1;
       pal=NULL;
       images[0]=read_pic(filename,pal);
       break;
-    case LOADER_bmp8 :  
+    case LOADER_bmp8 :
       images=(image **)jmalloc(sizeof(image *),"loader::bmp image * array");
       total_read=1;
       pal=NULL;
       images[0]=read_bmp(pal,filename);
       break;
-    case LOADER_pcx8 :  
+    case LOADER_pcx8 :
       images=(image **)jmalloc(sizeof(image *),"loader::pcx image * array");
       total_read=1;
       pal=NULL;
-      images[0]=read_PCX(filename,pal);    
-      break;   
+      images[0]=read_PCX(filename,pal);
+      break;
     case LOADER_lbm :
       images=(image **)jmalloc(sizeof(image *),"loader::pcx image * array");
       total_read=1;
       pal=NULL;
-      images[0]=read_lbm(filename,pal);    
+      images[0]=read_lbm(filename,pal);
       break;
     case LOADER_targa :
     {
@@ -99,10 +99,10 @@ short load_any(char *filename, image **&images, palette *&pal, short &total_read
     } break;
     default :
       set_error(imNOT_SUPPORTED);
-  }    
+  }
   if (current_error())
   {
-    short i;    
+    short i;
     i=current_error();
     set_error(0);
     return i;
@@ -119,9 +119,9 @@ graphics_type tell_file_type(char *filename)
   if (!fp)
     return LOADER_not_supported;
   else if (fread(header,1,12,fp)!=12)
-  { 
+  {
     fclose(fp);
-    return LOADER_not_supported;    
+    return LOADER_not_supported;
   }
   fclose(fp);
 
@@ -138,20 +138,20 @@ graphics_type tell_file_type(char *filename)
     return LOADER_pic;
   else if (header[0]=='F' && header[1]=='O' && header[2]=='R' && header[3]=='M')
     return LOADER_lbm;
-  else if (header[0]=='B' && header[1]=='M') 
+  else if (header[0]=='B' && header[1]=='M')
   {
     switch (tell_color_size(filename))
     {
-      case 24 : return LOADER_bmp24; break;      
-      case 8 : return LOADER_bmp8; break;	
+      case 24 : return LOADER_bmp24; break;
+      case 8 : return LOADER_bmp8; break;    
       default : return LOADER_not_supported; break;
     }
   } else if (header[0]==10)
-  {  
+  {
     switch (tell_color_size(filename))
     {
-      case 24 : return LOADER_pcx24; break;      
-      case 8 : return LOADER_pcx8; break;	
+      case 24 : return LOADER_pcx24; break;
+      case 8 : return LOADER_pcx8; break;    
       default : return LOADER_not_supported; break;
     }
   } else if (header[0]==0 && header[1]==0 && header[2]==10 && header[3]==0 && header[4]==0)

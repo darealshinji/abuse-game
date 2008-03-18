@@ -24,54 +24,54 @@ int ca[8]={1,1,1,1,0,0,0,0},
 #define RGB2Y(r,g,b) (char)(ya[MC(b)|MC(g)<<1|MC(r)<<2])
 #define RGB2M(r,g,b) (char)(ma[MC(b)|MC(g)<<1|MC(r)<<2])
 
-#define LSBFirst	0
-#define MSBFirst	1
+#define LSBFirst    0
+#define MSBFirst    1
 
-#define XYBitmap	0
-#define XYPixmap	1
-#define ZPixmap		2
+#define XYBitmap    0
+#define XYPixmap    1
+#define ZPixmap        2
 
-#define StaticGray	0
-#define GrayScale	1
-#define StaticColor	2
-#define PseudoColor	3
-#define TrueColor	4
-#define DirectColor	5
+#define StaticGray    0
+#define GrayScale    1
+#define StaticColor    2
+#define PseudoColor    3
+#define TrueColor    4
+#define DirectColor    5
 
 typedef unsigned long xwdval;
 #define X11WD_FILE_VERSION 7
 typedef struct {
-    xwdval header_size;		/* Size of the entire file header (bytes). */
-    xwdval file_version;	/* X11WD_FILE_VERSION */
-    xwdval pixmap_format;	/* Pixmap format */
-    xwdval pixmap_depth;	/* Pixmap depth */
-    xwdval pixmap_width;	/* Pixmap width */
-    xwdval pixmap_height;	/* Pixmap height */
-    xwdval xoffset;		/* Bitmap x offset */
-    xwdval byte_order;		/* MSBFirst, LSBFirst */
-    xwdval bitmap_unit;		/* Bitmap unit */
-    xwdval bitmap_bit_order;	/* MSBFirst, LSBFirst */
-    xwdval bitmap_pad;		/* Bitmap scanline pad */
-    xwdval bits_per_pixel;	/* Bits per pixel */
-    xwdval bytes_per_line;	/* Bytes per scanline */
-    xwdval visual_class;	/* Class of colormap */
-    xwdval red_mask;		/* Z red mask */
-    xwdval green_mask;		/* Z green mask */
-    xwdval blue_mask;		/* Z blue mask */
-    xwdval bits_per_rgb;	/* Log base 2 of distinct color values */
-    xwdval colormap_entries;	/* Number of entries in colormap */
-    xwdval ncolors;		/* Number of Color structures */
-    xwdval window_width;	/* Window width */
-    xwdval window_height;	/* Window height */
-    long window_x;		/* Window upper left X coordinate */
-    long window_y;		/* Window upper left Y coordinate */
-    xwdval window_bdrwidth;	/* Window border width */
+    xwdval header_size;        /* Size of the entire file header (bytes). */
+    xwdval file_version;    /* X11WD_FILE_VERSION */
+    xwdval pixmap_format;    /* Pixmap format */
+    xwdval pixmap_depth;    /* Pixmap depth */
+    xwdval pixmap_width;    /* Pixmap width */
+    xwdval pixmap_height;    /* Pixmap height */
+    xwdval xoffset;        /* Bitmap x offset */
+    xwdval byte_order;        /* MSBFirst, LSBFirst */
+    xwdval bitmap_unit;        /* Bitmap unit */
+    xwdval bitmap_bit_order;    /* MSBFirst, LSBFirst */
+    xwdval bitmap_pad;        /* Bitmap scanline pad */
+    xwdval bits_per_pixel;    /* Bits per pixel */
+    xwdval bytes_per_line;    /* Bytes per scanline */
+    xwdval visual_class;    /* Class of colormap */
+    xwdval red_mask;        /* Z red mask */
+    xwdval green_mask;        /* Z green mask */
+    xwdval blue_mask;        /* Z blue mask */
+    xwdval bits_per_rgb;    /* Log base 2 of distinct color values */
+    xwdval colormap_entries;    /* Number of entries in colormap */
+    xwdval ncolors;        /* Number of Color structures */
+    xwdval window_width;    /* Window width */
+    xwdval window_height;    /* Window height */
+    long window_x;        /* Window upper left X coordinate */
+    long window_y;        /* Window upper left Y coordinate */
+    xwdval window_bdrwidth;    /* Window border width */
     } X11WDFileHeader;
 
 typedef struct {
     unsigned long pixel;
     unsigned short red, green, blue;
-    char flags;			/* do_red, do_green, do_blue */
+    char flags;            /* do_red, do_green, do_blue */
     char pad;
     } X11XColor;
 
@@ -93,7 +93,7 @@ HBITMAP readxwd(char *input_file,palette *&pal)
   if (strcmp(input_file,"-") == 0)
     ifd = stdin;d)
   { printf("Unable to open %s\n"
-	   "Get your story right and try again.\n",input_file);
+       "Get your story right and try again.\n",input_file);
     exit(0);
   }
   printf("Reading image\n");
@@ -194,7 +194,7 @@ HBITMAP getinit(FILE *file, palette *&pal, int *padrightP, int &xres, int &yres)
   if ( h11P->pixmap_format != ZPixmap )
     {
       fprintf(stderr,"can't handle X11 pixmap_format %d", h11P->pixmap_format,
-	      0,0,0,0 );
+          0,0,0,0 );
       exit(-1);
     }
   if ( h11P->bitmap_unit != 8 && h11P->bitmap_unit != 16 &&
@@ -216,31 +216,31 @@ maxred = 0;
   for ( i = 0; i < h11P->colormap_entries; i++ )
     {
       if ( fread( &x11col, sizeof(X11XColor), 1, file ) != 1 )
-	{
-	  fprintf(stderr,"couldn't read X11 XWD colormap");
-	  exit(-1);
-	}
-	else
-	{
-	  x11col.pixel=bltl(x11col.pixel);
-	  x11col.red=bstl(x11col.red);
-	  x11col.green=bstl(x11col.green);
-	  x11col.blue=bstl(x11col.blue);
-	}
+    {
+      fprintf(stderr,"couldn't read X11 XWD colormap");
+      exit(-1);
+    }
+    else
+    {
+      x11col.pixel=bltl(x11col.pixel);
+      x11col.red=bstl(x11col.red);
+      x11col.green=bstl(x11col.green);
+      x11col.blue=bstl(x11col.blue);
+    }
       if (x11col.pixel < 256)
-	{
-	  if (minred > x11col.red) minred = x11col.red;
-	  if (maxred < x11col.red) maxred = x11col.red;
-	  dummy1 = (unsigned) x11col.red / 256 ;
-	  dummy2 = (unsigned) x11col.green / 256 ;
-	  dummy3 = (unsigned) x11col.blue / 256 ;
-	  pal->set(i,dummy1,dummy2,dummy3);
-	}
+    {
+      if (minred > x11col.red) minred = x11col.red;
+      if (maxred < x11col.red) maxred = x11col.red;
+      dummy1 = (unsigned) x11col.red / 256 ;
+      dummy2 = (unsigned) x11col.green / 256 ;
+      dummy3 = (unsigned) x11col.blue / 256 ;
+      pal->set(i,dummy1,dummy2,dummy3);
+    }
       else
-	{
-	  fprintf(stderr,"pixel value outside of valid HDF palette\n");
-	  exit(-1);
-	}
+    {
+      fprintf(stderr,"pixel value outside of valid HDF palette\n");
+      exit(-1);
+    }
     }
   /* rest of stuff for getpixnum */
   bits_per_item = h11P->bitmap_unit;
@@ -262,13 +262,13 @@ void getimage(FILE *file,HBITMAP &im.int pad)
   for (i=0; i<im->height(); i++)
     {
       if (i%50==0)
-	printf("Line %d of %d\n",i+1,im->height());
+    printf("Line %d of %d\n",i+1,im->height());
       sl=im->scan_line(i);
       for (j=0; j<im->width(); j++)
-	sl[j]= getpixnum(file);
+    sl[j]= getpixnum(file);
 
       for ( j = 0; j < pad; j++ )
-	getpixnum( file );
+    getpixnum( file );
     }
 }
 
@@ -280,30 +280,30 @@ int getpixnum(FILE *file)
   if ( bits_used == bits_per_item )
     {
       if ( fread( buf, bits_per_item / 8, 1, file ) != 1 )
-	fprintf(stderr, "couldn't read bits" );
+    fprintf(stderr, "couldn't read bits" );
       if ( byte_swap )
-	switch ( bits_per_item )
-	  {
-	  case 8:
-	    break;
+    switch ( bits_per_item )
+      {
+      case 8:
+        break;
 
-	  case 16:
-	    *shortP = bstl(*shortP) ;
-	    break;
+      case 16:
+        *shortP = bstl(*shortP) ;
+        break;
 
-	  case 32:
-	    *longP = bltl(*longP) ;
-	    break;
+      case 32:
+        *longP = bltl(*longP) ;
+        break;
 
-	  default:
-	    fprintf(stderr, "can't happen" );
-	  }
+      default:
+        fprintf(stderr, "can't happen" );
+      }
       bits_used = 0;
 
 //      if ( bit_order == MSBFirst )
-	bit_shift = bits_per_item - bits_per_pixel;
+    bit_shift = bits_per_item - bits_per_pixel;
 //      else
-//	bit_shift = 0;
+//    bit_shift = 0;
     }
 
   switch ( bits_per_item )
@@ -456,8 +456,8 @@ image *color_dither(image *im, palette *pal, int rev)
     { sl2=im->scan_line(y);
       for (x=0;x<im->width();x++)
       {
-	if (ad[sl2[x]*3]<min[j]) min[j]=ad[i*3];
-	if (ad[sl2[x]*3]>max[j]) max[j]=ad[i*3];
+    if (ad[sl2[x]*3]<min[j]) min[j]=ad[i*3];
+    if (ad[sl2[x]*3]>max[j]) max[j]=ad[i*3];
       }
     }
   // find the middle color used for red green and blue
@@ -480,19 +480,19 @@ image *color_dither(image *im, palette *pal, int rev)
       // diffuse the colors using flyod stienburg dithering algorithm
       for (j=0;j<3;j++)
       {
-	crimp = sl[x*3+j]>mid[j] ? 255 : 0;
-	delta=sl[x*3+j]-crimp;
-	sl[x*3+j]=crimp;
-	if (x+1<im->width())
-	{ sl[(x+1)*3+j]=addb(sl[(x+1)*3+j],delta*7/16);
-	  if (y+1<im->height())
-	    sl2[(x+1)*3+j]=addb(sl2[(x+1)*3+j],delta*1/16);
-	}
-	if (y+1<im->height())
-	{ if (x>0)
-	    sl2[(x-1)*3+j]=addb(sl2[(x-1)*3+j],delta*3/16);
-	  sl2[(x)*3+j]=addb(sl2[(x)*3+j],delta*5/16);
-	}
+    crimp = sl[x*3+j]>mid[j] ? 255 : 0;
+    delta=sl[x*3+j]-crimp;
+    sl[x*3+j]=crimp;
+    if (x+1<im->width())
+    { sl[(x+1)*3+j]=addb(sl[(x+1)*3+j],delta*7/16);
+      if (y+1<im->height())
+        sl2[(x+1)*3+j]=addb(sl2[(x+1)*3+j],delta*1/16);
+    }
+    if (y+1<im->height())
+    { if (x>0)
+        sl2[(x-1)*3+j]=addb(sl2[(x-1)*3+j],delta*3/16);
+      sl2[(x)*3+j]=addb(sl2[(x)*3+j],delta*5/16);
+    }
       }
     }
     sl=i24->scan_line(y);
@@ -532,7 +532,7 @@ void deskjet_print(int argc, char **argv)
   char def_name[10],*dev_name,*fname=NULL;
   uint8_t cp[500],mp[500],yp[500],kp[500];
   strcpy(def_name,"\\dev\\lp");  // set the default output device to /dev/lp
-		// since we are in vpix, however we will use the backslash
+        // since we are in vpix, however we will use the backslash
   dev_name=def_name; rev=0;
   for (i=1;i<argc;i++)
     if (!strcmp(argv[i],"-dpi"))
@@ -552,18 +552,18 @@ void deskjet_print(int argc, char **argv)
 
   if (!fname || bad)
   { printf("usage : %s [-dev device] [-dpi 75,100,150,300]\n"
-	   "     [-rev] [-display] [-2bmp] [-land] filename\n\n"
-	   "  default dpi is 100 (possible are 75/100/150/300)\n"
-	   "  default printer is /dev/lp\n"
-	   "  -rev, reverse black and white on the print out\n"
-	   "  -display only displays the image to the screen and does not print it\n"
-	   "    all ither options will be ignored\n"
-	   "  -2bmp converts the image X window dump to a MicroSoft Windows bitmap (BMP)\n"
-	   "    the file written to must be specified by -dev [filename]\n"
-	   "    all other options will be ignored\n"
-	   "  -land prints the image in landscape mode (sideways)\n"
-	   "  filename is the name of the dump created by xwd\n"
-	   "  Using Dos, the command [%s -dev lpt1] should be used\n",argv[0],argv[0]);
+       "     [-rev] [-display] [-2bmp] [-land] filename\n\n"
+       "  default dpi is 100 (possible are 75/100/150/300)\n"
+       "  default printer is /dev/lp\n"
+       "  -rev, reverse black and white on the print out\n"
+       "  -display only displays the image to the screen and does not print it\n"
+       "    all ither options will be ignored\n"
+       "  -2bmp converts the image X window dump to a MicroSoft Windows bitmap (BMP)\n"
+       "    the file written to must be specified by -dev [filename]\n"
+       "    all other options will be ignored\n"
+       "  -land prints the image in landscape mode (sideways)\n"
+       "  filename is the name of the dump created by xwd\n"
+       "  Using Dos, the command [%s -dev lpt1] should be used\n",argv[0],argv[0]);
     exit(0);
   }
   im=readxwd(fname,pal);
@@ -587,7 +587,7 @@ void deskjet_print(int argc, char **argv)
     fp=fopen(dev_name,"wb");  // open the output device for printing
     if (!fp)
     { printf("Unable to open %s for writing, make sure the path exsist and you\n"
-	     "have write permission to the file\n",dev_name);
+         "have write permission to the file\n",dev_name);
       exit(0);
     }
     if (land)
@@ -595,13 +595,13 @@ void deskjet_print(int argc, char **argv)
 
     w=im->width()+7; w/=8; w*=8;
     fprintf(fp,"E"           // reset the printer
-	       "&l%dO"      // portrait/landscape mode
-	       "*rbC"        // reset graphics
-	       "*t%dR"        // set the resolution
-	       "*r%dS"       // set the image width
-	       "*r1A"        // start raster graphics at left edge
-	       "*r-4U"         // set to CYM mode
-	       ,land,dpi,w);
+           "&l%dO"      // portrait/landscape mode
+           "*rbC"        // reset graphics
+           "*t%dR"        // set the resolution
+           "*r%dS"       // set the image width
+           "*r1A"        // start raster graphics at left edge
+           "*r-4U"         // set to CYM mode
+           ,land,dpi,w);
   // now loop through all the scan lines of the image and pcik out the planes
   // we need
     i24=color_dither(im,pal,rev);
@@ -610,7 +610,7 @@ void deskjet_print(int argc, char **argv)
     for (y=0;y<im->height();y++)
     {
       if (y%20==0)
-	printf(".");
+    printf(".");
 
       sl=i24->scan_line(y);
   //initally set all the planes to clear, this should leave the paper white
@@ -618,21 +618,21 @@ void deskjet_print(int argc, char **argv)
   // now scan through the cyan plane of this scan line and pick out the bits
       for (x=0,bito=7;x<im->width();x++)
       {
-	outcv=RGB2C(sl[x*3],sl[x*3+1],sl[x*3+2]);
-	outyv=RGB2Y(sl[x*3],sl[x*3+1],sl[x*3+2]);
-	outmv=RGB2M(sl[x*3],sl[x*3+1],sl[x*3+2]);
-	if (outcv==outyv && outyv==outmv)
-	{
-	  if ((rev && !outcv) || (!rev && outcv))
-	    kp[x/8]^=(1<<bito);
-	} else
-	{
-	  cp[x/8]^=(outcv<<bito);
-	  yp[x/8]^=(outyv<<bito);
-	  mp[x/8]^=(outmv<<bito);
-	}
-	if ((bito--)==0)
-	  bito=7;
+    outcv=RGB2C(sl[x*3],sl[x*3+1],sl[x*3+2]);
+    outyv=RGB2Y(sl[x*3],sl[x*3+1],sl[x*3+2]);
+    outmv=RGB2M(sl[x*3],sl[x*3+1],sl[x*3+2]);
+    if (outcv==outyv && outyv==outmv)
+    {
+      if ((rev && !outcv) || (!rev && outcv))
+        kp[x/8]^=(1<<bito);
+    } else
+    {
+      cp[x/8]^=(outcv<<bito);
+      yp[x/8]^=(outyv<<bito);
+      mp[x/8]^=(outmv<<bito);
+    }
+    if ((bito--)==0)
+      bito=7;
       }
       fprintf(fp,"%c*b%dV",27,w/8);  // print out the black plane first
       fwrite(kp,1,w/8,fp);
@@ -644,7 +644,7 @@ void deskjet_print(int argc, char **argv)
       fwrite(mp,1,w/8,fp);
     }
     fprintf(fp,"%c*rbC%c",27,12);  // end graphics, switch everthing back to defaults
-				   // and print a form feed to eject the paper.
+                   // and print a form feed to eject the paper.
     fclose(fp); // flush out anything in the buffers and close the file
     delete i24;  // clean up the memory that we allocated to the image and the palette
   }

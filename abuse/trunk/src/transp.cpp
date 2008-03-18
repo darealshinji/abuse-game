@@ -16,15 +16,15 @@ void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);
   int xs=0,ys=0,xl=im->width(),yl=im->height();
-  if (x<cx1) 
-  { 
+  if (x<cx1)
+  {
     int chop=cx1-x;
     xs+=chop;
     xl-=chop;
     x+=chop;
   }
-  if (y<cy1) 
-  { 
+  if (y<cy1)
+  {
     int chop=cy1-y;
     ys+=chop;
     yl-=chop;
@@ -54,7 +54,7 @@ void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
         *s=*i;
       else *s=table[*s];
     }
-  }        
+  }
 }
 
 
@@ -64,15 +64,15 @@ void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);
   int xs=0,ys=0,xl=im->width(),yl=im->height();
-  if (x<cx1) 
-  { 
+  if (x<cx1)
+  {
     int chop=cx1-x;
     xs+=chop;
     xl-=chop;
     x+=chop;
   }
-  if (y<cy1) 
-  { 
+  if (y<cy1)
+  {
     int chop=cy1-y;
     ys+=chop;
     yl-=chop;
@@ -98,7 +98,7 @@ void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
     uint8_t *s=ssl,*i=isl;
     for (int ix=xs;ix<xe;ix++,s++,i++)
       *s=table[((*i)<<8)|(*s)];
-  }        
+  }
 }
 
 

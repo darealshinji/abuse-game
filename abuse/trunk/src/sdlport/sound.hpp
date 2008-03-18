@@ -11,7 +11,7 @@
 #define __SOUND_HPP_
 
 /* options are passed via command line */
-     
+
 #define SFX_INITIALIZED    1
 #define MUSIC_INITIALIZED  2
 

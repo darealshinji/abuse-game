@@ -23,7 +23,7 @@ image *load_targa(char *filename, palette *pal)
     delete fp;
     return 0;
   }
-  
+
   uint8_t id,color_map,im_type;
 
   id=fp->read_uint8();
@@ -66,12 +66,12 @@ image *load_targa(char *filename, palette *pal)
   int x,y;
   uint8_t ctrl;
   uint8_t bgra[4],*sl,c,lr=0,lg=0,lb=0,ll=0,lc=0;
-  
-  
-  
+
+
+
 
   if (im_type==10)
-  {    
+  {
     for (y=0;y<h;y++)
     {
       sl=im->scan_line(h-y-1);
@@ -109,7 +109,7 @@ image *load_targa(char *filename, palette *pal)
           }
         } else
         {
-          ctrl++;          
+          ctrl++;
           while (ctrl--)
           {
             fp->read(bgra,4);
@@ -124,7 +124,7 @@ image *load_targa(char *filename, palette *pal)
           }
         }
       }
-    }    
+    }
   }
 
 

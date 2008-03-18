@@ -24,10 +24,10 @@
 
 /*  Lisp garbage collections :  uses copy/free algorithm
     Places to check :
-      symbol 
+      symbol
         values
-	functions
-	names
+    functions
+    names
       stack
 */
 
@@ -62,7 +62,7 @@ void unregister_pointer(void **addr)
       int j;
       reg_ptr_total--;
       for (j=i;j<reg_ptr_total;j++,reg_on++)
-        reg_on[0]=reg_on[1];      
+        reg_on[0]=reg_on[1];
       return ;
     }
   }
@@ -99,9 +99,9 @@ inline void *collect_cons_cell(void *x)
     ((lisp_collected_object *)old_x)->type=L_COLLECTED_OBJECT;
     ((lisp_collected_object *)old_x)->new_reference=p;
 
-    p->car=collect_object(old_car); 
-    p->cdr=collect_object(old_cdr); 
-	  
+    p->car=collect_object(old_car);
+    p->cdr=collect_object(old_cdr);
+    
     if (last) last->cdr=p;
     else first=p;
     last=p;
@@ -122,56 +122,56 @@ static void *collect_object(void *x)
       case L_BAD_CELL :
       { lbreak("error : GC corrupted cell\n"); } break;
 
-      case L_NUMBER : 
+      case L_NUMBER :
       { ret=new_lisp_number(((lisp_number *)x)->num); } break;
 
 
       case L_SYS_FUNCTION :
       { ret=new_lisp_sys_function( ((lisp_sys_function *)x)->min_args,
-				      ((lisp_sys_function *)x)->max_args,
-				      ((lisp_sys_function *)x)->fun_number);
+                      ((lisp_sys_function *)x)->max_args,
+                      ((lisp_sys_function *)x)->fun_number);
       } break;
       case L_USER_FUNCTION :
       {
 #ifndef NO_LIBS
-	ret=new_lisp_user_function( ((lisp_user_function *)x)->alist,
-				       ((lisp_user_function *)x)->blist);
+    ret=new_lisp_user_function( ((lisp_user_function *)x)->alist,
+                       ((lisp_user_function *)x)->blist);
 
 #else
-	void *arg=collect_object(((lisp_user_function *)x)->arg_list);
-	void *block=collect_object(((lisp_user_function *)x)->block_list);
-	ret=new_lisp_user_function(arg,block);
+    void *arg=collect_object(((lisp_user_function *)x)->arg_list);
+    void *block=collect_object(((lisp_user_function *)x)->block_list);
+    ret=new_lisp_user_function(arg,block);
 #endif
       } break;
       case L_STRING :
       { ret=new_lisp_string(lstring_value(x)); } break;
 
       case L_CHARACTER :
-      { ret=new_lisp_character(lcharacter_value(x)); } break; 
+      { ret=new_lisp_character(lcharacter_value(x)); } break;
 
       case L_C_FUNCTION :
       {
-	ret=new_lisp_c_function( ((lisp_sys_function *)x)->min_args,
-				      ((lisp_sys_function *)x)->max_args,
-				      ((lisp_sys_function *)x)->fun_number);
+    ret=new_lisp_c_function( ((lisp_sys_function *)x)->min_args,
+                      ((lisp_sys_function *)x)->max_args,
+                      ((lisp_sys_function *)x)->fun_number);
       } break;
 
       case L_C_BOOL :
       {
-	ret=new_lisp_c_bool( ((lisp_sys_function *)x)->min_args,
-				      ((lisp_sys_function *)x)->max_args,
-				      ((lisp_sys_function *)x)->fun_number);
+    ret=new_lisp_c_bool( ((lisp_sys_function *)x)->min_args,
+                      ((lisp_sys_function *)x)->max_args,
+                      ((lisp_sys_function *)x)->fun_number);
       } break;
       case L_L_FUNCTION :
       {
-	ret=new_user_lisp_function( ((lisp_sys_function *)x)->min_args,
-				      ((lisp_sys_function *)x)->max_args,
-				      ((lisp_sys_function *)x)->fun_number);
+    ret=new_user_lisp_function( ((lisp_sys_function *)x)->min_args,
+                      ((lisp_sys_function *)x)->max_args,
+                      ((lisp_sys_function *)x)->fun_number);
       } break;
 
       case L_POINTER :
       { ret=new_lisp_pointer(lpointer_value(x)); } break;
-      
+
 
       case L_1D_ARRAY :
       { ret=collect_array(x); } break;
@@ -184,19 +184,19 @@ static void *collect_object(void *x)
 
       case L_OBJECT_VAR :
       {
-	ret=new_lisp_object_var( ((lisp_object_var *)x)->number);
+    ret=new_lisp_object_var( ((lisp_object_var *)x)->number);
       } break;
       case L_COLLECTED_OBJECT :
       {
-	ret=((lisp_collected_object *)x)->new_reference;
+    ret=((lisp_collected_object *)x)->new_reference;
       } break;
 
       default :
-      { lbreak("shouldn't happen. collecting bad object\n"); } break;      
+      { lbreak("shouldn't happen. collecting bad object\n"); } break;
     }
     ((lisp_collected_object *)x)->type=L_COLLECTED_OBJECT;
     ((lisp_collected_object *)x)->new_reference=ret;
-  } else if ((uint8_t *)x<collected_start || (uint8_t *)x>=collected_end)  
+  } else if ((uint8_t *)x<collected_start || (uint8_t *)x>=collected_end)
   {
     if (item_type(x)==L_CONS_CELL) // still need to remap cons_cells outside of space
     {
@@ -243,7 +243,7 @@ static void collect_stacks()
   {
     void **ptr=*d2;
     *ptr=collect_object(*ptr);
-  }    
+  }
 
 }
 

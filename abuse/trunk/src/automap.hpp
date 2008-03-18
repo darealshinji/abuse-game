@@ -14,7 +14,7 @@
 #include "level.hpp"
 
 class automap
-{ 
+{
   Jwindow *automap_window;
   level *cur_lev;
   int tick,w,h;                // used to draw your position as a blinking spot

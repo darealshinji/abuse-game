@@ -44,7 +44,7 @@ class string_visual : public visual_object
   public :
   string_visual(char *string, int Color);
   virtual void draw(image *screen, int x, int y, filter *f);
-  virtual int width(); 
+  virtual int width();
   virtual int height();
 } ;
 

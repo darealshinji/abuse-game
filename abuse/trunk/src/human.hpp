@@ -15,7 +15,7 @@
 class human : public game_object
 {
 
-public :  
+public :
   human(long X, long Y) { defaults(); x=X; y=Y; }
   human(FILE *fp, unsigned char *state_remap) { load(fp,state_remap); }
   virtual int size() { return game_object::size(); }

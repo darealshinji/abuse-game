@@ -23,9 +23,9 @@ public :
 } ;
 
 particle::particle(int X, int Y, image *im, int size);
-{ 
-  x=X; y=Y; 
-  left=right=up=down=NULL; 
+{
+  x=X; y=Y;
+  left=right=up=down=NULL;
   pict=(unsigned char *)jmalloc(size*size,"Particle");
 }
 
@@ -39,7 +39,7 @@ public :
 } ;
 
 
-particle_image::particle_image(image *im, int particle_size)     
+particle_image::particle_image(image *im, int particle_size)
 {
   int x,y,py,p;
   unsigned char *sl,*sl2;
@@ -63,11 +63,11 @@ particle_image::particle_image(image *im, int particle_size)
       int copy_size;
 
       memset(sl2,0,size);
-      
+
       if (*sl)
       {
-	px=x/size;
-	py=y/size;
+    px=x/size;
+    py=y/size;
       }
 
   }

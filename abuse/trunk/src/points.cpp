@@ -34,7 +34,7 @@ point_list::point_list(bFILE *fp)
 
     int i;
     for (i=0;i<tot*2;i++)
-      data[i]=data[i]*scale_mult/scale_div;    
+      data[i]=data[i]*scale_mult/scale_div;
 
   } else data=NULL;
 }

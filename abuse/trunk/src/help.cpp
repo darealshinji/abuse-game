@@ -35,25 +35,25 @@ void draw_help()
 void help_handle_event(event &ev)
 {
   if (ev.window!=NULL) return ;
-  
+
   if (the_game->state!=HELP_STATE)
   {
     if (ev.type==EV_KEY && (ev.key=='h' || ev.key=='?' || ev.key==JK_F1) && help_screens)
     {
       if (!main_net_cfg || (main_net_cfg->state!=net_configuration::SERVER && main_net_cfg->state!=net_configuration::CLIENT))
       {
-	the_game->state=HELP_STATE;
-	help_page=0;
+    the_game->state=HELP_STATE;
+    help_page=0;
       }
     }
   } else if (ev.type==EV_KEY)
   {
     if (ev.key==JK_ESC || help_page>=total_help_screens-1)
     {
-      the_game->state=RUN_STATE;    
+      the_game->state=RUN_STATE;
       the_game->draw(0);
     }
     else
       help_page++;
-  }    
+  }
 }

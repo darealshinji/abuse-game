@@ -10,13 +10,13 @@
 #ifndef __KEYS_HPP_
 #define __KEYS_HPP_
 
-#define JK_BACKSPACE 8 
+#define JK_BACKSPACE 8
 #define JK_TAB      9
 #define JK_ENTER    13
 #define JK_ESC      27
 #define JK_SPACE    32
 
-#define JK_UP       256 
+#define JK_UP       256
 #define JK_DOWN     257
 #define JK_LEFT     258
 #define JK_RIGHT    259

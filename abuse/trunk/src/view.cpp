@@ -20,7 +20,7 @@
 #include "scroller.hpp"
 #include "id.hpp"
 #include "dev.hpp"
-#include "jrand.hpp" 
+#include "jrand.hpp"
 #include "dprint.hpp"
 #include "transp.hpp"
 #include "clisp.hpp"
@@ -38,7 +38,7 @@ int morph_sel_frame_color;
 
 view::~view()
 {
-  if (local_player()) 
+  if (local_player())
     sbar.associate(NULL);
 
   if (total_weapons)
@@ -52,7 +52,7 @@ view::~view()
 extern uint8_t bright_tint[256];
 
 void view::add_ammo(int weapon_type, int total)
-{  
+{
   if (weapon_type>=total_weapons || weapon_type<0)
   {
     printf("weapon out of range\n");
@@ -61,8 +61,8 @@ void view::add_ammo(int weapon_type, int total)
   if (weapons[weapon_type]==-1) return ;   // don't have weapon yet, can't give ammo
 
   weapons[weapon_type]+=total;
-  if (weapons[weapon_type]<0)  
-    weapons[weapon_type]=0;  
+  if (weapons[weapon_type]<0)
+    weapons[weapon_type]=0;
 
   if (weapons[weapon_type]>999)
     weapons[weapon_type]=999;
@@ -73,7 +73,7 @@ void view::add_ammo(int weapon_type, int total)
     if (DEFINEDP(symbol_value(l_switch_to_powerful)) && symbol_value(l_switch_to_powerful))
     {
       int x=total_weapons-1;
-      while (x>0 && (x==3 || weapons[x]<=0)) x--;         
+      while (x>0 && (x==3 || weapons[x]<=0)) x--;
       suggest.new_weapon=x;
     } else
       suggest.new_weapon=0;
@@ -81,16 +81,16 @@ void view::add_ammo(int weapon_type, int total)
 
 }
 
-void view::give_weapon(int type) 
-{ 
+void view::give_weapon(int type)
+{
   if (type>=total_weapons || type<0)
   {
     printf("weapon out of range\n");
     return ;
   }
-  if (weapons[type]==-1) 
-  { 
-    weapons[type]=0; 
+  if (weapons[type]==-1)
+  {
+    weapons[type]=0;
     sbar.need_refresh();
   }
 }
@@ -192,8 +192,8 @@ void set_login(char const *name)
 { strncpy(cur_user_name,name,20); }
 
 view::view(game_object *Focus, view *Next, int number)
-{ 
-  chat_buf[0]=0; 
+{
+  chat_buf[0]=0;
 
   draw_solid=-1;
   no_xleft=0;
@@ -256,7 +256,7 @@ view::view(game_object *Focus, view *Next, int number)
     weapons=(int32_t *)jmalloc(total_weapons*sizeof(int32_t),"weapon array");
     last_weapons=(int32_t *)jmalloc(total_weapons*sizeof(int32_t),"last weapon array");
     memset(weapons,0xff,total_weapons*sizeof(int32_t));   // set all to -1
-    memset(last_weapons,0xff,total_weapons*sizeof(int32_t));   // set all to -1  
+    memset(last_weapons,0xff,total_weapons*sizeof(int32_t));   // set all to -1
   }
 
   if (total_weapons)
@@ -266,24 +266,24 @@ view::view(game_object *Focus, view *Next, int number)
   sbar.need_refresh();
 }
 
-int32_t view::x_center() 
+int32_t view::x_center()
 {
   if (!focus)
     return (cx1+cx2)/2;
   else
-    return focus->x; 
-}   
+    return focus->x;
+}
 
-int32_t view::y_center() 
-{ 
+int32_t view::y_center()
+{
   if (!focus)
     return (cy1+cy2)/2;
   else
-    return focus->y; 
+    return focus->y;
 }
 
 void view::draw_character_damage()
-{   
+{
   if (focus && drawable())
   {
     if (last_hp!=focus->hp()) draw_hp();
@@ -291,7 +291,7 @@ void view::draw_character_damage()
     for (i=0;i<total_weapons;i++)
       if (weapons[i]!=last_weapons[i])
       {
-	last_weapons[i]=weapons[i];
+    last_weapons[i]=weapons[i];
         sbar.draw_ammo(screen,i,weapons[i],current_weapon==i);
       }
   }
@@ -310,8 +310,8 @@ uint16_t make_sync()
     {
       if (f->focus)
       {
-	x^=(f->focus->x&0xffff);
-	x^=(f->focus->y&0xffff);
+    x^=(f->focus->x&0xffff);
+    x^=(f->focus->y&0xffff);
       }
     }
   }
@@ -324,108 +324,108 @@ uint16_t make_sync()
 
 void view::get_input()
 {
-	int sug_x,sug_y,sug_b1,sug_b2,sug_b3,sug_b4;
-	int32_t sug_px,sug_py;
+    int sug_x,sug_y,sug_b1,sug_b2,sug_b3,sug_b4;
+    int32_t sug_px,sug_py;
 
 // NOTE:(AK) I have commented this out so we don't use the lisp
-//		file "input.lsp" to get our key mappings.
-/*	if( DEFINEDP( symbol_function( l_get_local_input ) ) )
-	{
-		void *ret = eval_function((lisp_symbol *)l_get_local_input, NULL );
-		sug_x = lnumber_value( CAR( ret ) );
-		ret = CDR( ret );
-		sug_y = lnumber_value( CAR( ret ) );
-		ret = CDR( ret );
-		if( CAR( ret ) )
-			sug_b1 = 1;
-		else
-			sug_b1 = 0;
-		ret = CDR( ret );
-		if( CAR( ret ) )
-			sug_b2 = 1;
-		else
-			sug_b2 = 0;
-		ret = CDR( ret );
-		int x = lnumber_value( CAR( ret ) );
-		ret = CDR( ret );
-		if( x < 0 )
-			sug_b3 = 1;
-		else
-			sug_b3 = 0;
-		if( x > 0 )
-			sug_b4 = 1;
-		else sug_b4 = 0;
+//        file "input.lsp" to get our key mappings.
+/*    if( DEFINEDP( symbol_function( l_get_local_input ) ) )
+    {
+        void *ret = eval_function((lisp_symbol *)l_get_local_input, NULL );
+        sug_x = lnumber_value( CAR( ret ) );
+        ret = CDR( ret );
+        sug_y = lnumber_value( CAR( ret ) );
+        ret = CDR( ret );
+        if( CAR( ret ) )
+            sug_b1 = 1;
+        else
+            sug_b1 = 0;
+        ret = CDR( ret );
+        if( CAR( ret ) )
+            sug_b2 = 1;
+        else
+            sug_b2 = 0;
+        ret = CDR( ret );
+        int x = lnumber_value( CAR( ret ) );
+        ret = CDR( ret );
+        if( x < 0 )
+            sug_b3 = 1;
+        else
+            sug_b3 = 0;
+        if( x > 0 )
+            sug_b4 = 1;
+        else sug_b4 = 0;
 
-		int32_t bx = lnumber_value( CAR( ret ) );
-		ret = CDR( ret );
-		int32_t by = lnumber_value( CAR( ret ) );
-		ret = CDR( ret );
-		the_game->mouse_to_game( bx, by, sug_px, sug_py, this );
+        int32_t bx = lnumber_value( CAR( ret ) );
+        ret = CDR( ret );
+        int32_t by = lnumber_value( CAR( ret ) );
+        ret = CDR( ret );
+        the_game->mouse_to_game( bx, by, sug_px, sug_py, this );
 
-	}
-	else*/
-	{
-		get_movement( 0, sug_x, sug_y, sug_b1, sug_b2, sug_b3, sug_b4 );
-		if( focus )
-		{
-			the_game->mouse_to_game( last_demo_mx, last_demo_my, sug_px, sug_py, this );
-			if( last_demo_mbut & 1 )
-				sug_b2 = 1;
-			if( last_demo_mbut & 2 )
-				sug_b1 = 1;
-		}
-		else
-			sug_px = sug_py = 0;
-	}
+    }
+    else*/
+    {
+        get_movement( 0, sug_x, sug_y, sug_b1, sug_b2, sug_b3, sug_b4 );
+        if( focus )
+        {
+            the_game->mouse_to_game( last_demo_mx, last_demo_my, sug_px, sug_py, this );
+            if( last_demo_mbut & 1 )
+                sug_b2 = 1;
+            if( last_demo_mbut & 2 )
+                sug_b1 = 1;
+        }
+        else
+            sug_px = sug_py = 0;
+    }
 
-	if( view_changed() )
-	{
-		base->packet.write_uint8( SCMD_VIEW_RESIZE );
-		base->packet.write_uint8( player_number );
-		base->packet.write_uint32( suggest.cx1 );
-		base->packet.write_uint32( suggest.cy1 );
-		base->packet.write_uint32( suggest.cx2 );
-		base->packet.write_uint32( suggest.cy2 );
+    if( view_changed() )
+    {
+        base->packet.write_uint8( SCMD_VIEW_RESIZE );
+        base->packet.write_uint8( player_number );
+        base->packet.write_uint32( suggest.cx1 );
+        base->packet.write_uint32( suggest.cy1 );
+        base->packet.write_uint32( suggest.cx2 );
+        base->packet.write_uint32( suggest.cy2 );
 
-		base->packet.write_uint32( suggest.pan_x );
-		base->packet.write_uint32( suggest.pan_y );
-		base->packet.write_uint32( suggest.shift_down );
-		base->packet.write_uint32( suggest.shift_right );
-	}
+        base->packet.write_uint32( suggest.pan_x );
+        base->packet.write_uint32( suggest.pan_y );
+        base->packet.write_uint32( suggest.shift_down );
+        base->packet.write_uint32( suggest.shift_right );
+    }
 
-	if( weapon_changed() )
-	{
-		base->packet.write_uint8( SCMD_WEAPON_CHANGE );
-		base->packet.write_uint8( player_number );
-		base->packet.write_uint32( suggest.new_weapon );
-	}
+    if( weapon_changed() )
+    {
+        base->packet.write_uint8( SCMD_WEAPON_CHANGE );
+        base->packet.write_uint8( player_number );
+        base->packet.write_uint32( suggest.new_weapon );
+    }
 
-	base->packet.write_uint8( SCMD_SET_INPUT );
-	base->packet.write_uint8( player_number );
+    base->packet.write_uint8( SCMD_SET_INPUT );
+    base->packet.write_uint8( player_number );
 
-	uint8_t mflags = 0;
-	if( sug_x > 0 )
-		mflags |= 1;
-	else if ( sug_x < 0 )
-		mflags |= 2;
+    uint8_t mflags = 0;
+    if( sug_x > 0 )
+        mflags |= 1;
+    else if ( sug_x < 0 )
+        mflags |= 2;
 
-	if( sug_y > 0 )
-		mflags |= 4;
-	else if( sug_y < 0 )
-		mflags |= 8;
+    if( sug_y > 0 )
+        mflags |= 4;
+    else if( sug_y < 0 )
+        mflags |= 8;
 
-	if( sug_b1 )
-		mflags |= 16;
-	if( sug_b2 )
-		mflags |= 32;
-	if( sug_b3 )
-		mflags |= 64;
-	if( sug_b4 )
-		mflags |= 128;
+    if( sug_b1 )
+        mflags |= 16;
+    if( sug_b2 )
+        mflags |= 32;
+    if( sug_b3 )
+        mflags |= 64;
+    if( sug_b4 )
+        mflags |= 128;
 
-	base->packet.write_uint8( mflags );
-	base->packet.write_uint16((uint16_t)((int16_t)sug_px));
-	base->packet.write_uint16((uint16_t)((int16_t)sug_py));
+    base->packet.write_uint8( mflags );
+    base->packet.write_uint16((uint16_t)((int16_t)sug_px));
+    base->packet.write_uint16((uint16_t)((int16_t)sug_py));
 }
 
 
@@ -457,14 +457,14 @@ void view::add_chat_key(int key)  // return string if buf is complete
 
       void *m=mark_heap(TMP_SPACE);
       void *list=NULL;
-      push_onto_list(new_lisp_string(chat_buf),list);       
+      push_onto_list(new_lisp_string(chat_buf),list);
       eval_function((lisp_symbol *)l_chat_input,list);
       restore_heap(m,TMP_SPACE);
 
       current_object=o;
 
     } else
-    {           
+    {
       if (chat)
         chat->put_all(chat_buf);
     }
@@ -483,21 +483,21 @@ int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went 
       add_chat_key(*(pk++));
     } break;
     case SCMD_VIEW_RESIZE :
-    { 
+    {
       int32_t x[8];
       memcpy(x,pk,8*4);  pk+=8*4;
       cx1=lltl(x[0]);
       cy1=lltl(x[1]);
       cx2=lltl(x[2]);
       cy2=lltl(x[3]);
-	
+    
       pan_x=lltl(x[4]);
       pan_y=lltl(x[5]);
       shift_down=lltl(x[6]);
       shift_right=lltl(x[7]);
       if (small_render)
       {
-	small_render->resize(cx2-cx1+1,cy2-cy1+1);
+    small_render->resize(cx2-cx1+1,cy2-cy1+1);
       }
 
       suggest.send_view=0;
@@ -536,10 +536,10 @@ int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went 
 
       uint16_t p[2];
       memcpy(p,pk,2*2);  pk+=2*2;
-      
+
       pointer_x=(int16_t)(lstl(p[0]));
       pointer_y=(int16_t)(lstl(p[1]));
-	
+    
       return 1;
     } break;
     case SCMD_KEYPRESS : set_key_down(*(pk++),1); break;
@@ -569,7 +569,7 @@ void view::next_weapon()
       return ;
     }
   }
- 
+
   c=0;
   while (c!=current_weapon)
   {
@@ -585,7 +585,7 @@ void view::next_weapon()
 
 void view::last_weapon()
 {
- 
+
   int c=current_weapon;
 
   while (c>=1)
@@ -615,103 +615,103 @@ void view::last_weapon()
 
 int view::handle_event(event &ev)
 {
-	if( ev.type == EV_KEY )
-	{
-		if( ev.key == (int)',' )
-		{
-			if( total_weapons )
-			{
-				last_weapon();
-			}
-			return 1;
-		}
-		else if( ev.key == (int)'.' )
-		{
-			if( total_weapons )
-			{
-				next_weapon();
-			}
-			return 1;
-		}
-		else if( ev.key == get_key_binding( "b3", 0 ) )
-		{
-			if( total_weapons )
-			{
-				last_weapon();
-			}
-			return 1;
-		}
-		else if( ev.key == get_key_binding( "b4", 0 ) )
-		{
-			if( total_weapons )
-			{
-				next_weapon();
-			}
-			return 1;
-		}
+    if( ev.type == EV_KEY )
+    {
+        if( ev.key == (int)',' )
+        {
+            if( total_weapons )
+            {
+                last_weapon();
+            }
+            return 1;
+        }
+        else if( ev.key == (int)'.' )
+        {
+            if( total_weapons )
+            {
+                next_weapon();
+            }
+            return 1;
+        }
+        else if( ev.key == get_key_binding( "b3", 0 ) )
+        {
+            if( total_weapons )
+            {
+                last_weapon();
+            }
+            return 1;
+        }
+        else if( ev.key == get_key_binding( "b4", 0 ) )
+        {
+            if( total_weapons )
+            {
+                next_weapon();
+            }
+            return 1;
+        }
 
-		switch( ev.key )
-		{
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-			{
-				if((( dev & EDIT_MODE ) == 0 ) && ( weapon_total( ev.key - '1' ) > 0 ))
-				{
-					suggest.send_weapon_change = 1;
-					suggest.new_weapon=ev.key - '1';
-				}
-			} break;
+        switch( ev.key )
+        {
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            {
+                if((( dev & EDIT_MODE ) == 0 ) && ( weapon_total( ev.key - '1' ) > 0 ))
+                {
+                    suggest.send_weapon_change = 1;
+                    suggest.new_weapon=ev.key - '1';
+                }
+            } break;
 
-			case JK_HOME:
-			case JK_CTRL_L:
-			case JK_CTRL_R:
-			{
-				if( total_weapons )
-				{
-					last_weapon();
-				}
-				return 1;
-			} break;
-			case JK_PAGEUP:
-			case JK_INSERT:
-			{
-				if( total_weapons )
-				{
-					next_weapon();
-				}
-				return 1;
-			} break;
-		}
-	}
-	return 0;
+            case JK_HOME:
+            case JK_CTRL_L:
+            case JK_CTRL_R:
+            {
+                if( total_weapons )
+                {
+                    last_weapon();
+                }
+                return 1;
+            } break;
+            case JK_PAGEUP:
+            case JK_INSERT:
+            {
+                if( total_weapons )
+                {
+                    next_weapon();
+                }
+                return 1;
+            } break;
+        }
+    }
+    return 0;
 }
 
 void view::draw_hp()
 {
-	if (focus)
-	{
-		int h = focus->hp();
-		last_hp=h;
-		sbar.draw_health( screen, focus->hp() );
-	}
-	else
-	{
-		sbar.draw_health( screen, 0 );
-	}
+    if (focus)
+    {
+        int h = focus->hp();
+        last_hp=h;
+        sbar.draw_health( screen, focus->hp() );
+    }
+    else
+    {
+        sbar.draw_health( screen, 0 );
+    }
 }
 
 int view::drawable()
 {
-	return local_player();
+    return local_player();
 }
 
 
-void recalc_local_view_space()   // calculates view areas for local players, should be called 
+void recalc_local_view_space()   // calculates view areas for local players, should be called
                                  // when adding or deleting local players
 {
   if (screen)
@@ -730,29 +730,29 @@ void recalc_local_view_space()   // calculates view areas for local players, sho
     {
       if (f->local_player())
       {
-	f->suggest.cx1=Xres/2-w/2;
-	f->suggest.cx2=Xres/2+w/2;
-	if (f->suggest.cx1<2) f->suggest.cx1=2;
-	if (f->suggest.cx2>Xres-2) f->suggest.cx2=Xres-2;    
+    f->suggest.cx1=Xres/2-w/2;
+    f->suggest.cx2=Xres/2+w/2;
+    if (f->suggest.cx1<2) f->suggest.cx1=2;
+    if (f->suggest.cx2>Xres-2) f->suggest.cx2=Xres-2;
 
-	f->suggest.cy1=y;
-	f->suggest.cy2=h-(total_weapons ? 33 : 0);
+    f->suggest.cy1=y;
+    f->suggest.cy2=h-(total_weapons ? 33 : 0);
 
-	f->suggest.shift_down=f->shift_down;
-	f->suggest.shift_right=f->shift_right;
-	f->suggest.pan_x=f->pan_x;
-	f->suggest.pan_y=f->pan_y;
-	f->suggest.send_view=1;
+    f->suggest.shift_down=f->shift_down;
+    f->suggest.shift_right=f->shift_right;
+    f->suggest.pan_x=f->pan_x;
+    f->suggest.pan_y=f->pan_y;
+    f->suggest.send_view=1;
 
-	if (!player_list->next)
-	{
-	  f->cx1=f->suggest.cx1;
-	  f->cy1=f->suggest.cy1;
-	  f->cx2=f->suggest.cx2;
-	  f->cy2=f->suggest.cy2;
-	  f->suggest.send_view=0;
-	}
-	y+=h;
+    if (!player_list->next)
+    {
+      f->cx1=f->suggest.cx1;
+      f->cy1=f->suggest.cy1;
+      f->cx2=f->suggest.cx2;
+      f->cy2=f->suggest.cy2;
+      f->suggest.send_view=0;
+    }
+    y+=h;
       }
     }
   }
@@ -777,19 +777,19 @@ void set_local_players(int total)
 
       if (last)
         last->next=n;
-      else        
+      else
       {
-	if (n)    // make sure we have at least one local player
+    if (n)    // make sure we have at least one local player
           player_list=n;
-      }            
+      }
       last=f;
       rdw=1;
     }
   }
-  
+
   while (total)   // see if we need to add new players
   {
-    game_object *o=create(current_start_type,50,50);    
+    game_object *o=create(current_start_type,50,50);
     view *v;
     if (!player_list)
     {
@@ -799,7 +799,7 @@ void set_local_players(int total)
     else
     {
       view *f=player_list;
-      for (;f && f->next;f=f->next);   	 
+      for (;f && f->next;f=f->next);       
       f->next=new view(o,NULL,f->player_number+1);
       v=f->next;
     }
@@ -807,7 +807,7 @@ void set_local_players(int total)
     v->focus->set_controller(v);
     total--;
     rdw=1;
-  }  
+  }
   if (rdw)
     recalc_local_view_space();
 }
@@ -816,7 +816,7 @@ void set_local_players(int total)
 int total_local_players()
 {
   int t=0;
-  for (view *f=player_list;f;f=f->next) 
+  for (view *f=player_list;f;f=f->next)
     if (f->local_player()) t++;
   return t;
 }
@@ -836,14 +836,14 @@ void view::resize_view(int32_t Cx1, int32_t Cy1, int32_t Cx2, int32_t Cy2)
 
 void view::set_input(int cx, int cy, int b1, int b2, int b3, int b4, int px, int py)
 {
-	x_suggestion=cx;
-	y_suggestion=cy;
-	b1_suggestion=b1;
-	b2_suggestion=b2;
-	b3_suggestion=b3;
-	b4_suggestion=b4;
-	pointer_x=px;
-	pointer_y=py;
+    x_suggestion=cx;
+    y_suggestion=cy;
+    b1_suggestion=b1;
+    b2_suggestion=b2;
+    b3_suggestion=b3;
+    b4_suggestion=b4;
+    pointer_x=px;
+    pointer_y=py;
 }
 
 
@@ -852,7 +852,7 @@ void view::reset_player()
 {
   if (focus)
   {
-   
+
     game_object *start=current_level ? current_level->get_random_start(320,focus->controller()) : 0;
     focus->defaults();
     if (start)
@@ -860,10 +860,10 @@ void view::reset_player()
       focus->x=start->x;
       focus->y=start->y;
       dprintf("reset position to %d %d\n",start->x,start->y);
-    } 
+    }
     focus->set_state(stopped);
-    memset(weapons,0xff,total_weapons*sizeof(int32_t));   
-    memset(last_weapons,0xff,total_weapons*sizeof(int32_t));   
+    memset(weapons,0xff,total_weapons*sizeof(int32_t));
+    memset(last_weapons,0xff,total_weapons*sizeof(int32_t));
 
     shift_down=SHIFT_DOWN_DEFAULT;
     shift_right=SHIFT_RIGHT_DEFAULT;
@@ -885,7 +885,7 @@ void view::reset_player()
 
     int i;
     for (i=0;i<focus->total_objects();i++)   // reset the vars for the attached objects
-    {      
+    {
       game_object *o=focus->get_object(i);
       memset(o->lvars,0,figures[o->otype]->tv*4);
     }
@@ -906,25 +906,25 @@ object_node *make_player_onodes(int player_num)
     {
       if (!object_to_number_in_list(o->focus,first))
       {
-	object_node *q=new object_node(o->focus,NULL);
-	if (first)
-	  last->next=q;
-	else first=q;
-	last=q;
+    object_node *q=new object_node(o->focus,NULL);
+    if (first)
+      last->next=q;
+    else first=q;
+    last=q;
       }
       for (int i=0;i<o->focus->total_objects();i++)
       {
-	game_object *p=o->focus->get_object(i);
+    game_object *p=o->focus->get_object(i);
 
-	if (!object_to_number_in_list(p,first))
-	{
-	  object_node *q=new object_node(p,NULL);
-	  if (first)
-	    last->next=q;
-	  else first=q;
-	  last=q;
-	}
-      }      
+    if (!object_to_number_in_list(p,first))
+    {
+      object_node *q=new object_node(p,NULL);
+      if (first)
+        last->next=q;
+      else first=q;
+      last=q;
+    }
+      }
     }
   }
   return first;
@@ -956,18 +956,18 @@ enum { V_CX1, V_CY1, V_CX2, V_CY2,
 
 static char const *vv_names[TVV] =
 {
-    "view.cx1",  "view.cy1",  "view.cx2",  "view.cy2", 
+    "view.cx1",  "view.cy1",  "view.cx2",  "view.cy2",
     "view.shift_down",  "view.shift_right",
     "view.god",
     "view.player_number",
     "view.draw_solid",
     "view.lives",
     "view.current_weapon",
-    "view.x_suggestion",  "view.y_suggestion",  
+    "view.x_suggestion",  "view.y_suggestion",
     "view.b1_suggestion",  "view.b2_suggestion",  "view.b3_suggestion",  "view.b4_suggestion",
     "view.pan_x",  "view.pan_y",
     "view.no_xleft",  "view.no_xright",  "view.no_ytop",  "view.no_ybottom",
-    "view.last_x",  "view.last_y",  "view.last_left",  "view.last_right",  "view.last_up",  "view.last_down", 
+    "view.last_x",  "view.last_y",  "view.last_left",  "view.last_right",  "view.last_up",  "view.last_down",
     "view.last_b1",  "view.last_b2",  "view.last_b3",  "view.last_b4",
     "view.last_hp",
     "view.secrets",  "view.kills",  "view.tsecrets",  "view.tkills",
@@ -978,7 +978,7 @@ static char const *vv_names[TVV] =
 };
 
 
-int total_view_vars() 
+int total_view_vars()
 { return TVV;
 }
 
@@ -1087,7 +1087,7 @@ int32_t view::set_view_var_value(int num, int32_t x)
     case V_AMBIENT : ambient=x; break;
     case V_POINTER_X : pointer_x=x; break;
     case V_POINTER_Y : pointer_y=x; break;
-    case V_LAST_LAST_X : last_last_x=x; break; 
+    case V_LAST_LAST_X : last_last_x=x; break;
     case V_LAST_LAST_Y : last_last_y=x; break;
     case V_FREEZE_TIME : freeze_time=x; break;
   }
@@ -1102,15 +1102,15 @@ void view::configure_for_area(area_controller *a)
     if (ambient>a->ambient)
     {
       ambient-=a->ambient_speed;
-      if (ambient<a->ambient) 
+      if (ambient<a->ambient)
         ambient=a->ambient;
     }
-    else 
+    else
     {
       ambient+=a->ambient_speed;
-      if (ambient>a->ambient) 
+      if (ambient>a->ambient)
         ambient=a->ambient;
-    }    
+    }
   }
 
   if (!view_shift_disabled)
@@ -1119,14 +1119,14 @@ void view::configure_for_area(area_controller *a)
     {
       if (pan_x>a->view_xoff)
       {
-	pan_x-=a->view_xoff_speed;
-	if (pan_x<a->view_xoff) 
+    pan_x-=a->view_xoff_speed;
+    if (pan_x<a->view_xoff)
         pan_x=a->view_xoff;
       }
       else
       {
-	pan_x+=a->view_xoff_speed;
-	if (pan_x>a->view_xoff) 
+    pan_x+=a->view_xoff_speed;
+    if (pan_x>a->view_xoff)
         pan_x=a->view_xoff;
       }
     }
@@ -1135,17 +1135,17 @@ void view::configure_for_area(area_controller *a)
     {
       if (pan_y>a->view_yoff)
       {
-	pan_y-=a->view_yoff_speed;
-	if (pan_y<a->view_yoff) 
+    pan_y-=a->view_yoff_speed;
+    if (pan_y<a->view_yoff)
         pan_y=a->view_yoff;
       }
       else
       {
-	pan_y+=a->view_yoff_speed;
-	if (pan_y>a->view_yoff) 
+    pan_y+=a->view_yoff_speed;
+    if (pan_y>a->view_yoff)
         pan_y=a->view_yoff;
       }
-    }  
+    }
   }
 }
 
@@ -1175,76 +1175,76 @@ void process_packet_commands(uint8_t *pk, int size)
       case SCMD_EXT_KEYRELEASE :
       case SCMD_CHAT_KEYPRESS :
       {
-	uint8_t player_num=*(pk++);
+    uint8_t player_num=*(pk++);
 
-	view *v=player_list;
-	for (;v && v->player_number!=player_num;v=v->next);
-	if (v)
-	{
-	  if (v->player_number==player_num)
-	  v->process_input(cmd,pk);
-	}      
-	else
-	{
-	  dprintf("Evil error : bad player number in packet\n");
-	  return ;
-	}
+    view *v=player_list;
+    for (;v && v->player_number!=player_num;v=v->next);
+    if (v)
+    {
+      if (v->player_number==player_num)
+      v->process_input(cmd,pk);
+    }
+    else
+    {
+      dprintf("Evil error : bad player number in packet\n");
+      return ;
+    }
       } break;
       case SCMD_RELOAD :
       {
-	if (!already_reloaded)
-	{
-	  net_reload();
-	  already_reloaded=1;
-	}
+    if (!already_reloaded)
+    {
+      net_reload();
+      already_reloaded=1;
+    }
       } break;
 
       case SCMD_SYNC :
       {
-	uint16_t x;
-	memcpy(&x,pk,2);  pk+=2;
-	x=lstl(x);
-	if (demo_man.current_state()==demo_manager::PLAYING)
-	sync_uint16=make_sync();
+    uint16_t x;
+    memcpy(&x,pk,2);  pk+=2;
+    x=lstl(x);
+    if (demo_man.current_state()==demo_manager::PLAYING)
+    sync_uint16=make_sync();
 
-	if (sync_uint16==-1)
-	sync_uint16=x;
-	else if (x!=sync_uint16 && !already_reloaded)
-	{
-	  dprintf("out of sync %d (packet=%d, calced=%d)\n",current_level->tick_counter(),x,sync_uint16);
-	  if (demo_man.current_state()==demo_manager::NORMAL)
-	    net_reload();
-	  already_reloaded=1;
-	}
+    if (sync_uint16==-1)
+    sync_uint16=x;
+    else if (x!=sync_uint16 && !already_reloaded)
+    {
+      dprintf("out of sync %d (packet=%d, calced=%d)\n",current_level->tick_counter(),x,sync_uint16);
+      if (demo_man.current_state()==demo_manager::NORMAL)
+        net_reload();
+      already_reloaded=1;
+    }
       } break;
       case SCMD_DELETE_CLIENT :
       {
-	uint8_t player_num=*(pk++);
-	view *v=player_list,*last=NULL;
-	for (;v && v->player_number!=player_num;v=v->next)
-	last=v;
-	if (!v)
-	dprintf("evil : delete client %d, but no such client\n");
-	else
-	{
+    uint8_t player_num=*(pk++);
+    view *v=player_list,*last=NULL;
+    for (;v && v->player_number!=player_num;v=v->next)
+    last=v;
+    if (!v)
+    dprintf("evil : delete client %d, but no such client\n");
+    else
+    {
 
-	  // make a list of all objects associated with this player
-	  object_node *on=make_player_onodes(player_num);   
-	  while (on)
-	  {
-	    current_level->delete_object(on->me);
-	    object_node *last=on;
-	    on=on->next;
-	    delete last;
-	  }
+      // make a list of all objects associated with this player
+      object_node *on=make_player_onodes(player_num);
+      while (on)
+      {
+        current_level->delete_object(on->me);
+        object_node *last=on;
+        on=on->next;
+        delete last;
+      }
 
-	  v->focus=NULL;
-	  if (last)
-	  last->next=v->next;
-	  else player_list=player_list->next;
+      v->focus=NULL;
+      if (last)
+      last->next=v->next;
+      else player_list=player_list->next;
 
-	  delete v;
-	}
+      delete v;
+    }
       } break;
       default :
       dprintf("Unknown net command %d\n",cmd);

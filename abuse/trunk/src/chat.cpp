@@ -35,7 +35,7 @@ void chat_console::clear()
 void chat_console::put_all(char *st)
 {
   memmove(screen,screen+w,w*(h-3));
-  memset(screen+w*(h-3),' ',w);  
+  memset(screen+w*(h-3),' ',w);
   memcpy(screen+w*(h-3),st,strlen(st));
   redraw();
 }

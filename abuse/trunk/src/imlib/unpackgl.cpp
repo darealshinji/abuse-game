@@ -48,28 +48,28 @@ void unpackgl(char *fn, int pict_only)
       ot=fopen(name,"rb");
       if (ot)
       { printf("File (%s) already exsist, overwrite (y/n)?\n",name);
-	fgets(st,49,stdin);
-	if (!(st[0]=='Y' || st[0]=='y'))
-	  length=0;
-	fclose(ot);
+    fgets(st,49,stdin);
+    if (!(st[0]=='Y' || st[0]=='y'))
+      length=0;
+    fclose(ot);
       }
       if (length)
-	ot=fopen(name,"wb");
+    ot=fopen(name,"wb");
       if (!ot) return ;
       bufsize=0xf000;
       do {
-	buf=(char *)jmalloc(bufsize,"unpack_gl::buffer");
-	if (!buf) bufsize-=100;
+    buf=(char *)jmalloc(bufsize,"unpack_gl::buffer");
+    if (!buf) bufsize-=100;
       } while (!buf);
 
       while (length)
       {
-	if (length>bufsize)
-	  amread=bufsize;
-	else amread=length;
-	fread(buf,1,amread,fp);
-	fwrite(buf,1,amread,ot);
-	length-=amread;
+    if (length>bufsize)
+      amread=bufsize;
+    else amread=length;
+    fread(buf,1,amread,fp);
+    fwrite(buf,1,amread,ot);
+    length-=amread;
       }
       jfree(buf);
       if (ot) fclose(ot);

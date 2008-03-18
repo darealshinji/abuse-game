@@ -159,14 +159,14 @@ color_filter::color_filter(palette *pal, int color_bits, void (*stat_fun)(int))
       gv=g<<lshift;
       for (b=0;b<colors;b++)
       {
-	bv=b<<lshift;
+    bv=b<<lshift;
         best=0x7fffffff;
         for (i=0,pp=(unsigned char *)pal->addr();i<max;i++)
         {
           register long rd=*(pp++)-rv,
                         gd=*(pp++)-gv,
                         bd=*(pp++)-bv;
-	
+    
           dist_sqr=(long)rd*rd+(long)bd*bd+(long)gd*gd;
           if (dist_sqr<best)
           { best=dist_sqr;
@@ -248,7 +248,7 @@ void filter::put_image(image *screen, image *im, short x, short y,
     {
         for(i = 0, source = &pg2[x1], dest = &pg1[x];
             i < xl;
-            i++, source++, dest++)	
+            i++, source++, dest++)    
         {
             if(!transparent || *source != current_background)
                 *dest=fdat[*source];

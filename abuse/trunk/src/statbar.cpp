@@ -52,7 +52,7 @@ void status_bar::load()
     bweap[i]=cache.reg(sbname,iname,SPEC_IMAGE);
 
     sprintf(iname,"dweap%04d.pcx",i+1);
-    dweap[i]=cache.reg(sbname,iname,SPEC_IMAGE);    
+    dweap[i]=cache.reg(sbname,iname,SPEC_IMAGE);
   }
 
   for (i=0;i<30;i++)
@@ -61,7 +61,7 @@ void status_bar::load()
     bnum[i]=cache.reg(sbname,iname,SPEC_IMAGE);
   }
 
-  
+
   sbar=cache.reg(sbname,"sbar",SPEC_IMAGE);
   sbar_select=cache.reg(sbname,"sbar_select",SPEC_IMAGE);
   sbar_numpad=cache.reg(sbname,"sbar_numpad",SPEC_IMAGE);
@@ -72,14 +72,14 @@ void status_bar::draw_num(image *screen, int x, int y, int num, int *offset)
   if (num<0 || num>999)
   {
     printf("bad number for statbar\n");
-    return ; 
+    return ;
   }
 
   image *im=cache.img(*offset);
   int dw=small_render ? im->width()*2 : im->width();
   int dh=small_render ? im->height()*2 : im->height();
 
-  int n=num/100;    
+  int n=num/100;
   scale_put(cache.img(offset[n]),screen,x,y,dw,dh);
   num-=n*100;
 
@@ -101,7 +101,7 @@ void status_bar::redraw(image *screen)
     if (!playing_state(the_game->state)) return ;
 
     image *sb=cache.img(sbar);
-    
+
     // status bar width & height
     int sb_w=(small_render ? sb->width()*2 : sb->width()),
     sb_h=(small_render ? sb->height()*2 : sb->height());
@@ -110,12 +110,12 @@ void status_bar::redraw(image *screen)
     int sx=xres/2-sb_w/2,sy=yres-sb_h;
 
     // weapon x offset, and x add increment
-    int wx=small_render ? 80 : 40,wa=small_render ? 34*2 : 34;    
+    int wx=small_render ? 80 : 40,wa=small_render ? 34*2 : 34;
 
     // weapon icon width & height
     int ww=small_render ? cache.img(bweap[0])->width()*2 : cache.img(bweap[0])->width();
     int wh=small_render ? cache.img(bweap[0])->height()*2 : cache.img(bweap[0])->height();
-    
+
 
     // numpad y offset
     int np_yo=small_render ? 42 : 21;
@@ -126,7 +126,7 @@ void status_bar::redraw(image *screen)
     int sel_w=small_render ? cache.img(sbar_select)->width()*2 : cache.img(sbar_select)->width();
     int sel_h=small_render ? cache.img(sbar_select)->height()*2 : cache.img(sbar_select)->height();
 
-    int sel_off=small_render ?  8 : 4; 
+    int sel_off=small_render ?  8 : 4;
     scale_put(sb,screen,sx,sy,sb_w,sb_h);
 
     if (v->focus)
@@ -138,26 +138,26 @@ void status_bar::redraw(image *screen)
       ammo_x=sx+52*2;
       ammo_y=sy+25*2;
     } else {ammo_x=sx+52; ammo_y=sy+25; }
-    
+
     int i,x_on=sx+wx,t=TOTAL_WEAPONS;
     if (t>=total_weapons) t=total_weapons;
     for (i=0;i<t;i++,x_on+=wa,ammo_x+=wa)
     {
       if (v->has_weapon(i))
       {
-	if (v->current_weapon==i)
+    if (v->current_weapon==i)
         scale_put_trans(cache.img(bweap[i]),screen,x_on,sy,ww,wh);
-	else
+    else
         scale_put_trans(cache.img(dweap[i]),screen,x_on,sy,ww,wh);
-	
-	scale_put_trans(cache.img(sbar_numpad),screen,x_on-2,sy+np_yo,np_w,np_h);
+    
+    scale_put_trans(cache.img(sbar_numpad),screen,x_on-2,sy+np_yo,np_w,np_h);
 
-	if (v->current_weapon==i)
+    if (v->current_weapon==i)
           draw_num(screen,ammo_x,ammo_y,v->weapon_total(i),bnum+20);
-	else
+    else
           draw_num(screen,ammo_x,ammo_y,v->weapon_total(i),bnum+10);
-        
-	if (i==icon_in_selection)
+
+    if (i==icon_in_selection)
         scale_put_trans(cache.img(sbar_select),screen,x_on+sel_off,sy,sel_w,sel_h);
       }
     }
@@ -175,7 +175,7 @@ void status_bar::area(int &x1, int &y1, int &x2, int &y2)
     return ;
   }
 
-  image *sb=cache.img(sbar);  
+  image *sb=cache.img(sbar);
 
   // status bar width & height
   int sb_w=sb->width(),
@@ -196,7 +196,7 @@ void status_bar::draw_health(image *screen,int amount)
   {
     int x1,y1,x2,y2;
     area(x1,y1,x2,y2);
-    draw_num(screen,x1+(small_render ? 17*2 : 17),y1+(small_render ? 11*2 : 11),amount,bnum);  
+    draw_num(screen,x1+(small_render ? 17*2 : 17),y1+(small_render ? 11*2 : 11),amount,bnum);
   }
 }
 
@@ -208,8 +208,8 @@ void status_bar::draw_ammo(image *screen, int weapon_num, int amount, int light)
     int x1,y1,x2,y2;
     area(x1,y1,x2,y2);
     draw_num(screen,
-		x1+(small_render ? 52*2+weapon_num*34*2 : 52+weapon_num*34),
-		y1+(small_render ? 25*2 : 25),amount,bnum+(light ? 20 : 10));  
+        x1+(small_render ? 52*2+weapon_num*34*2 : 52+weapon_num*34),
+        y1+(small_render ? 25*2 : 25),amount,bnum+(light ? 20 : 10));
   }
 }
 
@@ -242,11 +242,11 @@ void status_bar::draw_update()
   if (total_weapons && v)
   {
     if (DEFINEDP(symbol_value(l_mouse_can_switch)) && symbol_value(l_mouse_can_switch) &&
-	mouse_in_area())
+    mouse_in_area())
     {
       if ((current_level->tick_counter()&4)==0)
         wm->set_mouse_shape(cache.img(c_mouse1)->copy(),4,4);
-      else wm->set_mouse_shape(cache.img(c_mouse2)->copy(),4,4);   
+      else wm->set_mouse_shape(cache.img(c_mouse2)->copy(),4,4);
       changed_cursor=1;
     } else if (changed_cursor)
     {
@@ -254,7 +254,7 @@ void status_bar::draw_update()
         wm->set_mouse_shape(cache.img(c_target)->copy(),8,8);
       else
         wm->set_mouse_shape(cache.img(c_normal)->copy(),1,1);
-      changed_cursor=0;      
+      changed_cursor=0;
     }
 
     if (need_rf)
@@ -267,11 +267,11 @@ void status_bar::step()
 {
   if (!v) return ;
   if (!DEFINEDP(symbol_value(l_mouse_can_switch)) || !symbol_value(l_mouse_can_switch)) return ;
-  
+
   int sb_w,sb_h;
   if (sbar>0 && total_weapons)
   {
-    image *sb=cache.img(sbar);  
+    image *sb=cache.img(sbar);
 
     // status bar width & height
     sb_w=sb->width();
@@ -289,7 +289,7 @@ void status_bar::step()
     v->suggest.cx1=v->cx1;
     v->suggest.cy1=v->cy1;
     v->suggest.cx2=v->cx2;
-    v->suggest.cy2=small_render ? (sy1-v->cy1-2)/2+v->cy1 : sy1-2;    
+    v->suggest.cy2=small_render ? (sy1-v->cy1-2)/2+v->cy1 : sy1-2;
   }
 
   if (sbar<=0 || !total_weapons) return ;
@@ -304,7 +304,7 @@ void status_bar::step()
 
     int new_target;
 
-    mx-=sx1;    
+    mx-=sx1;
     if (small_render) mx/=2;
 
 
@@ -314,19 +314,19 @@ void status_bar::step()
     {
       new_target=mx/33;
       if (new_target>=TOTAL_WEAPONS)
-        new_target=TOTAL_WEAPONS-1; 
+        new_target=TOTAL_WEAPONS-1;
       if (new_target>=total_weapons)
         new_target=total_weapons-1;
-    }      
+    }
 
     if (v->has_weapon(new_target) && new_target!=icon_in_selection)
     {
       icon_in_selection=new_target;
       need_refresh();
     }
-    
+
     if (last_demo_mbut==2 && icon_in_selection!=v->current_weapon &&
-	icon_in_selection!=-1) // the user requested a weapon change
+    icon_in_selection!=-1) // the user requested a weapon change
     {
       v->suggest.send_weapon_change=1;
       v->suggest.new_weapon=icon_in_selection;
@@ -348,8 +348,8 @@ void status_bar::step()
     currently_selected_weapon=v->current_weapon;
     need_refresh();
   }
-  
-  
+
+
 }
 
 

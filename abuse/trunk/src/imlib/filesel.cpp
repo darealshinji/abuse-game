@@ -28,7 +28,7 @@ class file_picker : public spicker
   virtual void note_selection(image *screen, InputManager *inm, int x);
   void free_up();
   ~file_picker() { free_up(); }
-} ; 
+} ;
 
 void file_picker::free_up()
 {
@@ -68,9 +68,9 @@ void file_picker::note_selection(image *screen, InputManager *inm, int x)
       if ((int)strlen(d[i])+2>wid) wid=strlen(d[i])+2;
       sx=0;
 
-      
 
-      reconfigure();  
+
+      reconfigure();
       draw_first(screen);
     }
   } else
@@ -100,11 +100,11 @@ void file_picker::draw_item(image *screen, int x, int y, int num, int active)
 file_picker::file_picker(int X, int Y, int ID, int Rows, ifield *Next)
   : spicker(X,Y,0,Rows,1,1,0,Next)
 {
-  
+
   sid=ID;
 
   strcpy(cd,".");
- 
+
   get_directory(cd,f,tf,d,td);
   wid=0;
   int i=0;
@@ -112,26 +112,26 @@ file_picker::file_picker(int X, int Y, int ID, int Rows, ifield *Next)
     if ((int)strlen(f[i])>wid) wid=strlen(f[i]);
   for (i=0;i<td;i++)
     if ((int)strlen(d[i])+2>wid) wid=strlen(d[i])+2;
-  reconfigure();  
+  reconfigure();
 }
 
 Jwindow *file_dialog(char const *prompt, char const *def,
-		     int ok_id, char const *ok_name, int cancel_id,
+             int ok_id, char const *ok_name, int cancel_id,
                      char const *cancel_name, char const *FILENAME_str,
                      int filename_id)
 {
   int wh2 = 5 + wm->font()->height() + 5;
   int wh3 = wh2 + wm->font()->height() + 12;
   Jwindow *j=wm->new_window(0,0,-1,-1,
-			    new info_field(5, 5, 0, prompt,
+                new info_field(5, 5, 0, prompt,
                             new text_field(0, wh2, filename_id,
-					   ">","****************************************",def,
-			    new button(50, wh3, ok_id, ok_name,
-			    new button(100, wh3, cancel_id, cancel_name,
-			    new file_picker(15, wh3 + wm->font()->height() + 10, filename_id, 8,
-					  NULL))))),
+                       ">","****************************************",def,
+                new button(50, wh3, ok_id, ok_name,
+                new button(100, wh3, cancel_id, cancel_name,
+                new file_picker(15, wh3 + wm->font()->height() + 10, filename_id, 8,
+                      NULL))))),
 
-			    FILENAME_str);
+                FILENAME_str);
   return j;
 }
 

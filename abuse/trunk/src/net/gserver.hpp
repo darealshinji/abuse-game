@@ -12,10 +12,10 @@ class game_server : public game_handler
   {
     unsigned char flags;
     enum { Has_joined=1,
-	   Wait_reload=2,
-	   Wait_input=4,
-	   Need_reload_start_ok=8,
-	   Delete_me=16 };
+       Wait_reload=2,
+       Wait_input=4,
+       Need_reload_start_ok=8,
+       Delete_me=16 };
     int get_flag(int flag)         { return flags&flag; }
     void set_flag(int flag, int x) { if (x) flags|=flag; else flags&=~flag; }
 
@@ -35,16 +35,16 @@ class game_server : public game_handler
     int need_reload_start_ok() { return get_flag(Need_reload_start_ok); }
     void set_need_reload_start_ok(int x) { set_flag(Need_reload_start_ok,x); }
 
-    int client_id; 
+    int client_id;
     net_socket *comm;
     net_address *data_address;
     player_client *next;
-    player_client(int client_id, net_socket *comm, net_address *data_address, player_client *next) : 
-      client_id(client_id), comm(comm), data_address(data_address), next(next) 
-      { 
-	flags=0;
-	set_wait_input(1);
-	comm->read_selectable(); 
+    player_client(int client_id, net_socket *comm, net_address *data_address, player_client *next) :
+      client_id(client_id), comm(comm), data_address(data_address), next(next)
+      {
+    flags=0;
+    set_wait_input(1);
+    comm->read_selectable();
       };
     ~player_client();
   } ;

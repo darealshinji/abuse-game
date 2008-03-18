@@ -12,7 +12,7 @@ class nfs_client    // this is a client only read's a file
   int socket_fd;
   int file_fd;
 
-  long size_to_read;  
+  long size_to_read;
   long size;
   nfs_client *next;
   nfs_client(int Socket_fd, int File_fd, nfs_client *Next);
@@ -28,7 +28,7 @@ class remote_file    // a remote client has opened this file with us
   void r_close(char *reason);
   long size;   // server tells us the size of the file when we open it
   int open_local;
-  remote_file *next; 
+  remote_file *next;
   remote_file(char *filename, char *mode, remote_file *Next);
 
   int unbuffered_read(int out_fd, size_t count);

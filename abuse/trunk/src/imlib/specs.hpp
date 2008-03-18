@@ -44,7 +44,7 @@ extern char const *spec_types[];
 #define SPEC_EXTERNAL_LCACHE 23
 
 
-#define SPEC_SIGNATURE    "SPEC1.0" 
+#define SPEC_SIGNATURE    "SPEC1.0"
 #define SPEC_SIG_SIZE     8
 
 #define SPEC_FLAG_LINK    1
@@ -66,7 +66,7 @@ extern char const *spec_types[];
               X        link filename
                      else
               4        data size
-              4        offset 
+              4        offset
 */
 
 void set_spec_main_file(char const *filename, int search_order=SPEC_SEARCH_OUTSIDE_INSIDE);
@@ -124,9 +124,9 @@ class jFILE : public bFILE     // this file type will use virtual opens inside o
   long start_offset,file_length;    // offset of file from actual file begining
 
   long current_offset;  // current offset
-  
+
 public :
-	int get_fd() const { return fd; }
+    int get_fd() const { return fd; }
 
   void open_internal(char const *filename, char const *mode, int flags);
   void open_external(char const *filename, char const *mode, int flags);
@@ -136,12 +136,12 @@ public :
   virtual int open_failure() { return fd<0; }
   virtual int unbuffered_read(void *buf, size_t count);       // returns number of bytes read
   virtual int unbuffered_write(void const *buf, size_t count);     // returns number of bytes written
-  virtual int unbuffered_seek(long offset, int whence);      // whence=SEEK_SET, SEEK_CUR, 
+  virtual int unbuffered_seek(long offset, int whence);      // whence=SEEK_SET, SEEK_CUR,
                                                              // SEEK_END, ret=0=success
   virtual int unbuffered_tell();
   virtual int file_size() { return file_length; }
   virtual ~jFILE();
-} ; 
+} ;
 
 class spec_entry
 {
@@ -149,7 +149,7 @@ public :
   char *name;
   unsigned long size,offset;
   unsigned char type;
-  
+
   spec_entry(unsigned char spec_type,
              char const *object_name,
              char const *link_filename,
@@ -158,7 +158,7 @@ public :
   { type=spec_type;
     name=strcpy((char *)jmalloc(strlen(object_name)+1,"spec_entry::name"),object_name);
     size=data_size; offset=data_offset;
-  }  
+  }
   void print();
   ~spec_entry() { if (name) jfree(name); }
 } ;
@@ -184,12 +184,12 @@ public :
   long find_number(int type);
   void remove(spec_entry *e);
   void add_by_hand(spec_entry *e);
-  void calc_offsets(); 
+  void calc_offsets();
   long data_start_offset();  // returns the first offset past directory items
   long data_end_offset();    // this should be the end of the file
   long type_total(int type);
-  jFILE *write(char const *filename); 
-  int    write(bFILE *fp); 
+  jFILE *write(char const *filename);
+  int    write(bFILE *fp);
   void print();
   void delete_entries();   // if the directory was created by hand instead of by file
   ~spec_directory();

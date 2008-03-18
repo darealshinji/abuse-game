@@ -43,7 +43,7 @@ ifield *button_box::find(int search_id)
 
 button_box::button_box(int X, int Y, int ID, int MaxDown, button *Buttons, ifield *Next)
 {
-  x=X; y=Y; id=ID; next=Next; 
+  x=X; y=Y; id=ID; next=Next;
   buttons=Buttons;
   maxdown=MaxDown;
   if (buttons && maxdown) buttons->push();  // the first button is automatically selected!
@@ -74,7 +74,7 @@ void button_box::area(int &x1, int &y1, int &x2, int &y2)
       if (xp2>x2) x2=xp2;
       if (yp1<y1) y1=yp1;
       if (yp2>y2) y2=yp2;
-    }          
+    }
   }
 }
 
@@ -117,39 +117,39 @@ void button_box::handle_event(event &ev, image *screen, InputManager *im)
       int found=0;
       for (button *b=buttons;!found && b;b=(button *)b->next)  // see if the user clicked on a button
       {
-	b->area(x1,y1,x2,y2);
-	if (ev.mouse_move.x>=x1 && ev.mouse_move.x<=x2 && 
-	    ev.mouse_move.y>=y1 && ev.mouse_move.y<=y2)
-	{
-	  b->handle_event(ev,screen,im);
+    b->area(x1,y1,x2,y2);
+    if (ev.mouse_move.x>=x1 && ev.mouse_move.x<=x2 &&
+        ev.mouse_move.y>=y1 && ev.mouse_move.y<=y2)
+    {
+      b->handle_event(ev,screen,im);
 
-	  int total=0;
-	  button *b2=buttons;
-	  for (;b2;b2=(button *)b2->next)
-	    if (*((int *)b2->read())==0)
-	      total++;
+      int total=0;
+      button *b2=buttons;
+      for (;b2;b2=(button *)b2->next)
+        if (*((int *)b2->read())==0)
+          total++;
 
-	  if (*((int *)b->read())==0)  // did the user press or release the button
-	  {
-	    if (total>maxdown)
-	    {
-	      for (b2=buttons;total>maxdown && b2;b2=(button *)b2->next)
-	        if ((b!=b2 || maxdown==0) && *((int *)b2->read())==0)
-		{
-		  total--;
-		  b2->push();
-		  b2->draw_first(screen);
-		}
-	    }
-	    b->draw_first(screen);
-	  } else if (total==0 && maxdown)
-	    b->push();    // don't let the user de-press a button if non others are selected.     
+      if (*((int *)b->read())==0)  // did the user press or release the button
+      {
+        if (total>maxdown)
+        {
+          for (b2=buttons;total>maxdown && b2;b2=(button *)b2->next)
+            if ((b!=b2 || maxdown==0) && *((int *)b2->read())==0)
+        {
+          total--;
+          b2->push();
+          b2->draw_first(screen);
+        }
+        }
+        b->draw_first(screen);
+      } else if (total==0 && maxdown)
+        b->push();    // don't let the user de-press a button if non others are selected.
 
-	  found=1; // don't look at anymore buttons
+      found=1; // don't look at anymore buttons
 
-	}
+    }
       }
-    } break;   
+    } break;
   }
 }
 
@@ -171,11 +171,11 @@ void button_box::arrange_left_right()
     b->x=x_on;
     b->y=y;
     x_on+=(x2-x1+1)+1;
-  }  
+  }
 }
 
 void button_box::arrange_up_down()
-{  
+{
   button *b=buttons;
   int y_on=y,x1,y1,x2,y2;
   for (;b;b=(button *)b->next)
@@ -184,7 +184,7 @@ void button_box::arrange_up_down()
     b->y=y_on;
     b->x=x;
     y_on+=(y2-y1+1)+1;
-  }  
+  }
 }
 
 void button::change_visual(image *new_visual)
@@ -194,8 +194,8 @@ void button::change_visual(image *new_visual)
 }
 
 void button::area(int &x1, int &y1, int &x2, int &y2)
-{  
-  x1=x; y1=y; 
+{
+  x1=x; y1=y;
   if (pressed)
   {
     x2=x+pressed->width()-1;
@@ -204,9 +204,9 @@ void button::area(int &x1, int &y1, int &x2, int &y2)
   else
   {
     if (text)
-    {    
-      x2=x+wm->font()->width()*strlen(text)+6; 
-      y2=y+wm->font()->height()+6; 
+    {
+      x2=x+wm->font()->width()*strlen(text)+6;
+      y2=y+wm->font()->height()+6;
     } else
     {
       x2=x+6+visual->width();
@@ -217,10 +217,10 @@ void button::area(int &x1, int &y1, int &x2, int &y2)
 
 
 button::button(int X, int Y, int ID, char const *Text, ifield *Next)
-{  
-  x=X; y=Y; id=ID; 
+{
+  x=X; y=Y; id=ID;
   act_id=-1;
-  text=strcpy((char *)jmalloc(strlen(Text)+1,"input button"),Text); 
+  text=strcpy((char *)jmalloc(strlen(Text)+1,"input button"),Text);
   up=1; next=Next; act=0;
   visual=NULL;
   pressed=NULL;
@@ -228,23 +228,23 @@ button::button(int X, int Y, int ID, char const *Text, ifield *Next)
 
 
 button::button(int X, int Y, int ID, image *vis, ifield *Next)
-{ x=X; y=Y; id=ID; text=NULL; 
+{ x=X; y=Y; id=ID; text=NULL;
   act_id=-1;
-  visual=vis; up=1; next=Next; act=0; 
+  visual=vis; up=1; next=Next; act=0;
   pressed=NULL;
 }
 
 button::button(int X, int Y, int ID, image *Depressed, image *Pressed, image *active, ifield *Next)
-{ x=X; y=Y; id=ID; text=NULL; 
+{ x=X; y=Y; id=ID; text=NULL;
   act_id=-1;
-  visual=Depressed; up=1; next=Next; act=0; 
+  visual=Depressed; up=1; next=Next; act=0;
   pressed=Pressed;
   act_pict=active;
 }
 
 
 void text_field::change_data(char const *new_data, int new_cursor, // cursor==-1, does not change it.
-			     int active, image *screen)
+                 int active, image *screen)
 {
   if (strlen(format)<strlen(new_data))
     data=(char *)jrealloc(data,strlen(new_data),"text field input");
@@ -270,40 +270,40 @@ void text_field::handle_event(event &ev, image *screen, InputManager *im)
     switch (ev.key)
     {
       case JK_LEFT : if (cur) { draw_cur(wm->dark_color(),screen); cur--;
-                           draw_cur(wm->bright_color(),screen); } break; 
+                           draw_cur(wm->bright_color(),screen); } break;
       case JK_RIGHT : if (cur<(int)strlen(format)-1) { draw_cur(wm->dark_color(),screen); cur++;
-                           draw_cur(wm->bright_color(),screen); } break; 
-      case JK_END : if (cur!=last_spot()) 
-                          { draw_cur(wm->dark_color(),screen); cur=last_spot(); 
-                            if (cur==(int)strlen(format)-1) cur--; 
-                           draw_cur(wm->bright_color(),screen); } break; 
-      case JK_HOME : if (cur) 
+                           draw_cur(wm->bright_color(),screen); } break;
+      case JK_END : if (cur!=last_spot())
+                          { draw_cur(wm->dark_color(),screen); cur=last_spot();
+                            if (cur==(int)strlen(format)-1) cur--;
+                           draw_cur(wm->bright_color(),screen); } break;
+      case JK_HOME : if (cur)
                           { draw_cur(wm->dark_color(),screen); cur=0;
-                           draw_cur(wm->bright_color(),screen); } break; 
+                           draw_cur(wm->bright_color(),screen); } break;
       case JK_BACKSPACE : if (cur)
          { draw_cur(wm->dark_color(),screen); cur--;
            for (xx=cur;xx<(int)strlen(format)-1;xx++)
              data[xx]=data[xx+1];
            data[strlen(format)-1]=' ';
            draw_text(screen);
-           draw_cur(wm->bright_color(),screen); 
+           draw_cur(wm->bright_color(),screen);
            wm->push_event(new event(id,(char *)this));
-         } break; 
+         } break;
       default : if (ev.key>=' ' && ev.key<='~')
-         { 
-           draw_cur(wm->dark_color(),screen); 
+         {
+           draw_cur(wm->dark_color(),screen);
            for (xx=strlen(format)-1;xx>cur && xx>0;xx--)
              data[xx]=data[xx-1];
            data[cur]=ev.key;
            if (cur<(int)strlen(format)-1)
              cur++;
-	   data[strlen(format)]=0;
+       data[strlen(format)]=0;
            draw_text(screen);
-           draw_cur(wm->bright_color(),screen); 
+           draw_cur(wm->bright_color(),screen);
            wm->push_event(new event(id,(char *)this));
          } break;
     }
-  } 
+  }
 }
 
 void text_field::draw(int active, image *screen)
@@ -322,7 +322,7 @@ void text_field::draw(int active, image *screen)
 
 void text_field::area(int &x1, int &y1, int &x2, int &y2)
 {
-  x1=x; y1=y; 
+  x1=x; y1=y;
   x2=xend();
   y2=yend();
 }
@@ -345,7 +345,7 @@ text_field::text_field(int X, int Y, int ID, char const *Prompt,
                        char const *Format, double Data, ifield *Next)
 {
   char num[20];
-  sprintf(num,"%g",Data);  
+  sprintf(num,"%g",Data);
   int slen=(strlen(Format)>strlen(num) ? strlen(Format) : strlen(num));
   x=X; y=Y; id=ID;
   prompt=strcpy((char *)jmalloc(strlen(Prompt)+1,"text_field::prompt"),Prompt);
@@ -376,11 +376,11 @@ void button::handle_event(event &ev, image *screen, InputManager *im)
 
 void button::draw(int active, image *screen)
 {
-  int x1,y1,x2,y2,color=(active ? wm->bright_color() : wm->medium_color());  
-  area(x1,y1,x2,y2); 
+  int x1,y1,x2,y2,color=(active ? wm->bright_color() : wm->medium_color());
+  area(x1,y1,x2,y2);
   if (active!=act  && act_id!=-1 && active)
     wm->push_event(new event(act_id,NULL));
-    
+
   if (pressed)
   {
     if (up)
@@ -400,20 +400,20 @@ void button::draw(int active, image *screen)
 
 void button::draw_first(image *screen)
 {
-  if (pressed)  
+  if (pressed)
     draw(0,screen);
   else
   {
 
     int x1,y1,x2,y2;
     area(x1,y1,x2,y2);
-    
+
 
     if (up)
     {
       screen->rectangle(x1,y1,x2,y2,wm->black());
-//      screen->widget_bar(,wm->bright_color(),wm->medium_color(),wm->dark_color()); 
-      screen->widget_bar(x1+1,y1+1,x2-1,y2-1,wm->bright_color(),wm->medium_color(),wm->dark_color()); 
+//      screen->widget_bar(,wm->bright_color(),wm->medium_color(),wm->dark_color());
+      screen->widget_bar(x1+1,y1+1,x2-1,y2-1,wm->bright_color(),wm->medium_color(),wm->dark_color());
       if (text)
       {
         wm->font()->put_string(screen,x+4,y+5,text,wm->black());
@@ -434,7 +434,7 @@ void button::draw_first(image *screen)
         wm->font()->put_string(screen,x+4,y+5,text,wm->black());
         wm->font()->put_string(screen,x+3,y+4,text);
       }
-    }  
+    }
   }
 }
 
@@ -475,21 +475,21 @@ void info_field::area(int &x1, int &y1, int &x2, int &y2)
       if (w>maxw) maxw=w;
       if (*info=='\n')
       {
-	h+=fh+1;
-	w=1;
+    h+=fh+1;
+    w=1;
       }
-      else w+=fw;      
+      else w+=fw;
     }
     w=maxw;
-  }      
+  }
   x1=x;
   y1=y;
   x2=x+w;
   y2=y+h;
 }
 
-void info_field::put_para(image *screen, char const *st, int dx, int dy, 
-			  int xspace, int yspace, JCFont *font, int color)
+void info_field::put_para(image *screen, char const *st, int dx, int dy,
+              int xspace, int yspace, JCFont *font, int color)
 {
   int ox=dx;
   while (*st)

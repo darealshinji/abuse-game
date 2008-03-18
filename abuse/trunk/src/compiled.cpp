@@ -148,6 +148,6 @@ void compiled_init()
 
 void compiled_uninit()
 {
-  if (bad_guy_array) 
+  if (bad_guy_array)
     jfree(bad_guy_array);
 }

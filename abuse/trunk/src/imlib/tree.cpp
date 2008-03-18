@@ -17,10 +17,10 @@ class btnode
 protected :
   btnode *Left, *Right;
 public :
-	  btnode *left()                   { return Left; }
-	  btnode *right()                  { return Right; }
-	  void    set_right(btnode *right) { Right=right; }
-	  void    set_left (btnode *left)  { Left=left;   }
+      btnode *left()                   { return Left; }
+      btnode *right()                  { return Right; }
+      void    set_right(btnode *right) { Right=right; }
+      void    set_left (btnode *left)  { Left=left;   }
   virtual int     compare  (btnode *node) = 0;
   virtual char   *name     ()             = 0;
 } ;
@@ -31,7 +31,7 @@ class btree
 protected :
   btnode *root;
 public :
-	       btree() { root=NULL; }
+           btree() { root=NULL; }
   virtual void insert(btnode *node);
   virtual void remove(btnode *node);
   void         print() { reprint(root); }

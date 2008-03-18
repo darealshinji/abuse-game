@@ -51,7 +51,7 @@ void die(...)
 #else
 void die(int why)
 #endif
-{ 
+{
   fprintf(stderr,"dieing\n");
   if (driver) { delete driver; driver=NULL; }
   exit(0);
@@ -87,7 +87,7 @@ void net_driver::cleanup()
   fprintf(stderr,"net driver : cleaning up\n");
   if (shm_seg_id!=-1)
     shmctl(shm_seg_id,IPC_RMID,NULL);
-  if (shm_addr!=(void *)-1) 
+  if (shm_addr!=(void *)-1)
   {
     shmdt((char *)shm_addr);
     shm_addr=(void *)-1;
@@ -109,9 +109,9 @@ int net_driver::setup_shm()
 
   driver=this;
   int catch_sigs[]={SIGHUP,SIGINT,SIGQUIT,SIGILL,SIGABRT,
-		    SIGIOT,SIGFPE,SIGKILL,SIGUSR1,SIGSEGV,
-		    SIGUSR2,SIGPIPE,SIGTERM,SIGCHLD,
-		    SIGCONT,SIGSTOP,SIGTSTP,SIGTTIN,SIGTTOU,-1};
+            SIGIOT,SIGFPE,SIGKILL,SIGUSR1,SIGSEGV,
+            SIGUSR2,SIGPIPE,SIGTERM,SIGCHLD,
+            SIGCONT,SIGSTOP,SIGTSTP,SIGTTIN,SIGTTOU,-1};
 
   int i;
   for (i=0;catch_sigs[i]!=-1;i++)     // catch all signals in case we get
@@ -127,7 +127,7 @@ int net_driver::setup_shm()
 
 
   shm_addr=shmat(shm_seg_id,NULL,0);  // attach as read/write
-  if (shm_addr==(void *)-1) 
+  if (shm_addr==(void *)-1)
     mdie("could not attach shm seg");
 
   base=(base_memory_struct *)shm_addr;
@@ -152,7 +152,7 @@ int net_driver::setup_shm()
   if (in->read(&ack,1)!=1 || ack!=1)
     comm_failed();
 
-  
+
   if (shmctl(shm_seg_id,IPC_RMID,NULL))  // remove the shm id
     mdie("could not remove shm id");
 
@@ -177,27 +177,27 @@ int net_driver::connect_to_engine(int argc, char **argv)
 
   int driver_out_fd=open(DOUT_NAME,O_RDWR);  // open the pipe
   if (driver_out_fd<0)
-  { perror(DOUT_NAME); 
+  { perror(DOUT_NAME);
     exit(1);
   }
 
   int driver_in_fd=open(DIN_NAME,O_RDWR);
   if (driver_in_fd<0)
-  { 
+  {
     close(driver_out_fd);
-    perror(DIN_NAME); 
+    perror(DIN_NAME);
     exit(1);
   }
 
   in=new unix_fd(driver_in_fd);
   in->read_selectable();
   out=new unix_fd(driver_out_fd);
-  
-  if (in->read(&reg,sizeof(reg))!=sizeof(reg)) 
+
+  if (in->read(&reg,sizeof(reg))!=sizeof(reg))
     mdie("unable to registration from engine");
 }
 
-net_driver::net_driver(int argc, char **argv, int comm_port, int game_port, net_protocol *proto) : 
+net_driver::net_driver(int argc, char **argv, int comm_port, int game_port, net_protocol *proto) :
   comm_port(comm_port), game_port(game_port), proto(proto)
 {
   debug=0;
@@ -233,10 +233,10 @@ int net_driver::check_commands()
     {
       if (cmd<=EGCMD_DIE)
       {
-	char *cmds[]={"open","close","read","write","seek","size","tell","setfs","crc_calced","process_lsf","request_lfs",
-		     "equest_entry","become_server","block","reload_start","reload_end","send_input","input_missing",
-		      "kill_slackers","die"};
-	fprintf(stderr,"engine cmd : %s\n",cmds[cmd]);
+    char *cmds[]={"open","close","read","write","seek","size","tell","setfs","crc_calced","process_lsf","request_lfs",
+             "equest_entry","become_server","block","reload_start","reload_end","send_input","input_missing",
+              "kill_slackers","die"};
+    fprintf(stderr,"engine cmd : %s\n",cmds[cmd]);
       }
     }
 
@@ -244,152 +244,152 @@ int net_driver::check_commands()
     {
       case EGCMD_DIE :
       {
-	cmd=game_face->quit();
-	if (!out->write(&cmd,1)) { mdie("could not write block ack1"); }  // send something to unblock engine
-	mdie("received die command");
+    cmd=game_face->quit();
+    if (!out->write(&cmd,1)) { mdie("could not write block ack1"); }  // send something to unblock engine
+    mdie("received die command");
       } break;
 
       case NFCMD_RELOAD_START :
-      {      
-	cmd=game_face->start_reload();
-	if (!out->write(&cmd,1)) { mdie("could not write start reload ack"); }  // send something to unblock engine	
+      {
+    cmd=game_face->start_reload();
+    if (!out->write(&cmd,1)) { mdie("could not write start reload ack"); }  // send something to unblock engine    
       } break;
 
       case NFCMD_RELOAD_END :
-      {      
-	cmd=game_face->end_reload();
-	if (!out->write(&cmd,1)) { mdie("could not write end reload ack"); }  // send something to unblock engine	
+      {
+    cmd=game_face->end_reload();
+    if (!out->write(&cmd,1)) { mdie("could not write end reload ack"); }  // send something to unblock engine    
       } break;
 
       case NFCMD_BLOCK :
-      {      
-	if (!out->write(&cmd,1)) { mdie("could not write block ack1"); }  // send something to unblock engine
-	if (!in->read(&cmd,1)) { mdie("could not read block ack1"); }  // send something to block ourself
+      {
+    if (!out->write(&cmd,1)) { mdie("could not write block ack1"); }  // send something to unblock engine
+    if (!in->read(&cmd,1)) { mdie("could not read block ack1"); }  // send something to block ourself
       } break;
 
       case NFCMD_INPUT_MISSING :    // try to fetch the input via a loss-less net protocol
       {
-	game_face->input_missing();
-	if (out->write(&cmd,1)!=1) { mdie("could not write block ack1"); }  // send something to unblock engine
+    game_face->input_missing();
+    if (out->write(&cmd,1)!=1) { mdie("could not write block ack1"); }  // send something to unblock engine
       } break;
       case NFCMD_KILL_SLACKERS :
       {
-	if (!game_face->kill_slackers())
-	{
-	  delete game_face;
-	  game_face=new game_handler();
-	}
-	if (out->write(&cmd,1)!=1) { mdie("could not write block ack1"); }  // send something to unblock engine
+    if (!game_face->kill_slackers())
+    {
+      delete game_face;
+      game_face=new game_handler();
+    }
+    if (out->write(&cmd,1)!=1) { mdie("could not write block ack1"); }  // send something to unblock engine
       } break;
       case NFCMD_SEND_INPUT :
       {
-	game_face->add_engine_input();
-	if (out->write(&cmd,1)!=1) { mdie("could not write send ack1"); }  // send something to unblock engine
-	if (in->read(&cmd,1)!=1) { mdie("could not read send ack2"); }	// read something to block ourselves for engine
+    game_face->add_engine_input();
+    if (out->write(&cmd,1)!=1) { mdie("could not write send ack1"); }  // send something to unblock engine
+    if (in->read(&cmd,1)!=1) { mdie("could not read send ack2"); }    // read something to block ourselves for engine
       } break;
 
 
       case NFCMD_REQUEST_ENTRY :
       {
-	uint8_t len;
-	char name[256];
-	if (in->read(&len,1)!=1) { mdie("could not read server name length"); }
-	if (in->read(name,len)!=len) { mdie("could not read server name"); }
-	uint16_t success=join_server(name);
-	if (out->write(&success,2)!=2) mdie("cound not send lsf read failure");      
+    uint8_t len;
+    char name[256];
+    if (in->read(&len,1)!=1) { mdie("could not read server name length"); }
+    if (in->read(name,len)!=len) { mdie("could not read server name"); }
+    uint16_t success=join_server(name);
+    if (out->write(&success,2)!=2) mdie("cound not send lsf read failure");
       } break;
       case NFCMD_BECOME_SERVER :
       {
-	cmd=become_server();	
-	if (out->write(&cmd,1)!=1) mdie("cound not send ok");
+    cmd=become_server();    
+    if (out->write(&cmd,1)!=1) mdie("cound not send ok");
       } break;
       case NFCMD_REQUEST_LSF :
       {
-	uint8_t len;
-	char name[256];
-	if (in->read(&len,1)!=1) { mdie("could not read lsf name length"); }
-	if (in->read(name,len)!=len) { mdie("could not read lsf name"); }
-	if (!get_lsf(name))
-	{
-	  len=0;
-	  if (out->write(&len,1)!=1) mdie("cound not send lsf read failure");
-	} else
-	{
-	  len=strlen(name)+1;
-	  if (out->write(&len,1)!=1) mdie("cound not send lsf name len");
-	  if (out->write(name,len)!=len) mdie("cound not send lsf name");
-	}     
+    uint8_t len;
+    char name[256];
+    if (in->read(&len,1)!=1) { mdie("could not read lsf name length"); }
+    if (in->read(name,len)!=len) { mdie("could not read lsf name"); }
+    if (!get_lsf(name))
+    {
+      len=0;
+      if (out->write(&len,1)!=1) mdie("cound not send lsf read failure");
+    } else
+    {
+      len=strlen(name)+1;
+      if (out->write(&len,1)!=1) mdie("cound not send lsf name len");
+      if (out->write(name,len)!=len) mdie("cound not send lsf name");
+    }
       } break;
 
       case NFCMD_PROCESS_LSF :
       {
-	uint8_t len,name[256];
-	if (in->read(&len,1)!=1) { mdie("could not read lsf name length"); }
-	if (in->read(name,len)!=len) { mdie("could not read lsf name"); }
+    uint8_t len,name[256];
+    if (in->read(&len,1)!=1) { mdie("could not read lsf name length"); }
+    if (in->read(name,len)!=len) { mdie("could not read lsf name"); }
 
-	while (lsf_wait_list)
-	{
-	  lsf_waiter *c=lsf_wait_list;
-	  lsf_wait_list=lsf_wait_list->next;
-	  uint8_t status=1;
-	  c->sock->write(&len,1);
-	  c->sock->write(name,len);
-	  delete c;
-	}
+    while (lsf_wait_list)
+    {
+      lsf_waiter *c=lsf_wait_list;
+      lsf_wait_list=lsf_wait_list->next;
+      uint8_t status=1;
+      c->sock->write(&len,1);
+      c->sock->write(name,len);
+      delete c;
+    }
       } break;
 
-      case NFCMD_CRCS_CALCED : 
+      case NFCMD_CRCS_CALCED :
       {
-	while (crc_wait_list)
-	{
-	  crc_waiter *c=crc_wait_list;
-	  crc_wait_list=crc_wait_list->next;
-	  uint8_t status=1;
-	  c->sock->write(&status,1);
-	  delete c;
-	}
+    while (crc_wait_list)
+    {
+      crc_waiter *c=crc_wait_list;
+      crc_wait_list=crc_wait_list->next;
+      uint8_t status=1;
+      c->sock->write(&status,1);
+      delete c;
+    }
       } break;
 
       case NFCMD_SET_FS :
       {
-	uint8_t size;
-	char sn[256];
-	if (in->read(&size,1)!=1) mdie("could not read filename length");
-	if (in->read(sn,size)!=size) mdie("could not read server name");
-	fman->set_default_fs_name(sn);
+    uint8_t size;
+    char sn[256];
+    if (in->read(&size,1)!=1) mdie("could not read filename length");
+    if (in->read(sn,size)!=size) mdie("could not read server name");
+    fman->set_default_fs_name(sn);
 
-	size=fetch_crcs(sn);  // return success
-	if (out->write(&size,1)!=1) mdie("could not send ok to engine");
-      } break;    
+    size=fetch_crcs(sn);  // return success
+    if (out->write(&size,1)!=1) mdie("could not send ok to engine");
+      } break;
 
       case NFCMD_OPEN :
       {
-	uint8_t size[2];
-	char filename[300],mode[20],*fn;
-	fn=filename;
-	if (in->read(size,2)!=2  ||
-	    in->read(filename,size[0])!=size[0] ||
-	    in->read(mode,size[1])!=size[1]) 
-	  mdie("incomplete open command from engine");
-	
-	int fd=fman->rf_open_file(fn,mode);
-	if (fd==-2)
-	{
-	  uint8_t st[2];
-	  st[0]=NF_OPEN_LOCAL_FILE;
-	  st[1]=strlen(fn)+1;
-	  if (out->write(st,2)!=2) comm_failed();
-	  if (out->write(fn,st[1])!=st[1]) comm_failed();
-	} else if (fd==-1)
-	{
-	  uint8_t st=NF_OPEN_FAILED;
-	  if (out->write(&st,1)!=1) comm_failed(); 
-	} else
-	{
-	  uint8_t st=NF_OPEN_REMOTE_FILE;
-	  if (out->write(&st,1)!=1) comm_failed(); 	
-	  if (out->write(&fd,sizeof(fd))!=sizeof(fd)) comm_failed(); 	
-	}
+    uint8_t size[2];
+    char filename[300],mode[20],*fn;
+    fn=filename;
+    if (in->read(size,2)!=2  ||
+        in->read(filename,size[0])!=size[0] ||
+        in->read(mode,size[1])!=size[1])
+      mdie("incomplete open command from engine");
+    
+    int fd=fman->rf_open_file(fn,mode);
+    if (fd==-2)
+    {
+      uint8_t st[2];
+      st[0]=NF_OPEN_LOCAL_FILE;
+      st[1]=strlen(fn)+1;
+      if (out->write(st,2)!=2) comm_failed();
+      if (out->write(fn,st[1])!=st[1]) comm_failed();
+    } else if (fd==-1)
+    {
+      uint8_t st=NF_OPEN_FAILED;
+      if (out->write(&st,1)!=1) comm_failed();
+    } else
+    {
+      uint8_t st=NF_OPEN_REMOTE_FILE;
+      if (out->write(&st,1)!=1) comm_failed();     
+      if (out->write(&fd,sizeof(fd))!=sizeof(fd)) comm_failed();     
+    }
       } break;
       case NFCMD_CLOSE :
       case NFCMD_SIZE :
@@ -397,45 +397,45 @@ int net_driver::check_commands()
       case NFCMD_SEEK :
       case NFCMD_READ :
       {
-	int fd;
-	if (in->read(&fd,sizeof(fd))!=sizeof(fd)) comm_failed();
+    int fd;
+    if (in->read(&fd,sizeof(fd))!=sizeof(fd)) comm_failed();
 
-	switch (cmd)
-	{
-	  case NFCMD_CLOSE : 
-	  { 
-	    fman->rf_close(fd);
-	    uint8_t st=1;
-	    if (out->write(&st,1)!=1) comm_failed(); 	
-	  } break;
-	  case NFCMD_SIZE  :
-	  {
-	    int32_t x=fman->rf_file_size(fd);
-	    if (out->write(&x,sizeof(x))!=sizeof(x)) comm_failed(); 		  
-	  } break;
-	  case NFCMD_TELL :
-	  {
-	    int32_t offset=fman->rf_tell(fd);
-	    if (out->write(&offset,sizeof(offset))!=sizeof(offset)) comm_failed();  
-	  } break;
-	  case NFCMD_SEEK :
-	  {
-	    int32_t offset;
-	    if (in->read(&offset,sizeof(offset))!=sizeof(offset)) comm_failed();
-	    offset=fman->rf_seek(fd,offset);
-	    if (out->write(&offset,sizeof(offset))!=sizeof(offset)) comm_failed();  
-	  } break;
-	  case NFCMD_READ :
-	  {
-	    int32_t size;
-	    if (in->read(&size,sizeof(size))!=sizeof(size)) comm_failed();
-	    fman->rf_read(fd,out,size);
-	  } break;
-	}
-      } break;    
+    switch (cmd)
+    {
+      case NFCMD_CLOSE :
+      {
+        fman->rf_close(fd);
+        uint8_t st=1;
+        if (out->write(&st,1)!=1) comm_failed();     
+      } break;
+      case NFCMD_SIZE  :
+      {
+        int32_t x=fman->rf_file_size(fd);
+        if (out->write(&x,sizeof(x))!=sizeof(x)) comm_failed();         
+      } break;
+      case NFCMD_TELL :
+      {
+        int32_t offset=fman->rf_tell(fd);
+        if (out->write(&offset,sizeof(offset))!=sizeof(offset)) comm_failed();
+      } break;
+      case NFCMD_SEEK :
+      {
+        int32_t offset;
+        if (in->read(&offset,sizeof(offset))!=sizeof(offset)) comm_failed();
+        offset=fman->rf_seek(fd,offset);
+        if (out->write(&offset,sizeof(offset))!=sizeof(offset)) comm_failed();
+      } break;
+      case NFCMD_READ :
+      {
+        int32_t size;
+        if (in->read(&size,sizeof(size))!=sizeof(size)) comm_failed();
+        fman->rf_read(fd,out,size);
+      } break;
+    }
+      } break;
       default :
       { fprintf(stderr,"net driver : unknown net command %d\n",cmd); die(0); }
-    }   
+    }
     ret=1;
   }
 
@@ -451,7 +451,7 @@ int net_driver::join_server(char *server_name)   // ask remote server for entry 
 
   net_socket *sock=connect_to_server(server_name,DEFAULT_COMM_PORT,0);
   if (!sock)
-  { 
+  {
     fprintf(stderr,"unable to connect\n");
     return 0;
   }
@@ -471,10 +471,10 @@ int net_driver::join_server(char *server_name)   // ask remote server for entry 
   if (!reg)
   {
     fprintf(stderr,
-	    "This server is not running the registered version of abuse, and\n"
-	    "you are (thanks!).  So that there are no conflict between the two games\n"
-	    "please start with the -share option when connecting to this server\n"
-	    "example : abuse -net somewhere.someplace.net -share\n");
+        "This server is not running the registered version of abuse, and\n"
+        "you are (thanks!).  So that there are no conflict between the two games\n"
+        "please start with the -share option when connecting to this server\n"
+        "example : abuse -net somewhere.someplace.net -share\n");
     delete sock;
     return 0;
   }
@@ -486,7 +486,7 @@ int net_driver::join_server(char *server_name)   // ask remote server for entry 
   uint8_t len=strlen(uname)+1;
 
   if (sock->write(&len,1)!=1 ||
-      sock->write(uname,len)!=len || 
+      sock->write(uname,len)!=len ||
       sock->write(&port,2)!=2  ||            // send server out game port
       sock->read(&port,2)!=2   ||            // read server's game port
       sock->read(&cnum,2)!=2   || cnum==0    // read player number (cannot be 0 because 0 is server)
@@ -506,12 +506,12 @@ int net_driver::join_server(char *server_name)   // ask remote server for entry 
 }
 
 
-net_socket *net_driver::connect_to_server(char *&name, int port, int force_port, 
-					  net_socket::socket_type sock_type)
+net_socket *net_driver::connect_to_server(char *&name, int port, int force_port,
+                      net_socket::socket_type sock_type)
 {
   char *oname=name;
   net_address *addr=proto->get_node_address(name, port, force_port);
-  if (!addr) 
+  if (!addr)
   {
     if (debug) fprintf(stderr,"No IP address for name %s\n",oname);
     return NULL;
@@ -538,12 +538,12 @@ int net_driver::get_lsf(char *name)  // contact remot host and ask for lisp star
       sock->read(&len,1)!=1 || len==0 ||
       sock->read(name_start,len)!=len)
   {
-    delete sock; 
+    delete sock;
     return 0;
-  } 
+  }
 
   delete sock;
-  return 1;  
+  return 1;
 }
 
 
@@ -554,10 +554,10 @@ int net_driver::fetch_crcs(char *server)
   if (!sock) return 0;
   uint8_t cmd=CLIENT_CRC_WAITER;
   if (sock->write(&cmd,1)!=1 ||
-      sock->read(&cmd,1)!=1)  
+      sock->read(&cmd,1)!=1)
   { delete sock; return 0; }
   delete sock;
-  return cmd;  
+  return cmd;
 }
 
 
@@ -571,7 +571,7 @@ int net_driver::add_client(int type, net_socket *sock, net_address *from)
         fprintf(stderr,"add crc waiter\n");
 
       crc_wait_list=new crc_waiter(sock,crc_wait_list);
-      base->calc_crcs=1;      
+      base->calc_crcs=1;
       return 1;
     } break;
     case CLIENT_LSF_WAITER :
@@ -589,7 +589,7 @@ int net_driver::add_client(int type, net_socket *sock, net_address *from)
         fprintf(stderr,"unknown client type %d\n",type);
       return ret;
     }
-        
-  } 
+
+  }
   return 0;
 }

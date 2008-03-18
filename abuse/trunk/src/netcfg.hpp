@@ -24,7 +24,7 @@ class net_configuration
                  server_port;  // if we are a server, use our_port
   char name[100];
   char server_name[100];
-  
+
 
   char min_players,
        max_players;

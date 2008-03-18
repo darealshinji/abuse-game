@@ -29,7 +29,7 @@ class nfs_server_client_node
 
 
   nfs_server_client_node(out_socket *descriptor, nfs_server_client_node *Next)
-  { nd=descriptor; next=Next; 
+  { nd=descriptor; next=Next;
     file_list_size=0;
     file_list=NULL;
   }
@@ -95,7 +95,7 @@ char *squash_path(char *path, char *buffer)
 int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
 {
   uint8_t cmd;
-  if (pk.read(&cmd,1)!=1) 
+  if (pk.read(&cmd,1)!=1)
   {
     dprintf("Could not read command from nfs packet\n");
     return 0;
@@ -103,7 +103,7 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
   dprintf("cmd : %d\n",cmd);
   switch (cmd)
   {
-    case NFS_CLOSE_CONNECTION : 
+    case NFS_CLOSE_CONNECTION :
     { return 0; } break;
     case NFS_CRC_OPEN :
     {
@@ -112,7 +112,7 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
       uint32_t crc;
       if (pk.read((uint8_t *)&crc,4)!=4) return 0; crc=lltl(crc);
       if (pk.read(&fn_len,1)!=1) return 0;
-      if (pk.read((uint8_t *)fn,fn_len)!=fn_len) return 0;      
+      if (pk.read((uint8_t *)fn,fn_len)!=fn_len) return 0;
       if (pk.read((uint8_t *)&fn_len,1)!=1) return 0;
       if (pk.read((uint8_t *)perm,fn_len)!=fn_len) return 0;      // read permission string
       dprintf("nfs open %s,%s\n",fn,perm);
@@ -121,44 +121,44 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
       uint32_t my_crc=crc_manager.get_crc(crc_manager.get_filenumber(fn),fail);
       if (fail)
       {
-	jFILE *fp=new jFILE(squash_path(fn,newfn),perm);
-	if (fp->open_failure())
-	{
-	  delete fp;
-	  opk.write_uint32((int32_t)-1);
-	  if (!c->nd->send(opk)) return 0;
-	  return 1;
-	} else      
-	{
-	  my_crc=crc_file(fp);
-	  crc_manager.set_crc(crc_manager.get_filenumber(fn),my_crc);
-	  delete fp;
-	}	
+    jFILE *fp=new jFILE(squash_path(fn,newfn),perm);
+    if (fp->open_failure())
+    {
+      delete fp;
+      opk.write_uint32((int32_t)-1);
+      if (!c->nd->send(opk)) return 0;
+      return 1;
+    } else
+    {
+      my_crc=crc_file(fp);
+      crc_manager.set_crc(crc_manager.get_filenumber(fn),my_crc);
+      delete fp;
+    }    
       }
 
       if (my_crc==crc)
       {
-	opk.write_uint32((int32_t)-2);
-	if (!c->nd->send(opk)) return 0;
-	return 1;
+    opk.write_uint32((int32_t)-2);
+    if (!c->nd->send(opk)) return 0;
+    return 1;
       }
 
       jFILE *fp=new jFILE(squash_path(fn,newfn),perm);
       if (fp->open_failure())
       {
-	delete fp;
-	opk.write_uint32((int32_t)-1);
-      } else      
-	opk.write_uint32(c->add_file(fp));      
+    delete fp;
+    opk.write_uint32((int32_t)-1);
+      } else
+    opk.write_uint32(c->add_file(fp));
       if (!c->nd->send(opk)) return 0;
       return 1;
     } break;
     case NFS_OPEN :
-    { 
+    {
       uint8_t fn_len;
       char fn[255],newfn[255],perm[255];
       if (pk.read(&fn_len,1)!=1) return 0;
-      if (pk.read((uint8_t *)fn,fn_len)!=fn_len) return 0;      
+      if (pk.read((uint8_t *)fn,fn_len)!=fn_len) return 0;
       if (pk.read((uint8_t *)&fn_len,1)!=1) return 0;
       if (pk.read((uint8_t *)perm,fn_len)!=fn_len) return 0;      // read permission string
       dprintf("nfs open %s,%s\n",fn,perm);
@@ -166,10 +166,10 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
       jFILE *fp=new jFILE(squash_path(fn,newfn),perm);
       if (fp->open_failure())
       {
-	delete fp;
-	opk.write_uint32((int32_t)-1);
-      } else      
-	opk.write_uint32(c->add_file(fp));      
+    delete fp;
+    opk.write_uint32((int32_t)-1);
+      } else
+    opk.write_uint32(c->add_file(fp));
       if (!c->nd->send(opk)) return 0;
       return 1;
     } break;
@@ -178,10 +178,10 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
       int32_t fd;
       if (pk.read((uint8_t *)&fd,4)!=4) return 0;  fd=lltl(fd);
       dprintf("nfs close %d\n",fd);
-      if (!c->delete_file(fd)) 
+      if (!c->delete_file(fd))
       {
-	dprintf("nfs : bad fd for close\n");
-	return 0;
+    dprintf("nfs : bad fd for close\n");
+    return 0;
       }
       return 1;
     } break;
@@ -198,32 +198,32 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
       int total;
       do
       {
-	opk.reset();
-	int to_read=NFSFILE_BUFFER_SIZE < size ? NFSFILE_BUFFER_SIZE : size;
-	total=fp->read(buf,to_read);
-	opk.write_uint16(total);
-	opk.write(buf,total);
-	printf("sending %d bytes\n",total);
-	if (!c->nd->send(opk)) 
-	{
-	  dprintf("failed on write to client\n");
-	  return 0;
-	}
-	if (total<to_read) size=0;
-	else size-=total;
-      } while (size>0 && total);	       
+    opk.reset();
+    int to_read=NFSFILE_BUFFER_SIZE < size ? NFSFILE_BUFFER_SIZE : size;
+    total=fp->read(buf,to_read);
+    opk.write_uint16(total);
+    opk.write(buf,total);
+    printf("sending %d bytes\n",total);
+    if (!c->nd->send(opk))
+    {
+      dprintf("failed on write to client\n");
+      return 0;
+    }
+    if (total<to_read) size=0;
+    else size-=total;
+      } while (size>0 && total);    
       return 1;
     } break;
 
     case NFS_WRITE : // not supported
-    { dprintf("got write command..., not good\n"); 
+    { dprintf("got write command..., not good\n");
       return 0;
     } break;
     case NFS_SEEK :
     {
       int32_t fd,off,type;
       if (pk.read((uint8_t *)&fd,4)!=4) return 0;   fd=lltl(fd);
-      if (pk.read((uint8_t *)&off,4)!=4) return 0;  off=lltl(off);    
+      if (pk.read((uint8_t *)&off,4)!=4) return 0;  off=lltl(off);
       if (pk.read((uint8_t *)&type,4)!=4) return 0; type=lltl(type);
       dprintf("seek %d %d %d\n",fd,off,type);
       bFILE *fp=c->get_file(fd);
@@ -236,7 +236,7 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
       int32_t fd,off,type;
       if (pk.read((uint8_t *)&fd,4)!=4) return 0;   fd=lltl(fd);
       bFILE *fp=c->get_file(fd);
-      if (!fp) return 0;      
+      if (!fp) return 0;
       packet opk;
       opk.write_uint32(fp->file_size());
       if (!c->nd->send(opk)) return 0;
@@ -247,7 +247,7 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
       int32_t fd,off,type;
       if (pk.read((uint8_t *)&fd,4)!=4) return 0;   fd=lltl(fd);
       bFILE *fp=c->get_file(fd);
-      if (!fp) return 0;      
+      if (!fp) return 0;
       packet opk;
       opk.write_uint32(fp->tell());
       if (!c->nd->send(opk)) return 0;
@@ -262,7 +262,7 @@ int nfs_server::service_request()
 {
   int ret=0;
   out_socket *c=listen->check_for_connect();   // check for new clients
-  if (c)  
+  if (c)
   {
     nodes=new nfs_server_client_node(c,nodes);
     ret=1;
@@ -277,27 +277,27 @@ int nfs_server::service_request()
       int kill=0;
       do
       {
-	int ret;
-	if (!nc->nd->get(pk))
+    int ret;
+    if (!nc->nd->get(pk))
           kill=1;
-	else if (!process_packet(pk,nc))
-	  kill=1;
+    else if (!process_packet(pk,nc))
+      kill=1;
       } while (!kill && nc->nd->ready_to_read());
 
 
       if (kill)
       {
-	nfs_server_client_node *p=nc;
-	nc=nc->next;
-	if (last)
-	  last->next=nc;
-	else
-	  nodes=NULL;
-	delete p;
-      } else nc=nc->next;      
+    nfs_server_client_node *p=nc;
+    nc=nc->next;
+    if (last)
+      last->next=nc;
+    else
+      nodes=NULL;
+    delete p;
+      } else nc=nc->next;
     } else nc=nc->next;
     last=nc;
-  }  
+  }
   return ret;
 }
 

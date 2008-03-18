@@ -32,7 +32,7 @@ void remove_client(int client_number) { ; }
 CrcManager *net_crcs = NULL;
 extern net_protocol *prot;
 
-class nfs_file : public bFILE 
+class nfs_file : public bFILE
 {
   jFILE *local;
   int nfs_fd;
@@ -58,12 +58,12 @@ bFILE *open_nfs_file(char const *filename, char const *mode)
 nfs_file::nfs_file(char const *filename, char const *mode)
 {
   local=NULL;
-  nfs_fd=-1; 
+  nfs_fd=-1;
 
   int local_only=0;
   char const *s=mode;
   for (;*s;s++)    // check to see if writeable file, if so don't go through nfs
-    if (*s=='w' || *s=='W' || *s=='a' || *s=='A') 
+    if (*s=='w' || *s=='W' || *s=='a' || *s=='A')
       local_only=1;
 
   char name[256], *c;
@@ -86,24 +86,24 @@ nfs_file::nfs_file(char const *filename, char const *mode)
     int remote_file_num=net_crcs->get_filenumber(local_filename);
     uint32_t remote_crc=net_crcs->get_crc(remote_file_num,fail2);
     if (!fail2)
-    {   
+    {
       int local_file_num=crc_manager.get_filenumber(local_filename);
       uint32_t local_crc=crc_manager.get_crc(local_file_num,fail1);
       if (fail1)
       {
-	bFILE *fp=new jFILE(local_filename,"rb");      
-	if (!fp->open_failure())
-	{
-	  local_crc=crc_file(fp);
-	  crc_manager.set_crc(local_file_num,local_crc);
-	} else fail3=1;
-	delete fp;	
+    bFILE *fp=new jFILE(local_filename,"rb");
+    if (!fp->open_failure())
+    {
+      local_crc=crc_file(fp);
+      crc_manager.set_crc(local_file_num,local_crc);
+    } else fail3=1;
+    delete fp;    
       }
 
       if (!fail3)
       {
-	if (local_crc==remote_crc)
-          local_only=1;	
+    if (local_crc==remote_crc)
+          local_only=1;    
       }
     }
   }
@@ -123,7 +123,7 @@ nfs_file::nfs_file(char const *filename, char const *mode)
     nfs_fd=NF_open_file(nm,mode);
     if (nfs_fd==-2)
     {
-      local=new jFILE(nm,mode);      
+      local=new jFILE(nm,mode);
       if (local->open_failure()) { delete local; local=NULL; }
       nfs_fd=-1;
     }
@@ -131,8 +131,8 @@ nfs_file::nfs_file(char const *filename, char const *mode)
 }
 
 
-int nfs_file::open_failure() 
-{ 
+int nfs_file::open_failure()
+{
   if (local==NULL && nfs_fd<0) return 1;
   else return 0;
 }
@@ -146,7 +146,7 @@ int nfs_file::unbuffered_read(void *buf, size_t count)      // returns number of
   {
     long a=NF_read(nfs_fd,buf,count);
     if (a>(long)count)
-    { 
+    {
       fprintf(stderr,"ooch read too much\n");
     }
     return a;
@@ -159,10 +159,10 @@ int nfs_file::unbuffered_write(void const *buf, size_t count)      // returns nu
   if (local)
     return local->write(buf,count);
   else
-  { 
+  {
     fprintf(stderr,"write to nfs file not allowed for now!\n");
     exit(0);
-  }  
+  }
   return 0;
 }
 
@@ -177,8 +177,8 @@ int nfs_file::unbuffered_seek(long off, int whence) // whence=SEEK_SET, SEEK_CUR
       fprintf(stderr,"JC's a fork\n");
     else
       return NF_seek(nfs_fd,off);
-  } 
-  return 0; 
+  }
+  return 0;
 }
 
 int nfs_file::unbuffered_tell()
@@ -215,8 +215,8 @@ int set_file_server(net_address *addr)
 
     net_crcs=new CrcManager();
     if (!net_crcs->load_crc_file(NET_CRC_FILENAME))
-    { 
-      delete net_crcs; 
+    {
+      delete net_crcs;
       net_crcs=NULL;
       return 0;
     }

@@ -34,9 +34,9 @@ void *sensor_ai()
         o->set_aistate(1);
       else
         o->set_aistate(o->hp());
-      o->set_state((character_state)S_blocking);      
+      o->set_state((character_state)S_blocking);
     } else if (o->state!=stopped)
-      o->set_state(stopped);    
+      o->set_state(stopped);
   } else if (!o->lvars[un_offable])
   {
     if (!o->hp())

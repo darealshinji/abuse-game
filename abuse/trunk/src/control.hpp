@@ -33,7 +33,7 @@ class controlled_character : public game_object
   unsigned long abilities;  // if 1<<character bit is set then you have that ability
   void change_character(int char_type);
 
-public :    
+public :
   controlled_character(long X, long Y);
   controlled_character(FILE *fp);
   virtual int size();

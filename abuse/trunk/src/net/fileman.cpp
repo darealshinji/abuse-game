@@ -30,7 +30,7 @@ extern net_protocol *prot;
 file_manager *fman=NULL;
 
 file_manager::file_manager(int argc, char **argv, net_protocol *proto) : proto(proto)
-{  
+{
   default_fs=NULL;
   no_security=0;
   nfs_list=NULL;
@@ -58,12 +58,12 @@ void file_manager::process_net()
     {
       ok=0;
       //fprintf(stderr,"Killing nfs client, socket went bad\n");
-    } 
+    }
     else if (nc->size_to_read && nc->sock->ready_to_write())
       ok=nc->send_read();
     else if (nc->sock->ready_to_read())
       ok=process_nfs_command(nc);    // if we couldn't process the packeted, delete the connection
-    
+
     if (ok)
     {
       last=nc;
@@ -116,12 +116,12 @@ int file_manager::process_nfs_command(nfs_client *c)
       if (c->sock->write(&offset,sizeof(offset))!=sizeof(offset)) return 0;
       return 1;
     } break;
-    
+
     default :
     { fprintf(stderr,"net driver : bad command from nfs client\n");
       return 0;
     }
-  } 
+  }
 }
 
 int file_manager::nfs_client::send_read()   // return 0 if failure on socket, not failure to read
@@ -131,32 +131,32 @@ int file_manager::nfs_client::send_read()   // return 0 if failure on socket, no
     // first make sure the socket isn't 'full'
     if (sock->ready_to_write())
     {
-      char buf[READ_PACKET_SIZE];   
+      char buf[READ_PACKET_SIZE];
       short read_total;
       short actual;
 
       do
-      {      
-	read_total=size_to_read>(READ_PACKET_SIZE-2) ? (READ_PACKET_SIZE-2) : size_to_read;
+      {
+    read_total=size_to_read>(READ_PACKET_SIZE-2) ? (READ_PACKET_SIZE-2) : size_to_read;
 
-	actual=read(file_fd,buf+2,read_total);
-	*((ushort *)buf)=lstl(actual);
+    actual=read(file_fd,buf+2,read_total);
+    *((ushort *)buf)=lstl(actual);
 
-	int write_amount=sock->write(buf,actual+2);
-	if (write_amount!=actual+2) 
-	{ 
-	  fprintf(stderr,"write failed\n");
-	  return 0;
-	}
+    int write_amount=sock->write(buf,actual+2);
+    if (write_amount!=actual+2)
+    {
+      fprintf(stderr,"write failed\n");
+      return 0;
+    }
 
-	size_to_read-=actual;
+    size_to_read-=actual;
 
-	if (!sock->ready_to_write())
-	{
-	  sock->read_unselectable();
-	  sock->write_selectable();
-	  return 1;    // not ok to write anymore, try again latter
-	}
+    if (!sock->ready_to_write())
+    {
+      sock->read_unselectable();
+      sock->write_selectable();
+      return 1;    // not ok to write anymore, try again latter
+    }
 
       } while (size_to_read && actual==read_total);
 
@@ -165,7 +165,7 @@ int file_manager::nfs_client::send_read()   // return 0 if failure on socket, no
 
       size_to_read=0;
       return 1;
-    } else 
+    } else
     {
       sock->read_unselectable();
       sock->write_selectable();
@@ -179,7 +179,7 @@ int file_manager::nfs_client::send_read()   // return 0 if failure on socket, no
 void file_manager::secure_filename(char *filename, char *mode)
 {
   if (!no_security)
-  {    
+  {
     if (filename[0]=='/') { filename[0]=0; return ; }
     int level=0;
     char *f=filename;
@@ -188,14 +188,14 @@ void file_manager::secure_filename(char *filename, char *mode)
       if (*f=='/') { f++; level++; }
       else if (*f=='.' && f[1]=='.')
       {
-	if (f[3]=='.') while (*f!='.') f++;
-	else
-	{
-	  f+=2;
-	  level--;
-	}
-      } else f++; 
-      
+    if (f[3]=='.') while (*f!='.') f++;
+    else
+    {
+      f+=2;
+      level--;
+    }
+      } else f++;
+
     }
     if (level<0)
       filename[0]=0;
@@ -205,15 +205,15 @@ void file_manager::secure_filename(char *filename, char *mode)
 
 
 
-file_manager::nfs_client::nfs_client(net_socket *sock, int file_fd, nfs_client *next) : 
+file_manager::nfs_client::nfs_client(net_socket *sock, int file_fd, nfs_client *next) :
   sock(sock),file_fd(file_fd),next(next),size_to_read(0)
-{ 
+{
   sock->read_selectable();
-}  
+}
 
 
-file_manager::nfs_client::~nfs_client() 
-{ 
+file_manager::nfs_client::~nfs_client()
+{
   delete sock;
   if (file_fd>=0)
     close(file_fd);
@@ -227,7 +227,7 @@ void file_manager::add_nfs_client(net_socket *sock)
   if (sock->read(size,2)!=2) { delete sock; return ; }
   if (sock->read(filename,size[0])!=size[0]) { delete sock; return ; }
   if (sock->read(mode,size[1])!=size[1]) { delete sock; return ; }
- 
+
 
   secure_filename(filename,mode);  // make sure this filename isn't a security risk
   if (filename[0]==0) { fprintf(stderr,"(denied)\n"); delete sock; return ; }
@@ -241,14 +241,14 @@ void file_manager::add_nfs_client(net_socket *sock)
     else if (*mp=='r') flags|=O_RDONLY;
     mp++;
   }
-      
+
   int f=open(filename,flags,S_IRWXU | S_IRWXG | S_IRWXO);
 
-  FILE *fp=fopen("open.log","ab"); 
+  FILE *fp=fopen("open.log","ab");
   fprintf(fp,"open file %s, fd=%d\n",filename,f);
   fclose(fp);
-  
-  if (f<0) 
+
+  if (f<0)
     f=-1;  // make sure this is -1
 
 
@@ -272,8 +272,8 @@ void file_manager::add_nfs_client(net_socket *sock)
 
 
 
-void file_manager::remote_file::r_close(char const *reason) 
-{ 
+void file_manager::remote_file::r_close(char const *reason)
+{
 //  if (reason) fprintf(stderr,"remote_file : %s\n",reason);
 
   if (sock)
@@ -295,12 +295,12 @@ file_manager::remote_file::remote_file(net_socket *sock, char const *filename, c
   if (sock->write(mode,sizes[2])!=sizes[2]) { r_close("could not send mode"); return ; }
 
   int32_t remote_file_fd;
-  if (sock->read(&remote_file_fd,sizeof(remote_file_fd))!=sizeof(remote_file_fd)) 
-  { r_close("could not read remote fd"); return ; }   
+  if (sock->read(&remote_file_fd,sizeof(remote_file_fd))!=sizeof(remote_file_fd))
+  { r_close("could not read remote fd"); return ; }
   remote_file_fd=lltl(remote_file_fd);
   if (remote_file_fd<0) { r_close("remote fd is bad"); return ; }
 
-  if (sock->read(&size,sizeof(size))!=sizeof(size)) { r_close("could not read remote filesize"); return ; } 
+  if (sock->read(&size,sizeof(size))!=sizeof(size)) { r_close("could not read remote filesize"); return ; }
 
   size=lltl(size);
 }
@@ -321,23 +321,23 @@ int file_manager::remote_file::unbuffered_read(void *buffer, size_t count)
     ushort packet_size;
     do
     {
-      if (sock->read(&packet_size,sizeof(packet_size))!=sizeof(packet_size)) 
+      if (sock->read(&packet_size,sizeof(packet_size))!=sizeof(packet_size))
       {
-	fprintf(stderr,"could not read packet size\n");
-	return 0;
+    fprintf(stderr,"could not read packet size\n");
+    return 0;
       }
 
       packet_size=lstl(packet_size);
 
-      ushort size_read=sock->read(buf,packet_size); 
+      ushort size_read=sock->read(buf,packet_size);
 
-      if (size_read!=packet_size) 
-      { 
-	if (sock->read(buf+2+size_read,packet_size-size_read)!=packet_size-size_read)
-	{
-	  fprintf(stderr,"incomplete packet\n"); 
-	  return 0; 
-	}
+      if (size_read!=packet_size)
+      {
+    if (sock->read(buf+2+size_read,packet_size-size_read)!=packet_size-size_read)
+    {
+      fprintf(stderr,"incomplete packet\n");
+      return 0;
+    }
       }
 
       memcpy(buffer,buf,packet_size);
@@ -345,7 +345,7 @@ int file_manager::remote_file::unbuffered_read(void *buffer, size_t count)
 
       total_read+=packet_size;
       count-=packet_size;
-    } while (packet_size==READ_PACKET_SIZE-2 && count);     
+    } while (packet_size==READ_PACKET_SIZE-2 && count);
     return total_read;
   }
   return 0;
@@ -359,9 +359,9 @@ int32_t file_manager::remote_file::unbuffered_tell()   // ask server where the o
     if (sock->write(&cmd,sizeof(cmd))!=sizeof(cmd)) { r_close("tell : could not send command"); return 0; }
 
     int32_t offset;
-    if (sock->read(&offset,sizeof(offset))!=sizeof(offset)) { r_close("tell : could not read offset"); return 0; }    
+    if (sock->read(&offset,sizeof(offset))!=sizeof(offset)) { r_close("tell : could not read offset"); return 0; }
     return lltl(offset);
-  }    
+  }
   return 0;
 }
 
@@ -375,9 +375,9 @@ int32_t file_manager::remote_file::unbuffered_seek(int32_t offset)  // tell serv
     int32_t off=lltl(offset);
     if (sock->write(&off,sizeof(off))!=sizeof(off)) { r_close("seek : could not send offset"); return 0; }
 
-    if (sock->read(&offset,sizeof(offset))!=sizeof(offset)) { r_close("seek : could not read offset"); return 0; }    
+    if (sock->read(&offset,sizeof(offset))!=sizeof(offset)) { r_close("seek : could not read offset"); return 0; }
     return lltl(offset);
-  }    
+  }
   return 0;
 }
 
@@ -401,14 +401,14 @@ int file_manager::rf_open_file(char const *&filename, char const *mode)
     }
   } else if (default_fs)
     fs_server_addr=default_fs->copy();
-  
+
   if (fs_server_addr)
   {
     net_socket *sock=proto->connect_to_server(fs_server_addr,net_socket::SOCKET_SECURE);
     delete fs_server_addr;
 
     if (!sock)
-    { 
+    {
       fprintf(stderr,"unable to connect\n");
       return -1;
     }
@@ -419,11 +419,11 @@ int file_manager::rf_open_file(char const *&filename, char const *mode)
       delete rf;
       return -1;
     }
-    else 
+    else
     {
       remote_list=rf;
       return rf->sock->get_fd();
-    }      
+    }
   }
 
 
@@ -449,7 +449,7 @@ int file_manager::rf_open_file(char const *&filename, char const *mode)
   { close(f);
     return -2;
   }
-  
+
   return -1;
 }
 
@@ -500,11 +500,11 @@ int file_manager::rf_close(int fd)
     else remote_list=rf->next;
     delete rf;
     return 1;
-  } else 
+  } else
   {
-    fprintf(stderr,"Bad fd for remote file %d\n",fd); 
+    fprintf(stderr,"Bad fd for remote file %d\n",fd);
     return 0;
-  }  
+  }
 }
 
 int32_t file_manager::rf_file_size(int fd)

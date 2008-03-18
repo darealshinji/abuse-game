@@ -52,7 +52,7 @@ int RC_type_size(int type);
 
 
 class game_object : public simple_object
-{  
+{
   sequence *current_sequence() { return figures[otype]->get_sequence(state); }
 public :
   game_object *next,*next_active;
@@ -76,7 +76,7 @@ public :
   void draw_tint(int tint_id);
   void draw_double_tint(int tint_id1, int tint_id2);
   void draw_predator();
-  
+
 
   void drawer();
   void draw_above(view *v);
@@ -92,8 +92,8 @@ public :
 
   void load(int type, bFILE *fp, unsigned char *state_remap);
   int tick();  // should be called from decide, does the physics on the people, returns blocked status
-  void *float_tick();  // returns T or blocked structure = 
-                       // (block_flags 'tile tilex tiley) 
+  void *float_tick();  // returns T or blocked structure =
+                       // (block_flags 'tile tilex tiley)
                        // (block_flags 'object obj)
 
   void next_sequence();
@@ -103,12 +103,12 @@ public :
   int has_sequence(character_state s) { return figures[otype]->has_sequence(s); }
 
   game_object *try_move(int32_t x, int32_t y, int32_t &xv, int32_t &yv, int checks);  // 1=down,2=up,3=both
-  game_object *bmove(int &whit, game_object *exclude);  // ballestic move, return hit object, 
+  game_object *bmove(int &whit, game_object *exclude);  // ballestic move, return hit object,
                                                         // or NULL (whit is 1 if hit wall)
   trans_image *picture() { return current_sequence()->get_frame(current_frame,direction); }
-												    
+                                                
   int next_picture();
-  int32_t x_center();  
+  int32_t x_center();
   int32_t height();
 
   void stop_acel() { set_xacel(0);  set_yacel(0); set_fxacel(0); set_fyacel(0); }
@@ -131,7 +131,7 @@ public :
   int is_playable() { return hurtable(); }
   void add_power(int amount);
   void add_hp(int amount);
-  int can_morph_into(int type);  
+  int can_morph_into(int type);
   void morph_into(int type, void (*stat_fun)(int), int anneal, int frames);
   void do_flinch(game_object *from);
   void set_aimemory(game_object *p) { add_object(p); p->set_flags(p->flags()|KNOWN_FLAG); }
@@ -155,7 +155,7 @@ class object_node  // used to create various list of objects
   game_object *me;
   object_node *next;
   object_node(game_object *Me, object_node *Next) { me=Me; next=Next; }
-} ; 
+} ;
 
 extern game_object *current_object;
 extern view *current_view;

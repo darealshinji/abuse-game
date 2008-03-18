@@ -293,7 +293,7 @@ void game::btile_on(int screenx, int screeny, int32_t &x, int32_t &y)
     }
 }
 
-void game::mouse_to_game(int32_t x, int32_t y, 
+void game::mouse_to_game(int32_t x, int32_t y,
                          int32_t &gamex, int32_t &gamey, view *f)
 {
     if(!f)
@@ -324,7 +324,7 @@ void game::game_to_mouse(int32_t gamex, int32_t gamey, view *which,
         x = gamex - which->xoff() + which->cx1;
         y = gamey - which->yoff() + which->cy1;
         return;
-    } 
+    }
 
     int32_t x1, y1;
 

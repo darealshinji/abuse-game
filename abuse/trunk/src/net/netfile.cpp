@@ -19,15 +19,15 @@ nfs_client *first_nfs_client=NULL;
 remote_file *remote_file_list=NULL;
 char default_fs_name[256];    // default file server name (set with parm -fs)
 
-nfs_client::nfs_client(net_socket *sock, int file_fd, nfs_client *next) : 
+nfs_client::nfs_client(net_socket *sock, int file_fd, nfs_client *next) :
   sock(sock),file_fd(file_fd),next(next),size_to_read(0)
-{ 
+{
   sock->read_selectable();
-}  
+}
 
 
-nfs_client::~nfs_client() 
-{ 
+nfs_client::~nfs_client()
+{
   delete sock;
   if (file_fd>=0)
     close(file_fd);
@@ -36,7 +36,7 @@ nfs_client::~nfs_client()
 void secure_filename(char *filename, char *mode)
 {
   if (!no_security)
-  {    
+  {
     if (filename[0]=='/') { filename[0]=0; return ; }
     int level=0;
     char *f=filename;
@@ -45,14 +45,14 @@ void secure_filename(char *filename, char *mode)
       if (*f=='/') { f++; level++; }
       else if (*f=='.' && f[1]=='.')
       {
-	if (f[3]=='.') while (*f!='.') f++;
-	else
-	{
-	  f+=2;
-	  level--;
-	}
-      } else f++; 
-      
+    if (f[3]=='.') while (*f!='.') f++;
+    else
+    {
+      f+=2;
+      level--;
+    }
+      } else f++;
+
     }
     if (level<0)
       filename[0]=0;
@@ -65,7 +65,7 @@ int local_address(char *server_name)    // returns 1 if server name is ourself
   struct hostent *hn=gethostbyname(server_name);    // first check to see if this address is 127.0.0.1
   if (!hn) return 0;                                // if bad server_name, return false
   char **ip_address=hn->h_addr_list;
-  while (*ip_address) 
+  while (*ip_address)
   {
     char *a=*ip_address;
     if (a[0]==127 && a[1]==0 && a[2]==0 && a[3]==1)
@@ -77,7 +77,7 @@ int local_address(char *server_name)    // returns 1 if server name is ourself
 
   char my_name[100];                              // now check to see if this address is 'hostname'
   gethostname(my_name,100);
-  struct hostent *l_hn=gethostbyname(my_name);  
+  struct hostent *l_hn=gethostbyname(my_name);
   char **l_ip_address=l_hn->h_addr_list;
 
   while (*l_ip_address)  // local ip_address
@@ -103,55 +103,55 @@ int nfs_client::send_read()   // return 0 if failure on socket, not failure to r
     // first make sure the socket isn't 'full'
 
     struct timeval tv={0,0};     // don't wait
-    fd_set write_check;  
-    FD_ZERO(&write_check);  
-    FD_SET(socket_fd,&write_check);     
+    fd_set write_check;
+    FD_ZERO(&write_check);
+    FD_SET(socket_fd,&write_check);
     select(FD_SETSIZE,NULL,&write_check,NULL,&tv);
 
     if (FD_ISSET(socket_fd,&write_check))            // ready to write?
     {
-      char buf[READ_PACKET_SIZE];   
+      char buf[READ_PACKET_SIZE];
       int16_t read_total;
       int16_t actual;
 
       do
-      {      
-	read_total=size_to_read>(READ_PACKET_SIZE-2) ? (READ_PACKET_SIZE-2) : size_to_read;
-	actual=read(file_fd,buf,read_total);
-	actual=lstl(actual);
-	if (write(socket_fd,&actual,sizeof(actual))!=sizeof(actual))
-	{
-	  fprintf(stderr,"write failed\n");
-	  return 0;
-	}
-	actual=lstl(actual);
+      {
+    read_total=size_to_read>(READ_PACKET_SIZE-2) ? (READ_PACKET_SIZE-2) : size_to_read;
+    actual=read(file_fd,buf,read_total);
+    actual=lstl(actual);
+    if (write(socket_fd,&actual,sizeof(actual))!=sizeof(actual))
+    {
+      fprintf(stderr,"write failed\n");
+      return 0;
+    }
+    actual=lstl(actual);
 
-	int write_amount=write(socket_fd,buf,actual);
-	if (write_amount!=actual) 
-	{
-	  fprintf(stderr,"write failed\n");
-	  return 0;
-	}
+    int write_amount=write(socket_fd,buf,actual);
+    if (write_amount!=actual)
+    {
+      fprintf(stderr,"write failed\n");
+      return 0;
+    }
 
-	size_to_read-=actual;
+    size_to_read-=actual;
 
-	FD_ZERO(&write_check);  
-	FD_SET(socket_fd,&write_check);     
-	select(FD_SETSIZE,NULL,&write_check,NULL,&tv);
+    FD_ZERO(&write_check);
+    FD_SET(socket_fd,&write_check);
+    select(FD_SETSIZE,NULL,&write_check,NULL,&tv);
 
-	if (!FD_ISSET(socket_fd,&write_check))
-	{
-	  FD_SET(socket_fd,&master_write_set);      // socket is full, wait for it empty
-	  FD_CLR(socket_fd,&master_set);            // don't check for reading or process commands till read is done
-	  return 1;    // not ok to write anymore, try again latter
-	}
+    if (!FD_ISSET(socket_fd,&write_check))
+    {
+      FD_SET(socket_fd,&master_write_set);      // socket is full, wait for it empty
+      FD_CLR(socket_fd,&master_set);            // don't check for reading or process commands till read is done
+      return 1;    // not ok to write anymore, try again latter
+    }
 
       } while (size_to_read && actual==read_total);
       size_to_read=0;
       FD_CLR(socket_fd,&master_write_set);       // don't check this socket for write ok
       FD_SET(socket_fd,&master_set);             // check it for reading
       return 1;
-    } else 
+    } else
     {
       FD_SET(socket_fd,&master_write_set);      // socket is full, wait for it empty
       FD_CLR(socket_fd,&master_set);            // don't check for reading or process commands till read is done
@@ -198,12 +198,12 @@ int process_nfs_command(nfs_client *c)
       if (write(c->socket_fd,&offset,sizeof(offset))!=sizeof(offset)) return 0;
       return 1;
     } break;
-    
+
     default :
     { fprintf(stderr,"net driver : bad command from nfs client\n");
       return 0;
     }
-  } 
+  }
 }
 
 
@@ -215,7 +215,7 @@ void add_nfs_client(int fd)
   if (read(fd,size,2)!=2) { close(fd); return ; }
   if (read(fd,filename,size[0])!=size[0]) { close(fd); return ; }
   if (read(fd,mode,size[1])!=size[1]) { close(fd); return ; }
- 
+
   fprintf(stderr,"remote request for %s ",filename);
 
   secure_filename(filename,mode);  // make sure this filename isn't a security risk
@@ -230,10 +230,10 @@ void add_nfs_client(int fd)
     else if (*mp=='r') flags|=O_RDONLY;
     mp++;
   }
-      
+
   int f=open(filename,flags,S_IRWXU | S_IRWXG | S_IRWXO);
-  
-  if (f<0) 
+
+  if (f<0)
   {
     fprintf(stderr,"(not found)\n");
     f=-1;  // make sure this is -1
@@ -257,17 +257,17 @@ void add_nfs_client(int fd)
   }
 }
 
-void remote_file::r_close(char *reason) 
-{ 
+void remote_file::r_close(char *reason)
+{
   if (reason)
     fprintf(stderr,"remote_file : %s\n",reason);
-  if (socket_fd>=0) 
+  if (socket_fd>=0)
   {
     uint8_t cmd=NFCMD_CLOSE;
     write(socket_fd,&cmd,1);
-    close(socket_fd); 
+    close(socket_fd);
   }
-  socket_fd=-1; 
+  socket_fd=-1;
 }
 
 remote_file::remote_file(char *filename, char *mode, remote_file *Next)
@@ -277,7 +277,7 @@ remote_file::remote_file(char *filename, char *mode, remote_file *Next)
 
   socket_fd=connect_to_server(filename);
   if (socket_fd==-1)
-  { 
+  {
     fprintf(stderr,"unable to connect\n");
     return ;
   }
@@ -288,12 +288,12 @@ remote_file::remote_file(char *filename, char *mode, remote_file *Next)
   if (write(socket_fd,mode,sizes[2])!=sizes[2]) { r_close("could not send mode"); return ; }
 
   int32_t remote_file_fd;
-  if (read(socket_fd,&remote_file_fd,sizeof(remote_file_fd))!=sizeof(remote_file_fd)) 
-  { r_close("could not read remote fd"); return ; }   
+  if (read(socket_fd,&remote_file_fd,sizeof(remote_file_fd))!=sizeof(remote_file_fd))
+  { r_close("could not read remote fd"); return ; }
   remote_file_fd=lltl(remote_file_fd);
   if (remote_file_fd<0) { r_close("remote fd is bad"); return ; }
 
-  if (read(socket_fd,&size,sizeof(size))!=sizeof(size)) { r_close("could not read remote filesize"); return ; } 
+  if (read(socket_fd,&size,sizeof(size))!=sizeof(size)) { r_close("could not read remote filesize"); return ; }
 //  uint32_t remote_crc;
 //  if (read(socket_fd,&remote_crc,sizeof(remote_crc))!=sizeof(remote_crc)) { r_close("could not read remote checksum"); return ; }
 //  uint32_t local_crc=
@@ -315,25 +315,25 @@ int remote_file::unbuffered_read(int out_fd, size_t count)
     char buf[READ_PACKET_SIZE];
     uint16_t size;
 
-    uint16_t packet_size;    
+    uint16_t packet_size;
     do
     {
-      if (read(socket_fd,&packet_size,sizeof(packet_size))!=sizeof(packet_size)) 
+      if (read(socket_fd,&packet_size,sizeof(packet_size))!=sizeof(packet_size))
       {
-	fprintf(stderr,"could not read packet size\n");
-	return 0;
+    fprintf(stderr,"could not read packet size\n");
+    return 0;
       }
       packet_size=lstl(packet_size);
 
-      uint16_t size_read=read(socket_fd,buf+2,packet_size);   
+      uint16_t size_read=read(socket_fd,buf+2,packet_size);
 
-      if (size_read!=packet_size) 
-      { 
-	if (read(socket_fd,buf+2+size_read,packet_size-size_read)!=packet_size-size_read)
-	{
-	  fprintf(stderr,"incomplete packet\n"); 
-	  return 0; 
-	}
+      if (size_read!=packet_size)
+      {
+    if (read(socket_fd,buf+2+size_read,packet_size-size_read)!=packet_size-size_read)
+    {
+      fprintf(stderr,"incomplete packet\n");
+      return 0;
+    }
       }
 
       *((int16_t *)buf)=packet_size;
@@ -341,7 +341,7 @@ int remote_file::unbuffered_read(int out_fd, size_t count)
 
       total_read+=packet_size;
       count-=packet_size;
-    } while (packet_size==READ_PACKET_SIZE-2 && count);     
+    } while (packet_size==READ_PACKET_SIZE-2 && count);
     return total_read;
   }
   return 0;
@@ -355,9 +355,9 @@ int remote_file::unbuffered_tell()   // ask server where the offset of the file 
     if (write(socket_fd,&cmd,sizeof(cmd))!=sizeof(cmd)) { r_close("tell : could not send command"); return 0; }
 
     int32_t offset;
-    if (read(socket_fd,&offset,sizeof(offset))!=sizeof(offset)) { r_close("tell : could not read offset"); return 0; }    
+    if (read(socket_fd,&offset,sizeof(offset))!=sizeof(offset)) { r_close("tell : could not read offset"); return 0; }
     return lltl(offset);
-  }    
+  }
   return 0;
 }
 
@@ -371,9 +371,9 @@ int remote_file::unbuffered_seek(int32_t offset)  // tell server to seek to a sp
     int32_t off=lltl(offset);
     if (write(socket_fd,&off,sizeof(off))!=sizeof(off)) { r_close("seek : could not send offset"); return 0; }
 
-    if (read(socket_fd,&offset,sizeof(offset))!=sizeof(offset)) { r_close("seek : could not read offset"); return 0; }    
+    if (read(socket_fd,&offset,sizeof(offset))!=sizeof(offset)) { r_close("seek : could not read offset"); return 0; }
     return lltl(offset);
-  }    
+  }
   return 0;
 }
 
@@ -381,7 +381,7 @@ int open_file(char *&filename, char *mode)
 {
   if (filename[0]!='/' && filename[1]!='/' && default_fs_name[0])   // default file server?
   {
-    char tmp_fn[500];  
+    char tmp_fn[500];
     sprintf(tmp_fn,"//%s/%s",default_fs_name,filename);
     strcpy(filename,tmp_fn);
   }
@@ -395,11 +395,11 @@ int open_file(char *&filename, char *mode)
       delete rf;
       return -1;
     }
-    else 
+    else
     {
       remote_file_list=rf;
       return rf->socket_fd;
-    }      
+    }
   }
 
   secure_filename(filename,mode);
@@ -418,7 +418,7 @@ int open_file(char *&filename, char *mode)
   { close(f);
     return -2;
   }
-  
+
   return -1;
 }
 
@@ -455,7 +455,7 @@ int fetch_crcs(char *server)
 {
   int socket_fd=connect_to_server(server);
   if (socket_fd==-1)
-  { 
+  {
     fprintf(stderr,"unable to connect\n");
     return 0;
   }
@@ -465,7 +465,7 @@ int fetch_crcs(char *server)
   if (read(socket_fd,&cmd,1)!=1)  { close(socket_fd); return 0; }
   close(socket_fd);
   return cmd;
-  
+
 }
 
 

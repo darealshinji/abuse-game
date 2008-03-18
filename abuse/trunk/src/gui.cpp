@@ -22,7 +22,7 @@ void ico_button::set_act_id(int id)
 ico_switch_button::ico_switch_button(int X, int Y, int ID, int start_on, ifield *butts, ifield *Next)
 {
   x=X; y=Y; id=ID;
-  next=Next;  
+  next=Next;
   blist=cur_but=butts;
   act=0;
   for (ifield *b=blist;b;b=b->next) { b->x=x; b->y=y; }
@@ -38,7 +38,7 @@ void ico_switch_button::area(int &x1, int &y1, int &x2, int &y2)
   y2=-10000;
   int X1,Y1,X2,Y2;
   for (ifield *b=blist;b;b=b->next)
-  {    
+  {
     b->area(X1,Y1,X2,Y2);
     if (X1<x1) x1=X1;
     if (Y1<y1) y1=Y1;
@@ -59,7 +59,7 @@ ifield *ico_switch_button::unlink(int id)
       else blist=b->next;
       if (cur_but==b) cur_but=blist;
       return b;
-    } 
+    }
     ifield *x=b->unlink(id);
     if (x) return x;
     last=b;
@@ -83,11 +83,11 @@ void ico_switch_button::handle_event(event &ev, image *screen, InputManager *im)
 void ico_button::draw(int active, image *screen)
 {
   int x1,y1,x2,y2;
-  area(x1,y1,x2,y2); 
- 
+  area(x1,y1,x2,y2);
+
   if (active!=act  && activate_id!=-1 && active)
     wm->push_event(new event(activate_id,NULL));
- 
+
   if (up && !active)
     cache.img(u)->put_image(screen,x1,y1);
   else if (up && active)
@@ -99,7 +99,7 @@ void ico_button::draw(int active, image *screen)
   if (act!=active && active && activate_id!=-1)
     wm->push_event(new event(activate_id,NULL));
   act=active;
-  
+
   if (active && key[0])
   {
     int g=80;

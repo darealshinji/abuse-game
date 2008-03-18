@@ -72,56 +72,56 @@ static int fast_load_mode = 0;
 
 void set_filename_prefix(char const *prefix)
 {
-	if( spec_prefix )
-	{
-		jfree( spec_prefix );
-	}
-	
-	if( prefix )
-	{
-		spec_prefix = strcpy( (char *)jmalloc( strlen( prefix ) + 2, "prefix_name" ), prefix );
-		int len = strlen( prefix );
-		if( prefix[len - 1] != '\\' && prefix[len - 1] != '/')
-		{
-			spec_prefix[len] = '/';
-			spec_prefix[len + 1] = 0;
-		}
-	}
-	else
-	{
-		spec_prefix = NULL;
-	}
+    if( spec_prefix )
+    {
+        jfree( spec_prefix );
+    }
+    
+    if( prefix )
+    {
+        spec_prefix = strcpy( (char *)jmalloc( strlen( prefix ) + 2, "prefix_name" ), prefix );
+        int len = strlen( prefix );
+        if( prefix[len - 1] != '\\' && prefix[len - 1] != '/')
+        {
+            spec_prefix[len] = '/';
+            spec_prefix[len + 1] = 0;
+        }
+    }
+    else
+    {
+        spec_prefix = NULL;
+    }
 }
 
 char *get_filename_prefix()
 {
-	return spec_prefix;
+    return spec_prefix;
 }
 
 
 void set_save_filename_prefix(char const *save_prefix)
 {
-	if( save_spec_prefix )
-	{
-		jfree( save_spec_prefix );
-	}
+    if( save_spec_prefix )
+    {
+        jfree( save_spec_prefix );
+    }
 
-	if( save_prefix )
-	{
-		int len = strlen( save_prefix );
-		save_spec_prefix = (char *)jmalloc( len + 1, "prefix_name" );
-		strcpy( save_spec_prefix, save_prefix );
+    if( save_prefix )
+    {
+        int len = strlen( save_prefix );
+        save_spec_prefix = (char *)jmalloc( len + 1, "prefix_name" );
+        strcpy( save_spec_prefix, save_prefix );
 /* AK - Commented this out as it may cause problems
-		if( save_prefix[len - 1] != '\\' && save_prefix[len - 1] != '/' )
-		{
-			save_spec_prefix[len] = '/';
-			save_spec_prefix[len + 1] = '\0';
-		} */
-	}
-	else
-	{
-		save_spec_prefix = NULL;
-	}
+        if( save_prefix[len - 1] != '\\' && save_prefix[len - 1] != '/' )
+        {
+            save_spec_prefix[len] = '/';
+            save_spec_prefix[len + 1] = '\0';
+        } */
+    }
+    else
+    {
+        save_spec_prefix = NULL;
+    }
 }
 
 char *get_save_filename_prefix()
@@ -143,28 +143,28 @@ bFILE::bFILE()
 {
   rbuf_size=8192;
   rbuf=(unsigned char *)jmalloc(rbuf_size,"File read buffer");
-  rbuf_start=rbuf_end=0;  
+  rbuf_start=rbuf_end=0;
 
   wbuf_size=8192;
   wbuf=(unsigned char *)jmalloc(wbuf_size,"File write buffer");
-  wbuf_end=0;  
+  wbuf_end=0;
 }
 
 bFILE::~bFILE()
-{ 
+{
   if (rbuf) jfree(rbuf);
   flush_writes();
   if (wbuf) jfree(wbuf);
 }
 
-int bFILE::flush_writes() 
+int bFILE::flush_writes()
 {
   if (wbuf_end!=0)
   {
     unsigned long ret=unbuffered_write(wbuf,wbuf_end);
     if (ret!=wbuf_end && no_space_handle_fun)
       no_space_handle_fun();
-      
+
     wbuf_end=0;
     return ret;
   }
@@ -173,7 +173,7 @@ int bFILE::flush_writes()
 
 int bFILE::read(void *buf, size_t count)       // returns number of bytes read, calls unbuffer_read
 {
-  if (!allow_read_buffering()) 
+  if (!allow_read_buffering())
     return unbuffered_read(buf,count);
 
   int total_read=0,error=0;
@@ -187,11 +187,11 @@ int bFILE::read(void *buf, size_t count)       // returns number of bytes read, 
       memcpy(buf,rbuf+rbuf_start,copy_size);
       buf=(void *)(((unsigned char *)buf)+copy_size);
       rbuf_start+=copy_size;
-      if (rbuf_start>=rbuf_end)    
+      if (rbuf_start>=rbuf_end)
       {
-				if (rbuf_end!=rbuf_size)  // buffer wasn't full before so there is no way we can complete read
-				  error=1;
-				rbuf_start=rbuf_end=0;
+                if (rbuf_end!=rbuf_size)  // buffer wasn't full before so there is no way we can complete read
+                  error=1;
+                rbuf_start=rbuf_end=0;
       }
       total_read+=copy_size;
       count-=copy_size;
@@ -207,22 +207,22 @@ int bFILE::read(void *buf, size_t count)       // returns number of bytes read, 
 
 
 int bFILE::write(void const *buf, size_t count)      // returns number of bytes written
-{ 
+{
   if (allow_write_buffering())
   {
     int total_written=0;
     while (count)
     {
-      int copy_size=wbuf_end+count<=wbuf_size ? count :  wbuf_size-wbuf_end;           
+      int copy_size=wbuf_end+count<=wbuf_size ? count :  wbuf_size-wbuf_end;
       memcpy(wbuf+wbuf_end,buf,copy_size);
       wbuf_end+=copy_size;
       count-=copy_size;
       buf=(void *)(((char *)buf)+copy_size);
       if (wbuf_end==wbuf_size)
         if ((unsigned int)flush_writes()!=wbuf_size)
-	  return total_written;
-      
-      total_written+=copy_size;      
+      return total_written;
+
+      total_written+=copy_size;
     }
     return total_written;
   } else
@@ -235,7 +235,7 @@ int bFILE::write(void const *buf, size_t count)      // returns number of bytes 
 }
 
 int bFILE::seek(long offset, int whence) // whence=SEEK_SET, SEEK_CUR, SEEK_END, ret=0=success
-{  
+{
 //    rbuf_start=rbuf_end=0;
 //    unbuffered_seek(offset,SEEK_SET);
 
@@ -248,7 +248,7 @@ int bFILE::seek(long offset, int whence) // whence=SEEK_SET, SEEK_CUR, SEEK_END,
   {
     rbuf_start=rbuf_end=0;
     unbuffered_seek(offset,SEEK_SET);
-  } else  
+  } else
     rbuf_start=rbuf_end-(realpos-offset);
   return 1;
 }
@@ -277,7 +277,7 @@ void set_spec_main_file(char const *filename, int Search_order)
   dprintf("Specs : main file set to %s\n",filename);
   strcpy(spec_main_file,filename);
   search_order=Search_order;
-  
+
 #if (defined(__APPLE__) && !defined(__MACH__))
   spec_main_jfile.open_external(filename,"rb",O_BINARY|O_RDONLY);
 #else
@@ -331,7 +331,7 @@ void jFILE::open_external(char const *filename, char const *mode, int flags)
 //  int old_mask=umask(S_IRWXU | S_IRWXG | S_IRWXO);
   if (flags&O_WRONLY)
   {
-    if ((flags&O_APPEND)==0) 
+    if ((flags&O_APPEND)==0)
     {
       skip_size=1;
       //int errval = unlink(tmp_name);
@@ -341,7 +341,7 @@ void jFILE::open_external(char const *filename, char const *mode, int flags)
     flags|=O_CREAT|O_RDWR;
 
     fd=open(tmp_name,flags,S_IRWXU | S_IRWXG | S_IRWXO);
-  } else 
+  } else
     fd=open(tmp_name,flags);
 
 //  umask(old_mask);
@@ -351,9 +351,9 @@ void jFILE::open_external(char const *filename, char const *mode, int flags)
     if ((flags&O_APPEND)==0)
       lseek(fd,0,SEEK_SET);
     else
-    	current_offset = file_length;
+        current_offset = file_length;
     start_offset=0;
-  } else 
+  } else
   {
     file_length=0;
     start_offset=0;
@@ -372,7 +372,7 @@ class null_file : public bFILE     // this file type will use virtual opens insi
   virtual int unbuffered_tell() { return 0; }
   virtual int file_size() { return 0; }
   virtual ~null_file() { ; }
-} ; 
+} ;
 
 
 static bFILE *(*open_file_fun)(char const *,char const *)=NULL;
@@ -396,7 +396,7 @@ bFILE *open_file(char const *filename, char const *mode)
 void jFILE::open_internal(char const *filename, char const *mode, int flags)
 {
   int wr=0;
-  for (char const *s=mode;*s;s++) 
+  for (char const *s=mode;*s;s++)
     if (toupper(*s)=='A' || toupper(*s)=='W')
       wr=1;
 
@@ -404,41 +404,41 @@ void jFILE::open_internal(char const *filename, char const *mode, int flags)
     fd=-1;                 // only allow extern file openings for writing
   else
   {
-   	fd = spec_main_fd;
+       fd = spec_main_fd;
     if (fd>=0)                    // if we were able to open the main file, see if it's in there
     {
       start_offset=0;
       spec_entry *se=spec_main_sd.find(filename);
-      if (se)    
+      if (se)
       {
-	start_offset=se->offset;
-	current_offset = 0;
-	file_length=se->size;
-	rbuf_start=rbuf_end=0;
-      } else 
+    start_offset=se->offset;
+    current_offset = 0;
+    file_length=se->size;
+    rbuf_start=rbuf_end=0;
+      } else
       {
-	close(fd);
-	fd=-1;
+    close(fd);
+    fd=-1;
       }
-    }  
+    }
   }
 }
 
 jFILE::jFILE(char const *filename, char const *access_string)      // same as fopen parameters
 {
- flags=access=0;  
+ flags=access=0;
  char const *s=access_string;
-  for (;*s;s++) 
+  for (;*s;s++)
     if (toupper(*s)=='R') access=O_RDONLY;
 
-  for (s=access_string;*s;s++) 
-    if (toupper(*s)=='W')      
+  for (s=access_string;*s;s++)
+    if (toupper(*s)=='W')
       if (access)
         access=O_RDWR;
       else access=O_WRONLY;
 
-  for (s=access_string;*s;s++) 
-    if (toupper(*s)=='A')      
+  for (s=access_string;*s;s++)
+    if (toupper(*s)=='A')
       access|=O_APPEND|O_WRONLY;
 
   file_length=start_offset=-1;
@@ -464,77 +464,77 @@ jFILE::~jFILE()
   {
     total_files_open--;
     if (fd != spec_main_fd)
-	    close(fd);
+        close(fd);
   }
 }
 
 int jFILE::unbuffered_tell()
 {
-//	int ret = ::lseek(fd,0,SEEK_CUR) - start_offset;
-//	if (ret != current_offset)
-//		fprintf(stderr,"Bad tell %d\n",current_offset);
-	return current_offset;
+//    int ret = ::lseek(fd,0,SEEK_CUR) - start_offset;
+//    if (ret != current_offset)
+//        fprintf(stderr,"Bad tell %d\n",current_offset);
+    return current_offset;
 }
 
 int jFILE::unbuffered_read(void *buf, size_t count)
 {
-	unsigned long len;
+    unsigned long len;
 
-	if (fd == spec_main_fd)
-	{
-		switch (fast_load_mode)
-		{
-		case 0:
-			if (current_offset+start_offset != spec_main_offset)
-				spec_main_offset = lseek(fd, start_offset+current_offset, SEEK_SET);
-			
-			len = ::read(fd,(char*)buf,count);
-			break;
-		case 1:
-			if (current_offset+start_offset != spec_main_offset)
-				spec_main_offset = lseek(fd, start_offset+current_offset, SEEK_SET);
-			
-			len = ::read(fd,(char*)buf,count);
-			::write(fast_load_fd,(char*)&len,sizeof(len));
-			::write(fast_load_fd,(char*)buf,len);
-			break;
-		case 2:
-			::read(fast_load_fd,(char*)&len,sizeof(len));
-			len = ::read(fast_load_fd,(char*)buf,len);
-			break;
-		}
-		
-		spec_main_offset += len;
-	}
-	else
-	{
-		switch (fast_load_mode)
-		{
-		case 0:
-	  	len = ::read(fd,(char*)buf,count);
-	  	break;
-		case 1:
-	  	len = ::read(fd,(char*)buf,count);
-			::write(fast_load_fd,(char*)&len,sizeof(len));
-			::write(fast_load_fd,(char*)buf,len);
-	  	break;
-		case 2:
-			::read(fast_load_fd,(char*)&len,sizeof(len));
-			len = ::read(fast_load_fd,(char*)buf,len);
-			if (count != len)
-				printf("short read! %ld:%ld\n",current_offset,len);
-	  	break;
-	  }
-	}
-	current_offset += len;
-	return len;
+    if (fd == spec_main_fd)
+    {
+        switch (fast_load_mode)
+        {
+        case 0:
+            if (current_offset+start_offset != spec_main_offset)
+                spec_main_offset = lseek(fd, start_offset+current_offset, SEEK_SET);
+            
+            len = ::read(fd,(char*)buf,count);
+            break;
+        case 1:
+            if (current_offset+start_offset != spec_main_offset)
+                spec_main_offset = lseek(fd, start_offset+current_offset, SEEK_SET);
+            
+            len = ::read(fd,(char*)buf,count);
+            ::write(fast_load_fd,(char*)&len,sizeof(len));
+            ::write(fast_load_fd,(char*)buf,len);
+            break;
+        case 2:
+            ::read(fast_load_fd,(char*)&len,sizeof(len));
+            len = ::read(fast_load_fd,(char*)buf,len);
+            break;
+        }
+        
+        spec_main_offset += len;
+    }
+    else
+    {
+        switch (fast_load_mode)
+        {
+        case 0:
+          len = ::read(fd,(char*)buf,count);
+          break;
+        case 1:
+          len = ::read(fd,(char*)buf,count);
+            ::write(fast_load_fd,(char*)&len,sizeof(len));
+            ::write(fast_load_fd,(char*)buf,len);
+          break;
+        case 2:
+            ::read(fast_load_fd,(char*)&len,sizeof(len));
+            len = ::read(fast_load_fd,(char*)buf,len);
+            if (count != len)
+                printf("short read! %ld:%ld\n",current_offset,len);
+          break;
+      }
+    }
+    current_offset += len;
+    return len;
 }
 
 int jFILE::unbuffered_write(void const *buf, size_t count)
 {
   long ret = ::write(fd,(char*)buf,count);
-	current_offset += ret;
-	return ret;
+    current_offset += ret;
+    return ret;
 }
 
 int jFILE::unbuffered_seek(long offset, int whence) // whence=SEEK_SET, SEEK_CUR, SEEK_END, ret=0=success
@@ -545,13 +545,13 @@ int jFILE::unbuffered_seek(long offset, int whence) // whence=SEEK_SET, SEEK_CUR
   {
     switch (whence)
     {
-    case SEEK_SET : 
+    case SEEK_SET :
       current_offset = start_offset+offset;
       break;
-    case SEEK_END : 
+    case SEEK_END :
       current_offset = start_offset+file_length-offset;
       break;
-    case SEEK_CUR : 
+    case SEEK_CUR :
       current_offset += offset;
       break;
     default:
@@ -563,15 +563,15 @@ int jFILE::unbuffered_seek(long offset, int whence) // whence=SEEK_SET, SEEK_CUR
 
   switch (whence)
   {
-    case SEEK_SET : 
+    case SEEK_SET :
     { ret = lseek(fd,start_offset+offset,SEEK_SET); } break;
-    case SEEK_END : 
+    case SEEK_END :
     { ret = lseek(fd,start_offset+file_length-offset,SEEK_SET); } break;
-    case SEEK_CUR : 
+    case SEEK_CUR :
     { ret = lseek(fd,offset,SEEK_CUR); } break;
     default:
-    	ret = -1;
-    	break;
+        ret = -1;
+        break;
   }
   if (ret>=0)
   {
@@ -592,17 +592,17 @@ uint8_t bFILE::read_uint8()
 }
 
 uint16_t bFILE::read_uint16()
-{ 
+{
   uint16_t x;
-  read(&x,2); 
+  read(&x,2);
   return uint16_to_local(x);
 }
 
 
 uint32_t bFILE::read_uint32()
-{ 
+{
   uint32_t x;
-  read(&x,4); 
+  read(&x,4);
   return uint32_to_local(x);
 }
 
@@ -612,7 +612,7 @@ void bFILE::write_uint8(uint8_t x)
 }
 
 void bFILE::write_uint16(uint16_t x)
-{ 
+{
   x=uint16_to_local(x);
   write(&x,2);
 }
@@ -660,7 +660,7 @@ void spec_directory::calc_offsets()
   int i;
   long o=SPEC_SIG_SIZE+2;
   if (total)
-  { 
+  {
     for (i=0,e=entries;i<total;i++,e++)          // calculate the size of directory info
     {
       o+=1+1+strlen((*e)->name)+1 +1 +8;
@@ -737,7 +737,7 @@ void spec_directory::print()
 {
   spec_entry **se;
   int i;
-  printf("[   Entry type   ][   Entry name   ][  Size  ][ Offset ]\n"); 
+  printf("[   Entry type   ][   Entry name   ][  Size  ][ Offset ]\n");
   for (i=0,se=entries;i<total;i++,se++)
     (*se)->print();
 }
@@ -751,14 +751,14 @@ void spec_directory::startup(bFILE *fp)
   buf[9]=0;
   size=0;
   if (!strcmp(buf,SPEC_SIGNATURE))
-  {    
-    total=fp->read_uint16();   
+  {
+    total=fp->read_uint16();
     entries=(spec_entry **)jmalloc(sizeof(spec_entry *)*total,"spec_directory::entries");
     long start=fp->tell();
 
     int i;
     for (i=0;i<total;i++)
-    {            
+    {
       fp->read(buf,2);
       long entry_size=sizeof(spec_entry)+(unsigned char)buf[1];
       entry_size=(entry_size+3)&(~3);
@@ -771,29 +771,29 @@ void spec_directory::startup(bFILE *fp)
     char *dp=(char *)data;
     fp->seek(start,SEEK_SET);
     for (i=0;i<total;i++)
-    {            
+    {
       spec_entry *se=(spec_entry *)dp;
       entries[i]=se;
 
       unsigned char len,flags,type;
-      fp->read(&type,1);      
-      fp->read(&len,1); 
+      fp->read(&type,1);
+      fp->read(&len,1);
       se->type=type;
       se->name=dp+sizeof(spec_entry);
       fp->read(se->name,len);
-      fp->read(&flags,1); 
+      fp->read(&flags,1);
 
       se->size=fp->read_uint32();
       se->offset=fp->read_uint32();
       dp+=((sizeof(spec_entry)+len)+3)&(~3);
     }
   }
-  else 
+  else
   {
     total=0;
     data=NULL;
     entries=NULL;
-  }  
+  }
 }
 
 
@@ -844,12 +844,12 @@ long spec_directory::data_start_offset()
 {
     /* FIXME: no need for a for loop here! */
     long i;
-    for(i = 0; i < total; i++) 
+    for(i = 0; i < total; i++)
         return entries[i]->offset;
 
     // If no entries, then no data, but return where it would start anyway
     return SPEC_SIG_SIZE + 2;
-} 
+}
 
 long spec_directory::data_end_offset()
 {
@@ -860,7 +860,7 @@ long spec_directory::data_end_offset()
     return (*e)->offset+(*e)->size;
 
   return SPEC_SIG_SIZE+2;
-} 
+}
 
 int spec_directory::write(bFILE *fp)
 {
@@ -881,15 +881,15 @@ int spec_directory::write(bFILE *fp)
     if (fp->write(&(*e)->type,1)!=1)                 return 0;
     if (!write_string(fp,(*e)->name))                return 0;
     flags=0;
-    if (fp->write(&flags,1)!=1)                     return 0; 
+    if (fp->write(&flags,1)!=1)                     return 0;
 
-    data_size=uint32_to_intel((*e)->size); 
-    if (fp->write((char *)&data_size,4)!=4)              return 0; 
+    data_size=uint32_to_intel((*e)->size);
+    if (fp->write((char *)&data_size,4)!=4)              return 0;
     offset=uint32_to_intel((*e)->offset);
-    if (fp->write((char *)&offset,4)!=4)                  return 0; 
+    if (fp->write((char *)&offset,4)!=4)                  return 0;
 
   }
-  return 1; 
+  return 1;
 }
 
 jFILE *spec_directory::write(char const *filename)
@@ -908,7 +908,7 @@ jFILE *spec_directory::write(char const *filename)
 uint16_t read_uint16(FILE *fp)
 {
   uint16_t x;
-  fread(&x,1,2,fp); 
+  fread(&x,1,2,fp);
   return uint16_to_local(x);
 }
 
@@ -960,11 +960,11 @@ void write_other_int32(FILE *fp, uint32_t x)
   fwrite(&x,1,4,fp);
 }
 
-void spec_directory::remove(spec_entry *e) 
-{ 
+void spec_directory::remove(spec_entry *e)
+{
   int i;
   for (i=0;i<total && entries[i]!=e;i++);            // find the entry in the array first
-  
+
   if (entries[i]==e)                                 // make sre it was found
   {
     delete e;
@@ -979,8 +979,8 @@ void spec_directory::remove(spec_entry *e)
 
 
 
-void spec_directory::add_by_hand(spec_entry *e) 
-{ 
+void spec_directory::add_by_hand(spec_entry *e)
+{
   total++;
   entries=(spec_entry **)jrealloc(entries,sizeof(spec_entry *)*total,"spec_directory::entries");
   entries[total-1]=e;

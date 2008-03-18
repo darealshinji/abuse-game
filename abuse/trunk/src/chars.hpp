@@ -20,14 +20,14 @@
 #include <time.h>
 
 
-enum character_state {dead,  
-		      dieing,
-		      stopped,		      
-		      start_run_jump,run_jump, run_jump_fall, end_run_jump,
-		      flinch_up,flinch_down,
-		      morph_pose,
-		      running
-		    } ;
+enum character_state {dead,
+              dieing,
+              stopped,        
+              start_run_jump,run_jump, run_jump_fall, end_run_jump,
+              flinch_up,flinch_down,
+              morph_pose,
+              running
+            } ;
 
 
 
@@ -39,9 +39,9 @@ class named_field
   public :
   char *real_name;
   char *descript_name;
-  named_field(char *real, char *fake) 
-  { real_name=strcpy((char *)jmalloc(strlen(real)+1,"var_name"),real); 
-    descript_name=strcpy((char *)jmalloc(strlen(fake)+1,"var_name"),fake); 
+  named_field(char *real, char *fake)
+  { real_name=strcpy((char *)jmalloc(strlen(real)+1,"var_name"),real);
+    descript_name=strcpy((char *)jmalloc(strlen(fake)+1,"var_name"),fake);
   }
   ~named_field() { jfree(real_name); jfree(descript_name); }
 } ;
@@ -60,7 +60,7 @@ enum { CFLAG_HURT_ALL,            // if object hurts all characters, not just pl
        CFLAG_ADD_FRONT,
        CFLAG_CACHED_IN,
        CFLAG_NEED_CACHE_IN,
-       CFLAG_UNACTIVE_SHIELD      // if object is not active (i.e. link 0 aistate==0) 
+       CFLAG_UNACTIVE_SHIELD      // if object is not active (i.e. link 0 aistate==0)
                                   // then objects will not draw a damage when hitting it
      };
 extern char const *cflag_names[TOTAL_CFLAGS];
@@ -71,7 +71,7 @@ enum { OFUN_AI,                   // objects ai function called by the mover, sh
        OFUN_MOVER,                // objects move function, gets x y and but
        OFUN_DRAW,
        OFUN_MAP_DRAW,
-       OFUN_DAMAGE,               // called when the object receives damage 
+       OFUN_DAMAGE,               // called when the object receives damage
        OFUN_NEXT_STATE,           // called at the end of an object sequence
        OFUN_USER_FUN,             // can by called (user_fun x y z)
        OFUN_CONSTRUCTOR,          // called when object is created, dev & play modes
@@ -83,7 +83,7 @@ extern char const *ofun_names[TOTAL_OFUNS];
 
 
 class character_type
-{ 
+{
 public :
   ushort ts,tiv,tv; // total states, total index vars, total local vars
   sequence **seq;   // [0..ts-1]
@@ -96,19 +96,19 @@ public :
   int add_state(void *symbol);              // returns index into seq to use
   int abil[TOTAL_ABILITIES];
   void *fun_table[TOTAL_OFUNS];             // pointers to lisp function for this object
-  int logo,morph_mask,morph_power; 
+  int logo,morph_mask,morph_power;
   long rangex,rangey,draw_rangex,draw_rangey;             // range off screen before character is skipped
 
   ushort cflags;
   void *get_fun(int name) { return fun_table[name]; }
   int get_cflag(int name) { return cflags&(1<<name); }
   void set_cflag(int name, int x) { if (x) cflags|=(1<<name);  else cflags&=~(1<<name); }
-  int total_fields;                         // used by game editor to replace field names  
+  int total_fields;                         // used by game editor to replace field names
   named_field **fields;
-  character_type(void *args, void *name);   // lisp object describes object 
+  character_type(void *args, void *name);   // lisp object describes object
 
   sequence *get_sequence(character_state s);
-  void add_sequence(character_state which, sequence *new_seq); 
+  void add_sequence(character_state which, sequence *new_seq);
   int has_sequence(character_state s) { return s<ts && (seq[s]!=NULL); }
   int cache_in();    // returns false if out of cache memory
   void check_sizes();

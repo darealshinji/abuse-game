@@ -13,8 +13,8 @@
 #define EV_MOUSE_BUTTON   2
 #define EV_KEY            4
 #define EV_KEY_SPECIAL    8
-#define EV_REDRAW        16 
-#define EV_SPURIOUS      32 
+#define EV_REDRAW        16
+#define EV_SPURIOUS      32
 #define EV_RESIZE        64
 #define EV_KEYRELEASE   128
 #define EV_CLOSE_WINDOW 256
@@ -39,7 +39,7 @@ public :
   int                             key;
   struct { char alt,ctrl,shift; } key_special;
   struct { int x1,y1,x2,y2;
-	   void *start; }         redraw;
+       void *start; }         redraw;
   Jwindow                        *window;      // NULL is root
   struct { int x,y; }             window_position;
   struct { int id; char *data; }  message;
@@ -63,7 +63,7 @@ public :
   void mouse_status(int &x, int &y, int &button)
   { if (mouse)
     {
-      x=mouse->x(); y=mouse->y(); button=mouse->button(); 
+      x=mouse->x(); y=mouse->y(); button=mouse->button();
     } else x=y=button=0;
   }
   void push_event(event *ev) { events.add_end((linked_node *)ev); }

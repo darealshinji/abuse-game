@@ -26,13 +26,13 @@
 
 
 struct GifScreen {
-	uint16_t	Width;
-	uint16_t	Height;
-	uint8_t 	ColorMap[3][256];
-	uint16_t	BitPixel;
-	uint16_t	ColorResolution;
-	uint16_t	Background;
-	uint16_t	AspectRatio;
+    uint16_t    Width;
+    uint16_t    Height;
+    uint8_t     ColorMap[3][256];
+    uint16_t    BitPixel;
+    uint16_t    ColorResolution;
+    uint16_t    Background;
+    uint16_t    AspectRatio;
 } GifScreen;
 
 struct gif_screen {
@@ -71,24 +71,24 @@ image *read_gif(char *fn, palette *&pal)
         fread((uint8_t *)&gif_screen.color_info,1,1,fp);
         fread((uint8_t *)&gif_screen.background,1,1,fp);
         if (fread((uint8_t *)&gif_screen.reserved,1,1,fp)==1)
-	{
-	  if (gif_screen.color_info&128)
-	  {
-	    ncolors=2<<(gif_screen.color_info&0x0f);
-	    make_block(sizeof(palette));
-//	    pal=new palette(ncolors);
-	    pal=new palette(256);
-	    if (pal)
-	    {  
+    {
+      if (gif_screen.color_info&128)
+      {
+        ncolors=2<<(gif_screen.color_info&0x0f);
+        make_block(sizeof(palette));
+//        pal=new palette(ncolors);
+        pal=new palette(256);
+        if (pal)
+        {
               if (fread((uint8_t *)pal->addr(),1,ncolors*3,fp)!=ncolors*3) er=imREAD_ERROR;
-	    } else er=imMEMORY_ERROR;
-	  }
-	  if (!er)
-	  { do
-	    {
-	      if (fread((uint8_t *)&sep,1,1,fp)!=1)
-		er=imREAD_ERROR;
-	    } while (!er && sep!=',');
+        } else er=imMEMORY_ERROR;
+      }
+      if (!er)
+      { do
+        {
+          if (fread((uint8_t *)&sep,1,1,fp)!=1)
+        er=imREAD_ERROR;
+        } while (!er && sep!=',');
             fread((uint8_t *)&gif_image.xoff,2,1,fp);
             gif_image.xoff=uint16_to_local(gif_image.xoff);
             fread((uint8_t *)&gif_image.yoff,2,1,fp);
@@ -97,31 +97,31 @@ image *read_gif(char *fn, palette *&pal)
             gif_image.w=uint16_to_local(gif_image.w);
             fread((uint8_t *)&gif_image.h,2,1,fp);
             gif_image.h=uint16_to_local(gif_image.h);
-	    if (!er && (fread((uint8_t *)&gif_image.color_info,1,1,fp)==1))
-	    {
-	      if (gif_image.color_info&128)
-	      {
-		ncolors=2<<(gif_image.color_info&0x0f);
+        if (!er && (fread((uint8_t *)&gif_image.color_info,1,1,fp)==1))
+        {
+          if (gif_image.color_info&128)
+          {
+        ncolors=2<<(gif_image.color_info&0x0f);
                 CHECK(ncolors<=256);
-		make_block(sizeof(palette));
-		pal = new palette(ncolors);
-		if (pal)
-		{ if (fread((uint8_t *)pal->addr(),1,ncolors*3,fp)!=ncolors*3) er=imREAD_ERROR;
-		} else er=imMEMORY_ERROR;
-	      }
+        make_block(sizeof(palette));
+        pal = new palette(ncolors);
+        if (pal)
+        { if (fread((uint8_t *)pal->addr(),1,ncolors*3,fp)!=ncolors*3) er=imREAD_ERROR;
+        } else er=imMEMORY_ERROR;
+          }
 
-	      if (!er)
-	      {
-		make_block(sizeof(image));
-		im=new image(gif_image.w+1,gif_image.h);
-		decode_gif_data(im,fp);
-		fclose(fp);
-	      }
+          if (!er)
+          {
+        make_block(sizeof(image));
+        im=new image(gif_image.w+1,gif_image.h);
+        decode_gif_data(im,fp);
+        fclose(fp);
+          }
 
-	    } else er=imREAD_ERROR;
-	  }
+        } else er=imREAD_ERROR;
+      }
 
-	} else er=imREAD_ERROR;
+    } else er=imREAD_ERROR;
       } else er=imINCORRECT_FILETYPE;
     } else er=imREAD_ERROR;
     fclose(fp);

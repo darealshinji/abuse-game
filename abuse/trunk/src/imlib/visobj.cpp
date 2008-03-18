@@ -12,13 +12,13 @@
 #include "input.hpp"
 #include "visobj.hpp"
 
-void image_visual::draw(image *screen, int x, int y, 
-		    filter *f)
-{ 
+void image_visual::draw(image *screen, int x, int y,
+            filter *f)
+{
   if (f)
     f->put_image(screen,im,x,y,1);
   else
-    im->put_image(screen,x,y); 
+    im->put_image(screen,x,y);
 }
 
 
@@ -26,7 +26,7 @@ string_visual::string_visual(char *string, int Color)
 {
   st=strcpy((char *)jmalloc(strlen(string)+1,"string visual"),string);
   color=Color;
-  w=-1; 
+  w=-1;
 }
 
 
@@ -41,10 +41,10 @@ int string_visual::width()
       if (w>maxw) maxw=w;
       if (*info=='\n')
       {
-	h+=fh+1;
-	w=1;
+    h+=fh+1;
+    w=1;
       }
-      else w+=fw;      
+      else w+=fw;
     }
     w=maxw;
   }
@@ -52,14 +52,14 @@ int string_visual::width()
 }
 
 int string_visual::height()
-{ 
+{
   if (w==-1) width();
   return h;
 }
 
 
-static void put_para(image *screen, char *st, int dx, int dy, 
-		     int xspace, int yspace, JCFont *font, int color)
+static void put_para(image *screen, char *st, int dx, int dy,
+             int xspace, int yspace, JCFont *font, int color)
 {
   int ox=dx;
   while (*st)
@@ -80,8 +80,8 @@ static void put_para(image *screen, char *st, int dx, int dy,
 
 void string_visual::draw(image *screen, int x, int y, filter *f)
 
-{ 
+{
   put_para(screen,st,x+1,y+1,wm->font()->width(),wm->font()->height(),
-	   wm->font(),f ? f->get_mapping(color) : color);
+       wm->font(),f ? f->get_mapping(color) : color);
 }
 

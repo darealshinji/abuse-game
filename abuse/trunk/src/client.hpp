@@ -16,13 +16,13 @@
        - Get local inputs
        - Send current inputs
 
-       - read server commands until 
+       - read server commands until
        - process commands
        - ability to detach from server
        - ability to "talk" with a local server
          through global local_server
-	   and functions local_server->insert_received_packet(pk);
-	                 local_server->get_output_packet(pk);
+       and functions local_server->insert_received_packet(pk);
+                     local_server->get_output_packet(pk);
 
 
 */

@@ -128,7 +128,7 @@ public:
     image(spec_entry *e, bFILE *fp);
     image(bFILE *fp);
     image(int16_t width, int16_t height,
-          uint8_t *page_buffer = NULL, int16_t create_descriptor = 0); 
+          uint8_t *page_buffer = NULL, int16_t create_descriptor = 0);
     ~image();
 
     void lock();

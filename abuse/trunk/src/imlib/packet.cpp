@@ -41,8 +41,8 @@ void packet::write_uint8(uint8_t x)
 packet::~packet()
 { jfree(buf); }
 
-packet::packet(int prefix_size) 
-{ 
+packet::packet(int prefix_size)
+{
   pre_size=prefix_size;
 
 #ifdef MANAGE_MEM
@@ -52,7 +52,7 @@ packet::packet(int prefix_size)
 
   buf_size=1000;
   buf=(uint8_t *)jmalloc(buf_size,"packet buffer");
-  reset(); 
+  reset();
 
 #ifdef MANAGE_MEM
   alloc_space=sp;
@@ -64,7 +64,7 @@ void packet::get_string(char *st, int len)
   char *b=(char *)buf+ro;
   while (len>1 && !eop() && *b)
   {
-    *st=*b; 
+    *st=*b;
     st++;
     ro++;
     b++;
@@ -74,7 +74,7 @@ void packet::get_string(char *st, int len)
   *st=0;
 }
 
-void packet::reset() 
+void packet::reset()
 { ro=wo=rend=pre_size; }
 
 void packet::make_bigger(int max)
@@ -82,7 +82,7 @@ void packet::make_bigger(int max)
   if (buf_size<max)
   {
     buf_size=max;
-    buf=(uint8_t *)jrealloc(buf,max,"packet buffer"); 
+    buf=(uint8_t *)jrealloc(buf,max,"packet buffer");
   }
 }
 

@@ -28,7 +28,7 @@ void sprite::restore_background()
 { if (x+save->width()>=0 && y+save->height()>=0 && x<=xres && y<=yres)
       save->put_image(screen,x,y); }
 
-void sprite::get_background() 
+void sprite::get_background()
 { if (x+visual->width()>=0 && y+visual->height()>=0 && x<=xres && y<=yres)
    screen->put_part(save,0,0,x,y,x+save->width()-1,y+save->height()-1); }
 
@@ -46,7 +46,7 @@ sprite::sprite(image *Screen, image *Visual, int X, int Y)
 
 sprite::~sprite()
 {
-  delete save;  
+  delete save;
 }
 
 void sprite_controller::add_sprite(sprite *sp)

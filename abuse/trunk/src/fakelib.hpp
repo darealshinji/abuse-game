@@ -26,8 +26,8 @@ class bFILE
   FILE *fp;
   bFILE(FILE *FP) { fp=FP; }
   bFILE(char *fn, char *mode) { fp=fopen(fn,mode); }
-  long file_size() { long cur=ftell(fp),ret; fseek(fp,0,2); ret=ftell(fp); 
-		     fseek(fp,cur,0); return ret; }
+  long file_size() { long cur=ftell(fp),ret; fseek(fp,0,2); ret=ftell(fp);
+             fseek(fp,cur,0); return ret; }
   int read(void *buf, int count) { return fread(buf,count,1,fp); }
   int write(void *buf, int count) { return fwrite(buf,count,1,fp); }
   int write_byte(uchar x) { return fputc(x,fp); }

@@ -28,10 +28,10 @@
 #include "view.hpp"
 #include "id.hpp"
 
-#define MAPFW				100
-#define MAPFH				100
-#define MAPBW				100
-#define MAPBH				100
+#define MAPFW                100
+#define MAPFH                100
+#define MAPBW                100
+#define MAPBH                100
 
 #define RUN_STATE 0
 #define PAUSE_STATE 1
@@ -80,7 +80,7 @@ class game
   JCFont *game_font;
   uint8_t keymap[512/8];
 
-public : 
+public :
   int key_down(int key) { return keymap[key/8]&(1<<(key%8)); }
   void set_key_down(int key, int x) { if (x) keymap[key/8]|=(1<<(key%8)); else keymap[key/8]&=~(1<<(key%8)); }
   void reset_keymap() { memset(keymap,0,sizeof(keymap)); }
@@ -98,12 +98,12 @@ public :
   int done();
   void draw(int scene_mode=0);
 
-  backtile *get_bg(int x) { if (x<0 || x>=nbacktiles || backtiles[x]<0) 
-                           return cache.backt(backtiles[BLACK]); 
+  backtile *get_bg(int x) { if (x<0 || x>=nbacktiles || backtiles[x]<0)
+                           return cache.backt(backtiles[BLACK]);
                            else return cache.backt(backtiles[x]); }
-  foretile *get_fg(int x) { if (x<0 || x>=nforetiles || foretiles[x]<0) 
-                           return cache.foret(foretiles[BLACK]); else 
-			   return cache.foret(foretiles[x]); }
+  foretile *get_fg(int x) { if (x<0 || x>=nforetiles || foretiles[x]<0)
+                           return cache.foret(foretiles[BLACK]); else
+               return cache.foret(foretiles[x]); }
 
   void ftile_on(int screenx, int screeny, int32_t &x, int32_t &y);
   void btile_on(int screenx, int screeny, int32_t &x, int32_t &y);

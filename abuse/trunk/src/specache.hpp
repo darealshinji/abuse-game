@@ -26,11 +26,11 @@ class spec_directory_cache
     {
       fn=(char *)memcpy(jmalloc(strlen(filename)+1,"spec_dir cache"),filename,strlen(filename)+1);
       sd=dir;
-      next=left=right=0;      
+      next=left=right=0;
     }
     long size;
   } *fn_root,*fn_list;
-  void clear(filename_node *f); // private recursive member  
+  void clear(filename_node *f); // private recursive member
   long size;
   public :
   spec_directory *get_spec_directory(char const *filename, bFILE *fp=NULL);

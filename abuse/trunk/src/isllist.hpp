@@ -21,11 +21,11 @@ public:
   public:
     list_node * next;
     T data;
-    
+
     list_node() {}
     list_node(const T& item) { data = item; }
   };
-  
+
   list_node * list;
 
   class iterator
@@ -35,40 +35,40 @@ public:
     list_node * node;
     iterator(list_node * p) : node(p) {}
 
-	iterator() {}
+    iterator() {}
     iterator(const iterator &p) : node(p.node) {}
 
     int operator==(const iterator &p) { return (node == p.node); }
     int operator!=(const iterator &p) { return (node != p.node); }
-    
+
     iterator& operator++() { node = node->next; return *this; }
     iterator next() { return node->next; }
-    
+
     T& operator*() { return node->data; }
   };
-  
+
   iterator end()   { return (list_node *)(&list); }
   iterator begin_prev() { return end(); }
   iterator begin() { return list; }
-  
+
   int empty() { return begin() == end(); }
-  
+
   iterator insert_next(iterator pos, T& item)
   {
     list_node * p = new list_node(item);
     p->next = pos.node->next;
     pos.node->next = p;
-    
-    return p; 
+
+    return p;
   }
-  
+
   void erase_next(iterator pos)
   {
     list_node * p = pos.node->next;
     pos.node->next = p->next;
     delete p;
   }
-  
+
   int find_prev(iterator& p, T& item)
   {
     while (p.node->next != end().node)
@@ -79,11 +79,11 @@ public:
     }
     return 0;
   }
-  
+
   void move_next(const iterator&p, const iterator&q)
   {
     list_node * tmp;
-    
+
     tmp = p.node->next;
     if (tmp == q.node)
       return;
@@ -91,7 +91,7 @@ public:
     tmp->next = q.node->next;
     q.node->next = tmp;
   }
-  
+
   int find(T& item) { iterator p = begin_prev(); return find_prev(p, item); }
   void insert(T& item) {  insert_next( begin_prev(), item); }
   void erase() { erase_next( begin_prev() ); }
@@ -101,12 +101,12 @@ public:
     while (!empty())
       erase();
   }
-  
+
   isllist()
   {
     list = (list_node *)&list;
   }
-  
+
   ~isllist()
   {
     erase_all();

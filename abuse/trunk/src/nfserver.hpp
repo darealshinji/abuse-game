@@ -46,7 +46,7 @@ int get_remote_lsf(net_address *addr, char *filename);   // filename should be 2
 
 
 void send_local_request();                          // sends from *base
-int get_inputs_from_server(unsigned char *buf);     // return bytes read into buf (will be less than PACKET_MAX_SIZE 
+int get_inputs_from_server(unsigned char *buf);     // return bytes read into buf (will be less than PACKET_MAX_SIZE
 
 
 int client_number();

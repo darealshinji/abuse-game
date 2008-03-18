@@ -20,14 +20,14 @@ class button : public ifield
   char *text;
   image *visual,*pressed,*act_pict;
   int act_id;
-public : 
+public :
   button(int X, int Y, int ID, char const *Text, ifield *Next);
   button(int X, int Y, int ID, image *vis, ifield *Next);
   button(int X, int Y, int ID, image *Depressed, image *Pressed, image *active, ifield *Next);
 
   virtual void area(int &x1, int &y1, int &x2, int &y2);
   virtual void draw_first(image *screen);
-  virtual void draw(int active, image *screen); 
+  virtual void draw(int active, image *screen);
   virtual void handle_event(event &ev, image *screen, InputManager *im);
   void change_visual(image *new_visual);
   virtual void remap(filter *f);
@@ -50,8 +50,8 @@ public :
   virtual void move(int newx, int newy);
   virtual void area(int &x1, int &y1, int &x2, int &y2);
   virtual void draw_first(image *screen);
-  virtual void draw(int active, image *screen); 
-  virtual void handle_event(event &ev, image *screen, InputManager *im);  
+  virtual void draw(int active, image *screen);
+  virtual void handle_event(event &ev, image *screen, InputManager *im);
   virtual ~button_box();
   virtual char *read();   // return pointer to first button which is depressed
   virtual ifield *find(int search_id);  // should return pointer to item you control with this id
@@ -73,21 +73,21 @@ class text_field : public ifield
     screen->bar(xstart()+1,y+1,xend()-1,yend()-1,wm->dark_color());
     wm->font()->put_string(screen,xstart()+1,y+3,data);
   }
-public : 
-  text_field(int X, int Y, int ID, char const *Prompt, char const *Format, 
+public :
+  text_field(int X, int Y, int ID, char const *Prompt, char const *Format,
                                char const *Data, ifield *Next);
-  text_field(int X, int Y, int ID, char const *Prompt, char const *Format, 
+  text_field(int X, int Y, int ID, char const *Prompt, char const *Format,
                                double Data, ifield *Next);
 
   virtual void area(int &x1, int &y1, int &x2, int &y2);
   virtual void draw_first(image *screen);
-  virtual void draw(int active, image *screen); 
+  virtual void draw(int active, image *screen);
   virtual void handle_event(event &ev, image *screen, InputManager *im);
-  
+
   virtual ~text_field() { jfree(prompt); jfree(format); jfree(data); }
   virtual char *read();
   void change_data(char const *new_data, int new_cursor,       // cursor==-1, does not change it.
-		   int active, image *screen);
+           int active, image *screen);
 } ;
 
 
@@ -95,16 +95,16 @@ class info_field : public ifield
 {
   char *text;
   int w,h;
-  void put_para(image *screen, char const *st, int dx, int dy, int xspace, 
-		int yspace, JCFont *font, int color);
-public : 
+  void put_para(image *screen, char const *st, int dx, int dy, int xspace,
+        int yspace, JCFont *font, int color);
+public :
   info_field(int X, int Y, int ID, char const *info, ifield *Next);
   virtual void area(int &x1, int &y1, int &x2, int &y2);
   virtual void draw_first(image *screen);
   virtual void draw(int active, image *screen) { ; }
   virtual void handle_event(event &ev, image *screen, InputManager *im) { ; }
   virtual char *read() { return text; }
-  virtual int selectable() { return 0; } 
+  virtual int selectable() { return 0; }
   virtual ~info_field() { jfree(text); }
 } ;
 

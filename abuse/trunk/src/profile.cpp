@@ -54,13 +54,13 @@ void profile_init()
   prof_list=(prof_info *)jmalloc(sizeof(prof_info)*total_objects,"prof info");
   profile_reset();
 
-  
+
   prof_win=wm->new_window(prop->getd("profile x",-1),
-			  prop->getd("profile y",-1),
-			  20*console_font->width(),
-			  (prof_height+1)*console_font->height(),
-			  NULL,
-			  "PROFILE");
+              prop->getd("profile y",-1),
+              20*console_font->width(),
+              (prof_height+1)*console_font->height(),
+              NULL,
+              "PROFILE");
 }
 
 
@@ -71,8 +71,8 @@ void profile_reset()
   {
     prof_list[i].otype=i;
     prof_list[i].total_time=0;
-  }  
-  
+  }
+
 }
 
 
@@ -116,15 +116,15 @@ void profile_update()
 
 
   float time_scaler=(float)max_bar_length/prof_list[0].total_time;
-  
+
   prof_win->screen->bar(0,prof_win->y1(),prof_win->screen->width()-1,prof_win->screen->height(),0);
-  int dy = 0; 
+  int dy = 0;
   for (;i<prof_height;i++)
   {
     console_font->put_string(prof_win->screen,spliter+1,dy,object_names[prof_list[i].otype]);
     prof_win->screen->bar(spliter-1-(int)(prof_list[i].total_time*time_scaler),dy+1,
-			  spliter-1,
-			  dy+console_font->height()-1,wm->bright_color());
+              spliter-1,
+              dy+console_font->height()-1,wm->bright_color());
     dy+=console_font->height()+1;
   }
 
