@@ -127,7 +127,10 @@ public :
   int tx(int x) { if (direction>0) return x-x_center(); else return x_center()-x; }
   int ty(int y) { return y-picture()->height()+1; }
   void defaults();
+
   game_object(int Type, int load=0);
+  ~game_object();
+
   int is_playable() { return hurtable(); }
   void add_power(int amount);
   void add_hp(int amount);
@@ -146,7 +149,21 @@ public :
   int32_t get_var_by_name(char *name, int &error);
   game_object *copy();
   void change_aitype(int new_type);
-  ~game_object();
+
+  int get_tint() { return _tint; }
+  void set_tint(int tint)
+  {
+    for(int i = 0; i < tobjs; i++)
+      get_object(i)->_tint = tint;
+    _tint = tint;
+  }
+  int get_team() { return _team; }
+  void set_team(int team)
+  {
+    for(int i = 0; i < tobjs; i++)
+      get_object(i)->_team = team;
+    _team = team;
+  }
 } ;
 
 class object_node  // used to create various list of objects

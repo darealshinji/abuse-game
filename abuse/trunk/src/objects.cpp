@@ -441,20 +441,26 @@ int game_object::decide()
   return 1;
 }
 
-int game_object::can_hurt(game_object *who)     // collision checking will ask first to see if you
+// collision checking will ask first to see if you
+int game_object::can_hurt(game_object *who)
 {
-  int is_attacker=current_level->is_attacker(this);
-  // it's you against them!  Damage only if it you are attacking or they are attacking you
-  // I.E. don't let them hurt themselves, this can change if you over-ride this virtual function
+    int is_attacker = current_level->is_attacker(this);
 
-  if (who->hurtable() && (is_attacker || current_level->is_attacker(who) || hurt_all()))
-    return 1;
-  else return 0;
+    // it's you against them!  Damage only if it you are attacking or they are
+    // attacking you, ie. don't let them hurt themselves. This can change if
+    // you override this virtual function
+
+    if(who->hurtable()
+        && ((_team == -1) || (_team != who->get_team()))
+        && (is_attacker || current_level->is_attacker(who) || hurt_all()))
+        return 1;
+
+    return 0;
 }
 
 void game_object::note_attack(game_object *whom)
 {
-  return ;   // nevermind
+    return; // nevermind
 }
 
 void game_object::do_flinch(game_object *from)
@@ -469,6 +475,9 @@ void game_object::do_flinch(game_object *from)
 void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t hity,
                 int32_t push_xvel, int32_t push_yvel)
 {
+  // No friendly fire
+  if((_team != -1) && (_team == from->get_team()))
+    return;
 
   void *d=figures[otype]->get_fun(OFUN_DAMAGE);
   if (d)

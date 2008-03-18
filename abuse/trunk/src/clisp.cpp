@@ -127,7 +127,6 @@ void clisp_init()                            // call by lisp_init, defines symbo
   l_fields=make_find_symbol("fields");
   l_FIRE=make_find_symbol("FIRE");
   l_fire_object=make_find_symbol("fire_object");
-  l_fire_object=make_find_symbol("fire_object");
   l_cop_dead_parts=make_find_symbol("cop_dead_parts");  set_symbol_value(l_difficulty,l_hard);
   l_restart_player=make_find_symbol("restart_player");
   l_help_screens=make_find_symbol("help_screens");
@@ -483,8 +482,13 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_c_bool_fun("am_a_client",0,0,           292);
   add_c_bool_fun("time_for_next_level",0,0,   293);
   add_c_bool_fun("reset_kills",0,0,           294);
-  add_c_bool_fun("set_game_name",1,1,         295);  // name
+  add_c_bool_fun("set_game_name",1,1,         295);  // server game name
   add_c_bool_fun("set_net_min_players",1,1,   296);
+
+  add_c_bool_fun("set_object_tint", 1, 1,    1001);  // set_object_tint
+  add_c_function("get_object_tint", 0, 0,    1002);  // get_object_tint
+  add_c_bool_fun("set_object_team", 1, 1,    1003);  // set_object_team
+  add_c_function("get_object_team", 0, 0,    1004);  // get_object_tint
 
 
   add_lisp_function("go_state",1,1,              0);
@@ -2319,8 +2323,30 @@ long c_caller(long number, void *args)
       if (main_net_cfg)
         main_net_cfg->min_players=lnumber_value(CAR(args));
     } break;
-
-
+    case 1001: // (set_object_tint)
+      if(current_object->Controller)
+        current_object->Controller->set_tint(lnumber_value(CAR(args)));
+      else
+        current_object->set_tint(lnumber_value(CAR(args)));
+      break;
+    case 1002: //(get_object_tint)
+      if(current_object->Controller)
+        return current_object->Controller->get_tint();
+      else
+        return current_object->get_tint();
+      break;
+    case 1003: //(set_object_team)
+      if(current_object->Controller)
+        current_object->Controller->set_team(lnumber_value(CAR(args)));
+      else
+        current_object->set_team(lnumber_value(CAR(args)));
+      break;
+    case 1004: //(get_object_team)
+      if(current_object->Controller)
+        return current_object->Controller->get_team();
+      else
+        return current_object->get_team();
+      break;
     default :
       printf("Undefined c function %ld\n",number);
       return 0;
