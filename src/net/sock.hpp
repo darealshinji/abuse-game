@@ -6,7 +6,7 @@ extern const char notify_response[];
 
 class net_address
 {
-  public :
+public:
   enum protocol { IP, IPX, MODEM, NETBIOS, OTHER };
   virtual protocol protocol_type() const = 0;
   virtual int equal(const net_address *who) const = 0;
@@ -17,13 +17,13 @@ class net_address
   virtual net_address *copy()    = 0;
   virtual void store_string(char *st, int st_length) = 0;    // this should be able to be used get_node_address()
   virtual ~net_address() {;}
-} ;
+};
 
 
 class net_socket
 {
-  public :
-  enum socket_type { SOCKET_SECURE, SOCKET_FAST } ;
+public:
+  enum socket_type { SOCKET_SECURE, SOCKET_FAST };
 
   virtual int error()                                              = 0;
   virtual int ready_to_read()                                      = 0;
@@ -38,24 +38,24 @@ class net_socket
   virtual void write_unselectable()  { ; }
   virtual int listen(int port)       { return 0; }
   virtual net_socket *accept(net_address *&from) { from=0; return 0; }
-} ;
+};
 
 class net_protocol
 {
-public :
+public:
   enum debug_type
     { DB_OFF,                // no debug printing
       DB_MAJOR_EVENT,        // print major events
       DB_IMPORTANT_EVENT,    // anything that would tell where a lockup occurs
-      DB_MINOR_EVENT } ;     // anything you can think off
+      DB_MINOR_EVENT };      // anything you can think of
 
-private :
+private:
   debug_type debug_setting;
-public :
+public:
 
   enum connect_flags
   { READ_WRITE,          // flags for connect to server
-         WRITE_ONLY } ;
+         WRITE_ONLY };
 
 
   int debug_level(debug_type min_level) { return min_level<=debug_setting; }
@@ -91,7 +91,7 @@ public :
 
   net_protocol() { next=first; first=this; debug_setting=DB_OFF; }
   virtual ~net_protocol() { cleanup(); }
-} ;
+};
 
 #endif
 
