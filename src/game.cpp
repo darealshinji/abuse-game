@@ -59,7 +59,7 @@
 
 extern CrcManager *net_crcs;
 
-game *the_game;
+Game *the_game = NULL;
 WindowManager *wm = NULL;
 int dev, shift_down = SHIFT_DOWN_DEFAULT, shift_right = SHIFT_RIGHT_DEFAULT;
 double sum_diffs = 1, total_diffs = 12;
@@ -124,53 +124,50 @@ void handle_no_space()
     exit(1);
 }
 
-void game::play_sound(int id, int vol, int32_t x, int32_t y)
+void Game::play_sound(int id, int vol, int32_t x, int32_t y)
 {
     if(!(sound_avail & SFX_INITIALIZED))
         return;
-    if(vol < 15)
+    if(vol < 1)
         return;
     if(!player_list)
         return;
 
-    uint32_t mdist = 0xffffffff;
+    int mindist = 500;
     view *cd = NULL;
     for(view *f = player_list; f; f = f->next)
     {
-        if(f->local_player())
-        {
-            int32_t cx = abs(f->x_center()-x), cy = abs(f->y_center()-y), d;
-            if(cx < cy)
-                d = cx + cy - (cx >> 1);
-            else
-                d = cx + cy - (cy >> 1);
+        if(!f->local_player())
+            continue;
 
-            if((unsigned)d < mdist)
-            {
-                cd = f;
-                mdist = d;
-            }
+        int d, cx = abs(f->x_center() - x), cy = abs(f->y_center() - y);
+        if(cx < cy)
+            d = cx + cy - (cx >> 1);
+        else
+            d = cx + cy - (cy >> 1);
+
+        if(d < mindist)
+        {
+            cd = f;
+            mindist = d;
         }
     }
-    if(mdist > 500 || !cd)
+    if(mindist >= 500)
         return;
-    if(mdist < 100)
-        mdist = 0;
-    else
-        mdist -= 100;
 
-    int v = (400 - mdist) * sfx_volume / 400 - (127 - vol);
+    if(mindist < 100)
+        mindist = 0;
+    else
+        mindist -= 100;
 
     // Calculate the position of the sound relative to the player
-    int p = cd->x_center() - x;
-    if(p > 0)
-        p = (int)(((double)p / 255.0) * 128.0);
-    else
-        p = (int)(((double)abs(p) / 255.0) * -128.0);
-    p += 128;
-    if(p < 0) p = 0;
-    if(p > 255) p = 255;
+    int p = (cd->x_center() - x) / 2 + 128;
+    if(p < 0)
+        p = 0;
+    if(p > 255)
+        p = 255;
 
+    int v = (400 - mindist) * sfx_volume / 400 - (127 - vol);
     if(v > 0)
         cache.sfx(id)->play(v, 128, p);
 }
@@ -212,7 +209,7 @@ void make_screen_size(int w, int h)
     }
 }
 
-void game::grow_views(int amount)
+void Game::grow_views(int amount)
 {
     view *f;
 
@@ -249,13 +246,13 @@ void game::grow_views(int amount)
     }
 }
 
-void game::pan(int xv, int yv)
+void Game::pan(int xv, int yv)
 {
     first_view->pan_x += xv;
     first_view->pan_y += yv;
 }
 
-view *game::view_in(int mousex, int mousey)
+view *Game::view_in(int mousex, int mousey)
 {
     for(view *f = first_view; f; f = f->next)
         if(f->drawable() && mousex >= f->cx1 && mousey >= f->cy1
@@ -269,14 +266,14 @@ int playing_state(int state)
     return state == RUN_STATE || state == PAUSE_STATE;
 }
 
-void game::ftile_on(int screenx, int screeny, int32_t &x, int32_t &y)
+void Game::ftile_on(int screenx, int screeny, int32_t &x, int32_t &y)
 {
     mouse_to_game(screenx, screeny, x, y);
     x /= ftile_width();
     y /= ftile_height();
 }
 
-void game::btile_on(int screenx, int screeny, int32_t &x, int32_t &y)
+void Game::btile_on(int screenx, int screeny, int32_t &x, int32_t &y)
 {
     view *f = view_in(screenx, screeny);
     if(f)
@@ -293,7 +290,7 @@ void game::btile_on(int screenx, int screeny, int32_t &x, int32_t &y)
     }
 }
 
-void game::mouse_to_game(int32_t x, int32_t y,
+void Game::mouse_to_game(int32_t x, int32_t y,
                          int32_t &gamex, int32_t &gamey, view *f)
 {
     if(!f)
@@ -316,7 +313,7 @@ void game::mouse_to_game(int32_t x, int32_t y,
     }
 }
 
-void game::game_to_mouse(int32_t gamex, int32_t gamey, view *which,
+void Game::game_to_mouse(int32_t gamex, int32_t gamey, view *which,
                          int32_t &x, int32_t &y)
 {
     if(!(dev & MAP_MODE))
@@ -384,7 +381,7 @@ int window_state(int state)
     return 1;
 }
 
-void game::set_state(int new_state)
+void Game::set_state(int new_state)
 {
     int d = 0;
     reset_keymap(); // we think all the keys are up right now
@@ -456,7 +453,7 @@ void game::set_state(int new_state)
     dev_cont->set_state(new_state);
 }
 
-void game::joy_calb(event &ev)
+void Game::joy_calb(event &ev)
 {
     if(!joy_win) // make sure the joystick calibration window is open
         return;
@@ -485,7 +482,7 @@ void game::joy_calb(event &ev)
     }
 }
 
-void game::menu_select(event &ev)
+void Game::menu_select(event &ev)
 {
     state = DEV_MOUSE_RELEASE;
     if(top_menu)
@@ -499,14 +496,14 @@ void game::menu_select(event &ev)
 }
 
 
-void game::show_help(char const *st)
+void Game::show_help(char const *st)
 {
     strcpy(help_text, st);
     help_text_frames = 0;
     refresh = 1;
 }
 
-void game::draw_value(image *screen, int x, int y, int w, int h,
+void Game::draw_value(image *screen, int x, int y, int w, int h,
                       int val, int max)
 {
     screen->bar(x, y, x + w - 1, y + h, wm->dark_color());
@@ -514,14 +511,14 @@ void game::draw_value(image *screen, int x, int y, int w, int h,
 }
 
 
-void game::set_level(level *nl)
+void Game::set_level(level *nl)
 {
     if(current_level)
         delete current_level;
     current_level = nl;
 }
 
-void game::load_level(char const *name)
+void Game::load_level(char const *name)
 {
     if(current_level)
       delete current_level;
@@ -549,15 +546,14 @@ void game::load_level(char const *name)
     the_game->help_text_frames = 0;
 }
 
-int game::done()
+int Game::done()
 {
   return finished || (main_net_cfg && main_net_cfg->restart_state());
-
 }
 
-void game::end_session()
+void Game::end_session()
 {
-  finished = 1;
+  finished = true;
   if(main_net_cfg)
   {
     delete main_net_cfg;
@@ -565,7 +561,7 @@ void game::end_session()
   }
 }
 
-void game::put_block_fg(int x, int y, trans_image *im)
+void Game::put_block_fg(int x, int y, trans_image *im)
 {
   for(view *f = first_view; f; f = f->next)
   {
@@ -584,7 +580,7 @@ void game::put_block_fg(int x, int y, trans_image *im)
   }
 }
 
-void game::put_block_bg(int x, int y, image *im)
+void Game::put_block_bg(int x, int y, image *im)
 {
   for(view *f = first_view; f; f = f->next)
   {
@@ -608,7 +604,7 @@ void game::put_block_bg(int x, int y, image *im)
 
 int need_delay = 1;
 
-void game::dev_scroll()
+void Game::dev_scroll()
 {
   need_delay = 0;
   if(dev)
@@ -671,18 +667,21 @@ void game::dev_scroll()
 
 void remap_area(image *screen, int x1, int y1, int x2, int y2, uint8_t *remap)
 {
-  uint8_t *sl=(uint8_t *)screen->scan_line(y1)+x1;
-  int x, y, a = screen->width()-(x2 - x1 + 1);
-  uint8_t c;
-  for(y = y1; y <= y2; y++)
-  {
-    for(x = x1; x <= x2; x++)
+    screen->lock();
+
+    uint8_t *sl = (uint8_t *)screen->scan_line(y1) + x1;
+    int step = screen->width() - (x2 - x1 + 1);
+
+    for(int y = y1; y <= y2; y++)
     {
-      c=*sl;
-      *(sl++)=remap[c];
+        for(int x = x1; x <= x2; x++)
+        {
+            uint8_t c = *sl;
+            *(sl++) = remap[c];
+        }
+        sl += step;
     }
-    sl += a;
-  }
+    screen->unlock();
 }
 
 static void post_render()
@@ -697,7 +696,7 @@ static void post_render()
   }
 }
 
-void game::draw_map(view *v, int interpolate)
+void Game::draw_map(view *v, int interpolate)
 {
   backtile *bt;
   int x1, y1, x2, y2, x, y, xo, yo, nxoff, nyoff;
@@ -734,8 +733,10 @@ void game::draw_map(view *v, int interpolate)
   if(v->draw_solid != -1)      // fill the screen and exit..
   {
     int c = v->draw_solid;
+    screen->lock();
     for(int y = v->cy1; y <= v->cy2; y++)
       memset(screen->scan_line(y)+v->cx1, c, v->cx2 - v->cx1 + 1);
+    screen->unlock();
     v->draw_solid = -1;
     return;
   }
@@ -760,10 +761,6 @@ void game::draw_map(view *v, int interpolate)
     screen->dirt_off();
 
 
-
-//  int32_t max_xoff=(current_level->foreground_width()-1)*ftile_width()-(v->cx2 - v->cx1 + 1);
-//  int32_t max_yoff=(current_level->foreground_height()-1)*ftile_height()-(v->cy2 - v->cy1 + 1);
-
   int32_t xoff, yoff;
   if(interpolate)
   {
@@ -785,11 +782,6 @@ void game::draw_map(view *v, int interpolate)
 
   nxoff = xoff * bg_xmul / bg_xdiv;
   nyoff = yoff * bg_ymul / bg_ydiv;
-
-//  int32_t max_bg_xoff=(current_level->background_width())*btile_width()-(v->cx2 - v->cx1 + 1);
-//  int32_t max_bg_yoff=(current_level->background_height())*btile_height()-(v->cy2 - v->cy1 + 1);
-//  if(nxoff > max_bg_xoff) nxoff = max_xoff;
-//  if(nyoff > max_bg_yoff) nyoff = max_yoff;
 
 
   x1 = nxoff / btile_width(); y1 = nyoff / btile_height();
@@ -964,12 +956,7 @@ void game::draw_map(view *v, int interpolate)
     }
       }
     }
-/*        if(dev == 0)
-          current_level->put_fg(x, y, ft->next);  */
   }
-
-//  if(!(dev & EDIT_MODE))
-//    server_check();
 
   int32_t ro = rand_on;
   if(dev & DRAW_PEOPLE_LAYER)
@@ -1134,7 +1121,7 @@ void game::draw_map(view *v, int interpolate)
   sbar.draw_update();
 }
 
-void game::put_fg(int x, int y, int type)
+void Game::put_fg(int x, int y, int type)
 {
   if(current_level->get_fg(x, y)!=type)
   {
@@ -1142,13 +1129,10 @@ void game::put_fg(int x, int y, int type)
     for(view *f = first_view; f; f = f->next)
       if(f->drawable())
         draw_map(f);
-/*    put_block_bg(x, y, get_bg(current_level->get_bg(x / ASPECT, y / ASPECT))->im);
-    if(type > BLACK)
-      put_block_fg(x, y, get_fg(type)->im); */
   }
 }
 
-void game::put_bg(int x, int y, int type)
+void Game::put_bg(int x, int y, int type)
 {
   if(current_level->get_bg(x, y)!=type)
   {
@@ -1156,19 +1140,16 @@ void game::put_bg(int x, int y, int type)
     for(view *f = first_view; f; f = f->next)
       if(f->drawable())
         draw_map(f);
-/*    put_block_bg(x, y, get_bg(type)->im);
-    if(current_level->get_fg(x, y)>BLACK)
-      put_block_fg(x, y, get_fg(current_level->get_fg(x, y))->im); */
   }
 }
 
-int game::in_area(event &ev, int x1, int y1, int x2, int y2)
+int Game::in_area(event &ev, int x1, int y1, int x2, int y2)
 {
   return (last_demo_mx >= x1 && last_demo_mx <= x2 &&
       last_demo_my >= y1 && last_demo_my <= y2);
 }
 
-void game::request_level_load(char *name)
+void Game::request_level_load(char *name)
 {
   strcpy(req_name, name);
 }
@@ -1265,14 +1246,14 @@ void do_title()
         delete blank;
         fade_in(cache.img(cdc_logo), 32);
 
-        milli_wait(900);
+        milli_wait(400);
 
         void *space_snd = symbol_value(make_find_symbol("SPACE_SND"));
 
         fade_out(32);
-        milli_wait(300);
+        milli_wait(100);
 
-        int i, abort = 0;
+        int i;
         char *str = lstring_value(eval(make_find_symbol("plot_start")));
 
         bFILE *fp = open_file("art/smoke.spe", "rb");
@@ -1347,20 +1328,14 @@ void do_title()
         }
         delete fp;
 
-        for(i = 0; i < 100 && !abort; i++)
-        {
-        }
-
         if(title_screen >= 0)
             fade_in(cache.img(title_screen), 32);
-
-        wm->set_mouse_shape(cache.img(c_normal)->copy(), 1, 1);
     }
 }
 
 extern int start_edit;
 
-void game::request_end()
+void Game::request_end()
 {
   req_end = 1;
 }
@@ -1370,7 +1345,7 @@ extern void fast_load_stop_recording();
 extern void fast_load_start_reloading(char *name);
 extern void fast_load_stop_reloading();
 
-game::game(int argc, char **argv)
+Game::Game(int argc, char **argv)
 {
   int i;
   req_name[0]=0;
@@ -1424,7 +1399,7 @@ game::game(int argc, char **argv)
   get_key_bindings();
 
   reset_keymap();                   // we think all the keys are up right now
-  finished = 0;
+  finished = false;
 
   calc_light_table(pal);
 
@@ -1545,7 +1520,7 @@ game::game(int argc, char **argv)
 time_marker *led_last_time = NULL, *fps_mark_start = NULL;
 double avg_fps = 15.0, possible_fps = 15.0;
 
-void game::toggle_delay()
+void Game::toggle_delay()
 {
   no_delay=!no_delay;
   if(no_delay)
@@ -1554,7 +1529,7 @@ void game::toggle_delay()
   avg_fps = possible_fps = 15.0;
 }
 
-void game::show_time()
+void Game::show_time()
 {
   if(first_view && fps_on)
   {
@@ -1567,7 +1542,7 @@ void game::show_time()
   }
 }
 
-void game::update_screen()
+void Game::update_screen()
 {
   if(state == HELP_STATE)
     draw_help();
@@ -1624,12 +1599,12 @@ void game::update_screen()
 
 }
 
-void game::do_intro()
+void Game::do_intro()
 {
 
 }
 
-int game::calc_speed()
+int Game::calc_speed()
 {
     int ret = 0;
     if(fps_mark_start)
@@ -1693,7 +1668,7 @@ int game::calc_speed()
 
 extern int start_edit;
 
-void game::get_input()
+void Game::get_input()
 {
     event ev;
     idle_ticks++;
@@ -1792,7 +1767,7 @@ void game::get_input()
                     } break;
                     case DEV_QUIT:
                     {
-                        finished = 1;
+                        finished = true;
                     } break;
                 }
             }
@@ -1869,50 +1844,19 @@ void game::get_input()
                                         }
                                     } break;
                                     case JK_TAB:
-                                    {
                                         if(start_edit)
                                             toggle_edit_mode();
                                         need_refresh();
-                                    } break;
+                                        break;
                                     case 'c':
-                                    {
+                                    case 'C':
                                         if(chatting_enabled && (!(dev & EDIT_MODE) && chat))
                                             chat->toggle();
-                                    } break;
+                                        break;
                                     case '9':
-                                    {
                                         dev = dev ^ PERFORMANCE_TEST_MODE;
                                         need_refresh();
-                                    } break;
-/*                                    case '=':
-                                    case '+':
-                                    {
-                                        if(!dev_cont->need_plus_minus())
-                                        {
-                                            if(wm->key_pressed(JK_CTRL_L))
-                                                grow_views(20);
-                                            else
-                                                grow_views(5);
-                                            draw(state == SCENE_STATE);
-                                        }
-                                    } break;
-                                    case JK_F10:
-                                    {
-                                        make_screen_size(311, 160);
-                                    } break;
-                                    case '_':
-                                    case '-' :
-                                    {
-                                        if(!dev_cont->need_plus_minus())
-                                        {
-                                            if(wm->key_pressed(JK_CTRL_L))
-                                                grow_views(-20);
-                                            else
-                                                grow_views(-5);
-                                            draw(state == SCENE_STATE);
-                                        }
-                                    } break;
-*/
+                                        break;
                                 }
                             } break;
                             case EV_RESIZE:
@@ -2052,7 +1996,7 @@ void net_receive()
   }
 }
 
-void game::step()
+void Game::step()
 {
   clear_tmp();
   if(current_level)
@@ -2109,12 +2053,15 @@ void game::step()
   } else if(state == MENU_STATE)
     main_menu();
 
-  if(key_down('x') && (key_down(JK_ALT_L) || key_down(JK_ALT_R)) && confirm_quit()) finished = 1;
+  if((key_down('x') || key_down(JK_F4))
+      && (key_down(JK_ALT_L) || key_down(JK_ALT_R))
+      && confirm_quit())
+    finished = true;
 }
 
 extern void *current_demo;
 
-game::~game()
+Game::~Game()
 {
   current_demo = NULL;
   if(first_view == player_list) first_view = NULL;
@@ -2195,15 +2142,11 @@ game::~game()
 
 
 
-void game::draw(int scene_mode)
+void Game::draw(int scene_mode)
 {
     screen->add_dirty(0, 0, xres, yres);
-//    image *bt = cache.img(border_tile);
-//    int tw = bt->width(), th = bt->height();
-  screen->clear();
-//  for(y = 0; y < yt; y++, dy += th)
-//    for(x = 0, dx = 0; x < xt; x++, dx += tw)
-//      bt->put_image(screen, dx, dy);
+
+    screen->clear();
 
     if(scene_mode)
     {
@@ -2465,59 +2408,8 @@ void game_net_init(int argc, char **argv)
 
 }
 
-#if(defined(__APPLE__) && !defined(__MACH__))
-extern int PixMult;
-#if 1
-char cmdline[256];
-#elif 1
-char cmdline[] = "";
-#elif 1
-char cmdline[] = "abuse -server -a deathmat";
-#else
-char cmdline[] = "abuse -net 193.246.40.9";
-#endif
-char delims[] = " ";
-char *tmp_argv[255];
-
-void GetArgs(int &argc, char **(&argv))
+int main(int argc, char *argv[])
 {
-    char *s;
-
-    printf("Usage:\n"
-                    "  abuse [-options]\n\n"
-                    "  Options:\n"
-                    "    -server -a deathmat        become a server for deathmatch game\n"
-                    "    -net <dotted ip address>   connect to a server\n\n"
-                    "Options for mac:\n"
-                    "  Hold down <control> for single pixel mode\n"
-                    "  Hold down <option> for edit mode\n"
-                    "  Hold down <left shift> for double size mode\n\n"
-                    "If started with no command line options, networking will attempt\n"
-                    "  to search the local network for servers\n\n"
-);
-    printf("Enter command line:\n");
-    gets(cmdline);
-
-    argc = 0;
-    argv = tmp_argv;
-    s = strtok(cmdline, delims);
-    while(s)
-    {
-        argv[argc] = s;
-        argc++;
-        s = strtok(0, delims);
-    }
-    argv[argc] = 0;
-}
-
-#endif
-
-int main(int argc, char **argv)
-{
-#if(defined(__APPLE__) && !defined(__MACH__))
-    GetArgs(argc, argv);
-#endif
-
     start_argc = argc;
     start_argv = argv;
 
@@ -2629,7 +2521,7 @@ int main(int argc, char **argv)
 
         dev_init(argc, argv);
 
-        game *g = new game(argc, argv);
+        Game *g = new Game(argc, argv);
 
         dev_cont = new dev_controll();
         dev_cont->load_stuff();
@@ -2781,7 +2673,7 @@ int main(int argc, char **argv)
     lisp_uninit();
 
     base->packet.packet_reset();
-    mem_report("end.mem");
+//    mem_report("end.mem");
   } while(main_net_cfg && main_net_cfg->restart_state());
 
     delete stat_man;

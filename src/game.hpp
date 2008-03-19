@@ -49,8 +49,8 @@ extern WindowManager *wm;
 
 
 #define tile_type unsigned short
-class game;
-extern game *the_game;
+class Game;
+extern Game *the_game;
 extern int dev;
 extern int morph_sel_frame_color;
 
@@ -62,10 +62,11 @@ extern int demo_start,idle_ticks;
 
 extern FILE *open_FILE(char const *filename, char const *mode);
 
-class game
+class Game
 {
+private:
   JCFont *fnt;
-  int finished;
+  bool finished;
   int bg_top,fg_top;                         // in the fg/bg window which tile is at the top?
   int bright_color,med_color,dark_color,     // for boundaries and windows, etc
       morph_bright_color,morph_med_color,morph_dark_color;
@@ -89,8 +90,9 @@ public :
   view *first_view,*old_view;
   int state,zoom;
 
+  Game(int argc, char **argv);
+  ~Game();
 
-  game(int argc, char **argv);
   void step();
   void show_help(char const *st);
   void draw_value(image *screen, int x, int y, int w, int h, int val, int max);
@@ -154,7 +156,6 @@ public :
   void play_sound(int id, int vol, int32_t x, int32_t y);
   void request_level_load(char *name);
   void request_end();
-  ~game();
 } ;
 
 extern int playing_state(int state);
