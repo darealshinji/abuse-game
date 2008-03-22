@@ -34,11 +34,11 @@ void file_picker::free_up()
 {
   int i=0;
   for (;i<tf;i++)
-    jfree(f[i]);
+    free(f[i]);
   for (i=0;i<td;i++)
-    jfree(d[i]);
-  if (tf) jfree(f);
-  if (td) jfree(d);
+    free(d[i]);
+  if (tf) free(f);
+  if (td) free(d);
 }
 
 void file_picker::note_selection(image *screen, InputManager *inm, int x)

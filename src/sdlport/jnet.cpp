@@ -37,7 +37,6 @@
 
 #include "jnet.hpp"
 #include "macs.hpp"
-#include "jmalloc.hpp"
 
 int current_sock_err;
 

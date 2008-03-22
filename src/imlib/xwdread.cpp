@@ -521,13 +521,13 @@ image *read_bmp(palette *&pal, char *filename)
   }
   bytes=(im->width()+3)/4;
   bytes*=4;
-  scrap=(char *)jmalloc(bytes,"xwd_read scrap");
+  scrap=(char *)malloc(bytes);
   for (i=im->height();i;i--)
   {
     fread(scrap,1,bytes,fp);
     memcpy(im->scan_line(i-1),scrap,im->width());
   }
-  jfree(scrap);
+  free(scrap);
   fclose(fp);
   return im;
 }

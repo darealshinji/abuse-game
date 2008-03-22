@@ -27,7 +27,7 @@ class collide_patch
   }
   void add_collide(int32_t X1, int32_t Y1, int32_t X2, int32_t Y2, game_object *who);
   collide_patch *copy(collide_patch *Next);
-  ~collide_patch() { if (total) jfree(touch); }
+  ~collide_patch() { if (total) free(touch); }
 } ;
 
 
@@ -37,7 +37,7 @@ collide_patch *collide_patch::copy(collide_patch *Next)
   p->total=total;
   if (total)
   {
-    p->touch=(game_object **)jmalloc(total*sizeof(game_object *),"collide patches");
+    p->touch=(game_object **)malloc(total*sizeof(game_object *));
     memcpy(p->touch,touch,total*(sizeof(game_object *)));
   }
   else
@@ -83,7 +83,7 @@ void add_collide(collide_patch *&first, int32_t x1, int32_t y1, int32_t x2, int3
       p->x1=x1; p->y1=y1; p->x2=x2; p->y2=y2;
 
       p->total++;
-      p->touch=(game_object **)jrealloc(p->touch,sizeof(game_object *)*p->total,"object_patch_list");
+      p->touch=(game_object **)realloc(p->touch,sizeof(game_object *)*p->total);
       p->touch[p->total-1]=who;
       return ;
     }
@@ -100,7 +100,7 @@ void add_collide(collide_patch *&first, int32_t x1, int32_t y1, int32_t x2, int3
       if (y2>p->y2)
         add_collide(first,p->x1,p->y2+1,p->x2,y2,who);
       p->total++;
-      p->touch=(game_object **)jrealloc(p->touch,sizeof(game_object *)*p->total,"object_patch_list");
+      p->touch=(game_object **)realloc(p->touch,sizeof(game_object *)*p->total);
       p->touch[p->total-1]=who;
       return ;
     }
@@ -148,7 +148,7 @@ void add_collide(collide_patch *&first, int32_t x1, int32_t y1, int32_t x2, int3
 
   first=new collide_patch(x1,y1,x2,y2,first);
   first->total=1;
-  first->touch=(game_object **)jmalloc(sizeof(game_object *)*1,"object_patch_list");
+  first->touch=(game_object **)malloc(sizeof(game_object *)*1);
   first->touch[0]=who;
 }
 

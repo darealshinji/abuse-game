@@ -32,7 +32,7 @@ main(int argc, char **argv)
   set_mode(0x13,argc,argv);
   screen->clear();
   i=argc;
-  im=(image **)jmalloc(sizeof(image *)*80,"gl_view image");
+  im=(image **)malloc(sizeof(image *)*80);
   i=1; t=1;
   while (i<argc)
   {

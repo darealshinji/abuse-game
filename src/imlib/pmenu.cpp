@@ -59,7 +59,7 @@ pmenu_item::pmenu_item(int ID, char const *Name, char const *on_off_flag, int Ho
   hotkey=Hotkey;
   on_off=on_off_flag;
   if (Name)
-    n=strcpy((char *)jmalloc(strlen(Name)+1,"pmenu_item::name"),Name);
+    n=strcpy((char *)malloc(strlen(Name)+1),Name);
   else n=NULL;
   next=Next;
   sub=NULL;
@@ -72,7 +72,7 @@ pmenu_item::pmenu_item(char const *Name, psub_menu *Sub, pmenu_item *Next, int x
   next=Next;
   on_off=NULL;
   CONDITION(Name,"Sub menu cannot have a NULL name");
-  n=strcpy((char *)jmalloc(strlen(Name)+1,"pmenu_item::name"),Name);
+  n=strcpy((char *)malloc(strlen(Name)+1),Name);
   sub=Sub;
 }
 
@@ -399,7 +399,7 @@ int pmenu_item::own_event(event &ev)
 }
 
 pmenu_item::~pmenu_item()
-{ if (n) jfree(n); if (sub) delete sub;
+{ if (n) free(n); if (sub) delete sub;
 }
 
 int pmenu::handle_event(event &ev, image *screen)

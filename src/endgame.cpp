@@ -41,7 +41,7 @@ extern int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCF
 
 static mask_line *make_mask_lines(image *mask, int map_width)
 {
-  mask_line *p=(mask_line *)jmalloc(mask->height()*sizeof(mask_line),"mask_line");
+  mask_line *p=(mask_line *)malloc(mask->height()*sizeof(mask_line));
   for (int y=0;y<mask->height();y++)
   {
     // find the start of the run..
@@ -58,8 +58,8 @@ static mask_line *make_mask_lines(image *mask, int map_width)
     p[y].size=size;
 
     // now calculate remap for line
-    p[y].remap=(uint16_t *)jmalloc(size*2,"mask remap");
-    p[y].light=(uint8_t *)jmalloc(size,"mask light");
+    p[y].remap=(uint16_t *)malloc(size * 2);
+    p[y].light=(uint8_t *)malloc(size);
     uint16_t *rem=p[y].remap;
     uint8_t *lrem=p[y].light;
     for (x=0;x<size;x++,rem++)
@@ -397,11 +397,11 @@ void show_end2()
 
   for (i=0;i<cache.img(mask)->height();i++)
   {
-    jfree(p[i].remap);
-    jfree(p[i].light);
+    free(p[i].remap);
+    free(p[i].light);
   }
 
-  jfree(p);
+  free(p);
 
 
   delete current_level;

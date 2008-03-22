@@ -220,7 +220,7 @@ button::button(int X, int Y, int ID, char const *Text, ifield *Next)
 {
   x=X; y=Y; id=ID;
   act_id=-1;
-  text=strcpy((char *)jmalloc(strlen(Text)+1,"input button"),Text);
+  text=strcpy((char *)malloc(strlen(Text)+1),Text);
   up=1; next=Next; act=0;
   visual=NULL;
   pressed=NULL;
@@ -247,7 +247,7 @@ void text_field::change_data(char const *new_data, int new_cursor, // cursor==-1
                  int active, image *screen)
 {
   if (strlen(format)<strlen(new_data))
-    data=(char *)jrealloc(data,strlen(new_data),"text field input");
+    data=(char *)realloc(data,strlen(new_data));
 
   strcpy(data,new_data);
   if (new_cursor!=-1)
@@ -333,9 +333,9 @@ text_field::text_field(int X, int Y, int ID, char const *Prompt,
   int slen=(strlen(Format)>strlen(Data) ? strlen(Format) : strlen(Data));
 
   x=X; y=Y; id=ID;
-  prompt=strcpy((char *)jmalloc(strlen(Prompt)+1,"text_field::prompt"),Prompt);
-  format=strcpy((char *)jmalloc(slen+1,"text_field::format"),Format);
-  data=strcpy((char *)jmalloc(slen+1,"text_field::data"),Data);
+  prompt=strcpy((char *)malloc(strlen(Prompt)+1),Prompt);
+  format=strcpy((char *)malloc(slen+1),Format);
+  data=strcpy((char *)malloc(slen+1),Data);
   cur=strlen(data);
   while (cur && data[cur-1]==' ') cur--;
   next=Next;
@@ -348,9 +348,9 @@ text_field::text_field(int X, int Y, int ID, char const *Prompt,
   sprintf(num,"%g",Data);
   int slen=(strlen(Format)>strlen(num) ? strlen(Format) : strlen(num));
   x=X; y=Y; id=ID;
-  prompt=strcpy((char *)jmalloc(strlen(Prompt)+1,"text_field::prompt"),Prompt);
-  format=strcpy((char *)jmalloc(slen+1,"text_field::format"),Format);
-  data=strcpy((char *)jmalloc(slen+1,"text_field::data"),num);
+  prompt=strcpy((char *)malloc(strlen(Prompt)+1),Prompt);
+  format=strcpy((char *)malloc(slen+1),Format);
+  data=strcpy((char *)malloc(slen+1),num);
   cur=strlen(num);
   while (cur && data[cur-1]==' ') cur--;
   next=Next;
@@ -459,7 +459,7 @@ void text_field::draw_cur(int color, image *screen)
 info_field::info_field(int X, int Y, int ID, char const *info, ifield *Next)
 {
   x = X; y = Y; id = ID; next = Next;
-  text = strcpy((char *)jmalloc(strlen(info)+1,"info_field"), info);
+  text = strcpy((char *)malloc(strlen(info)+1), info);
   w = -1;
 }
 

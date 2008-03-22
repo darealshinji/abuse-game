@@ -34,7 +34,6 @@
 #include "video.hpp"
 #include "macs.hpp"
 #include "image.hpp"
-#include "jmalloc.hpp"
 #include "setup.h"
 
 SDL_Surface *window = NULL, *surface = NULL;
@@ -410,13 +409,9 @@ void update_dirty( image *im, int xoff, int yoff )
 void image::make_page( short width, short height, unsigned char *page_buffer )
 {
     if( page_buffer )
-    {
         data = page_buffer;
-    }
     else
-    {
-        data = (unsigned char *)jmalloc( width * height, "image::data" );
-    }
+        data = (unsigned char *)malloc( width * height );
 }
 
 //
@@ -425,9 +420,7 @@ void image::make_page( short width, short height, unsigned char *page_buffer )
 void image::delete_page()
 {
     if( !special || !special->static_mem )
-    {
-        jfree( data );
-    }
+        free( data );
 }
 
 //

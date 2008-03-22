@@ -9,13 +9,13 @@
 
 #ifndef __SPECS_HPP_
 #define __SPECS_HPP_
-#include "linked.hpp"
 #include <stdio.h>
-#include "jmalloc.hpp"
-#include "system.h"
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdint.h>
+
+#include "linked.hpp"
+#include "system.h"
 
 extern char const *spec_types[];
 
@@ -156,11 +156,11 @@ public :
              unsigned long data_size,
              unsigned long data_offset)
   { type=spec_type;
-    name=strcpy((char *)jmalloc(strlen(object_name)+1,"spec_entry::name"),object_name);
+    name=strcpy((char *)malloc(strlen(object_name) + 1),object_name);
     size=data_size; offset=data_offset;
   }
   void print();
-  ~spec_entry() { if (name) jfree(name); }
+  ~spec_entry() { if (name) free(name); }
 } ;
 
 

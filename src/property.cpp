@@ -13,7 +13,6 @@
 #include <string.h>
 
 #include "property.hpp"
-#include "jmalloc.hpp"
 #include "dprint.hpp"
 #include "game.hpp"
 
@@ -24,22 +23,22 @@ class property
   char *def_str;
   int def_num;
   property(char const *Name, int Def)
-  { name=strcpy((char *)jmalloc(strlen(Name)+1,"Property Name"),Name);
+  { name=strcpy((char *)malloc(strlen(Name)+1),Name);
     def_num=Def;
     def_str=NULL;
     next=NULL;
   }
 
   property(char const *Name, char const *Def)
-  { name=strcpy((char *)jmalloc(strlen(Name)+1,"Property Name"),Name);
-    def_str=strcpy((char *)jmalloc(strlen(Def)+1,"Property text"),Def);
+  { name=strcpy((char *)malloc(strlen(Name)+1),Name);
+    def_str=strcpy((char *)malloc(strlen(Def)+1),Def);
     next=NULL;
   }
 
   void set(int x)
   { if (def_str)
     {
-      jfree(def_str);
+      free(def_str);
       def_str=NULL;
     }
     def_num=x;
@@ -49,17 +48,17 @@ class property
   {
     if (def_str)
     {
-      jfree(def_str);
+      free(def_str);
       def_str=NULL;
     }
-    def_str=strcpy((char *)jmalloc(strlen(x)+1,"Property text"),x);
+    def_str=strcpy((char *)malloc(strlen(x)+1),x);
   }
 
   ~property()
   {
     if (def_str)
-      jfree(def_str);
-    jfree(name);
+      free(def_str);
+    free(name);
   }
   property *next;
 } ;

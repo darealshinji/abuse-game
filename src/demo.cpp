@@ -15,7 +15,6 @@
 #include "specs.hpp"
 #include "macs.hpp"
 #include "jwindow.hpp"
-#include "jmalloc.hpp"
 #include "dprint.hpp"
 #include "dev.hpp"
 #include "jrand.hpp"

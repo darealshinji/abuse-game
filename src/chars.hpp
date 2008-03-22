@@ -40,10 +40,10 @@ class named_field
   char *real_name;
   char *descript_name;
   named_field(char *real, char *fake)
-  { real_name=strcpy((char *)jmalloc(strlen(real)+1,"var_name"),real);
-    descript_name=strcpy((char *)jmalloc(strlen(fake)+1,"var_name"),fake);
+  { real_name=strcpy((char *)malloc(strlen(real) + 1),real);
+    descript_name=strcpy((char *)malloc(strlen(fake) + 1),fake);
   }
-  ~named_field() { jfree(real_name); jfree(descript_name); }
+  ~named_field() { free(real_name); free(descript_name); }
 } ;
 
 

@@ -9,9 +9,10 @@
 
 #ifndef __POINTS_HPP_
 #define __POINTS_HPP_
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "jmalloc.hpp"
+
 #include "specs.hpp"
 
 class point_list
@@ -25,7 +26,7 @@ public :
   void save(bFILE *fp);
   long size() { return 1+2*tot; }
   point_list *copy() { return new point_list(tot,data); }
-  ~point_list() { if (tot) { jfree(data); } }
+  ~point_list() { if (tot) { free(data); } }
 } ;
 
 #endif

@@ -184,10 +184,10 @@ void calc_tint(uchar *tint, int rs, int gs, int bs, int ra, int ga, int ba, pale
 
 void calc_light_table(palette *pal)
 {
-  white_light=(unsigned char *)jmalloc(256*64,"light table");
-  green_light=(unsigned char *)jmalloc(256*64,"green light");
+  white_light=(unsigned char *)malloc(256*64);
+  green_light=(unsigned char *)malloc(256*64);
   for (int i=0;i<TTINTS;i++)
-      tints[i]=(uchar *)jmalloc(256,"color tint");
+      tints[i]=(uchar *)malloc(256);
 
   jFILE fp("light.tbl","rb");
   int recalc=0;
@@ -299,7 +299,7 @@ light_patch *light_patch::copy(light_patch *Next)
   p->total=total;
   if (total)
   {
-    p->lights=(light_source **)jmalloc(total*sizeof(light_source *),"light patches");
+    p->lights=(light_source **)malloc(total*sizeof(light_source *));
     memcpy(p->lights,lights,total*(sizeof(light_source *)));
   }
   else
@@ -347,7 +347,7 @@ void add_light(light_patch *&first, long x1, long y1, long x2, long y2,
       }
       p->x1=x1; p->y1=y1; p->x2=x2; p->y2=y2;
       p->total++;
-      p->lights=(light_source **)jrealloc(p->lights,sizeof(light_source *)*p->total,"patch_list");
+      p->lights=(light_source **)realloc(p->lights,sizeof(light_source *)*p->total);
       p->lights[p->total-1]=who;
       return ;
     }
@@ -365,7 +365,7 @@ void add_light(light_patch *&first, long x1, long y1, long x2, long y2,
         add_light(first,p->x1,p->y2+1,p->x2,y2,who);
       if (p->total==MAX_LP)  return ;
       p->total++;
-      p->lights=(light_source **)jrealloc(p->lights,sizeof(light_source *)*p->total,"patch_list");
+      p->lights=(light_source **)realloc(p->lights,sizeof(light_source *)*p->total);
       p->lights[p->total-1]=who;
       return ;
     }

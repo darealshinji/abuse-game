@@ -158,7 +158,7 @@ unsigned char *read_wav(char *filename, long &sample_rate, long &data_size)
   }
 
   data_size=tag.size;
-  data=(unsigned char *)jmalloc(tag.size,"WAV data");
+  data=(unsigned char *)malloc(tag.size);
   ERROR(data,"Malloc error");
 
   sample_rate=pcm.wf.samplesps;

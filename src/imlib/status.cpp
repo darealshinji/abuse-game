@@ -23,12 +23,12 @@ class text_status_node
   visual_object *show;
   int last_update;
   text_status_node(char const *Name, visual_object *Show, text_status_node *Next)
-  { name=strcpy((char *)jmalloc(strlen(Name)+1,"status name"),Name);
+  { name=strcpy((char *)malloc(strlen(Name)+1),Name);
     show=Show;
     next=Next;
     last_update=0;
   }
-  ~text_status_node() { jfree(name); if (show) delete show; }
+  ~text_status_node() { free(name); if (show) delete show; }
 } ;
 
 

@@ -19,7 +19,7 @@ point_list::point_list(unsigned char how_many, unsigned char *Data)
   tot=how_many;
   if (tot)
   {
-    data=(unsigned char *)jmalloc((int)how_many*2,"point list");
+    data=(unsigned char *)malloc((int)how_many*2);
     memcpy(data,Data,(int)tot*2);
   } else data=NULL;
 }
@@ -29,7 +29,7 @@ point_list::point_list(bFILE *fp)
   fp->read(&tot,1);
   if (tot)
   {
-    data=(unsigned char *)jmalloc((int)tot*2,"point list : loaded");
+    data=(unsigned char *)malloc((int)tot*2);
     fp->read(data,(int)tot*2);
 
     int i;

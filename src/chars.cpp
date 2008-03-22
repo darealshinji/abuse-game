@@ -122,8 +122,8 @@ int character_type::add_state(void *symbol)             // returns index into se
     exit(0);
   } else if (num>=ts)
   {
-    seq=(sequence **)jrealloc(seq,sizeof(sequence *)*(num+1),"state list");
-    seq_syms=(void **)jrealloc(seq_syms,sizeof(void *)*(num+1),"state sym list");
+    seq=(sequence **)realloc(seq,sizeof(sequence *)*(num+1));
+    seq_syms=(void **)realloc(seq_syms,sizeof(void *)*(num+1));
 
     memset(&seq[ts],0,sizeof(sequence *)*((num+1)-ts));
     memset(&seq_syms[ts],0,sizeof(void *)*((num+1)-ts));
@@ -235,8 +235,8 @@ void character_type::add_var(void *symbol, void *name)
     } else
     {
       int new_total=index+1;
-      vars=(void **)jrealloc(vars,sizeof(void *)*new_total,"variable name list");
-      var_index=(short *)jrealloc(var_index,sizeof(short)*new_total,"variable index");
+      vars=(void **)realloc(vars,sizeof(void *)*new_total);
+      var_index=(short *)realloc(var_index,sizeof(short)*new_total);
       memset(&vars[tiv],0,(new_total-tiv)*sizeof(void *));
       memset(&var_index[tiv],0,(new_total-tiv)*sizeof(short));
       tiv=new_total;
@@ -254,8 +254,8 @@ void character_type::add_var(void *symbol, void *name)
     if (free_index==tiv)
     {
       int new_total=free_index+1;
-      vars=(void **)jrealloc(vars,sizeof(void *)*new_total,"variable name list");
-      var_index=(short *)jrealloc(var_index,sizeof(short)*new_total,"variable index");
+      vars=(void **)realloc(vars,sizeof(void *)*new_total);
+      var_index=(short *)realloc(var_index,sizeof(short)*new_total);
       memset(&vars[tiv],0,(new_total-tiv)*sizeof(void *));
       memset(&var_index[tiv],0,(new_total-tiv)*sizeof(short));
       tiv=new_total;
@@ -366,7 +366,7 @@ character_type::character_type(void *args, void *name)
       if (get_cflag(CFLAG_IS_WEAPON))  // if this is a weapon add to weapon array
       {
     total_weapons++;
-    weapon_types=(int *)jrealloc(weapon_types,sizeof(int)*total_weapons,"weapon map");
+    weapon_types=(int *)realloc(weapon_types,sizeof(int)*total_weapons);
     weapon_types[total_weapons-1]=total_objects;
       }
     } else if (f==l_range)
@@ -410,7 +410,7 @@ character_type::character_type(void *args, void *name)
     }
     total_fields++;
 
-    fields=(named_field **)jrealloc(fields,sizeof(named_field *)*total_fields,"named_fields");
+    fields=(named_field **)realloc(fields,sizeof(named_field *)*total_fields);
     fields[total_fields-1]=new named_field(real,fake);
     mf=lcdr(mf);
       }
@@ -516,7 +516,7 @@ character_type::character_type(void *args, void *name)
       char *new_name=lstring_value(lcar(lcdr(lcar(mf))));
       total_fields++;
 
-      fields=(named_field **)jrealloc(fields,sizeof(named_field *)*total_fields,"named_fields");
+      fields=(named_field **)realloc(fields,sizeof(named_field *)*total_fields);
       fields[total_fields-1]=new named_field(find,new_name);
       mf=lcdr(mf);
     }
@@ -553,46 +553,24 @@ character_type::~character_type()
   for (int i=0;i<ts;i++)
     if (seq[i])
       delete seq[i];
-  if (ts) jfree(seq);
+  if (ts) free(seq);
 
   if (total_fields)
   {
     for (int i=0;i<total_fields;i++)
       delete fields[i];
-    jfree(fields);
+    free(fields);
   }
 
   if (ts)
-    jfree(seq_syms);
+    free(seq_syms);
 
   if (tiv)
   {
-    jfree(vars);
-    jfree(var_index);
+    free(vars);
+    free(var_index);
   }
 
 
 }
-
-extern long small_ptr_size(void *ptr);
-
-
-void chk_sizes()
-{
-  for (int i=0;i<total_objects;i++)
-  {
-    figures[i]->check_sizes();
-  }
-}
-
-
-void character_type::check_sizes()
-{
-  for (int i=0;i<ts;i++)
-    if (seq[i] && small_ptr_size(seq[i])!=8)
-      printf("bad size for state %d\n",i);
-}
-
-
-
 

@@ -44,7 +44,7 @@ lisp_symbol *make_find_symbol(char *name)
     }
   }
 
-  p=jmalloc(sizeof(lisp_symbol),"lsymbol");
+  p=malloc(sizeof(lisp_symbol));
   p->type=L_SYMBOL;
   p->name=new_lisp_string(name);
   p->value=l_undefined;

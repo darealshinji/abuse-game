@@ -12,7 +12,7 @@
 ram_file::ram_file()
 {
   buf_size=2048;
-  buf=(uchar *)jmalloc(buf_size,"ram file buffer");
+  buf=(uchar *)malloc(buf_size);
   buf_end=0;
 }
 

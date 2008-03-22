@@ -22,7 +22,6 @@
 #include <SDL.h>
 
 #include "sound.hpp"
-#include "jmalloc.hpp"
 #include "readwav.hpp"
 #include "specs.hpp"
 #include "setup.h"
@@ -126,7 +125,7 @@ int sound_init( int argc, char **argv )
 
     // Check for the sfx directory, disable sound if we can't find it.
     datadir = get_filename_prefix();
-    sfxdir = (char *)jmalloc( strlen( datadir ) + 5 + 1, "sfxdir" );
+    sfxdir = (char *)malloc( strlen( datadir ) + 5 + 1 );
     sprintf( sfxdir, "%s/sfx/", datadir );
     if( (fd = fopen( sfxdir,"r" )) == NULL )
     {
@@ -134,7 +133,7 @@ int sound_init( int argc, char **argv )
         printf( "Sound : Disabled (couldn't find the sfx directory)\n" );
         return 0;
     }
-    jfree( sfxdir );
+    free( sfxdir );
 
     audioWanted.freq = 11025;
     audioWanted.format = AUDIO_U8;
@@ -173,7 +172,7 @@ void sound_uninit()
         {
             effect_handle *last = fx_list;
             fx_list = fx_list->next;
-            jfree( last );
+            free( last );
         }
         SDL_CloseAudio();
     }
@@ -204,7 +203,7 @@ sound_effect::~sound_effect()
     {
         if( data )
         {
-            jfree( data );
+            free( data );
         }
     }
 }
@@ -295,7 +294,7 @@ void sound_effect::play( int volume, int pitch, int panpot )
 song::song( char const * filename )
 {
     data = NULL;
-    Name = strcpy((char *)jmalloc( strlen( filename ) + 1, "song name" ), filename );
+    Name = strcpy((char *)malloc( strlen( filename ) + 1 ), filename );
     song_id = 0;
 }
 
@@ -307,9 +306,9 @@ song::~song()
     }
     if( data )
     {
-        jfree( data );
+        free( data );
     }
-    jfree( Name );
+    free( Name );
 }
 
 void song::play( unsigned char volume )

@@ -13,7 +13,6 @@
 #include <string.h>
 
 #include "packet.hpp"
-#include "jmalloc.hpp"
 
 int packet::advance(int32_t offset)
 {
@@ -39,24 +38,15 @@ void packet::write_uint8(uint8_t x)
 }
 
 packet::~packet()
-{ jfree(buf); }
+{ free(buf); }
 
 packet::packet(int prefix_size)
 {
   pre_size=prefix_size;
 
-#ifdef MANAGE_MEM
-  int sp=alloc_space;
-  alloc_space=ALLOC_SPACE_STATIC;
-#endif
-
   buf_size=1000;
-  buf=(uint8_t *)jmalloc(buf_size,"packet buffer");
+  buf=(uint8_t *)malloc(buf_size);
   reset();
-
-#ifdef MANAGE_MEM
-  alloc_space=sp;
-#endif
 }
 
 void packet::get_string(char *st, int len)
@@ -82,7 +72,7 @@ void packet::make_bigger(int max)
   if (buf_size<max)
   {
     buf_size=max;
-    buf=(uint8_t *)jrealloc(buf,max,"packet buffer");
+    buf=(uint8_t *)realloc(buf,max);
   }
 }
 

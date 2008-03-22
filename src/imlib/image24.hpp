@@ -38,7 +38,7 @@ public :
   void           clear              (unsigned char r=0, unsigned char g=0,
                                 unsigned char b=0);
   void add_error(int x, int y, int r_error, int g_error, int b_error, int error_mult);
-  ~image24() { jfree(data); }
+  ~image24() { free(data); }
 } ;
 
 

@@ -622,16 +622,12 @@ int server::join_game(out_socket *os, char *name, char *server_name)
   if (pk.read((uint8_t *)&rand_on,2)!=2)    // read the current random seed used by the server.
   { fputs(re,stderr); exit(0); }
   rand_on=lstl(rand_on);
-  uint16_t *rtab=(uint16_t *)jmalloc(1024*2,"tmp rtab");
+  uint16_t rtab[1024];
   if (!pk.read((uint8_t *)rtab,1024*2)) { fputs(re,stderr); exit(0); }  // read the rand table
 
   for (int j=0;j<1024*2;j++)
     if (((uint8_t *)rtab)[j]!=((uint8_t *)rtable)[j])
     { printf("rtables differ on byte %d\n",j); exit(0); }
-
-  jfree(rtab);
-
-
 
   if (last)
   {

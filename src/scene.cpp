@@ -33,9 +33,9 @@ public :
   string_node(char *Name, string_node *Left=NULL, string_node *Right=NULL)
   { l=Left;
     r=Right;
-    n=strcpy((char *)jmalloc(strlen(Name)+1,"string node"),Name);
+    n=strcpy((char *)malloc(strlen(Name)+1),Name);
   }
-  ~string_node() { jfree(n); }
+  ~string_node() { free(n); }
   char *name() { return n; }
   string_node *left() { return l; }
   string_node *right() { return r; }            
@@ -114,7 +114,7 @@ public :
 
 
 scene_sequence::~scene_sequence()
-{ jfree(n);
+{ free(n);
   while (first)
   { scene_frame *p=first;
     first=first->next;
@@ -131,7 +131,7 @@ scene_sequence::scene_sequence(char *&s)
   next_token(s);
 
   expect(get_token(s,tmp_name),sWORD,s);
-  n=strcpy((char *)jmalloc(strlen(tmp_name)+1,"sequence name"),tmp_name);
+  n=strcpy((char *)malloc(strlen(tmp_name)+1),tmp_name);
   cur=first=new scene_frame(s);
 
   while (token_type(s)!=sRIGHT_PAREN)
@@ -215,7 +215,7 @@ public :
   int x() { return the_game->screenx(me->x)-cache.fig(current_frame->picture)->xcfg; }     
   int y() { return the_game->screeny(me->y)-cache.fig(current_frame->picture)->forward->height(); }
   int next_frame();  // true if sequence is done
-  ~scene_character() { jfree(n); delete seq_list; if (last_frame) delete last_frame; }
+  ~scene_character() { free(n); delete seq_list; if (last_frame) delete last_frame; }
 } ;
 
 
@@ -270,7 +270,7 @@ scene_character::scene_character(char *&s)
   char tmp[100];
   expect(get_token(s,tmp),sLEFT_PAREN,s);
   expect(get_token(s,tmp),sWORD,s);
-  n=strcpy((char *)jmalloc(strlen(tmp)+1,"scene character name"),tmp);
+  n=strcpy((char *)malloc(strlen(tmp)+1),tmp);
   expect(get_token(s,tmp),sNUMBER,s);
 
 /*  if (atoi(tmp)==0) */
@@ -486,7 +486,7 @@ void play_scene(char *script, char *filename, JCFont *font)
   char token[90];
   text_blocker *text_blockers=NULL;
 
-  char *strng=(char *)jmalloc(MAX_SCROLL_DATA,"tmp token space");
+  char *strng=(char *)malloc(MAX_SCROLL_DATA);
   strcpy(scene_filename,filename);
 
   int x1,y1,x2,y2,done,pan_xv=0,pan_yv=0,pan_steps=0,
@@ -705,7 +705,7 @@ void play_scene(char *script, char *filename, JCFont *font)
   if (!abort)
     next_token(s);
 
-  jfree(strng);
+  free(strng);
   screen->set_clip(cx1,cy1,cx2,cy2);
 
   the_game->draw(0);

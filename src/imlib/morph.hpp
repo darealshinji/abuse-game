@@ -19,7 +19,6 @@
 #include "macs.hpp"
 #include "specs.hpp"
 #include "filter.hpp"
-#include "jmalloc.hpp"
 
 
 struct morph_point8
@@ -65,7 +64,7 @@ public :
   int write(FILE *fp);
   void add_filler(int frames);
   int small_morph() { return small; }
-  ~jmorph() { jfree(p); }
+  ~jmorph() { free(p); }
 } ;
 
 
@@ -80,7 +79,7 @@ public :
             color_filter *fli, palette *pal, int frames);
   void show_frame(image *screen, int x, int y, int frame_on, color_filter *fli, palette *pal);
   void show_8(image *screen, int x, int y, int frame_on, color_filter *fli, palette *pal);
-  ~patched_morph() { jfree(pats); }
+  ~patched_morph() { free(pats); }
 
 } ;
 
@@ -100,7 +99,7 @@ public :
   step_morph(patched_morph *mor, palette *pal, int frame_direction, int face_direction);
   void show_frame(image *screen, int x, int y,  color_filter *fli);
   void reverse_direction();
-  ~step_morph() { jfree(points); }
+  ~step_morph() { free(points); }
 } ;
 
 

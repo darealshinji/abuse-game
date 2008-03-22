@@ -24,7 +24,7 @@ void image_visual::draw(image *screen, int x, int y,
 
 string_visual::string_visual(char *string, int Color)
 {
-  st=strcpy((char *)jmalloc(strlen(string)+1,"string visual"),string);
+  st=strcpy((char *)malloc(strlen(string)+1),string);
   color=Color;
   w=-1;
 }

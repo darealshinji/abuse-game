@@ -24,7 +24,7 @@ class spec_directory_cache
     char *filename() { return fn; }
     filename_node(char const *filename, spec_directory *dir)
     {
-      fn=(char *)memcpy(jmalloc(strlen(filename)+1,"spec_dir cache"),filename,strlen(filename)+1);
+      fn=(char *)memcpy(malloc(strlen(filename) + 1),filename,strlen(filename)+1);
       sd=dir;
       next=left=right=0;
     }

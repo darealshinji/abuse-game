@@ -393,8 +393,7 @@ Jwindow::Jwindow(char const *name)
 
     _name = NULL;
     if(name)
-        _name = strcpy((char *)jmalloc(strlen(name) + 1,
-                                       "Jwindow::window name"), name);
+        _name = strcpy((char *)malloc(strlen(name) + 1), name);
     wm->add_window(this);
 }
 
@@ -440,8 +439,7 @@ Jwindow::Jwindow(int X, int Y, int L, int H, ifield *f, char const *name)
 
     _name = NULL;
     if(name)
-        _name = strcpy((char *)jmalloc(strlen(name) + 1,
-                                       "Jwindow::window name"), name);
+        _name = strcpy((char *)malloc(strlen(name) + 1), name);
 
     wm->add_window(this);
     if(!wm->frame_suppress)
@@ -456,7 +454,7 @@ Jwindow::~Jwindow()
         delete screen;
     delete inm;
     if(_name)
-        jfree(_name);
+        free(_name);
 }
 
 void Jwindow::reconfigure()

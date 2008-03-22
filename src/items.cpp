@@ -28,7 +28,7 @@ boundary::boundary(bFILE *fp, char const *er_name) : point_list(fp)
       exit(0);
     }
 
-    inside=(uint8_t *)jmalloc(tot,"Boundary point list");
+    inside=(uint8_t *)malloc(tot);
   }
 
   uint8_t *point_on;
@@ -114,7 +114,7 @@ boundary::boundary(boundary *p) : point_list(p->tot,p->data)
   uint8_t *point_on;
   if (tot)
   {
-    inside=(uint8_t *)jmalloc(tot,"Boundary point list");
+    inside=(uint8_t *)malloc(tot);
   } else inside=NULL;
   for (i=0,point_on=data;i<tot-1;i++)
   {

@@ -9,10 +9,10 @@
 
 #ifndef _FILTER_HPP
 #define _FILTER_HPP
+
 #include "image.hpp"
 #include "palette.hpp"
 #include "specs.hpp"
-#include "jmalloc.hpp"
 
 class filter
 {
@@ -28,7 +28,7 @@ public :
   void min_threshold(int maxv, char blank=0);
   void put_image(image *screen, image *im, short x, short y, char transparent=0);
   void clear();
-  ~filter() { jfree(fdat); }
+  ~filter() { free(fdat); }
 } ;
 
 class color_filter
@@ -44,7 +44,7 @@ public:
   unsigned char *table() { return color_table; }
   int total_colors() { return 32; }
   unsigned char *get_table() { return color_table; }
-  ~color_filter() { jfree(color_table); }
+  ~color_filter() { free(color_table); }
 } ;
 
 #endif

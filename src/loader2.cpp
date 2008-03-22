@@ -140,9 +140,9 @@ void insert_tiles(char *filename)
     {
       int fon=nforetiles,bon=nbacktiles;
       if (ft)
-        foretiles=(int *)jrealloc(foretiles,sizeof(int)*(nforetiles+ft),"foretile id array ptrs");
+        foretiles=(int *)realloc(foretiles,sizeof(int)*(nforetiles+ft));
       if (bt)
-        backtiles=(int *)jrealloc(backtiles,sizeof(int)*(nbacktiles+bt),"foretile id array ptrs");
+        backtiles=(int *)realloc(backtiles,sizeof(int)*(nbacktiles+bt));
 
       for (i=0;i<sd.total;i++)
       {
@@ -217,13 +217,13 @@ void load_tiles(Cell *file_list)
   // enlarge the arrays if needed.
   if (nbacktiles>old_bsize)
   {
-    backtiles=(int *)jrealloc(backtiles,sizeof(int)*nbacktiles,"backtile id array ptrs");
+    backtiles=(int *)realloc(backtiles,sizeof(int)*nbacktiles);
     memset(backtiles+old_bsize,-1,(nbacktiles-old_bsize)*sizeof(int));
   }
 
   if (nforetiles>old_fsize)
   {
-    foretiles=(int *)jrealloc(foretiles,sizeof(int)*nforetiles,"foretile id array ptrs");
+    foretiles=(int *)realloc(foretiles,sizeof(int)*nforetiles);
     memset(foretiles+old_fsize,-1,(nforetiles-old_fsize)*sizeof(int));
   }
 
@@ -295,7 +295,7 @@ void load_data(int argc, char **argv)
     int should_save_sd_cache = 0;
 
     char *cachepath;
-    cachepath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 12 + 1, "cachepath" );
+    cachepath = (char *)malloc( strlen( get_save_filename_prefix() ) + 12 + 1 );
     sprintf( cachepath, "%ssd_cache.tmp", get_save_filename_prefix() );
 
     bFILE *load = open_file( cachepath, "rb" );
@@ -400,7 +400,7 @@ void load_data(int argc, char **argv)
     while (v) { total_help_screens++; v=CDR(v); }
     if (total_help_screens)
     {
-      help_screens=(int *)jmalloc(sizeof(int)*total_help_screens,"help image ids");
+      help_screens=(int *)malloc(sizeof(int)*total_help_screens);
       v=CDR(symbol_value(l_help_screens));
       int i=0;
       for (;v;v=CDR(v),i++)
@@ -471,7 +471,7 @@ void load_data(int argc, char **argv)
     sd_cache.clear();
     past_startup = 1;
 #if 0
-    jfree( cachepath );
+    free( cachepath );
 #endif
 }
 
@@ -493,7 +493,7 @@ char *load_script(char *name)
   }
 
   long l=fp->file_size();
-  s=(char *)jmalloc(l+1,"loaded script");
+  s=(char *)malloc(l+1);
   ERROR(s,"Malloc error in load_script");
 
   fp->read(s,l);

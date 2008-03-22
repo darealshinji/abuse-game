@@ -52,36 +52,36 @@ short load_any(char *filename, image **&images, palette *&pal, short &total_read
         images=read_mdl(filename,pal,1,total_read,total_read);
       break;
     case LOADER_xwd :
-      images=(image **)jmalloc(sizeof(image *),"loader::xwd image * array");
+      images=(image **)malloc(sizeof(image *));
       total_read=1;
       images[0]=readxwd(filename,pal);
       break;
     case LOADER_ppm :
-      images=(image **)jmalloc(sizeof(image *),"loader::ppm image * array");
+      images=(image **)malloc(sizeof(image *));
       total_read=1;
       pal=new palette;
       images[0]=read_ppm(filename,pal,PPM_REG);
       break;
     case LOADER_pic :
-      images=(image **)jmalloc(sizeof(image *),"loader::pic image * array");
+      images=(image **)malloc(sizeof(image *));
       total_read=1;
       pal=NULL;
       images[0]=read_pic(filename,pal);
       break;
     case LOADER_bmp8 :
-      images=(image **)jmalloc(sizeof(image *),"loader::bmp image * array");
+      images=(image **)malloc(sizeof(image *));
       total_read=1;
       pal=NULL;
       images[0]=read_bmp(pal,filename);
       break;
     case LOADER_pcx8 :
-      images=(image **)jmalloc(sizeof(image *),"loader::pcx image * array");
+      images=(image **)malloc(sizeof(image *));
       total_read=1;
       pal=NULL;
       images[0]=read_PCX(filename,pal);
       break;
     case LOADER_lbm :
-      images=(image **)jmalloc(sizeof(image *),"loader::pcx image * array");
+      images=(image **)malloc(sizeof(image *));
       total_read=1;
       pal=NULL;
       images[0]=read_lbm(filename,pal);
@@ -90,7 +90,7 @@ short load_any(char *filename, image **&images, palette *&pal, short &total_read
     {
       if (ref_pal)
       {
-        images=(image **)jmalloc(sizeof(image *),"loader::targa image * array");
+        images=(image **)malloc(sizeof(image *));
         total_read=1;
         images[0]=load_targa(filename,ref_pal);
         pal=ref_pal->copy();

@@ -26,8 +26,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "jmalloc.hpp"
-
 void get_directory(char *path, char **&files, int &tfiles, char **&dirs, int &tdirs)
 {
     struct dirent *de;
@@ -52,8 +50,8 @@ void get_directory(char *path, char **&files, int &tfiles, char **&dirs, int &td
         if( de )
         {
             t++;
-            tlist = (char **)jrealloc(tlist,sizeof(char *)*t,"tmp file list");
-            tlist[t-1] = strcpy((char *)jmalloc(strlen(de->d_name)+1,"tmp file name"),de->d_name);
+            tlist = (char **)realloc(tlist,sizeof(char *)*t);
+            tlist[t-1] = strcpy((char *)malloc(strlen(de->d_name)+1),de->d_name);
         }
     } while( de );
     closedir( d );
@@ -64,19 +62,19 @@ void get_directory(char *path, char **&files, int &tfiles, char **&dirs, int &td
         if( d )
         {
             tdirs++;
-            dirs = (char **)jrealloc(dirs,sizeof(char *)*tdirs,"dir list");
-            dirs[tdirs-1] = strcpy((char *)jmalloc(strlen(tlist[i])+1,"tmp file name"),tlist[i]);
+            dirs = (char **)realloc(dirs,sizeof(char *)*tdirs);
+            dirs[tdirs-1] = strcpy((char *)malloc(strlen(tlist[i])+1),tlist[i]);
             closedir( d );
         }
         else
         {
             tfiles++;
-            files = (char **)jrealloc(files,sizeof(char *)*tfiles,"dir list");
-            files[tfiles-1] = strcpy((char *)jmalloc(strlen(tlist[i])+1,"tmp file name"),tlist[i]);
+            files = (char **)realloc(files,sizeof(char *)*tfiles);
+            files[tfiles-1] = strcpy((char *)malloc(strlen(tlist[i])+1),tlist[i]);
         }
-        jfree( tlist[i] );
+        free( tlist[i] );
     }
     if( t )
-        jfree( tlist );
+        free( tlist );
     chdir( curdir );
 }

@@ -118,7 +118,7 @@ patched_morph::patched_morph(image *i1, image *hint1, image *i2, image *hint2, i
   frames=9;
 
   patches=frames;
-  pats=(morph_patch *)jmalloc(sizeof(morph_patch)*patches,"morph::patch array");
+  pats=(morph_patch *)malloc(sizeof(morph_patch)*patches);
   w=max(bound_x2(0),bound_x2(1));
   h=max(bound_y2(0),bound_y2(1));
   image *im=new image(w,h);
@@ -260,10 +260,10 @@ void jmorph::add_filler(int frames)
   if (frames<3) return ;
 
 
-  middle_map=(morph_point8 **)jmalloc(w*h*sizeof(morph_point8 *),
-                      "morph::middle_map");  // create an image of pointers
-  end_map=(unsigned char *)jmalloc(w*h,
-                  "morph::end_map");      // maps all the ending pixels
+  // create an image of pointers
+  middle_map=(morph_point8 **)malloc(w*h*sizeof(morph_point8 *));
+  // maps all the ending pixels
+  end_map=(unsigned char *)malloc(w*h);
 
   for (frame_on=2;frame_on<frames-1;frame_on++)
   {
@@ -348,8 +348,8 @@ void jmorph::add_filler(int frames)
     }
   }
 
-  jfree(middle_map);
-  jfree(end_map);
+  free(middle_map);
+  free(end_map);
 
 }
 
@@ -363,13 +363,13 @@ jmorph::jmorph(spec_entry *e, bFILE *fp)
   total=long_to_local(total);
   if (e->type==SPEC_MORPH_POINTS_8 || e->type==SPEC_PATCHED_MORPH)
   {
-    p=(void *)jmalloc(sizeof(morph_point8)*total,"morph8::point array");
+    p=(void *)malloc(sizeof(morph_point8)*total);
     fp->read(p,sizeof(morph_point8)*total);
     small=1;
   }
   else
   {
-    p=(void *)jmalloc(sizeof(morph_point16)*total,"morph16::point array");
+    p=(void *)malloc(sizeof(morph_point16)*total);
 
     for (i=0;i<total;i++)
     {
@@ -543,9 +543,9 @@ jmorph::jmorph(image *i1, image *hint1, image *i2, image *hint2,
     }
   }
   if (small)
-    plist=(void *)jmalloc(sizeof(morph_point8)*total,"morph8::point array");
+    plist=(void *)malloc(sizeof(morph_point8)*total);
   else
-    plist=(void *)jmalloc(sizeof(morph_point16)*total,"morph16::point array");
+    plist=(void *)malloc(sizeof(morph_point16)*total);
   CHECK(plist);
   for (i=0,color=0;i<total_hints;i++)
   {
@@ -733,7 +733,7 @@ step_morph::step_morph(patched_morph *mor, palette *pal, int frame_direction, in
   pm=mor;
 
   total=mor->total_points();
-  points=(step_struct *)jmalloc(sizeof(step_struct)*total,"step_morph::points");
+  points=(step_struct *)malloc(sizeof(step_struct)*total);
 
   dir=frame_direction;
   face_dir=face_direction;
@@ -896,14 +896,14 @@ patched_morph::patched_morph(spec_entry *e, bFILE *fp) : jmorph(e,fp)
   int i;
 
   patches=fp->read_uint16();
-  pats=(morph_patch *)jmalloc(sizeof(morph_patch)*patches,"patched_morph::points");
+  pats=(morph_patch *)malloc(sizeof(morph_patch)*patches);
 
   for (i=0;i<patches;i++)
   {
     pats[i].patches=fp->read_uint16();
     if (pats[i].patches)
     {
-      pats[i].patch_data=(unsigned char *)jmalloc(3*pats[i].patches,"patched_morph::patch_data");
+      pats[i].patch_data=(unsigned char *)malloc(3*pats[i].patches);
       fp->read(pats[i].patch_data,3*pats[i].patches);
     }
     else

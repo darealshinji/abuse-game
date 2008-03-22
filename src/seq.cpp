@@ -41,7 +41,7 @@ sequence::sequence(char *filename, void *pict_list, void *advance_list)
   else
     total=list_length(pict_list);
 
-  seq=(int *) jmalloc(sizeof(int)*total,"sequence ptr array");
+  seq=(int *) malloc(sizeof(int)*total);
   if (item_type(pict_list)==L_STRING)
     seq[0]=cache.reg_object(filename,pict_list,SPEC_CHARACTER2,1);
   else
@@ -57,7 +57,7 @@ sequence::sequence(char *filename, void *pict_list, void *advance_list)
 
 sequence::~sequence()
 {
-  jfree(seq);
+  free(seq);
 }
 
 /*sequence::sequence(char *filename, char *picts)
@@ -86,7 +86,7 @@ sequence::~sequence()
 
 
   s=picts;
-  seq=(int *) jmalloc(sizeof(int)*total,"sequence ptr array");
+  seq=(int *) malloc(sizeof(int)*total);
 
   for (i=0;i<total;)
   {

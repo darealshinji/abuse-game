@@ -555,8 +555,6 @@ void dev_controll::dev_draw(view *v)
 
 
   }
-
-  update_memprof();
 }
 
 static light_source *find_light(int32_t x, int32_t y)
@@ -571,56 +569,6 @@ static light_source *find_light(int32_t x, int32_t y)
   return NULL;
 }
 
-
-extern void small_static_allocation_summary(int &total, int *&static_list, int *&cache_list);
-
-void dev_controll::update_memprof()
-{
-    if(!memprof)
-        return;
-
-    int i;
-    int total, *st, *ch;
-    small_static_allocation_summary(total, st, ch);
-
-    int h, x = 0, y = 0;
-    memprof->clear();
-
-    for(i = 0; i < total; i++)
-    {
-        x++;
-        h = st[i] * 100 / 3000;
-        memprof->screen->bar(x, y, x, y + h, wm->bright_color());
-        h = ch[i] * 100 / 3000;
-        memprof->screen->bar(x, y, x, y + h, wm->medium_color());
-        x++;
-    }
-    jfree(st);
-    jfree(ch);
-    char buf[100];
-    sprintf(buf, "%8ld %8ld", (long int)j_allocated(), (long int)j_available());
-    wm->font()->put_string(memprof->screen, memprof->x1(),
-                           memprof->y2() - wm->font()->height(), buf);
-}
-
-void dev_controll::toggle_memprof()
-{
-  if (memprof)
-  {
-    prop->setd("memprof x",memprof->x);
-    prop->setd("memprof y",memprof->y);
-    wm->close_window(memprof);
-    memprof=NULL;
-  } else
-  {
-    int total,*st,*ch;
-    small_static_allocation_summary(total,st,ch);
-    jfree(st);
-    jfree(ch);
-    memprof=wm->new_window(0,0,total*2+20,100,NULL);
-    update_memprof();
-  }
-}
 
 void dev_controll::toggle_toolbar()
 {
@@ -704,7 +652,7 @@ void dev_controll::toggle_omenu()
         prop->setd("objects y", omenu->y);
         wm->close_window(omenu);
         omenu = NULL;
-        jfree(listable_objs);
+        free(listable_objs);
         listable_objs = NULL;
         return;
     }
@@ -717,7 +665,7 @@ void dev_controll::toggle_omenu()
     for(i = 0; i < total_objects; i++)
         if(!figures[i]->get_cflag(CFLAG_UNLISTABLE))
             total_listable++;
-    listable_objs = (char **)jmalloc(sizeof(char *) * total_listable, "omenu list");
+    listable_objs = (char **)malloc(sizeof(char *) * total_listable);
 
     for(i = 0, c = 0; i < total_objects; i++)
         if(!figures[i]->get_cflag(CFLAG_UNLISTABLE))
@@ -751,7 +699,7 @@ void dev_controll::toggle_pmenu()
         prop->setd("pal y", pmenu->y);
         wm->close_window(pmenu);
         pmenu = NULL;
-        jfree(pwin_list);
+        free(pwin_list);
         return;
     }
 
@@ -763,7 +711,7 @@ void dev_controll::toggle_pmenu()
 
     pmenu_on = 1;
 
-    pwin_list = (char **)jmalloc(total_pals * sizeof(char *), "pal pick list");
+    pwin_list = (char **)malloc(total_pals * sizeof(char *));
     for(int i = 0; i < total_pals; i++)
         pwin_list[i] = pal_wins[i]->name;
 
@@ -967,7 +915,6 @@ dev_controll::dev_controll()
   edit_object=NULL;
   ai_object=NULL;
   search_object = NULL;
-  memprof=NULL;
   oedit=NULL;
   forew=NULL;
   backw=NULL;
@@ -998,8 +945,6 @@ dev_controll::dev_controll()
 
   if (get_option("-nolight"))
     dev=dev^DRAW_LIGHTS;
-  if (start_mem)
-    toggle_memprof();
 }
 
 
@@ -1079,7 +1024,7 @@ void dev_controll::do_command(char const *command, event &ev)
       int32_t cx=player_list->focus->x,cy=player_list->focus->y;
 
       // save the old weapon array
-      int32_t *w=(int32_t *)jmalloc(total_weapons*sizeof(int32_t),"tmp weapon array");
+      int32_t *w=(int32_t *)malloc(total_weapons*sizeof(int32_t));
       memcpy(w,player_list->weapons,total_weapons*sizeof(int32_t));
 
       char tmp[100];
@@ -1094,7 +1039,7 @@ void dev_controll::do_command(char const *command, event &ev)
       player_list->focus->y=cy;
 
       memcpy(player_list->weapons,w,total_weapons*sizeof(int32_t));
-      jfree(w);
+      free(w);
 
       the_game->need_refresh();
     }
@@ -1303,9 +1248,6 @@ void dev_controll::do_command(char const *command, event &ev)
     ((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->screen);
     }
   }
-
-  if (!strcmp(fword,"mem_report"))
-    mem_report("memory.report");
 
   if (!strcmp(fword,"restart"))
   {
@@ -2738,7 +2680,6 @@ void dev_controll::handle_event(event &ev)
     else if (ev.window==pmenu) toggle_pmenu();
     else if (ev.window==tbw) toggle_toolbar();
     else if (ev.window==omenu) toggle_omenu();
-    else if (ev.window==memprof) toggle_memprof();
     else if (ev.window==search_window) toggle_search_window();
     else if (profile_handle_event(ev))  profile_on=!profile_on;
     else if (chat->chat_event(ev)) chat->toggle();
@@ -2828,7 +2769,6 @@ void dev_controll::handle_event(event &ev)
       case '>' : do_command("to_front",ev); break;
       case 'p' : toggle_pmenu(); break;
       case 'P' : profile_toggle(); break;
-      case '|' : toggle_memprof(); break;
       case '.' :
       {
         if (last_created_type>=0)
@@ -2975,7 +2915,7 @@ void dev_controll::handle_event(event &ev)
 void dev_controll::add_palette(void *args)
 {
   total_pals++;
-  pal_wins=(pal_win **)jrealloc(pal_wins,sizeof(pal_win *)*total_pals,"edit pal array");
+  pal_wins=(pal_win **)realloc(pal_wins,sizeof(pal_win *)*total_pals);
   pal_wins[total_pals-1]=new pal_win(args);
 }
 
@@ -2985,8 +2925,7 @@ pal_win::pal_win(void *args)
   int i=0;
   Cell *ao=(Cell *)args;
 
-  name=strcpy((char *)jmalloc(strlen(lstring_value(CAR(args)))+1,
-                  "pal name"),lstring_value(CAR(args)));
+  name=strcpy((char *)malloc(strlen(lstring_value(CAR(args)))+1),lstring_value(CAR(args)));
   ao=CDR(ao);
   scale=w=h=1;
   x=y=0;
@@ -3013,7 +2952,7 @@ pal_win::pal_win(void *args)
   if (w<=0) w=0;
   if (h<=0) h=0;
 
-  pat=(unsigned short *)jmalloc(w*h*sizeof(unsigned short),"palwin::pat");
+  pat=(unsigned short *)malloc(w*h*sizeof(unsigned short));
   memset(pat,0,sizeof(unsigned short)*w*h);   // set the palette to black if no parameters are given
   while (!NILP(ao))   // loop until we run out of parameters
   {
@@ -3216,13 +3155,13 @@ void pal_win::resize(int xa, int ya)
   unsigned short *npat;
   if (w+xa<1 || y+ya<1) return ;
 
-  npat=(unsigned short *)jmalloc(sizeof(unsigned short)*(w+xa)*(h+ya),"resized pal_win");
+  npat=(unsigned short *)malloc(sizeof(unsigned short)*(w+xa)*(h+ya));
   memset(npat,0,sizeof(unsigned short)*(w+xa)*(h+ya));
   for (i=0;i<(w+xa);i++)
     for (j=0;j<(h+ya);j++)
       if (i+j*w<w*h)
         npat[i+j*(w+xa)]=pat[i+j*w];
-  jfree(pat);
+  free(pat);
   w+=xa;
   h+=ya;
   pat=npat;
@@ -3462,7 +3401,7 @@ void dev_cleanup()
   delete prop;
   if (listable_objs)
   {
-    jfree(listable_objs);
+    free(listable_objs);
     listable_objs=NULL;
   }
   crc_manager.clean_up();
@@ -3671,13 +3610,13 @@ dev_controll::~dev_controll()
   for (int i=0;i<total_pals;i++)
     delete pal_wins[i];
   if (total_pals)
-    jfree(pal_wins);
+    free(pal_wins);
 }
 
 
 
 pal_win::~pal_win()
 {
-  jfree(pat);
-  jfree(name);
+  free(pat);
+  free(name);
 }

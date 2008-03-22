@@ -38,11 +38,11 @@ class status_node
   visual_object *show;
   time_marker last_update;
   status_node(char *Name, visual_object *Show, status_node *Next)
-  { name=strcpy((char *)jmalloc(strlen(Name)+1,"status name"),Name);
+  { name=strcpy((char *)malloc(strlen(Name)+1),Name);
     show=Show;
     next=Next;
   }
-  ~status_node() { jfree(name); if (show) delete show; }
+  ~status_node() { free(name); if (show) delete show; }
 }
 
 

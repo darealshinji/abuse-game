@@ -13,7 +13,6 @@
 #include <ctype.h>
 
 #include "system.h"
-#include "jmalloc.hpp"
 #include "macs.hpp"
 
 void unpackgl(char *fn, int pict_only)
@@ -58,7 +57,7 @@ void unpackgl(char *fn, int pict_only)
       if (!ot) return ;
       bufsize=0xf000;
       do {
-    buf=(char *)jmalloc(bufsize,"unpack_gl::buffer");
+    buf=(char *)malloc(bufsize);
     if (!buf) bufsize-=100;
       } while (!buf);
 
@@ -71,7 +70,7 @@ void unpackgl(char *fn, int pict_only)
     fwrite(buf,1,amread,ot);
     length-=amread;
       }
-      jfree(buf);
+      free(buf);
       if (ot) fclose(ot);
     }
   }

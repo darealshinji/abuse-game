@@ -126,19 +126,19 @@ void CrcManager::clean_up()
   for (int i=0;i<total_files;i++)
     delete files[i];
   if (total_files)
-    jfree(files);
+    free(files);
   total_files=0;
   files=NULL;
 }
 
 CrcedFile::~CrcedFile()
 {
-  jfree(filename);
+  free(filename);
 }
 
 CrcedFile::CrcedFile(char const *name)
 {
-  filename=strcpy((char *)jmalloc(strlen(name)+1,"crc_file"),name);
+  filename=strcpy((char *)malloc(strlen(name)+1),name);
   crc_calculated=0;
 }
 
@@ -153,7 +153,7 @@ int CrcManager::get_filenumber(char const *filename)
   for (int i=0;i<total_files;i++)
     if (!strcmp(filename,files[i]->filename)) return i;
   total_files++;
-  files=(CrcedFile **)jrealloc(files,total_files*sizeof(CrcedFile *),"crc_file_list");
+  files=(CrcedFile **)realloc(files,total_files*sizeof(CrcedFile *));
   files[total_files-1]=new CrcedFile(filename);
   return total_files-1;
 }
@@ -194,7 +194,7 @@ void CacheList::unmalloc(CacheItem *i)
     case SPEC_IMAGE    : delete ((image *)i->data);     break;
     case SPEC_EXTERN_SFX : delete ((sound_effect *)i->data); break;
     case SPEC_PARTICLE : delete ((part_frame *)i->data); break;
-    case SPEC_EXTERNAL_LCACHE : if (i->data) jfree(i->data); break;
+    case SPEC_EXTERNAL_LCACHE : if (i->data) free(i->data); break;
     case SPEC_PALETTE : delete ((char_tint *)i->data); break;
     default :
       printf("Trying to unmalloc unknown type\n");
@@ -208,9 +208,9 @@ void CacheList::unmalloc(CacheItem *i)
 void CacheList::prof_init()
 {
   if (prof_data)
-    jfree(prof_data);
+    free(prof_data);
 
-  prof_data=(int *)jmalloc(sizeof(int)*total,"cache profile");
+  prof_data=(int *)malloc(sizeof(int)*total);
   memset(prof_data,0,sizeof(int)*total);
 }
 
@@ -251,7 +251,7 @@ void CacheList::prof_write(bFILE *fp)
 {
   if (prof_data)
   {
-    int *ordered_ids=(int *)jmalloc(sizeof(int)*total,"profile order");
+    int *ordered_ids=(int *)malloc(sizeof(int)*total);
     int i;
     for (i=0;i<total;i++) ordered_ids[i]=i;
     qsort(ordered_ids,total,sizeof(int),c_sorter);
@@ -284,7 +284,7 @@ void CacheList::prof_write(bFILE *fp)
       }
     }
 
-    jfree(ordered_ids);
+    free(ordered_ids);
 
   } else dprintf("Cache profiling was not initialized\n");
 }
@@ -293,7 +293,7 @@ void CacheList::prof_uninit()
 {
   if (prof_data)
   {
-    jfree(prof_data);
+    free(prof_data);
     prof_data=NULL;
   }
 }
@@ -494,7 +494,7 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
       tnames=fp->read_uint16();
       if (tnames)                     /// make sure there isn't bad info in the file
       {
-    fnum_remap=(int *)jmalloc(sizeof(int)*tnames,"pfname remap");
+    fnum_remap=(int *)malloc(sizeof(int)*tnames);
 
     int i;
     for (i=0;i<tnames;i++)
@@ -511,11 +511,11 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
     uint32_t tsaved=fp->read_uint32();
 
 
-    int *priority=(int *)jmalloc(tsaved*sizeof(int),"priorities");
+    int *priority=(int *)malloc(tsaved*sizeof(int));
     memset(priority,0xff,tsaved*sizeof(int));   // initialize to -1
     int tmatches=0;
 
-    sorted_id_list=(int *)jmalloc(sizeof(int)*total,"sorted ids");
+    sorted_id_list=(int *)malloc(sizeof(int)*total);
     for (j=0;j<total;j++) sorted_id_list[j]=j;
     qsort(sorted_id_list,total,sizeof(int),s_offset_compare);
 
@@ -541,7 +541,7 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
       }
     }
 
-    jfree(sorted_id_list);            // was used for searching, no longer needed
+    free(sorted_id_list);            // was used for searching, no longer needed
 
     for (j=0;j<total;j++)
       if (list[j].last_access==0)
@@ -591,8 +591,8 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
       }
     }
 
-    jfree(priority);
-    jfree(fnum_remap);
+    free(priority);
+    free(fnum_remap);
 
 
       }
@@ -744,7 +744,7 @@ void CacheList::empty()
     if (list[i].file_number>=0 && list[i].last_access!=-1)
       unmalloc(&list[i]);
   }
-  jfree(list);
+  free(list);
   if (fp) delete fp;
   if (last_dir) delete last_dir;
   if (cache_file)
@@ -836,7 +836,7 @@ int32_t CacheList::alloc_id()
     if (id<0)                                 // if no free id's then make list bigger
     {
       int add_size=20;
-      list=(CacheItem *)jrealloc(list,(sizeof(CacheItem)*(total+add_size)),"Cache list");
+      list=(CacheItem *)realloc(list,(sizeof(CacheItem)*(total+add_size)));
       for (i=0;i<add_size;i++)
       {
         list[total+i].file_number=-1;         // mark new entries as new
@@ -845,7 +845,7 @@ int32_t CacheList::alloc_id()
       }
       id=total;
       if (prof_data)                          // new id's have been added old prof_data size won't work
-      { jfree(prof_data); prof_data=NULL; }
+      { free(prof_data); prof_data=NULL; }
       total+=add_size;
     }
   }
@@ -1030,9 +1030,7 @@ backtile *CacheList::backt(int id)
   {
     touch(me);
     locate(me);
-    int sp=alloc_space; alloc_space=ALLOC_SPACE_CACHE;
     me->data=(void *)new backtile(fp);
-    alloc_space=sp;
     last_offset=fp->tell();
     return (backtile *)me->data;
   }
@@ -1053,9 +1051,7 @@ foretile *CacheList::foret(int id)
   {
     touch(me);
     locate(me);
-    int sp=alloc_space; alloc_space=ALLOC_SPACE_CACHE;
     me->data=(void *)new foretile(fp);
-    alloc_space=sp;
     last_offset=fp->tell();
     return (foretile *)me->data;
   }
@@ -1074,9 +1070,7 @@ figure *CacheList::fig(int id)
   {
     touch(me);
     locate(me);
-    int sp=alloc_space; alloc_space=ALLOC_SPACE_CACHE;
     me->data=(void *)new figure(fp,me->type);
-    alloc_space=sp;
     last_offset=fp->tell();
     return (figure *)me->data;
   }
@@ -1095,9 +1089,7 @@ image *CacheList::img(int id)
   {
     touch(me);                                           // hold me, feel me, be me!
     locate(me);
-    int sp=alloc_space; alloc_space=ALLOC_SPACE_CACHE;
     image *im=new image(fp);
-    alloc_space=sp;
     me->data=(void *)im;
     last_offset=fp->tell();
 
@@ -1118,9 +1110,7 @@ sound_effect *CacheList::sfx(int id)
   {
     touch(me);                                           // hold me, feel me, be me!
     char *fn=crc_manager.get_filename(me->file_number);
-    int sp=alloc_space; alloc_space=ALLOC_SPACE_CACHE;
     me->data=(void *)new sound_effect(fn);
-    alloc_space=sp;
     return (sound_effect *)me->data;
   }
 }
@@ -1139,9 +1129,7 @@ part_frame *CacheList::part(int id)
   {
     touch(me);
     locate(me);
-    int sp=alloc_space; alloc_space=ALLOC_SPACE_CACHE;
     me->data=(void *)new part_frame(fp);
-    alloc_space=sp;
     last_offset=fp->tell();
     return (part_frame *)me->data;
   }
@@ -1179,13 +1167,11 @@ Cell *CacheList::lblock(int id)
 
     cache_read_file->seek(me->offset,0);
 
-    int sp=alloc_space; alloc_space=ALLOC_SPACE_CACHE;
-
     uint32_t size=cache_read_file->read_uint32();
     void *space;
 
     if (size)
-      space=jmalloc(size,"cached lisp block");
+      space=malloc(size);
     else space=NULL;
 
     int cs=current_space;
@@ -1193,7 +1179,6 @@ Cell *CacheList::lblock(int id)
     load_block(cache_read_file);
     current_space=cs;
 
-    alloc_space=sp;
     if (size)
       me->data=(Cell *)space;
     else me->data=NULL;
@@ -1202,11 +1187,6 @@ Cell *CacheList::lblock(int id)
 }
 
 CacheList cache;
-
-void free_up_memory()
-{
-  cache.free_oldest();
-}
 
 void CacheList::free_oldest()
 {
@@ -1231,7 +1211,6 @@ void CacheList::free_oldest()
   {
     close_graphics();
     printf("Out of memory, please remove any TSR's device drivers you can\n");
-    mem_report("out_of_mem");
     exit(0);
   }
 }
@@ -1291,9 +1270,7 @@ char_tint *CacheList::ctint(int id)
   {
     touch(me);
     locate(me);
-    int sp=alloc_space; alloc_space=ALLOC_SPACE_CACHE;
     me->data=(void *)new char_tint(fp);
-    alloc_space=sp;
     last_offset=fp->tell();
     return (char_tint *)me->data;
   }

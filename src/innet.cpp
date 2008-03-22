@@ -158,7 +158,7 @@ int net_init(int argc, char **argv)
 
     fman=new file_manager(argc,argv,prot);                                       // manages remote file access
     game_face=new game_handler;
-    join_array=(join_struct *)jmalloc(sizeof(join_struct)*MAX_JOINERS,"join array");
+    join_array=(join_struct *)malloc(sizeof(join_struct)*MAX_JOINERS);
     base->join_list=NULL;
     base->mem_lock=0;
     base->calc_crcs=0;
@@ -183,7 +183,7 @@ int net_start()  // is the game starting up off the net? (i.e. -net hostname)
 int kill_net()
 {
   if (game_face) delete game_face;  game_face=NULL;
-  if (join_array) jfree(join_array);  join_array=NULL;
+  if (join_array) free(join_array);  join_array=NULL;
   if (game_sock) { delete game_sock; game_sock=NULL; }
   if (comm_sock) { delete comm_sock; comm_sock=NULL; }
   delete fman;  fman=NULL;

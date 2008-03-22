@@ -10,15 +10,7 @@
 #ifndef __FAKELIB_HPP_
 #define __FAKELIB_HPP_
 
-#define jmalloc(x,y) malloc(x)
-#define jrealloc(x,y,z) realloc(x,y)
-#define jfree(x) free(x)
-
-#ifdef __sgi
-#include <sys/bsd_types.h>
-#else
 #include <stdint.h>
-#endif
 
 class bFILE
 {

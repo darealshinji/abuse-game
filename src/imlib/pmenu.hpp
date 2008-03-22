@@ -10,7 +10,6 @@
 #ifndef __PMENU_HPP_
 #define __PMENU_HPP_
 
-#include "jmalloc.hpp"
 #include "input.hpp"
 
 class psub_menu;

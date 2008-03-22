@@ -127,7 +127,7 @@ void readRCFile()
     char buf[255];
     char *result;
 
-    rcfile = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 9, "rcfile" );
+    rcfile = (char *)malloc( strlen( get_save_filename_prefix() ) + 9 );
     sprintf( rcfile, "%s/abuserc", get_save_filename_prefix() );
     if( (fd = fopen( rcfile, "r" )) != NULL )
     {
@@ -246,7 +246,7 @@ void readRCFile()
         // Couldn't open the abuserc file so let's create a default one
         createRCFile( rcfile );
     }
-    jfree( rcfile );
+    free( rcfile );
 }
 
 //
@@ -386,7 +386,7 @@ void setup( int argc, char **argv )
 
     if( (homedir = getenv( "HOME" )) != NULL )
     {
-        savedir = (char *)jmalloc( strlen( homedir ) + 9, "savedir" );
+        savedir = (char *)malloc( strlen( homedir ) + 9 );
         sprintf( savedir, "%s/.abuse/", homedir );
         // Check if we already have a savegame directory
         if( (fd = fopen( savedir, "r" )) == NULL )
@@ -399,7 +399,7 @@ void setup( int argc, char **argv )
             fclose( fd );
         }
         set_save_filename_prefix( savedir );
-        jfree( savedir );
+        free( savedir );
     }
     else
     {

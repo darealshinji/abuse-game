@@ -18,7 +18,7 @@ image24::image24(unsigned short width, unsigned short height,
   w=width;
   h=height;
 
-  data=(unsigned char *)jmalloc(width*height*3,"image24");
+  data=(unsigned char *)malloc(width*height*3);
   CONDITION(data,"unable to alloc enough memory for 24 bit image");
 }
 

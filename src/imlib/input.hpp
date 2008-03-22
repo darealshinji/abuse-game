@@ -31,7 +31,7 @@ public :
   virtual void handle_event(event &ev, image *screen, InputManager *im);
   void change_visual(image *new_visual);
   virtual void remap(filter *f);
-  virtual ~button() { if (text) jfree(text); }
+  virtual ~button() { if (text) free(text); }
   void push();
   virtual char *read() { return (char *)&up; }
   int status() { return up; }
@@ -84,7 +84,7 @@ public :
   virtual void draw(int active, image *screen);
   virtual void handle_event(event &ev, image *screen, InputManager *im);
 
-  virtual ~text_field() { jfree(prompt); jfree(format); jfree(data); }
+  virtual ~text_field() { free(prompt); free(format); free(data); }
   virtual char *read();
   void change_data(char const *new_data, int new_cursor,       // cursor==-1, does not change it.
            int active, image *screen);
@@ -105,7 +105,7 @@ public :
   virtual void handle_event(event &ev, image *screen, InputManager *im) { ; }
   virtual char *read() { return text; }
   virtual int selectable() { return 0; }
-  virtual ~info_field() { jfree(text); }
+  virtual ~info_field() { free(text); }
 } ;
 
 #endif
