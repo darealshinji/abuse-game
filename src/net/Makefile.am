@@ -12,4 +12,4 @@ libnet_a_SOURCES = \
 
 INCLUDES = -I$(srcdir) -I$(srcdir)/../ -I$(srcdir)/../imlib $(SDL_CFLAGS)
 
-CPPFLAGS = @CPPFLAGS@ -DMANAGE_MEM -DNO_CHECK
+CPPFLAGS = @CPPFLAGS@ -DNO_CHECK

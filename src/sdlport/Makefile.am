@@ -17,4 +17,4 @@ libsdlport_a_LIBADD =
 
 INCLUDES = -I$(srcdir)/../ -I$(srcdir)/../imlib $(SDL_CFLAGS)
 
-CPPFLAGS = @CPPFLAGS@ -DMANAGE_MEM -DNO_CHECK
+CPPFLAGS = @CPPFLAGS@ -DNO_CHECK
