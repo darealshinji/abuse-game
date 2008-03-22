@@ -69,4 +69,4 @@ abuse_DEPENDENCIES = $(EXTRALIBS)
 INCLUDES = -I$(srcdir) -I $(srcdir)/lisp -I$(srcdir)/imlib \
            -I$(srcdir)/net $(SDL_CFLAGS)
 
-CPPFLAGS = @CPPFLAGS@ -DMANAGE_MEM -DNO_CHECK
+CPPFLAGS = @CPPFLAGS@ -DNO_CHECK

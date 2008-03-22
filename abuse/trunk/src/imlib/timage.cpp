@@ -96,13 +96,7 @@ trans_image::trans_image(image *im, char const *name)
     }
   }
 
-#ifdef MEM_CHECK
-  char st[80];
-  sprintf(st,"trans_image::data (%s)",name);
   data=(uint8_t *)malloc(size);
-#else
-  data=(uint8_t *)malloc(size);
-#endif
   int ww=im->width(),hh=im->height();
   datap=data;
   if (!datap)
