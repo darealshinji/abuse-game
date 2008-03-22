@@ -12,6 +12,7 @@
 
 #include "specs.hpp"
 
+#include <string.h>
 
 class spec_directory_cache
 {
@@ -24,9 +25,9 @@ class spec_directory_cache
     char *filename() { return fn; }
     filename_node(char const *filename, spec_directory *dir)
     {
-      fn=(char *)memcpy(malloc(strlen(filename) + 1),filename,strlen(filename)+1);
-      sd=dir;
-      next=left=right=0;
+      fn = strdup(filename);
+      sd = dir;
+      next = left = right = 0;
     }
     long size;
   } *fn_root,*fn_list;

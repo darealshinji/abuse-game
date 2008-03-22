@@ -10,6 +10,7 @@
 #include "config.h"
 
 #include <ctype.h>
+#include <string.h>
 
 #include "dev.hpp"
 #include "input.hpp"
@@ -2925,7 +2926,7 @@ pal_win::pal_win(void *args)
   int i=0;
   Cell *ao=(Cell *)args;
 
-  name=strcpy((char *)malloc(strlen(lstring_value(CAR(args)))+1),lstring_value(CAR(args)));
+  name = strdup(lstring_value(CAR(args)));
   ao=CDR(ao);
   scale=w=h=1;
   x=y=0;

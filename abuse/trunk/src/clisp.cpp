@@ -9,6 +9,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "sdlport/joy.hpp"
 
 #include "ant.hpp"
@@ -778,9 +780,7 @@ void *l_caller(long number, void *args)
     figures=(character_type **)realloc(figures,sizeof(character_type *)*(total_objects+1));
       }
 
-      object_names[total_objects]=strcpy(
-      (char *)malloc(strlen(lstring_value(symbol_name(sym)))+1),
-                     lstring_value(symbol_name(sym)));
+      object_names[total_objects] = strdup(lstring_value(symbol_name(sym)));
       figures[total_objects]=new character_type(CDR(args),sym);
       total_objects++;
       return new_lisp_number(total_objects-1);

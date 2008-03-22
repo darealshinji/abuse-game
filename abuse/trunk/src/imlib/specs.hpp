@@ -9,10 +9,12 @@
 
 #ifndef __SPECS_HPP_
 #define __SPECS_HPP_
+
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "linked.hpp"
 #include "system.h"
@@ -155,9 +157,10 @@ public :
              char const *link_filename,
              unsigned long data_size,
              unsigned long data_offset)
-  { type=spec_type;
-    name=strcpy((char *)malloc(strlen(object_name) + 1),object_name);
-    size=data_size; offset=data_offset;
+  { type = spec_type;
+    name = strdup(object_name);
+    size = data_size;
+    offset = data_offset;
   }
   void print();
   ~spec_entry() { if (name) free(name); }

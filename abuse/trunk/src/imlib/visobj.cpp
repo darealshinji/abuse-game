@@ -9,6 +9,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "input.hpp"
 #include "visobj.hpp"
 
@@ -24,9 +26,9 @@ void image_visual::draw(image *screen, int x, int y,
 
 string_visual::string_visual(char *string, int Color)
 {
-  st=strcpy((char *)malloc(strlen(string)+1),string);
-  color=Color;
-  w=-1;
+    st = strdup(string);
+    color = Color;
+    w = -1;
 }
 
 

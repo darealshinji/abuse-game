@@ -14,6 +14,7 @@
 #endif
 
 #include <fcntl.h>
+#include <string.h>
 
 #include "cache.hpp"
 #include "lisp.hpp"
@@ -138,7 +139,7 @@ CrcedFile::~CrcedFile()
 
 CrcedFile::CrcedFile(char const *name)
 {
-  filename=strcpy((char *)malloc(strlen(name)+1),name);
+  filename = strdup(name);
   crc_calculated=0;
 }
 

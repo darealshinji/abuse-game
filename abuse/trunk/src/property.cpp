@@ -23,16 +23,16 @@ class property
   char *def_str;
   int def_num;
   property(char const *Name, int Def)
-  { name=strcpy((char *)malloc(strlen(Name)+1),Name);
-    def_num=Def;
-    def_str=NULL;
-    next=NULL;
+  { name = strdup(Name);
+    def_num = Def;
+    def_str = NULL;
+    next = NULL;
   }
 
   property(char const *Name, char const *Def)
-  { name=strcpy((char *)malloc(strlen(Name)+1),Name);
-    def_str=strcpy((char *)malloc(strlen(Def)+1),Def);
-    next=NULL;
+  { name = strdup(Name);
+    def_str = strdup(Def);
+    next = NULL;
   }
 
   void set(int x)
@@ -51,7 +51,7 @@ class property
       free(def_str);
       def_str=NULL;
     }
-    def_str=strcpy((char *)malloc(strlen(x)+1),x);
+    def_str = strdup(x);
   }
 
   ~property()

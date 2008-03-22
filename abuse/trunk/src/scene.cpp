@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include <fcntl.h>
 
@@ -31,9 +32,9 @@ class string_node
   char *n;
 public :
   string_node(char *Name, string_node *Left=NULL, string_node *Right=NULL)
-  { l=Left;
-    r=Right;
-    n=strcpy((char *)malloc(strlen(Name)+1),Name);
+  { l = Left;
+    r = Right;
+    n = strdup(Name);
   }
   ~string_node() { free(n); }
   char *name() { return n; }
@@ -131,8 +132,8 @@ scene_sequence::scene_sequence(char *&s)
   next_token(s);
 
   expect(get_token(s,tmp_name),sWORD,s);
-  n=strcpy((char *)malloc(strlen(tmp_name)+1),tmp_name);
-  cur=first=new scene_frame(s);
+  n = strdup(tmp_name);
+  cur = first=new scene_frame(s);
 
   while (token_type(s)!=sRIGHT_PAREN)
   {
@@ -270,7 +271,7 @@ scene_character::scene_character(char *&s)
   char tmp[100];
   expect(get_token(s,tmp),sLEFT_PAREN,s);
   expect(get_token(s,tmp),sWORD,s);
-  n=strcpy((char *)malloc(strlen(tmp)+1),tmp);
+  n = strdup(tmp);
   expect(get_token(s,tmp),sNUMBER,s);
 
 /*  if (atoi(tmp)==0) */

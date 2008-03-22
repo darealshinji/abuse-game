@@ -9,6 +9,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "help.hpp"
 #include "game.hpp"
 
@@ -43,8 +45,8 @@ char *get_page(int x)
       fgets(line,120,fp);
       if (line[0]=='.')
       {    
-    fclose(fp);    
-        return strcpy((char *)malloc(strlen(tmp)+1),tmp);
+        fclose(fp);    
+        return strdup(tmp);
       }
       else strcat(tmp,line);
     } while (1);

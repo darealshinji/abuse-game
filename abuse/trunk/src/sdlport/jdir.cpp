@@ -19,11 +19,12 @@
 
 #include "config.h"
 
-#include <sys/types.h>
 #include <stdio.h>
-#include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <sys/types.h>
+#include <dirent.h>
 #include <unistd.h>
 
 void get_directory(char *path, char **&files, int &tfiles, char **&dirs, int &tdirs)
@@ -51,7 +52,7 @@ void get_directory(char *path, char **&files, int &tfiles, char **&dirs, int &td
         {
             t++;
             tlist = (char **)realloc(tlist,sizeof(char *)*t);
-            tlist[t-1] = strcpy((char *)malloc(strlen(de->d_name)+1),de->d_name);
+            tlist[t-1] = strdup(de->d_name);
         }
     } while( de );
     closedir( d );
@@ -63,14 +64,14 @@ void get_directory(char *path, char **&files, int &tfiles, char **&dirs, int &td
         {
             tdirs++;
             dirs = (char **)realloc(dirs,sizeof(char *)*tdirs);
-            dirs[tdirs-1] = strcpy((char *)malloc(strlen(tlist[i])+1),tlist[i]);
+            dirs[tdirs-1] = strdup(tlist[i]);
             closedir( d );
         }
         else
         {
             tfiles++;
             files = (char **)realloc(files,sizeof(char *)*tfiles);
-            files[tfiles-1] = strcpy((char *)malloc(strlen(tlist[i])+1),tlist[i]);
+            files[tfiles-1] = strdup(tlist[i]);
         }
         free( tlist[i] );
     }

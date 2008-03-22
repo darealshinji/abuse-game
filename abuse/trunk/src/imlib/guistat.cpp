@@ -9,6 +9,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "input.hpp"
 #include "status.hpp"
 #include "timing.hpp"
@@ -24,7 +26,7 @@ class gui_status_node
   int last_update;
   time_marker last_time;
   gui_status_node(char const *Name, visual_object *Show, gui_status_node *Next)
-  { name=strcpy((char *)malloc(strlen(Name)+1),Name);
+  { name = strdup(Name);
     show=Show;
     next=Next;
     last_update=0;
