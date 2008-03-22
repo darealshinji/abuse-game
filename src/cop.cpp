@@ -169,7 +169,7 @@ void *top_ai()
 
 
     // if the pointer is too close to the player go with the angle shown, not the angle through the pointer
-    if (abs(q->y-fb[1]-v->pointer_y)<45 & abs(v->pointer_x-q->x+fb[0])<40)
+    if (abs(q->y-fb[1]-v->pointer_y)<45 && abs(v->pointer_x-q->x+fb[0])<40)
       o->lvars[point_angle]=lisp_atan2(fb[1]-iy,fb[0]-ix);
     else
       o->lvars[point_angle]=lisp_atan2(q->y-fb[1]-v->pointer_y,v->pointer_x-(q->x+fb[0]));
