@@ -9,6 +9,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "pmenu.hpp"
 
 void pmenu::move(int new_x, int new_y)
@@ -59,7 +61,7 @@ pmenu_item::pmenu_item(int ID, char const *Name, char const *on_off_flag, int Ho
   hotkey=Hotkey;
   on_off=on_off_flag;
   if (Name)
-    n=strcpy((char *)malloc(strlen(Name)+1),Name);
+    n = strdup(Name);
   else n=NULL;
   next=Next;
   sub=NULL;
@@ -72,7 +74,7 @@ pmenu_item::pmenu_item(char const *Name, psub_menu *Sub, pmenu_item *Next, int x
   next=Next;
   on_off=NULL;
   CONDITION(Name,"Sub menu cannot have a NULL name");
-  n=strcpy((char *)malloc(strlen(Name)+1),Name);
+  n = strdup(Name);
   sub=Sub;
 }
 

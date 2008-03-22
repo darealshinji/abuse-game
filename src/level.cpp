@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #endif
 
+#include <string.h>
 #include <limits.h>
 #include <time.h>
 
@@ -1295,7 +1296,7 @@ level::level(spec_directory *sd, bFILE *fp, char const *lev_name)
   char cmd[100];
   sprintf(cmd,symbol_str("loading"),lev_name);
   stack_stat stat(cmd);
-  Name=strcpy((char *)malloc(strlen(lev_name)+1),lev_name);
+  Name = strdup(lev_name);
 
   e=sd->find("first name");
   if (e)
@@ -1306,8 +1307,7 @@ level::level(spec_directory *sd, bFILE *fp, char const *lev_name)
     fp->read(first_name,len);    // read the string
   } else
   {
-    first_name=(char *)malloc(strlen(Name)+1);
-    strcpy(first_name,Name);
+    first_name = strdup(Name);
   }
 
   e=sd->find("fgmap");
@@ -2238,8 +2238,7 @@ int level::save(char const *filename, int save_all)
     {
         if( first_name )
             free(first_name);
-        first_name = (char *)malloc( strlen( name ) + 1 );
-        strcpy( first_name, name );
+        first_name = strdup(name);
     }
 
     object_node *players, *objs;

@@ -19,6 +19,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include <SDL.h>
 
 #include "sound.hpp"
@@ -294,7 +296,7 @@ void sound_effect::play( int volume, int pitch, int panpot )
 song::song( char const * filename )
 {
     data = NULL;
-    Name = strcpy((char *)malloc( strlen( filename ) + 1 ), filename );
+    Name = strdup(filename);
     song_id = 0;
 }
 

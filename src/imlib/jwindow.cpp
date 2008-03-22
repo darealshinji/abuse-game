@@ -9,6 +9,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "video.hpp"
 #include "image.hpp"
 #include "input.hpp"
@@ -393,7 +395,7 @@ Jwindow::Jwindow(char const *name)
 
     _name = NULL;
     if(name)
-        _name = strcpy((char *)malloc(strlen(name) + 1), name);
+        _name = strdup(name);
     wm->add_window(this);
 }
 
@@ -439,7 +441,7 @@ Jwindow::Jwindow(int X, int Y, int L, int H, ifield *f, char const *name)
 
     _name = NULL;
     if(name)
-        _name = strcpy((char *)malloc(strlen(name) + 1), name);
+        _name = strdup(name);
 
     wm->add_window(this);
     if(!wm->frame_suppress)

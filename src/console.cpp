@@ -11,6 +11,7 @@
 
 #include <ctype.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include "game.hpp"
 
@@ -84,7 +85,7 @@ console::console(JCFont *font, int width, int height, char const *Name)
   fnt=font;
   lastx=xres/2-screen_w()/2;
   lasty=yres/2-screen_h()/2;
-  name=(char *)strcpy((char *)malloc(strlen(Name)+1),Name);
+  name = strdup(Name);
 }
 
 

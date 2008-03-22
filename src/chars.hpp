@@ -10,6 +10,7 @@
 #ifndef __CHARACTERZ_HPP_
 #define __CHARACTERZ_HPP_
 
+#include <string.h>
 
 #include "seq.hpp"
 //#include "sound.hpp"
@@ -20,16 +21,16 @@
 #include <time.h>
 
 
-enum character_state {dead,
-              dieing,
-              stopped,        
-              start_run_jump,run_jump, run_jump_fall, end_run_jump,
-              flinch_up,flinch_down,
-              morph_pose,
-              running
-            } ;
-
-
+enum character_state
+{
+    dead,
+    dieing,
+    stopped,        
+    start_run_jump, run_jump, run_jump_fall, end_run_jump,
+    flinch_up, flinch_down,
+    morph_pose,
+    running
+};
 
 #define MAX_STATE (running+1)
 extern char const *state_names[];
@@ -40,8 +41,8 @@ class named_field
   char *real_name;
   char *descript_name;
   named_field(char *real, char *fake)
-  { real_name=strcpy((char *)malloc(strlen(real) + 1),real);
-    descript_name=strcpy((char *)malloc(strlen(fake) + 1),fake);
+  { real_name = strdup(real);
+    descript_name = strdup(fake);
   }
   ~named_field() { free(real_name); free(descript_name); }
 } ;

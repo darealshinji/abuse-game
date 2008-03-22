@@ -9,6 +9,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "macs.hpp"
 #include "status.hpp"
 #include "dprint.hpp"
@@ -38,9 +40,9 @@ class status_node
   visual_object *show;
   time_marker last_update;
   status_node(char *Name, visual_object *Show, status_node *Next)
-  { name=strcpy((char *)malloc(strlen(Name)+1),Name);
-    show=Show;
-    next=Next;
+  { name = strdup(Name);
+    show = Show;
+    next = Next;
   }
   ~status_node() { free(name); if (show) delete show; }
 }

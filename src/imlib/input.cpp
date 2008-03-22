@@ -9,6 +9,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "input.hpp"
 #include "macs.hpp"
 
@@ -220,7 +222,7 @@ button::button(int X, int Y, int ID, char const *Text, ifield *Next)
 {
   x=X; y=Y; id=ID;
   act_id=-1;
-  text=strcpy((char *)malloc(strlen(Text)+1),Text);
+  text = strdup(Text);
   up=1; next=Next; act=0;
   visual=NULL;
   pressed=NULL;
@@ -333,7 +335,7 @@ text_field::text_field(int X, int Y, int ID, char const *Prompt,
   int slen=(strlen(Format)>strlen(Data) ? strlen(Format) : strlen(Data));
 
   x=X; y=Y; id=ID;
-  prompt=strcpy((char *)malloc(strlen(Prompt)+1),Prompt);
+  prompt = strdup(Prompt);
   format=strcpy((char *)malloc(slen+1),Format);
   data=strcpy((char *)malloc(slen+1),Data);
   cur=strlen(data);
@@ -348,7 +350,7 @@ text_field::text_field(int X, int Y, int ID, char const *Prompt,
   sprintf(num,"%g",Data);
   int slen=(strlen(Format)>strlen(num) ? strlen(Format) : strlen(num));
   x=X; y=Y; id=ID;
-  prompt=strcpy((char *)malloc(strlen(Prompt)+1),Prompt);
+  prompt = strdup(Prompt);
   format=strcpy((char *)malloc(slen+1),Format);
   data=strcpy((char *)malloc(slen+1),num);
   cur=strlen(num);
@@ -459,7 +461,7 @@ void text_field::draw_cur(int color, image *screen)
 info_field::info_field(int X, int Y, int ID, char const *info, ifield *Next)
 {
   x = X; y = Y; id = ID; next = Next;
-  text = strcpy((char *)malloc(strlen(info)+1), info);
+  text = strdup(info);
   w = -1;
 }
 
