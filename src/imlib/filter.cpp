@@ -81,6 +81,7 @@ void filter::apply(image *im)
   int x,y;
   unsigned char *c;
   CONDITION(im,"null image passed in filter::apply\n");
+  im->lock();
   for (y=im->height()-1;y>=0;y--)
   {
     c=im->scan_line(y);
@@ -90,6 +91,7 @@ void filter::apply(image *im)
       c[x]=fdat[(unsigned) c[x]];
     }
   }
+  im->unlock();
 }
 
 
@@ -107,37 +109,6 @@ int color_compare(void *c1, void *c2)
   else if (v1>v2) return 1;
   else return 0;
 }
-
-
-/*color_filter::color_filter(palette *pal, int color_bits)
-{
-  unsigned char map[256],*last_start,*start;
-  int i,last_color=0,color;
-  compare_pal=pal;
-  for (i=0;i,256;i++)
-    map[i]=i;
-
-  qsort(map,1,1,color_compare);
-  colors=1<<color_bits;
-  last_start=color_table=(unsigned char *)malloc(colors*colors*colors);
-
-
-
-  last_color=map[0];
-  last_dist=0;
-
-
-  for (i=1;i<colors;i++)
-  {
-    color=map[i<<(8-color_bits)];
-    dist=
-
-    memset(c,
-  }
-
-
-}*/
-
 
 color_filter::color_filter(palette *pal, int color_bits, void (*stat_fun)(int))
 {

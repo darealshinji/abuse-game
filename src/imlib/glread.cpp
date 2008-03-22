@@ -20,7 +20,7 @@
 image *read_glfont(char *fn)
 {
   image *im,*sub;
-  uint16_t length,y;
+  int length, y;
   uint8_t size,first,width,height,gsize,last;
   FILE *fp;
   fp=fopen(fn,"rb");
