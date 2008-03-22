@@ -769,19 +769,17 @@ void *l_caller(long number, void *args)
       current_space=sp;
       if (!total_objects)
       {
-        object_names=(char **)jmalloc(sizeof(char *)*(total_objects+1),"object name list");
-    figures=(character_type **)jmalloc(sizeof(character_type *)*(total_objects+1),"character types");
+        object_names=(char **)malloc(sizeof(char *)*(total_objects+1));
+    figures=(character_type **)malloc(sizeof(character_type *)*(total_objects+1));
       }
       else
       {
-        object_names=(char **)jrealloc(object_names,sizeof(char *)*(total_objects+1),
-                       "object name list");
-    figures=(character_type **)jrealloc(figures,sizeof(character_type *)*(total_objects+1),
-                        "character types");
+        object_names=(char **)realloc(object_names,sizeof(char *)*(total_objects+1));
+    figures=(character_type **)realloc(figures,sizeof(character_type *)*(total_objects+1));
       }
 
       object_names[total_objects]=strcpy(
-      (char *)jmalloc(strlen(lstring_value(symbol_name(sym)))+1,"object name"),
+      (char *)malloc(strlen(lstring_value(symbol_name(sym)))+1),
                      lstring_value(symbol_name(sym)));
       figures[total_objects]=new character_type(CDR(args),sym);
       total_objects++;
@@ -991,11 +989,11 @@ void *l_caller(long number, void *args)
       {
     p_ref r1(fl),r2(dl);
     
-    for (i=tfiles-1;i>=0;i--) { push_onto_list(new_lisp_string(files[i]),fl); jfree(files[i]); }
-    jfree(files);
+    for (i=tfiles-1;i>=0;i--) { push_onto_list(new_lisp_string(files[i]),fl); free(files[i]); }
+    free(files);
 
-    for (i=tdirs-1;i>=0;i--) { push_onto_list(new_lisp_string(dirs[i]),dl); jfree(dirs[i]); }
-    jfree(dirs);
+    for (i=tdirs-1;i>=0;i--) { push_onto_list(new_lisp_string(dirs[i]),dl); free(dirs[i]); }
+    free(dirs);
     
     push_onto_list(dl,rl);
     push_onto_list(fl,rl);
@@ -2139,7 +2137,7 @@ long c_caller(long number, void *args)
     } break;
     case 264 :
     {
-      mem_report("mem.rep");
+      printf("mem_report is deprecated\n");
     } break;
     case 265 :
     {

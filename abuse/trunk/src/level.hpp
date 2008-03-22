@@ -97,7 +97,7 @@ public :
   void load_fail();
   level(int width, int height, char const *name);
   int save(char const *filename, int save_all);  // save_all includes player and view information (1 = success)
-  void set_name(char const *name) { Name=strcpy((char *)jrealloc(Name,strlen(name)+1,"map name"),name); }
+  void set_name(char const *name) { Name=strcpy((char *)realloc(Name,strlen(name)+1),name); }
   void set_size(int w, int h);
   void remove_light(light_source *which);
   void try_pushback(game_object *subject,game_object *target);

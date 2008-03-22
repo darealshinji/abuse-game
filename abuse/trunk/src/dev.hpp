@@ -78,13 +78,12 @@ class dev_controll
 public :
   Jwindow *backw,*forew,*commandw,*modew,*omenu,*oedit,*ledit,
           *music_window,*pmenu,*show_menu,*lightw,*aiw,*ambw,*tbw,*area_win,
-          *search_window,*memprof;
+          *search_window;
 
   int fg_w,bg_w,fg_scale,bg_scale,yellow;
   void save();
   void fg_fill(int color, int x, int y, pal_win *p);
   void add_palette(void *args);
-  void toggle_memprof();
   void search_forward();
   void search_backward();
   void toggle_toolbar();
@@ -120,7 +119,6 @@ public :
   void notify_deleted_object(game_object *o);
   void notify_deleted_light(light_source *l);
   void set_state(int new_state);
-  void update_memprof();
   ~dev_controll();
 } ;
 

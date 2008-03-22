@@ -393,7 +393,7 @@ pick_list::pick_list(int X, int Y, int ID, int height,
   t=num_entries;
   wid=0;
   key_hist_total=0;
-  lis=(pick_list_item *)jmalloc(sizeof(pick_list_item)*num_entries,"pick list");
+  lis=(pick_list_item *)malloc(sizeof(pick_list_item)*num_entries);
   int i=0;
   for (;i<num_entries;i++)
   {
@@ -556,7 +556,7 @@ int spicker::first_selected()
 void spicker::reconfigure()
 {
   if (select)
-    jfree(select);
+    free(select);
   select=NULL;
 
 
@@ -565,7 +565,7 @@ void spicker::reconfigure()
     sx=t-1;
   if (m)
   {
-    select=(uint8_t *)jmalloc((t+7)/8,"selection bit array");
+    select=(uint8_t *)malloc((t+7)/8);
     memset(select,0,(t+7)/8);
   } else cur_sel=0;
 }

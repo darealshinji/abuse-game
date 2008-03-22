@@ -14,7 +14,6 @@
 #include "macs.hpp"
 #include "palette.hpp"
 #include "filter.hpp"
-#include "jmalloc.hpp"
 
 /* data is stored in the following format
 
@@ -60,7 +59,7 @@ public :
   void make_color(int c);
   int size();
   image *make_image();
-  ~trans_image() { jfree(data); }
+  ~trans_image() { free(data); }
 } ;
 
 

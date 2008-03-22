@@ -144,13 +144,13 @@ int nfs_file::unbuffered_read(void *buf, size_t count)      // returns number of
   else
   {
     int ret=new_read(buf,count);
-    void *comp=jmalloc(count,"compare");
+    void *comp=malloc(count);
 /*    ::read(check_fd,comp,count);
     if (memcmp(comp,buf,count))
     {
       printf("bad read!\n");
     }
-    jfree(comp);*/
+    free(comp);*/
     return ret;
   }
 }

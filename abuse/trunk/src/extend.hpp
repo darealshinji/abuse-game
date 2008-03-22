@@ -19,7 +19,6 @@
 
 #include "lisp/lisp.hpp"
 
-#include "jmalloc.hpp"
 #include "macs.hpp"
 #include "morpher.hpp"
 #include "chars.hpp"

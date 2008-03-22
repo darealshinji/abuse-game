@@ -13,7 +13,6 @@
 
 #include "lisp.hpp"
 #include "macs.hpp"
-#include "jmalloc.hpp"
 
 extern int total_objects;
 
@@ -125,7 +124,7 @@ void compiled_init()
   if (b && DEFINEDP(symbol_value(b)))
   {
     b=symbol_value(b);
-    bad_guy_array=(uint8_t *)jmalloc(total_objects,"bad_guy_array");
+    bad_guy_array=(uint8_t *)malloc(total_objects);
     memset(bad_guy_array,0,total_objects);
     while (b)
     {
@@ -149,5 +148,5 @@ void compiled_init()
 void compiled_uninit()
 {
   if (bad_guy_array)
-    jfree(bad_guy_array);
+    free(bad_guy_array);
 }

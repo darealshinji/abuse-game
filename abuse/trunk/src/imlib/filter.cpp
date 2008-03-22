@@ -18,7 +18,7 @@ extern unsigned char current_background;
 filter::filter(palette *from, palette *to)   // creates a conversion filter from one palette to another
 {
   nc=from->pal_size() > to->pal_size() ? from->pal_size() : to->pal_size();
-  unsigned char *p=fdat=(unsigned char *)jmalloc(nc,"conversion filter");
+  unsigned char *p=fdat=(unsigned char *)malloc(nc);
   unsigned char *r,*g,*b;
   r=g=b=(unsigned char *)from->addr();
   g++;
@@ -72,7 +72,7 @@ filter::filter(int colors)
   CONDITION(colors>=0 && colors<=256,"bad colors value");
   nc=colors;
   make_block(nc);
-  fdat=(unsigned char *)jmalloc(nc,"filter");
+  fdat=(unsigned char *)malloc(nc);
   clear();
 }
 
@@ -120,7 +120,7 @@ color_filter::color_filter(palette *pal, int color_bits, void (*stat_fun)(int))
 
   long dist_sqr,best;
   int colors=1<<color_bits;
-  color_table=(unsigned char *)jmalloc(colors*colors*colors,"color_filter");
+  color_table=(unsigned char *)malloc(colors*colors*colors);
   for (r=0;r<colors;r++)
   {
     if (stat_fun) stat_fun(r);
@@ -155,7 +155,7 @@ color_filter::color_filter(spec_entry *e, bFILE *fp)
   fp->seek(e->offset,0);
   fp->read_uint16();
   int colors=32;
-  color_table=(unsigned char *)jmalloc(colors*colors*colors,"color_filter : loaded");
+  color_table=(unsigned char *)malloc(colors*colors*colors);
   fp->read(color_table,colors*colors*colors);
 }
 

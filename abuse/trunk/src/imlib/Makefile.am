@@ -23,7 +23,6 @@ libimlib_a_SOURCES = \
     image24.cpp image24.hpp \
     pcxread.cpp pcxread.hpp \
     timage.cpp timage.hpp \
-    jmalloc.cpp jmalloc.hpp \
     jrand.cpp jrand.hpp \
     lbmread.cpp lbmread.hpp \
     targa.cpp targa.hpp \

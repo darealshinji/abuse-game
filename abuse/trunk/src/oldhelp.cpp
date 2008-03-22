@@ -22,7 +22,7 @@ char *get_page(int x)
   char tmp[800],line[120];
   FILE *fp=fopen("help.txt","r");
   if (!fp)
-    return strcpy((char *)jmalloc(40,"Help missing error string"),"help.txt missing");
+    return strcpy((char *)malloc(40),"help.txt missing");
   else
   {
     tmp[0]=0;
@@ -34,7 +34,7 @@ char *get_page(int x)
       if (line[0]=='.' && line[1]=='e')
       {    
     fclose(fp);    
-    return strcpy((char *)jmalloc(30,"help : page missing string"),"missing page");
+    return strcpy((char *)malloc(30),"missing page");
       }
 
     }
@@ -44,7 +44,7 @@ char *get_page(int x)
       if (line[0]=='.')
       {    
     fclose(fp);    
-        return strcpy((char *)jmalloc(strlen(tmp)+1,"help page"),tmp);
+        return strcpy((char *)malloc(strlen(tmp)+1),tmp);
       }
       else strcat(tmp,line);
     } while (1);
@@ -123,7 +123,7 @@ void make_help_page(int page, image *s)
       {    
         wm->font()->put_string(s,0,yres-10,"Missing image!");
         delete fp;
-        jfree(ho);    
+        free(ho);    
         return ;    
       }
       im=new image(sd.find(imname),fp);
@@ -168,7 +168,7 @@ void make_help_page(int page, image *s)
     x=0;
     if (*h) h++;
   }
-  jfree(ho);
+  free(ho);
   delete fp;
 }
 

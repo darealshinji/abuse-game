@@ -111,9 +111,9 @@ image::~image()
 
 void make_block(size_t size)
 {
-  void *dat=jmalloc(size, "make_block : tmp");
+  void *dat=malloc(size);
   CONDITION(dat, "Memory error : could not make block\n");
-  if (dat) jfree((char *)dat);
+  if (dat) free((char *)dat);
 }
 
 uint8_t image::pixel(int16_t x, int16_t y)
@@ -273,7 +273,7 @@ image *image::copy()
     int i;
 
     lock();
-    dat = (uint8_t *)jmalloc(width(), "image copy");
+    dat = (uint8_t *)malloc(width());
     im = new image(width(), height());
     im->lock();
     for(i = height() - 1; i >= 0; i--)
@@ -285,7 +285,7 @@ image *image::copy()
     }
     im->unlock();
     unlock();
-    jfree((char *)dat);
+    free((char *)dat);
     return im;
 }
 
@@ -1104,7 +1104,7 @@ void image::unpack_scanline(int16_t line, char bitsperpixel)
 {
   int16_t x;
   uint8_t *sl, *ex, mask, bt, sh;
-  ex=(uint8_t *)jmalloc(width(), "image::unpacked scanline");
+  ex=(uint8_t *)malloc(width());
 
   lock();
   sl=scan_line(line);
@@ -1120,7 +1120,7 @@ void image::unpack_scanline(int16_t line, char bitsperpixel)
     sl[x]=(ex[x/bt]&(mask>>sh))>>(bt-sh-1);
   }
 
-  jfree((char *)ex);
+  free((char *)ex);
 }
 
 void image::dither(palette *pal)
@@ -1161,7 +1161,7 @@ void image_descriptor::clear_dirties()
 void image::resize(int16_t new_width, int16_t new_height)
 {
   int old_width=width(), old_height=height();
-  uint8_t *im=(uint8_t *)jmalloc(width()*height(), "image::resized");
+  uint8_t *im=(uint8_t *)malloc(width()*height());
   lock();
   memcpy(im, scan_line(0), width()*height());
 
@@ -1186,7 +1186,7 @@ void image::resize(int16_t new_width, int16_t new_height)
     for (xd=0, x2=0; x2<new_width; xd+=xc, x2++)
     { sl2[x2]=sl1[(int)xd]; }
   }
-  jfree(im);
+  free(im);
   if (special) special->resize(new_width, new_height);
   unlock();
 }
@@ -1423,7 +1423,7 @@ image *image::copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2
 
 void image::flip_x()
 {
-  uint8_t *rev=(uint8_t *)jmalloc(width(), "image tmp::flipped_x"), *sl;
+  uint8_t *rev=(uint8_t *)malloc(width()), *sl;
   CONDITION(rev, "memory allocation");
   int y, x, i;
 
@@ -1436,12 +1436,12 @@ void image::flip_x()
     memcpy(sl, rev, width());
   }
   unlock();
-  jfree(rev);
+  free(rev);
 }
 
 void image::flip_y()
 {
-  uint8_t *rev=(uint8_t *)jmalloc(width(), "image::flipped_y"), *sl;
+  uint8_t *rev=(uint8_t *)malloc(width()), *sl;
   CONDITION(rev, "memory allocation");
   int y;
 
@@ -1454,7 +1454,7 @@ void image::flip_y()
     memcpy(scan_line(height()-y-1), rev, width());
   }
   unlock();
-  jfree(rev);
+  free(rev);
 }
 
 void image::make_color(uint8_t color)

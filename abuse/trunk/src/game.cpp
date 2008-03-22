@@ -1387,12 +1387,12 @@ Game::Game(int argc, char **argv)
 
 //    ProfilerInit(collectDetailed, bestTimeBase, 2000, 200); //prof
     char *fastpath;
-    fastpath = (char *)jmalloc(strlen(get_save_filename_prefix()) + 12 + 1, "fastpath");
+    fastpath = (char *)malloc(strlen(get_save_filename_prefix()) + 12 + 1);
     sprintf(fastpath, "%sfastload.dat", get_save_filename_prefix());
     fast_load_start_recording(fastpath);
     load_data(argc, argv);
     fast_load_stop_recording();
-    jfree(fastpath);
+    free(fastpath);
 //    ProfilerDump("\pabuse.prof");  //prof
 //    ProfilerTerm();
 
@@ -2113,19 +2113,19 @@ Game::~Game()
   int i = 0;
   for(; i < total_objects; i++)
   {
-    jfree(object_names[i]);
+    free(object_names[i]);
     delete figures[i];
   }
   free_pframes();
   if(fps_mark_start) delete fps_mark_start; fps_mark_start = NULL;
   delete pal;
-  jfree(object_names);
-  jfree(figures);
+  free(object_names);
+  free(figures);
 
-  jfree(backtiles);
-  jfree(foretiles);
+  free(backtiles);
+  free(foretiles);
   if(total_weapons)
-    jfree(weapon_types);
+    free(weapon_types);
 
   config_cleanup();
   delete color_table;
@@ -2134,7 +2134,7 @@ Game::~Game()
   delete big_font;
   delete console_font;
   if(total_help_screens)
-    jfree(help_screens);
+    free(help_screens);
 
   close_graphics();
   image_uninit();
@@ -2268,7 +2268,7 @@ void show_startup()
 
 char *get_line(int open_braces)
 {
-  char *line=(char *)jmalloc(1000, "lstring");
+  char *line=(char *)malloc(1000);
   fgets(line, 1000, stdin);
 
   char prev=' ';
@@ -2283,9 +2283,9 @@ char *get_line(int open_braces)
   else if(open_braces > 0)
   {
     char *s2 = get_line(open_braces);
-    line=(char *)jrealloc(line, strlen(line)+strlen(s2)+1, "lstring");
+    line=(char *)realloc(line, strlen(line)+strlen(s2)+1);
     strcat(line, s2);
-    jfree(s2);
+    free(s2);
   }
   return line;
 }
@@ -2331,7 +2331,7 @@ void check_for_lisp(int argc, char **argv)
                     lprint(eval(prog));
                     l_user_stack.pop(1);
                 }
-                jfree(l);
+                free(l);
             }
             fprintf(stderr, "End of input : bye\n");
             exit(0);
@@ -2375,10 +2375,6 @@ void show_sell(int abortable);
 
 extern pmenu *dev_menu;
 
-
-extern int jmalloc_max_size;
-extern int jmalloc_min_low_size;
-
 void game_net_init(int argc, char **argv)
 {
   int nonet=!net_init(argc, argv);
@@ -2419,17 +2415,7 @@ int main(int argc, char *argv[])
         {
             external_print = 1;
         }
-
-        if(!strcmp(argv[i], "-min_low"))
-        {
-            i++;
-            jmalloc_min_low_size = atoi(argv[i]);
-        }
     }
-
-//  jmalloc_max_size = 0x150000;
-    jmalloc_init(0x150000);
-//  jmalloc_init(100000);
 
 #if(defined(__APPLE__) && !defined(__MACH__))
     unsigned char km[16];
@@ -2649,9 +2635,9 @@ int main(int argc, char *argv[])
     if(old_pal) delete old_pal; old_pal = NULL;
     compiled_uninit();
     delete_all_lights();
-    jfree(white_light_initial);
+    free(white_light_initial);
 
-    for(int i = 0; i < TTINTS; i++) jfree(tints[i]);
+    for(int i = 0; i < TTINTS; i++) free(tints[i]);
 
 
     dev_cleanup();
@@ -2673,7 +2659,6 @@ int main(int argc, char *argv[])
     lisp_uninit();
 
     base->packet.packet_reset();
-//    mem_report("end.mem");
   } while(main_net_cfg && main_net_cfg->restart_state());
 
     delete stat_man;
@@ -2691,11 +2676,6 @@ int main(int argc, char *argv[])
         timer_uninit();
     }
 
-// AK -> Commented this out to stop a crash as the file prefix has already
-//       been released.  Need to fix this.
-//    mem_report("end.mem");
-
-//    jmalloc_uninit();
     l_user_stack.clean_up();
     l_ptr_stack.clean_up();
 

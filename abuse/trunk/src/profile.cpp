@@ -51,7 +51,7 @@ int profile_handle_event(event &ev)
 void profile_init()
 {
   if (prof_list) { profile_uninit(); }
-  prof_list=(prof_info *)jmalloc(sizeof(prof_info)*total_objects,"prof info");
+  prof_list=(prof_info *)malloc(sizeof(prof_info)*total_objects);
   profile_reset();
 
 
@@ -78,7 +78,7 @@ void profile_reset()
 
 void profile_uninit()
 {
-  if (prof_list) jfree(prof_list);
+  if (prof_list) free(prof_list);
   prof_list=NULL;
   if (prof_win) { wm->close_window(prof_win); prof_win=NULL; }
 }

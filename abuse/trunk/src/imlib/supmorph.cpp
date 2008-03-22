@@ -94,7 +94,7 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
     }
 
   t=start;
-  movers=(unsigned char *)jmalloc(t*4,"morph movers");
+  movers=(unsigned char *)malloc(t*4);
 
 
   /**************** Now scan the images again setup hints *********************/
@@ -203,7 +203,7 @@ smorph_player::smorph_player(super_morph *m, palette *pal, image *i1, image *i2,
   int i,x1,y1,x2,y2;
   unsigned char *d=m->movers,*paddr=(unsigned char *)pal->addr(),*pa;
   stepper *p;
-  p=steps=(stepper *)jmalloc(sizeof(stepper)*m->t,"smorph steps");
+  p=steps=(stepper *)malloc(sizeof(stepper)*m->t);
   f_left=frames;
   frames--;
   t=m->t;
@@ -246,7 +246,7 @@ smorph_player::smorph_player(super_morph *m, palette *pal, image *i1, image *i2,
     p->y=y1<<16;
   }
 
-  hole=(unsigned char *)jmalloc(w*h,"hole image");
+  hole=(unsigned char *)malloc(w*h);
 }
 
 

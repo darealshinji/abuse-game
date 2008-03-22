@@ -26,12 +26,12 @@ void free_pframes()
   for (int i=0;i<total_pseqs;i++)
     delete pseqs[i];
   if (total_pseqs)
-    jfree(pseqs);
+    free(pseqs);
 }
 
 part_frame::~part_frame()
 {
-  jfree(data);
+  free(data);
 }
 
 void add_panim(int id, long x, long y, int dir)
@@ -71,7 +71,7 @@ int defun_pseq(void *args)
   current_space=PERM_SPACE;
   set_symbol_number(sym,total_pseqs);   // set the symbol value to the object number
   current_space=sp;
-  pseqs=(part_sequence **)jrealloc(pseqs,sizeof(part_sequence *)*(total_pseqs+1),"particle seq array");
+  pseqs=(part_sequence **)realloc(pseqs,sizeof(part_sequence *)*(total_pseqs+1));
 
   args=lcdr(args);
   pseqs[total_pseqs]=new part_sequence(args);
@@ -104,7 +104,7 @@ part_sequence::part_sequence(void *args)
   int i=0;
   for (;i<sd.total;i++)
     if (sd.entries[i]->type==SPEC_PARTICLE) tframes++;
-  frames=(int *)jmalloc(sizeof(int)*tframes,"part_frame id list\n");
+  frames=(int *)malloc(sizeof(int)*tframes);
 
   int on=0;
   for (i=0;i<sd.total;i++)
@@ -116,7 +116,7 @@ part_sequence::part_sequence(void *args)
 part_frame::part_frame(bFILE *fp)
 {
   t=fp->read_uint32();
-  data=(part *)jmalloc(sizeof(part)*t,"particle frame");
+  data=(part *)malloc(sizeof(part)*t);
   x1=y1=100000; x2=y2=-100000;
   for (int i=0;i<t;i++)
   {

@@ -203,18 +203,18 @@ void calc_tint(uint8_t *tint, int rs, int gs, int bs, int ra, int ga, int ba, pa
 
 void calc_light_table(palette *pal)
 {
-    white_light_initial=(uint8_t *)jmalloc(256*64,"light table");
+    white_light_initial=(uint8_t *)malloc(256*64);
     white_light=white_light_initial;
 
-//    green_light=(uint8_t *)jmalloc(256*64,"green light");
+//    green_light=(uint8_t *)malloc(256*64);
     int i = 0;
     for( ; i < TTINTS; i++ )
     {
-        tints[i] = (uint8_t *)jmalloc( 256, "color tint" );
+        tints[i] = (uint8_t *)malloc( 256 );
     }
 
     char *lightpath;
-    lightpath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 9 + 1, "lightpath" );
+    lightpath = (char *)malloc( strlen( get_save_filename_prefix() ) + 9 + 1 );
     sprintf( lightpath, "%slight.tbl", get_save_filename_prefix() );
 
     bFILE *fp=open_file( lightpath, "rb" );
@@ -234,7 +234,7 @@ void calc_light_table(palette *pal)
             for (i=0;i<TTINTS;i++)
                 fp->read(tints[i],256);
             fp->read(bright_tint,256);
-//            trans_table=(uint8_t *)jmalloc(256*256,"transparency table");
+//            trans_table=(uint8_t *)malloc(256*256);
 //            fp.read(trans_table,256*256);
         }
     }
@@ -328,7 +328,7 @@ void calc_light_table(palette *pal)
     }
     stat_man->pop();
 /*    fprintf(stderr,"calculating transparency tables (256 total)\n");
-    trans_table=(uint8_t *)jmalloc(256*256,"transparency table");
+    trans_table=(uint8_t *)malloc(256*256);
 
     uint8_t *tp=trans_table;
     for (i=0;i<256;i++)
@@ -365,7 +365,7 @@ void calc_light_table(palette *pal)
         }
         delete f;
     }
-    jfree( lightpath );
+    free( lightpath );
 }
 
 
@@ -375,7 +375,7 @@ light_patch *light_patch::copy(light_patch *Next)
   p->total=total;
   if (total)
   {
-    p->lights=(light_source **)jmalloc(total*sizeof(light_source *),"light patches");
+    p->lights=(light_source **)malloc(total*sizeof(light_source *));
     memcpy(p->lights,lights,total*(sizeof(light_source *)));
   }
   else
@@ -459,7 +459,7 @@ void add_light(light_patch *&first, int32_t x1, int32_t y1, int32_t x2, int32_t 
 
 
       p->total++;
-      p->lights=(light_source **)jrealloc(p->lights,sizeof(light_source *)*p->total,"patch_list");
+      p->lights=(light_source **)realloc(p->lights,sizeof(light_source *)*p->total);
       p->lights[p->total-1]=who;
       return ;
     }
@@ -477,7 +477,7 @@ void add_light(light_patch *&first, int32_t x1, int32_t y1, int32_t x2, int32_t 
         add_light(first,p->x1,p->y2+1,p->x2,y2,who);
       if (p->total==MAX_LP)  return ;
       p->total++;
-      p->lights=(light_source **)jrealloc(p->lights,sizeof(light_source *)*p->total,"patch_list");
+      p->lights=(light_source **)realloc(p->lights,sizeof(light_source *)*p->total);
       p->lights[p->total-1]=who;
       return ;
     }
@@ -785,7 +785,7 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
   int32_t remap_size=((cx2-cx1+1-prefix-suffix)>>lx_run);
 
-  uint8_t *remap_line=(uint8_t *)jmalloc(remap_size,"light remap line");
+  uint8_t *remap_line=(uint8_t *)malloc(remap_size);
 
   light_patch *f=first;
 
@@ -890,7 +890,7 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
     first=first->next;
     delete p;
   }
-  jfree(remap_line);
+  free(remap_line);
 }
 
 
@@ -962,7 +962,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 
   int32_t remap_size=((cx2-cx1+1-prefix-suffix)>>lx_run);
 
-  uint8_t *remap_line=(uint8_t *)jmalloc(remap_size,"light remap line");
+  uint8_t *remap_line=(uint8_t *)malloc(remap_size);
 
   light_patch *f=first;
   uint8_t *in_line=sc->scan_line(cy1)+cx1;
@@ -1101,7 +1101,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
     first=first->next;
     delete p;
   }
-  jfree(remap_line);
+  free(remap_line);
 }
 
 

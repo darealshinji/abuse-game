@@ -11,12 +11,7 @@
 #define __STACK_HPP_
 
 #include <stdio.h>
-
-#ifndef NO_LIBS
-#   include "jmalloc.hpp"
-#else
-#   include "fakelib.hpp"
-#endif
+#include <stdlib.h>
 
 // A fixed-size stack class
 template<class T> class grow_stack
@@ -33,7 +28,7 @@ public:
     {
         smax = max_size;
         son = 0;
-        sdata = (T **)jmalloc(sizeof(T *) * smax, "pointer stack");
+        sdata = (T **)malloc(sizeof(T *) * smax);
     }
 
     void push(T *data)
@@ -62,7 +57,7 @@ public:
     {
         if(son != 0)
             fprintf(stderr, "warning: cleaning up stack and not empty\n");
-        jfree(sdata);
+        free(sdata);
         sdata = NULL;
         son = 0;
     }

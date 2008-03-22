@@ -48,7 +48,7 @@ nfs_server_client_node::~nfs_server_client_node()
     if (file_list[i])
      delete file_list[i];
   if (file_list)
-    jfree(file_list);
+    free(file_list);
 }
 
 int nfs_server_client_node::add_file(bFILE *fp)  // returns id for bFILE
@@ -63,7 +63,7 @@ int nfs_server_client_node::add_file(bFILE *fp)  // returns id for bFILE
   }
   // we need to enlarge the file_list
   file_list_size++;
-  file_list=(bFILE **)jrealloc(file_list,sizeof(bFILE *)*file_list_size,"client file list");
+  file_list=(bFILE **)realloc(file_list,sizeof(bFILE *)*file_list_size);
   file_list[file_list_size-1]=fp;
   return file_list_size-1;
 }

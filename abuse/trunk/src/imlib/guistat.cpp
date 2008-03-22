@@ -24,7 +24,7 @@ class gui_status_node
   int last_update;
   time_marker last_time;
   gui_status_node(char const *Name, visual_object *Show, gui_status_node *Next)
-  { name=strcpy((char *)jmalloc(strlen(Name)+1,"status name"),Name);
+  { name=strcpy((char *)malloc(strlen(Name)+1),Name);
     show=Show;
     next=Next;
     last_update=0;
@@ -36,7 +36,7 @@ class gui_status_node
 
 gui_status_node::~gui_status_node()
 {
-  jfree(name);
+  free(name);
   if (show)
     delete show;
   if (stat_win)

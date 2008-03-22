@@ -16,7 +16,6 @@
 #ifdef NO_LIBS
 #include "fakelib.hpp"
 #else
-#include "jmalloc.hpp"
 #include "macs.hpp"
 #endif
 
@@ -45,7 +44,7 @@ void register_pointer(void **addr)
   if (reg_ptr_total>=reg_ptr_list_size)
   {
     reg_ptr_list_size+=0x100;
-    reg_ptr_list=(void ***)jrealloc(reg_ptr_list,sizeof(void **)*reg_ptr_list_size,"registered ptr list");
+    reg_ptr_list=(void ***)realloc(reg_ptr_list,sizeof(void **)*reg_ptr_list_size);
   }
   reg_ptr_list[reg_ptr_total++]=addr;
 }
@@ -256,7 +255,7 @@ void collect_space(int which_space) // should be tmp or permenant
   cend=(uint8_t *)free_space[which_space];
 
   space_size[GC_SPACE]=space_size[which_space];
-  void *new_space=jmalloc(space_size[GC_SPACE],"collect lisp space");
+  void *new_space=malloc(space_size[GC_SPACE]);
   current_space=GC_SPACE;
   free_space[GC_SPACE]=space[GC_SPACE]=(char *)new_space;
 
@@ -267,7 +266,7 @@ void collect_space(int which_space) // should be tmp or permenant
   collect_stacks();
 
   memset(space[which_space],0,space_size[which_space]);  // for debuging clear it out
-  jfree(space[which_space]);
+  free(space[which_space]);
 
   space[which_space]=(char *)new_space;
   free_space[which_space]=((char *)new_space)+

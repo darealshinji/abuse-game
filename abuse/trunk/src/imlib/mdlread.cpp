@@ -163,7 +163,7 @@ image **read_mdl(char *fn, palette *&pal, int16_t startn, int16_t endn, int16_t 
     startn--; if (endn>0) endn--;
       }
       if (!current_error())
-    im=(image **)jmalloc(sizeof(image *)*endn,"mdl_read::image * array");
+    im=(image **)malloc(sizeof(image *)*endn);
 
       while ((startn<endn || endn==-1) && !feof(fp) && !current_error())
       {

@@ -17,15 +17,14 @@
 #include "dos.h"
 #include "video.hpp"
 #include "filter.hpp"
-#include "jmalloc.hpp"
 
 palette *lastl=NULL;
 
 palette::palette(bFILE *fp)
 {
   ncolors=fp->read_uint16();
-  pal=(color *)jmalloc(sizeof(color)*ncolors,"palette");
-  usd=(unsigned char *)jmalloc(ncolors/8+1,"palette used array");
+  pal=(color *)malloc(sizeof(color)*ncolors);
+  usd=(unsigned char *)malloc(ncolors/8+1);
   set_all_unused();
   fp->read(pal,sizeof(color)*ncolors);
   bg=0;
@@ -35,8 +34,8 @@ palette::palette(spec_entry *e, bFILE *fp)
 {
   fp->seek(e->offset,0);
   ncolors=fp->read_uint16();
-  pal=(color *)jmalloc(sizeof(color)*ncolors,"palette");
-  usd=(unsigned char *)jmalloc(ncolors/8+1,"palette used array");
+  pal=(color *)malloc(sizeof(color)*ncolors);
+  usd=(unsigned char *)malloc(ncolors/8+1);
   set_all_unused();
   fp->read(pal,sizeof(color)*ncolors);
   bg=0;
@@ -301,8 +300,8 @@ void palette::get(int x, unsigned char &red, unsigned char &green, unsigned char
   red=pal[x].red; green=pal[x].green; blue=pal[x].blue;
 }
 palette::~palette()
-{ if (pal) jfree(pal);
-  if (usd) jfree(usd);
+{ if (pal) free(pal);
+  if (usd) free(usd);
 }
 
 palette::palette(int number_colors)
@@ -310,8 +309,8 @@ palette::palette(int number_colors)
   CONDITION(number_colors>0,"palette::constructor - need at least one color!");
   ncolors=number_colors;
   bg=0;
-  pal=(color *)jmalloc(ncolors*3,"palette");
-  usd=(unsigned char *)jmalloc(ncolors/8+1,"palette used array");
+  pal=(color *)malloc(ncolors*3);
+  usd=(unsigned char *)malloc(ncolors/8+1);
   defaults();
 }
 

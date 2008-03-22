@@ -85,7 +85,7 @@ class spicker : public scroller
   virtual void handle_right(image *screen, InputManager *inm);
   virtual void set_x(int x, image *screen);
   void reconfigure();   // should be called by constructor after class is ready to take virtual calls
-  ~spicker() { if (select) jfree(select); }
+  ~spicker() { if (select) free(select); }
 } ;
 
 struct pick_list_item
@@ -110,7 +110,7 @@ class pick_list : public scroller
   virtual void handle_up(image *screen, InputManager *inm);
   virtual void handle_down(image *screen, InputManager *inm);
   int get_selection() { return lis[cur_sel].number; }
-  ~pick_list() { jfree(lis); }
+  ~pick_list() { free(lis); }
 } ;
 
 #endif

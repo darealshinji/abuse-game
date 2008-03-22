@@ -31,7 +31,7 @@ uint32_t crc_file(bFILE *fp)
   uint8_t crc1=0,crc2=0,crc3=0,crc4=0;
 
   int size=0x1000;
-  uint8_t *buffer=(uint8_t *)jmalloc(size,"crc_buffer"),*c;
+  uint8_t *buffer=(uint8_t *)malloc(size),*c;
   long l=fp->file_size();
   long cur_pos=fp->tell();
   fp->seek(0,0);
@@ -52,6 +52,6 @@ uint32_t crc_file(bFILE *fp)
     }
   }
   fp->seek(cur_pos,0);
-  jfree(buffer);
+  free(buffer);
   return (crc1|(crc2<<8)|(crc3<<16)|(crc4<<24));
 }

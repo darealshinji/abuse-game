@@ -43,8 +43,8 @@ view::~view()
 
   if (total_weapons)
   {
-    jfree(weapons);
-    jfree(last_weapons);
+    free(weapons);
+    free(last_weapons);
   }
 }
 
@@ -253,8 +253,8 @@ view::view(game_object *Focus, view *Next, int number)
 
   if (total_weapons)
   {
-    weapons=(int32_t *)jmalloc(total_weapons*sizeof(int32_t),"weapon array");
-    last_weapons=(int32_t *)jmalloc(total_weapons*sizeof(int32_t),"last weapon array");
+    weapons=(int32_t *)malloc(total_weapons*sizeof(int32_t));
+    last_weapons=(int32_t *)malloc(total_weapons*sizeof(int32_t));
     memset(weapons,0xff,total_weapons*sizeof(int32_t));   // set all to -1
     memset(last_weapons,0xff,total_weapons*sizeof(int32_t));   // set all to -1
   }

@@ -166,7 +166,7 @@ void gamma_correct(palette *&pal, int force_menu)
             char *gammapath;
             FILE *fp;
 
-            gammapath = (char *)jmalloc(strlen(get_save_filename_prefix()) + 10, "gammapath");
+            gammapath = (char *)malloc(strlen(get_save_filename_prefix()) + 10);
             sprintf(gammapath, "%sgamma.lsp", get_save_filename_prefix());
             fp = open_FILE(gammapath, "wb");
             if(fp)
@@ -183,7 +183,7 @@ void gamma_correct(palette *&pal, int force_menu)
             {
                 dprintf("Unable to write to file gamma.lsp\n");
             }
-            jfree(gammapath);
+            free(gammapath);
         }
     }
 

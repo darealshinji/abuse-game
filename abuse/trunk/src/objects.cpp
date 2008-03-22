@@ -340,7 +340,7 @@ void game_object::next_sequence()
 
 game_object::~game_object()
 {
-  if (lvars) jfree(lvars);
+  if (lvars) free(lvars);
   clean_up();
 }
 
@@ -1562,7 +1562,7 @@ game_object::game_object(int Type, int load)
     int t=figures[Type]->tv;
     if (t)
     {
-      lvars=(int32_t *)jmalloc(t*4,"object vars");
+      lvars=(int32_t *)malloc(t * 4);
       memset(lvars,0,t*4);
     }
     else lvars=NULL;
@@ -1619,14 +1619,14 @@ void game_object::change_aitype(int new_type)
 
 void game_object::change_type(int new_type)
 {
-  if (lvars) jfree(lvars);     // free old variable
+  if (lvars) free(lvars);     // free old variable
 
   if (otype<0xffff)
   {
     int t=figures[new_type]->tv;
     if (t)
     {
-      lvars=(int32_t *)jmalloc(t*4,"object vars");
+      lvars=(int32_t *)malloc(t*4);
       memset(lvars,0,t*4);
     }
     else lvars=NULL;

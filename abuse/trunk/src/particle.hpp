@@ -44,7 +44,7 @@ class part_sequence
   int tframes;
   int *frames;  // array of id's
   part_sequence(void *args);
-  ~part_sequence() { if (tframes) jfree(frames); }
+  ~part_sequence() { if (tframes) free(frames); }
 } ;
 
 class part_animation

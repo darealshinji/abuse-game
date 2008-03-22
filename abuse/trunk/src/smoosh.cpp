@@ -9,7 +9,6 @@
 
 #include "config.h"
 
-#include "jmalloc.hpp"
 #define PARTICLE_SIZE 2            // 2x2 block of pixels
 
 class particle
@@ -19,14 +18,14 @@ public :
   int x,y;
   particle *left,*right,*up,*down;
   particle(int X, int Y, int size);
-  ~particle() { jfree(pict); }
+  ~particle() { free(pict); }
 } ;
 
 particle::particle(int X, int Y, image *im, int size);
 {
   x=X; y=Y;
   left=right=up=down=NULL;
-  pict=(unsigned char *)jmalloc(size*size,"Particle");
+  pict=(unsigned char *)malloc(size*size);
 }
 
 class particle_image

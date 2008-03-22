@@ -24,7 +24,6 @@
 #include "fakelib.hpp"
 #else
 #include "status.hpp"
-#include "jmalloc.hpp"
 #include "macs.hpp"
 #include "specs.hpp"
 #include "dprint.hpp"
@@ -861,7 +860,7 @@ lisp_symbol *make_find_symbol(char const *name)
   if (current_space!=GC_SPACE)
      current_space=PERM_SPACE;       // make sure all symbols get defined in permanant space
 
-  p=(lisp_symbol *)jmalloc(sizeof(lisp_symbol),"lsymbol");
+  p=(lisp_symbol *)malloc(sizeof(lisp_symbol));
   p->type=L_SYMBOL;
   p->name=new_lisp_string(name);
 
@@ -888,7 +887,7 @@ void ldelete_syms(lisp_symbol *root)
   {
     ldelete_syms(root->left);
     ldelete_syms(root->right);
-    jfree(root);
+    free(root);
   }
 }
 
@@ -1645,7 +1644,7 @@ void *mapcar(void *arg_list)
   int num_args=list_length(CDR(arg_list)),i,stop=0;
   if (!num_args) return 0;
 
-  void **arg_on=(void **)jmalloc(sizeof(void *)*num_args,"mapcar tmp array");
+  void **arg_on=(void **)malloc(sizeof(void *)*num_args);
   cons_cell *list_on=(cons_cell *)CDR(arg_list);
   long old_ptr_son=l_ptr_stack.son;
 
@@ -1660,7 +1659,7 @@ void *mapcar(void *arg_list)
 
   if (stop)
   {
-    jfree(arg_on);
+    free(arg_on);
     return NULL;
   }
 
@@ -1703,7 +1702,7 @@ void *mapcar(void *arg_list)
   while (!stop);
   l_ptr_stack.son=old_ptr_son;
 
-  jfree(arg_on);
+  free(arg_on);
   return return_list;
 }
 
@@ -1721,7 +1720,7 @@ void *concatenate(void *prog_list)
     if (!elements) ret=new_lisp_string("");
     else
     {
-      void **str_eval=(void **)jmalloc(elements*sizeof(void *),"tmp eval array");
+      void **str_eval=(void **)malloc(elements*sizeof(void *));
       int i,old_ptr_stack_start=l_ptr_stack.son;
 
       // evalaute all the strings and count their lengths
@@ -1783,7 +1782,7 @@ void *concatenate(void *prog_list)
       default : ;     // already checked for, but make compiler happy
     }
       }
-      jfree(str_eval);
+      free(str_eval);
       l_ptr_stack.son=old_ptr_stack_start;   // restore pointer GC stack
       *s=0;
       ret=st;
@@ -2408,10 +2407,10 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
                 if( strcmp( st, "gamma.lsp" ) == 0 )
                 {
                     char *gammapath;
-                    gammapath = (char *)jmalloc( strlen( get_save_filename_prefix() ) + 9 + 1, "gammapath" );
+                    gammapath = (char *)malloc( strlen( get_save_filename_prefix() ) + 9 + 1 );
                     sprintf( gammapath, "%sgamma.lsp", get_save_filename_prefix() );
                     fp = new jFILE( gammapath, "rb" );
-                    jfree( gammapath );
+                    free( gammapath );
                 }
                 else
                 {
@@ -2433,7 +2432,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
             else
             {
                 long l=fp->file_size();
-                char *s=(char *)jmalloc(l+1,"loaded script");
+                char *s=(char *)malloc(l + 1);
                 if (!s)
                 {
                   printf("Malloc error in load_script\n");
@@ -2467,7 +2466,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
                                 if (stat_man) stat_man->update(100);
                 if (stat_man) stat_man->pop();
             #endif
-                jfree(s);
+                free(s);
                 ret=fn;
       }
     } break;
@@ -3199,7 +3198,7 @@ void resize_tmp(int new_size)
     exit(0);
   } else if (free_space[TMP_SPACE]==space[TMP_SPACE])
   {
-    free_space[TMP_SPACE]=space[TMP_SPACE]=(char *)jrealloc(space[TMP_SPACE],new_size,"lisp tmp space");
+    free_space[TMP_SPACE]=space[TMP_SPACE]=(char *)realloc(space[TMP_SPACE],new_size);
     space_size[TMP_SPACE]=new_size;
     dprintf("Lisp : tmp space resized to %d\n",new_size);
   } else dprintf("Lisp :tmp not empty, cannot resize\n");
@@ -3211,11 +3210,11 @@ void lisp_init(long perm_size, long tmp_size)
   int i;
   lsym_root=NULL;
   total_user_functions=0;
-  free_space[0]=space[0]=(char *)jmalloc(perm_size,"lisp perm space");
+  free_space[0]=space[0]=(char *)malloc(perm_size);
   space_size[0]=perm_size;
 
 
-  free_space[1]=space[1]=(char *)jmalloc(tmp_size,"lisp tmp space");
+  free_space[1]=space[1]=(char *)malloc(tmp_size);
   space_size[1]=tmp_size;
 
 
@@ -3233,8 +3232,8 @@ void lisp_init(long perm_size, long tmp_size)
 
 void lisp_uninit()
 {
-  jfree(space[0]);
-  jfree(space[1]);
+  free(space[0]);
+  free(space[1]);
   ldelete_syms(lsym_root);
   lsym_root=NULL;
   ltotal_syms=0;

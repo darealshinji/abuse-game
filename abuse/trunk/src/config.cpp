@@ -92,14 +92,14 @@ void get_key_bindings()
 {
     if( key_map )
     {
-        jfree( key_map );
+        free( key_map );
     }
     key_map = NULL;
 
     for( key_players = 0; binding_for_player( key_players + 1); key_players++ );
     if( key_players )
     {
-        key_map = ( player_keys *)jmalloc(sizeof(player_keys)*key_players,"key bindings");
+        key_map = ( player_keys *)malloc(sizeof(player_keys)*key_players);
         for( int i = 0; i < key_players; i++ )
         {
             key_map[i].joy = ( binding_for_player( i + 1 ) == 2 );
@@ -127,12 +127,12 @@ void get_key_bindings()
 {
     if( key_map )
     {
-        jfree( key_map );
+        free( key_map );
     }
     key_map = NULL;
 
     key_players = 1;
-    key_map = (player_keys *)jmalloc( sizeof( player_keys ) * key_players, "key bindings" );
+    key_map = (player_keys *)malloc( sizeof( player_keys ) * key_players );
     for( int i = 0; i < key_players; i++ )
     {
         key_map[i].joy = 0;
@@ -223,7 +223,7 @@ void config_cleanup()
 {
     if(key_map)
     {
-        jfree(key_map);
+        free(key_map);
         key_map = NULL;
     }
 }

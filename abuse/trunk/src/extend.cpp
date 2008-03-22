@@ -53,7 +53,7 @@ void simple_object::add_light(light_source *ls)
   ls->known=1;
   for (int i=0;i<tlights;i++) if (lights[i]==ls) return;
   tlights++;
-  lights=(light_source **)jrealloc(lights,sizeof(light_source *)*tlights,"Light list");
+  lights=(light_source **)realloc(lights,sizeof(light_source *)*tlights);
   lights[tlights-1]=ls;
 }
 
@@ -67,7 +67,7 @@ void simple_object::add_object(game_object *o)
   if(_tint != -1)
     o->set_tint(_tint);
   tobjs++;
-  objs=(game_object **)jrealloc(objs,sizeof(game_object *)*tobjs,"Object list");
+  objs=(game_object **)realloc(objs,sizeof(game_object *)*tobjs);
   objs[tobjs-1]=o;
 }
 
@@ -81,7 +81,7 @@ void simple_object::remove_light(light_source *ls)
       tlights--;
       for (int j=i;j<tlights;j++)     // don't even think about it :)
         lights[j]=lights[j+1];
-      lights=(light_source **)jrealloc(lights,sizeof(light_source *)*tlights,"object's lights");
+      lights=(light_source **)realloc(lights,sizeof(light_source *)*tlights);
       return ;
     }
   }
@@ -96,7 +96,7 @@ void simple_object::remove_object(game_object *o)
       tobjs--;
       for (int j=i;j<tobjs;j++)     // don't even think about it :)
         objs[j]=objs[j+1];
-      objs=(game_object **)jrealloc(objs,sizeof(game_object *)*tobjs,"object's lights");
+      objs=(game_object **)realloc(objs,sizeof(game_object *)*tobjs);
       return ;
     }
   }
@@ -144,8 +144,8 @@ void simple_object::set_morph_status(morph_char *Mc)
 
 void simple_object::clean_up()
 {
-  if (tlights) jfree(lights);
-  if (tobjs)   jfree(objs);
+  if (tlights) free(lights);
+  if (tobjs)   free(objs);
   if (Controller)
     Controller->focus=NULL;
 }

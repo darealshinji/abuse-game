@@ -75,9 +75,9 @@ game_object *level::main_character()
 
 void level::load_fail()
 {
-  if (map_fg)    jfree(map_fg);   map_fg=NULL;
-  if (map_bg)    jfree(map_bg);   map_bg=NULL;
-  if (Name)      jfree(Name);     Name=NULL;
+  if (map_fg)    free(map_fg);   map_fg=NULL;
+  if (map_bg)    free(map_bg);   map_bg=NULL;
+  if (Name)      free(Name);     Name=NULL;
 
   first_active=NULL;
   view *f=player_list;
@@ -110,11 +110,11 @@ void level::load_fail()
 level::~level()
 {
   load_fail();
-  if (attack_list) jfree(attack_list);
-  if (target_list) jfree(target_list);
-  if (block_list) jfree(block_list);
-  if (all_block_list) jfree(all_block_list);
-  if (first_name) jfree(first_name);
+  if (attack_list) free(attack_list);
+  if (target_list) free(target_list);
+  if (block_list) free(block_list);
+  if (all_block_list) free(all_block_list);
+  if (first_name) free(first_name);
 }
 
 void level::restart()
@@ -834,7 +834,7 @@ void level::set_size(int w, int h)
   }
 
   uint16_t *new_fg,*new_bg;
-  new_fg=(uint16_t *)jmalloc(w*h*sizeof(int16_t),"Map fg : resized");
+  new_fg=(uint16_t *)malloc(w*h*sizeof(int16_t));
   memset(new_fg,0,w*h*sizeof(int16_t));
 
   int x,y,miny=(h<fg_height)? h : fg_height,minx=(w<fg_width)? w : fg_width;
@@ -842,7 +842,7 @@ void level::set_size(int w, int h)
   uint16_t nbw,nbh;
   calc_bgsize(w,h,nbw,nbh);
 
-  new_bg=(uint16_t *)jmalloc((int)nbw*(int)nbh*sizeof(int16_t),"map bg : resized");
+  new_bg=(uint16_t *)malloc((int)nbw*(int)nbh*sizeof(int16_t));
   memset(new_bg,0,(int)nbw*(int)nbh*sizeof(int16_t));
 
   for (y=0;y<miny;y++)
@@ -856,8 +856,8 @@ void level::set_size(int w, int h)
     for (x=0;x<minx;x++)
       new_bg[x+y*nbw]=get_bg(x,y);
 
-  jfree(map_fg);
-  jfree(map_bg);
+  free(map_fg);
+  free(map_bg);
   map_fg=new_fg;
   map_bg=new_bg;
   fg_width=w;
@@ -897,7 +897,7 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
     fp->seek(se->offset,0);
     /******************************* Read debug info ******************************/
     int16_t old_tot=fp->read_uint16();
-    uint16_t *o_remap=(uint16_t *)jmalloc(old_tot*2,"obj remap array");
+    uint16_t *o_remap=(uint16_t *)malloc(old_tot * 2);
     char old_name[150];
     for (i=0;i<old_tot;i++)
     {
@@ -912,7 +912,7 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
 
     /***************************** Read state names *********************************/
     int old_stot=fp->read_uint16();
-    unsigned char *s_remap=(unsigned char *)jmalloc(old_stot,"state remap array");
+    unsigned char *s_remap=(unsigned char *)malloc(old_stot);
     for (i=0;i<old_stot;i++)
     {
       fp->read(old_name,fp->read_uint8());
@@ -1004,10 +1004,8 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
       }
     }
 
-
-
-    jfree(o_remap);
-    jfree(s_remap);
+    free(o_remap);
+    free(s_remap);
   }
 
 }
@@ -1033,8 +1031,8 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
     if (!se || !old_tot)
       return ;
 
-    uint16_t *o_remap=(uint16_t *)jmalloc(old_tot*2,"obj remap array");
-    uint16_t *o_backmap=(uint16_t *)jmalloc(total_objects*2,"obj remap array");
+    uint16_t *o_remap=(uint16_t *)malloc(old_tot * 2);
+    uint16_t *o_backmap=(uint16_t *)malloc(total_objects * 2);
     memset(o_backmap,0xff,total_objects*2);
     char old_name[150];
     for (i=0;i<old_tot;i++)
@@ -1051,9 +1049,9 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
     }
 
     se=sd->find("describe_states");
-    if (!se) { jfree(o_remap); jfree(o_backmap); return ; }
-    int16_t **s_remap=(int16_t **)jmalloc(old_tot*sizeof(int16_t *),"big state remap array");
-    int16_t *s_remap_totals=(int16_t *)jmalloc(old_tot*sizeof(int16_t),"big state rmp totals");
+    if (!se) { free(o_remap); free(o_backmap); return ; }
+    int16_t **s_remap=(int16_t **)malloc(old_tot*sizeof(int16_t *));
+    int16_t *s_remap_totals=(int16_t *)malloc(old_tot*sizeof(int16_t));
     fp->seek(se->offset,0);
     int i=0;
     for (;i<old_tot;i++)
@@ -1062,7 +1060,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
       s_remap_totals[i]=t;
       if (t)
       {
-        s_remap[i]=(int16_t *)jmalloc(t*sizeof(int16_t),"state remap");
+        s_remap[i]=(int16_t *)malloc(t*sizeof(int16_t));
     int j=0;
     for (;j<t;j++)
       *(s_remap[i]+j)=stopped;    // if no remap found, then go to stopped state
@@ -1093,8 +1091,8 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
     se=sd->find("describe_lvars");
     if (se)
     {
-      v_remap=(int16_t **)jmalloc(old_tot*sizeof(int16_t *),"big var remap array");
-      v_remap_totals=(int16_t *)jmalloc(old_tot*sizeof(int16_t),"big var rmp totals");
+      v_remap=(int16_t **)malloc(old_tot*sizeof(int16_t *));
+      v_remap_totals=(int16_t *)malloc(old_tot*sizeof(int16_t));
 
       fp->seek(se->offset,0);
       int i=0;
@@ -1104,7 +1102,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
     v_remap_totals[i]=t;
     if (t)
     {
-      v_remap[i]=(int16_t *)jmalloc(t*sizeof(int16_t),"var remap");
+      v_remap[i]=(int16_t *)malloc(t*sizeof(int16_t));
       memset(v_remap[i],0xff,t*sizeof(int16_t));
     } else { v_remap[i]=NULL; }
     int j=0;
@@ -1255,21 +1253,21 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
     for (;k<old_tot;k++)
     {
       if (s_remap_totals[k])
-        jfree(s_remap[k]);
+        free(s_remap[k]);
     }
 
     int l=0;
     for (;l<old_tot;l++)
     {
       if (v_remap_totals[l])
-        jfree(v_remap[l]);
+        free(v_remap[l]);
     }
-    jfree(v_remap_totals);
-    jfree(s_remap_totals);
-    jfree(o_remap);
-    jfree(o_backmap);
-    jfree(s_remap);
-    jfree(v_remap);
+    free(v_remap_totals);
+    free(s_remap_totals);
+    free(o_remap);
+    free(o_backmap);
+    free(s_remap);
+    free(v_remap);
   }
 
 }
@@ -1297,18 +1295,18 @@ level::level(spec_directory *sd, bFILE *fp, char const *lev_name)
   char cmd[100];
   sprintf(cmd,symbol_str("loading"),lev_name);
   stack_stat stat(cmd);
-  Name=strcpy((char *)jmalloc(strlen(lev_name)+1,"lev name"),lev_name);
+  Name=strcpy((char *)malloc(strlen(lev_name)+1),lev_name);
 
   e=sd->find("first name");
   if (e)
   {
     fp->seek(e->offset,0);
     int len=fp->read_uint8();   // read the length of the string
-    first_name=(char *)jmalloc(len,"level first name");
+    first_name=(char *)malloc(len);
     fp->read(first_name,len);    // read the string
   } else
   {
-    first_name=(char *)jmalloc(strlen(Name)+1,"level first name");
+    first_name=(char *)malloc(strlen(Name)+1);
     strcpy(first_name,Name);
   }
 
@@ -1320,7 +1318,7 @@ level::level(spec_directory *sd, bFILE *fp, char const *lev_name)
     fp->seek(e->offset,0);
     fg_width=fp->read_uint32();
     fg_height=fp->read_uint32();
-    map_fg=(uint16_t *)jmalloc(2*fg_width*fg_height,"Map fg : loaded");
+    map_fg=(uint16_t *)malloc(2*fg_width*fg_height);
     fp->read((char *)map_fg,2*fg_width*fg_height);
     int t=fg_width*fg_height;
     uint16_t *map=map_fg;
@@ -1338,7 +1336,7 @@ level::level(spec_directory *sd, bFILE *fp, char const *lev_name)
     fp->seek(e->offset,0);
     bg_width=fp->read_uint32();
     bg_height=fp->read_uint32();
-    map_bg=(uint16_t *)jmalloc(2*bg_width*bg_height,"Map bg : loaded");
+    map_bg=(uint16_t *)malloc(2*bg_width*bg_height);
     fp->read((char *)map_bg,2*bg_width*bg_height);
     int t=bg_width*bg_height;
     uint16_t *map=map_bg;
@@ -1353,7 +1351,7 @@ level::level(spec_directory *sd, bFILE *fp, char const *lev_name)
   {
     fg_width=bg_width;
     fg_height=bg_height;
-    map_fg=(uint16_t *)jmalloc(2*fg_width*fg_height,"Map fg : loaded");
+    map_fg=(uint16_t *)malloc(2*fg_width*fg_height);
     memset(map_fg,0,2*fg_width*fg_height);
   }
 
@@ -1361,7 +1359,7 @@ level::level(spec_directory *sd, bFILE *fp, char const *lev_name)
   {
     bg_width=fg_width/8+8;
     bg_height=fg_height/8+8;
-    map_bg=(uint16_t *)jmalloc(2*bg_width*bg_height,"Map bg : loaded");
+    map_bg=(uint16_t *)malloc(2*bg_width*bg_height);
     memset(map_bg,0,2*bg_width*bg_height);
   }
   stat_man->update(10);
@@ -2216,8 +2214,8 @@ int level::save(char const *filename, int save_all)
                 dprintf("unable to open backup file %s\n", bkname );
             else
             {
+                uint8_t buf[0x1000];
                 int32_t size = fp->file_size();
-                uint8_t *buf = (uint8_t *)jmalloc(0x1000,"copy buf");
                 int tr = 1;
                 while( size && tr )
                 {
@@ -2226,7 +2224,6 @@ int level::save(char const *filename, int save_all)
                     tr = bk->write(buf,tr);
                     size -= tr;
                 }
-                jfree(buf);
             }
             delete bk;
 #if (defined(__MACH__) || !defined(__APPLE__))
@@ -2240,8 +2237,8 @@ int level::save(char const *filename, int save_all)
     if( !save_all )
     {
         if( first_name )
-            jfree(first_name);
-        first_name = (char *)jmalloc( strlen( name ) + 1, "level first name" );
+            free(first_name);
+        first_name = (char *)malloc( strlen( name ) + 1 );
         strcpy( first_name, name );
     }
 
@@ -2380,8 +2377,8 @@ level::level(int width, int height, char const *name)
   fg_height=height;
   calc_bgsize(fg_width,fg_height,bg_width,bg_height);
 
-  map_bg=(uint16_t *)jmalloc(sizeof(int16_t)*bg_width*bg_height,"map bg");
-  map_fg=(uint16_t *)jmalloc(sizeof(int16_t)*fg_width*fg_height,"map fg");
+  map_bg=(uint16_t *)malloc(sizeof(int16_t)*bg_width*bg_height);
+  map_fg=(uint16_t *)malloc(sizeof(int16_t)*fg_width*fg_height);
 
 
 
@@ -3116,8 +3113,7 @@ void level::add_attacker(game_object *who)
   if (attack_total>=attack_list_size)  // see if we need to grow the list size..
   {
     attack_list_size++;
-    attack_list=(game_object **)jrealloc(attack_list,sizeof(game_object *)*attack_list_size,
-                              "attack_list");
+    attack_list=(game_object **)realloc(attack_list,sizeof(game_object *)*attack_list_size);
   }
   attack_list[attack_total]=who;
   attack_total++;
@@ -3130,8 +3126,7 @@ void level::add_target(game_object *who)
   if (target_total>=target_list_size)  // see if we need to grow the list size..
   {
     target_list_size++;
-    target_list=(game_object **)jrealloc(target_list,sizeof(game_object *)*target_list_size,
-                              "target_list");
+    target_list=(game_object **)realloc(target_list,sizeof(game_object *)*target_list_size);
   }
   target_list[target_total]=who;
   target_total++;
@@ -3144,8 +3139,7 @@ void level::add_block(game_object *who)
   if (block_total>=block_list_size)  // see if we need to grow the list size..
   {
     block_list_size++;
-    block_list=(game_object **)jrealloc(block_list,sizeof(game_object *)*block_list_size,
-                              "block_list");
+    block_list=(game_object **)realloc(block_list,sizeof(game_object *)*block_list_size);
   }
   block_list[block_total]=who;
   block_total++;
@@ -3157,8 +3151,7 @@ void level::add_all_block(game_object *who)
   if (all_block_total>=all_block_list_size)  // see if we need to grow the list size..
   {
     all_block_list_size++;
-    all_block_list=(game_object **)jrealloc(all_block_list,sizeof(game_object *)*all_block_list_size,
-                              "all_block_list");
+    all_block_list=(game_object **)realloc(all_block_list,sizeof(game_object *)*all_block_list_size);
   }
   all_block_list[all_block_total]=who;
   all_block_total++;

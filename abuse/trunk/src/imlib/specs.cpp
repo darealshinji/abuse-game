@@ -24,7 +24,6 @@
 #include "palette.hpp"
 #include "specs.hpp"
 #include "system.h"
-#include "jmalloc.hpp"
 #include "dprint.hpp"
 
 char const *spec_types[] =
@@ -74,12 +73,12 @@ void set_filename_prefix(char const *prefix)
 {
     if( spec_prefix )
     {
-        jfree( spec_prefix );
+        free( spec_prefix );
     }
     
     if( prefix )
     {
-        spec_prefix = strcpy( (char *)jmalloc( strlen( prefix ) + 2, "prefix_name" ), prefix );
+        spec_prefix = strcpy( (char *)malloc( strlen( prefix ) + 2 ), prefix );
         int len = strlen( prefix );
         if( prefix[len - 1] != '\\' && prefix[len - 1] != '/')
         {
@@ -103,13 +102,13 @@ void set_save_filename_prefix(char const *save_prefix)
 {
     if( save_spec_prefix )
     {
-        jfree( save_spec_prefix );
+        free( save_spec_prefix );
     }
 
     if( save_prefix )
     {
         int len = strlen( save_prefix );
-        save_spec_prefix = (char *)jmalloc( len + 1, "prefix_name" );
+        save_spec_prefix = (char *)malloc( len + 1 );
         strcpy( save_spec_prefix, save_prefix );
 /* AK - Commented this out as it may cause problems
         if( save_prefix[len - 1] != '\\' && save_prefix[len - 1] != '/' )
@@ -142,19 +141,19 @@ void set_no_space_handler(void (*handle_fun)())
 bFILE::bFILE()
 {
   rbuf_size=8192;
-  rbuf=(unsigned char *)jmalloc(rbuf_size,"File read buffer");
+  rbuf=(unsigned char *)malloc(rbuf_size);
   rbuf_start=rbuf_end=0;
 
   wbuf_size=8192;
-  wbuf=(unsigned char *)jmalloc(wbuf_size,"File write buffer");
+  wbuf=(unsigned char *)malloc(wbuf_size);
   wbuf_end=0;
 }
 
 bFILE::~bFILE()
 {
-  if (rbuf) jfree(rbuf);
+  if (rbuf) free(rbuf);
   flush_writes();
-  if (wbuf) jfree(wbuf);
+  if (wbuf) free(wbuf);
 }
 
 int bFILE::flush_writes()
@@ -267,9 +266,9 @@ void bFILE::set_read_buffer_size(long size)
   unbuffered_seek(tell(),SEEK_SET);
   rbuf_start=rbuf_end=0;
   if (rbuf)
-    jfree(rbuf);
+    free(rbuf);
   rbuf_size=size;
-  rbuf=(unsigned char *)jmalloc(rbuf_size,"File buffer");
+  rbuf=(unsigned char *)malloc(rbuf_size);
 }
 
 void set_spec_main_file(char const *filename, int Search_order)
@@ -644,8 +643,8 @@ spec_directory::~spec_directory()
 
   if (total)
   {
-    jfree(data);
-    jfree(entries);
+    free(data);
+    free(entries);
   }
 }
 
@@ -753,7 +752,7 @@ void spec_directory::startup(bFILE *fp)
   if (!strcmp(buf,SPEC_SIGNATURE))
   {
     total=fp->read_uint16();
-    entries=(spec_entry **)jmalloc(sizeof(spec_entry *)*total,"spec_directory::entries");
+    entries=(spec_entry **)malloc(sizeof(spec_entry *)*total);
     long start=fp->tell();
 
     int i;
@@ -767,7 +766,7 @@ void spec_directory::startup(bFILE *fp)
 
       size+=entry_size;
     }
-    data=jmalloc(size,"spec_directory::data");
+    data=malloc(size);
     char *dp=(char *)data;
     fp->seek(start,SEEK_SET);
     for (i=0;i<total;i++)
@@ -971,7 +970,7 @@ void spec_directory::remove(spec_entry *e)
     total--;
     for (;i<total;i++)                               // compact the pointer array
       entries[i]=entries[i+1];
-    entries=(spec_entry **)jrealloc(entries,sizeof(spec_entry *)*total,"spec_directory::entries");
+    entries=(spec_entry **)realloc(entries,sizeof(spec_entry *)*total);
   }
   else
     printf("Spec_directory::remove bad entry pointer\n");
@@ -982,7 +981,7 @@ void spec_directory::remove(spec_entry *e)
 void spec_directory::add_by_hand(spec_entry *e)
 {
   total++;
-  entries=(spec_entry **)jrealloc(entries,sizeof(spec_entry *)*total,"spec_directory::entries");
+  entries=(spec_entry **)realloc(entries,sizeof(spec_entry *)*total);
   entries[total-1]=e;
 }
 
@@ -993,7 +992,7 @@ void spec_directory::delete_entries()   // if the directory was created by hand 
     delete entries[i];
 
   if (total)
-    jfree(entries);
+    free(entries);
 }
 
 void note_open_fd(int fd, char const *str)

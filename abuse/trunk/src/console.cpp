@@ -16,7 +16,6 @@
 
 #include "linked.hpp"
 #include "console.hpp"
-#include "jmalloc.hpp"
 
 void console::put_string(char const *st)
 {
@@ -70,8 +69,8 @@ void console::hide()
 console::~console()
 {
   hide();
-  jfree(screen);
-  jfree(name);
+  free(screen);
+  free(name);
 }
 
 console::console(JCFont *font, int width, int height, char const *Name)
@@ -79,13 +78,13 @@ console::console(JCFont *font, int width, int height, char const *Name)
   con_win=NULL;
   w=width;
   h=height;
-  screen=(char *)jmalloc(w*h,"console screen");
+  screen=(char *)malloc(w*h);
   memset(screen,' ',w*h);
   cx=cy=0;
   fnt=font;
   lastx=xres/2-screen_w()/2;
   lasty=yres/2-screen_h()/2;
-  name=(char *)strcpy((char *)jmalloc(strlen(Name)+1,"console name"),Name);
+  name=(char *)strcpy((char *)malloc(strlen(Name)+1),Name);
 }
 
 

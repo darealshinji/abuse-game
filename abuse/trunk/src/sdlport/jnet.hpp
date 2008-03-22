@@ -56,7 +56,7 @@ uchar *name_to_address(char *name, int protocol);       // should be defined ext
                                                         // returns 4 bytes for TCPIP
                                                         // 4 (net number) 6 node number for IPX
 
-uchar *get_local_address();                             // same format as above (be sure to jfree this)
+uchar *get_local_address();                             // same format as above (be sure to free this)
 
 
 int net_init(int protocol);
