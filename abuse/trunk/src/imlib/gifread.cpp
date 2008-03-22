@@ -114,7 +114,9 @@ image *read_gif(char *fn, palette *&pal)
           {
         make_block(sizeof(image));
         im=new image(gif_image.w+1,gif_image.h);
+        im->lock();
         decode_gif_data(im,fp);
+        im->unlock();
         fclose(fp);
           }
 

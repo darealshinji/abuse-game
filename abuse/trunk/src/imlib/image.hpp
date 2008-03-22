@@ -156,6 +156,10 @@ public:
     {
         return (int16_t)h;
     }
+    int16_t pitch()
+    {
+        return (int16_t)w; // FIXME: for now, pitch == width
+    }
     void scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2,
                 int16_t xd, int16_t yd);
     void fill_image(image *screen, int16_t x1, int16_t y1,

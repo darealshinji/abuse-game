@@ -490,7 +490,6 @@ void Jwindow::redraw()
 
     if(_name)
     {
-fprintf(stderr, "redrawing '%s'\n", _name);
         if (right_border() >= 1)
         {
             screen->widget_bar (0, 0, l - 1, h - 1, hi, med, low);
@@ -510,7 +509,6 @@ fprintf(stderr, "redrawing '%s'\n", _name);
 
   else
     {
-fprintf(stderr, "redrawing unknown'\n");
       if (right_border() >= 1)
         {
           screen->widget_bar (0, 0, l - 1, h - 1, hi, med, low);
