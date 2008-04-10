@@ -28,7 +28,6 @@
 #include "help.hpp"
 #include "ability.hpp"
 #include "cache.hpp"
-#include "loader.hpp"
 #include "lisp.hpp"
 #include "jrand.hpp"
 #include "config.hpp"
@@ -1218,119 +1217,119 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *fo
 
 void do_title()
 {
-    if(cdc_logo != -1)
+    if(cdc_logo == -1)
+        return;
+
+    if(sound_avail & MUSIC_INITIALIZED)
     {
-        if(sound_avail & MUSIC_INITIALIZED)
+        if(current_song)
         {
-            if(current_song)
-            {
-                current_song->stop();
-                delete current_song;
-            }
-            current_song = new song("music/intro.hmi");
-            current_song->play(music_volume);
+            current_song->stop();
+            delete current_song;
         }
-
-        void *logo_snd = symbol_value(make_find_symbol("LOGO_SND"));
-
-        if(DEFINEDP(logo_snd) && (sound_avail & SFX_INITIALIZED))
-            cache.sfx(lnumber_value(logo_snd))->play(sfx_volume);
-
-        // This must be a dynamic allocated image because if it
-        // is not and the window gets closed during do_title, then
-        // exit() will try to delete (through the desctructor of
-        // image_list in image.cpp) the image on the stack -> boom.
-        image *blank = new image(2, 2);
-        blank->clear();
-        wm->set_mouse_shape(blank->copy(), 0, 0); // hide mouse
-        delete blank;
-        fade_in(cache.img(cdc_logo), 32);
-
-        milli_wait(400);
-
-        void *space_snd = symbol_value(make_find_symbol("SPACE_SND"));
-
-        fade_out(32);
-        milli_wait(100);
-
-        int i;
-        char *str = lstring_value(eval(make_find_symbol("plot_start")));
-
-        bFILE *fp = open_file("art/smoke.spe", "rb");
-        if(!fp->open_failure())
-        {
-            spec_directory sd(fp);
-            palette *old_pal = pal;
-            pal = new palette(sd.find(SPEC_PALETTE), fp);
-            pal->shift(1);
-
-            image *gray = new image(sd.find("gray_pict"), fp);
-            image *smoke[5];
-
-            char nm[20];
-            for(i = 0; i < 5; i++)
-            {
-                sprintf(nm, "smoke%04d.pcx", i + 1);
-                smoke[i] = new image(sd.find(nm), fp);
-            }
-
-            screen->clear();
-            pal->load();
-
-            int dx = (xres + 1) / 2 - gray->width() / 2, dy = (yres + 1) / 2 - gray->height() / 2;
-            gray->put_image(screen, dx, dy);
-            smoke[0]->put_image(screen, dx + 24, dy + 5);
-
-            fade_in(NULL, 16);
-            uint8_t cmap[32];
-            for(i = 0; i < 32; i++)
-            cmap[i] = pal->find_closest(i * 256 / 32, i * 256 / 32, i * 256 / 32);
-
-            event ev;
-            ev.type = EV_SPURIOUS;
-            time_marker start;
-
-            for(i = 0; i < 320 && (ev.type != EV_KEY && ev.type != EV_MOUSE_BUTTON); i++)
-            {
-                gray->put_image(screen, dx, dy);
-                smoke[i % 5]->put_image(screen, dx + 24, dy + 5);
-                text_draw(205 - i, dx + 15, dy, dx + 320 - 15, dy + 199, str, wm->font(), cmap, wm->bright_color());
-                wm->flush_screen();
-                time_marker now;
-
-                while(now.diff_time(&start) < 0.18)
-                {
-                    milli_wait(20); // ECS - Added the wait, so CPU utilization stays low during the story
-                    now.get_time();
-                }
-
-                start.get_time();
-
-                while(wm->event_waiting() && ev.type != EV_KEY)
-                {
-                    wm->get_event(ev);
-                }
-                if((i % 5) == 0 && DEFINEDP(space_snd) && (sound_avail & SFX_INITIALIZED))
-                {
-                    cache.sfx(lnumber_value(space_snd))->play(sfx_volume * 90 / 127);
-                }
-            }
-
-            the_game->reset_keymap();
-
-            fade_out(16);
-
-            for(i = 0; i < 5; i++)
-                delete smoke[i];
-            delete gray;
-            delete pal;
-            pal = old_pal;
-        }
-        delete fp;
-
-        if(title_screen >= 0)
-            fade_in(cache.img(title_screen), 32);
+        current_song = new song("music/intro.hmi");
+        current_song->play(music_volume);
     }
+
+    void *logo_snd = symbol_value(make_find_symbol("LOGO_SND"));
+
+    if(DEFINEDP(logo_snd) && (sound_avail & SFX_INITIALIZED))
+        cache.sfx(lnumber_value(logo_snd))->play(sfx_volume);
+
+    // This must be a dynamic allocated image because if it
+    // is not and the window gets closed during do_title, then
+    // exit() will try to delete (through the desctructor of
+    // image_list in image.cpp) the image on the stack -> boom.
+    image *blank = new image(2, 2);
+    blank->clear();
+    wm->set_mouse_shape(blank->copy(), 0, 0); // hide mouse
+    delete blank;
+    fade_in(cache.img(cdc_logo), 32);
+
+    milli_wait(400);
+
+    void *space_snd = symbol_value(make_find_symbol("SPACE_SND"));
+
+    fade_out(32);
+    milli_wait(100);
+
+    int i;
+    char *str = lstring_value(eval(make_find_symbol("plot_start")));
+
+    bFILE *fp = open_file("art/smoke.spe", "rb");
+    if(!fp->open_failure())
+    {
+        spec_directory sd(fp);
+        palette *old_pal = pal;
+        pal = new palette(sd.find(SPEC_PALETTE), fp);
+        pal->shift(1);
+
+        image *gray = new image(sd.find("gray_pict"), fp);
+        image *smoke[5];
+
+        char nm[20];
+        for(i = 0; i < 5; i++)
+        {
+            sprintf(nm, "smoke%04d.pcx", i + 1);
+            smoke[i] = new image(sd.find(nm), fp);
+        }
+
+        screen->clear();
+        pal->load();
+
+        int dx = (xres + 1) / 2 - gray->width() / 2, dy = (yres + 1) / 2 - gray->height() / 2;
+        gray->put_image(screen, dx, dy);
+        smoke[0]->put_image(screen, dx + 24, dy + 5);
+
+        fade_in(NULL, 16);
+        uint8_t cmap[32];
+        for(i = 0; i < 32; i++)
+        cmap[i] = pal->find_closest(i * 256 / 32, i * 256 / 32, i * 256 / 32);
+
+        event ev;
+        ev.type = EV_SPURIOUS;
+        time_marker start;
+
+        for(i = 0; i < 320 && (ev.type != EV_KEY && ev.type != EV_MOUSE_BUTTON); i++)
+        {
+            gray->put_image(screen, dx, dy);
+            smoke[i % 5]->put_image(screen, dx + 24, dy + 5);
+            text_draw(205 - i, dx + 15, dy, dx + 320 - 15, dy + 199, str, wm->font(), cmap, wm->bright_color());
+            wm->flush_screen();
+            time_marker now;
+
+            while(now.diff_time(&start) < 0.18)
+            {
+                milli_wait(20); // ECS - Added the wait, so CPU utilization stays low during the story
+                now.get_time();
+            }
+
+            start.get_time();
+
+            while(wm->event_waiting() && ev.type != EV_KEY)
+            {
+                wm->get_event(ev);
+            }
+            if((i % 5) == 0 && DEFINEDP(space_snd) && (sound_avail & SFX_INITIALIZED))
+            {
+                cache.sfx(lnumber_value(space_snd))->play(sfx_volume * 90 / 127);
+            }
+        }
+
+        the_game->reset_keymap();
+
+        fade_out(16);
+
+        for(i = 0; i < 5; i++)
+            delete smoke[i];
+        delete gray;
+        delete pal;
+        pal = old_pal;
+    }
+    delete fp;
+
+    if(title_screen >= 0)
+        fade_in(cache.img(title_screen), 32);
 }
 
 extern int start_edit;

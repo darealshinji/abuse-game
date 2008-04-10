@@ -12,15 +12,10 @@
 #include <math.h>
 
 #include "macs.hpp"
-#include "mdlread.hpp"
 #include "video.hpp"
 #include "image.hpp"
 #include "palette.hpp"
 #include "linked.hpp"
-#include "glread.hpp"
-#include "gifread.hpp"
-#include "ppmread.hpp"
-#include "emm.hpp"
 #include "sprite.hpp"
 
 

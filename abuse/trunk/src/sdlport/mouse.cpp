@@ -25,7 +25,6 @@
 #include "sprite.hpp"
 #include "image.hpp"
 #include "filter.hpp"
-#include "mdlread.hpp"
 #include "mouse.hpp"
 
 unsigned char def_mouse[]=

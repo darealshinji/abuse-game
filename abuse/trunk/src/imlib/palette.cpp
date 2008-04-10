@@ -14,7 +14,6 @@
 #include "palette.hpp"
 #include "image.hpp"
 #include "macs.hpp"
-#include "dos.h"
 #include "video.hpp"
 #include "filter.hpp"
 
