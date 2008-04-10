@@ -20,15 +20,17 @@
 
 #include "lisp.hpp"
 #include "lisp_gc.hpp"
+#include "symbols.hpp"
+
 #ifdef NO_LIBS
-#include "fakelib.hpp"
+#   include "fakelib.hpp"
 #else
-#include "status.hpp"
-#include "macs.hpp"
-#include "specs.hpp"
-#include "dprint.hpp"
-#include "cache.hpp"
-#include "dev.hpp"
+#   include "status.hpp"
+#   include "macs.hpp"
+#   include "specs.hpp"
+#   include "dprint.hpp"
+#   include "cache.hpp"
+#   include "dev.hpp"
 #endif
 
 /* To bypass the whole garbage collection issue of lisp I am going to have
@@ -43,67 +45,55 @@ long ltotal_syms=0;
 
 
 
-char *space[4],*free_space[4];
-int space_size[4],print_level=0,trace_level=0,trace_print_level=1000;
+char *space[4], *free_space[4];
+int space_size[4], print_level=0, trace_level=0, trace_print_level=1000;
 int total_user_functions;
 
 int current_space;  // normally set to TMP_SPACE, unless compiling or other needs
-
-// when you don't need as much as strcmp, this is faster...
-inline int streq(char const *s1, char const *s2)
-{
-  while (*s1)
-  {
-    if (*(s1++)!=*(s2++))
-      return 0;
-  }
-  return (*s2==0);
-}
 
 int break_level=0;
 
 void l1print(void *block)
 {
-  if (!block)
-    lprint(block);
-  else
-  {
-    if (item_type(block)==L_CONS_CELL)
+    if(!block || item_type(block) != L_CONS_CELL)
     {
-      dprintf("(");
-      for (;block && item_type(block)==L_CONS_CELL;block=CDR(block))
-      {
-    void *a=CAR(block);
-    if (item_type(a)==L_CONS_CELL)
-      dprintf("[...]");
-    else lprint(a);
-      }
-      if (block)
-      {
+        lprint(block);
+        return;
+    }
+
+    dprintf("(");
+    for( ; block && item_type(block) == L_CONS_CELL; block = CDR(block))
+    {
+        void *a = CAR(block);
+        if(item_type(a) == L_CONS_CELL)
+            dprintf("[...]");
+        else
+            lprint(a);
+    }
+    if (block)
+    {
         dprintf(" . ");
-    lprint(block);
-      }
-      dprintf(")");
-    } else lprint(block);
-  }
+        lprint(block);
+    }
+    dprintf(")");
 }
 
-void where_print(int max_lev=-1)
+void where_print(int max_lev = -1)
 {
-  dprintf("Main program\n");
-  if (max_lev==-1) max_lev=l_ptr_stack.son;
-  else if (max_lev>=l_ptr_stack.son) max_lev=l_ptr_stack.son-1;
+    dprintf("Main program\n");
+    if (max_lev==-1) max_lev=l_ptr_stack.son;
+    else if (max_lev>=l_ptr_stack.son) max_lev=l_ptr_stack.son-1;
 
-  for (int i=0;i<max_lev;i++)
-  {
-    dprintf("%d> ",i);
-    lprint(*l_ptr_stack.sdata[i]);
-  }
+    for (int i=0;i<max_lev;i++)
+    {
+        dprintf("%d> ", i);
+        lprint(*l_ptr_stack.sdata[i]);
+    }
 }
 
 void print_trace_stack(int max_levels)
 {
-  where_print(max_levels);
+    where_print(max_levels);
 }
 
 void lbreak(char const *format, ...)
@@ -114,26 +104,27 @@ void lbreak(char const *format, ...)
   char st[300];
   va_list ap;
   va_start(ap, format);
-  vsprintf(st,format,ap);
+  vsprintf(st, format, ap);
   va_end(ap);
-  dprintf("%s\n",st);
+  dprintf("%s\n", st);
   int cont=0;
   do
   {
     dprintf("type q to quit\n");
-    dprintf("%d. Break> ",break_level);
-    dgets(st,300);
-    if (!strcmp(st,"c") || !strcmp(st,"cont") || !strcmp(st,"continue"))
+    dprintf("%d. Break> ", break_level);
+    dgets(st, 300);
+    if (!strcmp(st, "c") || !strcmp(st, "cont") || !strcmp(st, "continue"))
       cont=1;
-    else if (!strcmp(st,"w") || !strcmp(st,"where"))
+    else if (!strcmp(st, "w") || !strcmp(st, "where"))
       where_print();
-    else if (!strcmp(st,"q") || !strcmp(st,"quit"))
+    else if (!strcmp(st, "q") || !strcmp(st, "quit"))
       exit(1);
-    else if (!strcmp(st,"e") || !strcmp(st,"env") || !strcmp(st,"environment"))
+    else if (!strcmp(st, "e") || !strcmp(st, "env") || !strcmp(st, "environment"))
     {
       dprintf("Enviorment : \nnot supported right now\n");
 
-    } else if (!strcmp(st,"h") || !strcmp(st,"help") || !strcmp(st,"?"))
+    }
+    else if (!strcmp(st, "h") || !strcmp(st, "help") || !strcmp(st, "?"))
     {
       dprintf("CLIVE Debugger\n");
       dprintf(" w, where : show calling parents\n"
@@ -163,7 +154,7 @@ void need_perm_space(char const *why)
 {
   if (current_space!=PERM_SPACE && current_space!=GC_SPACE)
   {
-    lbreak("%s : action requires permanant space\n",why);
+    lbreak("%s : action requires permanant space\n", why);
     exit(0);
   }
 }
@@ -180,7 +171,7 @@ void restore_heap(void *val, int heap)
 
 void *lmalloc(int size, int which_space)
 {
-  return malloc(size); /* XXX */
+  return malloc(size); /* XXX FIXME: do we want to fix this one day? */
 
 #ifdef WORD_ALIGN
   size=(size+3)&(~3);
@@ -202,7 +193,7 @@ void *lmalloc(int size, int which_space)
     }
     if (fart)
     {
-      lbreak("lisp : cannot malloc %d bytes in space #%d\n",size,which_space);
+      lbreak("lisp : cannot malloc %d bytes in space #%d\n", size, which_space);
       exit(0);
     }
   }
@@ -228,11 +219,11 @@ lisp_1d_array *new_lisp_1d_array(int size, void *rest)
   p_ref r11(rest);
   long s=sizeof(lisp_1d_array)+size*sizeof(void *);
   if (s<8) s=8;
-  void *p=(lisp_1d_array *)lmalloc(s,current_space);
+  void *p=(lisp_1d_array *)lmalloc(s, current_space);
   ((lisp_1d_array *)p)->type=L_1D_ARRAY;
   ((lisp_1d_array *)p)->size=size;
   void **data=(void **)(((lisp_1d_array *)p)+1);
-  memset(data,0,size*sizeof(void *));
+  memset(data, 0, size*sizeof(void *));
   p_ref r1(p);
 
   if (rest)
@@ -242,7 +233,7 @@ lisp_1d_array *new_lisp_1d_array(int size, void *rest)
     {
       x=eval(CAR(CDR(rest)));
       data=(void **)(((lisp_1d_array *)p)+1);
-      for (int i=0;i<size;i++,x=CDR(x))
+      for (int i=0;i<size;i++, x=CDR(x))
       {
     if (!x)
     {
@@ -274,7 +265,7 @@ lisp_1d_array *new_lisp_1d_array(int size, void *rest)
 
 lisp_fixed_point *new_lisp_fixed_point(int32_t x)
 {
-  lisp_fixed_point *p=(lisp_fixed_point *)lmalloc(sizeof(lisp_fixed_point),current_space);
+  lisp_fixed_point *p=(lisp_fixed_point *)lmalloc(sizeof(lisp_fixed_point), current_space);
   p->type=L_FIXED_POINT;
   p->x=x;
   return p;
@@ -283,7 +274,7 @@ lisp_fixed_point *new_lisp_fixed_point(int32_t x)
 
 lisp_object_var *new_lisp_object_var(int16_t number)
 {
-  lisp_object_var *p=(lisp_object_var *)lmalloc(sizeof(lisp_object_var),current_space);
+  lisp_object_var *p=(lisp_object_var *)lmalloc(sizeof(lisp_object_var), current_space);
   p->type=L_OBJECT_VAR;
   p->number=number;
   return p;
@@ -293,7 +284,7 @@ lisp_object_var *new_lisp_object_var(int16_t number)
 struct lisp_pointer *new_lisp_pointer(void *addr)
 {
   if (addr==NULL) return NULL;
-  lisp_pointer *p=(lisp_pointer *)lmalloc(sizeof(lisp_pointer),current_space);
+  lisp_pointer *p=(lisp_pointer *)lmalloc(sizeof(lisp_pointer), current_space);
   p->type=L_POINTER;
   p->addr=addr;
   return p;
@@ -301,7 +292,7 @@ struct lisp_pointer *new_lisp_pointer(void *addr)
 
 struct lisp_character *new_lisp_character(uint16_t ch)
 {
-  lisp_character *c=(lisp_character *)lmalloc(sizeof(lisp_character),current_space);
+  lisp_character *c=(lisp_character *)lmalloc(sizeof(lisp_character), current_space);
   c->type=L_CHARACTER;
   c->ch=ch;
   return c;
@@ -312,10 +303,10 @@ struct lisp_string *new_lisp_string(char const *string)
   int size=sizeof(lisp_string)+strlen(string)+1;
   if (size<8) size=8;
 
-  lisp_string *s=(lisp_string *)lmalloc(size,current_space);
+  lisp_string *s=(lisp_string *)lmalloc(size, current_space);
   s->type=L_STRING;
   char *sloc=((char *)s)+sizeof(lisp_string);
-  strcpy(sloc,string);
+  strcpy(sloc, string);
   return s;
 }
 
@@ -323,10 +314,10 @@ struct lisp_string *new_lisp_string(char const *string, int length)
 {
   int size=sizeof(lisp_string)+length+1;
   if (size<8) size=8;
-  lisp_string *s=(lisp_string *)lmalloc(size,current_space);
+  lisp_string *s=(lisp_string *)lmalloc(size, current_space);
   s->type=L_STRING;
   char *sloc=((char *)s)+sizeof(lisp_string);
-  memcpy(sloc,string,length);
+  memcpy(sloc, string, length);
   sloc[length]=0;
   return s;
 }
@@ -335,18 +326,18 @@ struct lisp_string *new_lisp_string(int length)
 {
   int size=sizeof(lisp_string)+length;
   if (size<8) size=8;
-  lisp_string *s=(lisp_string *)lmalloc(size,current_space);
+  lisp_string *s=(lisp_string *)lmalloc(size, current_space);
   s->type=L_STRING;
   char *sloc=((char *)s)+sizeof(lisp_string);
-  strcpy(sloc,"");
+  strcpy(sloc, "");
   return s;
 }
 
 #ifdef NO_LIBS
 lisp_user_function *new_lisp_user_function(void *arg_list, void *block_list)
 {
-  p_ref r1(arg_list),r2(block_list);
-  lisp_user_function *lu=(lisp_user_function *)lmalloc(sizeof(lisp_user_function),current_space);
+  p_ref r1(arg_list), r2(block_list);
+  lisp_user_function *lu=(lisp_user_function *)lmalloc(sizeof(lisp_user_function), current_space);
   lu->type=L_USER_FUNCTION;
   lu->arg_list=arg_list;
   lu->block_list=block_list;
@@ -359,7 +350,7 @@ lisp_user_function *new_lisp_user_function(intptr_t arg_list, intptr_t block_lis
   if (current_space!=GC_SPACE)
     current_space=PERM_SPACE;       // make sure all functions get defined in permanant space
 
-  lisp_user_function *lu=(lisp_user_function *)lmalloc(sizeof(lisp_user_function),current_space);
+  lisp_user_function *lu=(lisp_user_function *)lmalloc(sizeof(lisp_user_function), current_space);
   lu->type=L_USER_FUNCTION;
   lu->alist=arg_list;
   lu->blist=block_list;
@@ -421,7 +412,7 @@ lisp_sys_function *new_user_lisp_function(int min_args, int max_args, int fun_nu
 
 lisp_number *new_lisp_node(long num)
 {
-  lisp_number *n=(lisp_number *)lmalloc(sizeof(lisp_number),current_space);
+  lisp_number *n=(lisp_number *)lmalloc(sizeof(lisp_number), current_space);
   n->type=L_NUMBER;
   n->num=num;
   return n;
@@ -429,7 +420,7 @@ lisp_number *new_lisp_node(long num)
 
 lisp_symbol *new_lisp_symbol(char *name)
 {
-  lisp_symbol *s=(lisp_symbol *)lmalloc(sizeof(lisp_symbol),current_space);
+  lisp_symbol *s=(lisp_symbol *)lmalloc(sizeof(lisp_symbol), current_space);
   s->type=L_SYMBOL;
   s->name=new_lisp_string(name);
   s->value=l_undefined;
@@ -442,7 +433,7 @@ lisp_symbol *new_lisp_symbol(char *name)
 
 lisp_number *new_lisp_number(long num)
 {
-  lisp_number *s=(lisp_number *)lmalloc(sizeof(lisp_number),current_space);
+  lisp_number *s=(lisp_number *)lmalloc(sizeof(lisp_number), current_space);
   s->type=L_NUMBER;
   s->num=num;
   return s;
@@ -451,7 +442,7 @@ lisp_number *new_lisp_number(long num)
 
 cons_cell *new_cons_cell()
 {
-  cons_cell *c=(cons_cell *)lmalloc(sizeof(cons_cell),current_space);
+  cons_cell *c=(cons_cell *)lmalloc(sizeof(cons_cell), current_space);
   c->type=L_CONS_CELL;
   c->car=NULL;
   c->cdr=NULL;
@@ -467,12 +458,12 @@ char *lerror(char const *loc, char const *cause)
     for (lines=0;*loc && lines<10;loc++)
     {
       if (*loc=='\n') lines++;
-      dprintf("%c",*loc);
+      dprintf("%c", *loc);
     }
     dprintf("\nPROGRAM LOCATION : \n");
   }
   if (cause)
-    dprintf("ERROR MESSAGE : %s\n",cause);
+    dprintf("ERROR MESSAGE : %s\n", cause);
   lbreak("");
   exit(0);
   return NULL;
@@ -482,7 +473,7 @@ void *nth(int num, void *list)
 {
   if (num<0)
   {
-    lbreak("NTH: %d is not a nonnegative fixnum and therefore not a valid index\n",num);
+    lbreak("NTH: %d is not a nonnegative fixnum and therefore not a valid index\n", num);
     exit(1);
   }
 
@@ -606,7 +597,7 @@ void *lisp_eq(void *n1, void *n2)
   if (!n1 && !n2) return true_symbol;    
   else if ((n1 && !n2) || (n2 && !n1)) return NULL;
   {
-    int t1=*((ltype *)n1),t2=*((ltype *)n2);
+    int t1=*((ltype *)n1), t2=*((ltype *)n2);
     if (t1!=t2) return NULL;
     else if (t1==L_NUMBER)
     { if (((lisp_number *)n1)->num==((lisp_number *)n2)->num)
@@ -638,7 +629,7 @@ void *lget_array_element(void *a, long x)
 #endif
   if (x>=((lisp_1d_array *)a)->size || x<0)
   {
-    lbreak("array refrence out of bounds (%d)\n",x);
+    lbreak("array refrence out of bounds (%d)\n", x);
     exit(0);
   }
   return ((void **)(((lisp_1d_array *)a)+1))[x];
@@ -646,42 +637,38 @@ void *lget_array_element(void *a, long x)
 
 void *lisp_equal(void *n1, void *n2)
 {
+    if(!n1 && !n2) // if both nil, then equal
+        return true_symbol;
 
-  if (!n1 && !n2)           // if both nil, then equal
-    return true_symbol;    
-  else if ((n1 && !n2) || (n2 && !n1))   // one nil, nope
-    return NULL;
-  else
-  {
-    int t1=item_type(n1),t2=item_type(n2);
-    if (t1!=t2) return NULL;
-    else
+    if(!n1 || !n2) // one nil, nope
+        return NULL;
+
+    int t1 = item_type(n1), t2 = item_type(n2);
+    if(t1 != t2)
+        return NULL;
+
+    switch (t1)
     {
-      switch (t1)
-      {
     case L_STRING :
-    { if (streq(lstring_value(n1),lstring_value(n2))) return true_symbol; else return NULL; }
-    break;
+        if (!strcmp(lstring_value(n1), lstring_value(n2)))
+            return true_symbol;
+        return NULL;
     case L_CONS_CELL :
-    {
-      while (n1 && n2) // loop through the list and compare each element
-      {
-        if (!lisp_equal(CAR(n1),CAR(n2)))
-          return NULL;
-        n1=CDR(n1);
-        n2=CDR(n2);
-        if (n1 && *((ltype *)n1)!=L_CONS_CELL)
-          return lisp_equal(n1,n2);
-      }
-      if (n1 || n2) return NULL;   // if one is longer than the other
-      else return true_symbol;
-    } break;
+        while (n1 && n2) // loop through the list and compare each element
+        {
+          if (!lisp_equal(CAR(n1), CAR(n2)))
+            return NULL;
+          n1=CDR(n1);
+          n2=CDR(n2);
+          if (n1 && *((ltype *)n1)!=L_CONS_CELL)
+            return lisp_equal(n1, n2);
+        }
+        if (n1 || n2)
+            return NULL;   // if one is longer than the other
+        return true_symbol;
     default :
-          return lisp_eq(n1,n2);
-    break;
-      }
+        return lisp_eq(n1, n2);
     }
-  }
 }
 
 int32_t lisp_cos(int32_t x)
@@ -793,7 +780,7 @@ lisp_symbol *find_symbol(char const *name)
   cons_cell *cs;
   for (cs=(cons_cell *)symbol_list;cs;cs=(cons_cell *)CDR(cs))
   {
-    if (streq( ((char *)((lisp_symbol *)cs->car)->name)+sizeof(lisp_string),name))
+    if (!strcmp( ((char *)((lisp_symbol *)cs->car)->name)+sizeof(lisp_string), name))
       return (lisp_symbol *)(cs->car);
   }
   return NULL;
@@ -827,7 +814,7 @@ lisp_symbol *find_symbol(char const *name)
   lisp_symbol *p=lsym_root;
   while (p)
   {
-    int cmp=strcmp(name,((char *)p->name)+sizeof(lisp_string));
+    int cmp=strcmp(name, ((char *)p->name)+sizeof(lisp_string));
     if (cmp==0) return p;
     else if (cmp<0) p=p->left;
     else p=p->right;
@@ -843,7 +830,7 @@ lisp_symbol *make_find_symbol(char const *name)
   lisp_symbol **parent=&lsym_root;
   while (p)
   {
-    int cmp=strcmp(name,((char *)p->name)+sizeof(lisp_string));
+    int cmp=strcmp(name, ((char *)p->name)+sizeof(lisp_string));
     if (cmp==0) return p;
     else if (cmp<0)
     {
@@ -899,7 +886,7 @@ void *assoc(void *item, void *list)
   {
     while (list)
     {
-      if (lisp_eq(CAR(CAR(list)),item))
+      if (lisp_eq(CAR(CAR(list)), item))
         return lcar(list);    
       list=(cons_cell *)(CDR(list));
     }
@@ -933,7 +920,7 @@ void *pairlis(void *list1, void *list2, void *list3)
     return NULL;
 
   void *ret=NULL;
-  long l1=list_length(list1),l2=list_length(list2);
+  long l1=list_length(list1), l2=list_length(list2);
   if (l1!=l2)
   {    
     lprint(list1);
@@ -943,8 +930,8 @@ void *pairlis(void *list1, void *list2, void *list3)
   }
   if (l1!=0)
   {
-    void *first=NULL,*last=NULL,*cur=NULL,*tmp;
-    p_ref r1(first),r2(last),r3(cur);
+    void *first=NULL, *last=NULL, *cur=NULL, *tmp;
+    p_ref r1(first), r2(last), r3(cur);
     while (list1)
     {
       cur=new_cons_cell();
@@ -1007,10 +994,10 @@ lisp_symbol *add_sys_function(char const *name, short min_args, short max_args, 
   lisp_symbol *s=make_find_symbol(name);
   if (s->function!=l_undefined)
   {
-    lbreak("add_sys_fucntion -> symbol %s already has a function\n",name);
+    lbreak("add_sys_fucntion -> symbol %s already has a function\n", name);
     exit(0);
   }
-  else s->function=new_lisp_sys_function(min_args,max_args,number);
+  else s->function=new_lisp_sys_function(min_args, max_args, number);
   return s;
 }
 
@@ -1020,7 +1007,7 @@ lisp_symbol *add_c_object(void *symbol, int16_t number)
   lisp_symbol *s=(lisp_symbol *)symbol;
   if (s->value!=l_undefined)
   {
-    lbreak("add_c_object -> symbol %s already has a value\n",lstring_value(symbol_name(s)));
+    lbreak("add_c_object -> symbol %s already has a value\n", lstring_value(symbol_name(s)));
     exit(0);
   }
   else s->value=new_lisp_object_var(number);
@@ -1034,10 +1021,10 @@ lisp_symbol *add_c_function(char const *name, short min_args, short max_args, sh
   lisp_symbol *s=make_find_symbol(name);
   if (s->function!=l_undefined)
   {
-    lbreak("add_sys_fucntion -> symbol %s already has a function\n",name);
+    lbreak("add_sys_fucntion -> symbol %s already has a function\n", name);
     exit(0);
   }
-  else s->function=new_lisp_c_function(min_args,max_args,number);
+  else s->function=new_lisp_c_function(min_args, max_args, number);
   return s;
 }
 
@@ -1048,10 +1035,10 @@ lisp_symbol *add_c_bool_fun(char const *name, short min_args, short max_args, sh
   lisp_symbol *s=make_find_symbol(name);
   if (s->function!=l_undefined)
   {
-    lbreak("add_sys_fucntion -> symbol %s already has a function\n",name);
+    lbreak("add_sys_fucntion -> symbol %s already has a function\n", name);
     exit(0);
   }
-  else s->function=new_lisp_c_bool(min_args,max_args,number);
+  else s->function=new_lisp_c_bool(min_args, max_args, number);
   return s;
 }
 
@@ -1063,10 +1050,10 @@ lisp_symbol *add_lisp_function(char const *name, short min_args, short max_args,
   lisp_symbol *s=make_find_symbol(name);
   if (s->function!=l_undefined)
   {
-    lbreak("add_sys_fucntion -> symbol %s already has a function\n",name);
+    lbreak("add_sys_fucntion -> symbol %s already has a function\n", name);
     exit(0);
   }
-  else s->function=new_user_lisp_function(min_args,max_args,number);
+  else s->function=new_user_lisp_function(min_args, max_args, number);
   return s;
 }
 
@@ -1100,11 +1087,11 @@ int read_ltoken(char const *&s, char *buffer)
   if (*s==';')  // comment
   {
     while (*s && *s!='\n' && *s!='\r' && *s!=26) s++;
-    return read_ltoken(s,buffer);
+    return read_ltoken(s, buffer);
   } else if  (*s=='/' && *(s+1)=='*')   // c style comment
   {
     skip_c_comment(s);
-    return read_ltoken(s,buffer);
+    return read_ltoken(s, buffer);
   }
   else if (*s==0)
     return 0;
@@ -1138,13 +1125,13 @@ char n[MAX_LISP_TOKEN_LEN];  // assume all tokens will be < 200 characters
 
 int end_of_program(char const *s)
 {
-  return !read_ltoken(s,n);
+  return !read_ltoken(s, n);
 }
 
 
 void push_onto_list(void *object, void *&list)
 {
-  p_ref r1(object),r2(list);
+  p_ref r1(object), r2(list);
   cons_cell *c=new_cons_cell();
   c->car=object;
   c->cdr=list;
@@ -1156,16 +1143,16 @@ void *comp_optimize(void *list);
 void *compile(char const *&s)
 {
   void *ret=NULL;
-  if (!read_ltoken(s,n))
-    lerror(NULL,"unexpected end of program");
-  if (streq(n,"nil"))
+  if (!read_ltoken(s, n))
+    lerror(NULL, "unexpected end of program");
+  if (!strcmp(n, "nil"))
     return NULL;
   else if (toupper(n[0])=='T' && !n[1])
     return true_symbol;
   else if (n[0]=='\'')                    // short hand for quote function
   {
-    void *cs=new_cons_cell(),*c2=NULL,*tmp;
-    p_ref r1(cs),r2(c2);
+    void *cs=new_cons_cell(), *c2=NULL, *tmp;
+    p_ref r1(cs), r2(c2);
 
     ((cons_cell *)cs)->car=quote_symbol;
     c2=new_cons_cell();
@@ -1177,8 +1164,8 @@ void *compile(char const *&s)
   }
   else if (n[0]=='`')                    // short hand for backquote function
   {
-    void *cs=new_cons_cell(),*c2=NULL,*tmp;
-    p_ref r1(cs),r2(c2);
+    void *cs=new_cons_cell(), *c2=NULL, *tmp;
+    p_ref r1(cs), r2(c2);
 
     ((cons_cell *)cs)->car=backquote_symbol;
     c2=new_cons_cell();
@@ -1189,8 +1176,8 @@ void *compile(char const *&s)
     ret=cs;
   }  else if (n[0]==',')              // short hand for comma function
   {
-    void *cs=new_cons_cell(),*c2=NULL,*tmp;
-    p_ref r1(cs),r2(c2);
+    void *cs=new_cons_cell(), *c2=NULL, *tmp;
+    p_ref r1(cs), r2(c2);
 
     ((cons_cell *)cs)->car=comma_symbol;
     c2=new_cons_cell();
@@ -1202,35 +1189,35 @@ void *compile(char const *&s)
   }
   else if (n[0]=='(')                     // make a list of everything in ()
   {
-    void *first=NULL,*cur=NULL,*last=NULL;
-    p_ref r1(first),r2(cur),r3(last);
+    void *first=NULL, *cur=NULL, *last=NULL;
+    p_ref r1(first), r2(cur), r3(last);
     int done=0;
     do
     {
       char const *tmp=s;
-      if (!read_ltoken(tmp,n))           // check for the end of the list
-        lerror(NULL,"unexpected end of program");
+      if (!read_ltoken(tmp, n))           // check for the end of the list
+        lerror(NULL, "unexpected end of program");
       if (n[0]==')')
       {
                 done=1;
-                read_ltoken(s,n);                // read off the ')'
+                read_ltoken(s, n);                // read off the ')'
       }
       else
       {
                 if (n[0]=='.' && !n[1])
                 {
                   if (!first)
-                    lerror(s,"token '.' not allowed here\n");    
+                    lerror(s, "token '.' not allowed here\n");    
                   else
                   {
                     void *tmp;
-                    read_ltoken(s,n);              // skip the '.'
+                    read_ltoken(s, n);              // skip the '.'
                     tmp=compile(s);
                     ((cons_cell *)last)->cdr=tmp;          // link the last cdr to
                     last=NULL;
                   }
                 } else if (!last && first)
-                  lerror(s,"illegal end of dotted list\n");
+                  lerror(s, "illegal end of dotted list\n");
                 else
                 {        
                   void *tmp;
@@ -1248,17 +1235,17 @@ void *compile(char const *&s)
     ret=comp_optimize(first);
 
   } else if (n[0]==')')
-    lerror(s,"mismatched )");
+    lerror(s, "mismatched )");
   else if (isdigit(n[0]) || (n[0]=='-' && isdigit(n[1])))
   {
     lisp_number *num=new_lisp_number(0);
-    sscanf(n,"%ld",&num->num);
+    sscanf(n, "%ld", &num->num);
     ret=num;
   } else if (n[0]=='"')
   {
     ret=new_lisp_string(str_token_len(s));
     char *start=lstring_value(ret);
-    for (;*s && (*s!='"' || s[1]=='"');s++,start++)
+    for (;*s && (*s!='"' || s[1]=='"');s++, start++)
     {
       if (*s=='\\')
       {
@@ -1276,18 +1263,18 @@ void *compile(char const *&s)
   {
     if (n[1]=='\\')
     {
-      read_ltoken(s,n);                   // read character name
-      if (streq(n,"newline"))
+      read_ltoken(s, n);                   // read character name
+      if (!strcmp(n, "newline"))
         ret=new_lisp_character('\n');
-      else if (streq(n,"space"))
+      else if (!strcmp(n, "space"))
         ret=new_lisp_character(' ');
       else
         ret=new_lisp_character(n[0]);
     }
     else if (n[1]==0)                           // short hand for function
     {
-      void *cs=new_cons_cell(),*c2=NULL,*tmp;
-      p_ref r4(cs),r5(c2);
+      void *cs=new_cons_cell(), *c2=NULL, *tmp;
+      p_ref r4(cs), r5(c2);
       tmp=make_find_symbol("function");
       ((cons_cell *)cs)->car=tmp;
       c2=new_cons_cell();
@@ -1298,7 +1285,7 @@ void *compile(char const *&s)
     }
     else
     {
-      lbreak("Unknown #\\ notation : %s\n",n);
+      lbreak("Unknown #\\ notation : %s\n", n);
       exit(0);
     }
   } else {
@@ -1368,7 +1355,7 @@ void lprint(void *i)
       case L_NUMBER :
       {
                 char num[10];
-                sprintf(num,"%ld",((lisp_number *)i)->num);
+                sprintf(num, "%ld", ((lisp_number *)i)->num);
         lprint_string(num);
       }
       break;
@@ -1393,21 +1380,21 @@ void lprint(void *i)
                 if (current_print_file)
                      lprint_string(lstring_value(i));
                 else
-             dprintf("\"%s\"",lstring_value(i));
+             dprintf("\"%s\"", lstring_value(i));
       }
       break;
 
       case L_POINTER :
       {
                 char ptr[10];
-                    sprintf(ptr,"%p",lpointer_value(i));
+                    sprintf(ptr, "%p", lpointer_value(i));
                 lprint_string(ptr);
       }
       break;
       case L_FIXED_POINT :
       {
                 char num[20];
-                sprintf(num,"%g",(lfixed_point_value(i)>>16)+
+                sprintf(num, "%g", (lfixed_point_value(i)>>16)+
                           ((lfixed_point_value(i)&0xffff))/(double)0x10000);
                 lprint_string(num);
       } break;
@@ -1416,7 +1403,7 @@ void lprint(void *i)
                 if (current_print_file)
                 {
                   uint8_t ch=((lisp_character *)i)->ch;
-                  current_print_file->write(&ch,1);
+                  current_print_file->write(&ch, 1);
                 } else
                 {
                   uint16_t ch=((lisp_character *)i)->ch;
@@ -1428,7 +1415,7 @@ void lprint(void *i)
                     case ' ' :
                     { dprintf("space"); break; }
                     default :
-                      dprintf("%c",ch);
+                      dprintf("%c", ch);
                   }
                 }
       } break;
@@ -1467,10 +1454,8 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list);
 
 void *eval_function(lisp_symbol *sym, void *arg_list)
 {
-
-
 #ifdef TYPE_CHECKING
-  int args,req_min,req_max;
+  int args, req_min, req_max;
   if (item_type(sym)!=L_SYMBOL)
   {
     lprint(sym);
@@ -1498,7 +1483,7 @@ void *eval_function(lisp_symbol *sym, void *arg_list)
     } break;
     case L_USER_FUNCTION :
     {
-      return eval_user_fun(sym,arg_list);
+      return eval_user_fun(sym, arg_list);
     } break;
     default :
     {
@@ -1540,63 +1525,45 @@ void *eval_function(lisp_symbol *sym, void *arg_list)
   switch (t)
   {
     case L_SYS_FUNCTION :
-    { ret=eval_sys_function( ((lisp_sys_function *)fun),arg_list); } break;
+    { ret=eval_sys_function( ((lisp_sys_function *)fun), arg_list); } break;
     case L_L_FUNCTION :
-    { ret=l_caller( ((lisp_sys_function *)fun)->fun_number,arg_list); } break;
+    { ret=l_caller( ((lisp_sys_function *)fun)->fun_number, arg_list); } break;
     case L_USER_FUNCTION :
     {
-      return eval_user_fun(sym,arg_list);
+      return eval_user_fun(sym, arg_list);
     } break;
     case L_C_FUNCTION :
-    {
-      void *first=NULL,*cur=NULL,*tmp;
-      p_ref r1(first),r2(cur);
-      while (arg_list)
-      {
-                if (first) {
-                  tmp=new_cons_cell();
-                  ((cons_cell *)cur)->cdr=tmp;
-                  cur=tmp;
-                } else
-                  cur=first=new_cons_cell();
-            
-                void *val=eval(CAR(arg_list));
-                ((cons_cell *)cur)->car=val;
-                arg_list=lcdr(arg_list);
-      }
-      ret=new_lisp_number(c_caller( ((lisp_sys_function *)fun)->fun_number,first));
-    } break;
     case L_C_BOOL :
     {
-      void *first=NULL,*cur=NULL,*tmp;
-      p_ref r1(first),r2(cur);
+      void *first=NULL, *cur=NULL, *tmp;
+      p_ref r1(first), r2(cur);
       while (arg_list)
       {
-                if (first) {
-                  tmp=new_cons_cell();
-                  ((cons_cell *)cur)->cdr=tmp;
-                  cur=tmp;
-                } else
-                  cur=first=new_cons_cell();
-            
-                void *val=eval(CAR(arg_list));
-                ((cons_cell *)cur)->car=val;
-                arg_list=lcdr(arg_list);
+        if (first) {
+          tmp=new_cons_cell();
+          ((cons_cell *)cur)->cdr=tmp;
+          cur=tmp;
+        } else
+          cur=first=new_cons_cell();
+    
+        void *val=eval(CAR(arg_list));
+        ((cons_cell *)cur)->car=val;
+        arg_list=lcdr(arg_list);
       }
-
-      if (c_caller( ((lisp_sys_function *)fun)->fun_number,first))
+      if(t == L_C_FUNCTION)
+        ret=new_lisp_number(c_caller( ((lisp_sys_function *)fun)->fun_number, first));
+      else if (c_caller( ((lisp_sys_function *)fun)->fun_number, first))
         ret=true_symbol;
       else ret=NULL;
     } break;
     default :
-      fprintf(stderr,"not a fun, shouldn't happen\n");
+      fprintf(stderr, "not a fun, shouldn't happen\n");
   }
 
 #ifdef L_PROFILE
   time_marker end;
   ((lisp_symbol *)sym)->time_taken+=end.diff_time(&start);
 #endif
-
 
   return ret;
 }    
@@ -1606,20 +1573,20 @@ void pro_print(bFILE *out, lisp_symbol *p)
 {
   if (p)
   {
-    pro_print(out,p->right);
+    pro_print(out, p->right);
     {
       char st[100];
-      sprintf(st,"%20s %f\n",lstring_value(symbol_name(p)),((lisp_symbol *)p)->time_taken);
-      out->write(st,strlen(st));
+      sprintf(st, "%20s %f\n", lstring_value(symbol_name(p)), ((lisp_symbol *)p)->time_taken);
+      out->write(st, strlen(st));
     }
-    pro_print(out,p->left);
+    pro_print(out, p->left);
   }
 }
 
 void preport(char *fn)
 {
-  bFILE *fp=open_file("preport.out","wb");
-  pro_print(fp,lsym_root);
+  bFILE *fp=open_file("preport.out", "wb");
+  pro_print(fp, lsym_root);
   delete fp;
 }
 #endif
@@ -1641,7 +1608,7 @@ void *mapcar(void *arg_list)
       exit(0);
     }
   }
-  int num_args=list_length(CDR(arg_list)),i,stop=0;
+  int num_args=list_length(CDR(arg_list)), i, stop=0;
   if (!num_args) return 0;
 
   void **arg_on=(void **)malloc(sizeof(void *)*num_args);
@@ -1663,7 +1630,7 @@ void *mapcar(void *arg_list)
     return NULL;
   }
 
-  cons_cell *na_list=NULL,*return_list=NULL,*last_return=NULL;
+  cons_cell *na_list=NULL, *return_list=NULL, *last_return=NULL;
 
   do
   {
@@ -1691,7 +1658,7 @@ void *mapcar(void *arg_list)
     if (!stop)
     {
       cons_cell *c=new_cons_cell();
-      c->car=eval_function((lisp_symbol *)sym,first);
+      c->car=eval_function((lisp_symbol *)sym, first);
       if (return_list)
         last_return->cdr=c;
       else
@@ -1709,7 +1676,7 @@ void *mapcar(void *arg_list)
 void *concatenate(void *prog_list)
 {
   void *el_list=CDR(prog_list);
-  p_ref ref1(prog_list),ref2(el_list);
+  p_ref ref1(prog_list), ref2(el_list);
   void *ret=NULL;
   void *rtype=eval(CAR(prog_list));
 
@@ -1721,10 +1688,10 @@ void *concatenate(void *prog_list)
     else
     {
       void **str_eval=(void **)malloc(elements*sizeof(void *));
-      int i,old_ptr_stack_start=l_ptr_stack.son;
+      int i, old_ptr_stack_start=l_ptr_stack.son;
 
       // evalaute all the strings and count their lengths
-      for (i=0;i<elements;i++,el_list=CDR(el_list))
+      for (i=0;i<elements;i++, el_list=CDR(el_list))
       {
         str_eval[i]=eval(CAR(el_list));
     l_ptr_stack.push(&str_eval[i]);
@@ -1776,7 +1743,7 @@ void *concatenate(void *prog_list)
       } break;
       case L_STRING :
       {
-        memcpy(s,lstring_value(str_eval[i]),strlen(lstring_value(str_eval[i])));
+        memcpy(s, lstring_value(str_eval[i]), strlen(lstring_value(str_eval[i])));
         s+=strlen(lstring_value(str_eval[i]));
       } break;
       default : ;     // already checked for, but make compiler happy
@@ -1808,8 +1775,8 @@ void *backquote_eval(void *args)
     return eval(CAR(CDR(args)));
   else
   {
-    void *first=NULL,*last=NULL,*cur=NULL,*tmp;
-    p_ref ref1(first),ref2(last),ref3(cur),ref4(args);
+    void *first=NULL, *last=NULL, *cur=NULL, *tmp;
+    p_ref ref1(first), ref2(last), ref3(cur), ref4(args);
     while (args)
     {
       if (item_type(args)==L_CONS_CELL)
@@ -1852,7 +1819,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
   void *ret=NULL;
   switch (fun->fun_number)
   {
-    case 0 :                                                    // print
+    case SYS_FUNC_PRINT:
     {
       ret=NULL;
       while (arg_list)
@@ -1862,27 +1829,27 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       }
       return ret;
     } break;
-    case 1 :                                                    // car
+    case SYS_FUNC_CAR:
     { ret=lcar(eval(CAR(arg_list))); } break;
-    case 2 :                                                    // cdr
+    case SYS_FUNC_CDR:
     { ret=lcdr(eval(CAR(arg_list))); } break;
-    case 3 :                                                    // length
+    case SYS_FUNC_LENGTH:
     {
       void *v=eval(CAR(arg_list));
       switch (item_type(v))
       {
-    case L_STRING : ret=new_lisp_number(strlen(lstring_value(v))); break;
-    case L_CONS_CELL : ret=new_lisp_number(list_length(v)); break;
-    default :
-    { lprint(v);
-      lbreak("length : type not supported\n");
-    }
+        case L_STRING : ret=new_lisp_number(strlen(lstring_value(v))); break;
+        case L_CONS_CELL : ret=new_lisp_number(list_length(v)); break;
+        default :
+        { lprint(v);
+          lbreak("length : type not supported\n");
+        }
       }
     } break;                        
-    case 4 :                                                    // list
+    case SYS_FUNC_LIST:
     {
-      void *cur=NULL,*last=NULL,*first=NULL;
-      p_ref r1(cur),r2(first),r3(last);
+      void *cur=NULL, *last=NULL, *first=NULL;
+      p_ref r1(cur), r2(first), r3(last);
       while (arg_list)
       {
     cur=new_cons_cell();
@@ -1896,7 +1863,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       }    
       ret=first;
     } break;
-    case 5 :                                             // cons
+    case SYS_FUNC_CONS:
     { void *c=new_cons_cell();
       p_ref r1(c);
       void *val=eval(CAR(arg_list));
@@ -1905,22 +1872,22 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       ((cons_cell *)c)->cdr=val;
       ret=c;
     } break;
-    case 6 :                                             // quote
+    case SYS_FUNC_QUOTE:
     ret=CAR(arg_list);
     break;
-    case 7 :                                             // eq
+    case SYS_FUNC_EQ:
     {
       l_user_stack.push(eval(CAR(arg_list)));
       l_user_stack.push(eval(CAR(CDR(arg_list))));
-      ret=lisp_eq(l_user_stack.pop(1),l_user_stack.pop(1));
+      ret=lisp_eq(l_user_stack.pop(1), l_user_stack.pop(1));
     } break;
-    case 24 :                                             // equal
+    case SYS_FUNC_EQUAL:
     {
       l_user_stack.push(eval(CAR(arg_list)));
       l_user_stack.push(eval(CAR(CDR(arg_list))));
-      ret=lisp_equal(l_user_stack.pop(1),l_user_stack.pop(1));
+      ret=lisp_equal(l_user_stack.pop(1), l_user_stack.pop(1));
     } break;
-    case 8 :                                           // +
+    case SYS_FUNC_PLUS:
     {
       long sum=0;
       while (arg_list)
@@ -1931,7 +1898,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       ret=new_lisp_number(sum);
     }
     break;
-    case 28 :                                          // *
+    case SYS_FUNC_TIMES:
     {
       long sum;
       void *first=eval(CAR(arg_list));
@@ -1959,9 +1926,9 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       }
     }
     break;
-    case 29 :                                           // /
+    case SYS_FUNC_SLASH:
     {
-      long sum=0,first=1;
+      long sum=0, first=1;
       while (arg_list)
       {
     void *i=eval(CAR(arg_list));
@@ -1982,7 +1949,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       ret=new_lisp_number(sum);
     }
     break;
-    case 9 :                                           // -
+    case SYS_FUNC_MINUS:
     {
       long x=lnumber_value(eval(CAR(arg_list)));         arg_list=CDR(arg_list);
       while (arg_list)
@@ -1993,7 +1960,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       ret=new_lisp_number(x);
     }
     break;
-    case 10 :                                         // if
+    case SYS_FUNC_IF:
     {
       if (eval(CAR(arg_list)))
       ret=eval(CAR(CDR(arg_list)));
@@ -2004,111 +1971,111 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
     else ret=NULL;
       }
     } break;
-    case 63 :
-    case 11 :                                         // setf
+    case SYS_FUNC_SETQ:
+    case SYS_FUNC_SETF:
     {
-      void *set_to=eval(CAR(CDR(arg_list))),*i=NULL;
-      p_ref r1(set_to),r2(i);
+      void *set_to=eval(CAR(CDR(arg_list))), *i=NULL;
+      p_ref r1(set_to), r2(i);
       i=CAR(arg_list);
 
       ltype x=item_type(set_to);
       switch (item_type(i))
       {
-    case L_SYMBOL :
-    {
-      switch (item_type (((lisp_symbol *)i)->value))
-      {
-        case L_NUMBER :
+        case L_SYMBOL :
         {
-          if (x==L_NUMBER && ((lisp_symbol *)i)->value!=l_undefined)
-          ((lisp_number *)(((lisp_symbol *)i)->value))->num=lnumber_value(set_to);
-          else
-          ((lisp_symbol *)i)->value=set_to;
+          switch (item_type (((lisp_symbol *)i)->value))
+          {
+            case L_NUMBER :
+            {
+              if (x==L_NUMBER && ((lisp_symbol *)i)->value!=l_undefined)
+              ((lisp_number *)(((lisp_symbol *)i)->value))->num=lnumber_value(set_to);
+              else
+              ((lisp_symbol *)i)->value=set_to;
+            } break;
+            case L_OBJECT_VAR :
+            {
+              l_obj_set(((lisp_object_var *)(((lisp_symbol *)i)->value))->number, set_to);
+            } break;
+            default :
+            ((lisp_symbol *)i)->value=set_to;
+          }
+          ret=((lisp_symbol *)i)->value;
         } break;
-        case L_OBJECT_VAR :
+        case L_CONS_CELL :   // this better be an 'aref'
         {
-          l_obj_set(((lisp_object_var *)(((lisp_symbol *)i)->value))->number,set_to);
+#ifdef TYPE_CHECKING
+          void *car=((cons_cell *)i)->car;
+          if (car==car_symbol)
+          {
+            car=eval(CAR(CDR(i)));
+            if (!car || item_type(car)!=L_CONS_CELL)
+            { lprint(car); lbreak("setq car : evaled object is not a cons cell\n"); exit(0); }
+            ((cons_cell *)car)->car=set_to;
+          } else if (car==cdr_symbol)
+          {
+            car=eval(CAR(CDR(i)));
+            if (!car || item_type(car)!=L_CONS_CELL)
+            { lprint(car); lbreak("setq cdr : evaled object is not a cons cell\n"); exit(0); }
+            ((cons_cell *)car)->cdr=set_to;
+          } else if (car==aref_symbol)
+          {
+#endif
+            void *a=(lisp_1d_array *)eval(CAR(CDR(i)));
+            p_ref r1(a);
+#ifdef TYPE_CHECKING
+            if (item_type(a)!=L_1D_ARRAY)
+            {
+              lprint(a);
+              lbreak("is not an array (aref)\n");
+              exit(0);
+            }
+#endif
+            long num=lnumber_value(eval(CAR(CDR(CDR(i)))));
+#ifdef TYPE_CHECKING
+            if (num>=((lisp_1d_array *)a)->size || num<0)
+            {
+              lbreak("aref : value of bounds (%d)\n", num);
+              exit(0);
+            }
+#endif
+            void **data=(void **)(((lisp_1d_array *)a)+1);
+            data[num]=set_to;
+#ifdef TYPE_CHECKING
+          } else
+          {
+            lbreak("expected (aref, car, cdr, or symbol) in setq\n");
+            exit(0);
+          }
+#endif
+          ret=set_to;
         } break;
-        default :
-        ((lisp_symbol *)i)->value=set_to;
-      }
-      ret=((lisp_symbol *)i)->value;
-    } break;
-    case L_CONS_CELL :   // this better be an 'aref'
-    {
-#ifdef TYPE_CHECKING
-      void *car=((cons_cell *)i)->car;
-      if (car==car_symbol)
-      {
-        car=eval(CAR(CDR(i)));
-        if (!car || item_type(car)!=L_CONS_CELL)
-        { lprint(car); lbreak("setq car : evaled object is not a cons cell\n"); exit(0); }
-        ((cons_cell *)car)->car=set_to;
-      } else if (car==cdr_symbol)
-      {
-        car=eval(CAR(CDR(i)));
-        if (!car || item_type(car)!=L_CONS_CELL)
-        { lprint(car); lbreak("setq cdr : evaled object is not a cons cell\n"); exit(0); }
-        ((cons_cell *)car)->cdr=set_to;
-      } else if (car==aref_symbol)
-      {
-#endif
-        void *a=(lisp_1d_array *)eval(CAR(CDR(i)));
-        p_ref r1(a);
-#ifdef TYPE_CHECKING
-        if (item_type(a)!=L_1D_ARRAY)
-        {
-          lprint(a);
-          lbreak("is not an array (aref)\n");
-          exit(0);
-        }
-#endif
-        long num=lnumber_value(eval(CAR(CDR(CDR(i)))));
-#ifdef TYPE_CHECKING
-        if (num>=((lisp_1d_array *)a)->size || num<0)
-        {
-          lbreak("aref : value of bounds (%d)\n",num);
-          exit(0);
-        }
-#endif
-        void **data=(void **)(((lisp_1d_array *)a)+1);
-        data[num]=set_to;
-#ifdef TYPE_CHECKING
-      } else
-      {
-        lbreak("expected (aref, car, cdr, or symbol) in setq\n");
-        exit(0);
-      }
-#endif
-      ret=set_to;
-    } break;
 
-    default :
-    {
-      lprint(i);
-      lbreak("setq/setf only defined for symbols and arrays now..\n");
-      exit(0);
-    }
+        default :
+        {
+          lprint(i);
+          lbreak("setq/setf only defined for symbols and arrays now..\n");
+          exit(0);
+        }
       }
     } break;
-    case 12 :                                      // symbol-list
+    case SYS_FUNC_SYMBOL_LIST:
       ret=NULL;
     break;
-    case 13 :                                      // assoc
+    case SYS_FUNC_ASSOC:
     {
       void *item=eval(CAR(arg_list));
       p_ref r1(item);
       void *list=(cons_cell *)eval(CAR(CDR(arg_list)));
       p_ref r2(list);
-      ret=assoc(item,(cons_cell *)list);
+      ret=assoc(item, (cons_cell *)list);
     } break;
-    case 20 :                                       // not is the same as null
-    case 14 :                                       // null
+    case SYS_FUNC_NOT:
+    case SYS_FUNC_NULL:
     if (eval(CAR(arg_list))==NULL) ret=true_symbol; else ret=NULL;
     break;
-    case 15 :                                       // acons
+    case SYS_FUNC_ACONS:
     {
-      void *i1=eval(CAR(arg_list)),*i2=eval(CAR(CDR(arg_list)));
+      void *i1=eval(CAR(arg_list)), *i2=eval(CAR(CDR(arg_list)));
       p_ref r1(i1);
       cons_cell *cs=new_cons_cell();
       cs->car=i1;
@@ -2116,26 +2083,26 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       ret=cs;
     } break;
 
-    case 16 :                                       // pairlis
+    case SYS_FUNC_PAIRLIS:
     {    
       l_user_stack.push(eval(CAR(arg_list))); arg_list=CDR(arg_list);
       l_user_stack.push(eval(CAR(arg_list))); arg_list=CDR(arg_list);
       void *n3=eval(CAR(arg_list));
       void *n2=l_user_stack.pop(1);
       void *n1=l_user_stack.pop(1);
-      ret=pairlis(n1,n2,n3);
+      ret=pairlis(n1, n2, n3);
     } break;
-    case 17 :                                      // let
+    case SYS_FUNC_LET:
     {
       // make an a-list of new variable names and new values
       void *var_list=CAR(arg_list),
            *block_list=CDR(arg_list);
-      p_ref r1(block_list),r2(var_list);
+      p_ref r1(block_list), r2(var_list);
       long stack_start=l_user_stack.son;
 
       while (var_list)
       {
-    void *var_name=CAR(CAR(var_list)),*tmp;
+    void *var_name=CAR(CAR(var_list)), *tmp;
 #ifdef TYPE_CHECKING
     if (item_type(var_name)!=L_SYMBOL)
     {
@@ -2170,7 +2137,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       l_user_stack.son=stack_start;     // restore the stack
     }
     break;
-    case 18 :                                   // defun
+    case SYS_FUNC_DEFUN:
     {
       void *symbol=CAR(arg_list);
 #ifdef TYPE_CHECKING
@@ -2193,16 +2160,16 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
 #ifndef NO_LIBS
       intptr_t a=cache.reg_lisp_block(lcar(lcdr(arg_list)));
       intptr_t b=cache.reg_lisp_block(block_list);
-      lisp_user_function *ufun=new_lisp_user_function(a,b);
+      lisp_user_function *ufun=new_lisp_user_function(a, b);
 #else
-      lisp_user_function *ufun=new_lisp_user_function(lcar(lcdr(arg_list)),block_list);
+      lisp_user_function *ufun=new_lisp_user_function(lcar(lcdr(arg_list)), block_list);
 #endif
-      set_symbol_function(symbol,ufun);
+      set_symbol_function(symbol, ufun);
       ret=symbol;
     } break;
-    case 19 :                                       // atom
+    case SYS_FUNC_ATOM:
     { ret=lisp_atom(eval(CAR(arg_list))); }
-    case 21 :                                           // and
+    case SYS_FUNC_AND:
     {
       void *l=arg_list;
       p_ref r1(l);
@@ -2216,7 +2183,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
     } else l=CDR(l);
       }
     } break;
-    case 22 :                                           // or
+    case SYS_FUNC_OR:
     {
       void *l=arg_list;
       p_ref r1(l);
@@ -2230,31 +2197,31 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
     } else l=CDR(l);
       }
     } break;
-    case 23 :                                          // progn
+    case SYS_FUNC_PROGN:
     { ret=eval_block(arg_list); } break;
-    case 25 :                                        // concatenate
+    case SYS_FUNC_CONCATENATE:
       ret=concatenate(arg_list);
     break;
-    case 26 :                                        // char-code
+    case SYS_FUNC_CHAR_CODE:
     {
       void *i=eval(CAR(arg_list));
       p_ref r1(i);
       ret=NULL;
       switch (item_type(i))
       {
-    case L_CHARACTER :
-    { ret=new_lisp_number(((lisp_character *)i)->ch); } break;
-    case L_STRING :
-    {  ret=new_lisp_number(*lstring_value(i)); } break;
-    default :
-    {
-      lprint(i);
-      lbreak(" is not character type\n");
-      exit(0);
-    }
+        case L_CHARACTER :
+        { ret=new_lisp_number(((lisp_character *)i)->ch); } break;
+        case L_STRING :
+        {  ret=new_lisp_number(*lstring_value(i)); } break;
+        default :
+        {
+          lprint(i);
+          lbreak(" is not character type\n");
+          exit(0);
+        }
       }        
     } break;
-    case 27 :                                        // code-char
+    case SYS_FUNC_CODE_CHAR:
     {
       void *i=eval(CAR(arg_list));
       p_ref r1(i);
@@ -2266,7 +2233,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       }
       ret=new_lisp_character(((lisp_number *)i)->num);
     } break;
-    case 30 :                                       // cond
+    case SYS_FUNC_COND:
     {
       void *block_list=CAR(arg_list);
       p_ref r1(block_list);
@@ -2282,14 +2249,14 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
     }
       }
     } break;
-    case 31 :                                       // select
+    case SYS_FUNC_SELECT:
     {
       void *selector=eval(CAR(arg_list));
       void *sel=CDR(arg_list);
-      p_ref r1(selector),r2(sel);
+      p_ref r1(selector), r2(sel);
       while (sel)
       {
-    if (lisp_equal(selector,eval(CAR(CAR(sel)))))
+    if (lisp_equal(selector, eval(CAR(CAR(sel)))))
     {
       sel=CDR(CAR(sel));
       while (sel)
@@ -2301,38 +2268,38 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
     } else sel=CDR(sel);
       }
     } break;
-    case 32 :                                      // function
+    case SYS_FUNC_FUNCTION:
       ret=lookup_symbol_function(eval(CAR(arg_list)));
     break;
-    case 33 :                                      // mapcar
+    case SYS_FUNC_MAPCAR:
       ret=mapcar(arg_list);
-    case 34 :                                      // funcall
+    case SYS_FUNC_FUNCALL:
     {
       void *n1=eval(CAR(arg_list));
-      ret=eval_function((lisp_symbol *)n1,CDR(arg_list));
+      ret=eval_function((lisp_symbol *)n1, CDR(arg_list));
     } break;
-    case 35 :                                                   // >
+    case SYS_FUNC_GT:
     {
       long n1=lnumber_value(eval(CAR(arg_list)));
       long n2=lnumber_value(eval(CAR(CDR(arg_list))));
       if (n1>n2) ret=true_symbol; else ret=NULL;
     }
     break;
-    case 36 :                                                   // <
+    case SYS_FUNC_LT:
     {
       long n1=lnumber_value(eval(CAR(arg_list)));
       long n2=lnumber_value(eval(CAR(CDR(arg_list))));
       if (n1<n2) ret=true_symbol; else ret=NULL;
     }
     break;
-    case 47 :                                                   // >=
+    case SYS_FUNC_GE:
     {
       long n1=lnumber_value(eval(CAR(arg_list)));
       long n2=lnumber_value(eval(CAR(CDR(arg_list))));
       if (n1>=n2) ret=true_symbol; else ret=NULL;
     }
     break;
-    case 48 :                                                   // <=
+    case SYS_FUNC_LE:
     {
       long n1=lnumber_value(eval(CAR(arg_list)));
       long n2=lnumber_value(eval(CAR(CDR(arg_list))));
@@ -2340,15 +2307,15 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
     }
     break;
 
-    case 37 :                                                  // tmp-space
+    case SYS_FUNC_TMP_SPACE:
       tmp_space();
       ret=true_symbol;
     break;
-    case 38 :                                                  // perm-space
+    case SYS_FUNC_PERM_SPACE:
       perm_space();
       ret=true_symbol;
     break;
-    case 39 :
+    case SYS_FUNC_SYMBOL_NAME:
       void *symb;
       symb=eval(CAR(arg_list));
 #ifdef TYPE_CHECKING
@@ -2361,22 +2328,22 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
 #endif
       ret=((lisp_symbol *)symb)->name;
     break;
-    case 40 :                                                  // trace
+    case SYS_FUNC_TRACE:
       trace_level++;
       if (arg_list)
         trace_print_level=lnumber_value(eval(CAR(arg_list)));
       ret=true_symbol;
     break;
-    case 41 :                                                  // untrace
+    case SYS_FUNC_UNTRACE:
       if (trace_level>0)
       {
                 trace_level--;
                 ret=true_symbol;
       } else ret=NULL;
     break;
-    case 42 :                                                 // digitstr
+    case SYS_FUNC_DIGSTR:
     {
-      char tmp[50],*tp;
+      char tmp[50], *tp;
       long num=lnumber_value(eval(CAR(arg_list)));
       long dig=lnumber_value(eval(CAR(CDR(arg_list))));
       tp=tmp+49;
@@ -2393,15 +2360,15 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
         *(tp--)='0';
       ret=new_lisp_string(tp+1);
     } break;
-    case 98:
-    case 66:
-    case 43:                                     // compile-file
+    case SYS_FUNC_LOCAL_LOAD:
+    case SYS_FUNC_LOAD:
+    case SYS_FUNC_COMPILE_FILE:
     {
             void *fn = eval( CAR( arg_list ) );
             char *st = lstring_value( fn );
             p_ref r1( fn );
             bFILE *fp;
-            if( fun->fun_number == 98 )          // local_load
+            if( fun->fun_number == SYS_FUNC_LOCAL_LOAD )
             {
                 // A special test for gamma.lsp
                 if( strcmp( st, "gamma.lsp" ) == 0 )
@@ -2419,14 +2386,14 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
             }
             else
             {
-                fp = open_file(st,"rb");
+                fp = open_file(st, "rb");
             }
 
             if( fp->open_failure() )
             {
                 delete fp;
                 if( DEFINEDP(symbol_value(load_warning)) && symbol_value(load_warning) )
-                    dprintf("Warning : file %s does not exists\n",st);
+                    dprintf("Warning : file %s does not exist\n", st);
                 ret = NULL;
             }
             else
@@ -2439,14 +2406,14 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
                   exit(0);
                 }
             
-                fp->read(s,l);
+                fp->read(s, l);
                 s[l]=0;
                 delete fp;
                 char const *cs=s;
             #ifndef NO_LIBS
                 char msg[100];
-                sprintf(msg,"(load \"%s\")",st);
-                if (stat_man) stat_man->push(msg,NULL);
+                sprintf(msg, "(load \"%s\")", st);
+                if (stat_man) stat_man->push(msg, NULL);
                 crc_manager.get_filenumber(st);               // make sure this file gets crc'ed
             #endif
                 void *compiled_form=NULL;
@@ -2460,7 +2427,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
                   compiled_form=compile(cs);
                   eval(compiled_form);
                   compiled_form=NULL;
-                  restore_heap(m,TMP_SPACE);
+                  restore_heap(m, TMP_SPACE);
                 }    
             #ifndef NO_LIBS
                                 if (stat_man) stat_man->update(100);
@@ -2470,45 +2437,49 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
                 ret=fn;
       }
     } break;
-    case 44 :                                                 // abs
+    case SYS_FUNC_ABS:
       ret=new_lisp_number(abs(lnumber_value(eval(CAR(arg_list))))); break;
-    case 45 :                                                 // min
+    case SYS_FUNC_MIN:
     {
-      int x=lnumber_value(eval(CAR(arg_list))),y=lnumber_value(eval(CAR(CDR(arg_list))));
+      int x=lnumber_value(eval(CAR(arg_list))), y=lnumber_value(eval(CAR(CDR(arg_list))));
       if (x<y) ret=new_lisp_number(x); else ret=new_lisp_number(y);
     } break;
-    case 46 :                                                 // max
+    case SYS_FUNC_MAX:
     {
-      int x=lnumber_value(eval(CAR(arg_list))),y=lnumber_value(eval(CAR(CDR(arg_list))));
+      int x=lnumber_value(eval(CAR(arg_list))), y=lnumber_value(eval(CAR(CDR(arg_list))));
       if (x>y) ret=new_lisp_number(x); else ret=new_lisp_number(y);
     } break;
-    case 49 :                        // backquote
+    case SYS_FUNC_BACKQUOTE:
     {
       ret=backquote_eval(CAR(arg_list));
     } break;
-    case 50 :
+    case SYS_FUNC_COMMA:
     {
       lprint(arg_list);
       lbreak("comma is illegal outside of backquote\n");
       exit(0);
       ret=NULL;
     } break;
-    case 51 :
+    case SYS_FUNC_NTH:
     {
       long x=lnumber_value(eval(CAR(arg_list)));
-      ret=nth(x,eval(CAR(CDR(arg_list))));
+      ret=nth(x, eval(CAR(CDR(arg_list))));
     } break;
-    case 52 : resize_tmp(lnumber_value(eval(CAR(arg_list)))); break;
-    case 53 : resize_perm(lnumber_value(eval(CAR(arg_list)))); break;
-    case 54 : ret=new_lisp_fixed_point(lisp_cos(lnumber_value(eval(CAR(arg_list))))); break;
-    case 55 : ret=new_lisp_fixed_point(lisp_sin(lnumber_value(eval(CAR(arg_list))))); break;
-    case 56 :
+    case SYS_FUNC_RESIZE_TMP:
+        resize_tmp(lnumber_value(eval(CAR(arg_list)))); break;
+    case SYS_FUNC_RESIZE_PERM:
+        resize_perm(lnumber_value(eval(CAR(arg_list)))); break;
+    case SYS_FUNC_COS:
+        ret=new_lisp_fixed_point(lisp_cos(lnumber_value(eval(CAR(arg_list))))); break;
+    case SYS_FUNC_SIN:
+        ret=new_lisp_fixed_point(lisp_sin(lnumber_value(eval(CAR(arg_list))))); break;
+    case SYS_FUNC_ATAN2:
     {
       long y=(lnumber_value(eval(CAR(arg_list))));   arg_list=CDR(arg_list);
       long x=(lnumber_value(eval(CAR(arg_list))));
-      ret=new_lisp_number(lisp_atan2(y,x));
+      ret=new_lisp_number(lisp_atan2(y, x));
     } break;
-    case 57 :
+    case SYS_FUNC_ENUM:
     {
       int sp=current_space;
       current_space=PERM_SPACE;
@@ -2547,37 +2518,37 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       }
       current_space=sp;
     } break;
-    case 58 :
+    case SYS_FUNC_QUIT:
     {
       exit(0);
     } break;
-    case 59 :
+    case SYS_FUNC_EVAL:
     {
       ret=eval(eval(CAR(arg_list)));
     } break;
-    case 60 : lbreak("User break"); break;
-    case 61 :
+    case SYS_FUNC_BREAK: lbreak("User break"); break;
+    case SYS_FUNC_MOD:
     {
       long x=lnumber_value(eval(CAR(arg_list))); arg_list=CDR(arg_list);
       long y=lnumber_value(eval(CAR(arg_list)));
       if (y==0) { lbreak("mod : division by zero\n"); y=1; }
       ret=new_lisp_number(x%y);
     } break;
-/*    case 62 :
+/*    case SYS_FUNC_WRITE_PROFILE:
     {
       char *fn=lstring_value(eval(CAR(arg_list)));
-      FILE *fp=fopen(fn,"wb");
+      FILE *fp=fopen(fn, "wb");
       if (!fp)
-        lbreak("could not open %s for writing",fn);
+        lbreak("could not open %s for writing", fn);
       else
       {    
     for (void *s=symbol_list;s;s=CDR(s))        
-      fprintf(fp,"%8d  %s\n",((lisp_symbol *)(CAR(s)))->call_counter,
+      fprintf(fp, "%8d  %s\n", ((lisp_symbol *)(CAR(s)))->call_counter,
           lstring_value(((lisp_symbol *)(CAR(s)))->name));
     fclose(fp);
       }
     } break;*/
-    case 64 :
+    case SYS_FUNC_FOR:
     {
       void *bind_var=CAR(arg_list); arg_list=CDR(arg_list);
       p_ref r1(bind_var);
@@ -2595,20 +2566,20 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       { lbreak("expecting do after 'for iterator in list'\n"); exit(1); }
       arg_list=CDR(arg_list);
 
-      void *block=NULL,*ret=NULL;
+      void *block=NULL, *ret=NULL;
       p_ref r3(block);
       l_user_stack.push(symbol_value(bind_var));  // save old symbol value
       while (ilist)
       {
-                set_symbol_value(bind_var,CAR(ilist));
+                set_symbol_value(bind_var, CAR(ilist));
                 for (block=arg_list;block;block=CDR(block))
                   ret=eval(CAR(block));
                 ilist=CDR(ilist);
       }
-      set_symbol_value(bind_var,l_user_stack.pop(1));
+      set_symbol_value(bind_var, l_user_stack.pop(1));
       ret=ret;
     } break;
-    case 65 :
+    case SYS_FUNC_OPEN_FILE:
     {
       bFILE *old_file=current_print_file;
       void *str1=eval(CAR(arg_list));
@@ -2631,7 +2602,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       current_print_file=old_file;
 
     } break;
-    case 67 :
+    case SYS_FUNC_BIT_AND:
     {
       long first=lnumber_value(eval(CAR(arg_list))); arg_list=CDR(arg_list);
       while (arg_list)
@@ -2641,7 +2612,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       }
       ret=new_lisp_number(first);
     } break;
-    case 68 :
+    case SYS_FUNC_BIT_OR:
     {
       long first=lnumber_value(eval(CAR(arg_list))); arg_list=CDR(arg_list);
       while (arg_list)
@@ -2651,7 +2622,7 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       }
       ret=new_lisp_number(first);
     } break;
-    case 69 :
+    case SYS_FUNC_BIT_XOR:
     {
       long first=lnumber_value(eval(CAR(arg_list))); arg_list=CDR(arg_list);
       while (arg_list)
@@ -2661,69 +2632,69 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       }
       ret=new_lisp_number(first);
     } break;
-    case 70 :  // make-array
+    case SYS_FUNC_MAKE_ARRAY:
     {
       long l=lnumber_value(eval(CAR(arg_list)));
       if (l>=2<<16 || l<=0)
       {
-                lbreak("bad array size %d\n",l);
+                lbreak("bad array size %d\n", l);
                 exit(0);
       }
-      ret=new_lisp_1d_array(l,CDR(arg_list));
+      ret=new_lisp_1d_array(l, CDR(arg_list));
     } break;
-    case 71 : // aref
+    case SYS_FUNC_AREF:
     {
       long x=lnumber_value(eval(CAR(CDR(arg_list))));
-      ret=lget_array_element(eval(CAR(arg_list)),x);
+      ret=lget_array_element(eval(CAR(arg_list)), x);
     } break;
-    case 72 : // if-1progn
+    case SYS_FUNC_IF_1PROGN:
     {
       if (eval(CAR(arg_list)))
         ret=eval_block(CAR(CDR(arg_list)));
       else ret=eval(CAR(CDR(CDR(arg_list))));
 
     } break;
-    case 73 : // if-2progn
+    case SYS_FUNC_IF_2PROGN:
     {
       if (eval(CAR(arg_list)))
         ret=eval(CAR(CDR(arg_list)));
       else ret=eval_block(CAR(CDR(CDR(arg_list))));
 
     } break;
-    case 74 : // if-12progn
+    case SYS_FUNC_IF_12PROGN:
     {
       if (eval(CAR(arg_list)))
         ret=eval_block(CAR(CDR(arg_list)));
       else ret=eval_block(CAR(CDR(CDR(arg_list))));
 
     } break;
-    case 75 : // eq0
+    case SYS_FUNC_EQ0:
     {
       void *v=eval(CAR(arg_list));
       if (item_type(v)!=L_NUMBER || (((lisp_number *)v)->num!=0))
         ret=NULL;
       else ret=true_symbol;
     } break;
-    case 76 : // preport
+    case SYS_FUNC_PREPORT:
     {
 #ifdef L_PROFILE
       char *s=lstring_value(eval(CAR(arg_list)));
       preport(s);
 #endif
     } break;
-    case 77 : // search
+    case SYS_FUNC_SEARCH:
     {
       void *arg1=eval(CAR(arg_list)); arg_list=CDR(arg_list);
       p_ref r1(arg1);       // protect this refrence
       char *haystack=lstring_value(eval(CAR(arg_list)));
       char *needle=lstring_value(arg1);
 
-      char *find=strstr(haystack,needle);
+      char *find=strstr(haystack, needle);
       if (find)
         ret=new_lisp_number(find-haystack);
       else ret=NULL;
     } break;
-    case 78 : // elt
+    case SYS_FUNC_ELT:
     {
       void *arg1=eval(CAR(arg_list)); arg_list=CDR(arg_list);
       p_ref r1(arg1);       // protect this refrence
@@ -2734,20 +2705,20 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       else
         ret=new_lisp_character(st[x]);
     } break;
-    case 79 : // listp
+    case SYS_FUNC_LISTP:
     {
       return item_type(eval(CAR(arg_list)))==L_CONS_CELL ? true_symbol : NULL;
     } break;
-    case 80 : // numberp
+    case SYS_FUNC_NUMBERP:
     {
       int t=item_type(eval(CAR(arg_list)));
       if (t==L_NUMBER || t==L_FIXED_POINT) return true_symbol; else return NULL;
     } break;
-    case 81 : // do
+    case SYS_FUNC_DO:
     {
       void *init_var=CAR(arg_list);
       p_ref r1(init_var);
-      int i,ustack_start=l_user_stack.son;      // restore stack at end
+      int i, ustack_start=l_user_stack.son;      // restore stack at end
       void *sym=NULL;
       p_ref r2(sym);
 
@@ -2766,10 +2737,10 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
                 l_user_stack.push(eval(CAR(CDR(CAR((init_var))))));
 
       // now set all the symbols
-      for (init_var=CAR(arg_list);init_var;init_var=CDR(init_var),do_evaled++)
+      for (init_var=CAR(arg_list);init_var;init_var=CDR(init_var), do_evaled++)
       {
                 sym=CAR(CAR(init_var));
-                set_symbol_value(sym,*do_evaled);
+                set_symbol_value(sym, *do_evaled);
       }
 
       i=0;       // set i to 1 when terminate conditions are meet
@@ -2788,44 +2759,44 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
 
       // restore old values for symbols
       do_evaled=l_user_stack.sdata+ustack_start;
-      for (init_var=CAR(arg_list);init_var;init_var=CDR(init_var),do_evaled++)
+      for (init_var=CAR(arg_list);init_var;init_var=CDR(init_var), do_evaled++)
       {
                 sym=CAR(CAR(init_var));
-                set_symbol_value(sym,*do_evaled);
+                set_symbol_value(sym, *do_evaled);
       }
 
       l_user_stack.son=ustack_start;
 
     } break;
-    case 82 : // gc
+    case SYS_FUNC_GC:
     {
       collect_space(current_space);
     } break;
-    case 83 : // schar
+    case SYS_FUNC_SCHAR:
     {
       char *s=lstring_value(eval(CAR(arg_list)));      arg_list=CDR(arg_list);
       long x=lnumber_value(eval(CAR(arg_list)));
 
       if ((unsigned)x >= strlen(s))
-      { lbreak("SCHAR: index %d should be less than the length of the string\n",x); exit(0); }
+      { lbreak("SCHAR: index %d should be less than the length of the string\n", x); exit(0); }
       else if (x<0)
       { lbreak("SCHAR: index should not be negative\n"); exit(0); }
       return new_lisp_character(s[x]);
     } break;
-    case 84 :// symbolp
+    case SYS_FUNC_SYMBOLP:
     { if (item_type(eval(CAR(arg_list)))==L_SYMBOL) return true_symbol;
       else return NULL; } break;
-    case 85 :  // num2str
+    case SYS_FUNC_NUM2STR:
     {
       char str[20];
-      sprintf(str,"%ld",(long int)lnumber_value(eval(CAR(arg_list))));
+      sprintf(str, "%ld", (long int)lnumber_value(eval(CAR(arg_list))));
       ret=new_lisp_string(str);
     } break;
-    case 86 : // nconc
+    case SYS_FUNC_NCONC:
     {
       void *l1=eval(CAR(arg_list)); arg_list=CDR(arg_list);
       p_ref r1(l1);
-      void *first=l1,*next;
+      void *first=l1, *next;
       p_ref r2(first);
 
       if (!l1)
@@ -2845,27 +2816,27 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
       } while (arg_list);
       ret=first;
     } break;
-    case 87 : // first
+    case SYS_FUNC_FIRST:
     { ret=CAR(eval(CAR(arg_list))); } break;
-    case 88 : // second
+    case SYS_FUNC_SECOND:
     { ret=CAR(CDR(eval(CAR(arg_list)))); } break;
-    case 89 : // third
+    case SYS_FUNC_THIRD:
     { ret=CAR(CDR(CDR(eval(CAR(arg_list))))); } break;
-    case 90 : // fourth
+    case SYS_FUNC_FOURTH:
     { ret=CAR(CDR(CDR(CDR(eval(CAR(arg_list)))))); } break;
-    case 91 : // fifth
+    case SYS_FUNC_FIFTH:
     { ret=CAR(CDR(CDR(CDR(CDR(eval(CAR(arg_list))))))); } break;
-    case 92 : // sixth
+    case SYS_FUNC_SIXTH:
     { ret=CAR(CDR(CDR(CDR(CDR(CDR(eval(CAR(arg_list)))))))); } break;
-    case 93 : // seventh
+    case SYS_FUNC_SEVENTH:
     { ret=CAR(CDR(CDR(CDR(CDR(CDR(CDR(eval(CAR(arg_list))))))))); } break;
-    case 94 : // eight
+    case SYS_FUNC_EIGHTH:
     { ret=CAR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(eval(CAR(arg_list)))))))))); } break;
-    case 95 : // ninth
+    case SYS_FUNC_NINTH:
     { ret=CAR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(eval(CAR(arg_list))))))))))); } break;
-    case 96 : // tenth
+    case SYS_FUNC_TENTH:
     { ret=CAR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(eval(CAR(arg_list)))))))))))); } break;
-    case 97 :
+    case SYS_FUNC_SUBSTR:
     {
       long x1=lnumber_value(eval(CAR(arg_list))); arg_list=CDR(arg_list);
       long x2=lnumber_value(eval(CAR(arg_list))); arg_list=CDR(arg_list);
@@ -2877,28 +2848,28 @@ void *eval_sys_function(lisp_sys_function *fun, void *arg_list)
 
       lisp_string *s=new_lisp_string(x2-x1+2);
       if (x2-x1)
-        memcpy(lstring_value(s),lstring_value(st)+x1,x2-x1+1);
+        memcpy(lstring_value(s), lstring_value(st)+x1, x2-x1+1);
 
       *(lstring_value(s)+(x2-x1+1))=0;
       ret=s;
     } break;
     case 99 :
     {
-      void *r=NULL,*rstart=NULL;
-      p_ref r1(r),r2(rstart);
+      void *r=NULL, *rstart=NULL;
+      p_ref r1(r), r2(rstart);
       while (arg_list)
       {
-                void *q=eval(CAR(arg_list));
-                if (!rstart) rstart=q;
-                while (r && CDR(r)) r=CDR(r);
-                CDR(r)=q;    
-                arg_list=CDR(arg_list);
+        void *q=eval(CAR(arg_list));
+        if (!rstart) rstart=q;
+        while (r && CDR(r)) r=CDR(r);
+        CDR(r)=q;    
+        arg_list=CDR(arg_list);
       }
       return rstart;
     } break;
 
     default :
-    { dprintf("Undefined system function number %d\n",((lisp_sys_function *)fun)->fun_number); }
+    { dprintf("Undefined system function number %d\n", ((lisp_sys_function *)fun)->fun_number); }
   }
   return ret;
 }
@@ -2952,11 +2923,11 @@ void *eval_user_fun(lisp_symbol *sym, void *arg_list)
 #ifndef NO_LIBS
   void *fun_arg_list=cache.lblock(fun->alist);
   void *block_list=cache.lblock(fun->blist);
-  p_ref r9(block_list),r10(fun_arg_list);
+  p_ref r9(block_list), r10(fun_arg_list);
 #else
   void *fun_arg_list=fun->arg_list;
   void *block_list=fun->block_list;
-  p_ref r9(block_list),r10(fun_arg_list);
+  p_ref r9(block_list), r10(fun_arg_list);
 #endif
 
 
@@ -3042,7 +3013,7 @@ void *eval(void *prog)
   {
     if (trace_level<=trace_print_level)
     {
-      dprintf("%d (%d,%d,%d) TRACE : ",trace_level,
+      dprintf("%d (%d, %d, %d) TRACE : ", trace_level,
           space_size[PERM_SPACE]-((char *)free_space[PERM_SPACE]-(char *)space[PERM_SPACE]),
           space_size[TMP_SPACE]-((char *)free_space[TMP_SPACE]-(char *)space[TMP_SPACE]),
           l_ptr_stack.son);
@@ -3076,18 +3047,18 @@ void *eval(void *prog)
       } break;
       case L_CONS_CELL :
       {
-        ret=eval_function((lisp_symbol *)CAR(prog),CDR(prog));
+        ret=eval_function((lisp_symbol *)CAR(prog), CDR(prog));
       }
       break;
       default :
-        fprintf(stderr,"shouldn't happen\n");
+        fprintf(stderr, "shouldn't happen\n");
     }
   }
   if (tstart)
   {
     trace_level--;
     if (trace_level<=trace_print_level)
-      dprintf("%d (%d,%d,%d) TRACE ==> ",trace_level,
+      dprintf("%d (%d, %d, %d) TRACE ==> ", trace_level,
           space_size[PERM_SPACE]-((char *)free_space[PERM_SPACE]-(char *)space[PERM_SPACE]),
           space_size[TMP_SPACE]-((char *)free_space[TMP_SPACE]-(char *)space[TMP_SPACE]),
           l_ptr_stack.son);
@@ -3103,70 +3074,6 @@ void *eval(void *prog)
   return ret;
 }
 
-#define TOTAL_SYS_FUNCS 99
-char const *sys_funcs[TOTAL_SYS_FUNCS] =
-{
-    //  0      1    2       3       4      5      6      7
-    "print","car","cdr","length","list","cons","quote","eq",
-    // 8   9   10    11       12          13     14      15      16
-    "+","-","if","setf","symbol-list","assoc","null","acons","pairlis",
-    // 17     18     19     20     21     22    23      24
-    "let","defun","atom","not", "and", "or","progn","equal",
-    // 25               26          27       28  29   30     31
-    "concatenate","char-code","code-char","*","/","cond","select",
-    // 32            33         34     35    36    37
-    "function", "mapcar", "funcall", ">", "<", "tmp-space",
-    //   38              39        40       41         42
-    "perm-space","symbol-name","trace","untrace","digstr",
-    //   43            44   45    46    47  48       49
-    "compile-file","abs","min","max",">=","<=","backquote",
-    //  50      51      52         53           54    55     56
-    "comma","nth","resize-tmp","resize-perm","cos","sin","atan2",
-    // 57       58     59     60     61   62              63
-    "enum", "quit","eval","break","mod","write_profile","setq",
-    // 64    65          66      67       68        69        70
-    "for", "open_file","load","bit-and","bit-or","bit-xor","make-array",
-    // 71      72          73          74        75      76
-    "aref","if-1progn","if-2progn","if-12progn","eq0","preport",
-    // 77     78         79        80       81     82     83
-    "search","elt",    "listp", "numberp", "do",  "gc", "schar",
-    // 84       85        86      87      88        89    90
-    "symbolp","num2str","nconc","first","second","third","fourth",
-    // 91       92       93       94       95      96
-    "fifth", "sixth", "seventh","eighth","ninth","tenth",
-    "substr",       // 97
-    "local_load"    // 98, filename
-};
-
-/* select, digistr, load-file are not a common lisp functions! */
-
-short sys_args[TOTAL_SYS_FUNCS*2]={
-
-// 0      1       2        3       4         5       6      7        8
- 1, -1,   1, 1,   1, 1,   0, -1,   0, -1,   2, 2,   1, 1,   2, 2,  0, -1,
-// 9      10      11      12       13       14      15      16      17
- 1, -1,   2, 3,   2, 2,   0, 0,    2, 2,    1, 1,   2, 2,   2, 2,   1, -1,
-// 18     19      20      21       22       23      24      25      26
- 2, -1,  1, 1,   1, 1,  -1, -1,  -1, -1,  -1, -1,  2, 2,   1,-1,   1, 1,
-// 27      28      29     30       31      32        33,     34      35
- 1, 1,   -1,-1,  1,-1,  -1, -1,   1,-1,    1, 1,   2, -1,  1,-1,   2,2,
-// 36     37     38       39       40       41      42      43      44
- 2,2,    0,0,   0,0,      1,1,    0,-1,    0,-1,   2,2,    1,1,    1,1,
-// 45     46     47       48       49       50      51      52      53
- 2,2,    2,2,   2,2,     2,2,     1,1,     1,1,    2,2,    1,1,    1,1,
-// 54     55     56       57       58       59      60      61      62
- 1,1,    1,1,   2,2,     1,-1,    0,0,     1,1,    0,0,    2,2,    1,1,
-// 63     64     65      66        67       68      69      70      71
- 2,2,    4,-1,  2,-1,    1,1,     1,-1,    1,-1,   1,-1,   1,-1,    2,2,
-// 72     73     74      75        76       77      78      79       80
- 2,3,     2,3,  2,3,     1,1,     1,1,     2,2,    2,2,    1,1,     1,1,
-// 81     82     83      84        85       86      87       88      89
- 2,3,     0,0,  2,2,     1,1,     1,1,     2,-1,   1,1,     1,1,    1,1,
-// 90      91    92      93        94       95      96       97     98
- 1,1,     1,1,   1,1,    1,1,     1,1,      1,1,     1,1,   3,3,    1,1
-
-};
-
 int total_symbols()
 {
   return ltotal_syms;
@@ -3176,7 +3083,7 @@ void resize_perm(int new_size)
 {
   if (new_size<((char *)free_space[PERM_SPACE]-(char *)space[PERM_SPACE]))
   {
-    lbreak("resize perm : %d is to small to hold current heap\n",new_size);
+    lbreak("resize perm : %d is to small to hold current heap\n", new_size);
     exit(0);
   } else if (new_size>space_size[PERM_SPACE])
   {
@@ -3190,7 +3097,7 @@ void resize_tmp(int new_size)
 {
   if (new_size<((char *)free_space[TMP_SPACE]-(char *)space[TMP_SPACE]))
   {
-    lbreak("resize perm : %d is to small to hold current heap\n",new_size);
+    lbreak("resize perm : %d is to small to hold current heap\n", new_size);
     exit(0);
   } else if (new_size>space_size[TMP_SPACE])
   {
@@ -3198,9 +3105,9 @@ void resize_tmp(int new_size)
     exit(0);
   } else if (free_space[TMP_SPACE]==space[TMP_SPACE])
   {
-    free_space[TMP_SPACE]=space[TMP_SPACE]=(char *)realloc(space[TMP_SPACE],new_size);
+    free_space[TMP_SPACE]=space[TMP_SPACE]=(char *)realloc(space[TMP_SPACE], new_size);
     space_size[TMP_SPACE]=new_size;
-    dprintf("Lisp : tmp space resized to %d\n",new_size);
+    dprintf("Lisp : tmp space resized to %d\n", new_size);
   } else dprintf("Lisp :tmp not empty, cannot resize\n");
 }
 
@@ -3222,12 +3129,13 @@ void lisp_init(long perm_size, long tmp_size)
 
 
   l_comp_init();
-  for (i=0;i<TOTAL_SYS_FUNCS;i++)
-    add_sys_function(sys_funcs[i],sys_args[i*2],sys_args[i*2+1],i);
+  for(i = 0; i < sizeof(sys_funcs) / sizeof(*sys_funcs); i++)
+    add_sys_function(sys_funcs[i].name,
+                     sys_funcs[i].min_args, sys_funcs[i].max_args, i);
   clisp_init();
   current_space=TMP_SPACE;
   dprintf("Lisp : %d symbols defined, %d system functions, %d pre-compiled functions\n",
-      total_symbols(),TOTAL_SYS_FUNCS,total_user_functions);
+      total_symbols(), sizeof(sys_funcs) / sizeof(*sys_funcs), total_user_functions);
 }
 
 void lisp_uninit()

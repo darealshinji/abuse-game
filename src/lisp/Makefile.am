@@ -6,7 +6,7 @@ liblisp_a_SOURCES = \
     lisp_opt.cpp lisp_opt.hpp \
     lisp_gc.cpp lisp_gc.hpp \
     trig.cpp \
-    stack.hpp \
+    stack.hpp symbols.hpp \
     $(NULL)
 
 INCLUDES = -I$(srcdir) -I$(srcdir)/../ -I$(srcdir)/../imlib $(SDL_CFLAGS)
