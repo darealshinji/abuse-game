@@ -12,7 +12,6 @@
 #include "game.hpp"
 #include "control.hpp"
 #include "specs.hpp"
-#include "loader.hpp"
 #include "hpoint.hpp"
 #include "ability.hpp"
 
