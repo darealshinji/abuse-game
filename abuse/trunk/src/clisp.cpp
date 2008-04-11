@@ -29,7 +29,6 @@
 #include "nfserver.hpp"
 #include "demo.hpp"
 #include "chat.hpp"
-#include "text_gui.hpp"
 #include "jdir.hpp"
 #include "netcfg.hpp"
 
@@ -474,9 +473,6 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_c_bool_fun("draw_bar",5,5,              282);  // x1,y1,x2,y2,color
   add_c_bool_fun("draw_rect",5,5,             283);  // x1,y1,x2,y2,color
   add_c_bool_fun("get_option",1,1,            284);
-  add_c_bool_fun("dir_exsist",1,1,            285);
-  add_c_bool_fun("chdir",1,1,                 286);
-  add_c_bool_fun("nice_copy",3,3,             287);  // source file, dest file
   add_c_bool_fun("set_delay_on",1,1,          288);  // T or nil
   add_c_bool_fun("set_login",1,1,             289);  // name
   add_c_bool_fun("enable_chatting",0,0,       290);
@@ -549,13 +545,10 @@ void clisp_init()                            // call by lisp_init, defines symbo
   add_lisp_function("game_to_mouse",2,2,        50);  // pass in x,y -> x,y
   add_lisp_function("get_main_font",0,0,        51);
   add_lisp_function("player_name",0,0,          52);
-  add_lisp_function("nice_input",3,3,           53);  // title, prompt, default -> returns input
   add_lisp_function("get_cwd",0,0,              54);
   add_lisp_function("system",1,1,               55);
   add_lisp_function("convert_slashes",2,2,      56);
-  add_lisp_function("show_yes_no",4,4,          57);
   add_lisp_function("get_directory",1,1,        58);  // path
-  add_lisp_function("nice_menu",3,3,            59);  // title, menu_title, list -> return selection number
   add_lisp_function("respawn_ai",0,0,           60);
 
   add_lisp_function("score_draw",0,0,           61);
@@ -938,14 +931,6 @@ void *l_caller(long number, void *args)
       else
         return new_lisp_string(c->name);
     } break;
-    case 53 :
-    {
-      char tit[100],prompt[100],def[100];
-      strcpy(tit,lstring_value(eval(CAR(args))));  args=CDR(args);
-      strcpy(prompt,lstring_value(eval(CAR(args))));  args=CDR(args);
-      strcpy(def,lstring_value(eval(CAR(args))));  args=CDR(args);
-      return nice_input(tit,prompt,def);
-    } break;
     case 54 :
     {
       char cd[150];
@@ -975,10 +960,6 @@ void *l_caller(long number, void *args)
       }
       return new_lisp_string(tmp);
     } break;
-    case 57 :
-    {
-      return show_yes_no(CAR(args),CAR(CDR(args)),CAR(CDR(CDR(args))),CAR(CDR(CDR(CDR(args)))));
-    } break;
     case 58 :
     {
       char **files,**dirs;
@@ -1000,10 +981,6 @@ void *l_caller(long number, void *args)
       }
 
       return rl;
-    } break;
-    case 59 :
-    {
-      return nice_menu(CAR(args),CAR(CDR(args)),CAR(CDR(CDR(args))));
     } break;
     case 60 : return respawn_ai(); break;
     case 61 : return score_draw();  break;
@@ -2236,28 +2213,6 @@ long c_caller(long number, void *args)
       if (get_option(lstring_value(CAR(args))))
         return 1;
       else return 0;
-    } break;
-    case 285 :
-    {
-      char cd[100];
-      getcwd(cd,100);
-      int t=change_dir(lstring_value(CAR(args)));
-      change_dir(cd);
-      return t;
-    } break;
-    case 286 :
-    {
-      if (change_dir(lstring_value(CAR(args))))
-        return 1;
-      else return 0;
-    } break;
-    case 287 :
-    {
-      void *title=CAR(args); args=CDR(args);
-      void *source=CAR(args); args=CDR(args);
-      void *dest=CAR(args); args=CDR(args);
-
-      return nice_copy(lstring_value(title),lstring_value(source),lstring_value(dest));
     } break;
     case 288 :
     {
