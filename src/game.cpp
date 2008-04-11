@@ -2289,21 +2289,6 @@ char *get_line(int open_braces)
   return line;
 }
 
-void check_for_upgrade(int argc, char **argv)
-{
-  for(int i = 1; i < argc; i++)
-    if(!strcmp(argv[i], "-upgrade"))
-    {
-      lisp_init(0xf000, 0x30000);
-      char const *prog="(load \"lisp/upgrade.lsp\")";
-      char const *cs = prog;
-      if(!eval(compile(cs)))
-    printf("file \"lisp/upgrade.lsp\" does not exist, cannot upgrade\n");
-
-      exit(0);
-    }
-}
-
 void check_for_lisp(int argc, char **argv)
 {
     for(int i = 1; i < argc; i++)
@@ -2485,7 +2470,6 @@ int main(int argc, char *argv[])
     set_spec_main_file("abuse.spe");
 
     check_for_lisp(argc, argv);
-    check_for_upgrade(argc, argv);
 
     do
     {

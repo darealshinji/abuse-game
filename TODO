@@ -14,3 +14,9 @@ FEATURES
 - Performance improvements.
 - Add YUV overlay support.
 - Convert all internal rendering to 24-bit.
+
+SAM'S TODO
+----------
+ - replace write_PCX calls with SDL_WriteSurfaceBMP
+ - is visobj.cpp really used?
+

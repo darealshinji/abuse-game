@@ -7,7 +7,6 @@ bin_PROGRAMS = abuse
 abuse_SOURCES = \
     specache.cpp specache.hpp \
     netcfg.cpp netcfg.hpp \
-    text_gui.cpp text_gui.hpp \
     innet.cpp \
     chat.cpp chat.hpp \
     endgame.cpp \
