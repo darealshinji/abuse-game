@@ -18,7 +18,6 @@
 #include "scroller.hpp"
 #include "id.hpp"
 #include "cache.hpp"
-#include "language.hpp"
 #include "dprint.hpp"
 #include "loader2.hpp"
 
@@ -55,6 +54,12 @@ public:
     }
 };
 
+static char const *lang_string(char const *symbol)
+{
+  void *v=find_symbol(symbol);
+  if (!v || !DEFINEDP(symbol_value(v))) return "Language symbol missing!";
+  else return lstring_value(symbol_value(v));
+}
 
 void gamma_correct(palette *&pal, int force_menu)
 {

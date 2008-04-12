@@ -54,7 +54,6 @@ abuse_SOURCES = \
     devsel.cpp devsel.hpp \
     crc.cpp crc.hpp \
     gamma.cpp gamma.hpp \
-    language.cpp language.hpp \
     bus_type.hpp id.hpp netface.hpp isllist.hpp sbar.hpp \
     nfserver.hpp exitproc.hpp \
     \

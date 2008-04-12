@@ -3,7 +3,6 @@ noinst_LIBRARIES = libimlib.a
 
 libimlib_a_SOURCES = \
     filter.cpp filter.hpp \
-    globals.cpp \
     image.cpp image.hpp \
     linked.cpp linked.hpp \
     input.cpp input.hpp \
