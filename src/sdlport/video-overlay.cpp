@@ -22,7 +22,6 @@
 #include <SDL.h>
 
 #include "filter.hpp"
-#include "globals.hpp"
 #include "system.h"
 #include "video.hpp"
 #include "macs.hpp"
@@ -34,7 +33,6 @@ SDL_Overlay *overlay;
 image *screen = NULL;
 unsigned char current_background;
 
-extern unsigned int xres, yres;
 extern palette *lastl;
 extern flags_struct flags;
 
