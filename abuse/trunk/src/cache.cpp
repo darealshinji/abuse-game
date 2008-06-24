@@ -30,6 +30,7 @@
 #include "crc.hpp"
 #include "dev.hpp"
 #include "specache.hpp"
+#include "netface.hpp"
 
 char lfname[100]="";          // name of compiled lisp code cache file
 
@@ -71,7 +72,7 @@ int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
       stat_man->update(i*100/total_files);
   }
   if (stat_man) stat_man->pop();
-  jFILE *fp=new jFILE("#net_crc","wb");
+  jFILE *fp=new jFILE(NET_CRC_FILENAME,"wb");
   if (fp->open_failure())
   {
     delete fp;
