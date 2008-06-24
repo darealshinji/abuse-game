@@ -89,6 +89,9 @@ void createRCFile( char *rcfile )
 
     if( (fd = fopen( rcfile, "w" )) != NULL )
     {
+        char datadir[255];
+        strncpy(datadir, EXPDATADIR, 255);
+
         fputs( "; Abuse-SDL Configuration file\n\n", fd );
         fputs( "; Startup fullscreen\nfullscreen=0\n\n", fd );
         #ifdef __APPLE__
@@ -97,7 +100,9 @@ void createRCFile( char *rcfile )
         #else
         fputs( "; Use DoubleBuffering\ndoublebuf=0\n\n", fd );
         fputs( "; Use OpenGL\ngl=0\n\n", fd );
-        fputs( "; Location of the datafiles\ndatadir=/var/games/abuse\n\n", fd );
+        fputs( "; Location of the datafiles\ndatadir=", fd );
+        fputs( datadir, fd );
+        fputs( "\n\n", fd );
         #endif
         fputs( "; Use mono audio only\nmono=0\n\n", fd );
         fputs( "; Grab the mouse to the window\ngrabmouse=0\n\n", fd );
