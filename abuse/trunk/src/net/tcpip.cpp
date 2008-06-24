@@ -21,10 +21,10 @@
 
 extern tcpip_protocol tcpip;
 
-//#define TCPIP_DEBUG
+#define TCPIP_DEBUG
 
 //{{{ net logging stuff
-/* 
+ 
 FILE *log_file=NULL;
 extern int net_start();
 void net_log(char *st, void *buf, long size)
@@ -53,7 +53,7 @@ void net_log(char *st, void *buf, long size)
     fprintf(log_file,"\n");
     fflush(log_file);
 
-} */
+} 
 //}}}
 
 ////////////////////////////////////////////////////////////////////////
@@ -65,6 +65,9 @@ int unix_fd::read(void *buf, int size, net_address **addr)
 //{{{
 {
   int tr=::read(fd,(char*)buf,size);
+
+  net_log("tcpip.cpp: unix_fd::read:", (char *) buf, (long) size);
+
   if (addr) *addr=NULL;
   return tr;
 }
@@ -73,6 +76,8 @@ int unix_fd::read(void *buf, int size, net_address **addr)
 int unix_fd::write(void const *buf, int size, net_address *addr)
 //{{{
 { 
+  net_log("tcpip.cpp: unix_fd::write:", (char *) buf, (long) size);
+
   if (addr) fprintf(stderr,"Cannot change address for this socket type\n");
   return ::write(fd,(char*)buf,size); 
 }
