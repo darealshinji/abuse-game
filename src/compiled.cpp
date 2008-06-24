@@ -10,6 +10,7 @@
 #include "config.h"
 
 #include <string.h>
+#include <malloc.h>
 
 #include "lisp.hpp"
 #include "macs.hpp"
