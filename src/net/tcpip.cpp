@@ -33,9 +33,9 @@ void net_log(char *st, void *buf, long size)
   if (!log_file) 
   {
     if (net_start())
-      log_file=fopen("client.log","wb");
+      log_file=fopen("/tmp/abuseclient.log","wb");
     else
-      log_file=fopen("server.log","wb");
+      log_file=fopen("/tmp/abuseserver.log","wb");
   }
 
 
