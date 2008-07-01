@@ -272,6 +272,7 @@ int net_driver::check_commands()
     game_face->input_missing();
     if (out->write(&cmd,1)!=1) { mdie("could not write block ack1"); }  // send something to unblock engine
       } break;
+      
       case NFCMD_KILL_SLACKERS :
       {
     if (!game_face->kill_slackers())
@@ -288,7 +289,6 @@ int net_driver::check_commands()
     if (in->read(&cmd,1)!=1) { mdie("could not read send ack2"); }    // read something to block ourselves for engine
       } break;
 
-
       case NFCMD_REQUEST_ENTRY :
       {
     uint8_t len;
@@ -298,11 +298,13 @@ int net_driver::check_commands()
     uint16_t success=join_server(name);
     if (out->write(&success,2)!=2) mdie("cound not send lsf read failure");
       } break;
+      
       case NFCMD_BECOME_SERVER :
       {
     cmd=become_server();    
     if (out->write(&cmd,1)!=1) mdie("cound not send ok");
       } break;
+      
       case NFCMD_REQUEST_LSF :
       {
     uint8_t len;
@@ -449,7 +451,7 @@ int net_driver::join_server(char *server_name)   // ask remote server for entry 
   char sn_start[256];
   strcpy(sn_start,server_name);
 
-  net_socket *sock=connect_to_server(server_name,DEFAULT_COMM_PORT,0);
+  net_socket *sock=connect_to_server(server_name, DEFAULT_COMM_PORT, 0);
   if (!sock)
   {
     fprintf(stderr,"unable to connect\n");

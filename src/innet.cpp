@@ -381,7 +381,7 @@ int request_server_entry()
     if (game_sock) delete game_sock;
     dprintf("Joining game in progress, hang on....\n");
 
-    game_sock=prot->create_listen_socket(main_net_cfg->port+1,net_socket::SOCKET_FAST);     // this is used for fast game packet transmission
+    game_sock=prot->create_listen_socket(main_net_cfg->port+2,net_socket::SOCKET_FAST);     // this is used for fast game packet transmission
     if (!game_sock) { if (comm_sock) delete comm_sock; comm_sock=NULL; prot=NULL; return 0; }
     game_sock->read_selectable();
 
@@ -393,7 +393,7 @@ int request_server_entry()
     }
 
     uint8_t ctype=CLIENT_ABUSE;
-    uint16_t port=lstl(main_net_cfg->port+1),cnum;
+    uint16_t port=lstl(main_net_cfg->port+2),cnum;
 
     uint8_t reg;
     if (sock->write(&ctype,1)!=1 ||   // send server out game port
