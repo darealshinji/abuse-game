@@ -1,0 +1,16 @@
+Makefile.in
+Makefile
+aclocal.m4
+config.h
+config.h.in
+config.log
+config.status
+configure
+libtool
+stamp-*
+*.o
+*.a
+.auto
+.deps
+abuse.6
+src/abuse
