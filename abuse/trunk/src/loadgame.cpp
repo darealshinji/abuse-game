@@ -93,8 +93,8 @@ int get_save_spot()
 
   int w=cache.img(save_buts[0])->width();
   int mx=last_demo_mx-w/2;
-  if((unsigned)(mx + w + 10) > xres) mx = xres - w - 10;
-  if( mx < 0) mx = 0;
+  if(mx + w + 10 > xres) mx = xres - w - 10;
+  if(mx < 0) mx = 0;
 
   Jwindow *l_win=create_num_window(mx,MAX_SAVE_GAMES,NULL);
   event ev;

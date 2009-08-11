@@ -188,9 +188,11 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
   if (parent->x+w+x>cx2)
     x=cx2-w-parent->x;
   if (h+y+parent->y>cy2)
+  {
     if (parent->y+parent->h+wm->font()->height()>cy2)
       y=-h;
-     else y=y-h+wm->font()->height()+5;
+    else y=y-h+wm->font()->height()+5;
+  }
 
 
   win=wm->new_window(parent->x+x,parent->y+y,

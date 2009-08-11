@@ -3114,7 +3114,7 @@ void resize_tmp(int new_size)
 void l_comp_init();
 void lisp_init(long perm_size, long tmp_size)
 {
-  int i;
+  unsigned int i;
   lsym_root=NULL;
   total_user_functions=0;
   free_space[0]=space[0]=(char *)malloc(perm_size);

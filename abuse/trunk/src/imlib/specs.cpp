@@ -432,9 +432,11 @@ jFILE::jFILE(char const *filename, char const *access_string)      // same as fo
 
   for (s=access_string;*s;s++)
     if (toupper(*s)=='W')
+    {
       if (access)
         access=O_RDWR;
       else access=O_WRONLY;
+    }
 
   for (s=access_string;*s;s++)
     if (toupper(*s)=='A')
@@ -626,7 +628,7 @@ void bFILE::write_uint32(uint32_t x)
 void bFILE::write_double(double x)
 {
   double a;
-  write_uint32((long)(modf(x,&a)*(double)(1<<32-1)));
+  write_uint32((long)(modf(x,&a)*(double)(1<<31)));
   write_uint32((long)a);
 }
 
@@ -635,7 +637,7 @@ double bFILE::read_double()
   long a,b;
   a=read_uint32();
   b=read_uint32();
-  return (double)b+a/(double)(1<<32-1);
+  return (double)b+a/(double)(1<<31);
 }
 
 spec_directory::~spec_directory()

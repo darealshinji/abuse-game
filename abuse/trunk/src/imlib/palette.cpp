@@ -260,10 +260,10 @@ void palette::defaults()
       set(i,RED3(i),GREEN3(i),BLUE2(i));
   else if (ncolors==16)
     for (i=0;i<ncolors;i++)
-      set(i,255-i&3,255-(i&4)>>2,255-(i&8)>>3);
+      set(i,255-(i&3),255-(i&4)>>2,255-(i&8)>>3);
   else
     for (i=0;i<ncolors;i++)
-      set(i,255-i%3,255-(i+1)%3,255-(i+2)%3);
+      set(i,255-(i%3),255-((i+1)%3),255-((i+2)%3));
 }
 
 void palette::shift(int amount)

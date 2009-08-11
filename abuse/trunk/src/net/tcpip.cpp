@@ -27,7 +27,8 @@ extern tcpip_protocol tcpip;
  
 FILE *log_file=NULL;
 extern int net_start();
-void net_log(char *st, void *buf, long size)
+
+static void net_log(char const *st, void *buf, long size)
 {
     
   if (!log_file) 
@@ -39,7 +40,7 @@ void net_log(char *st, void *buf, long size)
   }
 
 
-    fprintf(log_file,"%s%d - ",st,size);
+    fprintf(log_file,"%s%ld - ",st,size);
     int i;
     for (i=0;i<size;i++) 
       if (isprint(*((unsigned char *)buf+i)))
@@ -49,7 +50,7 @@ void net_log(char *st, void *buf, long size)
     fprintf(log_file," : ");
 
     for (i=0;i<size;i++) 
-    fprintf(log_file,"%02x, ",*((unsigned char *)buf+i),*((unsigned char *)buf+i));
+    fprintf(log_file,"%02x, ",*((unsigned char *)buf+i));
     fprintf(log_file,"\n");
     fflush(log_file);
 
@@ -192,7 +193,7 @@ net_address *tcpip_protocol::get_node_address(char const *&server_name,
           np++;
         }
         tmp[i] = num;
-        if (*np == ':' & !force_port)
+        if (*np == ':' && !force_port)
         {
             int x;
           if (sscanf(np+1,"%d",&x)==1)

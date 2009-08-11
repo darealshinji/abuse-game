@@ -23,7 +23,7 @@
 
 
 extern unsigned char current_background;
-extern unsigned int xres,yres;
+extern int xres,yres;
 extern int xoff,yoff;
 extern image *screen;
 

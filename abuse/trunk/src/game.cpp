@@ -192,9 +192,9 @@ void make_screen_size(int w, int h)
         if(!f->local_player())
             continue;
 
-        if((unsigned)w >= xres - 1)
+        if(w >= xres - 1)
             w = xres - 2;
-        if((unsigned)h >= yres - 1)
+        if(h >= yres - 1)
             h = yres - 2;
         f->suggest.cx1 = (xres + 1) / 2 - w / 2;
         f->suggest.cx2 = (xres + 1) / 2 + w / 2;

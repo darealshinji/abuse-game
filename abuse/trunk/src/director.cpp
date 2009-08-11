@@ -84,12 +84,16 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *fo
 
     dist=31;
     if (y-y1<dist)
+    {
       if (y-y1<1) dist=0;
       else dist=y-y1;
+    }
 
     if (y2-y<dist)
+    {
       if (y2-y<1) dist=0;
       else dist=y2-y;
+    }
 
     int c=cmap[dist];
     if (y>y2) { buf=NULL; }
