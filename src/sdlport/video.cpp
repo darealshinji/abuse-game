@@ -42,7 +42,7 @@ SDL_Surface *window = NULL, *surface = NULL;
 image *screen = NULL;
 unsigned char current_background;
 int win_xscale, win_yscale, mouse_xscale, mouse_yscale;
-unsigned int xres, yres;
+int xres, yres;
 
 extern palette *lastl;
 extern flags_struct flags;
@@ -237,7 +237,7 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
     Uint8 *dpixel;
     Uint16 dinset;
 
-    if((unsigned)y > yres || (unsigned)x > xres)
+    if(y > yres || x > xres)
         return;
 
     CHECK(x1 >= 0 && x2 >= x1 && y1 >= 0 && y2 >= y1);
@@ -249,7 +249,7 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
         x = 0;
     }
     srcrect.x = x1;
-    if((unsigned)(x + (x2 - x1)) >= xres)
+    if(x + (x2 - x1) >= xres)
         xe = xres - x + x1 - 1;
     else
         xe = x2;
@@ -260,7 +260,7 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
         y = 0;
     }
     srcrect.y = y1;
-    if((unsigned)(y + (y2 - y1)) >= yres)
+    if(y + (y2 - y1) >= yres)
         ye = yres - y + y1 - 1;
     else
         ye = y2;

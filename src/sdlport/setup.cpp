@@ -42,7 +42,7 @@
 flags_struct flags;
 keys_struct keys;
 
-extern unsigned int xres, yres;
+extern int xres, yres;
 static unsigned int scale;
 
 //

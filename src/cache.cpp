@@ -510,7 +510,7 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
           fnum_remap[i]=j;
     }
     
-    uint32_t tsaved=fp->read_uint32();
+    int tsaved = fp->read_uint32();
 
 
     int *priority=(int *)malloc(tsaved*sizeof(int));
@@ -1192,16 +1192,16 @@ CacheList cache;
 
 void CacheList::free_oldest()
 {
-  uint32_t i,old_time=last_access;
+  int32_t old_time = last_access;
   CacheItem *ci=list,*oldest=NULL;
   ful=1;
 
-  for (i=0;i<total;i++,ci++)
+  for (int i = 0; i < total; i++, ci++)
   {
-    if (ci->data && ci->last_access<old_time)
+    if (ci->data && ci->last_access < old_time)
     {
-      oldest=ci;
-      old_time=ci->last_access;
+      oldest = ci;
+      old_time = ci->last_access;
     }
   }
   if (oldest)

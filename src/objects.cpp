@@ -1370,10 +1370,12 @@ int game_object::mover(int cx, int cy, int button)  // return false if the route
 //    if (cx && has_sequence(run_jump))
       set_state(run_jump);
     if (xvel()!=0)
+    {
       if (direction>0)
         set_xvel(get_ability(type(),jump_top_speed));
       else
         set_xvel(-get_ability(type(),jump_top_speed));
+    }
     set_xacel(0);
 
 
