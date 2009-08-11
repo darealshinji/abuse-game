@@ -15,7 +15,9 @@ AC_C_BIGENDIAN
 
 dnl Check for X
 AC_PATH_X
-X_LIBS=-L$x_libraries
+if [ "x$x_libraries" != "x" ]; then
+  X_LIBS="-L$x_libraries"
+fi
 
 dnl Figure out where the datafiles will be
 EXPDATADIR="-DEXPDATADIR=\\\"$datadir/games/abuse\\\""
@@ -37,7 +39,7 @@ SDL_VERSION=1.1.6
 AM_PATH_SDL($SDL_VERSION, :,
     AC_MSG_ERROR([*** SDL version $SDL_VERSION or above not found!]))
 CFLAGS="$CFLAGS $SDL_CFLAGS"
-LIBS="$LIBS $SDL_LIBS $X_LIBS -L/usr/lib"
+LIBS="$LIBS $SDL_LIBS $X_LIBS"
 
 # Optimizations
 CPPFLAGS="${CPPFLAGS} -g -O2 -fno-strength-reduce -fomit-frame-pointer"
