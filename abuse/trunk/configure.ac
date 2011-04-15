@@ -23,6 +23,11 @@ dnl Figure out where the datafiles will be
 EXPDATADIR="-DEXPDATADIR=\\\"$datadir/games/abuse\\\""
 AC_SUBST(EXPDATADIR)
 
+AC_ARG_ENABLE(debug,
+  [  --enable-debug          build debug versions of the game (default no)])
+AC_ARG_ENABLE(release,
+  [  --enable-release        build final release of the game (default no)])
+
 dnl Checks for libraries
 dnl Do we need to link against something for X shared memory support?
 AC_CHECK_LIB(Xext,XShmAttach,:,[
@@ -41,10 +46,24 @@ AM_PATH_SDL($SDL_VERSION, :,
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS $X_LIBS"
 
+if test "${enable_debug}" = "yes"; then
+  AC_DEFINE(HAVE_DEBUG, 1, Define to 1 to activate debug)
+  OPT="-O0"
+else
+  OPT="-O2 -fno-strength-reduce -fomit-frame-pointer"
+fi
+
+if test "${enable_release}" = "yes"; then
+  AC_DEFINE(HAVE_RELEASE, 1, Define to 1 to activate final release)
+  REL=""
+else
+  REL="-g"
+fi
+
 # Optimizations
-CPPFLAGS="${CPPFLAGS} -g -O2 -fno-strength-reduce -fomit-frame-pointer"
+CXXFLAGS="${CXXFLAGS} ${OPT} ${REL}"
 # Code qui fait des warnings == code de porc == deux baffes dans ta gueule
-CPPFLAGS="${CPPFLAGS} -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Waggregate-return -Wsign-compare"
+CXXFLAGS="${CXXFLAGS} -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Waggregate-return -Wsign-compare"
 
 dnl Checks for header files
 AC_HEADER_DIRENT
