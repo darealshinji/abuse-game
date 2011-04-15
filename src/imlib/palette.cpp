@@ -99,12 +99,12 @@ int palette::find_color(unsigned char r, unsigned char g, unsigned char b)
 }
 
 uint32_t palette::getquad(int x)
-{ char entry[4];
+{ union { char entry[4]; uint32_t ret; };
   entry[3]=0;
   entry[2]=pal[x].red;
   entry[1]=pal[x].green;
   entry[0]=pal[x].blue;
-  return *((uint32_t *)entry);
+  return ret;
 }
 
 
@@ -260,7 +260,7 @@ void palette::defaults()
       set(i,RED3(i),GREEN3(i),BLUE2(i));
   else if (ncolors==16)
     for (i=0;i<ncolors;i++)
-      set(i,255-(i&3),255-(i&4)>>2,255-(i&8)>>3);
+      set(i,255-(i&3),255-((i&4)>>2),255-((i&8)>>3));
   else
     for (i=0;i<ncolors;i++)
       set(i,255-(i%3),255-((i+1)%3),255-((i+2)%3));

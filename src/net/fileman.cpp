@@ -140,7 +140,8 @@ int file_manager::nfs_client::send_read()   // return 0 if failure on socket, no
     read_total=size_to_read>(READ_PACKET_SIZE-2) ? (READ_PACKET_SIZE-2) : size_to_read;
 
     actual=read(file_fd,buf+2,read_total);
-    *((ushort *)buf)=lstl(actual);
+    ushort tmp = lstl(actual);
+    memcpy(buf, &tmp, sizeof(tmp));
 
     int write_amount=sock->write(buf,actual+2);
     if (write_amount!=actual+2)
