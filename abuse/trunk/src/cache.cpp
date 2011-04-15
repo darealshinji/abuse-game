@@ -523,7 +523,7 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
 
     for (i=0;i<tsaved;i++)
     {
-      uint8_t type=fp->read_uint8();
+      fp->read_uint8(); // read type
       short file_num=fp->read_uint16();
       if (file_num>=tnames)  // bad data?
         file_num=-1;

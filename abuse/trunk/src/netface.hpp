@@ -106,7 +106,7 @@ struct net_packet
 {
   uint8_t data[PACKET_MAX_SIZE];
   int packet_prefix_size()                 { return 5; }    // 2 byte size, 2 byte check sum, 1 byte packet order
-  uint16_t packet_size()             { uint16_t size=(*(uint16_t *)data); return lstl(size); }
+  uint16_t packet_size()             { uint16_t size; memcpy(&size, data, sizeof(size)); return lstl(size); }
   uint8_t tick_received()            { return data[4]; }
   void set_tick_received(uint8_t x)  { data[4]=x; }
   uint8_t *packet_data()             { return data+packet_prefix_size(); }
@@ -141,7 +141,7 @@ struct net_packet
   void write_uint16(uint16_t x) { x=lstl(x); add_to_packet(&x,2); }
   void write_uint32(uint32_t x) { x=lltl(x); add_to_packet(&x,4); }
 
-  void set_packet_size(uint16_t x) { *((uint16_t *)data)=lstl(x); }
+  void set_packet_size(uint16_t x) { uint16_t tmp = lstl(x); memcpy(data, &tmp, sizeof(tmp)); }
 
 
 } ;
