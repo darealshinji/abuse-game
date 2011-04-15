@@ -96,13 +96,13 @@ void JCMouse::set_shape( image *im, int centerx, int centery )
 void JCMouse::set_position( int new_mx, int new_my )
 {
     // Make sure the values we are given are sensible.
-    if( new_mx > 319 )
+    if( new_mx > screen->width() - 1 )
     {
-        new_mx = 319;
+        new_mx = screen->width() - 1;
     }
-    if( new_my > 199 )
+    if( new_my > screen->height() - 1 )
     {
-        new_my = 199;
+        new_my = screen->height() - 1;
     }
 
     // Set the new position

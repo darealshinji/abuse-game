@@ -373,13 +373,13 @@ void handle_mouse( event &ev )
     buttons = SDL_GetMouseState( &x, &y );
     x = (x << 16) / mouse_xscale;
     y = (y << 16) / mouse_yscale;
-    if( x > 319 )
+    if( x > screen->width() - 1 )
     {
-        x = 319;
+        x = screen->width() - 1;
     }
-    if( y > 199 )
+    if( y > screen->height() - 1 )
     {
-        y = 199;
+        y = screen->height() - 1;
     }
     ev.mouse_move.x = x;
     ev.mouse_move.y = y;
