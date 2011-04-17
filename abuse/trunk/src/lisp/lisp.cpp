@@ -1459,7 +1459,7 @@ LObject *LSymbol::EvalFunction(void *arg_list)
         req_max = ((LSysFunction *)fun)->max_args;
         break;
     case L_USER_FUNCTION:
-        return (LObject *)eval_user_fun(this, arg_list);
+        return EvalUserFunction((LList *)arg_list);
     default:
         Print();
         lbreak(" is not a function name");
@@ -1505,7 +1505,7 @@ LObject *LSymbol::EvalFunction(void *arg_list)
         ret = (LObject *)l_caller(((LSysFunction *)fun)->fun_number, arg_list);
         break;
     case L_USER_FUNCTION:
-        return (LObject *)eval_user_fun(this, arg_list);
+        return EvalUserFunction((LList *)arg_list);
     case L_C_FUNCTION:
     case L_C_BOOL:
     {
@@ -2772,7 +2772,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
         char *st = lstring_value(arg1);
         if (x < 0 || x >= (int32_t)strlen(st))
         {
-            lbreak("elt : out of range of string\n");
+            lbreak("elt: out of range of string\n");
             ret = NULL;
         }
         else
@@ -2781,13 +2781,15 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
     }
     case SYS_FUNC_LISTP:
     {
-        ltype t = item_type(CAR(arg_list)->Eval());
+        LObject *tmp = CAR(arg_list)->Eval();
+        ltype t = item_type(tmp);
         ret = (t == L_CONS_CELL) ? true_symbol : NULL;
         break;
     }
     case SYS_FUNC_NUMBERP:
     {
-        ltype t = item_type(CAR(arg_list)->Eval());
+        LObject *tmp = CAR(arg_list)->Eval();
+        ltype t = item_type(tmp);
         ret = (t == L_NUMBER || t == L_FIXED_POINT) ? true_symbol : NULL;
         break;
     }
@@ -2795,7 +2797,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
     {
         LObject *init_var = CAR(arg_list);
         PtrRef r1(init_var);
-        int ustack_start = l_user_stack.son;      // restore stack at end
+        int ustack_start = l_user_stack.son; // restore stack at end
         LSymbol *sym = NULL;
         PtrRef r2(sym);
 
@@ -2867,9 +2869,11 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
         break;
     }
     case SYS_FUNC_SYMBOLP:
-        if (item_type(CAR(arg_list)->Eval()) == L_SYMBOL)
-            ret = true_symbol;
+    {
+        LObject *tmp = CAR(arg_list)->Eval();
+        ret = (item_type(tmp) == L_SYMBOL) ? true_symbol : NULL;
         break;
+    }
     case SYS_FUNC_NUM2STR:
     {
         char str[20];
@@ -2987,123 +2991,123 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
 
 void tmp_space()
 {
-  current_space=TMP_SPACE;
+    current_space = TMP_SPACE;
 }
 
 void perm_space()
 {
-  current_space=PERM_SPACE;
+    current_space = PERM_SPACE;
 }
 
 void use_user_space(void *addr, long size)
 {
-  current_space = 2;
-  free_space[USER_SPACE] = space[USER_SPACE] = (uint8_t *)addr;
-  space_size[USER_SPACE] = size;
+    current_space = 2;
+    free_space[USER_SPACE] = space[USER_SPACE] = (uint8_t *)addr;
+    space_size[USER_SPACE] = size;
 }
 
-
-void *eval_user_fun(LSymbol *sym, void *arg_list)
+/* PtrRef check: OK */
+LObject *LSymbol::EvalUserFunction(LList *arg_list)
 {
-  void *ret=NULL;
-  PtrRef ref1(ret);
+    LObject *ret = NULL;
+    PtrRef ref1(ret);
 
 #ifdef TYPE_CHECKING
-  if (item_type(sym)!=L_SYMBOL)
-  {
-    ((LObject *)sym)->Print();
-    lbreak("EVAL : is not a function name (not symbol either)");
-    exit(0);
-  }
+    if (item_type(this) != L_SYMBOL)
+    {
+        Print();
+        lbreak("EVAL : is not a function name (not symbol either)");
+        exit(0);
+    }
 #endif
 #ifdef L_PROFILE
-  time_marker start;
+    time_marker start;
 #endif
 
-
-  LUserFunction *fun=(LUserFunction *)(((LSymbol *)sym)->function);
+    LUserFunction *fun = (LUserFunction *)function;
 
 #ifdef TYPE_CHECKING
-  if (item_type(fun)!=L_USER_FUNCTION)
-  {
-    ((LObject *)sym)->Print();
-    lbreak("is not a user defined function\n");
-  }
+    if (item_type(fun) != L_USER_FUNCTION)
+    {
+        Print();
+        lbreak("is not a user defined function\n");
+    }
 #endif
 
 #ifndef NO_LIBS
-  void *fun_arg_list=cache.lblock(fun->alist);
-  void *block_list=cache.lblock(fun->blist);
-  PtrRef r9(block_list), r10(fun_arg_list);
+    void *fun_arg_list = cache.lblock(fun->alist);
+    void *block_list = cache.lblock(fun->blist);
+    PtrRef r9(block_list), r10(fun_arg_list);
 #else
-  void *fun_arg_list=fun->arg_list;
-  void *block_list=fun->block_list;
-  PtrRef r9(block_list), r10(fun_arg_list);
+    void *fun_arg_list = fun->arg_list;
+    void *block_list = fun->block_list;
+    PtrRef r9(block_list), r10(fun_arg_list);
 #endif
 
+    // mark the start start, so we can restore when done
+    long stack_start = l_user_stack.son;
 
+    // first push all of the old symbol values
+    LObject *f_arg = NULL;
+    PtrRef r18(f_arg);
+    PtrRef r19(arg_list);
 
-  // mark the start start, so we can restore when done
-  long stack_start=l_user_stack.son;
-
-  // first push all of the old symbol values
-  void *f_arg=fun_arg_list;
-  PtrRef r18(f_arg);
-  PtrRef r19(arg_list);
-  for (; f_arg; f_arg=CDR(f_arg))
-  {
-    LSymbol *s = (LSymbol *)CAR(f_arg);
-    l_user_stack.push(s->value);
-  }
-
-  // open block so that local vars aren't saved on the stack
-  {
-    int new_start=l_user_stack.son;
-    int i=new_start;
-    // now push all the values we wish to gather
-    for (f_arg=fun_arg_list; f_arg; )
+    for (f_arg = (LObject *)fun_arg_list; f_arg; f_arg = CDR(f_arg))
     {
-      if (!arg_list)
-      { sym->Print(); lbreak("too few parameter to function\n"); exit(0); }
-      l_user_stack.push(CAR(arg_list)->Eval());
-      f_arg=CDR(f_arg);
-      arg_list=CDR(arg_list);
+        LSymbol *s = (LSymbol *)CAR(f_arg);
+        l_user_stack.push(s->value);
     }
 
+    // open block so that local vars aren't saved on the stack
+    {
+        int new_start = l_user_stack.son;
+        int i = new_start;
+        // now push all the values we wish to gather
+        for (f_arg = (LObject *)fun_arg_list; f_arg; f_arg = CDR(f_arg))
+        {
+            if (!arg_list)
+            {
+                Print();
+                lbreak("too few parameter to function\n");
+                exit(0);
+            }
+            l_user_stack.push(CAR(arg_list)->Eval());
+            arg_list = (LList *)CDR(arg_list);
+        }
 
-    // now store all the values and put them into the symbols
-    for (f_arg=fun_arg_list; f_arg; f_arg=CDR(f_arg))
-      ((LSymbol *)CAR(f_arg))->SetValue((LObject *)l_user_stack.sdata[i++]);
+        // now store all the values and put them into the symbols
+        for (f_arg = (LObject *)fun_arg_list; f_arg; f_arg = CDR(f_arg))
+            ((LSymbol *)CAR(f_arg))->SetValue((LObject *)l_user_stack.sdata[i++]);
 
-    l_user_stack.son=new_start;
-  }
+        l_user_stack.son = new_start;
+    }
 
+    if (f_arg)
+    {
+        Print();
+        lbreak("too many parameter to function\n");
+        exit(0);
+    }
 
+    // now evaluate the function block
+    while (block_list)
+    {
+        ret = CAR(block_list)->Eval();
+        block_list = CDR(block_list);
+    }
 
-  if (f_arg)
-  { sym->Print(); lbreak("too many parameter to function\n"); exit(0); }
+    long cur_stack = stack_start;
+    for (f_arg = (LObject *)fun_arg_list; f_arg; f_arg = CDR(f_arg))
+        ((LSymbol *)CAR(f_arg))->SetValue((LObject *)l_user_stack.sdata[cur_stack++]);
 
-
-  // now evaluate the function block
-  while (block_list)
-  {
-    ret=CAR(block_list)->Eval();
-    block_list=CDR(block_list);
-  }
-
-  long cur_stack=stack_start;
-  for (f_arg=fun_arg_list; f_arg; f_arg=CDR(f_arg))
-    ((LSymbol *)CAR(f_arg))->SetValue((LObject *)l_user_stack.sdata[cur_stack++]);
-
-  l_user_stack.son=stack_start;
+    l_user_stack.son = stack_start;
 
 #ifdef L_PROFILE
-  time_marker end;
-  sym->time_taken += end.diff_time(&start);
+    time_marker end;
+    sym->time_taken += end.diff_time(&start);
 #endif
 
-
-  return ret;
+    return ret;
 }
 
 /* PtrRef check: OK */

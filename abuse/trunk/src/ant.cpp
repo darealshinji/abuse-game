@@ -118,7 +118,7 @@ static void fire_at_player(game_object *o, game_object *b)
     push_onto_list(LNumber::Create(firex),call_list);
     push_onto_list(LNumber::Create(o->aitype()),call_list);
     push_onto_list(LPointer::Create(o),call_list);
-    eval_user_fun((LSymbol *)l_fire_object,call_list);
+    ((LSymbol *)l_fire_object)->EvalUserFunction((LList *)call_list);
     o->set_state((character_state)S_weapon_fire);
   }
 }
