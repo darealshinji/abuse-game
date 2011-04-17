@@ -112,10 +112,10 @@ static void fire_at_player(game_object *o, game_object *b)
     void *call_list=NULL;
     p_ref r1(call_list);
     push_onto_list(new_lisp_pointer(b),call_list);
-    push_onto_list(new_lisp_number(angle),call_list);
-    push_onto_list(new_lisp_number(firey),call_list);
-    push_onto_list(new_lisp_number(firex),call_list);
-    push_onto_list(new_lisp_number(o->aitype()),call_list);
+    push_onto_list(LispNumber::Create(angle),call_list);
+    push_onto_list(LispNumber::Create(firey),call_list);
+    push_onto_list(LispNumber::Create(firex),call_list);
+    push_onto_list(LispNumber::Create(o->aitype()),call_list);
     push_onto_list(new_lisp_pointer(o),call_list);
     eval_user_fun((LispSymbol *)l_fire_object,call_list);
     o->set_state((character_state)S_weapon_fire);

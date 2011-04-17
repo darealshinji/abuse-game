@@ -383,7 +383,7 @@ void CacheList::preload_cache_object(int type)
     current_space=PERM_SPACE;
 
     void *call_with=NULL;
-    push_onto_list(new_lisp_number(type),call_with);
+    push_onto_list(LispNumber::Create(type),call_with);
 
     void *CacheList=eval_function((LispSymbol *)cache_fun,call_with);
     p_ref r1(CacheList);

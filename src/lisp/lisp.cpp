@@ -441,12 +441,12 @@ LispSymbol *new_lisp_symbol(char *name)
   return s;
 }
 
-LispNumber *new_lisp_number(long num)
+LispNumber *LispNumber::Create(long num)
 {
-  LispNumber *s=(LispNumber *)lmalloc(sizeof(LispNumber), current_space);
-  s->type=L_NUMBER;
-  s->num=num;
-  return s;
+    LispNumber *s = (LispNumber *)lmalloc(sizeof(LispNumber), current_space);
+    s->type = L_NUMBER;
+    s->num = num;
+    return s;
 }
 
 
@@ -1211,7 +1211,7 @@ void *compile(char const *&s)
     lerror(s, "mismatched )");
   else if (isdigit(n[0]) || (n[0]=='-' && isdigit(n[1])))
   {
-    LispNumber *num=new_lisp_number(0);
+    LispNumber *num = LispNumber::Create(0);
     sscanf(n, "%ld", &num->num);
     ret=num;
   } else if (n[0]=='"')
@@ -1524,7 +1524,7 @@ void *eval_function(LispSymbol *sym, void *arg_list)
         arg_list=lcdr(arg_list);
       }
       if(t == L_C_FUNCTION)
-        ret=new_lisp_number(c_caller( ((LispSysFunction *)fun)->fun_number, first));
+        ret = LispNumber::Create(c_caller( ((LispSysFunction *)fun)->fun_number, first));
       else if (c_caller( ((LispSysFunction *)fun)->fun_number, first))
         ret=true_symbol;
       else ret=NULL;
@@ -1811,8 +1811,8 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       void *v=eval(CAR(arg_list));
       switch (item_type(v))
       {
-        case L_STRING : ret=new_lisp_number(strlen(lstring_value(v))); break;
-        case L_CONS_CELL : ret=new_lisp_number(list_length(v)); break;
+        case L_STRING : ret = LispNumber::Create(strlen(lstring_value(v))); break;
+        case L_CONS_CELL : ret = LispNumber::Create(list_length(v)); break;
         default :
         { lprint(v);
           lbreak("length : type not supported\n");
@@ -1868,7 +1868,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
     sum+=lnumber_value(eval(CAR(arg_list)));
     arg_list=CDR(arg_list);
       }
-      ret=new_lisp_number(sum);
+      ret = LispNumber::Create(sum);
     }
     break;
     case SYS_FUNC_TIMES:
@@ -1895,7 +1895,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       arg_list=CDR(arg_list);
       if (arg_list) first=eval(CAR(arg_list));
     } while (arg_list);
-    ret=new_lisp_number(sum);
+    ret = LispNumber::Create(sum);
       }
     }
     break;
@@ -1919,7 +1919,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
     else sum/=((LispNumber *)i)->num;
     arg_list=CDR(arg_list);
       }
-      ret=new_lisp_number(sum);
+      ret = LispNumber::Create(sum);
     }
     break;
     case SYS_FUNC_MINUS:
@@ -1930,7 +1930,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
     x-=lnumber_value(eval(CAR(arg_list)));
     arg_list=CDR(arg_list);
       }
-      ret=new_lisp_number(x);
+      ret = LispNumber::Create(x);
     }
     break;
     case SYS_FUNC_IF:
@@ -2182,9 +2182,9 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       switch (item_type(i))
       {
         case L_CHARACTER :
-        { ret=new_lisp_number(((LispChar *)i)->ch); } break;
+        { ret = LispNumber::Create(((LispChar *)i)->ch); } break;
         case L_STRING :
-        {  ret=new_lisp_number(*lstring_value(i)); } break;
+        {  ret = LispNumber::Create(*lstring_value(i)); } break;
         default :
         {
           lprint(i);
@@ -2411,16 +2411,16 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       }
     } break;
     case SYS_FUNC_ABS:
-      ret=new_lisp_number(abs(lnumber_value(eval(CAR(arg_list))))); break;
+      ret = LispNumber::Create(abs(lnumber_value(eval(CAR(arg_list))))); break;
     case SYS_FUNC_MIN:
     {
       int x=lnumber_value(eval(CAR(arg_list))), y=lnumber_value(eval(CAR(CDR(arg_list))));
-      if (x<y) ret=new_lisp_number(x); else ret=new_lisp_number(y);
+      ret = LispNumber::Create(x < y ? x : y);
     } break;
     case SYS_FUNC_MAX:
     {
       int x=lnumber_value(eval(CAR(arg_list))), y=lnumber_value(eval(CAR(CDR(arg_list))));
-      if (x>y) ret=new_lisp_number(x); else ret=new_lisp_number(y);
+      ret = LispNumber::Create(x > y ? x : y);
     } break;
     case SYS_FUNC_BACKQUOTE:
     {
@@ -2450,7 +2450,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
     {
       long y=(lnumber_value(eval(CAR(arg_list))));   arg_list=CDR(arg_list);
       long x=(lnumber_value(eval(CAR(arg_list))));
-      ret=new_lisp_number(lisp_atan2(y, x));
+      ret = LispNumber::Create(lisp_atan2(y, x));
     } break;
     case SYS_FUNC_ENUM:
     {
@@ -2464,7 +2464,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
     switch (item_type(sym))
     {
       case L_SYMBOL :
-      { ((LispSymbol *)sym)->value=new_lisp_number(x); } break;
+      { ((LispSymbol *)sym)->value = LispNumber::Create(x); } break;
       case L_CONS_CELL :
       {
         void *s=eval(CAR(sym));
@@ -2477,7 +2477,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
         }
 #endif
         x=lnumber_value(eval(CAR(CDR(sym))));
-        ((LispSymbol *)sym)->value=new_lisp_number(x);
+        ((LispSymbol *)sym)->value = LispNumber::Create(x);
       } break;
       default :
       {
@@ -2505,7 +2505,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       long x=lnumber_value(eval(CAR(arg_list))); arg_list=CDR(arg_list);
       long y=lnumber_value(eval(CAR(arg_list)));
       if (y==0) { lbreak("mod : division by zero\n"); y=1; }
-      ret=new_lisp_number(x%y);
+      ret = LispNumber::Create(x%y);
     } break;
 /*    case SYS_FUNC_WRITE_PROFILE:
     {
@@ -2584,7 +2584,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
         first&=lnumber_value(eval(CAR(arg_list)));
                 arg_list=CDR(arg_list);
       }
-      ret=new_lisp_number(first);
+      ret = LispNumber::Create(first);
     } break;
     case SYS_FUNC_BIT_OR:
     {
@@ -2594,7 +2594,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
         first|=lnumber_value(eval(CAR(arg_list)));
                 arg_list=CDR(arg_list);
       }
-      ret=new_lisp_number(first);
+      ret = LispNumber::Create(first);
     } break;
     case SYS_FUNC_BIT_XOR:
     {
@@ -2604,7 +2604,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
         first^=lnumber_value(eval(CAR(arg_list)));
                 arg_list=CDR(arg_list);
       }
-      ret=new_lisp_number(first);
+      ret = LispNumber::Create(first);
     } break;
     case SYS_FUNC_MAKE_ARRAY:
     {
@@ -2665,7 +2665,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
 
       char *find=strstr(haystack, needle);
       if (find)
-        ret=new_lisp_number(find-haystack);
+        ret = LispNumber::Create(find-haystack);
       else ret=NULL;
     } break;
     case SYS_FUNC_ELT:
@@ -3152,7 +3152,7 @@ void LispSymbol::SetNumber(long num)
     if (value != l_undefined && item_type(value) == L_NUMBER)
         ((LispNumber *)value)->num = num;
     else
-        value = new_lisp_number(num);
+        value = LispNumber::Create(num);
 }
 
 void LispSymbol::SetValue(void *val)
