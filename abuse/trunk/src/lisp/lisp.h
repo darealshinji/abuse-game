@@ -96,8 +96,16 @@ struct LispUserFunction : LispObject
 
 struct LispArray : LispObject
 {
+    static LispArray *Create(int size, void *rest);
+
+    inline LispObject **GetData() { return data; }
+    LispObject *Get(long x);
+
     unsigned short size;
     // size * sizeof (void *) follows1
+
+private:
+    LispObject *data[1];
 };
 
 struct LispString : LispObject
@@ -128,7 +136,6 @@ void perm_space();
 void tmp_space();
 void use_user_space(void *addr, long size);
 #define item_type(c) ((c) ? *((ltype *)c) : (ltype)L_CONS_CELL)
-void *lget_array_element(void *a, long x);
 void *lpointer_value(void *lpointer);
 int32_t lnumber_value(void *lnumber);
 char *lstring_value(void *lstring);
@@ -175,7 +182,6 @@ LispString *new_lisp_string(char const *string, int length);
 LispString *new_lisp_string(int length);
 LispFixedPoint *new_lisp_fixed_point(int32_t x);
 LispObjectVar *new_lisp_object_var(int16_t number);
-LispArray   *new_lisp_1d_array(int size, void *rest);
 LispSysFunction *new_lisp_sys_function(int min_args, int max_args, int fun_number);
 LispSysFunction *new_lisp_c_function(int min_args, int max_args, int fun_number);
 LispSysFunction *new_lisp_c_bool(int min_args, int max_args, int fun_number);
