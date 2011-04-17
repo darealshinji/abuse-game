@@ -491,7 +491,7 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
     am=new_cons_cell();
     l_ptr_stack.push(&am);
 
-    ((LispList *)am)->car=new_lisp_number(amount);
+    ((LispList *)am)->car=LispNumber::Create(amount);
 
     frm=new_cons_cell();
     l_ptr_stack.push(&frm);
@@ -501,19 +501,19 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
     hx=new_cons_cell();
     l_ptr_stack.push(&hx);
 
-    ((LispList *)hx)->car=new_lisp_number(hitx);
+    ((LispList *)hx)->car=LispNumber::Create(hitx);
 
     hy=new_cons_cell();
     l_ptr_stack.push(&hy);
-    ((LispList *)hy)->car=new_lisp_number(hity);
+    ((LispList *)hy)->car=LispNumber::Create(hity);
 
     px=new_cons_cell();
     l_ptr_stack.push(&px);
-    ((LispList *)px)->car=new_lisp_number(push_xvel);
+    ((LispList *)px)->car=LispNumber::Create(push_xvel);
 
     py=new_cons_cell();
     l_ptr_stack.push(&py);
-    ((LispList *)py)->car=new_lisp_number(push_yvel);
+    ((LispList *)py)->car=LispNumber::Create(push_yvel);
 
 
     ((LispList *)am)->cdr=frm;
@@ -909,11 +909,11 @@ void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
     push_onto_list(l_object,rlist);
       } else
       {
-    push_onto_list(new_lisp_number(ly),rlist);
-    push_onto_list(new_lisp_number(lx),rlist);
+    push_onto_list(LispNumber::Create(ly),rlist);
+    push_onto_list(LispNumber::Create(lx),rlist);
     push_onto_list(l_tile,rlist);
       }
-      push_onto_list(new_lisp_number(ret),rlist);
+      push_onto_list(LispNumber::Create(ret),rlist);
 
       return rlist;
     } else return true_symbol;
@@ -1222,15 +1222,15 @@ int game_object::move(int cx, int cy, int button)
     // make a list of the parameters, and call the lisp function
     lcx=new_cons_cell();
     l_ptr_stack.push(&lcx);
-    ((LispList *)lcx)->car=new_lisp_number(cx);
+    ((LispList *)lcx)->car=LispNumber::Create(cx);
 
     lcy=new_cons_cell();
     l_ptr_stack.push(&lcy);
-    ((LispList *)lcy)->car=new_lisp_number(cy);
+    ((LispList *)lcy)->car=LispNumber::Create(cy);
 
     lb=new_cons_cell();
     l_ptr_stack.push(&lb);
-    ((LispList *)lb)->car=new_lisp_number(button);
+    ((LispList *)lb)->car=LispNumber::Create(button);
 
 
     ((LispList *)lcx)->cdr=lcy;

@@ -62,6 +62,8 @@ struct LispList : LispObject
 
 struct LispNumber : LispObject
 {
+    static LispNumber *Create(long num);
+
     long num;
 };
 
@@ -179,7 +181,6 @@ LispList *new_cons_cell();
 void print_trace_stack(int max_levels);
 
 
-LispNumber *new_lisp_number(long num);
 LispPointer *new_lisp_pointer(void *addr);
 LispChar *new_lisp_character(uint16_t ch);
 LispString *new_lisp_string(char const *string);

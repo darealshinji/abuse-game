@@ -134,7 +134,7 @@ static void *collect_object(void *x)
         lbreak("error: GC corrupted cell\n");
         break;
       case L_NUMBER:
-        ret = new_lisp_number(((LispNumber *)x)->num);
+        ret = LispNumber::Create(((LispNumber *)x)->num);
         break;
       case L_SYS_FUNCTION:
         ret = new_lisp_sys_function(((LispSysFunction *)x)->min_args,

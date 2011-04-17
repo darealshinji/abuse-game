@@ -781,7 +781,7 @@ void *l_caller(long number, void *args)
       object_names[total_objects] = strdup(lstring_value(sym->GetName()));
       figures[total_objects]=new character_type(CDR(args),sym);
       total_objects++;
-      return new_lisp_number(total_objects-1);
+      return LispNumber::Create(total_objects-1);
     } break;
     case 24 :
     {
@@ -791,8 +791,8 @@ void *l_caller(long number, void *args)
       int32_t y2=lnumber_value(eval(CAR(args)));
       current_level->foreground_intersect(x1,y1,x2,y2);
       void *ret=NULL;
-      push_onto_list(new_lisp_number(y2),ret);
-      push_onto_list(new_lisp_number(x2),ret);
+      push_onto_list(LispNumber::Create(y2),ret);
+      push_onto_list(LispNumber::Create(x2),ret);
       return ret;
     } break;
     case 25 :
@@ -877,11 +877,11 @@ void *l_caller(long number, void *args)
 
       void *ret=NULL;
       p_ref r1(ret);
-      push_onto_list(new_lisp_number(b3),ret);
-      push_onto_list(new_lisp_number(b2),ret);
-      push_onto_list(new_lisp_number(b1),ret);
-      push_onto_list(new_lisp_number(yv),ret);
-      push_onto_list(new_lisp_number(xv),ret);
+      push_onto_list(LispNumber::Create(b3),ret);
+      push_onto_list(LispNumber::Create(b2),ret);
+      push_onto_list(LispNumber::Create(b1),ret);
+      push_onto_list(LispNumber::Create(yv),ret);
+      push_onto_list(LispNumber::Create(xv),ret);
       return ret;
     } break;
     case 48 :
@@ -889,11 +889,11 @@ void *l_caller(long number, void *args)
       void *ret=NULL;
       {
     p_ref r1(ret);
-    push_onto_list(new_lisp_number((last_demo_mbut&4)==4),ret);
-    push_onto_list(new_lisp_number((last_demo_mbut&2)==2),ret);
-    push_onto_list(new_lisp_number((last_demo_mbut&1)==1),ret);
-    push_onto_list(new_lisp_number(last_demo_my),ret);
-    push_onto_list(new_lisp_number(last_demo_mx),ret);
+    push_onto_list(LispNumber::Create((last_demo_mbut&4)==4),ret);
+    push_onto_list(LispNumber::Create((last_demo_mbut&2)==2),ret);
+    push_onto_list(LispNumber::Create((last_demo_mbut&1)==1),ret);
+    push_onto_list(LispNumber::Create(last_demo_my),ret);
+    push_onto_list(LispNumber::Create(last_demo_mx),ret);
       }
       return ret;
     } break;
@@ -907,8 +907,8 @@ void *l_caller(long number, void *args)
       void *ret=NULL;
       {
     p_ref r1(ret);
-    push_onto_list(new_lisp_number(ry),ret);
-    push_onto_list(new_lisp_number(rx),ret);
+    push_onto_list(LispNumber::Create(ry),ret);
+    push_onto_list(LispNumber::Create(rx),ret);
       }
       return ret;
     } break;
@@ -922,8 +922,8 @@ void *l_caller(long number, void *args)
       void *ret=NULL;
       {
     p_ref r1(ret);
-    push_onto_list(new_lisp_number(ry),ret);
-    push_onto_list(new_lisp_number(rx),ret);
+    push_onto_list(LispNumber::Create(ry),ret);
+    push_onto_list(LispNumber::Create(rx),ret);
       }
       return ret;
     } break;

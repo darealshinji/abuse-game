@@ -227,10 +227,10 @@ static int player_fire_weapon(game_object *o, int type, game_object *target, int
   void *list=NULL;
   p_ref r1(list);
   push_onto_list(new_lisp_pointer(target),list);
-  push_onto_list(new_lisp_number(angle),list);
-  push_onto_list(new_lisp_number(y2),list);
-  push_onto_list(new_lisp_number(x2),list);
-  push_onto_list(new_lisp_number(type),list);
+  push_onto_list(LispNumber::Create(angle),list);
+  push_onto_list(LispNumber::Create(y2),list);
+  push_onto_list(LispNumber::Create(x2),list);
+  push_onto_list(LispNumber::Create(type),list);
   push_onto_list(new_lisp_pointer(o->get_object(0)),list);
   eval_function((LispSymbol *)l_fire_object,list);
   o->lvars[top_just_fired]=1;
@@ -259,15 +259,15 @@ void *laser_ufun(void *args)
       {
     o->lvars[fire_delay1]=3;
     if (player_fire_weapon(o,SHOTGUN,NULL,o->lvars[point_angle],small_fire_off))
-          ret=new_lisp_number(-1);
-    else ret=new_lisp_number(0);
+          ret=LispNumber::Create(-1);
+    else ret=LispNumber::Create(0);
       } else
       {
     o->lvars[fire_delay1]=5;                  // no ammo, set large fire delay for next shot
     player_fire_weapon(o,SHOTGUN,NULL,o->lvars[point_angle],small_fire_off);
-    ret=new_lisp_number(0);
+    ret=LispNumber::Create(0);
       }
-    } else ret=new_lisp_number(0);                // can't fire yet, return 0 ammo subtract
+    } else ret=LispNumber::Create(0);                // can't fire yet, return 0 ammo subtract
   }
   return ret;
 }
@@ -302,10 +302,10 @@ void *top_ufun(void *args)                       // generic top character ai GRE
     o->lvars[fire_delay1]=6;
     if (player_fire_weapon(o,ammo_type(o->otype),NULL,o->lvars[point_angle],
                    o->otype==DFRIS ? large_fire_off : small_fire_off ))    
-          ret=new_lisp_number(-1);
-    else ret=new_lisp_number(0);
-      } else ret=new_lisp_number(0);
-    } else ret=new_lisp_number(0);                // can't fire yet, return 0 ammo subtract
+          ret=LispNumber::Create(-1);
+    else ret=LispNumber::Create(0);
+      } else ret=LispNumber::Create(0);
+    } else ret=LispNumber::Create(0);                // can't fire yet, return 0 ammo subtract
   }
   return ret;
 }
@@ -328,10 +328,10 @@ void *plaser_ufun(void *args)
       {
     o->lvars[fire_delay1]=2;
     if (player_fire_weapon(o,PLASMA,NULL,o->lvars[point_angle],small_fire_off))    
-          ret=new_lisp_number(-1);
-    else ret=new_lisp_number(0);
-      } else ret=new_lisp_number(0);
-    } else ret=new_lisp_number(0);                // can't fire yet, return 0 ammo subtract
+          ret=LispNumber::Create(-1);
+    else ret=LispNumber::Create(0);
+      } else ret=LispNumber::Create(0);
+    } else ret=LispNumber::Create(0);                // can't fire yet, return 0 ammo subtract
   }
   return ret;
 }
@@ -353,10 +353,10 @@ void *lsaber_ufun(void *args)
     o->lvars[fire_delay1]=1;
     if (player_fire_weapon(o,LSABER,NULL,o->lvars[point_angle]+(current_level->tick_counter()&7)-8,
                    small_fire_off))
-          ret=new_lisp_number(-1);
-    else ret=new_lisp_number(0);
-      } else ret=new_lisp_number(0);
-    } else ret=new_lisp_number(0);                // can't fire yet, return 0 ammo subtract
+          ret=LispNumber::Create(-1);
+    else ret=LispNumber::Create(0);
+      } else ret=LispNumber::Create(0);
+    } else ret=LispNumber::Create(0);                // can't fire yet, return 0 ammo subtract
   }
   return ret;
 }
@@ -402,11 +402,11 @@ void *player_rocket_ufun(void *args)
       }
     }
     if (player_fire_weapon(o,ROCKET,target,o->lvars[point_angle],large_fire_off))    
-          ret=new_lisp_number(-1);
-    else ret=new_lisp_number(0);
+          ret=LispNumber::Create(-1);
+    else ret=LispNumber::Create(0);
 
-      } else ret=new_lisp_number(0);
-    } else ret=new_lisp_number(0);                // can't fire yet, return 0 ammo subtract
+      } else ret=LispNumber::Create(0);
+    } else ret=LispNumber::Create(0);                // can't fire yet, return 0 ammo subtract
   }
   return ret;
 }
@@ -657,7 +657,7 @@ void *cop_mover(int xm, int ym, int but)
       p_ref r1(args);
       view *v=o->controller();
 
-      push_onto_list(new_lisp_number(v->weapon_total(v->current_weapon)),args);
+      push_onto_list(LispNumber::Create(v->weapon_total(v->current_weapon)),args);
       push_onto_list(l_FIRE,args);
 
       current_object=top;
@@ -680,7 +680,7 @@ void *cop_mover(int xm, int ym, int but)
     } else o->set_aistate(o->aistate()+1);
   }
 
-  return new_lisp_number(ret);
+  return LispNumber::Create(ret);
 }
 
 
@@ -754,7 +754,7 @@ void *top_draw()
       void *ret=NULL;
       p_ref r1(ret);
 
-      push_onto_list(new_lisp_number(bot->get_tint()),ret);
+      push_onto_list(LispNumber::Create(bot->get_tint()),ret);
 
       if (bot->lvars[special_power]==SNEAKY_POWER)
       {
