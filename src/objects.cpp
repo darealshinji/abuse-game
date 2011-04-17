@@ -494,7 +494,7 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
 
     frm = LList::Create();
     PtrRef r2(frm);
-    frm->car = new_lisp_pointer(from);
+    frm->car = LPointer::Create(from);
 
     hx = LList::Create();
     PtrRef r3(hx);
@@ -898,7 +898,7 @@ void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
 
       if (hit_object)
       {
-    push_onto_list(new_lisp_pointer(hit_object),rlist);
+    push_onto_list(LPointer::Create(hit_object),rlist);
     push_onto_list(l_object,rlist);
       } else
       {
@@ -1246,7 +1246,7 @@ int game_object::move(int cx, int cy, int button)
 
     if (item_type(r)!=L_NUMBER)
     {
-      lprint(r);
+      ((LObject *)r)->Print();
       lbreak("Object %s did not return a number from its mover function!\n"
          "It should return a number to indicate its blocked status to the\n"
          "ai function.", object_names[otype]);

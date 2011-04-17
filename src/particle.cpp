@@ -63,7 +63,7 @@ int defun_pseq(void *args)
   LSymbol *sym=(LSymbol *)lcar(args);
   if (item_type(sym)!=L_SYMBOL)
   {
-    lprint(args);
+    ((LObject *)args)->Print();
     printf("expecting first arg to def-particle to be a symbol!\n");
     exit(0);
   }
@@ -88,7 +88,7 @@ part_sequence::part_sequence(void *args)
   if (fp->open_failure())
   {
     delete fp;
-    lprint(args);
+    ((LObject *)args)->Print();
     fprintf(stderr,"\nparticle sequence : Unable to open %s for reading\n",fn);
     fprintf(stderr,"total files open=%d\n",total_files_open);
 

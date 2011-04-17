@@ -46,12 +46,16 @@ typedef uint32_t ltype;    // make sure structures aren't packed differently on 
 
 struct LObject
 {
+    void Print();
+
     ltype type;
 };
 
 struct LObjectVar : LObject
 {
-    long number;
+    static LObjectVar *Create(int index);
+
+    int index;
 };
 
 struct LList : LObject
@@ -72,7 +76,7 @@ struct LNumber : LObject
 
 struct LRedirect : LObject
 {
-    LObject *new_reference;
+    LObject *ref;
 };
 
 struct LString : LObject
@@ -83,14 +87,17 @@ struct LString : LObject
 
     char *GetString();
 
-    char str[1];
+private:
+    char str[1]; /* Can be allocated much larger than 1 */
 };
 
 struct LSymbol : LObject
 {
+    /* Factories */
     static LSymbol *Find(char const *name);
     static LSymbol *FindOrCreate(char const *name);
 
+    /* Methods */
     LString *GetName();
     LObject *GetFunction();
     LObject *GetValue();
@@ -99,6 +106,7 @@ struct LSymbol : LObject
     void SetValue(LObject *value);
     void SetNumber(long num);
 
+    /* Members */
 #ifdef L_PROFILE
     float time_taken;
 #endif
@@ -106,6 +114,10 @@ struct LSymbol : LObject
     LObject *function;
     LString *name;
     LSymbol *left, *right; // tree structure
+
+    /* Static members */
+    static LSymbol *root;
+    static size_t count;
 };
 
 struct LSysFunction : LObject
@@ -125,31 +137,38 @@ struct LUserFunction : LObject
 
 struct LArray : LObject
 {
-    static LArray *Create(int size, void *rest);
+    /* Factories */
+    static LArray *Create(size_t len, void *rest);
 
+    /* Methods */
     inline LObject **GetData() { return data; }
-    LObject *Get(long x);
+    LObject *Get(int x);
 
-    unsigned short size;
-    // size * sizeof (void *) follows1
+    /* Members */
+    size_t len;
 
 private:
-    LObject *data[1];
+    LObject *data[1]; /* Can be allocated much larger than 1 */
 };
 
 struct LChar : LObject
 {
-    int16_t pad;
+    static LChar *Create(uint16_t ch);
+
     uint16_t ch;
 };
 
 struct LPointer : LObject
 {
+    static LPointer *Create(void *addr);
+
     void *addr;
 };
 
 struct LFixedPoint : LObject
 {
+    static LFixedPoint *Create(int32_t x);
+
     int32_t x;
 };
 
@@ -169,7 +188,6 @@ void *lcdr(void *c);
 void *lcar(void *c);
 void *lisp_eq(void *n1, void *n2);
 void *lisp_equal(void *n1, void *n2);
-void lprint(void *i);
 void *eval(void *prog);
 void *eval_block(void *list);
 void *eval_function(LSymbol *sym, void *arg_list);
@@ -180,7 +198,7 @@ void resize_tmp(int new_size);
 void resize_perm(int new_size);
 
 void push_onto_list(void *object, void *&list);
-LSymbol *add_c_object(void *symbol, int16_t number);
+LSymbol *add_c_object(void *symbol, int index);
 LSymbol *add_c_function(char const *name, short min_args, short max_args, short number);
 LSymbol *add_c_bool_fun(char const *name, short min_args, short max_args, short number);
 LSymbol *add_lisp_function(char const *name, short min_args, short max_args, short number);
@@ -188,10 +206,6 @@ int read_ltoken(char *&s, char *buffer);
 void print_trace_stack(int max_levels);
 
 
-LPointer *new_lisp_pointer(void *addr);
-LChar *new_lisp_character(uint16_t ch);
-LFixedPoint *new_lisp_fixed_point(int32_t x);
-LObjectVar *new_lisp_object_var(int16_t number);
 LSysFunction *new_lisp_sys_function(int min_args, int max_args, int fun_number);
 LSysFunction *new_lisp_c_function(int min_args, int max_args, int fun_number);
 LSysFunction *new_lisp_c_bool(int min_args, int max_args, int fun_number);
@@ -208,7 +222,6 @@ int end_of_program(char *s);
 void clear_tmp();
 void lisp_init(long perm_size, long tmp_size);
 void lisp_uninit();
-extern LSymbol *lsym_root;
 
 extern uint8_t *space[4], *free_space[4];
 extern int space_size[4];

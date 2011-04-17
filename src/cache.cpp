@@ -878,7 +878,7 @@ int32_t CacheList::reg_lisp_block(Cell *block)
     if (cache_file->open_failure())
     {
       delete cache_file;
-      lprint(block);
+      ((LObject *)block)->Print();
       fprintf(stderr,"Unable to open lisp cache file name %s\n",lfname);
       exit(0);
     }

@@ -226,12 +226,12 @@ static int player_fire_weapon(game_object *o, int type, game_object *target, int
 
   void *list=NULL;
   PtrRef r1(list);
-  push_onto_list(new_lisp_pointer(target),list);
+  push_onto_list(LPointer::Create(target),list);
   push_onto_list(LNumber::Create(angle),list);
   push_onto_list(LNumber::Create(y2),list);
   push_onto_list(LNumber::Create(x2),list);
   push_onto_list(LNumber::Create(type),list);
-  push_onto_list(new_lisp_pointer(o->get_object(0)),list);
+  push_onto_list(LPointer::Create(o->get_object(0)),list);
   eval_function((LSymbol *)l_fire_object,list);
   o->lvars[top_just_fired]=1;
   other->lvars[just_fired]=1;

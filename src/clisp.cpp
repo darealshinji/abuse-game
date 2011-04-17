@@ -601,21 +601,21 @@ void *l_caller(long number, void *args)
       else o=current_object;
       game_object *hit=current_object->bmove(whit,o);
       if (hit)
-        return new_lisp_pointer(hit);
+        return LPointer::Create(hit);
       else if (whit) return NULL;
       else return true_symbol;
     } break;
 
-    case 3 : return new_lisp_pointer(current_object); break;
+    case 3 : return LPointer::Create(current_object); break;
     case 4 :
     { if (player_list->next)
-        return new_lisp_pointer(current_level->attacker(current_object));
-      else return new_lisp_pointer(player_list->focus); } break;
-    case 5 : return new_lisp_pointer(current_level->find_closest(current_object->x,
+        return LPointer::Create(current_level->attacker(current_object));
+      else return LPointer::Create(player_list->focus); } break;
+    case 5 : return LPointer::Create(current_level->find_closest(current_object->x,
                                  current_object->y,
                                lnumber_value(eval(CAR(args))),
                                        current_object)); break;
-    case 6 : return new_lisp_pointer(current_level->find_xclosest(current_object->x,
+    case 6 : return LPointer::Create(current_level->find_xclosest(current_object->x,
                                   current_object->y,
                                   lnumber_value(eval(CAR(args))),
                                   current_object
@@ -624,7 +624,7 @@ void *l_caller(long number, void *args)
     {
       long n1=lnumber_value(eval(CAR(args)));
       long n2=lnumber_value(eval(CAR(CDR(args))));
-      return new_lisp_pointer(current_level->find_xrange(current_object->x,
+      return LPointer::Create(current_level->find_xrange(current_object->x,
                              current_object->y,
                              n1,
                              n2
@@ -642,7 +642,7 @@ void *l_caller(long number, void *args)
         o=create(type,x,y);
       if (current_level)
         current_level->add_object(o);
-      return new_lisp_pointer(o);
+      return LPointer::Create(o);
     } break;
     case 22 :
     {
@@ -656,25 +656,25 @@ void *l_caller(long number, void *args)
         o=create(type,x,y);
       if (current_level)
         current_level->add_object_after(o,current_object);
-      return new_lisp_pointer(o);
+      return LPointer::Create(o);
     } break;
 
-    case 9 : return new_lisp_pointer(the_game->first_view->focus); break;
+    case 9 : return LPointer::Create(the_game->first_view->focus); break;
     case 10 :
     {
       view *v=((game_object *)lpointer_value(eval(CAR(args))))->controller()->next;
       if (v)
-        return new_lisp_pointer(v->focus);
+        return LPointer::Create(v->focus);
       else return NULL;
     } break;
     case 11 :
     {
-      return new_lisp_pointer
+      return LPointer::Create
       ((void *)current_object->get_object(lnumber_value(eval(CAR(args)))));
     } break;
     case 12 :
     {
-      return new_lisp_pointer
+      return LPointer::Create
       ((void *)current_object->get_light(lnumber_value(eval(CAR(args)))));
     } break;
     case 13 :
@@ -698,7 +698,7 @@ void *l_caller(long number, void *args)
       int r2=lnumber_value(eval(CAR(args))); args=lcdr(args);
       int xs=lnumber_value(eval(CAR(args))); args=lcdr(args);
       int ys=lnumber_value(eval(CAR(args)));
-      return new_lisp_pointer(add_light_source(t,x,y,r1,r2,xs,ys));
+      return LPointer::Create(add_light_source(t,x,y,r1,r2,xs,ys));
     } break;
     case 15 :
     {
@@ -721,7 +721,7 @@ void *l_caller(long number, void *args)
     eval(CAR(args));
       }
       time_marker end;
-      return new_lisp_fixed_point((long)(end.diff_time(&start)*(1<<16)));
+      return LFixedPoint::Create((long)(end.diff_time(&start)*(1<<16)));
     } break;
     case 18 :
     { return LString::Create(object_names[current_object->otype]); } break;
@@ -738,7 +738,7 @@ void *l_caller(long number, void *args)
       game_object *find=current_level->find_object_in_area(current_object->x,
                           current_object->y,
                           x1,y1,x2,y2,list,current_object);
-      if (find) return new_lisp_pointer(find);
+      if (find) return LPointer::Create(find);
       else return NULL;
     } break;
 
@@ -752,7 +752,7 @@ void *l_caller(long number, void *args)
       game_object *find=current_level->find_object_in_angle(current_object->x,
                             current_object->y,
                             a1,a2,list,current_object);
-      if (find) return new_lisp_pointer(find);
+      if (find) return LPointer::Create(find);
       else return NULL;
     } break;
     case 23 :         // def_character
@@ -927,7 +927,7 @@ void *l_caller(long number, void *args)
       }
       return ret;
     } break;
-    case 51 :   return new_lisp_pointer(wm->font()); break;
+    case 51 :   return LPointer::Create(wm->font()); break;
     case 52 :
     {
       view *c=current_object->controller();
@@ -994,7 +994,7 @@ void *l_caller(long number, void *args)
     {
         long x;
         sscanf(lstring_value(eval(CAR(args))),"%lx",&x);
-        return new_lisp_pointer((void *)(intptr_t)x);
+        return LPointer::Create((void *)(intptr_t)x);
     } break;
     case 64 :
     {
@@ -1391,7 +1391,7 @@ long c_caller(long number, void *args)
       int32_t x=lnumber_value(lcar(a)); a=CDR(a);
       if (!a)
       {
-        lprint(args);
+        ((LObject *)args)->Print();
         lbreak("expecting y after x in play_sound\n");
         exit(1);
       }
@@ -1477,7 +1477,7 @@ long c_caller(long number, void *args)
       int a=lnumber_value(CAR(args));
       if (a<0 || a>=TOTAL_ABILITIES)
       {
-    lprint(args);
+    ((LObject *)args)->Print();
     lbreak("bad ability number for get_ability, should be 0..%d, not %d\n",
         TOTAL_ABILITIES,a);
     exit(0);
@@ -1572,7 +1572,7 @@ long c_caller(long number, void *args)
       int b=lnumber_value(CAR(a));
       if (r<0 || b<0 || g<0 || r>255 || g>255 || b>255)
       {
-    lprint(args);
+    ((LObject *)args)->Print();
     lbreak("color out of range (0..255) in color lookup\n");
     exit(0);
       }
@@ -1581,31 +1581,31 @@ long c_caller(long number, void *args)
     case 173 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->x_suggestion;
     } break;
     case 174 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->y_suggestion;
     } break;
     case 175 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->b1_suggestion;
     } break;
     case 176 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->b2_suggestion;
     } break;
     case 177 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->b3_suggestion;
     } break;
     case 178 :
@@ -1614,8 +1614,8 @@ long c_caller(long number, void *args)
       bg_xdiv=lnumber_value(CAR(args)); args=CDR(args);
       bg_ymul=lnumber_value(CAR(args)); args=CDR(args);
       bg_ydiv=lnumber_value(CAR(args));
-      if (bg_xdiv==0) { bg_xdiv=1; lprint(args); dprintf("bg_set_scroll : cannot set xdiv to 0\n"); }
-      if (bg_ydiv==0) { bg_ydiv=1; lprint(args); dprintf("bg_set_scroll : cannot set ydiv to 0\n"); }
+      if (bg_xdiv==0) { bg_xdiv=1; ((LObject *)args)->Print(); dprintf("bg_set_scroll : cannot set xdiv to 0\n"); }
+      if (bg_ydiv==0) { bg_ydiv=1; ((LObject *)args)->Print(); dprintf("bg_set_scroll : cannot set ydiv to 0\n"); }
     } break;
     case 179 :
     {
@@ -1982,13 +1982,13 @@ long c_caller(long number, void *args)
     case 241 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->pointer_x;
     } break;
     case 242 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->pointer_y;
     } break;
     case 243 :
@@ -2063,49 +2063,49 @@ long c_caller(long number, void *args)
     case 254 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->kills;
     } break;
     case 255 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->tkills;
     } break;
     case 256 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->secrets;
     } break;
     case 257 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->tsecrets;
     } break;
     case 258 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else v->kills=lnumber_value(CAR(args));
     } break;
     case 259 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else v->tkills=lnumber_value(CAR(args));
     } break;
     case 260 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else v->secrets=lnumber_value(CAR(args));
     } break;
     case 261 :
     {
       view *v=current_object->controller();
-      if (!v) { lprint(args); printf("get_player_inputs : object has no view!\n"); }
+      if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else v->tsecrets=lnumber_value(CAR(args));
     } break;
     case 262 :
