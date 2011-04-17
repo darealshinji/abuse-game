@@ -724,7 +724,7 @@ void *l_caller(long number, void *args)
       return new_lisp_fixed_point((long)(end.diff_time(&start)*(1<<16)));
     } break;
     case 18 :
-    { return new_lisp_string(object_names[current_object->otype]); } break;
+    { return LispString::Create(object_names[current_object->otype]); } break;
     case 19 :
     { return current_object->float_tick(); } break;
     case 20 :
@@ -809,7 +809,7 @@ void *l_caller(long number, void *args)
     } break;
     case 26 :
     {
-      return new_lisp_string(current_level->name());
+      return LispString::Create(current_level->name());
     } break;
     case 27 : return ant_ai(); break;
     case 28 : return sensor_ai(); break;
@@ -854,7 +854,7 @@ void *l_caller(long number, void *args)
     {
       char nm[50];
       last_savegame_name(nm);
-      return new_lisp_string(nm);
+      return LispString::Create(nm);
     } break;
     case 45 :
     {
@@ -862,11 +862,11 @@ void *l_caller(long number, void *args)
       sprintf(nm,"save%04d.pcx", load_game(1,symbol_str("LOAD")));
 //      get_savegame_name(nm);
       the_game->reset_keymap();
-      return new_lisp_string(nm);
+      return LispString::Create(nm);
     } break;
     case 46 :
     {
-      return new_lisp_string(start_argv[lnumber_value(eval(CAR(args)))]);
+      return LispString::Create(start_argv[lnumber_value(eval(CAR(args)))]);
     } break;
     case 47 :
     {
@@ -934,13 +934,13 @@ void *l_caller(long number, void *args)
       if (!c)
         lbreak("object is not a player, cannot return name");
       else
-        return new_lisp_string(c->name);
+        return LispString::Create(c->name);
     } break;
     case 54 :
     {
       char cd[150];
       getcwd(cd,100);
-      return new_lisp_string(cd);
+      return LispString::Create(cd);
     } break;
     case 55 :
     { system(lstring_value(eval(CAR(args)))); } break;
@@ -963,7 +963,7 @@ void *l_caller(long number, void *args)
     }
     *tp=0;
       }
-      return new_lisp_string(tmp);
+      return LispString::Create(tmp);
     } break;
     case 58 :
     {
@@ -975,10 +975,10 @@ void *l_caller(long number, void *args)
       {
     p_ref r1(fl),r2(dl);
     
-    for (i=tfiles-1;i>=0;i--) { push_onto_list(new_lisp_string(files[i]),fl); free(files[i]); }
+    for (i=tfiles-1;i>=0;i--) { push_onto_list(LispString::Create(files[i]),fl); free(files[i]); }
     free(files);
 
-    for (i=tdirs-1;i>=0;i--) { push_onto_list(new_lisp_string(dirs[i]),dl); free(dirs[i]); }
+    for (i=tdirs-1;i>=0;i--) { push_onto_list(LispString::Create(dirs[i]),dl); free(dirs[i]); }
     free(dirs);
     
     push_onto_list(dl,rl);
@@ -1011,14 +1011,14 @@ void *l_caller(long number, void *args)
         for (i=last;i>=first;i--)
         {
           sprintf(name2,"%s%04ld.pcx",name,i);
-          push_onto_list(new_lisp_string(name2),ret);
+          push_onto_list(LispString::Create(name2),ret);
         }
       } else
       {
         for (i=last;i<=first;i++)
         {
           sprintf(name2,"%s%04ld.pcx",name,i);
-          push_onto_list(new_lisp_string(name2),ret);
+          push_onto_list(LispString::Create(name2),ret);
         }
       }
       return ret;

@@ -74,6 +74,13 @@ struct LispRedirect : LispObject
 
 struct LispString : LispObject
 {
+    static LispString *Create(char const *string);
+    static LispString *Create(char const *string, int length);
+    static LispString *Create(int length);
+
+    char *GetString();
+
+    char str[1];
 };
 
 struct LispSymbol : LispObject
@@ -152,7 +159,6 @@ void use_user_space(void *addr, long size);
 #define item_type(c) ((c) ? *((ltype *)c) : (ltype)L_CONS_CELL)
 void *lpointer_value(void *lpointer);
 int32_t lnumber_value(void *lnumber);
-char *lstring_value(void *lstring);
 unsigned short lcharacter_value(void *c);
 long lfixed_point_value(void *c);
 void *lisp_atom(void *i);
@@ -183,9 +189,6 @@ void print_trace_stack(int max_levels);
 
 LispPointer *new_lisp_pointer(void *addr);
 LispChar *new_lisp_character(uint16_t ch);
-LispString *new_lisp_string(char const *string);
-LispString *new_lisp_string(char const *string, int length);
-LispString *new_lisp_string(int length);
 LispFixedPoint *new_lisp_fixed_point(int32_t x);
 LispObjectVar *new_lisp_object_var(int16_t number);
 LispSysFunction *new_lisp_sys_function(int min_args, int max_args, int fun_number);
@@ -229,6 +232,7 @@ extern void l_obj_print(long number);  // exten lisp function switches on number
 
 // FIXME: get rid of this later
 static inline void *symbol_value(void *sym) { return ((LispSymbol *)sym)->GetValue(); }
+static inline char *lstring_value(void *str) { return ((LispString *)str)->GetString(); }
 
 
 

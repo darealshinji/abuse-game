@@ -1509,7 +1509,7 @@ void level::level_loaded_notify()
 
     void *arg_list=NULL;
     p_ref r1(arg_list);
-    push_onto_list(new_lisp_string(n),arg_list);
+    push_onto_list(LispString::Create(n),arg_list);
     eval_function((LispSymbol *)l_level_loaded,arg_list);
 
     current_space=sp;

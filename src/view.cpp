@@ -459,7 +459,7 @@ void view::add_chat_key(int key)  // return string if buf is complete
 
       void *m=mark_heap(TMP_SPACE);
       void *list=NULL;
-      push_onto_list(new_lisp_string(chat_buf),list);
+      push_onto_list(LispString::Create(chat_buf),list);
       eval_function((LispSymbol *)l_chat_input,list);
       restore_heap(m,TMP_SPACE);
 

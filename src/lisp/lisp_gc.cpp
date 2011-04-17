@@ -155,7 +155,7 @@ static void *collect_object(void *x)
 #endif
         break;
       case L_STRING:
-        ret = new_lisp_string(lstring_value(x));
+        ret = LispString::Create(lstring_value(x));
         break;
       case L_CHARACTER:
         ret = new_lisp_character(lcharacter_value(x));
