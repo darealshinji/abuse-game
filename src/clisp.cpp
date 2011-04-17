@@ -38,11 +38,17 @@
 extern int has_joystick;
 
 // the following are references to lisp symbols
-void *l_difficulty,*l_easy,*l_hard,*l_medium,*l_main_menu,*l_extreme,
-     *l_logo,*l_state_art,*l_abilities,*l_state_sfx,
-     *l_song_list,*l_filename,*l_sfx_directory,*l_max_hp,*l_default_font,
-     *l_morph,*l_max_power,*l_default_abilities,*l_default_ai_function,
-     *l_tile_files,*l_empty_cache,*l_range,*l_hurt_all,*l_death_handler,
+LispSymbol *l_chat_input, *l_post_render;
+
+LispSymbol *l_difficulty, *l_easy, *l_hard, *l_medium, *l_extreme,
+    *l_max_hp, *l_max_power,
+    *l_empty_cache;
+
+// FIXME: port these to LispSymbol
+void *l_main_menu, *l_logo,*l_state_art,*l_abilities,*l_state_sfx,
+     *l_song_list,*l_filename,*l_sfx_directory,*l_default_font,
+     *l_morph,*l_default_abilities,*l_default_ai_function,
+     *l_tile_files,*l_range,*l_hurt_all,*l_death_handler,
      *l_title_screen,*l_console_font,*l_fields,*l_dist,*l_pushx,*l_pushy,
      *l_object,*l_tile,*l_fire_object,*l_FIRE,*l_cop_dead_parts,*l_restart_player,
      *l_help_screens,*l_player_draw,*l_sneaky_draw,*l_health_image,*l_fly_image,
@@ -54,8 +60,6 @@ void *l_difficulty,*l_easy,*l_hard,*l_medium,*l_main_menu,*l_extreme,
      *l_mouse_can_switch,
      *l_ask_save_slot,
      *l_get_local_input,
-     *l_post_render,
-     *l_chat_input,
      *l_player_text_color,
      *l_level_loaded;        // called when a new level is loaded
 
@@ -98,98 +102,99 @@ extern void set_login(char const *name);
 void clisp_init()                            // call by lisp_init, defines symbols and functions
                                              // to irnterface with c
 {
-  l_easy=make_find_symbol("easy");
-  l_medium=make_find_symbol("medium");
-  l_hard=make_find_symbol("hard");
-  l_extreme=make_find_symbol("extreme");
+  l_easy = LispSymbol::FindOrCreate("easy");
+  l_medium = LispSymbol::FindOrCreate("medium");
+  l_hard = LispSymbol::FindOrCreate("hard");
+  l_extreme = LispSymbol::FindOrCreate("extreme");
 
-  l_logo=make_find_symbol("logo");
-  l_morph=make_find_symbol("morph");
+  l_logo = LispSymbol::FindOrCreate("logo");
+  l_morph = LispSymbol::FindOrCreate("morph");
 
-  l_pushx=make_find_symbol("pushx");
-  l_pushy=make_find_symbol("pushy");
+  l_pushx = LispSymbol::FindOrCreate("pushx");
+  l_pushy = LispSymbol::FindOrCreate("pushy");
 
-  l_dist=make_find_symbol("dist");
-  l_state_art=make_find_symbol("state_art");
-  l_abilities=make_find_symbol("abilities");
-  l_default_abilities=make_find_symbol("default_abilities");
-  l_state_sfx=make_find_symbol("state_sfx");
-  l_filename=make_find_symbol("filename");
-  l_sfx_directory=make_find_symbol("sfx_directory");
-  l_default_font=make_find_symbol("default_font");
-  l_console_font=make_find_symbol("console_font");
-  l_default_ai_function=make_find_symbol("default_ai");
-  l_tile_files=make_find_symbol("tile_files");
-  l_empty_cache=make_find_symbol("empty_cache");
-  l_range=make_find_symbol("range");
-  l_difficulty=make_find_symbol("difficulty");
-  l_death_handler=make_find_symbol("death_handler");
-  l_title_screen=make_find_symbol("title_screen");
-  l_fields=make_find_symbol("fields");
-  l_FIRE=make_find_symbol("FIRE");
-  l_fire_object=make_find_symbol("fire_object");
-  l_cop_dead_parts=make_find_symbol("cop_dead_parts");  set_symbol_value(l_difficulty,l_hard);
-  l_restart_player=make_find_symbol("restart_player");
-  l_help_screens=make_find_symbol("help_screens");
-  l_save_order=make_find_symbol("save_order");
-  l_next_song=make_find_symbol("next_song");
-  l_player_draw=make_find_symbol("player_draw");
-  l_sneaky_draw=make_find_symbol("sneaky_draw");
-  l_keep_backup=make_find_symbol("keep_backup");
-  l_level_loaded=make_find_symbol("level_loaded");
+  l_dist = LispSymbol::FindOrCreate("dist");
+  l_state_art = LispSymbol::FindOrCreate("state_art");
+  l_abilities = LispSymbol::FindOrCreate("abilities");
+  l_default_abilities = LispSymbol::FindOrCreate("default_abilities");
+  l_state_sfx = LispSymbol::FindOrCreate("state_sfx");
+  l_filename = LispSymbol::FindOrCreate("filename");
+  l_sfx_directory = LispSymbol::FindOrCreate("sfx_directory");
+  l_default_font = LispSymbol::FindOrCreate("default_font");
+  l_console_font = LispSymbol::FindOrCreate("console_font");
+  l_default_ai_function = LispSymbol::FindOrCreate("default_ai");
+  l_tile_files = LispSymbol::FindOrCreate("tile_files");
+  l_empty_cache = LispSymbol::FindOrCreate("empty_cache");
+  l_range = LispSymbol::FindOrCreate("range");
+  l_difficulty = LispSymbol::FindOrCreate("difficulty");
+  l_death_handler = LispSymbol::FindOrCreate("death_handler");
+  l_title_screen = LispSymbol::FindOrCreate("title_screen");
+  l_fields = LispSymbol::FindOrCreate("fields");
+  l_FIRE = LispSymbol::FindOrCreate("FIRE");
+  l_fire_object = LispSymbol::FindOrCreate("fire_object");
+  l_cop_dead_parts = LispSymbol::FindOrCreate("cop_dead_parts");
+  l_difficulty->SetValue(l_hard);
+  l_restart_player = LispSymbol::FindOrCreate("restart_player");
+  l_help_screens = LispSymbol::FindOrCreate("help_screens");
+  l_save_order = LispSymbol::FindOrCreate("save_order");
+  l_next_song = LispSymbol::FindOrCreate("next_song");
+  l_player_draw = LispSymbol::FindOrCreate("player_draw");
+  l_sneaky_draw = LispSymbol::FindOrCreate("sneaky_draw");
+  l_keep_backup = LispSymbol::FindOrCreate("keep_backup");
+  l_level_loaded = LispSymbol::FindOrCreate("level_loaded");
 
-  l_draw_fast=make_find_symbol("draw_fast");
-  l_player_tints=make_find_symbol("player_tints");
+  l_draw_fast = LispSymbol::FindOrCreate("draw_fast");
+  l_player_tints = LispSymbol::FindOrCreate("player_tints");
 
-  l_max_hp=make_find_symbol("max_hp");
-  set_symbol_number(l_max_hp,200);
-  l_max_power=make_find_symbol("max_power");
-  l_main_menu=make_find_symbol("main_menu");
-  set_symbol_number(l_max_power,999);
+  l_max_hp = LispSymbol::FindOrCreate("max_hp");
+  l_max_hp->SetNumber(200);
+  l_max_power = LispSymbol::FindOrCreate("max_power");
+  l_main_menu = LispSymbol::FindOrCreate("main_menu");
+  l_max_power->SetNumber(999);
 
-  set_symbol_number(make_find_symbol("run_state"),RUN_STATE);
-  set_symbol_number(make_find_symbol("pause_state"),PAUSE_STATE);
-  set_symbol_number(make_find_symbol("menu_state"),MENU_STATE);
-  set_symbol_number(make_find_symbol("scene_state"),SCENE_STATE);
+  LispSymbol::FindOrCreate("run_state")->SetNumber(RUN_STATE);
+  LispSymbol::FindOrCreate("pause_state")->SetNumber(PAUSE_STATE);
+  LispSymbol::FindOrCreate("menu_state")->SetNumber(MENU_STATE);
+  LispSymbol::FindOrCreate("scene_state")->SetNumber(SCENE_STATE);
 
-  l_statbar_ammo_x=make_find_symbol("statbar_ammo_x");
-  l_statbar_ammo_y=make_find_symbol("statbar_ammo_y");
-  l_statbar_ammo_w=make_find_symbol("statbar_ammo_w");
-  l_statbar_ammo_h=make_find_symbol("statbar_ammo_h");
-  l_statbar_ammo_bg_color=make_find_symbol("statbar_ammo_bg_color");
+  l_statbar_ammo_x = LispSymbol::FindOrCreate("statbar_ammo_x");
+  l_statbar_ammo_y = LispSymbol::FindOrCreate("statbar_ammo_y");
+  l_statbar_ammo_w = LispSymbol::FindOrCreate("statbar_ammo_w");
+  l_statbar_ammo_h = LispSymbol::FindOrCreate("statbar_ammo_h");
+  l_statbar_ammo_bg_color = LispSymbol::FindOrCreate("statbar_ammo_bg_color");
 
-  l_statbar_health_x=make_find_symbol("statbar_health_x");
-  l_statbar_health_y=make_find_symbol("statbar_health_y");
-  l_statbar_health_w=make_find_symbol("statbar_health_w");
-  l_statbar_health_h=make_find_symbol("statbar_health_h");
-  l_statbar_health_bg_color=make_find_symbol("statbar_health_bg_color");
+  l_statbar_health_x = LispSymbol::FindOrCreate("statbar_health_x");
+  l_statbar_health_y = LispSymbol::FindOrCreate("statbar_health_y");
+  l_statbar_health_w = LispSymbol::FindOrCreate("statbar_health_w");
+  l_statbar_health_h = LispSymbol::FindOrCreate("statbar_health_h");
+  l_statbar_health_bg_color = LispSymbol::FindOrCreate("statbar_health_bg_color");
 
-  l_statbar_logo_x=make_find_symbol("statbar_logo_x");
-  l_statbar_logo_y=make_find_symbol("statbar_logo_y");
-  l_object=make_find_symbol("object");
-  l_tile=make_find_symbol("tile");
-  l_cdc_logo=make_find_symbol("logo");
+  l_statbar_logo_x = LispSymbol::FindOrCreate("statbar_logo_x");
+  l_statbar_logo_y = LispSymbol::FindOrCreate("statbar_logo_y");
+  l_object = LispSymbol::FindOrCreate("object");
+  l_tile = LispSymbol::FindOrCreate("tile");
+  l_cdc_logo = LispSymbol::FindOrCreate("logo");
 
-  l_switch_to_powerful=make_find_symbol("switch_to_powerful");
-  l_mouse_can_switch=make_find_symbol("mouse_can_switch");
-  l_ask_save_slot=make_find_symbol("ask_save_slot");
+  l_switch_to_powerful = LispSymbol::FindOrCreate("switch_to_powerful");
+  l_mouse_can_switch = LispSymbol::FindOrCreate("mouse_can_switch");
+  l_ask_save_slot = LispSymbol::FindOrCreate("ask_save_slot");
 
-  l_level_load_start=make_find_symbol("level_load_start");
-  l_level_load_end=make_find_symbol("level_load_end");
-  l_get_local_input=make_find_symbol("get_local_input");
-  l_chat_input=make_find_symbol("chat_input");
-  l_player_text_color=make_find_symbol("player_text_color");
+  l_level_load_start = LispSymbol::FindOrCreate("level_load_start");
+  l_level_load_end = LispSymbol::FindOrCreate("level_load_end");
+  l_get_local_input = LispSymbol::FindOrCreate("get_local_input");
+  l_chat_input = LispSymbol::FindOrCreate("chat_input");
+  l_player_text_color = LispSymbol::FindOrCreate("player_text_color");
 
   int i;
   for (i=0;i<MAX_STATE;i++)
-    set_symbol_number(make_find_symbol(state_names[i]),i);
+    LispSymbol::FindOrCreate(state_names[i])->SetNumber(i);
   for (i=0;i<TOTAL_ABILITIES;i++)
-    set_symbol_number(make_find_symbol(ability_names[i]),i);
+    LispSymbol::FindOrCreate(ability_names[i])->SetNumber(i);
   for (i=0;i<TOTAL_CFLAGS;i++)
-    set_symbol_number(make_find_symbol(cflag_names[i]),i);
+    LispSymbol::FindOrCreate(cflag_names[i])->SetNumber(i);
 
-  l_song_list=make_find_symbol("song_list");
-  l_post_render=make_find_symbol("post_render");
+  l_song_list = LispSymbol::FindOrCreate("song_list");
+  l_post_render = LispSymbol::FindOrCreate("post_render");
 
   add_c_function("distx",0,0,                   1);
   add_c_function("disty",0,0,                   2);
@@ -755,12 +760,12 @@ void *l_caller(long number, void *args)
       LispSymbol *sym=(LispSymbol *)lcar(args);
       if (item_type(sym)!=L_SYMBOL)
       {
-    lbreak("expecting first arg to def-character to be a symbol!\n");
-    exit(0);
+        lbreak("expecting first arg to def-character to be a symbol!\n");
+        exit(0);
       }
       int sp=current_space;
       current_space=PERM_SPACE;
-      set_symbol_number(sym,total_objects);   // set the symbol value to the object number
+      sym->SetNumber(total_objects);   // set the symbol value to the object number
       current_space=sp;
       if (!total_objects)
       {
@@ -773,7 +778,7 @@ void *l_caller(long number, void *args)
     figures=(character_type **)realloc(figures,sizeof(character_type *)*(total_objects+1));
       }
 
-      object_names[total_objects] = strdup(lstring_value(symbol_name(sym)));
+      object_names[total_objects] = strdup(lstring_value(sym->GetName()));
       figures[total_objects]=new character_type(CDR(args),sym);
       total_objects++;
       return new_lisp_number(total_objects-1);
@@ -793,13 +798,13 @@ void *l_caller(long number, void *args)
     case 25 :
     {
 #ifdef __linux__
-      return make_find_symbol("LINUX");
+      return LispSymbol::FindOrCreate("LINUX");
 #endif
 #ifdef __sgi
-      return make_find_symbol("IRIX");
+      return LispSymbol::FindOrCreate("IRIX");
 #endif
 #ifdef __WIN32
-      return make_find_symbol("WIN32");
+      return LispSymbol::FindOrCreate("WIN32");
 #endif
     } break;
     case 26 :
@@ -1365,7 +1370,7 @@ long c_caller(long number, void *args)
       current_space=PERM_SPACE;
       int id=cache.reg(lstring_value(lcar(args)),NULL,SPEC_EXTERN_SFX,1);
       if (sym)
-        set_symbol_number(sym,id);    // set the symbol value to sfx id                
+        sym->SetNumber(id);    // set the symbol value to sfx id
       current_space=sp;
       return id;
     } break;

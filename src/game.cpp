@@ -685,11 +685,11 @@ void remap_area(image *screen, int x1, int y1, int x2, int y2, uint8_t *remap)
 
 static void post_render()
 {
-  if(DEFINEDP(symbol_function(l_post_render)))
+  if(DEFINEDP(l_post_render->GetFunction()))
   {
     screen->dirt_off();
     clear_tmp();
-    eval_function((LispSymbol *)l_post_render, NULL);
+    eval_function(l_post_render, NULL);
     clear_tmp();
     screen->dirt_on();
   }
@@ -1231,7 +1231,7 @@ void do_title()
         current_song->play(music_volume);
     }
 
-    void *logo_snd = symbol_value(make_find_symbol("LOGO_SND"));
+    void *logo_snd = LispSymbol::FindOrCreate("LOGO_SND")->GetValue();
 
     if(DEFINEDP(logo_snd) && (sound_avail & SFX_INITIALIZED))
         cache.sfx(lnumber_value(logo_snd))->play(sfx_volume);
@@ -1248,13 +1248,13 @@ void do_title()
 
     milli_wait(400);
 
-    void *space_snd = symbol_value(make_find_symbol("SPACE_SND"));
+    void *space_snd = LispSymbol::FindOrCreate("SPACE_SND")->GetValue();
 
     fade_out(32);
     milli_wait(100);
 
     int i;
-    char *str = lstring_value(eval(make_find_symbol("plot_start")));
+    char *str = lstring_value(eval(LispSymbol::FindOrCreate("plot_start")));
 
     bFILE *fp = open_file("art/smoke.spe", "rb");
     if(!fp->open_failure())
@@ -2636,9 +2636,9 @@ int main(int argc, char *argv[])
 
     if(!(main_net_cfg && main_net_cfg->restart_state()))
     {
-      void *end_msg = make_find_symbol("end_msg");
-      if(DEFINEDP(symbol_value(end_msg)))
-      printf("%s\n", lstring_value(symbol_value(end_msg)));
+      LispSymbol *end_msg = LispSymbol::FindOrCreate("end_msg");
+      if(DEFINEDP(end_msg->GetValue()))
+      printf("%s\n", lstring_value(end_msg->GetValue()));
     }
 
     lisp_uninit();

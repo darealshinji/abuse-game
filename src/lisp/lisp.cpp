@@ -819,64 +819,54 @@ LispSymbol *make_find_symbol(char const *name)    // find a symbol, if it doesn'
 
 */
 
-LispSymbol *find_symbol(char const *name)
+LispSymbol *LispSymbol::Find(char const *name)
 {
-  LispSymbol *p=lsym_root;
-  while (p)
-  {
-    int cmp=strcmp(name, ((char *)p->name)+sizeof(LispString));
-    if (cmp==0) return p;
-    else if (cmp<0) p=p->left;
-    else p=p->right;
-  }
-  return NULL;
+    LispSymbol *p = lsym_root;
+    while (p)
+    {
+        int cmp = strcmp(name, ((char *)p->name) + sizeof(LispString));
+        if (cmp == 0)
+            return p;
+        p = (cmp < 0) ? p->left : p->right;
+    }
+    return NULL;
 }
 
-
-
-LispSymbol *make_find_symbol(char const *name)
+LispSymbol *LispSymbol::FindOrCreate(char const *name)
 {
-  LispSymbol *p=lsym_root;
-  LispSymbol **parent=&lsym_root;
-  while (p)
-  {
-    int cmp=strcmp(name, ((char *)p->name)+sizeof(LispString));
-    if (cmp==0) return p;
-    else if (cmp<0)
+    LispSymbol *p = lsym_root;
+    LispSymbol **parent = &lsym_root;
+    while (p)
     {
-      parent=&p->left;
-      p=p->left;
+        int cmp = strcmp(name, ((char *)p->name) + sizeof(LispString));
+        if (cmp == 0)
+            return p;
+        parent = (cmp < 0) ? &p->left : &p->right;
+        p = *parent;
     }
-    else
-    {
-      parent=&p->right;
-      p=p->right;
-    }
-  }
-  int sp=current_space;
-  if (current_space!=GC_SPACE)
-     current_space=PERM_SPACE;       // make sure all symbols get defined in permanant space
 
-  p=(LispSymbol *)malloc(sizeof(LispSymbol));
-  p->type=L_SYMBOL;
-  p->name=new_lisp_string(name);
+    // Make sure all symbols get defined in permanant space
+    int sp = current_space;
+    if (current_space != GC_SPACE)
+       current_space = PERM_SPACE;
 
-  if (name[0]==':')     // constant, set the value to ourself
-    p->value=p;
-  else
-    p->value=l_undefined;
-  p->function=l_undefined;
+    p = (LispSymbol *)malloc(sizeof(LispSymbol));
+    p->type = L_SYMBOL;
+    p->name = new_lisp_string(name);
+
+    // If constant, set the value to ourself
+    p->value = (name[0] == ':') ? p : l_undefined;
+    p->function = l_undefined;
 #ifdef L_PROFILE
-  p->time_taken=0;
+    p->time_taken = 0;
 #endif
-  p->left=p->right=NULL;
-  *parent=p;
-  ltotal_syms++;
+    p->left = p->right = NULL;
+    *parent = p;
+    ltotal_syms++;
 
-  current_space=sp;
-  return p;
+    current_space = sp;
+    return p;
 }
-
 
 void ldelete_syms(LispSymbol *root)
 {
@@ -897,7 +887,7 @@ void *assoc(void *item, void *list)
     while (list)
     {
       if (lisp_eq(CAR(CAR(list)), item))
-        return lcar(list);    
+        return lcar(list);
       list=(LispList *)(CDR(list));
     }
   }
@@ -966,42 +956,15 @@ void *pairlis(void *list1, void *list2, void *list3)
   return ret;
 }
 
-void *lookup_symbol_function(void *symbol)
+void LispSymbol::SetFunction(void *fun)
 {
-  return ((LispSymbol *)symbol)->function;
-}
-
-void set_symbol_function(void *symbol, void *function)
-{
-  ((LispSymbol *)symbol)->function=function;
-}
-
-void *lookup_symbol_value(void *symbol)
-{
-#ifdef TYPE_CHECKING
-  if (((LispSymbol *)symbol)->value!=l_undefined)
-#endif
-    return ((LispSymbol *)symbol)->value;
-#ifdef TYPE_CHECKING
-  else
-  {
-    lprint(symbol);
-    lbreak(" has no value\n");
-    exit(0);
-  }
-#endif
-  return NULL;
-}
-
-void set_variable_value(void *symbol, void *value)
-{
-  ((LispSymbol *) symbol)->value=value;
+    function = fun;
 }
 
 LispSymbol *add_sys_function(char const *name, short min_args, short max_args, short number)
 {
   need_perm_space("add_sys_function");
-  LispSymbol *s=make_find_symbol(name);
+  LispSymbol *s = LispSymbol::FindOrCreate(name);
   if (s->function!=l_undefined)
   {
     lbreak("add_sys_fucntion -> symbol %s already has a function\n", name);
@@ -1017,7 +980,7 @@ LispSymbol *add_c_object(void *symbol, int16_t number)
   LispSymbol *s=(LispSymbol *)symbol;
   if (s->value!=l_undefined)
   {
-    lbreak("add_c_object -> symbol %s already has a value\n", lstring_value(symbol_name(s)));
+    lbreak("add_c_object -> symbol %s already has a value\n", lstring_value(s->GetName()));
     exit(0);
   }
   else s->value=new_lisp_object_var(number);
@@ -1028,7 +991,7 @@ LispSymbol *add_c_function(char const *name, short min_args, short max_args, sho
 {
   total_user_functions++;
   need_perm_space("add_c_function");
-  LispSymbol *s=make_find_symbol(name);
+  LispSymbol *s = LispSymbol::FindOrCreate(name);
   if (s->function!=l_undefined)
   {
     lbreak("add_sys_fucntion -> symbol %s already has a function\n", name);
@@ -1042,7 +1005,7 @@ LispSymbol *add_c_bool_fun(char const *name, short min_args, short max_args, sho
 {
   total_user_functions++;
   need_perm_space("add_c_bool_fun");
-  LispSymbol *s=make_find_symbol(name);
+  LispSymbol *s = LispSymbol::FindOrCreate(name);
   if (s->function!=l_undefined)
   {
     lbreak("add_sys_fucntion -> symbol %s already has a function\n", name);
@@ -1057,7 +1020,7 @@ LispSymbol *add_lisp_function(char const *name, short min_args, short max_args, 
 {
   total_user_functions++;
   need_perm_space("add_c_bool_fun");
-  LispSymbol *s=make_find_symbol(name);
+  LispSymbol *s = LispSymbol::FindOrCreate(name);
   if (s->function!=l_undefined)
   {
     lbreak("add_sys_fucntion -> symbol %s already has a function\n", name);
@@ -1285,7 +1248,7 @@ void *compile(char const *&s)
     {
       void *cs=new_cons_cell(), *c2=NULL, *tmp;
       p_ref r4(cs), r5(c2);
-      tmp=make_find_symbol("function");
+      tmp = LispSymbol::FindOrCreate("function");
       ((LispList *)cs)->car=tmp;
       c2=new_cons_cell();
       tmp=compile(s);
@@ -1299,7 +1262,7 @@ void *compile(char const *&s)
       exit(0);
     }
   } else {
-    ret = make_find_symbol(n);
+    ret = LispSymbol::FindOrCreate(n);
   }
   return ret;
 }
@@ -1586,7 +1549,7 @@ void pro_print(bFILE *out, LispSymbol *p)
     pro_print(out, p->right);
     {
       char st[100];
-      sprintf(st, "%20s %f\n", lstring_value(symbol_name(p)), ((LispSymbol *)p)->time_taken);
+      sprintf(st, "%20s %f\n", lstring_value(p->GetName()), p->time_taken);
       out->write(st, strlen(st));
     }
     pro_print(out, p->left);
@@ -2148,7 +2111,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
     break;
     case SYS_FUNC_DEFUN:
     {
-      void *symbol=CAR(arg_list);
+      LispSymbol *symbol = (LispSymbol *)CAR(arg_list);
 #ifdef TYPE_CHECKING
       if (item_type(symbol)!=L_SYMBOL)
       {
@@ -2173,7 +2136,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
 #else
       LispUserFunction *ufun=new_lisp_user_function(lcar(lcdr(arg_list)), block_list);
 #endif
-      set_symbol_function(symbol, ufun);
+      symbol->SetFunction(ufun);
       ret=symbol;
     } break;
     case SYS_FUNC_ATOM:
@@ -2278,7 +2241,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       }
     } break;
     case SYS_FUNC_FUNCTION:
-      ret=lookup_symbol_function(eval(CAR(arg_list)));
+      ret = ((LispSymbol *)eval(CAR(arg_list)))->GetFunction();
     break;
     case SYS_FUNC_MAPCAR:
       ret=mapcar(arg_list);
@@ -2401,7 +2364,8 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
             if( fp->open_failure() )
             {
                 delete fp;
-                if( DEFINEDP(symbol_value(load_warning)) && symbol_value(load_warning) )
+                if( DEFINEDP(((LispSymbol *)load_warning)->GetValue())
+                     && ((LispSymbol *)load_warning)->GetValue())
                     dprintf("Warning : file %s does not exist\n", st);
                 ret = NULL;
             }
@@ -2559,7 +2523,8 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
     } break;*/
     case SYS_FUNC_FOR:
     {
-      void *bind_var=CAR(arg_list); arg_list=CDR(arg_list);
+      LispSymbol *bind_var = (LispSymbol *)CAR(arg_list);
+      arg_list = CDR(arg_list);
       p_ref r1(bind_var);
       if (item_type(bind_var)!=L_SYMBOL)
       { lbreak("expecting for iterator to be a symbol\n"); exit(1); }
@@ -2577,15 +2542,15 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
 
       void *block=NULL, *ret=NULL;
       p_ref r3(block);
-      l_user_stack.push(symbol_value(bind_var));  // save old symbol value
+      l_user_stack.push(bind_var->GetValue());  // save old symbol value
       while (ilist)
       {
-                set_symbol_value(bind_var, CAR(ilist));
+                bind_var->SetValue(CAR(ilist));
                 for (block=arg_list;block;block=CDR(block))
                   ret=eval(CAR(block));
                 ilist=CDR(ilist);
       }
-      set_symbol_value(bind_var, l_user_stack.pop(1));
+      bind_var->SetValue(l_user_stack.pop(1)); // restore symbol value
       ret=ret;
     } break;
     case SYS_FUNC_OPEN_FILE:
@@ -2728,16 +2693,16 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       void *init_var=CAR(arg_list);
       p_ref r1(init_var);
       int i, ustack_start=l_user_stack.son;      // restore stack at end
-      void *sym=NULL;
+      LispSymbol *sym = NULL;
       p_ref r2(sym);
 
       // check to make sure iter vars are symbol and push old values
       for (init_var=CAR(arg_list);init_var;init_var=CDR(init_var))
       {
-                sym=CAR(CAR(init_var));
+                sym = (LispSymbol *)CAR(CAR(init_var));
                 if (item_type(sym)!=L_SYMBOL)
                 { lbreak("expecting symbol name for iteration var\n"); exit(0); }
-                l_user_stack.push(symbol_value(sym));
+                l_user_stack.push(sym->GetValue());
       }
 
       void **do_evaled=l_user_stack.sdata+l_user_stack.son;
@@ -2748,8 +2713,8 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       // now set all the symbols
       for (init_var=CAR(arg_list);init_var;init_var=CDR(init_var), do_evaled++)
       {
-                sym=CAR(CAR(init_var));
-                set_symbol_value(sym, *do_evaled);
+                sym = (LispSymbol *)CAR(CAR(init_var));
+                sym->SetValue(*do_evaled);
       }
 
       i=0;       // set i to 1 when terminate conditions are meet
@@ -2770,8 +2735,8 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       do_evaled=l_user_stack.sdata+ustack_start;
       for (init_var=CAR(arg_list);init_var;init_var=CDR(init_var), do_evaled++)
       {
-                sym=CAR(CAR(init_var));
-                set_symbol_value(sym, *do_evaled);
+                sym = (LispSymbol *)CAR(CAR(init_var));
+                sym->SetValue(*do_evaled);
       }
 
       l_user_stack.son=ustack_start;
@@ -3049,7 +3014,7 @@ void *eval(void *prog)
                   ret=prog;
         else
                 {
-                  ret=lookup_symbol_value(prog);
+                  ret = ((LispSymbol *)prog)->GetValue();
                   if (item_type(ret)==L_OBJECT_VAR)
                     ret=l_obj_get(((LispObjectVar *)ret)->number);
                 }
@@ -3161,73 +3126,74 @@ void clear_tmp()
   free_space[TMP_SPACE]=space[TMP_SPACE];
 }
 
-void *symbol_name(void *symbol)
-{
-  return ((LispSymbol *)symbol)->name;
-}
-
-
-void *set_symbol_number(void *symbol, long num)
+void *LispSymbol::GetName()
 {
 #ifdef TYPE_CHECKING
-  if (item_type(symbol)!=L_SYMBOL)
-  {
-    lprint(symbol);
-    lbreak("is not a symbol\n");
-    exit(0);
-  }
+    if (item_type(this) != L_SYMBOL)
+    {
+        lprint(this);
+        lbreak("is not a symbol\n");
+        exit(0);
+    }
 #endif
-  if (((LispSymbol *)symbol)->value!=l_undefined &&
-      item_type(((LispSymbol *)symbol)->value)==L_NUMBER)
-    ((LispNumber *)((LispSymbol *)symbol)->value)->num=num;
-  else
-    ((LispSymbol *)(symbol))->value=new_lisp_number(num);
-
-  return ((LispSymbol *)(symbol))->value;
+    return name;
 }
 
-void *set_symbol_value(void *symbol, void *value)
+void *LispSymbol::SetNumber(long num)
 {
 #ifdef TYPE_CHECKING
-  if (item_type(symbol)!=L_SYMBOL)
-  {
-    lprint(symbol);
-    lbreak("is not a symbol\n");
-    exit(0);
-  }
+    if (item_type(this) != L_SYMBOL)
+    {
+        lprint(this);
+        lbreak("is not a symbol\n");
+        exit(0);
+    }
 #endif
-  ((LispSymbol *)(symbol))->value=value;
-  return value;
+    if (value != l_undefined && item_type(value) == L_NUMBER)
+        ((LispNumber *)value)->num = num;
+    else
+        value = new_lisp_number(num);
+
+    return value;
 }
 
-void *symbol_function(void *symbol)
+void *LispSymbol::SetValue(void *val)
 {
 #ifdef TYPE_CHECKING
-  if (item_type(symbol)!=L_SYMBOL)
-  {
-    lprint(symbol);
-    lbreak("is not a symbol\n");
-    exit(0);
-  }
+    if (item_type(this) != L_SYMBOL)
+    {
+        lprint(this);
+        lbreak("is not a symbol\n");
+        exit(0);
+    }
 #endif
-  return ((LispSymbol *)symbol)->function;
+    value = val;
+    return value;
 }
 
-void *symbol_value(void *symbol)
+void *LispSymbol::GetFunction()
 {
 #ifdef TYPE_CHECKING
-  if (item_type(symbol)!=L_SYMBOL)
-  {
-    lprint(symbol);
-    lbreak("is not a symbol\n");
-    exit(0);
-  }
+    if (item_type(this) != L_SYMBOL)
+    {
+        lprint(this);
+        lbreak("is not a symbol\n");
+        exit(0);
+    }
 #endif
-  return ((LispSymbol *)symbol)->value;
+    return function;
 }
 
-
-
-
-
+void *LispSymbol::GetValue()
+{
+#ifdef TYPE_CHECKING
+    if (item_type(this) != L_SYMBOL)
+    {
+        lprint(this);
+        lbreak("is not a symbol\n");
+        exit(0);
+    }
+#endif
+    return value;
+}
 

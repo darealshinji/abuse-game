@@ -13,6 +13,9 @@ int get_lprop_number(void *sybol, int def);  // returns def if symbol undefined 
 
 
 // variables for the status bar
+extern LispSymbol *l_chat_input, *l_post_render;
+
+// FIXME: port these to LispSymbol
 extern void *l_statbar_ammo_x,*l_statbar_ammo_y,
             *l_statbar_ammo_w,*l_statbar_ammo_h,
         *l_statbar_ammo_bg_color,
@@ -33,19 +36,21 @@ extern void *l_statbar_ammo_x,*l_statbar_ammo_y,
         *l_mouse_can_switch,
         *l_ask_save_slot,
         *l_get_local_input,
-        *l_post_render,
-        *l_chat_input,
         *l_player_text_color,
         *l_level_loaded;        // called when a new level is loaded
 
 
 /******************************** Lisp objects **********************************/
-extern void *l_difficulty,*l_easy,*l_hard,*l_medium,*l_extreme,*l_main_menu,
+extern LispSymbol *l_difficulty, *l_easy, *l_hard, *l_medium, *l_extreme,
+    *l_max_hp, *l_max_power,
+    *l_empty_cache;
+
+// FIXME: port these to LispSymbol
+extern void *l_main_menu,
      *l_logo,*l_state_art,*l_default_abilities,*l_abilities,
-     *l_default_ai_function,*l_state_sfx,
-     *l_morph,*l_max_power,
-     *l_song_list,*l_filename,*l_sfx_directory,*l_max_hp,*l_default_font,
-     *l_empty_cache,*l_range,*l_joy_file,*l_death_handler,
+     *l_default_ai_function,*l_state_sfx, *l_morph,
+     *l_song_list,*l_filename,*l_sfx_directory,*l_default_font,
+     *l_range,*l_joy_file,*l_death_handler,
      *l_title_screen,*l_console_font,*l_fields,*l_FIRE,*l_fire_object,
      *l_cop_dead_parts,*l_restart_player,*l_help_screens,*l_save_order;
 

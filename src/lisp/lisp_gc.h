@@ -24,6 +24,7 @@ class p_ref {
   p_ref(void *&ref) { l_ptr_stack.push(&ref); }
   p_ref(LispObject *&ref) { l_ptr_stack.push((void **)&ref); }
   p_ref(LispArray *&ref) { l_ptr_stack.push((void **)&ref); }
+  p_ref(LispSymbol *&ref) { l_ptr_stack.push((void **)&ref); }
   ~p_ref() { l_ptr_stack.pop(1); }
 } ;
 

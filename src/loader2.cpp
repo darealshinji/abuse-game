@@ -366,10 +366,11 @@ void load_data(int argc, char **argv)
 
 
   char const *ff;
-  if (DEFINEDP(symbol_value(make_find_symbol("frame_file"))))
-    ff=lstring_value(symbol_value(make_find_symbol("frame_file")));
+  // FIXME: unnecessary duplicate call
+  if (DEFINEDP(LispSymbol::FindOrCreate("frame_file")->GetValue()))
+    ff = lstring_value(LispSymbol::FindOrCreate("frame_file")->GetValue());
   else
-    ff="art/frame.spe";
+    ff = "art/frame.spe";
 
   ok_button   =      cache.reg(ff,"dev_ok",SPEC_IMAGE);
   cancel_button  =   cache.reg(ff,"cancel",SPEC_IMAGE);
@@ -414,7 +415,7 @@ void load_data(int argc, char **argv)
   for (i=1;i<argc;i++)
   {
     if (!strcmp(argv[i],"-ec"))
-      set_symbol_value(l_empty_cache,true_symbol);
+      l_empty_cache->SetValue(true_symbol);
     if (!strcmp(argv[i],"-t"))
     {
       i++;

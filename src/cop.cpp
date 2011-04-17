@@ -726,10 +726,10 @@ void *player_draw(int just_fired_var, int num)
   {
     if (o->lvars[just_fired_var])
     {
-      o->draw_double_tint(lnumber_value(((LispArray *)symbol_value(l_player_tints))->Get(num)),S_bright_tint);
+      o->draw_double_tint(lnumber_value(((LispArray *)((LispSymbol *)l_player_tints)->GetValue())->Get(num)), S_bright_tint);
       o->lvars[just_fired_var]=0;
     } else
-      o->draw_tint(lnumber_value(((LispArray *)symbol_value(l_player_tints))->Get(num)));
+      o->draw_tint(lnumber_value(((LispArray *)((LispSymbol *)l_player_tints)->GetValue())->Get(num)));
   }
   return NULL;
 }
@@ -1020,7 +1020,7 @@ void *score_draw()
     int i;
     for (i=0;i<tp;i++)
     {
-      int color=lnumber_value(((LispArray *)symbol_value(l_player_text_color))->Get(sorted_players[i]->get_tint()));
+      int color=lnumber_value(((LispArray *)((LispSymbol *)l_player_text_color)->GetValue())->Get(sorted_players[i]->get_tint()));
       sprintf(msg,"%3ld %s",(long)sorted_players[i]->kills,sorted_players[i]->name);
       if (sorted_players[i]==local)
         strcat(msg," <<");
@@ -1061,7 +1061,7 @@ void *show_kills()
   for (i=0;i<tp;i++)
   {
     enum { NAME_LEN=18 } ;
-    int color=lnumber_value(((LispArray *)symbol_value(l_player_text_color))->Get(v->get_tint()));
+    int color=lnumber_value(((LispArray *)((LispSymbol *)l_player_text_color)->GetValue())->Get(v->get_tint()));
     char max_name[NAME_LEN];
     strncpy(max_name,v->name,NAME_LEN-1);
     max_name[NAME_LEN-1]=0;

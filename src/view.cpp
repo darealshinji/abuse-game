@@ -452,7 +452,7 @@ void view::add_chat_key(int key)  // return string if buf is complete
 
   if (len>38 || key==JK_ENTER)
   {
-    if (DEFINEDP(symbol_function(l_chat_input)))
+    if (DEFINEDP(l_chat_input->GetFunction()))
     {
       game_object *o=current_object;
       current_object=focus;
