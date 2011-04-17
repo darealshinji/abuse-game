@@ -1255,7 +1255,7 @@ void do_title()
     milli_wait(100);
 
     int i;
-    char *str = lstring_value(eval(LSymbol::FindOrCreate("plot_start")));
+    char *str = lstring_value(LSymbol::FindOrCreate("plot_start")->Eval());
 
     bFILE *fp = open_file("art/smoke.spe", "rb");
     if(!fp->open_failure())
@@ -2310,10 +2310,10 @@ void check_for_lisp(int argc, char **argv)
                 char const *s = l;
                 while(*s)
                 {
-                    void *prog = compile(s);
+                    LObject *prog = LObject::Compile(s);
                     l_user_stack.push(prog);
                     while(*s==' ' || *s=='\t' || *s=='\r' || *s=='\n') s++;
-                    ((LObject *)eval(prog))->Print();
+                    prog->Eval()->Print();
                     l_user_stack.pop(1);
                 }
                 free(l);
