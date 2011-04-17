@@ -1,6 +1,6 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
- *  Copyright (c) 2008 Sam Hocevar
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Sam Hocevar.

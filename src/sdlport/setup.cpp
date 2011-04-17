@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 2001 Anthony Kruize <trandor@labyrinth.net.au>
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -287,7 +288,7 @@ void parseCommandLine( int argc, char **argv )
             {
                 scale = result;
 /*                flags.xres = xres * scale;
-                flags.yres = yres * scale;*/
+                flags.yres = yres * scale; */
             }
         }
 /*        else if( !strcasecmp( argv[ii], "-x" ) )
@@ -355,7 +356,7 @@ void setup( int argc, char **argv )
     flags.nosdlparachute    = 0;            // SDL error handling
     flags.xres = xres        = 320;            // Default window width
     flags.yres = yres        = 200;            // Default window height
-#ifdef __APPLE__    
+#ifdef __APPLE__
     flags.gl                = 1;            // Use opengl
     flags.doublebuf            = 1;            // Do double buffering
 #else
@@ -422,7 +423,7 @@ void setup( int argc, char **argv )
     UInt8 buffer[255];
     CFURLRef bundleurl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
     CFURLRef url = CFURLCreateCopyAppendingPathComponent(kCFAllocatorDefault, bundleurl, CFSTR("Contents/Resources/data"), true);
-    
+
     if (!CFURLGetFileSystemRepresentation(url, true, buffer, 255))
     {
         exit(1);
@@ -432,7 +433,7 @@ void setup( int argc, char **argv )
     #else
     set_filename_prefix( EXPDATADIR );
     #endif
-    
+
     // Load the users configuration
     readRCFile();
 

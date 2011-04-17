@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -28,7 +29,7 @@ extern int32_t S_fall_start,S_falling,S_landing,S_pounce_wait,
         S_LOW_HEALTH_SND,S_BUTTON_PRESS_SND,
         S_LINK_SND,S_DELETE_SND;
 
-    
+
 
 void compiled_init();
 void compiled_uninit();

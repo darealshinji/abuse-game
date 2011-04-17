@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -34,9 +35,9 @@ void console::redraw()
     con_win->clear();
     char *s=screen;
     int dx,dy,xa=fnt->width(),ya=fnt->height(),i,j;
-    for (j=0,dy=wy();j<h;j++,dy+=ya)
+    for (j=0,dy=wy(); j<h; j++,dy+=ya)
     {
-      for (i=0,dx=wx();i<w;i++,s++,dx+=xa)
+      for (i=0,dx=wx(); i<w; i++,s++,dx+=xa)
       {
     if (*s)
       fnt->put_char(con_win->screen,dx,dy,*s);

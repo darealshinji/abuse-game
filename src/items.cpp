@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -33,7 +34,7 @@ boundary::boundary(bFILE *fp, char const *er_name) : point_list(fp)
 
   uint8_t *point_on;
 
-  for (i=0,point_on=data;i<tot-1;i++)
+  for (i=0,point_on=data; i<tot-1; i++)
   {
     x1=*(point_on++);
     y1=*(point_on++);
@@ -70,31 +71,31 @@ boundary::boundary(bFILE *fp, char const *er_name) : point_list(fp)
       skip_next=0;
     else
     {
-      for (j=0,point2=data;j<tot-1;j++,point2+=2)
-      {    
+      for (j=0,point2=data; j<tot-1; j++,point2+=2)
+      {
     if (skip_next)
       skip_next=0;
     else
-    {    
+    {
       if (j!=i)           // make sure we are not looking at ourself
       {
         xp1=point2[0];
         yp1=point2[1];
         xp2=point2[2];
-        yp2=point2[3];                
+        yp2=point2[3];
 
         if ((checkx>=xp1 && checkx<=xp2) || (checkx>=xp2 &&  checkx<=xp1))
-            {    
-            if (check_down && (yp1>miny && yp2>miny))              
+            {
+            if (check_down && (yp1>miny && yp2>miny))
         segs_down++;
-          if (checkx==xp2) skip_next=1;              
+          if (checkx==xp2) skip_next=1;
         } else if ((checky>=yp1 && checky<=yp2) || (checky>=yp2 &&  checky<=yp1))
         {
-          if (check_left && xp1<maxx && xp2<maxx)    
+          if (check_left && xp1<maxx && xp2<maxx)
         segs_left++;
-          if (check_right && xp1>minx && xp2>minx)    
+          if (check_right && xp1>minx && xp2>minx)
             segs_right++;
-          if (checky==yp2) skip_next=1;    
+          if (checky==yp2) skip_next=1;
         }
       }
     }
@@ -116,7 +117,7 @@ boundary::boundary(boundary *p) : point_list(p->tot,p->data)
   {
     inside=(uint8_t *)malloc(tot);
   } else inside=NULL;
-  for (i=0,point_on=data;i<tot-1;i++)
+  for (i=0,point_on=data; i<tot-1; i++)
   {
     x1=*(point_on++);
     y1=*(point_on++);
@@ -155,31 +156,31 @@ boundary::boundary(boundary *p) : point_list(p->tot,p->data)
       skip_next=0;
     else
     {
-      for (j=0,point2=data;j<tot-1;j++,point2+=2)
-      {    
+      for (j=0,point2=data; j<tot-1; j++,point2+=2)
+      {
     if (skip_next)
       skip_next=0;
     else
-    {    
+    {
       if (j!=i)           // make sure we are not looking at ourself
       {
         xp1=point2[0];
         yp1=point2[1];
         xp2=point2[2];
-        yp2=point2[3];                
+        yp2=point2[3];
 
         if ((checkx>=xp1 && checkx<=xp2) || (checkx>=xp2 &&  checkx<=xp1))
-            {    
-            if (check_down && (yp1>miny && yp2>miny))              
+            {
+            if (check_down && (yp1>miny && yp2>miny))
         segs_down++;
-          if (checkx==xp2) skip_next=1;              
+          if (checkx==xp2) skip_next=1;
         } else if ((checky>=yp1 && checky<=yp2) || (checky>=yp2 &&  checky<=yp1))
         {
-          if (check_left && xp1<maxx && xp2<maxx)    
+          if (check_left && xp1<maxx && xp2<maxx)
         segs_left++;
-          if (check_right && xp1>minx && xp2>minx)    
+          if (check_right && xp1>minx && xp2>minx)
             segs_right++;
-          if (checky==yp2) skip_next=1;    
+          if (checky==yp2) skip_next=1;
         }
       }
     }
@@ -236,10 +237,10 @@ foretile::foretile(bFILE *fp)
     exit(0);
   }
 
-  for (y=0;y<h;y++)
+  for (y=0; y<h; y++)
   {
     sl=img->scan_line(y);
-    for (x=0;x<w;x++,sl++)
+    for (x=0; x<w; x++,sl++)
     {
       l=(y*AUTOTILE_HEIGHT/h)*AUTOTILE_WIDTH +  x*AUTOTILE_WIDTH/w;
       r[l]+=pal->red(*sl);
@@ -250,7 +251,7 @@ foretile::foretile(bFILE *fp)
   }
   micro_image=new image(AUTOTILE_WIDTH,AUTOTILE_HEIGHT);
 
-  for (l=0;l<AUTOTILE_WIDTH*AUTOTILE_HEIGHT;l++)
+  for (l=0; l<AUTOTILE_WIDTH*AUTOTILE_HEIGHT; l++)
     micro_image->putpixel(  l%AUTOTILE_WIDTH , l/AUTOTILE_WIDTH,
        color_table->lookup_color((r[l]/(t[l]*4/5))>>3,
                  (g[l]/(t[l]*4/5))>>3,
@@ -307,7 +308,7 @@ char_tint::char_tint(bFILE *fp)  // se should be a palette entry
 {
   palette *p=new palette(fp);
   uint8_t *t=data,*p_addr=(uint8_t *)p->addr();
-  for (int i=0;i<256;i++,t++,p_addr+=3)
+  for (int i=0; i<256; i++,t++,p_addr+=3)
     *t=pal->find_closest(*p_addr,p_addr[1],p_addr[2]);
 
   delete p;

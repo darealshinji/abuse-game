@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -76,10 +77,10 @@ void write_PCX(image *im, palette *pal, char const *filename)
 
   int y,run_length,x;
   unsigned char *sl,code;
-  for (y=0;y<im->height();y++)
+  for (y=0; y<im->height(); y++)
   {
     sl=im->scan_line(y);
-    for (x=0;x<im->width();)
+    for (x=0; x<im->width(); )
     {
       run_length=1;
       while (x+run_length<im->width() && sl[x]==sl[x+run_length])
@@ -93,7 +94,7 @@ void write_PCX(image *im, palette *pal, char const *filename)
     code=0xc0 | run_length;
     fputc(code,fp);
     fputc(sl[x],fp);
-    
+
       }
       x+=run_length;
 

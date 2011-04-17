@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -75,7 +76,7 @@ void set_filename_prefix(char const *prefix)
     {
         free( spec_prefix );
     }
-    
+
     if( prefix )
     {
         spec_prefix = strcpy( (char *)malloc( strlen( prefix ) + 2 ), prefix );
@@ -395,7 +396,7 @@ bFILE *open_file(char const *filename, char const *mode)
 void jFILE::open_internal(char const *filename, char const *mode, int flags)
 {
   int wr=0;
-  for (char const *s=mode;*s;s++)
+  for (char const *s=mode; *s; s++)
     if (toupper(*s)=='A' || toupper(*s)=='W')
       wr=1;
 
@@ -427,10 +428,10 @@ jFILE::jFILE(char const *filename, char const *access_string)      // same as fo
 {
  flags=access=0;
  char const *s=access_string;
-  for (;*s;s++)
+  for (; *s; s++)
     if (toupper(*s)=='R') access=O_RDONLY;
 
-  for (s=access_string;*s;s++)
+  for (s=access_string; *s; s++)
     if (toupper(*s)=='W')
     {
       if (access)
@@ -438,7 +439,7 @@ jFILE::jFILE(char const *filename, char const *access_string)      // same as fo
       else access=O_WRONLY;
     }
 
-  for (s=access_string;*s;s++)
+  for (s=access_string; *s; s++)
     if (toupper(*s)=='A')
       access|=O_APPEND|O_WRONLY;
 
@@ -488,13 +489,13 @@ int jFILE::unbuffered_read(void *buf, size_t count)
         case 0:
             if (current_offset+start_offset != spec_main_offset)
                 spec_main_offset = lseek(fd, start_offset+current_offset, SEEK_SET);
-            
+
             len = ::read(fd,(char*)buf,count);
             break;
         case 1:
             if (current_offset+start_offset != spec_main_offset)
                 spec_main_offset = lseek(fd, start_offset+current_offset, SEEK_SET);
-            
+
             len = ::read(fd,(char*)buf,count);
             ::write(fast_load_fd,(char*)&len,sizeof(len));
             ::write(fast_load_fd,(char*)buf,len);
@@ -504,7 +505,7 @@ int jFILE::unbuffered_read(void *buf, size_t count)
             len = ::read(fast_load_fd,(char*)buf,len);
             break;
         }
-        
+
         spec_main_offset += len;
     }
     else
@@ -662,12 +663,12 @@ void spec_directory::calc_offsets()
   long o=SPEC_SIG_SIZE+2;
   if (total)
   {
-    for (i=0,e=entries;i<total;i++,e++)          // calculate the size of directory info
+    for (i=0,e=entries; i<total; i++,e++)          // calculate the size of directory info
     {
       o+=1+1+strlen((*e)->name)+1 +1 +8;
     }
 
-    for (i=0,e=entries;i<total;i++,e++)          // calculate offset for each entry
+    for (i=0,e=entries; i<total; i++,e++)          // calculate offset for each entry
     {
       (*e)->offset=o;
       o+=(*e)->size;
@@ -679,7 +680,7 @@ spec_entry *spec_directory::find(char const *name, int type)
 {
   int i;
   spec_entry **e;
-  for (i=0,e=entries;i<total;i++,e++)
+  for (i=0,e=entries; i<total; i++,e++)
     if (!strcmp((*e)->name,name) && (*e)->type==type)
       return (*e);
   return NULL;
@@ -689,7 +690,7 @@ spec_entry *spec_directory::find(char const *name)
 {
   int i;
   spec_entry **e;
-  for (i=0,e=entries;i<total;i++,e++)
+  for (i=0,e=entries; i<total; i++,e++)
     if (!strcmp((*e)->name,name))
       return (*e);
   return NULL;
@@ -699,7 +700,7 @@ long spec_directory::find_number(char const *name)
 {
   int i;
   spec_entry **e;
-  for (i=0,e=entries;i<total;i++,e++)
+  for (i=0,e=entries; i<total; i++,e++)
     if (!strcmp((*e)->name,name))
       return i;
   return -1;
@@ -709,7 +710,7 @@ spec_entry *spec_directory::find(int type)
 {
   int i;
   spec_entry **e;
-  for (i=0,e=entries;i<total;i++,e++)
+  for (i=0,e=entries; i<total; i++,e++)
     if ((*e)->type==type)
       return (*e);
   return NULL;
@@ -719,7 +720,7 @@ long spec_directory::type_total(int type)
 {
   int i,x=0;
   spec_entry **e;
-  for (i=0,e=entries;i<total;i++,e++)
+  for (i=0,e=entries; i<total; i++,e++)
     if ((*e)->type==type) x++;
   return x;
 }
@@ -728,7 +729,7 @@ long spec_directory::find_number(int type)
 {
   int i;
   spec_entry **e;
-  for (i=0,e=entries;i<total;i++,e++)
+  for (i=0,e=entries; i<total; i++,e++)
     if ((*e)->type==type)
       return i;
   return -1;
@@ -739,7 +740,7 @@ void spec_directory::print()
   spec_entry **se;
   int i;
   printf("[   Entry type   ][   Entry name   ][  Size  ][ Offset ]\n");
-  for (i=0,se=entries;i<total;i++,se++)
+  for (i=0,se=entries; i<total; i++,se++)
     (*se)->print();
 }
 
@@ -758,7 +759,7 @@ void spec_directory::startup(bFILE *fp)
     long start=fp->tell();
 
     int i;
-    for (i=0;i<total;i++)
+    for (i=0; i<total; i++)
     {
       fp->read(buf,2);
       long entry_size=sizeof(spec_entry)+(unsigned char)buf[1];
@@ -771,7 +772,7 @@ void spec_directory::startup(bFILE *fp)
     data=malloc(size);
     char *dp=(char *)data;
     fp->seek(start,SEEK_SET);
-    for (i=0;i<total;i++)
+    for (i=0; i<total; i++)
     {
       spec_entry *se=(spec_entry *)dp;
       entries[i]=se;
@@ -857,7 +858,7 @@ long spec_directory::data_end_offset()
     /* FIXME: no need for a for loop here! */
   spec_entry **e;
   long i;
-  for (i=total-1,e=entries;i>=0;i--,e++)
+  for (i=total-1,e=entries; i>=0; i--,e++)
     return (*e)->offset+(*e)->size;
 
   return SPEC_SIG_SIZE+2;
@@ -877,7 +878,7 @@ int spec_directory::write(bFILE *fp)
 
 
   int i;
-  for (i=0,e=entries;i<total;i++,e++)
+  for (i=0,e=entries; i<total; i++,e++)
   {
     if (fp->write(&(*e)->type,1)!=1)                 return 0;
     if (!write_string(fp,(*e)->name))                return 0;
@@ -964,13 +965,13 @@ void write_other_int32(FILE *fp, uint32_t x)
 void spec_directory::remove(spec_entry *e)
 {
   int i;
-  for (i=0;i<total && entries[i]!=e;i++);            // find the entry in the array first
+  for (i=0; i<total && entries[i]!=e; i++);            // find the entry in the array first
 
   if (entries[i]==e)                                 // make sre it was found
   {
     delete e;
     total--;
-    for (;i<total;i++)                               // compact the pointer array
+    for (; i<total; i++)                               // compact the pointer array
       entries[i]=entries[i+1];
     entries=(spec_entry **)realloc(entries,sizeof(spec_entry *)*total);
   }
@@ -990,7 +991,7 @@ void spec_directory::add_by_hand(spec_entry *e)
 void spec_directory::delete_entries()   // if the directory was created by hand instead of by file
 {
   int i;
-  for (i=0;i<total;i++)
+  for (i=0; i<total; i++)
     delete entries[i];
 
   if (total)

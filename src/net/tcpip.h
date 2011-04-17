@@ -37,7 +37,7 @@ public:
 
   virtual protocol protocol_type() const { return net_address::IP; }
   virtual int equal(const net_address *who) const
-  //{{{
+  //{ {{
   {
     if (who->protocol_type()==IP &&
         !memcmp(&addr.sin_addr,& ((ip_address const *)who)->addr.sin_addr,sizeof(addr.sin_addr)))
@@ -48,7 +48,7 @@ public:
   virtual int set_port(int port)  { addr.sin_port=htons(port); return 1; }
   ip_address(sockaddr_in *Addr) { memcpy(&addr,Addr,sizeof(addr)); }
   virtual void print()
-  //{{{
+  //{ {{
   {
     unsigned char *c=(unsigned char *) (&addr.sin_addr.s_addr);
     fprintf(stderr,"%d.%d.%d.%d",c[0],c[1],c[2],c[3]);
@@ -56,15 +56,15 @@ public:
     //}}}
   int get_port() { return htons(addr.sin_port); }
   net_address *copy()  { return new ip_address(&addr); }
-  ip_address() {} ;
+  ip_address() { } ;
   void store_string(char *st, int st_length)
-  //{{{
+  //{ {{
   {
     char buf[100];
     unsigned char *c=(unsigned char *) (&addr.sin_addr.s_addr);
     sprintf(buf,"%d.%d.%d.%d:%d",c[0],c[1],c[2],c[3],htons(addr.sin_port));
     strncpy(st,buf,st_length);
-    st[st_length-1]=0;    
+    st[st_length-1]=0;
   }
   //}}}
 } ;
@@ -97,14 +97,14 @@ public :
   tcpip_protocol();
   net_address *get_local_address();
   net_address *get_node_address(char const *&server_name, int def_port, int force_port);
-  net_socket *connect_to_server(net_address *addr, 
+  net_socket *connect_to_server(net_address *addr,
         net_socket::socket_type sock_type=net_socket::SOCKET_SECURE);
   net_socket *create_listen_socket(int port, net_socket::socket_type sock_type);
   int installed() { return 1; }  // always part of unix
   char const *name() { return "UNIX generic TCPIP"; }
-  void cleanup(); 
+  void cleanup();
   int select(int block);          // return # of sockets available for read & writing
-  
+
   // Notification methods
   virtual net_socket *start_notify(int port, void *data, int len);
   virtual void end_notify();
@@ -125,14 +125,14 @@ class unix_fd : public net_socket
   unix_fd(int fd) : fd(fd) { };
   virtual int error()                             { return FD_ISSET(fd,&tcpip.exception_set); }
   virtual int ready_to_read()                     { return FD_ISSET(fd,&tcpip.read_set); }
-  virtual int ready_to_write()                    
-  { 
-    struct timeval tv={0,0};     // don't wait
-    fd_set write_check;  
-    FD_ZERO(&write_check);  
-    FD_SET(fd,&write_check);     
+  virtual int ready_to_write()
+  {
+    struct timeval tv={ 0,0};     // don't wait
+    fd_set write_check;
+    FD_ZERO(&write_check);
+    FD_SET(fd,&write_check);
     select(FD_SETSIZE,NULL,&write_check,NULL,&tv);
-    return FD_ISSET(fd,&write_check); 
+    return FD_ISSET(fd,&write_check);
   }
   virtual int write(void const *buf, int size, net_address *addr=NULL);
   virtual int read(void *buf, int size, net_address **addr);
@@ -143,7 +143,7 @@ class unix_fd : public net_socket
   virtual void write_selectable()                  { FD_SET(fd,&tcpip.master_write_set); }
   virtual void write_unselectable()                { FD_CLR(fd,&tcpip.master_write_set); }
   int get_fd() { return fd; }
-  
+
   void broadcastable();
 } ;
 
@@ -166,14 +166,14 @@ class tcp_socket : public unix_fd
     }
     if (::listen(fd,5)==-1)
     {
-      fprintf(stderr,"net driver : could not listen to socket on port %d\n",port);    
+      fprintf(stderr,"net driver : could not listen to socket on port %d\n",port);
       return 0;
     }
     listening=1;
     return 1;
   }
-  virtual net_socket *accept(net_address *&addr) 
-  { 
+  virtual net_socket *accept(net_address *&addr)
+  {
     if (listening)
     {
       struct sockaddr_in from;
@@ -184,7 +184,7 @@ class tcp_socket : public unix_fd
         addr=new ip_address(&from);
         return new tcp_socket(new_fd);
       }
-      else 
+      else
       { addr=NULL; return 0; }
     }
     return 0;
@@ -198,7 +198,7 @@ class udp_socket : public unix_fd
   virtual int read(void *buf, int size, net_address **addr)
   {
     int tr;
-    if (addr) 
+    if (addr)
     {
       *addr=new ip_address;
       socklen_t addr_size=sizeof(sockaddr_in);
@@ -211,8 +211,8 @@ class udp_socket : public unix_fd
   {
     if (addr)
       return sendto(fd,buf,size,0,(sockaddr *)(&((ip_address *)addr)->addr),sizeof(((ip_address *)addr)->addr));
-    else 
-      return ::write(fd,(char*)buf,size);     
+    else
+      return ::write(fd,(char*)buf,size);
   }
   virtual int listen(int port)
   {

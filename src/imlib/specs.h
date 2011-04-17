@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -176,7 +177,7 @@ public :
   spec_entry **entries;
   void *data;
   long size;
-//  spec_directory(char *filename);  ;; not allowed anymore, user must construct file first!
+//  spec_directory(char *filename);  ; ; not allowed anymore, user must construct file first!
   spec_directory(FILE *fp);
   spec_directory(bFILE *fp);
   spec_directory();
@@ -202,7 +203,7 @@ public :
                          unsigned short data_type,
                          char *data_name,
                          unsigned long data_size,
-                         char *link_filename=NULL);*/
+                         char *link_filename=NULL); */
 
 uint16_t read_uint16(FILE *fp);
 uint32_t read_uint32(FILE *fp);

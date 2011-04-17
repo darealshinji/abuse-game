@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -55,7 +56,7 @@ int palette::find_closest(unsigned char r, unsigned char g, unsigned char b)
 {
    unsigned char *cl=(unsigned char *)addr();
    int c=0,d=0x100000,i,nd;
-   for (i=0;i<256;i++)
+   for (i=0; i<256; i++)
    {
      nd=((int)r-(int)(*cl))*((int)r-(int)(*cl)); cl++;
      nd+=((int)g-(int)(*cl))*((int)g-(int)(*cl)); cl++;
@@ -71,7 +72,7 @@ int palette::find_closest_non0(unsigned char r, unsigned char g, unsigned char b
 {
    unsigned char *cl=(unsigned char *)addr()+3;
    int c=1,d=0x7fffffff,i,nd;
-   for (i=1;i<256;i++)
+   for (i=1; i<256; i++)
    {
      nd=((int)r-(int)(*cl))*((int)r-(int)(*cl)); cl++;
      nd+=((int)g-(int)(*cl))*((int)g-(int)(*cl)); cl++;
@@ -86,7 +87,7 @@ int palette::find_closest_non0(unsigned char r, unsigned char g, unsigned char b
 int palette::find_color(unsigned char r, unsigned char g, unsigned char b)
 {
   int i,ub,mask,find;
-  for (i=0,ub=0,mask=128,find=-1;i<ncolors && find<0;i++)
+  for (i=0,ub=0,mask=128,find=-1; i<ncolors && find<0; i++)
   {
     if (usd[ub]&mask)
       if (r==pal[i].red && b==pal[i].blue && g==pal[i].green)
@@ -113,7 +114,7 @@ void palette::black_white()
   int i;
   unsigned char r,g,b,gr;
 
-  for (i=0;i<256;i++)
+  for (i=0; i<256; i++)
   {
     get(i,r,g,b);
     gr=(unsigned char)((double) r*0.30+(double) g*0.59+(double)b*0.11);
@@ -125,7 +126,7 @@ void palette::make_black_white()
 {
   int i,c;
   set(0,0,0,0);
-  for (i=1;i<ncolors;i++)
+  for (i=1; i<ncolors; i++)
   { c=(int)((double)i/(double)ncolors*(double)255);
     set(i,c,c,c);
   }
@@ -135,7 +136,7 @@ void palette::set_rgbs()
 {
   int i,v;
   CHECK(ncolors==256);
-  for (i=0;i<64;i++)
+  for (i=0; i<64; i++)
   {
     if (i==0) v=0;
     else
@@ -155,13 +156,13 @@ void palette::set_rgbs()
 void palette::set_all_used()
 {
   int i;
-  for (i=0;i<ncolors;i++) set_used(i);
+  for (i=0; i<ncolors; i++) set_used(i);
 }
 
 void palette::set_all_unused()
 {
   int i;
-  for (i=0;i<ncolors;i++) set_unused(i);
+  for (i=0; i<ncolors; i++) set_unused(i);
 }
 
 
@@ -170,7 +171,7 @@ palette *palette::copy()
   palette *p;
   int i;
   p=new palette(ncolors);
-  for (i=0;i<ncolors;i++)
+  for (i=0; i<ncolors; i++)
   {
     if (used(i))
       p->set_used(i);
@@ -212,7 +213,7 @@ int palette::add_color(unsigned int r, int unsigned g, int unsigned b, int close
   int i,f,u,c;
   if (!closest_only)
   {
-    for (i=ncolors-1,f=-1,u=-1;i>=0 && f<0;i--)
+    for (i=ncolors-1,f=-1,u=-1; i>=0 && f<0; i--)
     {
       if (used(i))
       {
@@ -234,7 +235,7 @@ int palette::add_color(unsigned int r, int unsigned g, int unsigned b, int close
     }
     else
     {
-      for (i=0,f=0,u=10000;i<ncolors;i++)
+      for (i=0,f=0,u=10000; i<ncolors; i++)
       { c=(pal[i].red-r)*(pal[i].red-r)+
       (pal[i].green-g)*(pal[i].green-g)+
       (pal[i].blue-b)*(pal[i].blue-b);
@@ -253,16 +254,16 @@ void palette::defaults()
   int i;
   set(0,0,0,0);
   set_used(0);
-  for (i=1;i<ncolors;i++)
+  for (i=1; i<ncolors; i++)
     set_unused(i);
   if (ncolors==256)
-    for (i=0;i<ncolors;i++)
+    for (i=0; i<ncolors; i++)
       set(i,RED3(i),GREEN3(i),BLUE2(i));
   else if (ncolors==16)
-    for (i=0;i<ncolors;i++)
+    for (i=0; i<ncolors; i++)
       set(i,255-(i&3),255-((i&4)>>2),255-((i&8)>>3));
   else
-    for (i=0;i<ncolors;i++)
+    for (i=0; i<ncolors; i++)
       set(i,255-(i%3),255-((i+1)%3),255-((i+2)%3));
 }
 
@@ -274,13 +275,13 @@ void palette::shift(int amount)
   {
 
     m=-amount;
-    for (i=0;i<ncolors*3;i++)
+    for (i=0; i<ncolors*3; i++)
       ((unsigned char *) pal)[i]>>=m;
   }
   else if (amount>0)
   {
     m=amount;
-    for (i=0;i<ncolors*3;i++)
+    for (i=0; i<ncolors*3; i++)
       ((unsigned char *) pal)[i]<<=m;
   }
 }
@@ -318,7 +319,7 @@ palette::palette(int number_colors)
 quant_node::~quant_node()
 {
 /*  if (!is_leaf())
-  { for (i=0;i<8;i++)
+  { for (i=0; i<8; i++)
       if (children[i])
       {    delete children[i];
     children[i]=NULL;
@@ -348,7 +349,7 @@ void quant_node::total(int &tnodes, int &tr, int &tg, int &tb)
     tb+=blue*tot;
   }
   else
-  { for (i=0;i<8;i++)
+  { for (i=0; i<8; i++)
       if (children[i])
     children[i]->total(tnodes,tr,tg,tb);
   }
@@ -362,7 +363,7 @@ quant_node::quant_node(int level, quant_node *dad,
   if (level==8)
     be_childish();
   else
-    for (i=0;i<8;i++) children[i]=NULL;
+    for (i=0; i<8; i++) children[i]=NULL;
   padre=dad;
   red=r; green=g; blue=b;
   tot=0;
@@ -376,7 +377,7 @@ void quant_palette::re_delete(quant_node *who, int lev)  // removes all children
   if (who)
   {
     if (!who->is_leaf())
-    { for (x=0;x<8;x++)
+    { for (x=0; x<8; x++)
     if (who->children[x])
     {
       CONDITION(lev<8,"Levl > 7");
@@ -392,14 +393,14 @@ void quant_palette::prune()
 {
   int pruned,lev,x,r,g,b,t;
   quant_node *p=NULL,*f=NULL;
-  for (pruned=0,lev=8;lev>1 && !pruned;lev--)
+  for (pruned=0,lev=8; lev>1 && !pruned; lev--)
   {
     p=(quant_node *)level[lev-1].first();
     if (p)
     { do
       {
     f=p->father();
-    for (x=0;x<8 && !pruned;x++)
+    for (x=0; x<8 && !pruned; x++)
       if (f->children[x])
         if (f->children[x]->next()!=p->next())        // if this son is not me!
         pruned=1;                   //  I have a brother! stop
@@ -468,9 +469,9 @@ palette *quant_palette::create_pal()
   int i,x;
   quant_node *pn;
   p=new palette(mx);
-  for (x=0,i=7;i>=0;i++)
+  for (x=0,i=7; i>=0; i++)
     for (pn=(quant_node *)level[i].first();
-     pn!=(quant_node *)level[i].first();pn=(quant_node *)pn->next())
+     pn!=(quant_node *)level[i].first(); pn=(quant_node *)pn->next())
       if (pn->is_leaf())
     p->set(x++,pn->red,pn->green,pn->blue);
   return p;
@@ -491,7 +492,7 @@ unsigned char palette::brightest(int all)
   long brv;
   brv=0; bri=0;
 
-  for (i=0;i<(unsigned int)ncolors;i++)
+  for (i=0; i<(unsigned int)ncolors; i++)
   { if (all || used(i))
     {
       get(i,r,g,b);
@@ -511,7 +512,7 @@ unsigned char palette::darkest(int all, int noblack)
   long brv,x;
   brv=(long)258*(long)258*(long)258; bri=0;
 
-  for (i=0;i<(unsigned int)ncolors;i++)
+  for (i=0; i<(unsigned int)ncolors; i++)
   { if (all || used(i))
     {
       get(i,r,g,b);
@@ -535,7 +536,7 @@ void palette::fade_to(int total_fades, int fade_on, int dest_r, int dest_g, int 
   uint8_t *sl=(uint8_t *)addr();
   uint8_t x;
   int i;
-  for (i=0;i<ncolors;i++)
+  for (i=0; i<ncolors; i++)
   {
     x=(( dest_r-(int)*sl)*fade_on/total_fades+*sl);
     *(sl++)=x;

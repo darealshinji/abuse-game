@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -99,7 +100,7 @@ void demo_manager::do_inputs()
     {
       base->packet.packet_reset();       // reset input buffer
       view *p=player_list;               // get current inputs
-      for (;p;p=p->next)
+      for (; p; p=p->next)
         if (p->local_player())
           p->get_input();
 
@@ -138,7 +139,7 @@ void demo_manager::reset_game()
   rand_on=0;
 
   view *v=player_list;
-  for (;v;v=v->next) { if (v->focus) v->reset_player(); }
+  for (; v; v=v->next) { if (v->focus) v->reset_player(); }
 
   last_demo_mx=last_demo_my=last_demo_mbut=0;
   current_level->set_tick_counter(0);
@@ -207,7 +208,7 @@ int demo_manager::set_state(demo_state new_state, char *filename)
       wm->push_event(new event(ID_NULL,NULL));
 
       view *v=player_list;
-      for (;v;v=v->next)  // reset all the players
+      for (; v; v=v->next)  // reset all the players
       { if (v->focus) { v->reset_player(); v->focus->set_aistate(0); } }
       delete current_level;
       current_level=NULL;

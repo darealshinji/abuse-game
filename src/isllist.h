@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -22,7 +23,7 @@ public:
     list_node * next;
     T data;
 
-    list_node() {}
+    list_node() { }
     list_node(const T& item) { data = item; }
   };
 
@@ -33,10 +34,10 @@ public:
   public:
     // pseudo-protected - don't use unless you really have to
     list_node * node;
-    iterator(list_node * p) : node(p) {}
+    iterator(list_node * p) : node(p) { }
 
-    iterator() {}
-    iterator(const iterator &p) : node(p.node) {}
+    iterator() { }
+    iterator(const iterator &p) : node(p.node) { }
 
     int operator==(const iterator &p) { return (node == p.node); }
     int operator!=(const iterator &p) { return (node != p.node); }

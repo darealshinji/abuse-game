@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -102,7 +103,7 @@ int net_init(int argc, char **argv)
   base=&local_base;
   char *server_name=NULL;
 
-  for (i=1;i<argc;i++)
+  for (i=1; i<argc; i++)
     if (!strcmp(argv[i],"-nonet"))
       return 0;
     else if (!strcmp(argv[i],"-no_net_fork"))      // make it easy to run the driver under a debugger
@@ -180,7 +181,7 @@ int NF_set_file_server(char *name)
 {
   if (net_installed)
   {
-    char cm[2]={NFCMD_SET_FS,strlen(name)+1};
+    char cm[2]={ NFCMD_SET_FS,strlen(name)+1};
     if (write(net_out_fd,cm,2)!=2) { kill_net(); return 0; }
     if (write(net_out_fd,name,cm[1])!=cm[1]) { kill_net(); return 0; }
     if (read(net_in_fd,cm,1)!=1)  { kill_net(); return 0; }   // read the status of this command
@@ -193,7 +194,7 @@ int NF_open_file(char const *filename, char const *mode)
 {
   if (net_installed)
   {
-    char cm[3]={NFCMD_OPEN,strlen(filename)+1,strlen(mode)+1};
+    char cm[3]={ NFCMD_OPEN,strlen(filename)+1,strlen(mode)+1};
     if (write(net_out_fd,cm,3)!=3) { kill_net(); return -1; }
     if (write(net_out_fd,filename,cm[1])!=cm[1])  { kill_net(); return -1; }
     if (write(net_out_fd,mode,cm[2])!=cm[2])  { kill_net(); return -1; }
@@ -338,7 +339,7 @@ void service_net_request()
     {
       base->get_lsf=0;
       base->mem_lock=0;
-      uint8_t c[2]={NFCMD_PROCESS_LSF,strlen(lsf)+1};
+      uint8_t c[2]={ NFCMD_PROCESS_LSF,strlen(lsf)+1};
       if (write(net_out_fd,&c,2)!=2) { kill_net(); return ; }
       if (write(net_out_fd,lsf,c[1])!=c[1]) { kill_net(); return ; }
     } else base->mem_lock=0;
@@ -352,7 +353,7 @@ int get_remote_lsf(char *name, char *filename)  // filename should be 256 bytes
 {
   if (net_installed)
   {
-    uint8_t cm[2]={NFCMD_REQUEST_LSF,strlen(name)+1};
+    uint8_t cm[2]={ NFCMD_REQUEST_LSF,strlen(name)+1};
     if (write(net_out_fd,cm,2)!=2) { kill_net(); return 0; }
     if (write(net_out_fd,name,cm[1])!=cm[1]) { kill_net(); return 0; }
     uint8_t size;
@@ -368,7 +369,7 @@ int request_server_entry()
   if (net_installed)
   {
     if (!net_server) return 0;
-    uint8_t cm[2]={NFCMD_REQUEST_ENTRY,strlen(net_server)+1};
+    uint8_t cm[2]={ NFCMD_REQUEST_ENTRY,strlen(net_server)+1};
     if (write(net_out_fd,cm,2)!=2) { kill_net(); return 0; }
     if (write(net_out_fd,net_server,cm[1])!=cm[1]) { kill_net(); return 0; }
     uint16_t cnum;  // client number
@@ -451,11 +452,11 @@ void net_reload()
 
       while (join_list)
       {
-    
+
     view *f=player_list;
-    for (;f && f->next;f=f->next);      // find last player, add one for pn
+    for (; f && f->next; f=f->next);      // find last player, add one for pn
     int i,st=0;
-    for (i=0;i<total_objects;i++)
+    for (i=0; i<total_objects; i++)
     if (!strcmp(object_names[i],"START"))
     st=i;
 
@@ -564,7 +565,7 @@ int get_inputs_from_server(unsigned char *buf)
       abort=wm->new_window(0,yres/2,-1,wm->font()->height()*4,
                    new info_field(0, 0, 0,"Waiting for data...",
                           new button(0, wm->font()->height()+5,ID_NET_DISCONNECT,
-                             "Disconnect slackers",NULL)),"Error");    
+                             "Disconnect slackers",NULL)),"Error");
       wm->flush_screen();
     }
       }

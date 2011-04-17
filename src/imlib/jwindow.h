@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -174,7 +175,7 @@ public:
     void set_colors(int Hi, int Med, int Low) { hi=Hi; med=Med; low=Low; }
     JCFont *font() { return fnt; }
     int has_mouse() { return eh->has_mouse(); }
-    void mouse_status(int &x, int &y, int &button) {eh->mouse_status(x,y,button); }    
+    void mouse_status(int &x, int &y, int &button) { eh->mouse_status(x,y,button); }
     void set_mouse_shape(image *im, int centerx, int centery)
     { eh->set_mouse_shape(im,centerx,centery); }
 

@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 2001 Anthony Kruize <trandor@labyrinth.net.au>
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -222,7 +223,7 @@ sound_effect::sound_effect( char * filename )
         void* temp_data = (void *)read_wav( filename, sample_speed, size );
 
         SDL_AudioCVT audiocvt;
-    
+
         SDL_BuildAudioCVT( &audiocvt, AUDIO_U8, 1, 11025, audioObtained.format, audioObtained.channels, audioObtained.freq );
         data = malloc( size * audiocvt.len_mult );
 
@@ -364,7 +365,7 @@ song::song( char const * filename )
     data = NULL;
     Name = strdup(filename);
     song_id = 0;
-    
+
 #ifdef USE_SDL_MIXER
     rw = NULL;
     music = NULL;

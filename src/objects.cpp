@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -42,12 +43,12 @@ game_object *game_object::copy()
   game_object *o=create(otype,x,y);
   o->state=state;
   int i=0;
-  for (;i<TOTAL_OBJECT_VARS;i++)
+  for (; i<TOTAL_OBJECT_VARS; i++)
     o->set_var(i,get_var(i));
   memcpy(o->lvars,lvars,4*figures[otype]->tv);
-  for (i=0;i<total_objects();i++)
+  for (i=0; i<total_objects(); i++)
     o->add_object(get_object(i));
-  for (i=0;i<total_lights();i++)
+  for (i=0; i<total_lights(); i++)
     o->add_light(get_light(i));
   return o;
 }
@@ -57,52 +58,52 @@ int simple_object::total_vars() { return TOTAL_OBJECT_VARS; }
 
 obj_desc object_descriptions[TOTAL_OBJECT_VARS] =
 {
-    {"fade_dir",      RC_8 },
-    {"frame_dir",     RC_8 },
-    {"direction",     RC_8 },
-    {"gravity_on",    RC_8 },
-    {"fade_count",    RC_8 },
+    { "fade_dir",      RC_8 },
+    { "frame_dir",     RC_8 },
+    { "direction",     RC_8 },
+    { "gravity_on",    RC_8 },
+    { "fade_count",    RC_8 },
 
-    {"fade_max",      RC_8 },
-    {"active",        RC_8 },
-    {"flags",         RC_8 },
-    {"aitype",        RC_8 },
-    {"xvel",          RC_32 },
+    { "fade_max",      RC_8 },
+    { "active",        RC_8 },
+    { "flags",         RC_8 },
+    { "aitype",        RC_8 },
+    { "xvel",          RC_32 },
 
-    {"fxvel",         RC_8 },
-    {"yvel",          RC_32 },
-    {"fyvel",         RC_8 },
-    {"xacel",         RC_32 },
-    {"fxacel",        RC_8 },
+    { "fxvel",         RC_8 },
+    { "yvel",          RC_32 },
+    { "fyvel",         RC_8 },
+    { "xacel",         RC_32 },
+    { "fxacel",        RC_8 },
 
-    {"yacel",         RC_32 },
-    {"fyacel",        RC_8 },
-    {"x",             RC_32 },
-    {"fx",            RC_8 },
-    {"y",             RC_32 },
+    { "yacel",         RC_32 },
+    { "fyacel",        RC_8 },
+    { "x",             RC_32 },
+    { "fx",            RC_8 },
+    { "y",             RC_32 },
 
-    {"fy",            RC_8 },
-    {"hp",            RC_16 },
-    {"mp",            RC_16 },
-    {"fmp",           RC_16 },
-    {"cur_frame",     RC_16 },
+    { "fy",            RC_8 },
+    { "hp",            RC_16 },
+    { "mp",            RC_16 },
+    { "fmp",           RC_16 },
+    { "cur_frame",     RC_16 },
 
-    {"aistate",       RC_16 },
-    {"aistate_time",  RC_16 },
-    {"targetable",    RC_8 }
+    { "aistate",       RC_16 },
+    { "aistate_time",  RC_16 },
+    { "targetable",    RC_8 }
 };
 
 int32_t game_object::get_var_by_name(char *name, int &error)
 {
   error=0;
   int i=0;
-  for (;i<TOTAL_OBJECT_VARS;i++)
+  for (; i<TOTAL_OBJECT_VARS; i++)
   {
     if (!strcmp(object_descriptions[i].name,name))
       return get_var(i);
   }
 
-  for (i=0;i<figures[otype]->tiv;i++)
+  for (i=0; i<figures[otype]->tiv; i++)
   {
     if (!strcmp(lstring_value(((LSymbol *)figures[otype]->vars[i])->GetName()),name))
     {
@@ -115,7 +116,7 @@ int32_t game_object::get_var_by_name(char *name, int &error)
     lbreak("access : variable does not exsist for this class\n");
     return 0;
       }
-      return lvars[t->var_index[number]];*/
+      return lvars[t->var_index[number]]; */
     }
   }
   error=1;
@@ -125,7 +126,7 @@ int32_t game_object::get_var_by_name(char *name, int &error)
 int game_object::set_var_by_name(char *name, int32_t value)
 {
   int i=0;
-  for (;i<TOTAL_OBJECT_VARS;i++)
+  for (; i<TOTAL_OBJECT_VARS; i++)
   {
     if (!strcmp(object_descriptions[i].name,name))
     {
@@ -133,7 +134,7 @@ int game_object::set_var_by_name(char *name, int32_t value)
       return 1;
     }
   }
-  for (i=0;i<figures[otype]->tiv;i++)
+  for (i=0; i<figures[otype]->tiv; i++)
     if (!strcmp(lstring_value(((LSymbol *)figures[otype]->vars[i])->GetName()),name))
     {
       lvars[figures[otype]->var_index[i]]=value;
@@ -164,7 +165,7 @@ void simple_object::set_var(int xx, uint32_t v)
     case 3 : set_gravity(v); break;
     case 4 : set_fade_count(v); break;
     case 5 : set_fade_max(v); break;
-    case 6 : active=v;break;
+    case 6 : active=v; break;
     case 7 : set_flags(v); break;
     case 8 : set_aitype(v); break;
     case 9 : set_xvel(v); break;
@@ -250,7 +251,7 @@ int RC_type_size(int type)
     { return 2; } break;
     case RC_32 :
     { return 4; } break;
-  }        
+  }
   CHECK(0);
   return 1;
 }
@@ -394,7 +395,7 @@ void game_object::draw_above(view *v)
     sy2 = Min(v->cy2, sy2);
     trans_image *p=picture();
 
-    for (i=sy1;i<=sy2;i++)
+    for (i=sy1; i<=sy2; i++)
       p->put_scan_line(screen,sx,i,0);
   }
 }
@@ -733,7 +734,7 @@ void game_object::draw_predator()
   cpict->put_predator(screen,
              (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
              y-cpict->height()+1-current_vyadd);
-        
+
 }
 
 void game_object::drawer()
@@ -879,15 +880,15 @@ void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
       {
     int32_t tx=(old_nxv>0 ? 1 : -1),ty=0;
     try_move(x,y,tx,ty,3);
-    if (!tx)     
-      ret|=(old_nxv>0 ? BLOCKED_RIGHT : BLOCKED_LEFT);    
+    if (!tx)
+      ret|=(old_nxv>0 ? BLOCKED_RIGHT : BLOCKED_LEFT);
     else tx=0;
 
     ty=(old_nyv>0 ? 1 : -1);
     try_move(x,y,tx,ty,3);
-    if (!ty)     
+    if (!ty)
       ret|=(old_nyv>0 ? BLOCKED_DOWN : BLOCKED_UP);
-    
+
     if (!ret)
       ret|=(old_nyv>0 ? BLOCKED_DOWN : BLOCKED_UP) | (old_nxv>0 ? BLOCKED_RIGHT : BLOCKED_LEFT);
 
@@ -970,22 +971,22 @@ int game_object::tick()      // returns blocked status
     if (xv!=old_vx || yv!=old_vy)     // he collided with something
     {
       if (gravity())                         // was he going up or down?
-      {    
+      {
     int32_t fall_xv=0,old_fall_vy,fall_vy;
     old_fall_vy=fall_vy=old_vy-yvel();             // make sure he gets all of his yvel
     try_move(x,y,fall_xv,fall_vy,1|up);
     if (old_vy>0 && fall_vy<old_fall_vy)       // he was trying to fall, but he hit the ground
     {
-      if (old_vy>0)    
+      if (old_vy>0)
       {
         blocked|=BLOCKED_DOWN;
-    
-        if (!xvel() && has_sequence(end_run_jump))    
+
+        if (!xvel() && has_sequence(end_run_jump))
         {
           set_xvel(old_vx);
           set_state(end_run_jump);
         }
-        else set_state(stopped);    
+        else set_state(stopped);
       }
       else blocked|=BLOCKED_UP;
 
@@ -1063,7 +1064,7 @@ int game_object::tick()      // returns blocked status
       set_xvel(xvel()+climb_xvel);
       set_yvel(0);
       set_fyvel(0);
-    
+
       // now put him back on the ground
       climb_yvel=abs(climb_xvel)+5;               // plus one to put him back on the ground
       climb_xvel=0;
@@ -1071,17 +1072,17 @@ int game_object::tick()      // returns blocked status
       if (climb_yvel)
           y+=climb_yvel;
     }
-    else    
-    {    
+    else
+    {
       if (old_vx<0)
           blocked|=BLOCKED_LEFT;
       else
           blocked|=BLOCKED_RIGHT;
       set_state(stopped);      // nope, musta hit a wall, stop the poor fella
       x=ox;
-      y=oy;    
+      y=oy;
     }
-    
+
       }
 
       if (xvel()!=old_vx && state!=run_jump_fall && state!=end_run_jump)
@@ -1296,7 +1297,7 @@ int game_object::mover(int cx, int cy, int button)  // return false if the route
       {
     direction=-1;
     set_xacel(-get_ability(type(),start_accel));           // set the appropriate accel
-      }    
+      }
     }
     else
     {
@@ -1315,7 +1316,7 @@ int game_object::mover(int cx, int cy, int button)  // return false if the route
       if (xvel()+stop_acel>=0)                       // if this acceleration is enough to stop him
       {
     stop_x();
-    if (!gravity())    
+    if (!gravity())
       set_state(stopped);
       } else { set_xacel(stop_acel); }
     } else if (xvel()>0)
@@ -1568,7 +1569,7 @@ game_object::game_object(int Type, int load)
 int game_object::reduced_state()
 {
   int32_t x=0;
-  for (int i=0;i<figures[otype]->ts;i++)
+  for (int i=0; i<figures[otype]->ts; i++)
   {
     if (i==state) return x;
       else

@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -116,7 +117,7 @@ struct net_packet
     *((uint16_t *)data+1)=0;
     int i,size=packet_prefix_size()+packet_size();
     uint8_t c1=0,c2=0,*p=data;
-    for (i=0;i<size;i++,p++)
+    for (i=0; i<size; i++,p++)
     {
       c1+=*p;
       c2+=c1;

@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -108,13 +109,13 @@ int net_driver::setup_shm()
   shm_seg_id=-1;
 
   driver=this;
-  int catch_sigs[]={SIGHUP,SIGINT,SIGQUIT,SIGILL,SIGABRT,
+  int catch_sigs[]={ SIGHUP,SIGINT,SIGQUIT,SIGILL,SIGABRT,
             SIGIOT,SIGFPE,SIGKILL,SIGUSR1,SIGSEGV,
             SIGUSR2,SIGPIPE,SIGTERM,SIGCHLD,
             SIGCONT,SIGSTOP,SIGTSTP,SIGTTIN,SIGTTOU,-1};
 
   int i;
-  for (i=0;catch_sigs[i]!=-1;i++)     // catch all signals in case we get
+  for (i=0; catch_sigs[i]!=-1; i++)     // catch all signals in case we get
     signal(catch_sigs[i],die);            // interrupted before we remove shmid
 
 
@@ -211,7 +212,7 @@ net_driver::net_driver(int argc, char **argv, int comm_port, int game_port, net_
   connect_to_engine(argc,argv);
   setup_shm();
   int i;
-  for (i=1;i<argc;i++) if (!strcmp(argv[i],"-debug")) debug=1;
+  for (i=1; i<argc; i++) if (!strcmp(argv[i],"-debug")) debug=1;
 }
 
 int net_driver::become_server()
@@ -233,7 +234,7 @@ int net_driver::check_commands()
     {
       if (cmd<=EGCMD_DIE)
       {
-    char *cmds[]={"open","close","read","write","seek","size","tell","setfs","crc_calced","process_lsf","request_lfs",
+    char *cmds[]={ "open","close","read","write","seek","size","tell","setfs","crc_calced","process_lsf","request_lfs",
              "equest_entry","become_server","block","reload_start","reload_end","send_input","input_missing",
               "kill_slackers","die"};
     fprintf(stderr,"engine cmd : %s\n",cmds[cmd]);
@@ -252,13 +253,13 @@ int net_driver::check_commands()
       case NFCMD_RELOAD_START :
       {
     cmd=game_face->start_reload();
-    if (!out->write(&cmd,1)) { mdie("could not write start reload ack"); }  // send something to unblock engine    
+    if (!out->write(&cmd,1)) { mdie("could not write start reload ack"); }  // send something to unblock engine
       } break;
 
       case NFCMD_RELOAD_END :
       {
     cmd=game_face->end_reload();
-    if (!out->write(&cmd,1)) { mdie("could not write end reload ack"); }  // send something to unblock engine    
+    if (!out->write(&cmd,1)) { mdie("could not write end reload ack"); }  // send something to unblock engine
       } break;
 
       case NFCMD_BLOCK :
@@ -272,7 +273,7 @@ int net_driver::check_commands()
     game_face->input_missing();
     if (out->write(&cmd,1)!=1) { mdie("could not write block ack1"); }  // send something to unblock engine
       } break;
-      
+
       case NFCMD_KILL_SLACKERS :
       {
     if (!game_face->kill_slackers())
@@ -298,13 +299,13 @@ int net_driver::check_commands()
     uint16_t success=join_server(name);
     if (out->write(&success,2)!=2) mdie("cound not send lsf read failure");
       } break;
-      
+
       case NFCMD_BECOME_SERVER :
       {
-    cmd=become_server();    
+    cmd=become_server();
     if (out->write(&cmd,1)!=1) mdie("cound not send ok");
       } break;
-      
+
       case NFCMD_REQUEST_LSF :
       {
     uint8_t len;
@@ -373,7 +374,7 @@ int net_driver::check_commands()
         in->read(filename,size[0])!=size[0] ||
         in->read(mode,size[1])!=size[1])
       mdie("incomplete open command from engine");
-    
+
     int fd=fman->rf_open_file(fn,mode);
     if (fd==-2)
     {
@@ -389,8 +390,8 @@ int net_driver::check_commands()
     } else
     {
       uint8_t st=NF_OPEN_REMOTE_FILE;
-      if (out->write(&st,1)!=1) comm_failed();     
-      if (out->write(&fd,sizeof(fd))!=sizeof(fd)) comm_failed();     
+      if (out->write(&st,1)!=1) comm_failed();
+      if (out->write(&fd,sizeof(fd))!=sizeof(fd)) comm_failed();
     }
       } break;
       case NFCMD_CLOSE :
@@ -408,12 +409,12 @@ int net_driver::check_commands()
       {
         fman->rf_close(fd);
         uint8_t st=1;
-        if (out->write(&st,1)!=1) comm_failed();     
+        if (out->write(&st,1)!=1) comm_failed();
       } break;
       case NFCMD_SIZE  :
       {
         int32_t x=fman->rf_file_size(fd);
-        if (out->write(&x,sizeof(x))!=sizeof(x)) comm_failed();         
+        if (out->write(&x,sizeof(x))!=sizeof(x)) comm_failed();
       } break;
       case NFCMD_TELL :
       {

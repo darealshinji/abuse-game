@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -40,7 +41,7 @@ void load_number_icons()
 {
   char name[100];
   int i;
-  for (i=0;i<MAX_SAVE_GAMES*3;i++)
+  for (i=0; i<MAX_SAVE_GAMES*3; i++)
   {
     sprintf(name,"nums%04d.pcx",i+1);
     save_buts[i]=cache.reg("art/icons.spe",name,SPEC_IMAGE,1);
@@ -60,7 +61,7 @@ Jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
   int y = 0, i;
   int ih=cache.img(save_buts[0])->height();
   int x=0;
-  for (i=0;i<total_saved;i++,y+=ih)
+  for (i=0; i<total_saved; i++,y+=ih)
   {
     if (thumb_nails) { while (!thumb_nails[x]) x++; }
     buts[i]=new ico_button(0, y, ID_LOAD_GAME_NUMBER + x,
@@ -69,7 +70,7 @@ Jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
     x++;
   }
 
-  for (i=0;i<total_saved-1;i++)
+  for (i=0; i<total_saved-1; i++)
     buts[i]->next=buts[i+1];
 
   return wm->new_window(mx,yres/2-(Jwindow::top_border()+ih*5)/2,-1,-1,buts[0]);
@@ -78,7 +79,7 @@ Jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
 int get_save_spot()
 {
   int i=MAX_SAVE_GAMES,last_free=0;
-  for (;i>0;)
+  for (; i>0; )
   {
     char name[20];
     sprintf(name,"%ssave%04d.spe", get_save_filename_prefix(),i);
@@ -159,7 +160,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 
     image *first=NULL;
 
-    for (start_num=0;start_num<MAX_SAVE_GAMES;start_num++)
+    for (start_num=0; start_num<MAX_SAVE_GAMES; start_num++)
     {
         char name[255];
         int fail=0;
@@ -187,7 +188,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         }
         if (fail && show_all)
         {
-            thumb_nails[start_num]=new image(160,100);    
+            thumb_nails[start_num]=new image(160,100);
             thumb_nails[start_num]->clear();
             console_font->put_string(thumb_nails[start_num],0,0,symbol_str("no_saved"));
             total_saved++;
@@ -206,14 +207,14 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
   int y=0;
 
 
-  for (i=0;i<total_saved;i++,y+=ih)
+  for (i=0; i<total_saved; i++,y+=ih)
   {
-    buts[i]=new ico_button(0,y,ID_LOAD_GAME_NUMBER+i,        
+    buts[i]=new ico_button(0,y,ID_LOAD_GAME_NUMBER+i,
                save_buts[i*3+1],save_buts[i*3+1],save_buts[i*3+0],save_buts[i*3+2],NULL);
     buts[i]->set_act_id(ID_LOAD_GAME_PREVIEW+i);
   }
 
-  for (i=0;i<total_saved-1;i++)
+  for (i=0; i<total_saved-1; i++)
     buts[i]->next=buts[i+1];
 */
 
@@ -247,7 +248,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
     wm->close_window(l_win);
     wm->close_window(preview);
 
-    for (i=0;i<total_saved;i++)
+    for (i=0; i<total_saved; i++)
         if (thumb_nails[i])
             delete thumb_nails[i];
 

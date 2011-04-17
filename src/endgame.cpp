@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -42,7 +43,7 @@ extern int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCF
 static mask_line *make_mask_lines(image *mask, int map_width)
 {
   mask_line *p=(mask_line *)malloc(mask->height()*sizeof(mask_line));
-  for (int y=0;y<mask->height();y++)
+  for (int y=0; y<mask->height(); y++)
   {
     // find the start of the run..
     uint8_t *sl=mask->scan_line(y);
@@ -62,7 +63,7 @@ static mask_line *make_mask_lines(image *mask, int map_width)
     p[y].light=(uint8_t *)malloc(size);
     uint16_t *rem=p[y].remap;
     uint8_t *lrem=p[y].light;
-    for (x=0;x<size;x++,rem++)
+    for (x=0; x<size; x++,rem++)
     {
       *(lrem++)=*(sl_start++);
 /*      if (x==size/2 || x==size/2-1 || x==size/2+1)
@@ -89,7 +90,7 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
   int y=0;
   uint8_t *l;
 
-  for (;y<mask_height;y++)
+  for (; y<mask_height; y++)
   {
     mask_line *n=p+y;
     uint8_t *sl=screen->scan_line(y+sy)+sx+n->x;
@@ -99,7 +100,7 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
     uint16_t *rem=n->remap;
     if (sx+n->x<x1) x1=sx+n->x;
     int x=0;
-    for (;x<n->size;x++,sl++,rem++,l++)
+    for (; x<n->size; x++,sl++,rem++,l++)
     {
       r=*rem;
 
@@ -116,7 +117,7 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
           b3=b1+(b2-b1)*fade256/256;
 
       uint8_t c=color_table->lookup_color(r3>>3,g3>>3,b3>>3);
-                
+
       *sl=*(white_light+((*l)/2+28+jrand()%4)*256+c);
 
     }
@@ -161,12 +162,12 @@ void show_end2()
 
   int explo_frames1[8],explo_frames2[7];
 
-  for (i=0;i<8;i++)
+  for (i=0; i<8; i++)
   { char nm[100]; sprintf(nm,"small_wite%04d.pcx",i+1);
     explo_frames1[i]=cache.reg("art/exp1.spe",nm,SPEC_CHARACTER,1);
   }
 
-  for (i=0;i<7;i++)
+  for (i=0; i<7; i++)
   { char nm[100]; sprintf(nm,"small_fire%04d.pcx",i+1);
     explo_frames2[i]=cache.reg("art/exp1.spe",nm,SPEC_CHARACTER,1);
   }
@@ -182,13 +183,13 @@ void show_end2()
 
 
   screen->clear();
-  int c[4]={pal->find_closest(222,222,22),
+  int c[4]={ pal->find_closest(222,222,22),
         pal->find_closest(200,200,200),
         pal->find_closest(100,100,100),
         pal->find_closest(64,64,64)};
   uint16_t sinfo[800*3],*si;
 
-  for (si=sinfo,i=0;i<800;i++)
+  for (si=sinfo,i=0; i<800; i++)
   {
     *(si++)=jrand()%320;
     *(si++)=jrand()%200;
@@ -198,12 +199,12 @@ void show_end2()
   int32_t paddr[256];
   if (old_pal)
   {
-    for (i=0;i<256;i++)
+    for (i=0; i<256; i++)
       paddr[i]=(old_pal->red(i)<<16)|(old_pal->green(i)<<8)|(old_pal->blue(i));
   }
   else
   {
-    for (i=0;i<256;i++)
+    for (i=0; i<256; i++)
       paddr[i]=(pal->red(i)<<16)|(pal->green(i)<<8)|(pal->blue(i));
   }
 
@@ -218,7 +219,7 @@ void show_end2()
 
 
 
-  for (i=0;i<80;)
+  for (i=0; i<80; )
   {
     time_marker new_time;
     if (new_time.diff_time(&old_time)>0.1)
@@ -229,7 +230,7 @@ void show_end2()
       old_time.get_time();
       screen->clear();
       int j;
-      for (si=sinfo,j=0;j<800;j++,si+=3)
+      for (si=sinfo,j=0; j<800; j++,si+=3)
         screen->putpixel(dx+si[0],dy+si[1],si[2]);
 
       if (i>=30 && i<=37)
@@ -270,7 +271,7 @@ void show_end2()
 
 
   ex_char *clist=NULL;
-  for (i=0;i<200;)
+  for (i=0; i<200; )
   {
     time_marker new_time;
     if (new_time.diff_time(&old_time)>0.1)
@@ -281,7 +282,7 @@ void show_end2()
       old_time.get_time();
       screen->clear();
       int j;
-      for (si=sinfo,j=0;j<800;j++,si+=3)
+      for (si=sinfo,j=0; j<800; j++,si+=3)
         screen->putpixel(dx+si[0],dy+si[1],si[2]);
 
 
@@ -304,7 +305,7 @@ void show_end2()
 //            ey+jrand()%(cache.img(mask)->height(),0,1,clist);
 
       ex_char *c=clist,*last=NULL;
-      for (;c;)
+      for (; c; )
       {
     c->frame++;
     if (c->frame>6)
@@ -317,12 +318,12 @@ void show_end2()
     } else
     {
       last=c;
-      if (c->char_num)    
-        cache.fig(explo_frames2[c->frame])->forward->put_image(screen,c->x,c->y);    
+      if (c->char_num)
+        cache.fig(explo_frames2[c->frame])->forward->put_image(screen,c->x,c->y);
 
       c->x-=3;
       c=c->next;
-    }    
+    }
       }
 
       wm->flush_screen();
@@ -335,7 +336,7 @@ void show_end2()
 
   screen->clear();
   int j;
-  for (si=sinfo,j=0;j<800;j++,si+=3)
+  for (si=sinfo,j=0; j<800; j++,si+=3)
     screen->putpixel(si[0],si[1],si[2]);
 
   event ev;
@@ -366,7 +367,7 @@ void show_end2()
 
 
   uint8_t cmap[32];
-  for (i=0;i<32;i++)
+  for (i=0; i<32; i++)
     cmap[i]=pal->find_closest(i*256/32,i*256/32,i*256/32);
 
   void *end_plot = LSymbol::FindOrCreate("plot_end")->GetValue();
@@ -375,11 +376,11 @@ void show_end2()
   time_marker start;
 
   ev.type=EV_SPURIOUS;
-  for (i=0;i<320 && ev.type!=EV_KEY;i++)
+  for (i=0; i<320 && ev.type!=EV_KEY; i++)
   {
     screen->clear();
     int j;
-    for (si=sinfo,j=0;j<800;j++,si+=3)
+    for (si=sinfo,j=0; j<800; j++,si+=3)
       screen->putpixel(dx+si[0],dy+si[1],si[2]);
 
     scan_map(screen,ex,ey,cache.img(planet),
@@ -395,7 +396,7 @@ void show_end2()
 
 
 
-  for (i=0;i<cache.img(mask)->height();i++)
+  for (i=0; i<cache.img(mask)->height(); i++)
   {
     free(p[i].remap);
     free(p[i].light);
@@ -440,12 +441,12 @@ void share_end()
 
   uint8_t cmap[32];
   int i;
-  for (i=0;i<32;i++)
+  for (i=0; i<32; i++)
     cmap[i]=pal->find_closest(i*256/32,i*256/32,i*256/32);
 
   event ev; ev.type=EV_SPURIOUS;
   time_marker start;
-  for (i=0;i<320 && ev.type!=EV_KEY;i++)
+  for (i=0; i<320 && ev.type!=EV_KEY; i++)
   {
     im->put_image(screen,dx,dy);
     console_font->put_string(screen,xres/2+35,yres/2+100-console_font->height()-2,
@@ -492,12 +493,12 @@ void show_end()
 
   uint8_t cmap[32];
   int i;
-  for (i=0;i<32;i++)
+  for (i=0; i<32; i++)
     cmap[i]=pal->find_closest(i*256/32,i*256/32,i*256/32);
 
   event ev; ev.type=EV_SPURIOUS;
   time_marker start;
-  for (i=0;i<320 && ev.type!=EV_KEY;i++)
+  for (i=0; i<320 && ev.type!=EV_KEY; i++)
   {
     im->put_image(screen,dx,dy);
 

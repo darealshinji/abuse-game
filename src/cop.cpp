@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -153,9 +154,9 @@ void *top_ai()
     signed char *f=fire_off,*fb=NULL;
     int best_diff=200,best_num=0;
     int iy=f[1],ix=f[6*2];
-    
+
     int best_angle=lisp_atan2(q->y-iy-v->pointer_y,v->pointer_x-q->x-ix);
-    for (i=0;i<24;i++,f+=2)             // check all the angles to see which would best fit animation wise
+    for (i=0; i<24; i++,f+=2)             // check all the angles to see which would best fit animation wise
     {
       int this_angle=lisp_atan2(f[1]-iy,f[0]-ix);
       int this_diff=angle_diff(this_angle,best_angle);
@@ -173,7 +174,7 @@ void *top_ai()
       o->lvars[point_angle]=lisp_atan2(fb[1]-iy,fb[0]-ix);
     else
       o->lvars[point_angle]=lisp_atan2(q->y-fb[1]-v->pointer_y,v->pointer_x-(q->x+fb[0]));
-    
+
 
     if (q->direction<0)
           q->x-=4;
@@ -301,7 +302,7 @@ void *top_ufun(void *args)                       // generic top character ai GRE
       {
     o->lvars[fire_delay1]=6;
     if (player_fire_weapon(o,ammo_type(o->otype),NULL,o->lvars[point_angle],
-                   o->otype==DFRIS ? large_fire_off : small_fire_off ))    
+                   o->otype==DFRIS ? large_fire_off : small_fire_off ))
           ret=LNumber::Create(-1);
     else ret=LNumber::Create(0);
       } else ret=LNumber::Create(0);
@@ -327,7 +328,7 @@ void *plaser_ufun(void *args)
       if (value)                                   // do we have ammo ?
       {
     o->lvars[fire_delay1]=2;
-    if (player_fire_weapon(o,PLASMA,NULL,o->lvars[point_angle],small_fire_off))    
+    if (player_fire_weapon(o,PLASMA,NULL,o->lvars[point_angle],small_fire_off))
           ret=LNumber::Create(-1);
     else ret=LNumber::Create(0);
       } else ret=LNumber::Create(0);
@@ -382,13 +383,13 @@ void *player_rocket_ufun(void *args)
     if (bad_guy_array)
     {
       game_object *other=current_object->total_objects() ? current_object->get_object(0) : 0;
-      for (p=current_level->first_active_object();p;p=p->next_active)
+      for (p=current_level->first_active_object(); p; p=p->next_active)
       {
         xd=abs(p->x-o->x);
         yd=abs(p->y-o->y);
         if (xd<160 && yd<130 && bad_guy_array[p->otype] && p!=other)
         {
-          if (p->targetable() &&        
+          if (p->targetable() &&
           !(p->otype==S_ROCKET && p->total_objects() && p->get_object(0)==bot))  // don't track onto own missles
           {
         d=xd*xd+yd*yd;
@@ -401,7 +402,7 @@ void *player_rocket_ufun(void *args)
         }
       }
     }
-    if (player_fire_weapon(o,ROCKET,target,o->lvars[point_angle],large_fire_off))    
+    if (player_fire_weapon(o,ROCKET,target,o->lvars[point_angle],large_fire_off))
           ret=LNumber::Create(-1);
     else ret=LNumber::Create(0);
 
@@ -529,7 +530,7 @@ static int climb_handler(game_object *o, int xm, int ym, int but)
       {
 
     if (o->current_frame==0) o->current_frame=9;
-      o->current_frame--;    
+      o->current_frame--;
 
 /*    if (o->lvars[special_power]==FAST_POWER)
     {
@@ -544,7 +545,7 @@ static int climb_handler(game_object *o, int xm, int ym, int but)
       }
     }
     else */ o->y+=3;
-    
+
 
       } else if (ym<0)
       {
@@ -567,7 +568,7 @@ static int climb_handler(game_object *o, int xm, int ym, int but)
         o->set_state(run_jump_fall);
       else
       { o->set_state(run_jump);
-        o->set_yvel(get_ability(o->otype,jump_yvel));    
+        o->set_yvel(get_ability(o->otype,jump_yvel));
       }
     }
       }
@@ -632,11 +633,11 @@ void *cop_mover(int xm, int ym, int but)
       if (o->hp()==0)
       {
     o->set_aistate(2);                // go to deing state
-    o->set_state(dead);    
+    o->set_state(dead);
       }
       else
       {
-    if (o->hp()<40 && (current_level->tick_counter()%16)==0) // if low on health play heart beat    
+    if (o->hp()<40 && (current_level->tick_counter()%16)==0) // if low on health play heart beat
       the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
     else if (o->hp()<15 && (current_level->tick_counter()%8)==0) // if low on health play heart beat
       the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
@@ -650,7 +651,7 @@ void *cop_mover(int xm, int ym, int but)
     ret=player_move(o,xm,ym,but);
     top->x=o->x;
     top->y=o->y+29-top->picture()->height();
-    
+
     if ((but&2) && !o->lvars[is_teleporting] && o->state!=S_climbing && o->state!=S_climb_off)
     {
       void *args=NULL;
@@ -661,11 +662,11 @@ void *cop_mover(int xm, int ym, int but)
       push_onto_list(l_FIRE,args);
 
       current_object=top;
-      void *ret=eval_function((LSymbol *)figures[top->otype]->get_fun(OFUN_USER_FUN),args);    
+      void *ret=eval_function((LSymbol *)figures[top->otype]->get_fun(OFUN_USER_FUN),args);
       current_object=o;
-      v->add_ammo(v->current_weapon,lnumber_value(ret));    
+      v->add_ammo(v->current_weapon,lnumber_value(ret));
     }
-      }    
+      }
     } else if (o->aistate()==3)
     {
       if (!o->controller() || o->controller()->key_down(JK_SPACE))
@@ -692,7 +693,7 @@ void *ladder_ai()
   if (o->total_objects())
   {
     game_object *other=o->get_object(0);
-    for (;f;f=f->next)
+    for (; f; f=f->next)
     {
       int mex=f->focus->x;
       int mey=f->focus->y;
@@ -701,7 +702,7 @@ void *ladder_ai()
       {
     if (f->focus->state==S_climbing)
       f->focus->x=(o->x+other->x)/2;
-        f->focus->lvars[in_climbing_area]=mey-o->y;    
+        f->focus->lvars[in_climbing_area]=mey-o->y;
       }
     }
   }
@@ -802,7 +803,7 @@ void *bottom_draw()
     uint8_t *addr=(uint8_t *)p->addr();
     int ra,ga,ba;
 
-    for (int i=0;i<256;i++)
+    for (int i=0; i<256; i++)
     {
       ra=(int)*addr+r; if (ra>255) ra=255; else if (ra<0) r=0; *addr=(uint8_t)ra; addr++;
       ga=(int)*addr+g; if (ga>255) ga=255; else if (ga<0) g=0; *addr=(uint8_t)ga; addr++;
@@ -876,7 +877,7 @@ void *bottom_draw()
       o->draw_trans(o->lvars[used_special_power],16);
     else
       o->draw_predator();
-    
+
     if (o->controller() && o->controller()->local_player())
       cache.img(S_sneaky_image)->put_image(screen,o->controller()->cx2-20,
                         o->controller()->cy1+5,1);
@@ -955,7 +956,7 @@ void *mover_ai()
     }
   }
   return true_symbol;
-}    
+}
 
 
 void *respawn_ai()
@@ -1001,7 +1002,7 @@ void *score_draw()
   view *sorted_players[16],*local=NULL;
   int tp=0;
   view *f=player_list;
-  for (;f;f=f->next)
+  for (; f; f=f->next)
   {
     sorted_players[tp]=f;
     tp++;
@@ -1018,7 +1019,7 @@ void *score_draw()
     char msg[100];
 
     int i;
-    for (i=0;i<tp;i++)
+    for (i=0; i<tp; i++)
     {
       int color=lnumber_value(((LArray *)((LSymbol *)l_player_text_color)->GetValue())->Get(sorted_players[i]->get_tint()));
       sprintf(msg,"%3ld %s",(long)sorted_players[i]->kills,sorted_players[i]->name);
@@ -1047,7 +1048,7 @@ void *show_kills()
   JCFont *fnt=wm->font();
 
   view *v=player_list; int tp=0,i;
-  for (v=player_list;v;v=v->next) tp++;
+  for (v=player_list; v; v=v->next) tp++;
 
   int y=(y1+y2)/2-(tp+2)*fnt->height()/2,x=x1+10;
   char const *header_str = symbol_str("score_header");
@@ -1058,7 +1059,7 @@ void *show_kills()
              wm->bright_color(),wm->medium_color(),wm->dark_color());
   y+=fnt->height();
   v=player_list;
-  for (i=0;i<tp;i++)
+  for (i=0; i<tp; i++)
   {
     enum { NAME_LEN=18 } ;
     int color=lnumber_value(((LArray *)((LSymbol *)l_player_text_color)->GetValue())->Get(v->get_tint()));

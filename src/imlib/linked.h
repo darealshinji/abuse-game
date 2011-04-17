@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -14,7 +15,7 @@
 // function compare.
 // example compare function
 //   virtual int compare(void *n1, int field)
-//        {return ((classname *) n1)->data > data);}
+//        { return ((classname *) n1)->data > data); }
 //  should return (1 if n1 is greater than (self)) else return 0
 //  field is the value determined by linked_list::set_sort_field
 //  this defaults to 1
@@ -47,22 +48,22 @@
   int x=0; \
   if (first) \
      for (controll=(type *)(first); \
-          (!x || (controll)!=(type *)(first));\
+          (!x || (controll)!=(type *)(first)); \
           controll=(type *)(controll->next()),x++)
 
 #define loop_forct(type,controll,first,cond,x) int x=0; if (first) for \
-  (controll=(type *)(first);cond && (!x || controll!=(type *)(first));\
+  (controll=(type *)(first); cond && (!x || controll!=(type *)(first)); \
   controll=(type *)(controll->next()),x++)
 
 class linked_node
 {
   class linked_node *nextp, *lastp;
 public:
-  virtual int compare(void *n1, int field)     {return(0);}  // default is = (equal)
-  class linked_node *next()              {return nextp;}
-  class linked_node *last()              {return lastp;}
-  void set_next(class linked_node *p)    {nextp=p;}
-  void set_last(class linked_node *p)    {lastp=p;}
+  virtual int compare(void *n1, int field)     { return(0); }  // default is = (equal)
+  class linked_node *next()              { return nextp; }
+  class linked_node *last()              { return lastp; }
+  void set_next(class linked_node *p)    { nextp=p; }
+  void set_last(class linked_node *p)    { lastp=p; }
   virtual ~linked_node() { ; }
   linked_node() { nextp=NULL; lastp=NULL; }
 };
@@ -89,17 +90,17 @@ public :
   void add_front(class linked_node *p);
   void add_end(class linked_node *p);
   void insert(class linked_node *p);
-  void set_sort_field(int x) {sortby=x;}   // this is passed to compare
-  class linked_node *current() {return cn;}
-  class linked_node *first() {return fn;}
-  class linked_node *last() {return fn->last();}
+  void set_sort_field(int x) { sortby=x; }   // this is passed to compare
+  class linked_node *current() { return cn; }
+  class linked_node *first() { return fn; }
+  class linked_node *last() { return fn->last(); }
   class linked_node *get_node(int x);
-  void set_current(class linked_node *p) {cn=p;}
-  void go_first() {cn=fn;}
-  void go_end() {cn=fn->last();}
-  void go_next() {cn=cn->next();}
-  void go_last() {cn=cn->last();}
-  int number_nodes()  {return nn;}
+  void set_current(class linked_node *p) { cn=p; }
+  void go_first() { cn=fn; }
+  void go_end() { cn=fn->last(); }
+  void go_next() { cn=cn->next(); }
+  void go_last() { cn=cn->last(); }
+  int number_nodes()  { return nn; }
   int node_number(linked_node *p);
   int unlink(linked_node *p);
   ~linked_list();

@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -45,7 +46,7 @@ class shell_term : public console
   char shcmd[300];
   public :
   shell_term(JCFont *font, int width, int height, char const *Name);
-  virtual ~shell_term() {};
+  virtual ~shell_term() { };
   int handle_event(event &ev);
   virtual void prompt();
   virtual void execute(char const *st);

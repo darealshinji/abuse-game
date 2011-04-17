@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -25,7 +26,7 @@ filter::filter(palette *from, palette *to)   // creates a conversion filter from
   b+=2;
 
   int dk=to->darkest(1);
-  for (int i=0;i<nc;i++,p++,r+=3,g+=3,b+=3)
+  for (int i=0; i<nc; i++,p++,r+=3,g+=3,b+=3)
   {
     *p=to->find_closest(*r,*g,*b);
 
@@ -39,7 +40,7 @@ filter::filter(palette *from, palette *to)   // creates a conversion filter from
 void filter::clear()
 {
   int i;
-  for (i=0;i<nc;i++)
+  for (i=0; i<nc; i++)
     fdat[i]=i;
 }
 
@@ -47,7 +48,7 @@ void filter::max_threshold(int minv, char blank)
 {
   int i;
   CONDITION(minv>=0 && minv<nc,"Bad minv");
-  for (i=0;i<minv;i++)
+  for (i=0; i<minv; i++)
     fdat[i]=blank;
 }
 
@@ -55,7 +56,7 @@ void filter::min_threshold(int maxv, char blank)
 {
   int i;
   CONDITION(maxv>=0 && maxv<nc,"bad maxv value in filter::max_thresh");
-  for (i=nc-1;i>=maxv;i--)
+  for (i=nc-1; i>=maxv; i--)
     fdat[i]=(unsigned) blank;
 }
 
@@ -82,10 +83,10 @@ void filter::apply(image *im)
   unsigned char *c;
   CONDITION(im,"null image passed in filter::apply\n");
   im->lock();
-  for (y=im->height()-1;y>=0;y--)
+  for (y=im->height()-1; y>=0; y--)
   {
     c=im->scan_line(y);
-    for (x=im->width()-1;x>=0;x--)
+    for (x=im->width()-1; x>=0; x--)
     {
       CONDITION((unsigned) c[x]<nc,"not enough filter colors");
       c[x]=fdat[(unsigned) c[x]];
@@ -121,23 +122,23 @@ color_filter::color_filter(palette *pal, int color_bits, void (*stat_fun)(int))
   long dist_sqr,best;
   int colors=1<<color_bits;
   color_table=(unsigned char *)malloc(colors*colors*colors);
-  for (r=0;r<colors;r++)
+  for (r=0; r<colors; r++)
   {
     if (stat_fun) stat_fun(r);
     rv=r<<lshift;
-    for (g=0;g<colors;g++)
+    for (g=0; g<colors; g++)
     {
       gv=g<<lshift;
-      for (b=0;b<colors;b++)
+      for (b=0; b<colors; b++)
       {
     bv=b<<lshift;
         best=0x7fffffff;
-        for (i=0,pp=(unsigned char *)pal->addr();i<max;i++)
+        for (i=0,pp=(unsigned char *)pal->addr(); i<max; i++)
         {
           register long rd=*(pp++)-rv,
                         gd=*(pp++)-gv,
                         bd=*(pp++)-bv;
-    
+
           dist_sqr=(long)rd*rd+(long)bd*bd+(long)gd*gd;
           if (dist_sqr<best)
           { best=dist_sqr;
@@ -219,7 +220,7 @@ void filter::put_image(image *screen, image *im, short x, short y,
     {
         for(i = 0, source = &pg2[x1], dest = &pg1[x];
             i < xl;
-            i++, source++, dest++)    
+            i++, source++, dest++)
         {
             if(!transparent || *source != current_background)
                 *dest=fdat[*source];

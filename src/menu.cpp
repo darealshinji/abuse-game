@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -52,10 +53,10 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
   percent=256-percent;
 
   screen->lock();
-  for (y=y1;y<=y2;y++)
+  for (y=y1; y<=y2; y++)
   {
     uint8_t *sl=screen->scan_line(y)+x1;
-    for (x=x1;x<=x2;x++,sl++)
+    for (x=x1; x<=x2; x++,sl++)
     {
       uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
       uint8_t r=((*(paddr++))-r_to)*percent/256+r_to;
@@ -80,10 +81,10 @@ void darken_area(int x1, int y1, int x2, int y2, int amount)
   if (x2<x1 || y2<y1) return ;
 
   screen->lock();
-  for (y=y1;y<=y2;y++)
+  for (y=y1; y<=y2; y++)
   {
     uint8_t *sl=screen->scan_line(y)+x1;
-    for (x=x1;x<=x2;x++,sl++)
+    for (x=x1; x<=x2; x++,sl++)
     {
       uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
       uint8_t r=(*(paddr++))*amount/256;
@@ -137,7 +138,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   int mh=(font->height()+1)*options+10,maxw=0;
 
   Cell *c=(Cell *)args;
-  for (;!NILP(c);c=CDR(c))
+  for (; !NILP(c); c=CDR(c))
   {
     if( strlen(men_str(CAR(c))) > (unsigned)maxw)
       maxw = strlen(men_str(CAR(c)));
@@ -162,7 +163,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
 
 
   int y=my+5;
-  for (c=(Cell *)args;!NILP(c);c=CDR(c))
+  for (c=(Cell *)args; !NILP(c); c=CDR(c))
   {
     char *ms=men_str(CAR(c));
     font->put_string(screen,mx+10+1,y+1,ms,wm->black());
@@ -204,7 +205,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
         if (choice>0)
         choice--;
         else choice=options-1;
-      } break;        
+      } break;
     }
       } else if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
       {
@@ -439,10 +440,10 @@ void menu_handler(event &ev, InputManager *inm)
       the_game->load_level(level_file);
       the_game->set_state(RUN_STATE);
       view *v;
-      for (v=player_list;v;v=v->next)
+      for (v=player_list; v; v=v->next)
         if (v->focus)
           v->reset_player();
-    
+
     } break;
 
 
@@ -457,7 +458,7 @@ void menu_handler(event &ev, InputManager *inm)
         sprintf(name,"%ssave%04d.spe", get_save_filename_prefix(), got_level);
 
         the_game->load_level(name);
-        the_game->set_state(RUN_STATE);    
+        the_game->set_state(RUN_STATE);
       }
     } break;
 
@@ -501,7 +502,7 @@ void menu_handler(event &ev, InputManager *inm)
         inm->redraw();
       }
     } break;
-        
+
     case ID_SHOW_SELL :
     if (!volume_window)
     {
@@ -636,7 +637,7 @@ ico_button *make_conditional_buttons(int x,int &y)
 
   ico_button *load;
   if (show_load_icon())
-  { load= load_icon(1,ID_LOAD_PLAYER_GAME,x,y,h,NULL,"ic_load");                     y+=h;}
+  { load= load_icon(1,ID_LOAD_PLAYER_GAME,x,y,h,NULL,"ic_load");                     y+=h; }
   else load=NULL;
 
   if (start_list) start_list->next=load;

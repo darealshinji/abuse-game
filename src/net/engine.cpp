@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -106,7 +107,7 @@ main(int argc, char **argv)
   strcpy(default_fs_name,"");          // initially no default file server
   strcpy(net_server,"");
 
-  for (i=1;i<argc;i++)
+  for (i=1; i<argc; i++)
     if (!strcmp(argv[i],"-bastard"))   // this bypasses filename security features
     {
       fprintf(stderr,"Warning : Security measures bypassed (-bastard)\n");
@@ -169,7 +170,7 @@ main(int argc, char **argv)
     chmod(DOUT_NAME,S_IRWXU | S_IRWXG | S_IRWXO);
 
     int i,no_fork=0;
-    for (i=1;i<argc;i++)
+    for (i=1; i<argc; i++)
     if (!strcmp(argv[i],"-no_fork"))    // use this to debug easier
       no_fork=1;
 
@@ -207,12 +208,12 @@ main(int argc, char **argv)
 
 
 
-  int catch_sigs[]={SIGHUP,SIGINT,SIGQUIT,SIGILL,SIGABRT,
+  int catch_sigs[]={ SIGHUP,SIGINT,SIGQUIT,SIGILL,SIGABRT,
             SIGIOT,SIGFPE,SIGKILL,SIGUSR1,SIGSEGV,
             SIGUSR2,SIGPIPE,SIGTERM,SIGCHLD,
             SIGCONT,SIGSTOP,SIGTSTP,SIGTTIN,SIGTTOU,-1};
 
-  for (i=0;catch_sigs[i]!=-1;i++)     // catch all signals in case we get
+  for (i=0; catch_sigs[i]!=-1; i++)     // catch all signals in case we get
     signal(catch_sigs[i],die);            // interrupted before we remove shmid
 
 
@@ -270,7 +271,7 @@ main(int argc, char **argv)
 
   int comm_port=DEFAULT_COMM_PORT;
   int game_port=-1;
-  for (i=1;i<argc-1;i++)
+  for (i=1; i<argc-1; i++)
     if (!strcmp(argv[i],"-port"))
     {
       comm_port=atoi(argv[i+1]);
@@ -522,7 +523,7 @@ void join_new_players()  // during this section we are giving mem_lock by engine
 {
   client *c=first_client;
 
-  for (;c;c=c->next)     // tell all the clients to reload
+  for (; c; c=c->next)     // tell all the clients to reload
   {
     if (!c->has_joined)
     {
@@ -559,7 +560,7 @@ void add_client_input(char *buf, int size, client *c)
   }
 
   int got_all=1;
-  for (c=first_client;c;c=c->next)
+  for (c=first_client; c; c=c->next)
     if (c->wait_input)
       got_all=0;
 
@@ -567,7 +568,7 @@ void add_client_input(char *buf, int size, client *c)
   {
     base->packet.calc_checksum();
 
-    for (c=first_client;c;c=c->next)      // setup for next time, wait for all the input
+    for (c=first_client; c; c=c->next)      // setup for next time, wait for all the input
     {
       c->wait_input=1;
       send(c->data_fd,base->packet.data,base->packet.packet_size()+base->packet.packet_prefix_size(),0);
@@ -610,7 +611,7 @@ void process_engine_command()
 
     case NFCMD_INPUT_MISSING :    // try to fetch the input via a loss-less net protocol
     {
-      unsigned char pk[2]={CLCMD_REQUEST_RESEND,base->packet.tick_received()};
+      unsigned char pk[2]={ CLCMD_REQUEST_RESEND,base->packet.tick_received()};
 
       if (net_server[0])   // if we are connected to a server ask sever to resend
       {
@@ -619,7 +620,7 @@ void process_engine_command()
       } else
       {
     client *c=first_client;
-    for (;c;c=c->next)
+    for (; c; c=c->next)
     {
       if (!c->delete_me && c->wait_input)
       {
@@ -655,7 +656,7 @@ void process_engine_command()
       if (game_server_fd>0)
       {
     uint8_t ok=CLCMD_RELOADED;
-        if (!write(game_server_fd,&ok,1)) { mdie("could not send join_ok msg"); }    
+        if (!write(game_server_fd,&ok,1)) { mdie("could not send join_ok msg"); }
     next_process();
       }
     } break;
@@ -765,8 +766,8 @@ void process_engine_command()
       } else
       {
     uint8_t st=NF_OPEN_REMOTE_FILE;
-    if (write(driver_out_fd,&st,1)!=1) comm_failed();     
-    if (write(driver_out_fd,&fd,sizeof(fd))!=sizeof(fd)) comm_failed();     
+    if (write(driver_out_fd,&st,1)!=1) comm_failed();
+    if (write(driver_out_fd,&fd,sizeof(fd))!=sizeof(fd)) comm_failed();
       }
       next_process();
     } break;
@@ -789,11 +790,11 @@ void process_engine_command()
       unlink_remote_file(rf);
       delete rf;
       uint8_t st=1;
-      if (write(driver_out_fd,&st,1)!=1) comm_failed();     
+      if (write(driver_out_fd,&st,1)!=1) comm_failed();
     } break;
     case NFCMD_SIZE  :
     {
-      if (write(driver_out_fd,&rf->size,sizeof(rf->size))!=sizeof(rf->size)) comm_failed();         
+      if (write(driver_out_fd,&rf->size,sizeof(rf->size))!=sizeof(rf->size)) comm_failed();
     } break;
     case NFCMD_TELL :
     {
@@ -832,7 +833,7 @@ int process_client_command(client *c)
     {
       c->wait_reload=0;
       int done=1;
-      for (c=first_client;c;c=c->next)
+      for (c=first_client; c; c=c->next)
         if (c->wait_reload) done=0;
       if (done) base->wait_reload=0;
       return 1;
@@ -855,9 +856,9 @@ int process_client_command(client *c)
       {
     int got_all=!waiting_server_input;
     client *cc=first_client;
-    for (;cc;cc=cc->next)
+    for (; cc; cc=cc->next)
       if (cc->wait_input) got_all=0;
-    
+
     if (got_all)
     {
       fprintf(stderr,"resending current game packet\n");
@@ -877,7 +878,7 @@ int isa_client(int client_id)    // sreach the list of active clients for this i
   int i;
   if (client_id==0) return 1;   // the server is always a client
   client *c=first_client;
-  for (;c;c=c->next)
+  for (; c; c=c->next)
     if (c->client_id==client_id) return 1;
   return 0;
 }
@@ -897,7 +898,7 @@ int add_game_client(int fd, sockaddr *from)     // returns false if could not jo
 
 
   int f=-1,i;
-  for (i=0;f==-1 && i<MAX_JOINERS;i++)
+  for (i=0; f==-1 && i<MAX_JOINERS; i++)
     if (!isa_client(i))
       f=i;
 
@@ -987,7 +988,7 @@ void net_watch()
   int i;
   join_array=(join_struct *) (base+1);
 
-  for (i=0;i<MAX_JOINERS;i++)
+  for (i=0; i<MAX_JOINERS; i++)
     join_array[i].client_id=-1;
 
 
@@ -1031,7 +1032,7 @@ void net_watch()
       tsel--;
       check_rest=0;
       net_packet scratch,*use;
-    
+
       if (net_server[0]==0)    // if we are the server, read into scratch, then "add" into base
         use=&scratch;
       else use=&base->packet;    // otherwise read directly into base because it is a complete packet from the server
@@ -1055,10 +1056,10 @@ void net_watch()
         {
 
           client *f=first_client,*found=NULL;
-          for (;!found &&f;f=f->next)
+          for (; !found &&f; f=f->next)
           if (!memcmp(&from_addr.sin_addr,&f->data_address.sin_addr,sizeof(from_addr.sin_addr)))
           found=f;
-        
+
           if (!found)
           fprintf(stderr,"received data from unknown client\n");
           else
@@ -1095,7 +1096,7 @@ void net_watch()
       {
     client *c,*lastc=NULL;
 
-    for (c=first_client;c;)
+    for (c=first_client; c; )
     {
       int del=0;
       if (FD_ISSET(c->socket_fd,&exception_set))  // error?
@@ -1117,7 +1118,7 @@ void net_watch()
           {
         int done=1;
         client *d=first_client;
-        for (;d;d=d->next)                // see if this was the last client to wait on reloading
+        for (; d; d=d->next)                // see if this was the last client to wait on reloading
         if (d->wait_reload) done=0;
         if (done) base->wait_reload=0;
           }
@@ -1129,7 +1130,7 @@ void net_watch()
         {
           lastc=c;
           c=c->next;
-        }    
+        }
       } else c=c->next;
     }
       } else if (FD_ISSET(game_server_fd,&read_set))
@@ -1168,7 +1169,7 @@ void net_watch()
       }
 
       nfs_client *nc,*last=NULL;
-      for (nc=first_nfs_client;nc;)      // check for nfs request
+      for (nc=first_nfs_client; nc; )      // check for nfs request
       {
 
     int ok=1;
@@ -1186,13 +1187,13 @@ void net_watch()
         tsel--;
         ok=nc->send_read();
       }
-    }    
+    }
     else if (FD_ISSET(nc->socket_fd,&read_set))
     {
       tsel--;
       ok=process_nfs_command(nc);    // if we couldn't process the packeted, delete the connection
     }
-    
+
     if (ok)
     {
       last=nc;
@@ -1209,7 +1210,7 @@ void net_watch()
 
       // check for bad sockets for people waiting on crc's
       crc_waiter *crcw=crc_wait_list,*last_crcw=NULL;
-      for (;crcw;)
+      for (; crcw; )
       {
     if (FD_ISSET(crcw->socket_fd,&exception_set))
     {
@@ -1222,7 +1223,7 @@ void net_watch()
 
       // check for bad sockets for people waiting on crc's
       lsf_waiter *lsfw=lsf_wait_list,*last_lsfw=NULL;
-      for (;lsfw;)
+      for (; lsfw; )
       {
     if (FD_ISSET(lsfw->socket_fd,&exception_set))
     {

@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -48,7 +49,7 @@ enum dev_ids
     DEV_LEDIT_H,
     DEV_LEDIT_R1,
     DEV_LEDIT_R2,
-    
+
 
     DEV_MUSIC_PICKLIST,
     DEV_PALETTE,
@@ -126,7 +127,7 @@ enum dev_ids
     ID_TCPIP,
     ID_IPX,
     ID_SPLIT_SCREEN,
-    
+
     ID_VOLUME,
     ID_SFX_UP,
     ID_SFX_DOWN,
@@ -135,7 +136,7 @@ enum dev_ids
     ID_SFX_OFF,
     ID_MUSIC_OFF,
     ID_SFX_CHANNELS,
-    
+
     ID_LIGHT_DETAIL,
     ID_SCREEN_SIZE,
 
@@ -225,7 +226,7 @@ enum dev_ids
     DEV_AREA_VIEW_YOFF,
     DEV_AREA_VIEW_XOFF_SPEED,
     DEV_AREA_VIEW_YOFF_SPEED,
-    
+
     ID_START_GAME,
     ID_EASY,
     ID_MEDIUM,
@@ -236,7 +237,7 @@ enum dev_ids
     ID_SHOW_FPS,
     ID_RAISE_ALL,
     SHOW_LINKS,
-    
+
     ID_RED_PICKER,
     ID_GREEN_PICKER,
     ID_BLUE_PICKER,
@@ -252,8 +253,8 @@ enum dev_ids
     ID_PLAY_DEMO,
     ID_PLAY_DEMO_OK,
     ID_PLAY_DEMO_FILENAME
-    
-    
+
+
 };
 
 

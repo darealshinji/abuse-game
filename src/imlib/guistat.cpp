@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -91,8 +92,8 @@ void gui_status_manager::update(int percentage)
     if (first->show) len2=first->show->width()/2;
     if (len2>len1) len3=len2; else len3=len1;
     wx-=len3/2;
-    
-    
+
+
     gui_status_node *p=first->next;
     while (p && !p->stat_win) p=p->next;
     if (p) wy=p->stat_win->y+p->stat_win->y2()+5;

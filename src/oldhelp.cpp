@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -34,8 +35,8 @@ char *get_page(int x)
       if (line[0]=='.' && line[1]=='n')
         x--;
       if (line[0]=='.' && line[1]=='e')
-      {    
-    fclose(fp);    
+      {
+    fclose(fp);
     return strcpy((char *)malloc(30),"missing page");
       }
 
@@ -44,8 +45,8 @@ char *get_page(int x)
     {
       fgets(line,120,fp);
       if (line[0]=='.')
-      {    
-        fclose(fp);    
+      {
+        fclose(fp);
         return strdup(tmp);
       }
       else strcat(tmp,line);
@@ -82,11 +83,11 @@ void make_help_page(int page, image *s)
       {
     h++;
     if (*h=='@')
-    {    
+    {
           wm->font()->put_char(s,x,y,*h);
-      x+=fw;    
-      h++;    
-    }    
+      x+=fw;
+      h++;
+    }
         else
         {
       inp=imname;
@@ -94,76 +95,76 @@ void make_help_page(int page, image *s)
       if (*h=='#')
       {
         center=1;
-        h++;    
+        h++;
       }
       if (*h=='+')
       {
-        h++;    
+        h++;
         while (*h!='+')
         {
           *inp=*h;
           h++;
-          inp++;    
+          inp++;
         }
-        h++;    
+        h++;
         *inp=0;
         x=atoi(imname);
-        inp=imname;    
+        inp=imname;
       }
-    
-    
+
+
       while (*h!='@')
       {
         *inp=*h;
         h++;
-        inp++;    
+        inp++;
       }
       *inp=0;
       h++;
-    
+
       if (!sd.find(imname))
-      {    
+      {
         wm->font()->put_string(s,0,yres-10,"Missing image!");
         delete fp;
-        free(ho);    
-        return ;    
+        free(ho);
+        return ;
       }
       im=new image(sd.find(imname),fp);
 
       if (center)
-      {    
+      {
           im->put_image(s,x,y-im->height()/2,1);
           if (im->height()/2>=ya)
             ya=im->height()/2+1;
-      }    
+      }
       else
-      {    
+      {
           im->put_image(s,x,y,1);
           if (im->height()>=ya)
             ya=im->height()+1;
-      }    
-      x+=im->width()+1;         
-      delete im;    
+      }
+      x+=im->width()+1;
+      delete im;
     }
       } else if (*h=='`')
       {
-    inp=imname;            
-    h+=2;    
+    inp=imname;
+    h+=2;
     while (*h!='`')
     {
       *inp=*h;
       h++;
-      inp++;    
+      inp++;
     }
-    h++;    
+    h++;
     *inp=0;
     x=atoi(imname);
       }
       else
       {
     wm->font()->put_char(s,x,y,*h);
-    x+=fw;    
-    h++;    
+    x+=fw;
+    h++;
       }
     }
     y+=ya;
@@ -195,7 +196,7 @@ void show_help(int direction)
   int scroll_step=screen->height()/steps;
   int helpy=-screen->height()+scroll_step;
 
-  for (i=0;i<steps;i++,helpy+=scroll_step)
+  for (i=0; i<steps; i++,helpy+=scroll_step)
   {
     screen->scroll(0,0,xres,yres,0,scroll_step);
     h->put_part(screen,0,helpy,0,0,xres,-helpy+scroll_step);

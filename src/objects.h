@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -106,7 +107,7 @@ public :
   game_object *bmove(int &whit, game_object *exclude);  // ballestic move, return hit object,
                                                         // or NULL (whit is 1 if hit wall)
   trans_image *picture() { return current_sequence()->get_frame(current_frame,direction); }
-                                                
+
   int next_picture();
   int32_t x_center();
   int32_t height();

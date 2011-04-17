@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -50,7 +51,7 @@ void add_collide(collide_patch *&first, int32_t x1, int32_t y1, int32_t x2, int3
                 game_object *who)
 {
   collide_patch *next;
-  for (collide_patch *p=first;p;p=next)
+  for (collide_patch *p=first; p; p=next)
   {
     next=p->next;
     // first see if light patch we are adding is enclosed entirely by another patch
@@ -160,16 +161,16 @@ void level::check_collisions()
   game_object *target,*rec,*subject;
   int32_t sx1,sy1,sx2,sy2,tx1,ty1,tx2,ty2,hitx=0,hity=0,t_centerx;
 
-  for (int l=0;l<attack_total;l++)
+  for (int l=0; l<attack_total; l++)
   {
     subject=attack_list[l];
     subject->picture_space(sx1,sy1,sx2,sy2);
     rec=NULL;
 
 
-    for (int j=0;j<target_total && !rec;j++)
+    for (int j=0; j<target_total && !rec; j++)
     {
-      target=target_list[j];    
+      target=target_list[j];
       target->picture_space(tx1,ty1,tx2,ty2);
       if (!(sx2<tx1 || sy2<ty1 || sx1>tx2 || sy1>ty2))  // check to see if picture spaces collide
       {
@@ -180,7 +181,7 @@ void level::check_collisions()
     {
       t_centerx=target->x_center();
       point_list *s_hit,*t_damage;
-    
+
       s_hit=subject->current_figure()->hit;
 
       if (target->direction>0)
@@ -190,14 +191,14 @@ void level::check_collisions()
 
       unsigned char *s_dat=s_hit->data,*t_dat;
       int i,j;
-      for (i=(int)s_hit->tot-1;i>0 && !rec;i--)
+      for (i=(int)s_hit->tot-1; i>0 && !rec; i--)
       {
-        for (t_dat=t_damage->data,j=(int)t_damage->tot-1;j>0 && !rec;j--)
+        for (t_dat=t_damage->data,j=(int)t_damage->tot-1; j>0 && !rec; j--)
         {
           int32_t x1,y1,x2,y2,          // define the two line segments to check
           xp1,yp1,xp2,yp2;
 
-          xp1=target->x+target->tx(*t_dat);  t_dat++;    
+          xp1=target->x+target->tx(*t_dat);  t_dat++;
           yp1=target->y+target->ty(*t_dat);  t_dat++;
           xp2=target->x+target->tx(*t_dat);
           yp2=target->y+target->ty(t_dat[1]);
@@ -206,11 +207,11 @@ void level::check_collisions()
           y1=subject->y+subject->ty(s_dat[1]);
           x2=subject->x+subject->tx(s_dat[2]);
           y2=subject->y+subject->ty(s_dat[3]);
-    
+
 
           // ok, now we know which line segemnts to check for intersection
           // now check to see if (x1,y1-x2,y2) intercest with (xp1,yp1-xp2,yp2)
-          int32_t _x2=x2,_y2=y2;    
+          int32_t _x2=x2,_y2=y2;
           setback_intersect(x1, y1, x2, y2, xp1, yp1, xp2, yp2,0);
 
 
@@ -222,7 +223,7 @@ void level::check_collisions()
           }
         }
         s_dat+=2;
-      }        
+      }
     }
       }
     }

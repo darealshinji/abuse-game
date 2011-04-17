@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -20,7 +21,7 @@ void spec_directory_cache::load(bFILE *fp)
   unsigned char len;
   char fn[256];
   size=0;
-  for (i=0;i<tfn;i++)
+  for (i=0; i<tfn; i++)
   {
     fp->read(&len,1);
     fp->read(fn,len);
@@ -32,10 +33,10 @@ void spec_directory_cache::save(bFILE *fp)
 {
   int total = 0;
   filename_node *f=fn_list;
-  for (;f;f=f->next)
+  for (; f; f=f->next)
     total++;
   fp->write_uint16(total);
-  for (f=fn_list;f;f=f->next)
+  for (f=fn_list; f; f=f->next)
   {
     unsigned char len=strlen(f->filename())+1;
     fp->write(&len,1);

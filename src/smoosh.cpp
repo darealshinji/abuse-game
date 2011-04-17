@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -50,11 +51,11 @@ particle_image::particle_image(image *im, int particle_size)
 
 
   // break the image up into particles and store in a big matrix
-  for (y=0;y<im->height();y++)
+  for (y=0; y<im->height(); y++)
   {
     sl=im->scan_line(y);
     py=y/size;
-    for (x=0;x<im->width();x++,sl+=px)
+    for (x=0; x<im->width(); x++,sl+=px)
     {
       px=x/size;
       sl2=matrix[py*matw+px]->pict+(y%size)*size;      // address of particle image memory

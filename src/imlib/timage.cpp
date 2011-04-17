@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -15,7 +16,7 @@ void trans_image::make_color(int c)
 {
   uint8_t *dp=data;
   int y,x;
-  for (y=0;y<h;y++)
+  for (y=0; y<h; y++)
   {
     x=0;
     while(x<w)
@@ -39,7 +40,7 @@ image *trans_image::make_image()
   im->lock();
   uint8_t *d=im->scan_line(0),*dp=data,*dline;
   int y,x;
-  for (y=0;y<h;y++)
+  for (y=0; y<h; y++)
   {
     x=0;
     dline=d;
@@ -74,7 +75,7 @@ trans_image::trans_image(image *im, char const *name)
   im->lock();
 
   // first we must find out how much data to allocate
-  for (y=0;y<im->height();y++)
+  for (y=0; y<im->height(); y++)
   {
     sl=im->scan_line(y);
     x=0;
@@ -103,7 +104,7 @@ trans_image::trans_image(image *im, char const *name)
   { printf("size = %d %d (%d)\n",im->width(),im->height(),size);  }
   CONDITION(datap,"malloc error for trans_image::data");
 
-  for (y=0;y<hh;y++)  // now actually make the runs
+  for (y=0; y<hh; y++)  // now actually make the runs
   {
     sl=im->scan_line(y);
     x=0;
@@ -144,7 +145,7 @@ void trans_image::put_scan_line(image *screen, int x, int y, int line)   // alwa
   int ix;
   while (line)            // skip scan line data until we get to the line of interest
   {
-    for (ix=0;ix<w;)
+    for (ix=0; ix<w; )
     {
       ix+=*datap;        // skip blank space
       datap++;
@@ -164,7 +165,7 @@ void trans_image::put_scan_line(image *screen, int x, int y, int line)   // alwa
   screen->lock();
   uint8_t *screen_line=screen->scan_line(y)+x;
 
-  for (ix=0;ix<w;)
+  for (ix=0; ix<w; )
   {
     int skip=*datap;              // how much space to skip?
     datap++;
@@ -274,10 +275,10 @@ void trans_image::put_image_filled(image *screen, int x, int y,
   screen_line=screen->scan_line(y)+x;
   int sw=screen->width()-w;
   x1-=x; x2-=x;
-  for (;ysteps>0;ysteps--)
+  for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
-    for (ix=0;ix<w;)
+    for (ix=0; ix<w; )
     {
       int blank=(*datap);
       memset(screen_line,fill_color,blank);
@@ -342,9 +343,9 @@ void trans_image::put_image_offseted(image *screen, uint8_t *s_off)   // if scre
 
   screen->lock();
   screen_skip = screen->width() - w;
-  for (;ysteps;ysteps--)
+  for (; ysteps; ysteps--)
   {
-    for (ix=0;ix<w;)
+    for (ix=0; ix<w; )
     {
       skip=*datap;       // skip leading blank space
       datap++;
@@ -386,10 +387,10 @@ void trans_image::put_image(image *screen, int x, int y)
   screen_line=screen->scan_line(y)+x;
   int sw=screen->width();
   x1-=x; x2-=x;
-  for (;ysteps>0;ysteps--)
+  for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
-    for (ix=0;ix<w;)
+    for (ix=0; ix<w; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
@@ -451,10 +452,10 @@ void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap)
   screen_line=screen->scan_line(y)+x;
   int sw=screen->width();
   x1-=x; x2-=x;
-  for (;ysteps>0;ysteps--)
+  for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
-    for (ix=0;ix<w;)
+    for (ix=0; ix<w; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
@@ -529,10 +530,10 @@ void trans_image::put_double_remaped(image *screen, int x, int y, uint8_t *remap
   screen_line=screen->scan_line(y)+x;
   int sw=screen->width();
   x1-=x; x2-=x;
-  for (;ysteps>0;ysteps--)
+  for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
-    for (ix=0;ix<w;)
+    for (ix=0; ix<w; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
@@ -611,11 +612,11 @@ void trans_image::put_fade(image *screen, int x, int y,
 
   long fixmul=(frame_on<<16)/total_frames;
   screen->lock();
-  for (;ysteps>0;ysteps--,y++)
+  for (; ysteps>0; ysteps--,y++)
   {
     screen_line=screen->scan_line(y);
 
-    for (ix=0;ix<w;)
+    for (ix=0; ix<w; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
@@ -705,11 +706,11 @@ void trans_image::put_fade_tint(image *screen, int x, int y,
                 *caddr1,*caddr2,r_dest,g_dest,b_dest;
 
   long fixmul=(frame_on<<16)/total_frames;
-  for (;ysteps>0;ysteps--,y++)
+  for (; ysteps>0; ysteps--,y++)
   {
     screen_line=screen->scan_line(y);
 
-    for (ix=0;ix<w;)
+    for (ix=0; ix<w; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
@@ -789,11 +790,11 @@ void trans_image::put_color(image *screen, int x, int y, int color)
   if (!datap) return ;
 
   screen->lock();
-  for (;ysteps>0;ysteps--,y++)
+  for (; ysteps>0; ysteps--,y++)
   {
     screen_line=screen->scan_line(y);
 
-    for (ix=0;ix<w;)
+    for (ix=0; ix<w; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
@@ -860,13 +861,13 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
   blend_amount=16-blend_amount;
 
   screen->lock();
-  for (;ysteps>0;ysteps--,y++)
+  for (; ysteps>0; ysteps--,y++)
   {
     screen_line=screen->scan_line(y);
     blend_line=blend->scan_line(y-blendy);
 
 
-    for (ix=0;ix<w;)
+    for (ix=0; ix<w; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
@@ -958,7 +959,7 @@ void trans_image::put_predator(image *screen, int x, int y)
   if (y+ysteps==y2) ysteps-=2;
   else if (y+ysteps==y2-1) ysteps--;
 /*  {
-    for (int x=0;x<w;)
+    for (int x=0; x<w; )
     {
       int skip=*datap; datap++;
       x+=skip;
@@ -979,10 +980,10 @@ void trans_image::put_predator(image *screen, int x, int y)
   screen_line=screen->scan_line(y)+x;
   int sw=screen->width();
   x1-=x; x2-=x;
-  for (;ysteps>0;ysteps--)
+  for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
-    for (ix=0;ix<w;)
+    for (ix=0; ix<w; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
@@ -1035,7 +1036,7 @@ int trans_image::size()
 {
   uint8_t *d=data;
   int t=0;
-  for (int y=0;y<h;y++)
+  for (int y=0; y<h; y++)
   {
     int x=0;
     while (x<w)

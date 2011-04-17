@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -120,7 +121,7 @@ void insert_tiles(char *filename)
     spec_directory sd(fp);
     delete fp;
     int i=0;
-    for (;i<sd.total;i++)
+    for (; i<sd.total; i++)
     {
       spec_entry *se=sd.entries[i];
       if (se->type==SPEC_FORETILE)
@@ -144,7 +145,7 @@ void insert_tiles(char *filename)
       if (bt)
         backtiles=(int *)realloc(backtiles,sizeof(int)*(nbacktiles+bt));
 
-      for (i=0;i<sd.total;i++)
+      for (i=0; i<sd.total; i++)
       {
     if (sd.entries[i]->type==SPEC_FORETILE)
     {
@@ -179,7 +180,7 @@ void load_tiles(Cell *file_list)
   int old_fsize=nforetiles,
       old_bsize=nbacktiles;
 
-  for (fl=file_list;!NILP(fl);fl=lcdr(fl))
+  for (fl=file_list; !NILP(fl); fl=lcdr(fl))
   {
     fp=open_file(lstring_value(lcar(fl)),"rb");
     if (fp->open_failure())
@@ -192,7 +193,7 @@ void load_tiles(Cell *file_list)
       sd=new spec_directory(fp);
       delete fp;
       int i;
-      for (i=0;i<sd->total;i++)
+      for (i=0; i<sd->total; i++)
       {
     spe=sd->entries[i];
         switch (spe->type)
@@ -229,7 +230,7 @@ void load_tiles(Cell *file_list)
 
 
 // now load them up
-  for (fl=file_list;!NILP(fl);fl=lcdr(fl))
+  for (fl=file_list; !NILP(fl); fl=lcdr(fl))
   {
     char const *fn=lstring_value(lcar(fl));
     fp=open_file(fn,"rb");
@@ -239,13 +240,13 @@ void load_tiles(Cell *file_list)
       delete fp;
 
       int i;
-      for (i=0;i<sd->total;i++)
+      for (i=0; i<sd->total; i++)
       {
     spe=sd->entries[i];
         switch (spe->type)
         {
           case SPEC_BACKTILE :
-    
+
             if (sscanf(spe->name,"%d",&num))
         {
           if (backtiles[num]>=0)
@@ -253,7 +254,7 @@ void load_tiles(Cell *file_list)
         dprintf("Warning : background tile %d redefined\n",num);
         cache.unreg(backtiles[num]);
           }
-          backtiles[num]=cache.reg(fn,spe->name,SPEC_BACKTILE);    
+          backtiles[num]=cache.reg(fn,spe->name,SPEC_BACKTILE);
         }
             break;
           case SPEC_FORETILE :
@@ -312,7 +313,7 @@ void load_data(int argc, char **argv)
 
   if (!net_start())              // don't let them specify a startup file we are connect elsewhere
   {
-    for (int i=1;i<argc;i++)
+    for (int i=1; i<argc; i++)
     {
       if (!strcmp(argv[i],"-lsf"))
       {
@@ -352,7 +353,7 @@ void load_data(int argc, char **argv)
   resize_tmp(0x4000);
 
   dprintf("Engine : Registering base graphics\n");
-  for (int z=0;z<=11;z++)
+  for (int z=0; z<=11; z++)
   {
     char nm[10];
     sprintf(nm,"l%d",z);
@@ -404,7 +405,7 @@ void load_data(int argc, char **argv)
       help_screens=(int *)malloc(sizeof(int)*total_help_screens);
       v=CDR(symbol_value(l_help_screens));
       int i=0;
-      for (;v;v=CDR(v),i++)
+      for (; v; v=CDR(v),i++)
         help_screens[i]=cache.reg(ff,lstring_value(CAR(v)),SPEC_IMAGE);
     }
     else
@@ -412,7 +413,7 @@ void load_data(int argc, char **argv)
   }
 
   int i;
-  for (i=1;i<argc;i++)
+  for (i=1; i<argc; i++)
   {
     if (!strcmp(argv[i],"-ec"))
       l_empty_cache->SetValue(true_symbol);
@@ -432,7 +433,7 @@ void load_data(int argc, char **argv)
   else cdc_logo=-1;
 
   start_position_type=0xffff;
-  for(i=0;i<total_objects;i++)
+  for(i=0; i<total_objects; i++)
     if (!strcmp(object_names[i],"START"))
       start_position_type=i;
   if (start_position_type==0xffff)

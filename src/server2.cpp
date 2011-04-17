@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -48,7 +49,7 @@ game_server::game_server(int argc, char **argv, int port)
   client_list=NULL;
   sync_check=0;                  // should we send sync packets to client?
 
-  for (int i=1;i<argc;i++)
+  for (int i=1; i<argc; i++)
   {
     if (!strcmp(argv[i],"-sync"))
     sync_check=1;
@@ -63,7 +64,7 @@ game_server::game_server(int argc, char **argv, int port)
 
 game_server::~game_server()
 {
-  for (client_descriptor *p=client_list;p;)
+  for (client_descriptor *p=client_list; p; )
   {
     client_descriptor *q=p;
     p=p->next;
@@ -77,7 +78,7 @@ void game_server::receive_inputs()         // reads inputs from all non-local cl
 {
 /*  client_descriptor *last=NULL;
   packet pk;
-  for (client_descriptor *p=client_list;p;)
+  for (client_descriptor *p=client_list; p; )
   {
     int delete_me=0;
     if (p->connection)
@@ -127,7 +128,7 @@ void game_server::receive_inputs()         // reads inputs from all non-local cl
       if (last)
         last->next=p;
       else client_list=p;
-      delete del_me;    
+      delete del_me;
     } else { last=p; p=p->next; }
 
 
@@ -146,7 +147,7 @@ void game_server::send_inputs()            // pass collected inputs to all non-l
 
   next_out.write_uint8(SCMD_END_OF_PACKET);        // so clients knows when to stop reading
 
-  for (client_descriptor *p=client_list;p;)
+  for (client_descriptor *p=client_list; p; )
   {
     if (p->connection && p->player)
     {
@@ -158,7 +159,7 @@ void game_server::send_inputs()            // pass collected inputs to all non-l
     if (last)
       last->next=p;
     else client_list=p;
-    delete del_me;    
+    delete del_me;
       } else { last=p; p=p->next; }
     } else
     {
@@ -179,14 +180,14 @@ void game_server::join_new_players()
 {
 /*  int wait=0;
   client_descriptor *p=client_list;
-  for (;p;p=p->next)
+  for (; p; p=p->next)
     if (p->requested_join)
     {
 
       view *f=player_list;
-      for (;f && f->next;f=f->next);      // find last player, add one for pn
+      for (; f && f->next; f=f->next);      // find last player, add one for pn
       int i,st=0;
-      for (i=0;i<total_objects;i++)
+      for (i=0; i<total_objects; i++)
         if (!strcmp(object_names[i],"START"))
       st=i;
 
@@ -224,7 +225,7 @@ void game_server::join_new_players()
     printf("%d sync for save\n",make_sync_uint32());
 
     client_descriptor *last=NULL;
-    for (p=client_list;p;p=p->next)
+    for (p=client_list; p; p=p->next)
     {
       if (p->player)
       {

@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -186,11 +187,11 @@ void clisp_init()                            // call by lisp_init, defines symbo
   l_player_text_color = LSymbol::FindOrCreate("player_text_color");
 
   int i;
-  for (i=0;i<MAX_STATE;i++)
+  for (i=0; i<MAX_STATE; i++)
     LSymbol::FindOrCreate(state_names[i])->SetNumber(i);
-  for (i=0;i<TOTAL_ABILITIES;i++)
+  for (i=0; i<TOTAL_ABILITIES; i++)
     LSymbol::FindOrCreate(ability_names[i])->SetNumber(i);
-  for (i=0;i<TOTAL_CFLAGS;i++)
+  for (i=0; i<TOTAL_CFLAGS; i++)
     LSymbol::FindOrCreate(cflag_names[i])->SetNumber(i);
 
   l_song_list = LSymbol::FindOrCreate("song_list");
@@ -681,8 +682,8 @@ void *l_caller(long number, void *args)
     {
       game_object *old_cur=current_object;
       void *ret=NULL;
-      for (int i=0;i<old_cur->total_objects();i++)
-      {    
+      for (int i=0; i<old_cur->total_objects(); i++)
+      {
     current_object=old_cur->get_object(i);
     ret=eval(CAR(args));
       }
@@ -715,7 +716,7 @@ void *l_caller(long number, void *args)
       long trials=lnumber_value(eval(CAR(args)));
       args=CDR(args);
       time_marker start;
-      for (int x=0;x<trials;x++)
+      for (int x=0; x<trials; x++)
       {
     clear_tmp();
     eval(CAR(args));
@@ -954,8 +955,8 @@ void *l_caller(long number, void *args)
     char *filename=lstring_value(fn);
 
     char *s=filename,*tp;
-    
-    for (tp=tmp;*s;s++,tp++)
+
+    for (tp=tmp; *s; s++,tp++)
     {
       if (*s=='/' || *s=='\\')
       *tp=*slash;
@@ -974,13 +975,13 @@ void *l_caller(long number, void *args)
       void *fl=NULL,*dl=NULL,*rl=NULL;
       {
     PtrRef r1(fl),r2(dl);
-    
-    for (i=tfiles-1;i>=0;i--) { push_onto_list(LString::Create(files[i]),fl); free(files[i]); }
+
+    for (i=tfiles-1; i>=0; i--) { push_onto_list(LString::Create(files[i]),fl); free(files[i]); }
     free(files);
 
-    for (i=tdirs-1;i>=0;i--) { push_onto_list(LString::Create(dirs[i]),dl); free(dirs[i]); }
+    for (i=tdirs-1; i>=0; i--) { push_onto_list(LString::Create(dirs[i]),dl); free(dirs[i]); }
     free(dirs);
-    
+
     push_onto_list(dl,rl);
     push_onto_list(fl,rl);
       }
@@ -1008,14 +1009,14 @@ void *l_caller(long number, void *args)
 
       if (last>=first)
       {
-        for (i=last;i>=first;i--)
+        for (i=last; i>=first; i--)
         {
           sprintf(name2,"%s%04ld.pcx",name,i);
           push_onto_list(LString::Create(name2),ret);
         }
       } else
       {
-        for (i=last;i<=first;i++)
+        for (i=last; i<=first; i++)
         {
           sprintf(name2,"%s%04ld.pcx",name,i);
           push_onto_list(LString::Create(name2),ret);
@@ -1489,7 +1490,7 @@ long c_caller(long number, void *args)
       view *v=current_object->controller();
       if (!v) dprintf("Can't use reset_player on non-players\n");
       else
-        v->reset_player();    
+        v->reset_player();
     } break;
     case 153 :
     {
@@ -1523,9 +1524,9 @@ long c_caller(long number, void *args)
       int32_t ang=(lnumber_value(CAR(args))+90/tframes)%360;
       if (ang1>ang2)
       {
-        if (ang<ang1 && ang>ang2)     
+        if (ang<ang1 && ang>ang2)
       return 0;
-    else if (ang>=ang1)    
+    else if (ang>=ang1)
       f=(ang-ang1)*tframes/(359-ang1+ang2+1);
     else
       f=(359-ang1+ang)*tframes/(359-ang1+ang2+1);
@@ -1628,7 +1629,7 @@ long c_caller(long number, void *args)
     {
       int x=current_object->total_objects();
       game_object *who=(game_object *)lpointer_value(CAR(args));
-      for (int i=0;i<x;i++)
+      for (int i=0; i<x; i++)
         if (current_object->get_object(i)==who) return 1;
       return 0;
     } break;
@@ -1653,7 +1654,7 @@ long c_caller(long number, void *args)
       int32_t type=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->foreground_width() || y>=current_level->foreground_width())
         lbreak("%d %d is out of range of fg map",x,y);
-      else    
+      else
         current_level->put_fg(x,y,type);
     } break;
     case 193 :
@@ -1671,7 +1672,7 @@ long c_caller(long number, void *args)
       int32_t type=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->background_width() || y>=current_level->background_width())
         lbreak("%d %d is out of range of fg map",x,y);
-      else    
+      else
         current_level->put_bg(x,y,type);
     } break;
     case 195 :
@@ -1905,7 +1906,7 @@ long c_caller(long number, void *args)
       int ra=lnumber_value(CAR(args)); args=CDR(args);
       int ga=lnumber_value(CAR(args)); args=CDR(args);
       int ba=lnumber_value(CAR(args));
-      for (int i=0;i<256;i++)
+      for (int i=0; i<256; i++)
       {
     r=(int)*addr+ra; if (r>255) r=255; else if (r<0) r=0; *addr=(uint8_t)r; addr++;
     g=(int)*addr+ga; if (g>255) g=255; else if (g<0) g=0; *addr=(uint8_t)g; addr++;
@@ -1929,7 +1930,7 @@ long c_caller(long number, void *args)
     int32_t x=lnumber_value(CAR(args));
     if (x<0 || x>=total_weapons)
     { lbreak("weapon out of range (%d)\n",x); exit(0); }
-    v->current_weapon=x;    
+    v->current_weapon=x;
       }
     } break;
     case 231 :
@@ -1944,7 +1945,7 @@ long c_caller(long number, void *args)
     } break;
 
     case 233 :
-    { int x=0; view *v=player_list; for (;v;v=v->next,x++); return x; } break;
+    { int x=0; view *v=player_list; for (; v; v=v->next,x++); return x; } break;
 
     case 234 :
     {
@@ -2245,17 +2246,17 @@ long c_caller(long number, void *args)
       if (main_net_cfg && (main_net_cfg->state==net_configuration::CLIENT || main_net_cfg->state==net_configuration::SERVER))
       {
     view *v=player_list;
-    for (;v;v=v->next)
+    for (; v; v=v->next)
        if (v->kills>=main_net_cfg->kills)
          return 1;
-    
+
 
       } else return 0;
     } break;
     case 294 :
     {
       view *v=player_list;
-      for (;v;v=v->next)
+      for (; v; v=v->next)
       {
     v->tkills+=v->kills;
 
@@ -2266,7 +2267,7 @@ long c_caller(long number, void *args)
     eval_function((LSymbol *)l_restart_player,NULL);
     v->reset_player();
     v->focus->set_aistate(0);
-    current_object=o;    
+    current_object=o;
       }
 
     } break;
@@ -2322,7 +2323,7 @@ int get_lprop_number(void *symbol, int def)  // returns def if symbol undefined 
       case L_FIXED_POINT :
       case L_NUMBER :
       { return lnumber_value(v); } break;
-      default : return def;        
+      default : return def;
     }
   } else return def;
 }

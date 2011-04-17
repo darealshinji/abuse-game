@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -178,7 +179,7 @@ void view::update_scroll()
   }
 }
 
-char cur_user_name[20]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+char cur_user_name[20]={ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 char const *get_login()
 {
@@ -290,7 +291,7 @@ void view::draw_character_damage()
   {
     if (last_hp!=focus->hp()) draw_hp();
     int i;
-    for (i=0;i<total_weapons;i++)
+    for (i=0; i<total_weapons; i++)
       if (weapons[i]!=last_weapons[i])
       {
     last_weapons[i]=weapons[i];
@@ -308,7 +309,7 @@ uint16_t make_sync()
   if (current_level)
   {
     view *f=player_list;
-    for (;f;f=f->next)
+    for (; f; f=f->next)
     {
       if (f->focus)
       {
@@ -492,7 +493,7 @@ int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went 
       cy1=lltl(x[1]);
       cx2=lltl(x[2]);
       cy2=lltl(x[3]);
-    
+
       pan_x=lltl(x[4]);
       pan_y=lltl(x[5]);
       shift_down=lltl(x[6]);
@@ -541,7 +542,7 @@ int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went 
 
       pointer_x=(int16_t)(lstl(p[0]));
       pointer_y=(int16_t)(lstl(p[1]));
-    
+
       return 1;
     } break;
     case SCMD_KEYPRESS : set_key_down(*(pk++),1); break;
@@ -728,7 +729,7 @@ void recalc_local_view_space()   // calculates view areas for local players, sho
     int w=h*320/200,y=5;
     if (w<300) w=300;
 
-    for (view *f=player_list;f;f=f->next)
+    for (view *f=player_list; f; f=f->next)
     {
       if (f->local_player())
       {
@@ -768,7 +769,7 @@ void set_local_players(int total)
   if (total<1) return ;
 
   view *last=NULL;
-  for (view *f=player_list;f;f=f->next)
+  for (view *f=player_list; f; f=f->next)
   {
     if (total && f->local_player())
       total--;
@@ -801,7 +802,7 @@ void set_local_players(int total)
     else
     {
       view *f=player_list;
-      for (;f && f->next;f=f->next);       
+      for (; f && f->next; f=f->next);
       f->next=new view(o,NULL,f->player_number+1);
       v=f->next;
     }
@@ -818,7 +819,7 @@ void set_local_players(int total)
 int total_local_players()
 {
   int t=0;
-  for (view *f=player_list;f;f=f->next)
+  for (view *f=player_list; f; f=f->next)
     if (f->local_player()) t++;
   return t;
 }
@@ -888,7 +889,7 @@ void view::reset_player()
     sbar.redraw(screen);
 
     int i;
-    for (i=0;i<focus->total_objects();i++)   // reset the vars for the attached objects
+    for (i=0; i<focus->total_objects(); i++)   // reset the vars for the attached objects
     {
       game_object *o=focus->get_object(i);
       memset(o->lvars,0,figures[o->otype]->tv*4);
@@ -904,7 +905,7 @@ void view::reset_player()
 object_node *make_player_onodes(int player_num)
 {
   object_node *first=NULL,*last=NULL;
-  for (view *o=player_list;o;o=o->next)
+  for (view *o=player_list; o; o=o->next)
   {
     if (o->focus && (player_num==-1 || o->player_number==player_num))
     {
@@ -916,7 +917,7 @@ object_node *make_player_onodes(int player_num)
     else first=q;
     last=q;
       }
-      for (int i=0;i<o->focus->total_objects();i++)
+      for (int i=0; i<o->focus->total_objects(); i++)
       {
     game_object *p=o->focus->get_object(i);
 
@@ -1182,7 +1183,7 @@ void process_packet_commands(uint8_t *pk, int size)
     uint8_t player_num=*(pk++);
 
     view *v=player_list;
-    for (;v && v->player_number!=player_num;v=v->next);
+    for (; v && v->player_number!=player_num; v=v->next);
     if (v)
     {
       if (v->player_number==player_num)
@@ -1225,7 +1226,7 @@ void process_packet_commands(uint8_t *pk, int size)
       {
     uint8_t player_num=*(pk++);
     view *v=player_list,*last=NULL;
-    for (;v && v->player_number!=player_num;v=v->next)
+    for (; v && v->player_number!=player_num; v=v->next)
     last=v;
     if (!v)
     dprintf("evil : delete client %d, but no such client\n");

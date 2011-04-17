@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -31,14 +32,14 @@ void button_box::press_button(int id)      // if button box doesn't contain id, 
 
 void button_box::remap(filter *f)
 {
-  for (button *b=buttons;b;b=(button *)b->next)
+  for (button *b=buttons; b; b=(button *)b->next)
     b->remap(f);
 }
 
 ifield *button_box::find(int search_id)
 {
   if (search_id==id) return this;
-  for (ifield *i=(ifield *)buttons;i;i=i->next)
+  for (ifield *i=(ifield *)buttons; i; i=i->next)
     if (search_id==i->id) return i;
   return NULL;
 }
@@ -69,7 +70,7 @@ void button_box::area(int &x1, int &y1, int &x2, int &y2)
   {
     b->area(x1,y1,x2,y2);
     int xp1,yp1,xp2,yp2;
-    for (b=(button *)b->next;b;b=(button *)b->next)
+    for (b=(button *)b->next; b; b=(button *)b->next)
     {
       b->area(xp1,yp1,xp2,yp2);
       if (xp1<x1) x1=xp1;
@@ -82,7 +83,7 @@ void button_box::area(int &x1, int &y1, int &x2, int &y2)
 
 void button_box::draw_first(image *screen)
 {
-  for (button *b=buttons;b;b=(button *)b->next)
+  for (button *b=buttons; b; b=(button *)b->next)
     b->draw_first(screen);
 }
 
@@ -101,7 +102,7 @@ void button_box::move(int newx, int newy)
 
 char *button_box::read()
 {
-  for (button *b=buttons;b;b=(button *)b->next)
+  for (button *b=buttons; b; b=(button *)b->next)
   {
     if (*((int *)b->read())==0)
       return (char *)b;
@@ -117,7 +118,7 @@ void button_box::handle_event(event &ev, image *screen, InputManager *im)
     {
       int x1,y1,x2,y2;
       int found=0;
-      for (button *b=buttons;!found && b;b=(button *)b->next)  // see if the user clicked on a button
+      for (button *b=buttons; !found && b; b=(button *)b->next)  // see if the user clicked on a button
       {
     b->area(x1,y1,x2,y2);
     if (ev.mouse_move.x>=x1 && ev.mouse_move.x<=x2 &&
@@ -127,7 +128,7 @@ void button_box::handle_event(event &ev, image *screen, InputManager *im)
 
       int total=0;
       button *b2=buttons;
-      for (;b2;b2=(button *)b2->next)
+      for (; b2; b2=(button *)b2->next)
         if (*((int *)b2->read())==0)
           total++;
 
@@ -135,7 +136,7 @@ void button_box::handle_event(event &ev, image *screen, InputManager *im)
       {
         if (total>maxdown)
         {
-          for (b2=buttons;total>maxdown && b2;b2=(button *)b2->next)
+          for (b2=buttons; total>maxdown && b2; b2=(button *)b2->next)
             if ((b!=b2 || maxdown==0) && *((int *)b2->read())==0)
         {
           total--;
@@ -167,7 +168,7 @@ void button_box::arrange_left_right()
 {
   button *b=buttons;
   int x_on=x,x1,y1,x2,y2;
-  for (;b;b=(button *)b->next)
+  for (; b; b=(button *)b->next)
   {
     b->area(x1,y1,x2,y2);
     b->x=x_on;
@@ -180,7 +181,7 @@ void button_box::arrange_up_down()
 {
   button *b=buttons;
   int y_on=y,x1,y1,x2,y2;
-  for (;b;b=(button *)b->next)
+  for (; b; b=(button *)b->next)
   {
     b->area(x1,y1,x2,y2);
     b->y=y_on;
@@ -284,7 +285,7 @@ void text_field::handle_event(event &ev, image *screen, InputManager *im)
                            draw_cur(wm->bright_color(),screen); } break;
       case JK_BACKSPACE : if (cur)
          { draw_cur(wm->dark_color(),screen); cur--;
-           for (xx=cur;xx<(int)strlen(format)-1;xx++)
+           for (xx=cur; xx<(int)strlen(format)-1; xx++)
              data[xx]=data[xx+1];
            data[strlen(format)-1]=' ';
            draw_text(screen);
@@ -294,7 +295,7 @@ void text_field::handle_event(event &ev, image *screen, InputManager *im)
       default : if (ev.key>=' ' && ev.key<='~')
          {
            draw_cur(wm->dark_color(),screen);
-           for (xx=strlen(format)-1;xx>cur && xx>0;xx--)
+           for (xx=strlen(format)-1; xx>cur && xx>0; xx--)
              data[xx]=data[xx-1];
            data[cur]=ev.key;
            if (cur<(int)strlen(format)-1)
@@ -472,7 +473,7 @@ void info_field::area(int &x1, int &y1, int &x2, int &y2)
   {
     int fw=wm->font()->width(),fh=wm->font()->height(),maxw=0;
     char *info=text;
-    for (w=fw,h=fh+1;*info;info++)
+    for (w=fw,h=fh+1; *info; info++)
     {
       if (w>maxw) maxw=w;
       if (*info=='\n')

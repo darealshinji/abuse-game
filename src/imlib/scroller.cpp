@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -59,12 +60,12 @@ void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
   remap[2]=wm->dark_color();
 
   screen->lock();
-  for (int yc=ich;yc;yc--,y++)
+  for (int yc=ich; yc; yc--,y++)
   {
     if (y>=cy1 && y<=cy2)
     {
       uint8_t *sl=screen->scan_line(y)+x;
-      for (int xc=icw,xo=x;xc;xc--,xo++,sl++,buf++)
+      for (int xc=icw,xo=x; xc; xc--,xo++,sl++,buf++)
       {
     if (xo>=cx1 && xo<=cx2)
       *sl=remap[*buf];
@@ -182,7 +183,7 @@ void scroller::handle_event(event &ev, image *screen, InputManager *inm)
     case EV_MOUSE_BUTTON :
     {
       if (ev.mouse_button && drag==-1)
-      {    
+      {
     if (mx>=b1x() && mx<b1x()+bw() && my>=b1y()-2 && my<b1y()+bh())
     {
       if (sx>0)
@@ -200,7 +201,7 @@ void scroller::handle_event(event &ev, image *screen, InputManager *inm)
         sx++;
         draw_widget(screen,0);
         scroll_event(sx,screen);
-      }    
+      }
     }
     else
     {
@@ -214,7 +215,7 @@ void scroller::handle_event(event &ev, image *screen, InputManager *inm)
         {
           drag=sx;
           inm->grab_focus(this);
-        }    
+        }
         else if (t>1)
         {
           int nx=mouse_to_drag(mx,my);
@@ -223,8 +224,8 @@ void scroller::handle_event(event &ev, image *screen, InputManager *inm)
         draw_widget(screen,1);
         sx=nx;
         draw_widget(screen,0);
-        scroll_event(sx,screen);        
-          }        
+        scroll_event(sx,screen);
+          }
         }
       } else handle_inside_event(ev,screen,inm);
     }
@@ -285,7 +286,7 @@ void scroller::handle_right(image *screen, InputManager *inm)
     draw_widget(screen,1);
     sx++;
     draw_widget(screen,0);
-    scroll_event(sx,screen);    
+    scroll_event(sx,screen);
   }
 }
 
@@ -296,7 +297,7 @@ void scroller::handle_left(image *screen, InputManager *inm)
     draw_widget(screen,1);
     sx--;
     draw_widget(screen,0);
-    scroll_event(sx,screen);    
+    scroll_event(sx,screen);
   }
 }
 
@@ -307,7 +308,7 @@ void scroller::handle_up(image *screen, InputManager *inm)
     draw_widget(screen,1);
     sx--;
     draw_widget(screen,0);
-    scroll_event(sx,screen);    
+    scroll_event(sx,screen);
   }
 }
 
@@ -318,7 +319,7 @@ void scroller::handle_down(image *screen, InputManager *inm)
     draw_widget(screen,1);
     sx++;
     draw_widget(screen,0);
-    scroll_event(sx,screen);    
+    scroll_event(sx,screen);
   }
 }
 
@@ -331,7 +332,7 @@ void scroller::set_x (int x, image *screen)
     draw_widget(screen,1);
     sx=x;
     draw_widget(screen,0);
-    scroll_event(sx,screen);    
+    scroll_event(sx,screen);
   }
 }
 
@@ -362,7 +363,7 @@ void scroller::scroll_event(int newx, image *screen)
   screen->bar(x,y,x+l-1,y+h-1,wm->black());
   int xa,ya,xo=0,yo;
   if (vert) { xa=0; ya=30; yo=x+5; yo=y+5; } else { xa=30; ya=0; xo=x+5; yo=y+5; }
-  for (int i=newx,c=0;c<30 && i<100;i++,c++)
+  for (int i=newx,c=0; c<30 && i<100; i++,c++)
   {
     char st[10];
     sprintf(st,"%d",i);
@@ -395,14 +396,14 @@ pick_list::pick_list(int X, int Y, int ID, int height,
   key_hist_total=0;
   lis=(pick_list_item *)malloc(sizeof(pick_list_item)*num_entries);
   int i=0;
-  for (;i<num_entries;i++)
+  for (; i<num_entries; i++)
   {
     lis[i].name=List[i];
     lis[i].number=i;
   }
   qsort((void *)lis,num_entries,sizeof(pick_list_item),lis_sort);
 
-  for (i=0;i<t;i++)
+  for (i=0; i<t; i++)
     if ((int)strlen(List[i])>wid)
       wid=strlen(List[i]);
   cur_sel=sx=start_yoffset;
@@ -440,7 +441,7 @@ void pick_list::handle_inside_event(event &ev, image *screen, InputManager *inm)
     if (key_hist_total<20)
       key_hist[(int)(key_hist_total++)]=ev.key;
 
-    for (int i=0;i<t && found==-1;i++)
+    for (int i=0; i<t && found==-1; i++)
     {
       if ((int)strlen(lis[i].name)>=key_hist_total && memcmp(lis[i].name,key_hist,key_hist_total)==0)
     found=i;
@@ -465,7 +466,7 @@ void pick_list::handle_up(image *screen, InputManager *inm)
     sx=cur_sel;
     draw_widget(screen,0);
   }
-  scroll_event(sx,screen);    
+  scroll_event(sx,screen);
 }
 
 void pick_list::handle_down(image *screen, InputManager *inm)
@@ -479,7 +480,7 @@ void pick_list::handle_down(image *screen, InputManager *inm)
     sx=cur_sel-th+1;
     draw_widget(screen,0);
   }
-  scroll_event(sx,screen);    
+  scroll_event(sx,screen);
 }
 
 void pick_list::scroll_event(int newx, image *screen)
@@ -493,15 +494,15 @@ void pick_list::scroll_event(int newx, image *screen)
     int tw=(l+tex->width()-1)/tex->width();
     int th=(h+tex->height()-1)/tex->height();
     int dy=y;
-    for (int j=0;j<th;j++,dy+=tex->height())
-      for (int i=0,dx=x;i<tw;i++,dx+=tex->width())
+    for (int j=0; j<th; j++,dy+=tex->height())
+      for (int i=0,dx=x; i<tw; i++,dx+=tex->width())
         tex->put_image(screen,dx,dy);
 
     screen->set_clip(cx1,cy1,cx2,cy2);
   } else screen->bar(x,y,x+l-1,y+h-1,wm->black());
 
   int dy=y;
-  for (int i=0;i<th;i++,dy+=wm->font()->height()+1)
+  for (int i=0; i<th; i++,dy+=wm->font()->height()+1)
   {
     if (i+newx==cur_sel)
       screen->bar(x,dy,x+wid*wm->font()->width()-1,dy+wm->font()->height(),wm->dark_color());
@@ -547,7 +548,7 @@ int spicker::first_selected()
 {
   if (m)
   {
-    for (int i=0;i<t;i++)
+    for (int i=0; i<t; i++)
       if (get_select(i)) return i;
     return -1;
   } else return cur_sel;
@@ -608,7 +609,7 @@ void spicker::scroll_event(int newx, image *screen)
   else { xa=item_width(); ya=0; }
   draw_background(screen);
 
-  for (int i=newx;i<newx+vis();i++)
+  for (int i=newx; i<newx+vis(); i++)
   {
     if (i<t)
     {
@@ -656,7 +657,7 @@ void spicker::handle_inside_event(event &ev, image *screen, InputManager *inm)
       if (me<t && me>=0)
       {
     if (m)
-    {    
+    {
       if (ev.mouse_button)
       {
         if (ok_to_select(me))
@@ -669,7 +670,7 @@ void spicker::handle_inside_event(event &ev, image *screen, InputManager *inm)
 
     } else if (ok_to_select(me))
     {
-      if (cur_sel==me)    
+      if (cur_sel==me)
         note_selection(screen,inm,me);
       else
       {

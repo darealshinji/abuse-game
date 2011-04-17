@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -64,8 +65,8 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *fo
       }
 
       word_start=buf;
-      for (word_len=0,word_start=buf,word_size=0;*buf && *buf!=' ' && *buf!='\r' && *buf!='\n' &&
-       *buf!='\t' && (*buf!='\\' || buf[1]!='n');buf++,word_size+=w,word_len++);
+      for (word_len=0,word_start=buf,word_size=0; *buf && *buf!=' ' && *buf!='\r' && *buf!='\n' &&
+       *buf!='\t' && (*buf!='\\' || buf[1]!='n'); buf++,word_size+=w,word_len++);
 
       if (word_size<x2-x1) // make sure the word can fit on the screen
       {
@@ -160,27 +161,27 @@ void director::wait(void *arg)
             the_game->first_view->cy2-tbottom,text,font,
             white_light+32*256,
             wm->bright_color()
-        
+
             ))
         text=NULL;
       if (text_time)
       {
     if ((int)(cur_time.diff_time(text_time)*1000)>scroll_speed)
-    {    
+    {
       text_y+=text_step;
       delete text_time;
       if (text)
-        text_time=new time_marker;    
+        text_time=new time_marker;
       else
         text_time=NULL;
     }
-      } else text_time=new time_marker;    
+      } else text_time=new time_marker;
     } else if (arg==text_symbol) done=1;
-    
-    wm->flush_screen();    
+
+    wm->flush_screen();
     while (wm->event_waiting())
-    {    
-      event ev;    
+    {
+      event ev;
       wm->get_event(ev);
       if (ev.type==EV_KEY)
       {
@@ -203,8 +204,8 @@ void director::wait(void *arg)
         break;
         case JK_ESC : set_abort(1); done=1; break;
         case JK_ENTER : done=1; break;
-      }    
-    }    
+      }
+    }
       }
     }
   } while (!done);

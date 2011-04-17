@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -61,7 +62,7 @@ int net_init(int argc, char **argv)
     if (!main_net_cfg)
         main_net_cfg=new net_configuration;
 
-    for (i=1;i<argc;i++)
+    for (i=1; i<argc; i++)
     {
         if (!strcmp(argv[i],"-nonet"))
         {
@@ -288,14 +289,14 @@ void service_net_request()
       if (comm_sock && comm_sock->ready_to_read())  // new connection?
       {
                 net_address *addr;
-            
-                net_socket *new_sock=comm_sock->accept(addr);    
+
+                net_socket *new_sock=comm_sock->accept(addr);
                 if (new_sock)
                 {
                   uint8_t client_type;
                   if (new_sock->read(&client_type,1)!=1)
                   {
-                    delete addr;    
+                    delete addr;
                     delete new_sock;
                   }
                   else
@@ -304,16 +305,16 @@ void service_net_request()
                     {
                       case CLIENT_NFS :
                       {
-                                delete addr;    
+                                delete addr;
                                 fman->add_nfs_client(new_sock);
                       } break;
                       case CLIENT_CRC_WAITER :
-                      {        
+                      {
                                 crc_manager.write_crc_file(NET_CRC_FILENAME);       // return 0 on failure
                                 client_type=1;                                  // confirmation byte
                                 new_sock->write(&client_type,1);
                                 delete new_sock;                                // done with this socket now
-                                delete addr;    
+                                delete addr;
                       } break;
                       case CLIENT_LSF_WAITER :          // wants to know which .lsp file to start with
                       {
@@ -332,7 +333,7 @@ void service_net_request()
                                 }
                       } break;
                     }
-                  }        
+                  }
                 }
       }
       if (!game_face->process_net())
@@ -506,19 +507,19 @@ void net_reload()
 
       while (join_list)
       {
-    
+
                 view *f=player_list;
-                for (;f && f->next;f=f->next);      // find last player, add one for pn
+                for (; f && f->next; f=f->next);      // find last player, add one for pn
                 int i,st=0;
-                for (i=0;i<total_objects;i++)
+                for (i=0; i<total_objects; i++)
                 if (!strcmp(object_names[i],"START"))
                 st=i;
-            
+
                 game_object *o=create(current_start_type,0,0);
                 game_object *start=current_level->get_random_start(320,NULL);
                 if (start) { o->x=start->x; o->y=start->y; }
                 else { o->x=100; o->y=100; }
-            
+
                 f->next=new view(o,NULL,join_list->client_id);
                 strcpy(f->next->name,join_list->name);
                 o->set_controller(f->next);
@@ -527,9 +528,9 @@ void net_reload()
                 current_level->add_object_after(o,start);
                 else
                 current_level->add_object(o);
-            
+
                 view *v=f->next;
-            
+
                 v->cx1=5;
                 v->cy1=5;
                 v->cx2=319-5;
@@ -568,9 +569,9 @@ void net_reload()
                       game_face->end_reload(1);
                       base->input_state=INPUT_PROCESSING;
                     }
-            
+
                   } while (wm->event_waiting());
-            
+
                   wm->flush_screen();
                 }
 
@@ -640,7 +641,7 @@ int get_inputs_from_server(unsigned char *buf)
     if (prot->debug_level(net_protocol::DB_IMPORTANT_EVENT))
       fprintf(stderr,"(missed packet)");
 
-    
+
     game_face->input_missing();
     start.get_time();
 
@@ -650,7 +651,7 @@ int get_inputs_from_server(unsigned char *buf)
       abort=wm->new_window(0,yres/2,-1,wm->font()->height()*4,
                    new info_field(0, 0, 0, symbol_str("waiting"),
                           new button(0, wm->font()->height() + 5, ID_NET_DISCONNECT,
-                             symbol_str("slack"),NULL)),symbol_str("Error"));    
+                             symbol_str("slack"),NULL)),symbol_str("Error"));
       wm->flush_screen();
     }
       }

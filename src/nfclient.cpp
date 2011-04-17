@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -62,7 +63,7 @@ nfs_file::nfs_file(char const *filename, char const *mode)
 
   int local_only=0;
   char const *s=mode;
-  for (;*s;s++)    // check to see if writeable file, if so don't go through nfs
+  for (; *s; s++)    // check to see if writeable file, if so don't go through nfs
     if (*s=='w' || *s=='W' || *s=='a' || *s=='A')
       local_only=1;
 
@@ -97,13 +98,13 @@ nfs_file::nfs_file(char const *filename, char const *mode)
       local_crc=crc_file(fp);
       crc_manager.set_crc(local_file_num,local_crc);
     } else fail3=1;
-    delete fp;    
+    delete fp;
       }
 
       if (!fail3)
       {
     if (local_crc==remote_crc)
-          local_only=1;    
+          local_only=1;
       }
     }
   }

@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -25,7 +26,7 @@ ico_switch_button::ico_switch_button(int X, int Y, int ID, int start_on, ifield 
   next=Next;
   blist=cur_but=butts;
   act=0;
-  for (ifield *b=blist;b;b=b->next) { b->x=x; b->y=y; }
+  for (ifield *b=blist; b; b=b->next) { b->x=x; b->y=y; }
   while (cur_but && start_on--) cur_but=cur_but->next;
   if (!cur_but) cur_but=blist;
 }
@@ -37,7 +38,7 @@ void ico_switch_button::area(int &x1, int &y1, int &x2, int &y2)
   x2=-10000;
   y2=-10000;
   int X1,Y1,X2,Y2;
-  for (ifield *b=blist;b;b=b->next)
+  for (ifield *b=blist; b; b=b->next)
   {
     b->area(X1,Y1,X2,Y2);
     if (X1<x1) x1=X1;
@@ -51,7 +52,7 @@ void ico_switch_button::area(int &x1, int &y1, int &x2, int &y2)
 ifield *ico_switch_button::unlink(int id)
 {
   ifield *last=NULL;
-  for (ifield *b=blist;b;b=b->next)
+  for (ifield *b=blist; b; b=b->next)
   {
     if (b->id==id)
     {

@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -36,7 +37,7 @@ file_manager::file_manager(int argc, char **argv, net_protocol *proto) : proto(p
   nfs_list=NULL;
 
   int i;
-  for (i=1;i<argc;i++)
+  for (i=1; i<argc; i++)
     if (!strcmp(argv[i],"-bastard"))   // this bypasses filename security features
     {
       fprintf(stderr,"Warning : Security measures bypassed (-bastard)\n");
@@ -49,7 +50,7 @@ file_manager::file_manager(int argc, char **argv, net_protocol *proto) : proto(p
 void file_manager::process_net()
 {
   nfs_client *nc,*last=NULL;
-  for (nc=nfs_list;nc;)      // check for nfs request
+  for (nc=nfs_list; nc; )      // check for nfs request
   {
 
     int ok=1;
@@ -290,7 +291,7 @@ file_manager::remote_file::remote_file(net_socket *sock, char const *filename, c
   next=Next;
   open_local=0;
 
-  uint8_t sizes[3]={CLIENT_NFS,strlen(filename)+1,strlen(mode)+1};
+  uint8_t sizes[3]={ CLIENT_NFS,strlen(filename)+1,strlen(mode)+1};
   if (sock->write(sizes,3)!=3) { r_close("could not send open info"); return ; }
   if (sock->write(filename,sizes[1])!=sizes[1]) { r_close("could not send filename"); return ; }
   if (sock->write(mode,sizes[2])!=sizes[2]) { r_close("could not send mode"); return ; }
@@ -458,7 +459,7 @@ int file_manager::rf_open_file(char const *&filename, char const *mode)
 file_manager::remote_file *file_manager::find_rf(int fd)
 {
   remote_file *r=remote_list;
-  for (;r && r->sock->get_fd()!=fd;r=r->next)
+  for (; r && r->sock->get_fd()!=fd; r=r->next)
   {
     if (r->sock->get_fd()==-1)
     {

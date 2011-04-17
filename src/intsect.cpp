@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -113,10 +114,10 @@ void pushback(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
             { tx2=x1; ty2=y1; }
           else tx2=mx2*(y1-b2)/my2+xadd;
         else if (my2==0)
-        {        
+        {
           ty2=yp1+yadd;
-          tx2=mx1*(ty2-b1)/my1;        
-        }        
+          tx2=mx1*(ty2-b1)/my1;
+        }
         else
         {
           if (abs(mx1)>abs(my1))
@@ -171,7 +172,7 @@ int setback_intersect(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
   int32_t xdiff,ydiff;
 /*  int32_t xdiff=abs(xp1-xp2),ydiff=yp1-yp2;
   if (xdiff>=ydiff)                              // increment the endpoints
-    if (xp2<xp1) { xp2--; xp1++; }                  
+    if (xp2<xp1) { xp2--; xp1++; }
     else { xp2++; xp1--; }
 
   if (xdiff<=ydiff)
@@ -198,17 +199,17 @@ int setback_intersect(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
            (xp1>=xp2 && ((r2^inside)<0)) ||
        inside==0 || r2==0)
       {
-    int32_t ae=a1*b2,bd=b1*a2;    
+    int32_t ae=a1*b2,bd=b1*a2;
     if (ae!=bd)         // co-linear returns 0
     {
       x2=(b1*c2-b2*c1)/(ae-bd);
-      y2=(a1*c2-a2*c1)/(bd-ae);    
+      y2=(a1*c2-a2*c1)/(bd-ae);
       xdiff=abs(x2-x1);
-      ydiff=abs(y2-y1);    
+      ydiff=abs(y2-y1);
 //      if (xdiff<=ydiff)            // push the intersection back one pixel
 //      {
         if (y2!=y1)
-        {    
+        {
             if (y2>y1)
             y2--;
           else y2++;
@@ -226,15 +227,15 @@ int setback_intersect(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
 
       if (inside)        // check to make sure end point is on the
       {                  // right side
-        r1=x1*a2+y1*b2+c2;    
-        r2=x2*a2+y2*b2+c2;    
+        r1=x1*a2+y1*b2+c2;
+        r2=x2*a2+y2*b2+c2;
         if ((r2!=0 && ((r1^r2)<0)))
-        {    
+        {
           x2=x1;
           y2=y1;
-        }    
-      }        
-      return 1;    
+        }
+      }
+      return 1;
     }
       }
     }

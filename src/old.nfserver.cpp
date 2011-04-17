@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -44,7 +45,7 @@ class nfs_server_client_node
 nfs_server_client_node::~nfs_server_client_node()
 {
   delete nd;
-  for (int i=0;i<file_list_size;i++)
+  for (int i=0; i<file_list_size; i++)
     if (file_list[i])
      delete file_list[i];
   if (file_list)
@@ -53,7 +54,7 @@ nfs_server_client_node::~nfs_server_client_node()
 
 int nfs_server_client_node::add_file(bFILE *fp)  // returns id for bFILE
 {
-  for (int i=0;i<file_list_size;i++)   // search for a free spot
+  for (int i=0; i<file_list_size; i++)   // search for a free spot
   {
     if (!file_list[i])
     {
@@ -133,7 +134,7 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
       my_crc=crc_file(fp);
       crc_manager.set_crc(crc_manager.get_filenumber(fn),my_crc);
       delete fp;
-    }    
+    }
       }
 
       if (my_crc==crc)
@@ -211,7 +212,7 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
     }
     if (total<to_read) size=0;
     else size-=total;
-      } while (size>0 && total);    
+      } while (size>0 && total);
       return 1;
     } break;
 
@@ -269,7 +270,7 @@ int nfs_server::service_request()
   }
 
   nfs_server_client_node *last=NULL;
-  for (nfs_server_client_node *nc=nodes;nc;)    // loop through all clients and check for request
+  for (nfs_server_client_node *nc=nodes; nc; )    // loop through all clients and check for request
   {
     if (nc->nd->ready_to_read())  // request pending?
     {

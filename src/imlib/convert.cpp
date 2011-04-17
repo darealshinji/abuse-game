@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -25,9 +26,9 @@ main(int argc, char **argv)
   }
   if (STReq(argv[1],"2unix"))
   { strip=1; add=0; }
-  else {strip=0; add=1; }
+  else { strip=0; add=1; }
   printf("Converting...\n");
-  for (i=2;i<argc;i++)
+  for (i=2; i<argc; i++)
   {
     printf("  %s\n",argv[i]);
     fp=fopen(argv[i],"r");

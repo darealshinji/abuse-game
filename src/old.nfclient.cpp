@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -70,7 +71,7 @@ static void nfs_disconnect()
 nfs_file::nfs_file(char *filename, char *mode)
 {
   int local_only=0;
-  for (char *s=mode;*s;s++)    // check to see if writeable file, if so don't go through nfs
+  for (char *s=mode; *s; s++)    // check to see if writeable file, if so don't go through nfs
     if (*s=='w' || *s=='W' || *s=='a' || *s=='A')
       local_only=1;
   if (local_only)
@@ -122,7 +123,7 @@ nfs_file::nfs_file(char *filename, char *mode)
       {
         fd=lltl(fd);
         nfs_fd=fd;
-        if (local_test && fd==-2) // confirmed that CRCs match, use local file    
+        if (local_test && fd==-2) // confirmed that CRCs match, use local file
         { local=local_test;    local_test=NULL; }
 
       }
@@ -150,7 +151,7 @@ int nfs_file::unbuffered_read(void *buf, size_t count)      // returns number of
     {
       printf("bad read!\n");
     }
-    free(comp);*/
+    free(comp); */
     return ret;
   }
 }
@@ -181,7 +182,7 @@ int nfs_file::new_read(void *buf, size_t count)      // returns number of bytes 
       {
     if (!nfs_server->get(pk)) fail=1;
     else
-    {    
+    {
       if (pk.read((uint8_t *)&size,2)!=2) fail=1;
       else
       {
@@ -194,12 +195,12 @@ int nfs_file::new_read(void *buf, size_t count)      // returns number of bytes 
           if (pk.read((uint8_t *)buf,need_size)!=need_size) fail=1;
           else
           {
-        count-=need_size;    
+        count-=need_size;
         rtotal+=need_size;
         buf=(void *)(((char *)buf)+need_size);
         offset+=need_size;
-        if (need_size<size)    // see if there are any leftovers to buffer        
-          fprintf(stderr,"Server sent to much\n");        
+        if (need_size<size)    // see if there are any leftovers to buffer
+          fprintf(stderr,"Server sent to much\n");
           }
           if (need_size<2048) count=0;
         }

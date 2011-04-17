@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -92,14 +93,14 @@ void tile_picker::scroll_event(int newx, image *screen)
   last_sel=newx;
 
   screen->bar(x,y,x+l-1,y+h-1,wm->black());
-  for (int i=newx;i<newx+th*wid;i++)
+  for (int i=newx; i<newx+th*wid; i++)
   {
     xo=x+((i-newx)%wid)*xw;
     yo=y+((i-newx)/wid)*ya;
 
       int blank=0;
       if (i<t)
-      {    
+      {
     switch (type)
     {
       case SPEC_FORETILE :
@@ -123,7 +124,7 @@ void tile_picker::scroll_event(int newx, image *screen)
         if (backtiles[i]<0) blank=1;
         else
           scale_put(the_game->get_bg(i)->im,screen,xo,yo,xw,ya);
-    
+
       } break;
       case SPEC_CHARACTER :
       {
@@ -162,11 +163,11 @@ int tile_picker::get_current()
   switch (type)
   {
     case SPEC_FORETILE :
-    {return cur_fg;} break;
+    { return cur_fg; } break;
     case SPEC_BACKTILE :
-    {return cur_bg;} break;
+    { return cur_bg; } break;
     case SPEC_CHARACTER :
-    {return cur_char;} break;
+    { return cur_char; } break;
   }
   return 0;
 }
@@ -176,11 +177,11 @@ void tile_picker::set_current(int x)
   switch (type)
   {
     case SPEC_FORETILE :
-    {cur_fg=x;} break;
+    { cur_fg=x; } break;
     case SPEC_BACKTILE :
-    {cur_bg=x;} break;
+    { cur_bg=x; } break;
     case SPEC_CHARACTER :
-    {cur_char=x;} break;
+    { cur_char=x; } break;
   }
 }
 
