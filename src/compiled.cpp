@@ -41,13 +41,13 @@ int compile_error=0;
 
 static int32_t c_state(char const *name)
 {
-  void *sym = LispSymbol::Find(name);
+  void *sym = LSymbol::Find(name);
   if (sym)
   {
-    if (item_type(((LispSymbol *)sym)->value)!=L_NUMBER)
+    if (item_type(((LSymbol *)sym)->value)!=L_NUMBER)
       compile_error=1;
     else
-      return lnumber_value(((LispSymbol *)sym)->value);
+      return lnumber_value(((LSymbol *)sym)->value);
   } else compile_error=1;
   return 0;
 }
@@ -121,7 +121,7 @@ void compiled_init()
   S_LINK_SND=    c_state("LINK_OBJECT_SND");
   S_DELETE_SND=  c_state("DEL_OBJECT_SND");
 
-  void *b = LispSymbol::FindOrCreate("bad_guy_list");
+  void *b = LSymbol::FindOrCreate("bad_guy_list");
   if (b && DEFINEDP(symbol_value(b)))
   {
     b=symbol_value(b);
@@ -137,7 +137,7 @@ void compiled_init()
     }
   }
 
-  void *v = LispSymbol::FindOrCreate("last_save_game")->GetValue();
+  void *v = LSymbol::FindOrCreate("last_save_game")->GetValue();
   if (DEFINEDP(v))
     last_save_game_number=lnumber_value(v);
   else last_save_game_number=0;

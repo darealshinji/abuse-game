@@ -39,7 +39,7 @@ sequence::sequence(char *filename, void *pict_list, void *advance_list)
   if (item_type(pict_list)==L_STRING)
     total=1;
   else
-    total = ((LispList *)pict_list)->GetLength();
+    total = ((LList *)pict_list)->GetLength();
 
   seq=(int *) malloc(sizeof(int)*total);
   if (item_type(pict_list)==L_STRING)

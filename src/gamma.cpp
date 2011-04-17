@@ -56,7 +56,7 @@ public:
 
 static char const *lang_string(char const *symbol)
 {
-    LispSymbol *v = LispSymbol::Find(symbol);
+    LSymbol *v = LSymbol::Find(symbol);
     if (!v || !DEFINEDP(v->GetValue()))
         return "Language symbol missing!";
     return lstring_value(v->GetValue());
@@ -68,7 +68,7 @@ void gamma_correct(palette *&pal, int force_menu)
     int abort=0;
 
     // see if user has already done this routine
-    LispSymbol *gs = LispSymbol::Find("darkest_gray");
+    LSymbol *gs = LSymbol::Find("darkest_gray");
 
     if(old_pal)
     {
@@ -181,7 +181,7 @@ void gamma_correct(palette *&pal, int force_menu)
                 fclose(fp);
                 int sp = current_space;
                 current_space = PERM_SPACE;
-                LispSymbol::FindOrCreate("darkest_gray")->SetNumber(dg);
+                LSymbol::FindOrCreate("darkest_gray")->SetNumber(dg);
 
                 current_space = sp;
             }

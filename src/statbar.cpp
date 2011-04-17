@@ -40,7 +40,7 @@ void status_bar::load()
 {
   char sbname[100];
   char iname[20];
-  void *l_name = LispSymbol::FindOrCreate("sbar_file");
+  void *l_name = LSymbol::FindOrCreate("sbar_file");
   if (symbol_value(l_name)!=l_undefined)
     strcpy(sbname,lstring_value(symbol_value(l_name)));
   else strcpy(sbname,"art/statbar.spe");

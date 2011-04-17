@@ -12,8 +12,8 @@
 
 #include "lisp.h"
 
-extern LispObject *l_undefined;
-extern LispSymbol *true_symbol, *list_symbol, *string_symbol, *quote_symbol,
+extern LObject *l_undefined;
+extern LSymbol *true_symbol, *list_symbol, *string_symbol, *quote_symbol,
      *backquote_symbol, *comma_symbol, *do_symbol, *in_symbol, *aref_symbol,
      *if_symbol, *progn_symbol, *car_symbol, *cdr_symbol;
 

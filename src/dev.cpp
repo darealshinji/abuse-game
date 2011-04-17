@@ -41,7 +41,7 @@ char backw_on=0,forew_on=0,show_menu_on=0,ledit_on=0,pmenu_on=0,omenu_on=0,comma
 
 char const *symbol_str(char const *name)
 {
-  LispSymbol *sym = LispSymbol::FindOrCreate(name);
+  LSymbol *sym = LSymbol::FindOrCreate(name);
   if (sym->GetValue() && item_type(sym->GetValue())==L_STRING)
     return lstring_value(sym->GetValue());
 
@@ -66,13 +66,13 @@ char const *symbol_str(char const *name)
 
 
   // check again to see if the symbol is there
-  sym = LispSymbol::FindOrCreate(name);
+  sym = LSymbol::FindOrCreate(name);
   if (sym->GetValue() && item_type(sym->GetValue())==L_STRING)
     return lstring_value(sym->GetValue());
 
 
   // check to see if there is a missing symbol definition
-  sym = LispSymbol::FindOrCreate("missing_sym");
+  sym = LSymbol::FindOrCreate("missing_sym");
   if (sym->GetValue() && item_type(sym->GetValue())==L_STRING)
     return lstring_value(sym->GetValue());
 

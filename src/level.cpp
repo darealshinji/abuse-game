@@ -1079,7 +1079,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
       for (;k<figures[new_type]->ts;k++)
       {
         if (figures[new_type]->seq[k] &&
-           !strcmp(lstring_value(((LispSymbol *)figures[new_type]->seq_syms[k])->GetName()),old_name))
+           !strcmp(lstring_value(((LSymbol *)figures[new_type]->seq_syms[k])->GetName()),old_name))
         *(s_remap[i]+j)=k;
       }
     }
@@ -1118,7 +1118,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
         {
           if (figures[new_type]->vars[k])
           {
-        if (!strcmp(lstring_value(((LispSymbol *)figures[new_type]->vars[k])->GetName()),old_name))
+        if (!strcmp(lstring_value(((LSymbol *)figures[new_type]->vars[k])->GetName()),old_name))
           *(v_remap[i]+j)=figures[new_type]->var_index[k];
           }
         }
@@ -1509,8 +1509,8 @@ void level::level_loaded_notify()
 
     void *arg_list=NULL;
     PtrRef r1(arg_list);
-    push_onto_list(LispString::Create(n),arg_list);
-    eval_function((LispSymbol *)l_level_loaded,arg_list);
+    push_onto_list(LString::Create(n),arg_list);
+    eval_function((LSymbol *)l_level_loaded,arg_list);
 
     current_space=sp;
   } */
@@ -1559,7 +1559,7 @@ bFILE *level::create_dir(char *filename, int save_all,
     int j=0;
     for (;j<figures[i]->ts;j++)
       if (figures[i]->seq[j])
-        size+=1+strlen(lstring_value(((LispSymbol *)figures[i]->seq_syms[j])->GetName()))+1;
+        size+=1+strlen(lstring_value(((LSymbol *)figures[i]->seq_syms[j])->GetName()))+1;
   }
   sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"describe_states",NULL,size,0));
 
@@ -1572,7 +1572,7 @@ bFILE *level::create_dir(char *filename, int save_all,
     int j=0;
     for (;j<figures[i]->tiv;j++)
       if (figures[i]->vars[j])
-        size+=1+strlen(lstring_value(((LispSymbol *)figures[i]->vars[j])->GetName()))+1;
+        size+=1+strlen(lstring_value(((LSymbol *)figures[i]->vars[j])->GetName()))+1;
   }
   sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"describe_lvars",NULL,size,0));
 
@@ -1826,7 +1826,7 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
 
   } else
   {
-    LispSymbol *fun = LispSymbol::FindOrCreate("set_player_defaults");
+    LSymbol *fun = LSymbol::FindOrCreate("set_player_defaults");
     if (DEFINEDP(fun->GetFunction()))
     {
       view *f;
@@ -1886,7 +1886,7 @@ void level::write_objects(bFILE *fp, object_node *save_list)
     for (j=0;j<figures[i]->ts;j++)
       if (figures[i]->seq[j])
       {
-    char *state_name=lstring_value(((LispSymbol *)figures[i]->seq_syms[j])->GetName());
+    char *state_name=lstring_value(((LSymbol *)figures[i]->seq_syms[j])->GetName());
     fp->write_uint8(strlen(state_name)+1);
     fp->write(state_name,strlen(state_name)+1);
       }
@@ -1905,7 +1905,7 @@ void level::write_objects(bFILE *fp, object_node *save_list)
       {
         if (figures[i]->vars[j] && figures[i]->var_index[j]==x)
     {
-      char *var_name=lstring_value(((LispSymbol *)figures[i]->vars[j])->GetName());
+      char *var_name=lstring_value(((LSymbol *)figures[i]->vars[j])->GetName());
       fp->write_uint8(strlen(var_name)+1);
       fp->write(var_name,strlen(var_name)+1);
     }

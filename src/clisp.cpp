@@ -38,13 +38,13 @@
 extern int has_joystick;
 
 // the following are references to lisp symbols
-LispSymbol *l_chat_input, *l_post_render;
+LSymbol *l_chat_input, *l_post_render;
 
-LispSymbol *l_difficulty, *l_easy, *l_hard, *l_medium, *l_extreme,
+LSymbol *l_difficulty, *l_easy, *l_hard, *l_medium, *l_extreme,
     *l_max_hp, *l_max_power,
     *l_empty_cache;
 
-// FIXME: port these to LispSymbol
+// FIXME: port these to LSymbol
 void *l_main_menu, *l_logo,*l_state_art,*l_abilities,*l_state_sfx,
      *l_song_list,*l_filename,*l_sfx_directory,*l_default_font,
      *l_morph,*l_default_abilities,*l_default_ai_function,
@@ -102,99 +102,99 @@ extern void set_login(char const *name);
 void clisp_init()                            // call by lisp_init, defines symbols and functions
                                              // to irnterface with c
 {
-  l_easy = LispSymbol::FindOrCreate("easy");
-  l_medium = LispSymbol::FindOrCreate("medium");
-  l_hard = LispSymbol::FindOrCreate("hard");
-  l_extreme = LispSymbol::FindOrCreate("extreme");
+  l_easy = LSymbol::FindOrCreate("easy");
+  l_medium = LSymbol::FindOrCreate("medium");
+  l_hard = LSymbol::FindOrCreate("hard");
+  l_extreme = LSymbol::FindOrCreate("extreme");
 
-  l_logo = LispSymbol::FindOrCreate("logo");
-  l_morph = LispSymbol::FindOrCreate("morph");
+  l_logo = LSymbol::FindOrCreate("logo");
+  l_morph = LSymbol::FindOrCreate("morph");
 
-  l_pushx = LispSymbol::FindOrCreate("pushx");
-  l_pushy = LispSymbol::FindOrCreate("pushy");
+  l_pushx = LSymbol::FindOrCreate("pushx");
+  l_pushy = LSymbol::FindOrCreate("pushy");
 
-  l_dist = LispSymbol::FindOrCreate("dist");
-  l_state_art = LispSymbol::FindOrCreate("state_art");
-  l_abilities = LispSymbol::FindOrCreate("abilities");
-  l_default_abilities = LispSymbol::FindOrCreate("default_abilities");
-  l_state_sfx = LispSymbol::FindOrCreate("state_sfx");
-  l_filename = LispSymbol::FindOrCreate("filename");
-  l_sfx_directory = LispSymbol::FindOrCreate("sfx_directory");
-  l_default_font = LispSymbol::FindOrCreate("default_font");
-  l_console_font = LispSymbol::FindOrCreate("console_font");
-  l_default_ai_function = LispSymbol::FindOrCreate("default_ai");
-  l_tile_files = LispSymbol::FindOrCreate("tile_files");
-  l_empty_cache = LispSymbol::FindOrCreate("empty_cache");
-  l_range = LispSymbol::FindOrCreate("range");
-  l_difficulty = LispSymbol::FindOrCreate("difficulty");
-  l_death_handler = LispSymbol::FindOrCreate("death_handler");
-  l_title_screen = LispSymbol::FindOrCreate("title_screen");
-  l_fields = LispSymbol::FindOrCreate("fields");
-  l_FIRE = LispSymbol::FindOrCreate("FIRE");
-  l_fire_object = LispSymbol::FindOrCreate("fire_object");
-  l_cop_dead_parts = LispSymbol::FindOrCreate("cop_dead_parts");
+  l_dist = LSymbol::FindOrCreate("dist");
+  l_state_art = LSymbol::FindOrCreate("state_art");
+  l_abilities = LSymbol::FindOrCreate("abilities");
+  l_default_abilities = LSymbol::FindOrCreate("default_abilities");
+  l_state_sfx = LSymbol::FindOrCreate("state_sfx");
+  l_filename = LSymbol::FindOrCreate("filename");
+  l_sfx_directory = LSymbol::FindOrCreate("sfx_directory");
+  l_default_font = LSymbol::FindOrCreate("default_font");
+  l_console_font = LSymbol::FindOrCreate("console_font");
+  l_default_ai_function = LSymbol::FindOrCreate("default_ai");
+  l_tile_files = LSymbol::FindOrCreate("tile_files");
+  l_empty_cache = LSymbol::FindOrCreate("empty_cache");
+  l_range = LSymbol::FindOrCreate("range");
+  l_difficulty = LSymbol::FindOrCreate("difficulty");
+  l_death_handler = LSymbol::FindOrCreate("death_handler");
+  l_title_screen = LSymbol::FindOrCreate("title_screen");
+  l_fields = LSymbol::FindOrCreate("fields");
+  l_FIRE = LSymbol::FindOrCreate("FIRE");
+  l_fire_object = LSymbol::FindOrCreate("fire_object");
+  l_cop_dead_parts = LSymbol::FindOrCreate("cop_dead_parts");
   l_difficulty->SetValue(l_hard);
-  l_restart_player = LispSymbol::FindOrCreate("restart_player");
-  l_help_screens = LispSymbol::FindOrCreate("help_screens");
-  l_save_order = LispSymbol::FindOrCreate("save_order");
-  l_next_song = LispSymbol::FindOrCreate("next_song");
-  l_player_draw = LispSymbol::FindOrCreate("player_draw");
-  l_sneaky_draw = LispSymbol::FindOrCreate("sneaky_draw");
-  l_keep_backup = LispSymbol::FindOrCreate("keep_backup");
-  l_level_loaded = LispSymbol::FindOrCreate("level_loaded");
+  l_restart_player = LSymbol::FindOrCreate("restart_player");
+  l_help_screens = LSymbol::FindOrCreate("help_screens");
+  l_save_order = LSymbol::FindOrCreate("save_order");
+  l_next_song = LSymbol::FindOrCreate("next_song");
+  l_player_draw = LSymbol::FindOrCreate("player_draw");
+  l_sneaky_draw = LSymbol::FindOrCreate("sneaky_draw");
+  l_keep_backup = LSymbol::FindOrCreate("keep_backup");
+  l_level_loaded = LSymbol::FindOrCreate("level_loaded");
 
-  l_draw_fast = LispSymbol::FindOrCreate("draw_fast");
-  l_player_tints = LispSymbol::FindOrCreate("player_tints");
+  l_draw_fast = LSymbol::FindOrCreate("draw_fast");
+  l_player_tints = LSymbol::FindOrCreate("player_tints");
 
-  l_max_hp = LispSymbol::FindOrCreate("max_hp");
+  l_max_hp = LSymbol::FindOrCreate("max_hp");
   l_max_hp->SetNumber(200);
-  l_max_power = LispSymbol::FindOrCreate("max_power");
-  l_main_menu = LispSymbol::FindOrCreate("main_menu");
+  l_max_power = LSymbol::FindOrCreate("max_power");
+  l_main_menu = LSymbol::FindOrCreate("main_menu");
   l_max_power->SetNumber(999);
 
-  LispSymbol::FindOrCreate("run_state")->SetNumber(RUN_STATE);
-  LispSymbol::FindOrCreate("pause_state")->SetNumber(PAUSE_STATE);
-  LispSymbol::FindOrCreate("menu_state")->SetNumber(MENU_STATE);
-  LispSymbol::FindOrCreate("scene_state")->SetNumber(SCENE_STATE);
+  LSymbol::FindOrCreate("run_state")->SetNumber(RUN_STATE);
+  LSymbol::FindOrCreate("pause_state")->SetNumber(PAUSE_STATE);
+  LSymbol::FindOrCreate("menu_state")->SetNumber(MENU_STATE);
+  LSymbol::FindOrCreate("scene_state")->SetNumber(SCENE_STATE);
 
-  l_statbar_ammo_x = LispSymbol::FindOrCreate("statbar_ammo_x");
-  l_statbar_ammo_y = LispSymbol::FindOrCreate("statbar_ammo_y");
-  l_statbar_ammo_w = LispSymbol::FindOrCreate("statbar_ammo_w");
-  l_statbar_ammo_h = LispSymbol::FindOrCreate("statbar_ammo_h");
-  l_statbar_ammo_bg_color = LispSymbol::FindOrCreate("statbar_ammo_bg_color");
+  l_statbar_ammo_x = LSymbol::FindOrCreate("statbar_ammo_x");
+  l_statbar_ammo_y = LSymbol::FindOrCreate("statbar_ammo_y");
+  l_statbar_ammo_w = LSymbol::FindOrCreate("statbar_ammo_w");
+  l_statbar_ammo_h = LSymbol::FindOrCreate("statbar_ammo_h");
+  l_statbar_ammo_bg_color = LSymbol::FindOrCreate("statbar_ammo_bg_color");
 
-  l_statbar_health_x = LispSymbol::FindOrCreate("statbar_health_x");
-  l_statbar_health_y = LispSymbol::FindOrCreate("statbar_health_y");
-  l_statbar_health_w = LispSymbol::FindOrCreate("statbar_health_w");
-  l_statbar_health_h = LispSymbol::FindOrCreate("statbar_health_h");
-  l_statbar_health_bg_color = LispSymbol::FindOrCreate("statbar_health_bg_color");
+  l_statbar_health_x = LSymbol::FindOrCreate("statbar_health_x");
+  l_statbar_health_y = LSymbol::FindOrCreate("statbar_health_y");
+  l_statbar_health_w = LSymbol::FindOrCreate("statbar_health_w");
+  l_statbar_health_h = LSymbol::FindOrCreate("statbar_health_h");
+  l_statbar_health_bg_color = LSymbol::FindOrCreate("statbar_health_bg_color");
 
-  l_statbar_logo_x = LispSymbol::FindOrCreate("statbar_logo_x");
-  l_statbar_logo_y = LispSymbol::FindOrCreate("statbar_logo_y");
-  l_object = LispSymbol::FindOrCreate("object");
-  l_tile = LispSymbol::FindOrCreate("tile");
-  l_cdc_logo = LispSymbol::FindOrCreate("logo");
+  l_statbar_logo_x = LSymbol::FindOrCreate("statbar_logo_x");
+  l_statbar_logo_y = LSymbol::FindOrCreate("statbar_logo_y");
+  l_object = LSymbol::FindOrCreate("object");
+  l_tile = LSymbol::FindOrCreate("tile");
+  l_cdc_logo = LSymbol::FindOrCreate("logo");
 
-  l_switch_to_powerful = LispSymbol::FindOrCreate("switch_to_powerful");
-  l_mouse_can_switch = LispSymbol::FindOrCreate("mouse_can_switch");
-  l_ask_save_slot = LispSymbol::FindOrCreate("ask_save_slot");
+  l_switch_to_powerful = LSymbol::FindOrCreate("switch_to_powerful");
+  l_mouse_can_switch = LSymbol::FindOrCreate("mouse_can_switch");
+  l_ask_save_slot = LSymbol::FindOrCreate("ask_save_slot");
 
-  l_level_load_start = LispSymbol::FindOrCreate("level_load_start");
-  l_level_load_end = LispSymbol::FindOrCreate("level_load_end");
-  l_get_local_input = LispSymbol::FindOrCreate("get_local_input");
-  l_chat_input = LispSymbol::FindOrCreate("chat_input");
-  l_player_text_color = LispSymbol::FindOrCreate("player_text_color");
+  l_level_load_start = LSymbol::FindOrCreate("level_load_start");
+  l_level_load_end = LSymbol::FindOrCreate("level_load_end");
+  l_get_local_input = LSymbol::FindOrCreate("get_local_input");
+  l_chat_input = LSymbol::FindOrCreate("chat_input");
+  l_player_text_color = LSymbol::FindOrCreate("player_text_color");
 
   int i;
   for (i=0;i<MAX_STATE;i++)
-    LispSymbol::FindOrCreate(state_names[i])->SetNumber(i);
+    LSymbol::FindOrCreate(state_names[i])->SetNumber(i);
   for (i=0;i<TOTAL_ABILITIES;i++)
-    LispSymbol::FindOrCreate(ability_names[i])->SetNumber(i);
+    LSymbol::FindOrCreate(ability_names[i])->SetNumber(i);
   for (i=0;i<TOTAL_CFLAGS;i++)
-    LispSymbol::FindOrCreate(cflag_names[i])->SetNumber(i);
+    LSymbol::FindOrCreate(cflag_names[i])->SetNumber(i);
 
-  l_song_list = LispSymbol::FindOrCreate("song_list");
-  l_post_render = LispSymbol::FindOrCreate("post_render");
+  l_song_list = LSymbol::FindOrCreate("song_list");
+  l_post_render = LSymbol::FindOrCreate("post_render");
 
   add_c_function("distx",0,0,                   1);
   add_c_function("disty",0,0,                   2);
@@ -580,7 +580,7 @@ void *l_caller(long number, void *args)
            "Are you calling from move function (not mover)?\n");
     exit(0);
       }
-      return eval_function((LispSymbol *)ai,NULL);
+      return eval_function((LSymbol *)ai,NULL);
     } break;
     case 1 :
     {
@@ -708,7 +708,7 @@ void *l_caller(long number, void *args)
     {
       void *f=figures[current_object->otype]->get_fun(OFUN_USER_FUN);
       if (!f) return NULL;
-      return eval_function((LispSymbol *)f,args);
+      return eval_function((LSymbol *)f,args);
     } break;
     case 17 :
     {
@@ -724,7 +724,7 @@ void *l_caller(long number, void *args)
       return new_lisp_fixed_point((long)(end.diff_time(&start)*(1<<16)));
     } break;
     case 18 :
-    { return LispString::Create(object_names[current_object->otype]); } break;
+    { return LString::Create(object_names[current_object->otype]); } break;
     case 19 :
     { return current_object->float_tick(); } break;
     case 20 :
@@ -757,7 +757,7 @@ void *l_caller(long number, void *args)
     } break;
     case 23 :         // def_character
     {
-      LispSymbol *sym=(LispSymbol *)lcar(args);
+      LSymbol *sym=(LSymbol *)lcar(args);
       if (item_type(sym)!=L_SYMBOL)
       {
         lbreak("expecting first arg to def-character to be a symbol!\n");
@@ -781,7 +781,7 @@ void *l_caller(long number, void *args)
       object_names[total_objects] = strdup(lstring_value(sym->GetName()));
       figures[total_objects]=new character_type(CDR(args),sym);
       total_objects++;
-      return LispNumber::Create(total_objects-1);
+      return LNumber::Create(total_objects-1);
     } break;
     case 24 :
     {
@@ -791,25 +791,25 @@ void *l_caller(long number, void *args)
       int32_t y2=lnumber_value(eval(CAR(args)));
       current_level->foreground_intersect(x1,y1,x2,y2);
       void *ret=NULL;
-      push_onto_list(LispNumber::Create(y2),ret);
-      push_onto_list(LispNumber::Create(x2),ret);
+      push_onto_list(LNumber::Create(y2),ret);
+      push_onto_list(LNumber::Create(x2),ret);
       return ret;
     } break;
     case 25 :
     {
 #ifdef __linux__
-      return LispSymbol::FindOrCreate("LINUX");
+      return LSymbol::FindOrCreate("LINUX");
 #endif
 #ifdef __sgi
-      return LispSymbol::FindOrCreate("IRIX");
+      return LSymbol::FindOrCreate("IRIX");
 #endif
 #ifdef __WIN32
-      return LispSymbol::FindOrCreate("WIN32");
+      return LSymbol::FindOrCreate("WIN32");
 #endif
     } break;
     case 26 :
     {
-      return LispString::Create(current_level->name());
+      return LString::Create(current_level->name());
     } break;
     case 27 : return ant_ai(); break;
     case 28 : return sensor_ai(); break;
@@ -854,7 +854,7 @@ void *l_caller(long number, void *args)
     {
       char nm[50];
       last_savegame_name(nm);
-      return LispString::Create(nm);
+      return LString::Create(nm);
     } break;
     case 45 :
     {
@@ -862,11 +862,11 @@ void *l_caller(long number, void *args)
       sprintf(nm,"save%04d.pcx", load_game(1,symbol_str("LOAD")));
 //      get_savegame_name(nm);
       the_game->reset_keymap();
-      return LispString::Create(nm);
+      return LString::Create(nm);
     } break;
     case 46 :
     {
-      return LispString::Create(start_argv[lnumber_value(eval(CAR(args)))]);
+      return LString::Create(start_argv[lnumber_value(eval(CAR(args)))]);
     } break;
     case 47 :
     {
@@ -877,11 +877,11 @@ void *l_caller(long number, void *args)
 
       void *ret=NULL;
       PtrRef r1(ret);
-      push_onto_list(LispNumber::Create(b3),ret);
-      push_onto_list(LispNumber::Create(b2),ret);
-      push_onto_list(LispNumber::Create(b1),ret);
-      push_onto_list(LispNumber::Create(yv),ret);
-      push_onto_list(LispNumber::Create(xv),ret);
+      push_onto_list(LNumber::Create(b3),ret);
+      push_onto_list(LNumber::Create(b2),ret);
+      push_onto_list(LNumber::Create(b1),ret);
+      push_onto_list(LNumber::Create(yv),ret);
+      push_onto_list(LNumber::Create(xv),ret);
       return ret;
     } break;
     case 48 :
@@ -889,11 +889,11 @@ void *l_caller(long number, void *args)
       void *ret=NULL;
       {
     PtrRef r1(ret);
-    push_onto_list(LispNumber::Create((last_demo_mbut&4)==4),ret);
-    push_onto_list(LispNumber::Create((last_demo_mbut&2)==2),ret);
-    push_onto_list(LispNumber::Create((last_demo_mbut&1)==1),ret);
-    push_onto_list(LispNumber::Create(last_demo_my),ret);
-    push_onto_list(LispNumber::Create(last_demo_mx),ret);
+    push_onto_list(LNumber::Create((last_demo_mbut&4)==4),ret);
+    push_onto_list(LNumber::Create((last_demo_mbut&2)==2),ret);
+    push_onto_list(LNumber::Create((last_demo_mbut&1)==1),ret);
+    push_onto_list(LNumber::Create(last_demo_my),ret);
+    push_onto_list(LNumber::Create(last_demo_mx),ret);
       }
       return ret;
     } break;
@@ -907,8 +907,8 @@ void *l_caller(long number, void *args)
       void *ret=NULL;
       {
     PtrRef r1(ret);
-    push_onto_list(LispNumber::Create(ry),ret);
-    push_onto_list(LispNumber::Create(rx),ret);
+    push_onto_list(LNumber::Create(ry),ret);
+    push_onto_list(LNumber::Create(rx),ret);
       }
       return ret;
     } break;
@@ -922,8 +922,8 @@ void *l_caller(long number, void *args)
       void *ret=NULL;
       {
     PtrRef r1(ret);
-    push_onto_list(LispNumber::Create(ry),ret);
-    push_onto_list(LispNumber::Create(rx),ret);
+    push_onto_list(LNumber::Create(ry),ret);
+    push_onto_list(LNumber::Create(rx),ret);
       }
       return ret;
     } break;
@@ -934,13 +934,13 @@ void *l_caller(long number, void *args)
       if (!c)
         lbreak("object is not a player, cannot return name");
       else
-        return LispString::Create(c->name);
+        return LString::Create(c->name);
     } break;
     case 54 :
     {
       char cd[150];
       getcwd(cd,100);
-      return LispString::Create(cd);
+      return LString::Create(cd);
     } break;
     case 55 :
     { system(lstring_value(eval(CAR(args)))); } break;
@@ -963,7 +963,7 @@ void *l_caller(long number, void *args)
     }
     *tp=0;
       }
-      return LispString::Create(tmp);
+      return LString::Create(tmp);
     } break;
     case 58 :
     {
@@ -975,10 +975,10 @@ void *l_caller(long number, void *args)
       {
     PtrRef r1(fl),r2(dl);
     
-    for (i=tfiles-1;i>=0;i--) { push_onto_list(LispString::Create(files[i]),fl); free(files[i]); }
+    for (i=tfiles-1;i>=0;i--) { push_onto_list(LString::Create(files[i]),fl); free(files[i]); }
     free(files);
 
-    for (i=tdirs-1;i>=0;i--) { push_onto_list(LispString::Create(dirs[i]),dl); free(dirs[i]); }
+    for (i=tdirs-1;i>=0;i--) { push_onto_list(LString::Create(dirs[i]),dl); free(dirs[i]); }
     free(dirs);
     
     push_onto_list(dl,rl);
@@ -1011,14 +1011,14 @@ void *l_caller(long number, void *args)
         for (i=last;i>=first;i--)
         {
           sprintf(name2,"%s%04ld.pcx",name,i);
-          push_onto_list(LispString::Create(name2),ret);
+          push_onto_list(LString::Create(name2),ret);
         }
       } else
       {
         for (i=last;i<=first;i++)
         {
           sprintf(name2,"%s%04ld.pcx",name,i);
-          push_onto_list(LispString::Create(name2),ret);
+          push_onto_list(LString::Create(name2),ret);
         }
       }
       return ret;
@@ -1354,10 +1354,10 @@ long c_caller(long number, void *args)
                         } break;
     case 133 :  // def_sound
     {
-      LispSymbol *sym=NULL;
+      LSymbol *sym=NULL;
       if (CDR(args))
       {
-    sym=(LispSymbol *)lcar(args);
+    sym=(LSymbol *)lcar(args);
     if (item_type(sym)!=L_SYMBOL)
     {
       lbreak("expecting first arg to def-character to be a symbol!\n");
@@ -2263,7 +2263,7 @@ long c_caller(long number, void *args)
     game_object *o=current_object;
     current_object=v->focus;
 
-    eval_function((LispSymbol *)l_restart_player,NULL);
+    eval_function((LSymbol *)l_restart_player,NULL);
     v->reset_player();
     v->focus->set_aistate(0);
     current_object=o;    

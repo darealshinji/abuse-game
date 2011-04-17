@@ -26,24 +26,24 @@ long block_size(Cell *level)  // return size needed to recreate this block
     void *b=level;
     for (;b && item_type(b)==L_CONS_CELL;b=CDR(b))
     {
-      t+=sizeof(LispList);
+      t+=sizeof(LList);
     }
     if (b) t+=block_size(b);
     for (b=level;b && item_type(b)==L_CONS_CELL;b=CDR(b))
       t+=block_size(CAR(b));
     ret=t;
     } else if (type== L_NUMBER)
-    { ret=sizeof(LispNumber); }
+    { ret=sizeof(LNumber); }
     else if (type==L_CHARACTER)
-    { ret=sizeof(LispChar); }
+    { ret=sizeof(LChar); }
     else if (type==L_STRING)
     {
-      ret=sizeof(LispString)+strlen(lstring_value(level))+1;
+      ret=sizeof(LString)+strlen(lstring_value(level))+1;
       if (ret<8)
         ret=8;
     }
     else if (type==L_POINTER)
-    { ret=sizeof(LispPointer); }
+    { ret=sizeof(LPointer); }
     else ret=0;
   }
 #ifdef WORD_ALIGN
@@ -102,12 +102,12 @@ Cell *load_block(bFILE *fp)
   switch (type)
   {
     case L_NUMBER :
-    { return LispNumber::Create(fp->read_uint32()); } break;
+    { return LNumber::Create(fp->read_uint32()); } break;
     case L_CHARACTER :
     { return new_lisp_character(fp->read_uint16()); } break;
     case L_STRING :
     { long l=fp->read_uint32();
-      LispString *s = LispString::Create(l);
+      LString *s = LString::Create(l);
       fp->read(lstring_value(s),l);
       return s;
     } break;
@@ -120,20 +120,20 @@ Cell *load_block(bFILE *fp)
       else
       {
     long x=abs(t);
-    LispList *last=NULL,*first=NULL;
+    LList *last=NULL,*first=NULL;
     while (x)
     {
-      LispList *c = LispList::Create();
+      LList *c = LList::Create();
       if (first)
         last->cdr=c;
       else first=c;
       last=c;
       x--;
     }
-    last->cdr = (t < 0) ? (LispObject *)load_block(fp) : NULL;
+    last->cdr = (t < 0) ? (LObject *)load_block(fp) : NULL;
 
-    for (last=first,x=0;x<abs(t);x++,last=(LispList *)last->cdr)
-      last->car = (LispObject *)load_block(fp);
+    for (last=first,x=0;x<abs(t);x++,last=(LList *)last->cdr)
+      last->car = (LObject *)load_block(fp);
     return first;
       }
     }

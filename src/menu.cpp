@@ -133,7 +133,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   Cell *def=lcar(lcdr(lcdr(args)));
   args=CAR(CDR(args));
 
-  int options = ((LispList *)args)->GetLength();
+  int options = ((LList *)args)->GetLength();
   int mh=(font->height()+1)*options+10,maxw=0;
 
   Cell *c=(Cell *)args;
@@ -376,7 +376,7 @@ void fade_in(image *im, int steps);
 
 void show_sell(int abortable)
 {
-  LispSymbol *ss = LispSymbol::FindOrCreate("sell_screens");
+  LSymbol *ss = LSymbol::FindOrCreate("sell_screens");
   if (!DEFINEDP(ss->GetValue()))
   {
     int sp=current_space;
@@ -384,7 +384,7 @@ void show_sell(int abortable)
 //    char *prog="((\"art/help.spe\" . \"sell2\")(\"art/help.spe\" . \"sell4\")(\"art/help.spe\" . \"sell3\")(\"art/endgame.spe\" . \"credit\"))";
 //    char *prog="((\"art/endgame.spe\" . \"credit\") (\"art/help.spe\" . \"sell6\"))";
     char const *prog="((\"art/endgame.spe\" . \"credit\"))";
-    ss->SetValue((LispObject *)compile(prog));
+    ss->SetValue((LObject *)compile(prog));
     current_space=sp;
   }
 
@@ -393,7 +393,7 @@ void show_sell(int abortable)
     image blank(2,2); blank.clear();
     wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
 
-    LispObject *tmp = (LispObject *)ss->GetValue();
+    LObject *tmp = (LObject *)ss->GetValue();
     int quit=0;
     while (tmp && !quit)
     {
@@ -408,7 +408,7 @@ void show_sell(int abortable)
       if (ev.key==JK_ESC && abortable)
         quit=1;
       fade_out(16);
-      tmp = (LispObject *)CDR(tmp);
+      tmp = (LObject *)CDR(tmp);
     }
     wm->set_mouse_shape(cache.img(c_normal)->copy(),1,1);
   }
@@ -695,7 +695,7 @@ void main_menu()
             {
                 if (!current_demo)
                 {
-                    LispSymbol *d = LispSymbol::FindOrCreate("demos");
+                    LSymbol *d = LSymbol::FindOrCreate("demos");
                     if (DEFINEDP(d->GetValue()))
                         current_demo = d->GetValue();
                 }

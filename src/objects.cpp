@@ -104,10 +104,10 @@ int32_t game_object::get_var_by_name(char *name, int &error)
 
   for (i=0;i<figures[otype]->tiv;i++)
   {
-    if (!strcmp(lstring_value(((LispSymbol *)figures[otype]->vars[i])->GetName()),name))
+    if (!strcmp(lstring_value(((LSymbol *)figures[otype]->vars[i])->GetName()),name))
     {
       return lvars[figures[otype]->var_index[i]];
-/*      LispObjectVar *cobj=(LispObjectVar *)symbol_value(figures[otype]->vars[i]);
+/*      LObjectVar *cobj=(LObjectVar *)symbol_value(figures[otype]->vars[i]);
       character_type *t=figures[otype];
       int number=cobj->number;
       if (t->tiv<=number || !t->vars[number])
@@ -134,7 +134,7 @@ int game_object::set_var_by_name(char *name, int32_t value)
     }
   }
   for (i=0;i<figures[otype]->tiv;i++)
-    if (!strcmp(lstring_value(((LispSymbol *)figures[otype]->vars[i])->GetName()),name))
+    if (!strcmp(lstring_value(((LSymbol *)figures[otype]->vars[i])->GetName()),name))
     {
       lvars[figures[otype]->var_index[i]]=value;
       return 1;
@@ -264,7 +264,7 @@ void game_object::reload_notify()
     current_object=this;
 
     void *m=mark_heap(TMP_SPACE);
-    eval_function((LispSymbol *)ns,NULL);
+    eval_function((LSymbol *)ns,NULL);
     restore_heap(m,TMP_SPACE);
 
     current_object=o;
@@ -278,7 +278,7 @@ void game_object::next_sequence()
     {
         current_object = this;
         void *m = mark_heap( TMP_SPACE );
-        (void)eval_function( (LispSymbol *)ns, NULL );
+        (void)eval_function( (LSymbol *)ns, NULL );
         restore_heap( m, TMP_SPACE );
     }
     else
@@ -418,7 +418,7 @@ int game_object::decide()
     if (profiling())
       prof1=new time_marker;
 
-    Cell *ret=(Cell *)eval_function((LispSymbol *)figures[otype]->get_fun(OFUN_AI),NULL);
+    Cell *ret=(Cell *)eval_function((LSymbol *)figures[otype]->get_fun(OFUN_AI),NULL);
     if (profiling())
     {
       time_marker now;
@@ -482,35 +482,35 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
   void *d=figures[otype]->get_fun(OFUN_DAMAGE);
   if (d)
   {
-    LispList *am, *frm, *hx, *hy, *px, *py;
+    LList *am, *frm, *hx, *hy, *px, *py;
     game_object *o = current_object;
     current_object = this;
 
     void *m = mark_heap(TMP_SPACE);
 
-    am = LispList::Create();
+    am = LList::Create();
     PtrRef r1(am);
-    am->car = LispNumber::Create(amount);
+    am->car = LNumber::Create(amount);
 
-    frm = LispList::Create();
+    frm = LList::Create();
     PtrRef r2(frm);
     frm->car = new_lisp_pointer(from);
 
-    hx = LispList::Create();
+    hx = LList::Create();
     PtrRef r3(hx);
-    hx->car = LispNumber::Create(hitx);
+    hx->car = LNumber::Create(hitx);
 
-    hy = LispList::Create();
+    hy = LList::Create();
     PtrRef r4(hy);
-    hy->car = LispNumber::Create(hity);
+    hy->car = LNumber::Create(hity);
 
-    px = LispList::Create();
+    px = LList::Create();
     PtrRef r5(px);
-    px->car = LispNumber::Create(push_xvel);
+    px->car = LNumber::Create(push_xvel);
 
-    py = LispList::Create();
+    py = LList::Create();
     PtrRef r6(py);
-    py->car = LispNumber::Create(push_yvel);
+    py->car = LNumber::Create(push_yvel);
 
     px->cdr = py;
     hy->cdr = px;
@@ -522,7 +522,7 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
     if (profiling())
       prof1 = new time_marker;
 
-    eval_user_fun((LispSymbol *)d, am);
+    eval_user_fun((LSymbol *)d, am);
     if (profiling())
     {
       time_marker now;
@@ -634,7 +634,7 @@ void game_object::draw()
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((LispSymbol *)figures[otype]->get_fun(OFUN_DRAW),NULL);
+    eval_function((LSymbol *)figures[otype]->get_fun(OFUN_DRAW),NULL);
     if (profiling())
     {
       time_marker now;
@@ -661,7 +661,7 @@ void game_object::map_draw()
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((LispSymbol *)figures[otype]->get_fun(OFUN_MAP_DRAW),NULL);
+    eval_function((LSymbol *)figures[otype]->get_fun(OFUN_MAP_DRAW),NULL);
     if (profiling())
     {
       time_marker now;
@@ -902,11 +902,11 @@ void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
     push_onto_list(l_object,rlist);
       } else
       {
-    push_onto_list(LispNumber::Create(ly),rlist);
-    push_onto_list(LispNumber::Create(lx),rlist);
+    push_onto_list(LNumber::Create(ly),rlist);
+    push_onto_list(LNumber::Create(lx),rlist);
     push_onto_list(l_tile,rlist);
       }
-      push_onto_list(LispNumber::Create(ret),rlist);
+      push_onto_list(LNumber::Create(ret),rlist);
 
       return rlist;
     } else return true_symbol;
@@ -1168,7 +1168,7 @@ game_object *create(int type, int32_t x, int32_t y, int skip_constructor, int ai
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((LispSymbol *)figures[type]->get_fun(OFUN_CONSTRUCTOR),NULL);
+    eval_function((LSymbol *)figures[type]->get_fun(OFUN_CONSTRUCTOR),NULL);
     if (profiling())
     {
       time_marker now;
@@ -1206,23 +1206,23 @@ int game_object::move(int cx, int cy, int button)
 
   if (figures[otype]->get_fun(OFUN_MOVER))      // is a lisp move function defined?
   {
-    LispList *lcx, *lcy, *lb;
+    LList *lcx, *lcy, *lb;
 
     game_object *o=current_object;
     current_object=this;
 
     // make a list of the parameters, and call the lisp function
-    lcx = LispList::Create();
+    lcx = LList::Create();
     PtrRef r1(lcx);
-    lcx->car = LispNumber::Create(cx);
+    lcx->car = LNumber::Create(cx);
 
-    lcy = LispList::Create();
+    lcy = LList::Create();
     PtrRef r2(lcy);
-    lcy->car = LispNumber::Create(cy);
+    lcy->car = LNumber::Create(cy);
 
-    lb = LispList::Create();
+    lb = LList::Create();
     PtrRef r3(lb);
-    lb->car = LispNumber::Create(button);
+    lb->car = LNumber::Create(button);
 
     lcx->cdr = lcy;
     lcy->cdr = lb;
@@ -1233,7 +1233,7 @@ int game_object::move(int cx, int cy, int button)
     if (profiling())
       prof1=new time_marker;
 
-    void *r=eval_function((LispSymbol *)figures[otype]->get_fun(OFUN_MOVER),
+    void *r=eval_function((LSymbol *)figures[otype]->get_fun(OFUN_MOVER),
               (void *)lcx);
     if (profiling())
     {
@@ -1593,7 +1593,7 @@ void game_object::change_aitype(int new_type)
       if (profiling())
         prof1=new time_marker;
 
-      eval_user_fun((LispSymbol *)f,NULL);
+      eval_user_fun((LSymbol *)f,NULL);
 
       if (profiling())
       {
@@ -1636,7 +1636,7 @@ void game_object::change_type(int new_type)
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((LispSymbol *)figures[new_type]->get_fun(OFUN_CONSTRUCTOR),NULL);
+    eval_function((LSymbol *)figures[new_type]->get_fun(OFUN_CONSTRUCTOR),NULL);
     if (profiling())
     {
       time_marker now;

@@ -15,7 +15,7 @@
 
 class demo_manager
 {
-  LispSymbol *initial_difficulty;
+  LSymbol *initial_difficulty;
   bFILE *record_file;
   int skip_next;
 
