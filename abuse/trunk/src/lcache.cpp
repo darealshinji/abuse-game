@@ -107,7 +107,7 @@ Cell *load_block(bFILE *fp)
     { return new_lisp_character(fp->read_uint16()); } break;
     case L_STRING :
     { long l=fp->read_uint32();
-      LispString *s=new_lisp_string(l);
+      LispString *s = LispString::Create(l);
       fp->read(lstring_value(s),l);
       return s;
     } break;

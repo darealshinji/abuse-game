@@ -308,39 +308,41 @@ struct LispChar *new_lisp_character(uint16_t ch)
   return c;
 }
 
-struct LispString *new_lisp_string(char const *string)
+struct LispString *LispString::Create(char const *string)
 {
-  size_t size=sizeof(LispString)+strlen(string)+1;
-  if (size<8 + sizeof(intptr_t)) size=8 + sizeof(intptr_t);
+    size_t size = sizeof(LispString) + strlen(string);
+    if (size < sizeof(LispRedirect))
+        size = sizeof(LispRedirect);
 
-  LispString *s=(LispString *)lmalloc(size, current_space);
-  s->type=L_STRING;
-  char *sloc=((char *)s)+sizeof(LispString);
-  strcpy(sloc, string);
-  return s;
+    LispString *s = (LispString *)lmalloc(size, current_space);
+    s->type = L_STRING;
+    strcpy(s->str, string);
+    return s;
 }
 
-struct LispString *new_lisp_string(char const *string, int length)
+struct LispString *LispString::Create(char const *string, int length)
 {
-  size_t size=sizeof(LispString)+length+1;
-  if (size<8 + sizeof(intptr_t)) size=8 + sizeof(intptr_t);
-  LispString *s=(LispString *)lmalloc(size, current_space);
-  s->type=L_STRING;
-  char *sloc=((char *)s)+sizeof(LispString);
-  memcpy(sloc, string, length);
-  sloc[length]=0;
-  return s;
+    size_t size = sizeof(LispString) + length;
+    if (size < sizeof(LispRedirect))
+        size = sizeof(LispRedirect);
+
+    LispString *s = (LispString *)lmalloc(size, current_space);
+    s->type = L_STRING;
+    memcpy(s->str, string, length);
+    s->str[length] = 0;
+    return s;
 }
 
-struct LispString *new_lisp_string(int length)
+struct LispString *LispString::Create(int length)
 {
-  size_t size=sizeof(LispString)+length;
-  if (size<8 + sizeof(intptr_t)) size=8 + sizeof(intptr_t);
-  LispString *s=(LispString *)lmalloc(size, current_space);
-  s->type=L_STRING;
-  char *sloc=((char *)s)+sizeof(LispString);
-  strcpy(sloc, "");
-  return s;
+    size_t size = sizeof(LispString) + length - 1;
+    if (size < sizeof(LispRedirect))
+        size = sizeof(LispRedirect);
+
+    LispString *s = (LispString *)lmalloc(size, current_space);
+    s->type = L_STRING;
+    s->str[0] = '\0';
+    return s;
 }
 
 #ifdef NO_LIBS
@@ -432,7 +434,7 @@ LispSymbol *new_lisp_symbol(char *name)
 {
   LispSymbol *s=(LispSymbol *)lmalloc(sizeof(LispSymbol), current_space);
   s->type=L_SYMBOL;
-  s->name=new_lisp_string(name);
+  s->name=LispString::Create(name);
   s->value=l_undefined;
   s->function=l_undefined;
 #ifdef L_PROFILE
@@ -532,20 +534,18 @@ int32_t lnumber_value(void *lnumber)
   return 0;
 }
 
-char *lstring_value(void *lstring)
+char *LispString::GetString()
 {
 #ifdef TYPE_CHECKING
-  if (item_type(lstring)!=(ltype)L_STRING)
-  {
-    lprint(lstring);
-    lbreak(" is not a string\n");
-    exit(0);
-  }
+    if (item_type(this) != L_STRING)
+    {
+        lprint(this);
+        lbreak(" is not a string\n");
+        exit(0);
+    }
 #endif
-  return ((char *)lstring)+sizeof(LispString);
+    return str;
 }
-
-
 
 void *lisp_atom(void *i)
 {
@@ -824,7 +824,7 @@ LispSymbol *LispSymbol::Find(char const *name)
     LispSymbol *p = lsym_root;
     while (p)
     {
-        int cmp = strcmp(name, ((char *)p->name) + sizeof(LispString));
+        int cmp = strcmp(name, p->name->GetString());
         if (cmp == 0)
             return p;
         p = (cmp < 0) ? p->left : p->right;
@@ -838,7 +838,7 @@ LispSymbol *LispSymbol::FindOrCreate(char const *name)
     LispSymbol **parent = &lsym_root;
     while (p)
     {
-        int cmp = strcmp(name, ((char *)p->name) + sizeof(LispString));
+        int cmp = strcmp(name, p->name->GetString());
         if (cmp == 0)
             return p;
         parent = (cmp < 0) ? &p->left : &p->right;
@@ -852,7 +852,7 @@ LispSymbol *LispSymbol::FindOrCreate(char const *name)
 
     p = (LispSymbol *)malloc(sizeof(LispSymbol));
     p->type = L_SYMBOL;
-    p->name = new_lisp_string(name);
+    p->name = LispString::Create(name);
 
     // If constant, set the value to ourself
     p->value = (name[0] == ':') ? p : l_undefined;
@@ -1216,7 +1216,7 @@ void *compile(char const *&s)
     ret=num;
   } else if (n[0]=='"')
   {
-    ret=new_lisp_string(str_token_len(s));
+    ret = LispString::Create(str_token_len(s));
     char *start=lstring_value(ret);
     for (;*s && (*s!='"' || s[1]=='"');s++, start++)
     {
@@ -1333,7 +1333,7 @@ void lprint(void *i)
       }
       break;
       case L_SYMBOL :
-        lprint_string((char *)(((LispSymbol *)i)->name)+sizeof(LispString));
+        lprint_string(((LispSymbol *)i)->name->GetString());
       break;
       case L_USER_FUNCTION :
       case L_SYS_FUNCTION :
@@ -1657,7 +1657,7 @@ void *concatenate(void *prog_list)
   if (rtype==string_symbol)
   {
     int elements=list_length(el_list);       // see how many things we need to concat
-    if (!elements) ret=new_lisp_string("");
+    if (!elements) ret = LispString::Create("");
     else
     {
       void **str_eval=(void **)malloc(elements*sizeof(void *));
@@ -1696,7 +1696,7 @@ void *concatenate(void *prog_list)
 
     }
       }
-      LispString *st=new_lisp_string(len+1);
+      LispString *st = LispString::Create(len+1);
       char *s=lstring_value(st);
 
       // now add the string up into the new string
@@ -2330,7 +2330,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       }
       while (dig--)
         *(tp--)='0';
-      ret=new_lisp_string(tp+1);
+      ret=LispString::Create(tp+1);
     } break;
     case SYS_FUNC_LOCAL_LOAD:
     case SYS_FUNC_LOAD:
@@ -2764,7 +2764,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
     {
       char str[20];
       sprintf(str, "%ld", (long int)lnumber_value(eval(CAR(arg_list))));
-      ret=new_lisp_string(str);
+      ret=LispString::Create(str);
     } break;
     case SYS_FUNC_NCONC:
     {
@@ -2820,7 +2820,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       if (x1 < 0 || x1 > x2 || (unsigned)x2 >= strlen(lstring_value(st)))
         lbreak("substr : bad x1 or x2 value");
 
-      LispString *s=new_lisp_string(x2-x1+2);
+      LispString *s=LispString::Create(x2-x1+2);
       if (x2-x1)
         memcpy(lstring_value(s), lstring_value(st)+x1, x2-x1+1);
 
