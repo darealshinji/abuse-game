@@ -10,6 +10,10 @@
 #ifndef __SOUND_HPP_
 #define __SOUND_HPP_
 
+#ifdef USE_SDL_MIXER
+#include <SDL/SDL_mixer.h>
+#endif
+
 /* options are passed via command line */
 
 #define SFX_INITIALIZED    1
@@ -23,6 +27,9 @@ class sound_effect
 {
   long size;
   void *data;
+#ifdef USE_SDL_MIXER
+  Mix_Chunk* chunk;
+#endif
 public :
   sound_effect(char *filename);
   void play(int volume=127, int pitch=128, int panpot=128);
@@ -35,6 +42,10 @@ class song
   char *Name;
   unsigned char *data;
   unsigned long song_id;
+#ifdef USE_SDL_MIXER
+  Mix_Music* music;
+  SDL_RWops* rw;
+#endif
 public :
   char const *name() { return Name; }
   song(char const *filename);
