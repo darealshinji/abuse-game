@@ -19,14 +19,12 @@
 #include "lisp_gc.h"
 
 LispObject *l_undefined;
-LispSymbol *true_symbol = NULL;
+LispSymbol *true_symbol = NULL, *list_symbol, *string_symbol, *quote_symbol,
+     *backquote_symbol, *comma_symbol, *do_symbol, *in_symbol, *aref_symbol,
+     *if_symbol, *progn_symbol, *car_symbol, *cdr_symbol;
 
-void *list_symbol,*string_symbol,     // in lisp_init()
-     *quote_symbol,*backquote_symbol,*comma_symbol,*do_symbol,*in_symbol,*aref_symbol,
-     *colon_initial_contents,*colon_initial_element,*if_symbol,
-     *progn_symbol,*eq_symbol,*zero_symbol,*eq0_symbol,*car_symbol,*cdr_symbol,
-     *load_warning;
-
+void *colon_initial_contents, *colon_initial_element,
+     *eq_symbol, *zero_symbol, *eq0_symbol, *load_warning;
 
 void *if_1progn,*if_2progn,*if_12progn,*not_symbol;
 

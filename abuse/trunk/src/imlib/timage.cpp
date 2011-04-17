@@ -255,7 +255,7 @@ inline uint8_t *trans_image::clip_y(image *screen, int x1, int y1, int x2, int y
   if (y+ysteps>y2)  // check to see if it gets clipped at the bottom
     ysteps-=(y+ysteps-y2-1);
 
-  screen->add_dirty(max(x,x1),y,min(x+width()-1,x2),y+h-1);
+  screen->add_dirty(Max(x,x1),y,Min(x+width()-1,x2),y+h-1);
   return datap;
 }
 

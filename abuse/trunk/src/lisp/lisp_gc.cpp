@@ -109,15 +109,15 @@ inline void *collect_cons_cell(void *x)
     ((LispRedirect *)old_x)->type = L_COLLECTED_OBJECT;
     ((LispRedirect *)old_x)->new_reference = p;
 
-    p->car = collect_object(old_car);
-    p->cdr = collect_object(old_cdr);
-    
+    p->car = (LispObject *)collect_object(old_car);
+    p->cdr = (LispObject *)collect_object(old_cdr);
+
     if (last) last->cdr = p;
     else first = p;
     last = p;
   }
   if (x)
-    last->cdr = collect_object(x);
+    last->cdr = (LispObject *)collect_object(x);
   return first;                    // we already set the collection pointers
 }
 
@@ -208,9 +208,9 @@ static void *collect_object(void *x)
     if (item_type(x) == L_CONS_CELL) // still need to remap cons_cells outside of space
     {
       for (; x && item_type(x) == L_CONS_CELL; x = CDR(x))
-        ((LispList *)x)->car = collect_object(((LispList *)x)->car);
+        ((LispList *)x)->car = (LispObject *)collect_object(((LispList *)x)->car);
       if (x)
-        ((LispList *)x)->cdr = collect_object(((LispList *)x)->cdr);
+        ((LispList *)x)->cdr = (LispObject *)collect_object(((LispList *)x)->cdr);
     }
   }
 

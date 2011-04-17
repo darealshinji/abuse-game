@@ -13,11 +13,10 @@
 #include "lisp.h"
 
 extern LispObject *l_undefined;
-extern LispSymbol *true_symbol;
+extern LispSymbol *true_symbol, *list_symbol, *string_symbol, *quote_symbol,
+     *backquote_symbol, *comma_symbol, *do_symbol, *in_symbol, *aref_symbol,
+     *if_symbol, *progn_symbol, *car_symbol, *cdr_symbol;
 
-extern void *list_symbol,*string_symbol,     // in lisp_init()
-           *quote_symbol,*backquote_symbol,*comma_symbol,*do_symbol,*in_symbol,*aref_symbol,
-       *colon_initial_contents,*colon_initial_element,*if_symbol,
-       *progn_symbol,*car_symbol,*cdr_symbol,*load_warning;
+extern void *colon_initial_contents, *colon_initial_element, *load_warning;
 
 #endif

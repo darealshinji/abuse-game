@@ -11,7 +11,6 @@
 
 #include "game.h"
 
-
 #include "netcfg.h"
 #include "input.h"
 #include "cache.h"

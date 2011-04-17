@@ -1896,19 +1896,19 @@ void Game::get_input()
                                     case LOWER_MUSIC:
                                     {
                                         if(ev.message.id == RAISE_SFX && sfx_volume != 127)
-                                            sfx_volume = min(127, sfx_volume + 16);
+                                            sfx_volume = Min(127, sfx_volume + 16);
                                         if(ev.message.id == LOWER_SFX && sfx_volume != 0)
-                                            sfx_volume = max(sfx_volume - 16, 0);
+                                            sfx_volume = Max(sfx_volume - 16, 0);
                                         if(ev.message.id == RAISE_MUSIC && music_volume != 126)
                                         {
-                                            music_volume = min(music_volume + 16, 127);
+                                            music_volume = Min(music_volume + 16, 127);
                                             if(current_song && (sound_avail & MUSIC_INITIALIZED))
                                                 current_song->set_volume(music_volume);
                                         }
 
                                         if(ev.message.id == LOWER_MUSIC && music_volume != 0)
                                         {
-                                            music_volume = max(music_volume - 16, 0);
+                                            music_volume = Max(music_volume - 16, 0);
                                             if(current_song && (sound_avail & MUSIC_INITIALIZED))
                                                 current_song->set_volume(music_volume);
                                         }
