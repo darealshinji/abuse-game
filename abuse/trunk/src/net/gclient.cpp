@@ -18,11 +18,11 @@
 #include <string.h>
 #include <signal.h>
 
-#include "netcfg.hpp"
-#include "gclient.hpp"
-#include "netface.hpp"
-#include "undrv.hpp"
-#include "timing.hpp"
+#include "netcfg.h"
+#include "gclient.h"
+#include "netface.h"
+#include "undrv.h"
+#include "timing.h"
 
 extern base_memory_struct *base;
 extern net_socket *comm_sock,*game_sock;

@@ -9,9 +9,9 @@
 
 #include "config.h"
 
-#include "image.hpp"
-#include "macs.hpp"
-#include "filter.hpp"
+#include "image.h"
+#include "macs.h"
+#include "filter.h"
 
 extern unsigned char current_background;
 

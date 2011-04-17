@@ -14,11 +14,11 @@
 
 #include <stdio.h>
 
-#include "image.hpp"
-#include "palette.hpp"
-#include "macs.hpp"
-#include "specs.hpp"
-#include "filter.hpp"
+#include "image.h"
+#include "palette.h"
+#include "macs.h"
+#include "specs.h"
+#include "filter.h"
 
 
 struct morph_point8

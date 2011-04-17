@@ -11,7 +11,7 @@
 
 #include <string.h>
 
-#include "pmenu.hpp"
+#include "pmenu.h"
 
 void pmenu::move(int new_x, int new_y)
 {

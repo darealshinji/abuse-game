@@ -26,18 +26,18 @@
 #include <sys/shm.h>
 #include <netdb.h>
 
-#include "indian.hpp"
-#include "undrv.hpp"
-#include "../include/netface.hpp"      // net interface structures to the engine will use
+#include "indian.h"
+#include "undrv.h"
+#include "../include/netface.h"      // net interface structures to the engine will use
 
-#include "../include/netface.hpp"
+#include "../include/netface.h"
 
-//#include "netdrv.hpp"
-#include "gserver.hpp"
-#include "gclient.hpp"
-#include "fileman.hpp"
-#include "sock.hpp"
-#include "tcpip.hpp"
+//#include "netdrv.h"
+#include "gserver.h"
+#include "gclient.h"
+#include "fileman.h"
+#include "sock.h"
+#include "tcpip.h"
 
 
 

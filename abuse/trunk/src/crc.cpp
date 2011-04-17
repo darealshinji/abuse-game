@@ -9,7 +9,7 @@
 
 #include "config.h"
 
-#include "crc.hpp"
+#include "crc.h"
 
 uint16_t calc_crc(uint8_t *buf, int len)
 {

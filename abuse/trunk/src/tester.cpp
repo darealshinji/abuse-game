@@ -9,7 +9,7 @@
 
 #include "config.h"
 
-#include "items.hpp"
+#include "items.h"
 
 backtile::backtile(spec_entry *e, FILE *fp)
 {

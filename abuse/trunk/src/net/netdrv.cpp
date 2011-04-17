@@ -27,12 +27,12 @@
 #include <bstring.h>
 #include <netdb.h>
 
-#include "fileman.hpp"
-#include "netdrv.hpp"
-#include "gserver.hpp"
-#include "gclient.hpp"
-#include "undrv.hpp"
-#include "tcpip.hpp"
+#include "fileman.h"
+#include "netdrv.h"
+#include "gserver.h"
+#include "gclient.h"
+#include "undrv.h"
+#include "tcpip.h"
 
 #define real2shm(type,ptr) (ptr==NULL ? NULL : ((type *)((uint8_t *)(ptr)-(uint8_t *)base)))
 #define shm2real(type,ptr) (ptr==NULL ? NULL : ((type *)((intptr_t)(ptr)+(intptr_t)(base))))

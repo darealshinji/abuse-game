@@ -9,10 +9,10 @@
 
 #include "config.h"
 
-#include "indian.hpp"
-#include "../inc/netface.hpp"      // net interface structures to the engine will use
-#include "netfile.hpp"
-#include "engine.hpp"
+#include "indian.h"
+#include "../inc/netface.h"      // net interface structures to the engine will use
+#include "netfile.h"
+#include "engine.h"
 
 // these are the names of the fifos to create in tmp
 // that communitcate with the engine

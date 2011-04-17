@@ -9,20 +9,20 @@
 
 #include "config.h"
 
-#include "timage.hpp"
-#include "objects.hpp"
-#include "chars.hpp"
+#include "timage.h"
+#include "objects.h"
+#include "chars.h"
 
-#include "game.hpp"
-#include "intsect.hpp"
-#include "ability.hpp"
-#include "lisp.hpp"
-#include "jrand.hpp"
-#include "light.hpp"
-#include "dprint.hpp"
-#include "clisp.hpp"
-#include "lisp_gc.hpp"
-#include "profile.hpp"
+#include "game.h"
+#include "intsect.h"
+#include "ability.h"
+#include "lisp.h"
+#include "jrand.h"
+#include "light.h"
+#include "dprint.h"
+#include "clisp.h"
+#include "lisp_gc.h"
+#include "profile.h"
 
 #ifdef SCADALISP
 #define LCAR(x)        CAR(x)

@@ -9,8 +9,8 @@
 
 #include "config.h"
 
-#include "pcxread.hpp"
-#include "specs.hpp"
+#include "pcxread.h"
+#include "specs.h"
 
 struct PCX_header_type
 {

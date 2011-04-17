@@ -9,7 +9,7 @@
 
 #include "config.h"
 
-#include "scroller.hpp"
+#include "scroller.h"
 #define HS_ICON_W 10
 #define HS_ICON_H 8
 

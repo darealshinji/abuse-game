@@ -12,7 +12,7 @@
 #include <time.h>
 #include <stdio.h>
 
-#include "jrand.hpp"
+#include "jrand.h"
 
 unsigned short rtable[RAND_TABLE_SIZE];
 unsigned short rand_on=0;

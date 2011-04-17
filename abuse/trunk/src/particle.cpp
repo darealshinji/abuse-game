@@ -9,12 +9,12 @@
 
 #include "config.h"
 
-#include "macs.hpp"
-#include "particle.hpp"
-#include "view.hpp"
-#include "lisp.hpp"
-#include "cache.hpp"
-#include "jrand.hpp"
+#include "macs.h"
+#include "particle.h"
+#include "view.h"
+#include "lisp.h"
+#include "cache.h"
+#include "jrand.h"
 
 
 static int total_pseqs=0;

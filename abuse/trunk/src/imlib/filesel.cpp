@@ -9,10 +9,10 @@
 
 #include "config.h"
 
-#include "filesel.hpp"
-#include "input.hpp"
-#include "scroller.hpp"
-#include "jdir.hpp"
+#include "filesel.h"
+#include "input.h"
+#include "scroller.h"
+#include "jdir.h"
 
 class file_picker : public spicker
 {

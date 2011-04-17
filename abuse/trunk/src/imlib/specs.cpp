@@ -20,11 +20,11 @@
 #   include <sys/stat.h>
 #endif
 
-#include "image.hpp"
-#include "palette.hpp"
-#include "specs.hpp"
+#include "image.h"
+#include "palette.h"
+#include "specs.h"
 #include "system.h"
-#include "dprint.hpp"
+#include "dprint.h"
 
 char const *spec_types[] =
 {

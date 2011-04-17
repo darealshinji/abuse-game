@@ -11,11 +11,11 @@
 
 #include <math.h>
 
-#include "palette.hpp"
-#include "image.hpp"
-#include "macs.hpp"
-#include "video.hpp"
-#include "filter.hpp"
+#include "palette.h"
+#include "image.h"
+#include "macs.h"
+#include "video.h"
+#include "filter.h"
 
 palette *lastl=NULL;
 

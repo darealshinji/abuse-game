@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "parse.hpp"
+#include "parse.h"
 
 char *ttype[]={"END","NUMBER","STRING","WORD","OPERATOR","LEFT BRACE","RIGHT BRACE",
             "LEFT PAREN","RIGHT_PAREN","ASSIGNMENT","COMMA"};

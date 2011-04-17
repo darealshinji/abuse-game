@@ -11,18 +11,18 @@
 
 #include <unistd.h>
 
-#include "nfserver.hpp"
+#include "nfserver.h"
 
-#include "server.hpp"
-#include "view.hpp"
-#include "dprint.hpp"
-#include "jnet.hpp"
-#include "level.hpp"
-#include "game.hpp"
-#include "jrand.hpp"
-#include "timing.hpp"
-//#include "nfserver.hpp"
-//#include "nfclient.hpp"
+#include "server.h"
+#include "view.h"
+#include "dprint.h"
+#include "jnet.h"
+#include "level.h"
+#include "game.h"
+#include "jrand.h"
+#include "timing.h"
+//#include "nfserver.h"
+//#include "nfclient.h"
 
 //nfs_server *file_server=NULL;
 

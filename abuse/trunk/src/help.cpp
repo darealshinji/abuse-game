@@ -9,9 +9,9 @@
 
 #include "config.h"
 
-#include "help.hpp"
-#include "game.hpp"
-#include "netcfg.hpp"
+#include "help.h"
+#include "game.h"
+#include "netcfg.h"
 
 int total_help_screens;
 int *help_screens;

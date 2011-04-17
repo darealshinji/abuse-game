@@ -31,11 +31,11 @@
 #   endif    /* __APPLE__ */
 #endif    /* HAVE_OPENGL */
 
-#include "filter.hpp"
+#include "filter.h"
 #include "system.h"
-#include "video.hpp"
-#include "macs.hpp"
-#include "image.hpp"
+#include "video.h"
+#include "macs.h"
+#include "image.h"
 #include "setup.h"
 
 SDL_Surface *window = NULL, *surface = NULL;

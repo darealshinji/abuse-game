@@ -17,7 +17,7 @@
 #if (defined(__APPLE__) && !defined(__MACH__))
 #   include "GUSI.h"
 #endif
-#include "tcpip.hpp"
+#include "tcpip.h"
 
 extern tcpip_protocol tcpip;
 

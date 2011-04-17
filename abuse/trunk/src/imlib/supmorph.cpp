@@ -9,13 +9,13 @@
 
 #include "config.h"
 
-#include "supmorph.hpp"
-#include "specs.hpp"
-#include "timage.hpp"
-#include "timing.hpp"
-#include "filter.hpp"
-#include "video.hpp"
-#include "jrand.hpp"
+#include "supmorph.h"
+#include "specs.h"
+#include "timage.h"
+#include "timing.h"
+#include "filter.h"
+#include "video.h"
+#include "jrand.h"
 
 #define p_swap(x,y) { x^=y; y^=x; x^=y; }
 #define p_dist(x1,y1,x2,y2) (((int)(x1)-(int)x2)*((int)(x1)-(int)x2)+      \

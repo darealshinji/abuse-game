@@ -9,10 +9,10 @@
 
 #include "config.h"
 
-#include "extend.hpp"
-#include "view.hpp"
-#include "objects.hpp"
-#include "lisp.hpp"
+#include "extend.h"
+#include "view.h"
+#include "objects.h"
+#include "lisp.h"
 
 /*
 

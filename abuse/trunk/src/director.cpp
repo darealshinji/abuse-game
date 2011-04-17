@@ -9,10 +9,10 @@
 
 #include "config.h"
 
-#include "director.hpp"
-#include "game.hpp"
-#include "lisp.hpp"
-#include "fonts.hpp"
+#include "director.h"
+#include "game.h"
+#include "lisp.h"
+#include "fonts.h"
 
 director scene_director;
 

@@ -17,12 +17,12 @@
 #include <signal.h>
 #include <sys/stat.h>
 
-#include "macs.hpp"
+#include "macs.h"
 
-#include "fileman.hpp"
-#include "netface.hpp"
-#include "ghandler.hpp"
-#include "specache.hpp"
+#include "fileman.h"
+#include "netface.h"
+#include "ghandler.h"
+#include "specache.h"
 
 extern net_protocol *prot;
 

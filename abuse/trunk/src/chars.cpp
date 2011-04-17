@@ -9,16 +9,16 @@
 
 #include "config.h"
 
-#include "chars.hpp"
-#include "game.hpp"
-#include "intsect.hpp"
-#include "lisp.hpp"
-#include "jwindow.hpp"
-#include "input.hpp"
-#include "id.hpp"
-#include "clisp.hpp"
-#include "dprint.hpp"
-#include "lisp_gc.hpp"
+#include "chars.h"
+#include "game.h"
+#include "intsect.h"
+#include "lisp.h"
+#include "jwindow.h"
+#include "input.h"
+#include "id.h"
+#include "clisp.h"
+#include "dprint.h"
+#include "lisp_gc.h"
 
 #define FADING_FRAMES 26
 #define FADING_MAX 32

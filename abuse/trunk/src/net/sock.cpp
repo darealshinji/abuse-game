@@ -11,7 +11,7 @@
 
 #include <stdlib.h>
 
-#include "sock.hpp"
+#include "sock.h"
 
 const char notify_signature[] = "I wanna play ABUSE!";
 const char notify_response[] = "Yes!";

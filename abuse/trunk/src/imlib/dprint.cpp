@@ -13,7 +13,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "macs.hpp"
+#include "macs.h"
 
 void  (*dprint_fun)(char *) = NULL;
 void  (*dget_fun)(char *,int) = NULL;

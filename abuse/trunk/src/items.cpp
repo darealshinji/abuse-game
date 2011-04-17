@@ -9,9 +9,9 @@
 
 #include "config.h"
 
-#include "items.hpp"
-#include "lisp.hpp"
-#include "dev.hpp"
+#include "items.h"
+#include "lisp.h"
+#include "dev.h"
 
 
 extern palette *pal;

@@ -9,8 +9,8 @@
 
 #include "config.h"
 
-#include "ability.hpp"
-#include "chars.hpp"
+#include "ability.h"
+#include "chars.h"
 
 /*int abil[TOTAL_OBJECTS*TOTAL_ABILITIES]= {
 /                 hp starta stopa jumpxv  jumpyv crouch_tops run_tops jmp_tops wlk_tops    /

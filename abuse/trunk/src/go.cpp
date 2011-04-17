@@ -9,11 +9,11 @@
 
 #include "config.h"
 
-#include "go.hpp"
-#include "level.hpp"
-#include "game.hpp"
-#include "id.hpp"
-#include "signals.hpp"
+#include "go.h"
+#include "level.h"
+#include "game.h"
+#include "id.h"
+#include "signals.h"
 
 #define EL_WAIT_MOVEMENT 1           // wait for the user to press up or down
 #define EL_SKIP_SIGNAL   2

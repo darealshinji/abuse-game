@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "linked.hpp"
+#include "linked.h"
 
 //
 // take a node out of the linked list, but do not dispose of the memory

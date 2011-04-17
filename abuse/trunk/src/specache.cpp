@@ -9,7 +9,7 @@
 
 #include "config.h"
 
-#include "specache.hpp"
+#include "specache.h"
 
 spec_directory_cache sd_cache;
 

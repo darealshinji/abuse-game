@@ -11,20 +11,20 @@
 
 #include <stdio.h>
 
-#include "demo.hpp"
-#include "macs.hpp"
-#include "specs.hpp"
-#include "level.hpp"
-#include "game.hpp"
-#include "dev.hpp"
-#include "timing.hpp"
-#include "fileman.hpp"
-#include "netface.hpp"
+#include "demo.h"
+#include "macs.h"
+#include "specs.h"
+#include "level.h"
+#include "game.h"
+#include "dev.h"
+#include "timing.h"
+#include "fileman.h"
+#include "netface.h"
 
-#include "gserver.hpp"
-#include "gclient.hpp"
-#include "dprint.hpp"
-#include "netcfg.hpp"
+#include "gserver.h"
+#include "gclient.h"
+#include "dprint.h"
+#include "netcfg.h"
 
 /*
 

@@ -9,17 +9,17 @@
 
 #include "config.h"
 
-#include "game.hpp"
+#include "game.h"
 
 
-#include "netcfg.hpp"
-#include "input.hpp"
-#include "cache.hpp"
-#include "sock.hpp"
-#include "timing.hpp"
-#include "light.hpp"
+#include "netcfg.h"
+#include "input.h"
+#include "cache.h"
+#include "sock.h"
+#include "timing.h"
+#include "light.h"
 
-#include "dev.hpp"
+#include "dev.h"
 
 extern char *get_login();
 net_configuration *main_net_cfg=NULL;

@@ -9,9 +9,9 @@
 
 #include "config.h"
 
-#include "volumewindow.hpp" // class VolumeWindow
-#include "property.hpp"     // class property_manager
-#include "gui.hpp"          // ico_button
+#include "volumewindow.h" // class VolumeWindow
+#include "property.h"     // class property_manager
+#include "gui.h"          // ico_button
 
 VolumeWindow::VolumeWindow() : Jwindow("Volume")
 {

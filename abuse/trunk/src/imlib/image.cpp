@@ -17,8 +17,8 @@
 #endif
 #include <stdlib.h>
 
-#include "image.hpp"
-#include "macs.hpp"
+#include "image.h"
+#include "macs.h"
 #include "system.h"
 #include "system.h"
 

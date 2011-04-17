@@ -12,14 +12,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lisp.hpp"
+#include "lisp.h"
 #ifdef NO_LIBS
-#include "fakelib.hpp"
+#include "fakelib.h"
 #else
-#include "macs.hpp"
+#include "macs.h"
 #endif
 
-#include "stack.hpp"
+#include "stack.h"
 
 /*  Lisp garbage collection: uses copy/free algorithm
     Places to check:

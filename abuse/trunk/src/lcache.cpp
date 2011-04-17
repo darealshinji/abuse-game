@@ -9,9 +9,9 @@
 
 #include "config.h"
 
-#include "lisp.hpp"
-#include "specs.hpp"
-#include "bus_type.hpp"
+#include "lisp.h"
+#include "specs.h"
+#include "bus_type.h"
 
 long block_size(Cell *level)  // return size needed to recreate this block
 {

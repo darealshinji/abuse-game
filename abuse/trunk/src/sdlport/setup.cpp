@@ -35,8 +35,8 @@
 #endif    /* __APPLE__ */
 #endif    /* HAVE_OPENGL */
 
-#include "specs.hpp"
-#include "keys.hpp"
+#include "specs.h"
+#include "keys.h"
 #include "setup.h"
 
 flags_struct flags;

@@ -9,11 +9,11 @@
 
 #include "config.h"
 
-#include "game.hpp"
-#include "control.hpp"
-#include "specs.hpp"
-#include "hpoint.hpp"
-#include "ability.hpp"
+#include "game.h"
+#include "control.h"
+#include "specs.h"
+#include "hpoint.h"
+#include "ability.h"
 
 #define FADING_FRAMES 20
 #define FADING_MAX 30

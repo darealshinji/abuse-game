@@ -11,16 +11,16 @@
 
 #include <stdlib.h>
 
-#include "light.hpp"
-#include "image.hpp"
-#include "macs.hpp"
-#include "video.hpp"
-#include "palette.hpp"
-#include "timing.hpp"
-#include "specs.hpp"
-#include "dprint.hpp"
-#include "filter.hpp"
-#include "video.hpp"
+#include "light.h"
+#include "image.h"
+#include "macs.h"
+#include "video.h"
+#include "palette.h"
+#include "timing.h"
+#include "specs.h"
+#include "dprint.h"
+#include "filter.h"
+#include "video.h"
 
 light_source *first_light_source=NULL;
 unsigned char *white_light,*green_light;

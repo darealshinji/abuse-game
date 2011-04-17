@@ -12,9 +12,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "property.hpp"
-#include "dprint.hpp"
-#include "game.hpp"
+#include "property.h"
+#include "dprint.h"
+#include "game.h"
 
 class property
 {

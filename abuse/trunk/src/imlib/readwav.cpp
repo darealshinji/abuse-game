@@ -9,10 +9,10 @@
 
 #include "config.h"
 
-#include "readwav.hpp"
-#include "specs.hpp"
-#include "macs.hpp"
-#include "dprint.hpp"
+#include "readwav.h"
+#include "specs.h"
+#include "macs.h"
+#include "dprint.h"
 
 struct wav_chunk
 {

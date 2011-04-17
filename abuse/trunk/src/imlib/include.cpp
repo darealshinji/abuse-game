@@ -9,7 +9,7 @@
 
 #include "config.h"
 
-#include "include.hpp"
+#include "include.h"
 #include "ctype.h"
 
 void write_include(image *im, palette *pal, char *filename, char *name)

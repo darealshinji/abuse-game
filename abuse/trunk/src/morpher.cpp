@@ -9,10 +9,10 @@
 
 #include "config.h"
 
-#include "morpher.hpp"
-#include "game.hpp"
-#include "objects.hpp"
-#include "view.hpp"
+#include "morpher.h"
+#include "game.h"
+#include "objects.h"
+#include "view.h"
 
 void morph_char::draw(game_object *who, view *v)
 {

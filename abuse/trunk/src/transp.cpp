@@ -9,7 +9,7 @@
 
 #include "config.h"
 
-#include "transp.hpp"
+#include "transp.h"
 
 void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
 {

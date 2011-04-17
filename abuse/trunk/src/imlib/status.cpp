@@ -11,9 +11,9 @@
 
 #include <string.h>
 
-#include "macs.hpp"
-#include "status.hpp"
-#include "dprint.hpp"
+#include "macs.h"
+#include "status.h"
+#include "dprint.h"
 
 status_manager *stat_man=NULL;
 

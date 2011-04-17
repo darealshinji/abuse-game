@@ -11,23 +11,23 @@
 
 #include <stdlib.h>
 
-#include "light.hpp"
-#include "image.hpp"
-#include "macs.hpp"
-#include "video.hpp"
-#include "palette.hpp"
-#include "timing.hpp"
-#include "specs.hpp"
-#include "dprint.hpp"
-#include "filter.hpp"
-#include "status.hpp"
-#include "dev.hpp"
+#include "light.h"
+#include "image.h"
+#include "macs.h"
+#include "video.h"
+#include "palette.h"
+#include "timing.h"
+#include "specs.h"
+#include "dprint.h"
+#include "filter.h"
+#include "status.h"
+#include "dev.h"
 
 light_source *first_light_source=NULL;
 uint8_t *white_light,*white_light_initial,*green_light,*trans_table;
 short ambient_ramp=0;
 short shutdown_lighting_value,shutdown_lighting=0;
-extern char disable_autolight;   // defined in dev.hpp
+extern char disable_autolight;   // defined in dev.h
 
 int light_detail=MEDIUM_DETAIL;
 

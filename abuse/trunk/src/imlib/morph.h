@@ -10,7 +10,7 @@
 #ifndef __MORPH_H_
 #define __MORPH_H_
 
-#include "image.hpp"
+#include "image.h"
 struct point
 {
   short sx,sy,ex,ey;    /* starting x -ending x */

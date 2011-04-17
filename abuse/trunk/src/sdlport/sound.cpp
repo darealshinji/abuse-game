@@ -24,12 +24,12 @@
 #include <SDL.h>
 #ifdef USE_SDL_MIXER
 #include <SDL/SDL_mixer.h>
-#include "hmi.hpp"
+#include "hmi.h"
 #endif
 
-#include "sound.hpp"
-#include "readwav.hpp"
-#include "specs.hpp"
+#include "sound.h"
+#include "readwav.h"
+#include "specs.h"
 #include "setup.h"
 
 class effect_handle

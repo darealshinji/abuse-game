@@ -17,15 +17,15 @@
 #include <ctype.h>
 
 #include "system.h"
-#include "netface.hpp"
+#include "netface.h"
 
-#include "specs.hpp"
-#include "nfserver.hpp"
-#include "dprint.hpp"
-#include "crc.hpp"
-#include "cache.hpp"
+#include "specs.h"
+#include "nfserver.h"
+#include "dprint.h"
+#include "crc.h"
+#include "cache.h"
 
-#include "gserver.hpp"
+#include "gserver.h"
 
 void remove_client(int client_number) { ; }
 
