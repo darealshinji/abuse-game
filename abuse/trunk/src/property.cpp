@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -65,7 +66,7 @@ class property
 
 property *property_manager::find(char const *name)
 {
-  for (property *i=first;i;i=i->next)
+  for (property *i=first; i; i=i->next)
     if (!strcmp(i->name,name))
       return i;
   return NULL;
@@ -134,7 +135,7 @@ void property_manager::save(char const *filename)
     dprintf("Error opening %s to save properties\n",filename);
   else
   {
-    for (property *i=first;i;i=i->next)
+    for (property *i=first; i; i=i->next)
     {
       fprintf(fp,"%s = ",i->name);
       if (i->def_str)
@@ -157,16 +158,16 @@ void property_manager::load(char const *filename)
     {
       if (fgets(buf,100,fp))
       {
-    for (c1=buf,c2=name;*c1 && *c1!='=';c1++,c2++)
+    for (c1=buf,c2=name; *c1 && *c1!='='; c1++,c2++)
       *c2=*c1;
     if (*c1==0) { fprintf(stderr,"Missing = for property line %s in file %s\n",buf,filename);
-              exit(1);}
+              exit(1); }
     *c2=' ';
     while (*c2==' ') { *c2=0; c2--; }
     c1++; while (*c1==' ') c1++;
     if (*c1=='"')
     { c1++;
-      for (c2=str;*c1 && *c1!='"';c1++,c2++)
+      for (c2=str; *c1 && *c1!='"'; c1++,c2++)
         *c2=*c1;
       *c2=0;
       if (*c1!='"') { fprintf(stderr,"Missing \" for property name %s in file %s\n",name,filename);
@@ -181,8 +182,8 @@ void property_manager::load(char const *filename)
       {
         fprintf(stderr,"Bad number/string for property name %s in file %s\n",name,filename);
         exit(1);
-      }    
-    }            
+      }
+    }
       }
     }
   }

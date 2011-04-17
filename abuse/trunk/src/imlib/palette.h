@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -85,7 +86,7 @@ public :
     unsigned char r=0, unsigned char g=0, unsigned char b=0);
   void total(int &tnodes, int &tr, int &tg, int &tb);
 //  void prune();
-  void set(int r,int g,int b) {red=r; green=g; blue=b; }
+  void set(int r,int g,int b) { red=r; green=g; blue=b; }
   unsigned char red,green,blue;
   ~quant_node();
 } ;

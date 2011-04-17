@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -23,7 +24,7 @@ static part_animation *first_anim=NULL,*last_anim=NULL;
 
 void free_pframes()
 {
-  for (int i=0;i<total_pseqs;i++)
+  for (int i=0; i<total_pseqs; i++)
     delete pseqs[i];
   if (total_pseqs)
     free(pseqs);
@@ -102,12 +103,12 @@ part_sequence::part_sequence(void *args)
   delete fp;
   tframes=0;
   int i=0;
-  for (;i<sd.total;i++)
+  for (; i<sd.total; i++)
     if (sd.entries[i]->type==SPEC_PARTICLE) tframes++;
   frames=(int *)malloc(sizeof(int)*tframes);
 
   int on=0;
-  for (i=0;i<sd.total;i++)
+  for (i=0; i<sd.total; i++)
     if (sd.entries[i]->type==SPEC_PARTICLE)
       frames[on++]=cache.reg(fn,sd.entries[i]->name,SPEC_PARTICLE,1);
 
@@ -118,7 +119,7 @@ part_frame::part_frame(bFILE *fp)
   t=fp->read_uint32();
   data=(part *)malloc(sizeof(part)*t);
   x1=y1=100000; x2=y2=-100000;
-  for (int i=0;i<t;i++)
+  for (int i=0; i<t; i++)
   {
     int16_t x=fp->read_uint16();
     int16_t y=fp->read_uint16();
@@ -135,7 +136,7 @@ part_frame::part_frame(bFILE *fp)
 void tick_panims()
 {
   part_animation *last=NULL;
-  for (part_animation *p=first_anim;p;)
+  for (part_animation *p=first_anim; p; )
   {
     p->frame++;
     if (p->frame>=p->seq->tframes)
@@ -158,7 +159,7 @@ void tick_panims()
 
 void draw_panims(view *v)
 {
-  for (part_animation *p=first_anim;p;p=p->next)
+  for (part_animation *p=first_anim; p; p=p->next)
   {
     cache.part(p->seq->frames[p->frame])->draw(screen,p->x-v->xoff()+v->cx1,p->y-v->yoff()+v->cy1,p->dir);
   }

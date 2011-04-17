@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -16,7 +17,7 @@
 tool_picker::~tool_picker()
 { delete old_pal;
   delete map;
-  for (int i=0;i<total_icons;i++)
+  for (int i=0; i<total_icons; i++)
     delete icons[i];                   // delete visual object, which should be a "shell"
 }
 
@@ -36,7 +37,7 @@ tool_picker::tool_picker(int X, int Y, int ID,
   icons=Icons;
   ids=Ids;
   total_icons=total_ic;
-  for (int i=0;i<total_ic;i++)
+  for (int i=0; i<total_ic; i++)
   {
     if (icons[i]->width()>iw) iw=icons[i]->width();
     if (icons[i]->height()>ih) ih=icons[i]->height();

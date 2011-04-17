@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -18,7 +19,7 @@ void write_include(image *im, palette *pal, char *filename, char *name)
   strcpy(tmp_name,name);
   unsigned int j;
   int append=0,i;
-  for (j=0;j<strlen(name);j++)
+  for (j=0; j<strlen(name); j++)
     if (toupper(tmp_name[j])<'A' || toupper(tmp_name[j])>'Z')
       tmp_name[j]='_';
 
@@ -40,7 +41,7 @@ void write_include(image *im, palette *pal, char *filename, char *name)
     {
       fprintf(fp,"unsigned char %s_palette[256*3] = {\n    ",tmp_name);
       unsigned char *p=(unsigned char *)pal->addr();
-      for (i=0;i<768;i++,p++)
+      for (i=0; i<768; i++,p++)
       {
     fprintf(fp,"%d",(int)*p);
     if (i==767)
@@ -54,8 +55,8 @@ void write_include(image *im, palette *pal, char *filename, char *name)
     fprintf(fp,"unsigned char %s[%d*%d]={\n    ",tmp_name,
             im->width(),im->height());
     int x,y,max=im->width()*im->height()-1;
-    for (y=0,i=0;y<im->height();y++)
-      for (x=0;x<im->width();x++,i++)
+    for (y=0,i=0; y<im->height(); y++)
+      for (x=0; x<im->width(); x++,i++)
       {
         fprintf(fp,"%d",(int)im->pixel(x,y));
         if (i==max)

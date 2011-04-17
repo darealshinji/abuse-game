@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -25,7 +26,7 @@
 / sensor  /      0,      0,    0,    0,       0,     0,        0,       0,       0,
 / elcontrol /    0,      0,    0,    0,       0,     0,        0,       0,       0,
 / no type  /     0,      0,    0,    0,       0,     0,        0,       0,       0
-} ;*/
+} ; */
 
 
 char const *ability_names[TOTAL_ABILITIES] =
@@ -40,7 +41,7 @@ char const *ability_names[TOTAL_ABILITIES] =
 
 
 long abil_def[TOTAL_ABILITIES]=
-   {6,   3,     4,    2,    -16,   10,       6,         0,
+   { 6,   3,     4,    2,    -16,   10,       6,         0,
 /* hp starta stopa jumpxv  jumpyv run_tops jmp_tops blood_type */
 
 /* push_xrange wlk_tops */

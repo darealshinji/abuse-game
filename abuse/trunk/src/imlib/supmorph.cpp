@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -38,7 +39,7 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
   memset(hints2,0,256*2);
 
   dp=hint1->t_data();
-  for (y=0;y<h1;y++)
+  for (y=0; y<h1; y++)
   {
     x=0;
     while (x<w1)
@@ -55,7 +56,7 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
 
   // hint2 image2
   dp=hint2->t_data();
-  for (y=0;y<h2;y++)
+  for (y=0; y<h2; y++)
   {
     x=0;
     while (x<w2)
@@ -77,7 +78,7 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
                  start=0,*h1p=hints1,*h2p=hints2;
   unsigned char hint_color[256],total_hints=0;
 
-  for (y=0;y<256;y++,h1p++,h2p++)
+  for (y=0; y<256; y++,h1p++,h2p++)
     if (*h1p)
     {
       if (*h2p==0)
@@ -99,7 +100,7 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
 
   /**************** Now scan the images again setup hints *********************/
   dp=hint1->t_data();
-  for (y=0;y<h1;y++)
+  for (y=0; y<h1; y++)
   {
     x=0;
     while (x<w1)
@@ -121,7 +122,7 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
   }
 
   dp=hint2->t_data();
-  for (y=0;y<h2;y++)
+  for (y=0; y<h2; y++)
   {
     x=0;
     while (x<w2)
@@ -143,28 +144,28 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
   }
 
   /********* if hint sizes don't match duplicate the smaller until sizes are equal **********/
-  for (start=0,x=0;x<total_hints;x++)
+  for (start=0,x=0; x<total_hints; x++)
   {
     y=hint_color[x];
     int dups;
-    for (dp=movers+start1[y]*4,dups=totals[y]-hints1[y];dups;dups--)
+    for (dp=movers+start1[y]*4,dups=totals[y]-hints1[y]; dups; dups--)
     {
       *dp=*(dp-4); dp++;      // copy previous x,y position
       *dp=*(dp-4); dp++;
-      dp+=2;    
+      dp+=2;
     }
     start1[y]-=2*totals[y]-hints1[y];        // set the start back to the begining of hint range
   }
 
-  for (start=0,x=0;x<total_hints;x++)
+  for (start=0,x=0; x<total_hints; x++)
   {
     y=hint_color[x];
     int dups;
-    for (dp=movers+start2[y]*4+2,dups=totals[y]-hints2[y];dups;dups--)
+    for (dp=movers+start2[y]*4+2,dups=totals[y]-hints2[y]; dups; dups--)
     {
       *dp=*(dp-4); dp++;      // copy previous x,y position
       *dp=*(dp-4); dp++;
-      dp+=2;    
+      dp+=2;
     }
     start2[y]-=hints2[y];        // set the start back to the begining of hint range
   }
@@ -172,17 +173,17 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
 
   /******* Now apply simulated annealing to solve for a smaller total distance ********/
   int rand_on=0;
-  for (y=0;y<aneal_steps;y++)
+  for (y=0; y<aneal_steps; y++)
   {
     if (stat_fun)
       stat_fun(y);
     dp=movers;
-    for (x=0;x<total_hints;x++)
+    for (x=0; x<total_hints; x++)
     {
       int hc=hint_color[x];
       int a,z=totals[hc];
       unsigned char *range_start=dp;
-      for (a=0;a<z;a++,dp+=4)
+      for (a=0; a<z; a++,dp+=4)
       {
     unsigned char *swap=range_start+(rtable[((rand_on++)&(RAND_TABLE_SIZE-1))]%z)*4;
     int d_old=p_dist(dp[0],dp[1],dp[2],dp[3])+p_dist(swap[0],swap[1],swap[2],swap[3]);
@@ -209,7 +210,7 @@ smorph_player::smorph_player(super_morph *m, palette *pal, image *i1, image *i2,
   t=m->t;
   w=m->w; h=m->h;
 
-  for (i=0;i<t;i++,p++)
+  for (i=0; i<t; i++,p++)
   {
     x1=*(d++);
     y1=*(d++);
@@ -265,7 +266,7 @@ int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette 
     stepper *ss;
     memset(hole,0,w*h);
     unsigned char *paddr=(unsigned char *)pal->addr();
-    for (ss=steps,i=0;i<t;i++,ss++)
+    for (ss=steps,i=0; i<t; i++,ss++)
     {
       ix=(ss->x>>(16));
       iy=(ss->y>>(16));
@@ -288,9 +289,9 @@ int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette 
       return 1;
 
     unsigned char *ll=hole+1,*tl=hole+w+1,*nl=hole+w*2+1;
-    for (iy=1;iy<h-1;iy++)    // now scan the for holes to fill
+    for (iy=1; iy<h-1; iy++)    // now scan the for holes to fill
     {
-      for (ix=1;ix<w-1;ix++,ll++,tl++,nl++)
+      for (ix=1; ix<w-1; ix++,ll++,tl++,nl++)
       {
     if (x+ix>=x1 && x+ix<=x2 && y+iy>=y1 && y+iy<=y2)
     {
@@ -300,12 +301,12 @@ int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette 
 /*      if (*(tl-1)) t++;
       if (*(tl+1)) t++;
       if (*ll) t++;
-      if (*nl) t++;*/
+      if (*nl) t++; */
 
       if (*(tl-1)) { t++; pa=paddr+(*(tl-1))*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
       if (*(tl+1)) { t++; pa=paddr+(*(tl+1))*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
       if (*(ll)) { t++; pa=paddr+(*ll)*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
-      if (*(nl)) { t++; pa=paddr+(*nl)*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }    
+      if (*(nl)) { t++; pa=paddr+(*nl)*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
 
       if (*tl)
       {

@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -99,7 +100,7 @@ main(int argc, char **argv)
     return 0;
 
   int no_fork=0,i;
-  for (i=1;i<argc;i++)
+  for (i=1; i<argc; i++)
     if (!strcmp(argv[i],"-no_fork"))    // use this to debug easier
       no_fork=1;
 
@@ -128,7 +129,7 @@ main(int argc, char **argv)
   int game_port=-1;
   int debug=0;
 
-  for (i=1;i<argc-1;i++)
+  for (i=1; i<argc-1; i++)
     if (!strcmp(argv[i],"-port"))
     {
       comm_port=atoi(argv[i+1]);
@@ -179,17 +180,17 @@ main(int argc, char **argv)
     uchar client_type;
     if (new_sock->read(&client_type,1)!=1)
     {
-      delete addr;    
+      delete addr;
       delete new_sock;
     }
     else if (client_type==CLIENT_NFS)
     {
-      delete addr;    
+      delete addr;
       fman->add_nfs_client(new_sock);
     }
     else if (!driver || !driver->add_client(client_type,new_sock,addr))
     {
-      delete addr;    
+      delete addr;
       delete new_sock;
     }
       }

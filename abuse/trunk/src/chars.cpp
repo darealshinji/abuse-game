@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -44,9 +45,9 @@ char const *state_names[MAX_STATE] =
 /*                   "start_still_jump","still_jump","still_jump_fall","end_still_jump",
 
                    "morph_pose",
-            
+
                    "walking",
-            
+
 
                    "weapon_draw",
                    "weapon_put_away",
@@ -149,7 +150,7 @@ int character_type::cache_in()    // returns false if out of cache memory
     return 1;
   cflags|=1<<CFLAG_CACHED_IN;
 
-  for (i=0;i<ts;i++)
+  for (i=0; i<ts; i++)
   {
     if (seq[i])
       seq[i]->cache_in();
@@ -249,7 +250,7 @@ void character_type::add_var(void *symbol, void *name)
   {
     /* locate a free index in the index list */
     int free_index=tiv;
-    for (int i=0;i<tiv;i++)
+    for (int i=0; i<tiv; i++)
       if (!vars[i] && i<tiv) free_index=i;
     if (free_index==tiv)
     {
@@ -278,12 +279,12 @@ void character_type::add_var(void *symbol, void *name)
 long character_type::isa_var_name(char *name)
 {
   int i=0;
-  for (;i<TOTAL_OBJECT_VARS;i++)
+  for (; i<TOTAL_OBJECT_VARS; i++)
   {
     if (!strcmp(object_descriptions[i].name,name))
       return 1;
   }
-  for (i=0;i<tiv;i++)
+  for (i=0; i<tiv; i++)
     if (!strcmp(lstring_value(((LSymbol *)vars[i])->GetName()),name))
       return 1;
   return 0;
@@ -320,11 +321,11 @@ character_type::character_type(void *args, void *name)
   rangex=rangey=0;
   draw_rangex=draw_rangey=0;
 
-  for (i=0;i<TOTAL_ABILITIES;i++)
+  for (i=0; i<TOTAL_ABILITIES; i++)
     abil[i]=get_ability_default((ability)i);
   void *field=args;
   PtrRef r7(field);
-  for (;field;field=CDR(field))
+  for (; field; field=CDR(field))
   {
     void *f=CAR(CAR(field));
     PtrRef r1(f);
@@ -333,7 +334,7 @@ character_type::character_type(void *args, void *name)
     {
       void *l=CDR(CAR(field));
       PtrRef r4(l);
-      for (i=0;i<TOTAL_ABILITIES;i++)
+      for (i=0; i<TOTAL_ABILITIES; i++)
       {
     Cell *ab=assoc(LSymbol::FindOrCreate(ability_names[i]),l);
     PtrRef r5(ab);
@@ -344,7 +345,7 @@ character_type::character_type(void *args, void *name)
     {
       void *l=CDR(CAR(field));
       PtrRef r4(l);
-      for (i=0;i<TOTAL_OFUNS;i++)
+      for (i=0; i<TOTAL_OFUNS; i++)
       {
     Cell *ab=assoc(LSymbol::FindOrCreate(ofun_names[i]),l);
     PtrRef r5(ab);
@@ -355,7 +356,7 @@ character_type::character_type(void *args, void *name)
     {
       void *l=CDR(CAR(field));
       PtrRef r4(l);
-      for (i=0;i<TOTAL_CFLAGS;i++)
+      for (i=0; i<TOTAL_CFLAGS; i++)
       {
     Cell *ab=assoc(LSymbol::FindOrCreate(cflag_names[i]),l);
     PtrRef r5(ab);
@@ -501,7 +502,7 @@ character_type::character_type(void *args, void *name)
     {
       char *name=lstring_value(lcar(lcar(mf)));
       int t=default_simple.total_vars(),find=-1;
-      for (int i=0;find<0 && i<t;i++)
+      for (int i=0; find<0 && i<t; i++)
         if (!strcmp(default_simple.var_name(i),name))
       find=i;
       if (find<0)
@@ -509,7 +510,7 @@ character_type::character_type(void *args, void *name)
     lprint(assoc(l_fields,desc));
     printf("fields : no such var name \"%s\"\n",name);
     printf("current possiblities are : \n");
-    for (int i=0;i<t;i++) printf("\"%s\" ",default_simple.var_name(i));
+    for (int i=0; i<t; i++) printf("\"%s\" ",default_simple.var_name(i));
     printf("\n");
     exit(0);
       }
@@ -550,14 +551,14 @@ sequence *character_type::get_sequence(character_state s)
 
 character_type::~character_type()
 {
-  for (int i=0;i<ts;i++)
+  for (int i=0; i<ts; i++)
     if (seq[i])
       delete seq[i];
   if (ts) free(seq);
 
   if (total_fields)
   {
-    for (int i=0;i<total_fields;i++)
+    for (int i=0; i<total_fields; i++)
       delete fields[i];
     free(fields);
   }

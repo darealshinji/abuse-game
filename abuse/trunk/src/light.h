@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -70,7 +71,7 @@ void read_lights(spec_directory *sd, bFILE *fp, char const *level_name);
 
 void delete_patch_list(light_patch *first);
 light_patch *find_patch(int screenx, int screeny, light_patch *list);
-int calc_light_value(int32_t x, int32_t y, light_patch *which);            
+int calc_light_value(int32_t x, int32_t y, light_patch *which);
 void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient);
 void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient,
              image *out, int32_t out_x, int32_t out_y);

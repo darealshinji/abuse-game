@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -46,7 +47,7 @@ void status_bar::load()
   else strcpy(sbname,"art/statbar.spe");
 
   int i;
-  for (i=0;i<TOTAL_WEAPONS;i++)
+  for (i=0; i<TOTAL_WEAPONS; i++)
   {
     sprintf(iname,"bweap%04d.pcx",i+1);
     bweap[i]=cache.reg(sbname,iname,SPEC_IMAGE);
@@ -55,7 +56,7 @@ void status_bar::load()
     dweap[i]=cache.reg(sbname,iname,SPEC_IMAGE);
   }
 
-  for (i=0;i<30;i++)
+  for (i=0; i<30; i++)
   {
     sprintf(iname,"bnum%02d",i);
     bnum[i]=cache.reg(sbname,iname,SPEC_IMAGE);
@@ -137,11 +138,11 @@ void status_bar::redraw(image *screen)
     {
       ammo_x=sx+52*2;
       ammo_y=sy+25*2;
-    } else {ammo_x=sx+52; ammo_y=sy+25; }
+    } else { ammo_x=sx+52; ammo_y=sy+25; }
 
     int i,x_on=sx+wx,t=TOTAL_WEAPONS;
     if (t>=total_weapons) t=total_weapons;
-    for (i=0;i<t;i++,x_on+=wa,ammo_x+=wa)
+    for (i=0; i<t; i++,x_on+=wa,ammo_x+=wa)
     {
       if (v->has_weapon(i))
       {
@@ -149,7 +150,7 @@ void status_bar::redraw(image *screen)
         scale_put_trans(cache.img(bweap[i]),screen,x_on,sy,ww,wh);
     else
         scale_put_trans(cache.img(dweap[i]),screen,x_on,sy,ww,wh);
-    
+
     scale_put_trans(cache.img(sbar_numpad),screen,x_on-2,sy+np_yo,np_w,np_h);
 
     if (v->current_weapon==i)

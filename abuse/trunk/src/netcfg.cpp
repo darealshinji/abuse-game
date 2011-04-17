@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -193,7 +194,7 @@ extern int start_running,demo_start,start_edit;
 
   wm->close_window(sv);
   wm->flush_screen();
-    
+
   if (state==RESTART_SINGLE)
   {
     strcpy(lsf,"abuse.lsp");
@@ -222,7 +223,7 @@ extern int start_running,demo_start,start_edit;
   }
 
   ifield *i=ilist;
-  for (;i;i=i->next)
+  for (; i; i=i->next)
   {
     i->y=y;
     int x1,y1,x2,y2;
@@ -269,7 +270,7 @@ void net_configuration::error(char const *message)
 
   uint8_t *sl=screen->scan_line(0);
   int xx=screen->width()*screen->height();
-  for (;xx;xx--,sl++) *sl=remap[*sl];
+  for (; xx; xx--,sl++) *sl=remap[*sl];
 
   int fx=x+ns_w/2-strlen(message)*fnt->width()/2,
     fy=y+ns_h/2-fnt->height();
@@ -393,7 +394,7 @@ int net_configuration::get_options(int server)
 
 
 
-                
+
   } else
   {
     list=center_ifield(new text_field(x,y+80,NET_NAME,symbol_str("your_name"),"************************",name,list),x,x+ns_w,NULL);
@@ -422,10 +423,10 @@ int net_configuration::get_options(int server)
     switch (ev.message.id)
     {
       case NET_OK : { if (confirm_inputs(&inm,server))
-          { ret=1; done=1; }             
+          { ret=1; done=1; }
           else { ((button *)inm.get(NET_OK))->push(); inm.redraw(); }
           } break;
-      case NET_CANCEL : done=1;    
+      case NET_CANCEL : done=1;
     }
       } if (ev.type==EV_KEY && ev.key==JK_ESC) done=1;
 
@@ -521,7 +522,7 @@ int net_configuration::input()   // pulls up dialog box and input fileds
           inm.add(new button(x+ns_w/2-bw/2,y+button_y,NET_GAME+total_games,name,NULL));
           find->set_port(server_port);
           game_addr[total_games]=find;
-            
+
           total_games++;
           button_y+=fnt->height()+10;
           inm.redraw();
@@ -544,27 +545,27 @@ int net_configuration::input()   // pulls up dialog box and input fileds
           char name[256];
           net_address *find=prot->find_address(0x9090,name);  // was server_port
           if (find)
-          {    
+          {
             if (find->equal(game_addr[join_game]))
               still_there=1;
             delete find;
           }
-            
+
         } while (now.diff_time(&start)<3 && !still_there);
-            
+
         if (still_there)
         {
           game_addr[join_game]->store_string(server_name,sizeof(server_name));
           state=RESTART_CLIENT;
           ret=1;
-            
+
         } else error(symbol_str("not_there"));
-            
-            
+
+
         prot->reset_find_list();
         int i;
-        for (i=0;i<total_games;i++)        // delete all the addresses we found and stored
-          delete game_addr[join_game];    
+        for (i=0; i<total_games; i++)        // delete all the addresses we found and stored
+          delete game_addr[join_game];
       }
     } else if (ev.type==EV_MESSAGE && ev.message.id==NET_SERVER)
     {

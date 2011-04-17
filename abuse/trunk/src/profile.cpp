@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -67,7 +68,7 @@ void profile_init()
 void profile_reset()
 {
   int i;
-  for (i=0;i<total_objects;i++)
+  for (i=0; i<total_objects; i++)
   {
     prof_list[i].otype=i;
     prof_list[i].total_time=0;
@@ -119,7 +120,7 @@ void profile_update()
 
   prof_win->screen->bar(0,prof_win->y1(),prof_win->screen->width()-1,prof_win->screen->height(),0);
   int dy = 0;
-  for (;i<prof_height;i++)
+  for (; i<prof_height; i++)
   {
     console_font->put_string(prof_win->screen,spliter+1,dy,object_names[prof_list[i].otype]);
     prof_win->screen->bar(spliter-1-(int)(prof_list[i].total_time*time_scaler),dy+1,

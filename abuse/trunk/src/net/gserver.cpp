@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -102,7 +103,7 @@ void game_server::check_collection_complete()
   player_client *c;
   int got_all=waiting_server_input==0;
   int add_deletes=0;
-  for (c=player_list;c && got_all;c=c->next)
+  for (c=player_list; c && got_all; c=c->next)
   {
     if (c->delete_me())
       add_deletes=1;
@@ -113,7 +114,7 @@ void game_server::check_collection_complete()
   if (add_deletes)
   {
     player_client *last=NULL;
-    for (c=player_list;c;)
+    for (c=player_list; c; )
     {
       if (c->delete_me())
       {
@@ -142,7 +143,7 @@ void game_server::check_collection_complete()
   {
     base->packet.calc_checksum();
 
-    for (c=player_list;c;c=c->next)      // setup for next time, wait for all the input
+    for (c=player_list; c; c=c->next)      // setup for next time, wait for all the input
     {
       if (c->has_joined())
       {
@@ -180,7 +181,7 @@ void game_server::add_client_input(char *buf, int size, player_client *c)
 void game_server::check_reload_wait()
 {
   player_client *d=player_list;
-  for (;d;d=d->next)
+  for (; d; d=d->next)
    if (d->wait_reload()) return ;    // we are still waiting for someone to reload the game
   base->wait_reload=0;
 }
@@ -255,12 +256,12 @@ int game_server::process_net()
     if (rec_crc==use->calc_checksum())
     {
       player_client *f=player_list,*found=NULL;
-      for (;!found &&f;f=f->next)
+      for (; !found &&f; f=f->next)
       if (f->has_joined() && from->equal(f->data_address))
         found=f;
       if (found)
       {
-        if (base->current_tick==use->tick_received())      
+        if (base->current_tick==use->tick_received())
         {
           if (prot->debug_level(net_protocol::DB_MINOR_EVENT))
             fprintf(stderr,"(got data from %d)",found->client_id);
@@ -275,7 +276,7 @@ int game_server::process_net()
         else if (use->tick_received()==base->last_packet.tick_received())
         {
           if (prot->debug_level(net_protocol::DB_IMPORTANT_EVENT))
-            fprintf(stderr,"(sending old %d)\n",use->tick_received());    
+            fprintf(stderr,"(sending old %d)\n",use->tick_received());
 
           // if they are sending stale data we need to send them the last packet so they can catchup
           net_packet *pack=&base->last_packet;
@@ -308,7 +309,7 @@ int game_server::process_net()
 
   /**************************       Any client with commands?       **************************/
   player_client *c;
-  for (c=player_list;c;c=c->next)
+  for (c=player_list; c; c=c->next)
     if (c->comm->error() || (c->comm->ready_to_read() && !process_client_command(c)))
     {
       c->set_delete_me(1);
@@ -333,7 +334,7 @@ int game_server::end_reload(int disconnect)  // notify evryone you've reloaded t
   player_client *c=player_list;
   prot->select(0);
 
-  for (;c;c=c->next)
+  for (; c; c=c->next)
     if (!c->delete_me() && c->wait_reload())
     {
       if (disconnect)
@@ -341,7 +342,7 @@ int game_server::end_reload(int disconnect)  // notify evryone you've reloaded t
       else return 0;
     }
 
-  for (c=player_list;c;c=c->next)
+  for (c=player_list; c; c=c->next)
     c->set_has_joined(1);
   reload_state=0;
 
@@ -354,7 +355,7 @@ int game_server::start_reload()
   reload_state=1;
   prot->select(0);
 
-  for (;c;c=c->next)
+  for (; c; c=c->next)
   {
     if (!c->delete_me() && c->need_reload_start_ok())    // if the client is already waiting for reload state to start, send ok
     {
@@ -372,7 +373,7 @@ int game_server::isa_client(int client_id)
 {
   player_client *c=player_list;
   if (!client_id) return 1;
-  for (;c;c=c->next) if (c->client_id==client_id) return 1;
+  for (; c; c=c->next) if (c->client_id==client_id) return 1;
   return 0;
 }
 
@@ -451,7 +452,7 @@ int game_server::add_client(int type, net_socket *sock, net_address *from)
 int game_server::kill_slackers()
 {
   player_client *c=player_list;
-  for (;c;c=c->next)
+  for (; c; c=c->next)
     if (c->wait_input())
       c->set_delete_me(1);
   check_collection_complete();

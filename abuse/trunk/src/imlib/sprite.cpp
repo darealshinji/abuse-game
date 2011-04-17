@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -48,13 +49,13 @@ void sprite_controller::add_sprite(sprite *sp)
 { sprites.add_end((linked_node *)sp); }
 
 void sprite_controller::remove_sprites()
-{ sprite *sp; loopt(sprite,sp,sprites.first(),sp->restore_background();); }
+{ sprite *sp; loopt(sprite,sp,sprites.first(),sp->restore_background(); ); }
 
 void sprite_controller::put_sprites()
-{ sprite *sp; loopt(sprite,sp,sprites.first(),sp->draw();); }
+{ sprite *sp; loopt(sprite,sp,sprites.first(),sp->draw(); ); }
 
 void sprite_controller::get_backgrounds()
-{ sprite *sp; loopt(sprite,sp,sprites.first(),sp->get_background();); }
+{ sprite *sp; loopt(sprite,sp,sprites.first(),sp->get_background(); ); }
 
 void sprite::change_visual(image *Visual, int delete_old)
 { if (delete_old)

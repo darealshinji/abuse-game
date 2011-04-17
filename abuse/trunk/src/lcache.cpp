@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -24,12 +25,12 @@ long block_size(Cell *level)  // return size needed to recreate this block
     {
     long t=0;
     void *b=level;
-    for (;b && item_type(b)==L_CONS_CELL;b=CDR(b))
+    for (; b && item_type(b)==L_CONS_CELL; b=CDR(b))
     {
       t+=sizeof(LList);
     }
     if (b) t+=block_size(b);
-    for (b=level;b && item_type(b)==L_CONS_CELL;b=CDR(b))
+    for (b=level; b && item_type(b)==L_CONS_CELL; b=CDR(b))
       t+=block_size(CAR(b));
     ret=t;
     } else if (type== L_NUMBER)
@@ -81,7 +82,7 @@ void write_level(bFILE *fp, Cell *level)
       {
     long t=0;
     void *b=level;
-    for (;b && item_type(b)==L_CONS_CELL;b=CDR(b)) t++;
+    for (; b && item_type(b)==L_CONS_CELL; b=CDR(b)) t++;
     if (b)
     {
       fp->write_uint32(-t);      // negative number means dotted list
@@ -89,7 +90,7 @@ void write_level(bFILE *fp, Cell *level)
     }
     else fp->write_uint32(t);
 
-    for (b=level;b && item_type(b)==L_CONS_CELL;b=CDR(b))
+    for (b=level; b && item_type(b)==L_CONS_CELL; b=CDR(b))
       write_level(fp,CAR(b));
       }
     } break;
@@ -132,7 +133,7 @@ Cell *load_block(bFILE *fp)
     }
     last->cdr = (t < 0) ? (LObject *)load_block(fp) : NULL;
 
-    for (last=first,x=0;x<abs(t);x++,last=(LList *)last->cdr)
+    for (last=first,x=0; x<abs(t); x++,last=(LList *)last->cdr)
       last->car = (LObject *)load_block(fp);
     return first;
       }

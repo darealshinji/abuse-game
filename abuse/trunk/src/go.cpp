@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -33,7 +34,7 @@ ifield *elevator::make_fields(int ystart, ifield *Next)
   int H=10;
   return new text_field(5,ystart+H*0,ELEVATOR_SPEED,"speed",              "#####",speed,
          new text_field(5,ystart+H*1,ELEVATOR_DIR,"heading dir",          "#####",dir,
-         new text_field(5,ystart+H*2,ELEVATOR_DIRECTION,"facing dir",     "#####",direction,    
+         new text_field(5,ystart+H*2,ELEVATOR_DIRECTION,"facing dir",     "#####",direction,
             NULL)));
 }
 
@@ -104,7 +105,7 @@ void elevator::draw()  // draw cables above the elevator
     sy2=min(the_game->viewy2,sy2);
     trans_image *p=picture();
 
-    for (i=sy1;i<=sy2;i++)
+    for (i=sy1; i<=sy2; i++)
       p->put_scan_line(screen,sx,i,0);
   }
 }
@@ -146,7 +147,7 @@ elcontrol *elevator::find_stop()
   picture_space(x1,y1,x2,y2);
   int i;
   game_object **o=current_level->obj;
-  for (i=current_level->first_object();i>=0;i=o[i]->next_active)
+  for (i=current_level->first_object(); i>=0; i=o[i]->next_active)
   {
     if (o[i]->type()==O_elcontrol)
     {
@@ -167,7 +168,7 @@ int elevator::decide()
   {
     switch (state)
     {
-      case stopped :    
+      case stopped :
       {
         long x1,y1,x2,y2;
     picture_space(x1,y1,x2,y2);
@@ -203,7 +204,7 @@ int elevator::decide()
     {
       set_state(still_jump);              // we can start moving now
       dir=dir+dir;
-    }    
+    }
     break;
       case still_jump :                       // just stopped, open the doors
     set_state(end_still_jump);
@@ -262,7 +263,7 @@ void sensor::get_activate(char *name)
 {
   int i;
   activate=-1;  // if we can't fnd the name then go focus
-  for (i=0;i<TOTAL_OBJECTS;i++)
+  for (i=0; i<TOTAL_OBJECTS; i++)
     if (!strcmp(name,object_names[i]))
       activate=i;
 }
@@ -311,17 +312,17 @@ int sensor::decide()
   }
   else
   {
-    for (i=current_level->first_object();i>=0;i=o[i]->next_active)
+    for (i=current_level->first_object(); i>=0; i=o[i]->next_active)
     {
       long x1,y1,x2,y2;
       if (o[i]->type()==activate)
-      {    
+      {
     o[i]->picture_space(x1,y1,x2,y2);
     if (x+xrange>=x1 && x-xrange<=x2 && y+yrange>=y1 && y-yrange<=y2)
-    {    
+    {
           current_level->send_signal(signal);
       return 1;          // only send one signal!
-    }    
+    }
       }
     }
   }
@@ -359,5 +360,5 @@ void sensor::gather_input(InputManager *inm)
   yrange=atoi(inm->get(SENSOR_XRANGE)->read());
   signal=atoi(inm->get(SENSOR_SIGNAL)->read());
   get_activate(inm->get(SENSOR_ACTIVATE)->read());
-}            
+}
 

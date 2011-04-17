@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -33,7 +34,7 @@ point_list::point_list(bFILE *fp)
     fp->read(data,(int)tot*2);
 
     int i;
-    for (i=0;i<tot*2;i++)
+    for (i=0; i<tot*2; i++)
       data[i]=data[i]*scale_mult/scale_div;
 
   } else data=NULL;

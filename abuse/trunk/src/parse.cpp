@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -15,7 +16,7 @@
 
 #include "parse.h"
 
-char *ttype[]={"END","NUMBER","STRING","WORD","OPERATOR","LEFT BRACE","RIGHT BRACE",
+char *ttype[]={ "END","NUMBER","STRING","WORD","OPERATOR","LEFT BRACE","RIGHT BRACE",
             "LEFT PAREN","RIGHT_PAREN","ASSIGNMENT","COMMA"};
 
 void match_right(char *&s)
@@ -68,7 +69,7 @@ int get_token(char *&s, char *buffer)  // returns token type
   switch (*s)
   {
     case 0    : *buffer=0; return sEND;                                  break;
-    case '{'  : *(buffer++)=*(s++); *buffer=0; return sLEFT_BRACE;       break;
+    case '{ '  : *(buffer++)=*(s++); *buffer=0; return sLEFT_BRACE;       break;
     case '}'  : *(buffer++)=*(s++); *buffer=0; return sRIGHT_BRACE;      break;
     case '('  : *(buffer++)=*(s++); *buffer=0; return sLEFT_PAREN;       break;
     case ')'  : *(buffer++)=*(s++); *buffer=0; return sRIGHT_PAREN;      break;
@@ -76,10 +77,10 @@ int get_token(char *&s, char *buffer)  // returns token type
     case ','  : *(buffer++)=*(s++); *buffer=0; return sCOMMA;            break;
     case '+' :
     case '-' :
-    case '*' :    
+    case '*' :
     case '/' : *(buffer++)=*(s++); *buffer=0; return sOPERATOR;          break;
     default :
-    {        
+    {
       if (isdigit(*s))
       {
     while (isdigit(*s))
@@ -89,8 +90,8 @@ int get_token(char *&s, char *buffer)  // returns token type
       } else if (*s=='"')
       {
     while (*s=='"')
-    {    
-      s++;    
+    {
+      s++;
       while (*s && *s!='"')
         *(buffer++)=*(s++);
          if (*s) s++;
@@ -101,7 +102,7 @@ int get_token(char *&s, char *buffer)  // returns token type
       } else
       {
     *(buffer++)=*(s++);      // take the first character, no matter what it is
-                             // because nobody else will     
+                             // because nobody else will
     while (*s && isalnum(*s) || *s=='_' || *s=='.')
     *(buffer++)=*(s++);
     *buffer=0;

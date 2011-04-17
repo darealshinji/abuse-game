@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -102,25 +103,25 @@ void automap::draw()
   // we will slam on as fast as possible
 
   screen->set_clip(window_xstart,window_ystart,window_xend,window_yend);
-/*  for (i=draw_xstart,j=draw_ystart,x=sx,y=sy;y<=ey;j+=AUTOTILE_HEIGHT,y++)
+/*  for (i=draw_xstart,j=draw_ystart,x=sx,y=sy; y<=ey; j+=AUTOTILE_HEIGHT,y++)
     foretiles[cur_lev->get_fg(x,y)]->micro_image->put_image(screen,i,j,0);
 
-  for (i=draw_xstart+ex*AUTOTILE_WIDTH,j=draw_ystart,y=sy,x=ex;y<=ey;j+=AUTOTILE_HEIGHT,y++)
+  for (i=draw_xstart+ex*AUTOTILE_WIDTH,j=draw_ystart,y=sy,x=ex; y<=ey; j+=AUTOTILE_HEIGHT,y++)
     foretiles[cur_lev->get_fg(x,y)]->micro_image->put_image(screen,i,j,0);
 
-  for (i=draw_xstart,j=draw_ystart,x=sx,y=sy;x<=ex;i+=AUTOTILE_WIDTH,x++)
+  for (i=draw_xstart,j=draw_ystart,x=sx,y=sy; x<=ex; i+=AUTOTILE_WIDTH,x++)
     foretiles[cur_lev->get_fg(x,y)]->micro_image->put_image(screen,i,j,0);
 
-  for (i=draw_xstart,j=draw_ystart+ey*AUTOTILE_HEIGHT,x=sx,y=ex;x<=ex;i+=AUTOTILE_WIDTH,x++)
+  for (i=draw_xstart,j=draw_ystart+ey*AUTOTILE_HEIGHT,x=sx,y=ex; x<=ex; i+=AUTOTILE_WIDTH,x++)
     foretiles[cur_lev->get_fg(x,y)]->micro_image->put_image(screen,i,j,0); */
 
 
 
   unsigned short *fgline;
-  for (j=draw_ystart,y=sy;y<=ey;j+=AUTOTILE_HEIGHT,y++)
+  for (j=draw_ystart,y=sy; y<=ey; j+=AUTOTILE_HEIGHT,y++)
   {
     fgline=cur_lev->get_fgline(y)+sx;
-    for (i=draw_xstart,x=sx;x<=ex;i+=AUTOTILE_WIDTH,x++,fgline++)
+    for (i=draw_xstart,x=sx; x<=ex; i+=AUTOTILE_WIDTH,x++,fgline++)
     {
       if ((*fgline)&0x8000)
       {
@@ -198,16 +199,16 @@ void automap::handle_event(event &ev)
       case EV_KEY :
         switch(ev.key)
     {
-      case 'A' :    
+      case 'A' :
       case 'a' :
           toggle_window();
-        break;    
+        break;
     }
-    break;    
+    break;
       case EV_CLOSE_WINDOW :
         wm->close_window(automap_window);
     automap_window=NULL;
-    break;    
+    break;
     }
   }
 }

@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -23,7 +24,7 @@ void jrand_init()
   unsigned long rseed=('F'<<24)|('U'<<16)|('C'<<8)|'K';
   int i;
   unsigned short *tp=rtable;
-  for (i=0;i<RAND_TABLE_SIZE;i++,tp++)
+  for (i=0; i<RAND_TABLE_SIZE; i++,tp++)
   {
     rseed=rseed*0x41c64e6d+12345;
     *tp=(rseed>>16)&0xffff;

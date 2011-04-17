@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -42,7 +43,7 @@ void set_frame_size(int x)
  // true if a window lies in this area
 int WindowManager::window_in_area(int x1, int y1, int x2, int y2)
 {
-  for (Jwindow *f=first;f;f=f->next)
+  for (Jwindow *f=first; f; f=f->next)
     if (f->x<=x2 && f->y<=y2 && f->x+f->l-1>=x1 && f->y+f->h-1>=y1)
       return 1;
   return 0;
@@ -63,7 +64,7 @@ void WindowManager::close_window(Jwindow *j)
 void WindowManager::hide_windows()
 {
   Jwindow *p;
-  for (p=first;p;p=p->next)
+  for (p=first; p; p=p->next)
   {
     if (!p->is_hidden())
     {
@@ -76,7 +77,7 @@ void WindowManager::hide_windows()
 void WindowManager::show_windows()
 {
   Jwindow *p;
-  for (p=first;p;p=p->next)
+  for (p=first; p; p=p->next)
     if (p->is_hidden())
       show_window(p);
 }
@@ -88,7 +89,7 @@ void WindowManager::hide_window(Jwindow *j)
     first=first->next;
   else
   {
-    for (k=first;k->next!=j;k=k->next)
+    for (k=first; k->next!=j; k=k->next)
       k->screen->add_dirty(j->x-k->x,j->y-k->y,
                    j->x+j->l-1-k->x,j->y+j->h-1-k->y);
     k->screen->add_dirty(j->x-k->x,j->y-k->y,
@@ -119,7 +120,7 @@ void WindowManager::get_event(event &ev)
 
   if (state==inputing)
   {
-    for (ev.window=NULL,j=first;j;j=j->next)
+    for (ev.window=NULL,j=first; j; j=j->next)
       if (!j->is_hidden() && ev.mouse_move.x>=j->x && ev.mouse_move.y>=j->y &&
           ev.mouse_move.x<j->x+j->l && ev.mouse_move.y<j->y+j->h)
         ev.window=j;
@@ -147,7 +148,7 @@ void WindowManager::get_event(event &ev)
       if (closew)
         ev.type=EV_CLOSE_WINDOW;
       else if (movew)
-      {    
+      {
     int red=0;
     if (ev.window==first)       // see if we need to raise the window
     {
@@ -158,7 +159,7 @@ void WindowManager::get_event(event &ev)
     else
     {
       Jwindow *last=first;
-      for (;last->next!=ev.window;last=last->next);
+      for (; last->next!=ev.window; last=last->next);
       if (ev.window->next)
         red=1;
       last->next=ev.window->next;
@@ -168,7 +169,7 @@ void WindowManager::get_event(event &ev)
     else
     {
       Jwindow *last=first;
-      for (;last->next;last=last->next);
+      for (; last->next; last=last->next);
       last->next=ev.window;
     }
     ev.window->next=NULL;
@@ -176,8 +177,8 @@ void WindowManager::get_event(event &ev)
     {
       Jwindow *j=ev.window;
 /*      screen->add_dirty(j->x,j->y,j->x+j->l-1,j->y+j->h-1);
-      for (p=first;p!=j;p=p->next)
-        p->screen->add_dirty(j->x-p->x,j->y-p->y,j->x+j->l-1-p->x,j->y+j->h-1-p->y);*/
+      for (p=first; p!=j; p=p->next)
+        p->screen->add_dirty(j->x-p->x,j->y-p->y,j->x+j->l-1-p->x,j->y+j->h-1-p->y); */
       j->screen->add_dirty(0,0,j->l-1,j->h-1);
       flush_screen();
     }
@@ -208,7 +209,7 @@ void WindowManager::get_event(event &ev)
   }
   if (ev.type==EV_REDRAW)
   {
-    for (j=first;j;j=j->next)
+    for (j=first; j; j=j->next)
        j->screen->add_dirty(ev.redraw.x1-j->x,ev.redraw.y1-j->y,
              ev.redraw.x2-j->x,ev.redraw.y2-j->y);
     screen->add_dirty(ev.redraw.x1,ev.redraw.y1,ev.redraw.x2,ev.redraw.y2);
@@ -227,7 +228,7 @@ void WindowManager::resize_window(Jwindow *j, int l, int h)
 {
   Jwindow *p;
   screen->add_dirty(j->x,j->y,j->x+j->l-1,j->y+j->h-1);
-  for (p=first;p!=j;p=p->next)
+  for (p=first; p!=j; p=p->next)
     p->screen->add_dirty(j->x-p->x,j->y-p->y,j->x+j->l-1-p->x,j->y+j->h-1-p->y);
   j->resize(l,h);
   if (!frame_suppress)
@@ -558,7 +559,7 @@ int Jwindow::bottom_border()
 
 ifield *InputManager::unlink(int id)     // unlinks ID from fields list and return the pointer to it
 {
-  for (ifield *i=first,*last=NULL;i;i=i->next)
+  for (ifield *i=first,*last=NULL; i; i=i->next)
   {
     if (i->id==id)
     {
@@ -614,7 +615,7 @@ void InputManager::handle_event(event &ev, Jwindow *j)
   {
     if ((ev.type==EV_MOUSE_BUTTON && ev.mouse_button==1) || ev.type==EV_MOUSE_MOVE)
     {
-      for (i=first;i;i=i->next)
+      for (i=first; i; i=i->next)
       {
     i->area(x1,y1,x2,y2);
     if (ev.mouse_move.x>=x1 && ev.mouse_move.y>=y1 &&
@@ -724,7 +725,7 @@ void InputManager::release_focus()
 
 void InputManager::remap(filter *f)
 {
-  for (ifield *i=first;i;i=i->next)
+  for (ifield *i=first; i; i=i->next)
    i->remap(f);
   redraw();
 }
@@ -746,7 +747,7 @@ void InputManager::add(ifield *i)
 ifield *InputManager::get(int id)
 {
   ifield *f;
-  for (f=first;f;f=f->next)
+  for (f=first; f; f=f->next)
   {
     ifield *ret=f->find(id);
     if (ret) return ret;

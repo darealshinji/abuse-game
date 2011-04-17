@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -38,17 +39,17 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
 
   int total=0,tx,tw;
   pmenu_item *p=top;
-  for (;p;p=p->next) total++;
+  for (; p; p=p->next) total++;
 
   tw=w/(total+1);
   tx=tw/2;
 
-  for (p=top;p;p=p->next,tx+=tw)
+  for (p=top; p; p=p->next,tx+=tw)
     p->draw_self(bar,itemx(p),1,itemw(p),1,p==active);
 /*  }
   else
   {
-    for (p=top;p;p=p->next,tx+=tw)
+    for (p=top; p; p=p->next,tx+=tw)
       p->draw(bar,itemx(p),1,itemw(p),1,p==active);
   }*/
 
@@ -118,7 +119,7 @@ psub_menu::~psub_menu()
 
 pmenu_item *psub_menu::find_id(int search_id)
 {
-  for (pmenu_item *f=first;f;f=f->next)
+  for (pmenu_item *f=first; f; f=f->next)
   {
     pmenu_item *ret=f->find_id(search_id);
     if (ret) return ret;
@@ -128,7 +129,7 @@ pmenu_item *psub_menu::find_id(int search_id)
 
 pmenu_item *psub_menu::find_key(int key)
 {
-  for (pmenu_item *f=first;f;f=f->next)
+  for (pmenu_item *f=first; f; f=f->next)
   {
     pmenu_item *ret=f->find_key(key);
     if (ret) return ret;
@@ -164,7 +165,7 @@ void psub_menu::calc_size(int &w, int &h)
 {
   int tw=wm->font()->width(),th=wm->font()->height();
   w=h=0;
-  for (pmenu_item *p=first;p;p=p->next)
+  for (pmenu_item *p=first; p; p=p->next)
   {
     if (p->name())
     {
@@ -204,11 +205,11 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
 
   int has_flags=0;
   pmenu_item *p=first;
-  for (;p;p=p->next) if (p->on_off) has_flags=1;
+  for (; p; p=p->next) if (p->on_off) has_flags=1;
   x=has_flags ? 3+wm->font()->width() : 3;
   y=3;
 
-  for (p=first;p;p=p->next,i++,y+=wm->font()->height()+1)
+  for (p=first; p; p=p->next,i++,y+=wm->font()->height()+1)
     p->draw(win,x,y,w-6,0,i==active);
 
 }
@@ -231,7 +232,7 @@ void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int ac
       else
       {
     parent->screen->bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->dark_color());
-    wm->font()->put_string(parent->screen,x+1,y+1,n,wm->medium_color());    
+    wm->font()->put_string(parent->screen,x+1,y+1,n,wm->medium_color());
     if (on_off && *on_off) wm->font()->put_string(parent->screen,bx+1,y+1,"*",wm->medium_color());
       }
     } else
@@ -287,7 +288,7 @@ int pmenu::itemx(pmenu_item *p)
 
 
   int total=0,tw,i=0,x=0;
-  for (pmenu_item *pp=top;pp;pp=pp->next,i++)
+  for (pmenu_item *pp=top; pp; pp=pp->next,i++)
   { if (pp==p) x=i;
     total++;
   }
@@ -315,7 +316,7 @@ int psub_menu::handle_event(Jwindow *parent, int x, int y, event &ev)
   y=win->y;
 
   int has_flags=0,dx=3;
-  for (pmenu_item *p=first;p;p=p->next) if (p->on_off) has_flags=1;
+  for (pmenu_item *p=first; p; p=p->next) if (p->on_off) has_flags=1;
   if (has_flags) dx+=wm->font()->width();
 
   int th=wm->font()->height();
@@ -377,7 +378,7 @@ pmenu_item *pmenu::inarea(int mx, int my, image *screen)
   if (mx<0 || my<0 || mx>=bar->screen->width() || my>=bar->screen->height()) return NULL;
   else
   {
-    for (pmenu_item *p=top;p;p=p->next)
+    for (pmenu_item *p=top; p; p=p->next)
     {
       if (!p->next) return p;
       else if (itemx(p->next)>mx) return p;
@@ -389,7 +390,7 @@ pmenu_item *pmenu::inarea(int mx, int my, image *screen)
 int psub_menu::own_event(event &ev)
 {
   if (win && ev.window==win) return 1; else
-    for (pmenu_item *p=first;p;p=p->next)
+    for (pmenu_item *p=first; p; p=p->next)
       if (p->own_event(ev))
         return 1;
   return 0;
@@ -414,7 +415,7 @@ int pmenu::handle_event(event &ev, image *screen)
     if (ev.window==bar) yes=1;    // event in top bar?
     else
     {
-      for (pmenu_item *p=top;p && !yes;p=p->next)  // event in submenu?
+      for (pmenu_item *p=top; p && !yes; p=p->next)  // event in submenu?
       if (p->own_event(ev)) yes=1;
     }
     if (!yes) return 0;        // event is not for us...
@@ -424,7 +425,7 @@ int pmenu::handle_event(event &ev, image *screen)
   {
     case EV_KEY :
     {
-      for (pmenu_item *p=top;p;p=p->next)
+      for (pmenu_item *p=top; p; p=p->next)
       {
     pmenu_item *r=p->find_key(ev.key);
     if (r)

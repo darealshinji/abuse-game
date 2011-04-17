@@ -16,7 +16,7 @@ public:
   virtual void print()               { ; }
   virtual net_address *copy()    = 0;
   virtual void store_string(char *st, int st_length) = 0;    // this should be able to be used get_node_address()
-  virtual ~net_address() {;}
+  virtual ~net_address() { ; }
 };
 
 
@@ -78,7 +78,7 @@ public:
 
     // Notification methods
     virtual net_socket *start_notify(int port, void *data, int len) { return 0; }
-    virtual void end_notify() {}
+    virtual void end_notify() { }
     // for protocols that don't know how to find address without help, start_notify creates
     //   a fast/connectionless socket to respond to find address request packets.  After start_notify,
     //   protocol::select should automatically forward the specified data to all requesters.

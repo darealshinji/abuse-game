@@ -62,10 +62,10 @@ unsigned int read_time_value(unsigned char* &buffer)
     unsigned int value;
     unsigned char c;
 
-    if ((value = *buffer++) & 0x80) 
+    if ((value = *buffer++) & 0x80)
     {
         value &= 0x7F;
-        do 
+        do
         {
             value = (value << 7) + ((c = *buffer++) & 0x7F);
         }
@@ -233,7 +233,7 @@ void convert_hmi_track(unsigned char* input, unsigned int input_size, unsigned c
                 case 0x15:
                     input += 6;
                     break;
-                }          
+                }
             }
             else
             {

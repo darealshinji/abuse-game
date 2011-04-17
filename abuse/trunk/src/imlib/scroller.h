@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -44,7 +45,7 @@ public :
   virtual char *read() { return (char *)&sx; }
 
   virtual int activate_on_mouse_move() { return 1; }
-  virtual void handle_inside_event(event &ev, image *screen, InputManager *inm) {;}
+  virtual void handle_inside_event(event &ev, image *screen, InputManager *inm) { ; }
   virtual void scroll_event(int newx, image *screen);
   virtual void handle_up(image *screen, InputManager *inm);
   virtual void handle_down(image *screen, InputManager *inm);

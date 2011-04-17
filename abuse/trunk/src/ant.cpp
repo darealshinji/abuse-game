@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -50,7 +51,7 @@ static void scream_check(game_object *o, game_object *b)
 
 static int ant_congestion(game_object *o)
 {
-  for (game_object *d=current_level->first_active_object();d;d=d->next_active)
+  for (game_object *d=current_level->first_active_object(); d; d=d->next_active)
   {
     if (d->otype==o->otype && abs(o->x-d->x)<30 && abs(o->x-d->y)<20) return 1;
   }
@@ -408,7 +409,7 @@ void *ant_ai()
       {
         o->x+=speed;
         if (!o->next_picture()) o->set_state((character_state)S_top_walk);
-    
+
       } else o->set_aistate(ANT_FALL_DOWN);
     }
       }

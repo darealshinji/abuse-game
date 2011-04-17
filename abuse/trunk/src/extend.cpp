@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -51,7 +52,7 @@ void simple_object::add_light(light_source *ls)
 {
   if (!ls) return ;
   ls->known=1;
-  for (int i=0;i<tlights;i++) if (lights[i]==ls) return;
+  for (int i=0; i<tlights; i++) if (lights[i]==ls) return;
   tlights++;
   lights=(light_source **)realloc(lights,sizeof(light_source *)*tlights);
   lights[tlights-1]=ls;
@@ -60,7 +61,7 @@ void simple_object::add_light(light_source *ls)
 void simple_object::add_object(game_object *o)
 {
   if (!o) return ;
-  for (int i=0;i<tobjs;i++) if (objs[i]==o) return;
+  for (int i=0; i<tobjs; i++) if (objs[i]==o) return;
   o->set_flags(o->flags()|KNOWN_FLAG);
   if(_team != -1)
     o->set_team(_team);
@@ -74,12 +75,12 @@ void simple_object::add_object(game_object *o)
 
 void simple_object::remove_light(light_source *ls)
 {
-  for (int i=0;i<tlights;i++)
+  for (int i=0; i<tlights; i++)
   {
     if (lights[i]==ls)
     {
       tlights--;
-      for (int j=i;j<tlights;j++)     // don't even think about it :)
+      for (int j=i; j<tlights; j++)     // don't even think about it :)
         lights[j]=lights[j+1];
       lights=(light_source **)realloc(lights,sizeof(light_source *)*tlights);
       return ;
@@ -89,12 +90,12 @@ void simple_object::remove_light(light_source *ls)
 
 void simple_object::remove_object(game_object *o)
 {
-  for (int i=0;i<tobjs;i++)
+  for (int i=0; i<tobjs; i++)
   {
     if (objs[i]==o)
     {
       tobjs--;
-      for (int j=i;j<tobjs;j++)     // don't even think about it :)
+      for (int j=i; j<tobjs; j++)     // don't even think about it :)
         objs[j]=objs[j+1];
       objs=(game_object **)realloc(objs,sizeof(game_object *)*tobjs);
       return ;

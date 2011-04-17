@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -127,7 +128,7 @@ int game_client::input_missing()
 //  { time_marker now,start; while (now.diff_time(&start)<3.0) now.get_time(); }
 
 /*
-  unsigned char pk[2]={CLCMD_REQUEST_RESEND,base->packet.tick_received()};
+  unsigned char pk[2]={ CLCMD_REQUEST_RESEND,base->packet.tick_received()};
   if (client_sock->write(pk,2)!=2) return 0;
   fprintf(stderr,"sending retry request to server (tick %d, wait input=%d)\n",pk[1],wait_local_input); */
   return 1;

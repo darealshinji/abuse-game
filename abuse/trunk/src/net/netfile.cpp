@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -102,7 +103,7 @@ int nfs_client::send_read()   // return 0 if failure on socket, not failure to r
   {
     // first make sure the socket isn't 'full'
 
-    struct timeval tv={0,0};     // don't wait
+    struct timeval tv={ 0,0};     // don't wait
     fd_set write_check;
     FD_ZERO(&write_check);
     FD_SET(socket_fd,&write_check);
@@ -282,7 +283,7 @@ remote_file::remote_file(char *filename, char *mode, remote_file *Next)
     return ;
   }
 
-  uint8_t sizes[3]={CLIENT_NFS,strlen(filename)+1,strlen(mode)+1};
+  uint8_t sizes[3]={ CLIENT_NFS,strlen(filename)+1,strlen(mode)+1};
   if (write(socket_fd,sizes,3)!=3) { r_close("could not send open info"); return ; }
   if (write(socket_fd,filename,sizes[1])!=sizes[1]) { r_close("could not send filename"); return ; }
   if (write(socket_fd,mode,sizes[2])!=sizes[2]) { r_close("could not send mode"); return ; }
@@ -425,7 +426,7 @@ int open_file(char *&filename, char *mode)
 remote_file *find_rfile(int fd)
 {
   remote_file *r=remote_file_list;
-  for (;r && r->socket_fd!=fd;r=r->next)
+  for (; r && r->socket_fd!=fd; r=r->next)
   {
     if (r->socket_fd==-1)
     {

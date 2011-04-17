@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -36,7 +37,7 @@ int32_t light_to_number(light_source *l)
 
   if (!l) return 0;
   int x=1;
-  for (light_source *s=first_light_source;s;s=s->next,x++)
+  for (light_source *s=first_light_source; s; s=s->next,x++)
     if (s==l) return x;
   return 0;
 }
@@ -47,7 +48,7 @@ light_source *number_to_light(int32_t x)
   if (x==0) return NULL;
   x--;
   light_source *s=first_light_source;
-  for (;x && s;x--,s=s->next);
+  for (; x && s; x--,s=s->next);
   return s;
 }
 
@@ -83,7 +84,7 @@ void delete_light(light_source *which)
   else
   {
     light_source *f=first_light_source;
-    for (;f->next!=which && f;f=f->next);
+    for (; f->next!=which && f; f=f->next);
     if (f)
     {
       f->next=which->next;
@@ -164,7 +165,7 @@ light_source::light_source(char Type, int32_t X, int32_t Y, int32_t Inner_radius
 int count_lights()
 {
   int t=0;
-  for (light_source *s=first_light_source;s;s=s->next)
+  for (light_source *s=first_light_source; s; s=s->next)
     t++;
   return t;
 }
@@ -186,7 +187,7 @@ void calc_tint(uint8_t *tint, int rs, int gs, int bs, int ra, int ga, int ba, pa
   palette npal;
   memset(npal.addr(),0,256);
   int i=0;
-  for (;i<256;i++)
+  for (; i<256; i++)
   {
     npal.set(i,(int)rs,(int)gs,(int)bs);
     rs+=ra; if (rs>255) rs=255; else if (rs<0) rs=0;
@@ -196,7 +197,7 @@ void calc_tint(uint8_t *tint, int rs, int gs, int bs, int ra, int ga, int ba, pa
   filter f(pal,&npal);
   filter f2(&npal,pal);
 
-  for (i=0;i<256;i++,tint++)
+  for (i=0; i<256; i++,tint++)
     *tint=f2.get_mapping(f.get_mapping(i));
 }
 
@@ -231,7 +232,7 @@ void calc_light_table(palette *pal)
         {
             fp->read(white_light,256*64);
 //            fp->read(green_light,256*64);
-            for (i=0;i<TTINTS;i++)
+            for (i=0; i<TTINTS; i++)
                 fp->read(tints[i],256);
             fp->read(bright_tint,256);
 //            trans_table=(uint8_t *)malloc(256*256);
@@ -246,31 +247,31 @@ void calc_light_table(palette *pal)
         dprintf("Palette has changed, recalculating light table...\n");
         stat_man->push("white light",NULL);
         int color=0;
-        for (;color<256;color++)
+        for (; color<256; color++)
         {
             uint8_t r,g,b;
             pal->get(color,r,g,b);
             stat_man->update(color*100/256);
-            for (int intensity=63;intensity>=0;intensity--)
+            for (int intensity=63; intensity>=0; intensity--)
             {
                 if (r>0 || g>0 || b>0)
                     white_light[intensity*256+color]=pal->find_closest(r,g,b);
                 else
                     white_light[intensity*256+color]=0;
-                if (r) r--;  if (g) g--;  if (b) b--;     
+                if (r) r--;  if (g) g--;  if (b) b--;
             }
         }
         stat_man->pop();
 
 /*    stat_man->push("green light",NULL);
-    for (color=0;color<256;color++)
+    for (color=0; color<256; color++)
     {
       stat_man->update(color*100/256);
       uint8_t r,g,b;
       pal->get(color,b,r,g);
       r=r*3/5; b=b*3/5; g+=7; if (g>255) g=255;
 
-      for (int intensity=63;intensity>=0;intensity--)
+      for (int intensity=63; intensity>=0; intensity--)
       {
     if (r>0 || g>0 || b>0)
           green_light[intensity*256+color]=pal->find_closest(r,g,b);
@@ -285,7 +286,7 @@ void calc_light_table(palette *pal)
     stat_man->pop(); */
 
     stat_man->push("tints",NULL);
-    uint8_t t[TTINTS*6]={0,0,0,0,0,0, // normal
+    uint8_t t[TTINTS*6]={ 0,0,0,0,0,0, // normal
                    0,0,0,1,0,0,     // red
            0,0,0,1,1,0,     // yellow
            0,0,0,1,0,1,     // purple
@@ -303,15 +304,15 @@ void calc_light_table(palette *pal)
          } ;
     uint8_t *ti=t+6;
     uint8_t *c;
-    for (i=0,c=tints[0];i<256;i++,c++) *c=i;  // make the normal tint (maps everthing to itself)
-    for (i=0,c=tints[TTINTS-1];i<256;i++,c++)  // reverse green
+    for (i=0,c=tints[0]; i<256; i++,c++) *c=i;  // make the normal tint (maps everthing to itself)
+    for (i=0,c=tints[TTINTS-1]; i<256; i++,c++)  // reverse green
     {
       int r=pal->red(i)/2,g=255-pal->green(i)-30,b=pal->blue(i)*3/5+50;
       if (g<0) g=0;
       if (b>255) b=0;
       *c=pal->find_closest(r,g,b);
     }
-    for (i=0;i<256;i++)
+    for (i=0; i<256; i++)
     {
       int r=pal->red(i)+(255-pal->red(i))/2,
           g=pal->green(i)+(255-pal->green(i))/2,
@@ -320,7 +321,7 @@ void calc_light_table(palette *pal)
     }
 
     // make the colored tints
-    for (i=1;i<TTINTS-1;i++)
+    for (i=1; i<TTINTS-1; i++)
     {
       stat_man->update(i*100/(TTINTS-1));
       calc_tint(tints[i],ti[0],ti[1],ti[2],ti[3],ti[4],ti[5],pal);
@@ -331,13 +332,13 @@ void calc_light_table(palette *pal)
     trans_table=(uint8_t *)malloc(256*256);
 
     uint8_t *tp=trans_table;
-    for (i=0;i<256;i++)
+    for (i=0; i<256; i++)
     {
       uint8_t r1,g1,b1,r2,g2,b2;
       pal->get(i,r1,g1,b1);
       if ((i%16)==0)
         fprintf(stderr,"%d ",i);
-      for (int j=0;j<256;j++,tp++)
+      for (int j=0; j<256; j++,tp++)
       {
     if (r1==0 && r2==0 && b2==0)
       *tp=j;
@@ -358,7 +359,7 @@ void calc_light_table(palette *pal)
             f->write_uint16(calc_crc((uint8_t *)pal->addr(),768));
             f->write(white_light,256*64);
 //      f->write(green_light,256*64);
-            for (int i=0;i<TTINTS;i++)
+            for (int i=0; i<TTINTS; i++)
                 f->write(tints[i],256);
             f->write(bright_tint,256);
 //    f.write(trans_table,256*256);
@@ -397,7 +398,7 @@ void insert_light(light_patch *&first, light_patch *l)
   } else
   {
     light_patch *p=first;
-    for (;p->next && p->next->y1<l->y1;p=p->next);
+    for (; p->next && p->next->y1<l->y1; p=p->next);
     l->next=p->next;
     p->next=l;
   }
@@ -408,7 +409,7 @@ void add_light(light_patch *&first, int32_t x1, int32_t y1, int32_t x2, int32_t 
 {
   light_patch *next;
   light_patch *p=first;
-  for (;p;p=next)
+  for (; p; p=next)
   {
     next=p->next;
     // first see if light patch we are adding is enclosed entirely by another patch
@@ -452,7 +453,7 @@ void add_light(light_patch *&first, int32_t x1, int32_t y1, int32_t x2, int32_t 
       else
       {
     light_patch *q=first;
-    for (;q->next!=p;q=q->next);
+    for (; q->next!=p; q=q->next);
     q->next=p->next;
       }
       insert_light(first,p);
@@ -525,7 +526,7 @@ void add_light(light_patch *&first, int32_t x1, int32_t y1, int32_t x2, int32_t 
 
 light_patch *find_patch(int screenx, int screeny, light_patch *list)
 {
-  for (;list;list=list->next)
+  for (; list; list=list->next)
   {
     if (screenx>=list->x1 && screenx<=list->x2 && screeny>=list->y1 && screeny<=list->y2)
       return list;
@@ -538,7 +539,7 @@ int calc_light_value(light_patch *which, int32_t x, int32_t y)
 {
   int lv=0;
   int t=which->total;
-  for (register int i=t-1;i>=0;i--)
+  for (register int i=t-1; i>=0; i--)
   {
     light_source *fn=which->lights[i];
     if (fn->type==9)
@@ -561,7 +562,7 @@ int calc_light_value(light_patch *which, int32_t x, int32_t y)
     {
       lv+=((fn->outer_radius-r2)*fn->mul_div)>>16;
     }
-      } else lv=63;    
+      } else lv=63;
     }
   }
   if (lv>63) return 63;
@@ -579,7 +580,7 @@ light_patch *make_patch_list(int width, int height, int32_t screenx, int32_t scr
 {
   light_patch *first=new light_patch(0,0,width-1,height-1,NULL);
 
-  for (light_source *f=first_light_source;f;f=f->next)   // determine which lights will have effect
+  for (light_source *f=first_light_source; f; f=f->next)   // determine which lights will have effect
   {
     int32_t x1=f->x1-screenx,y1=f->y1-screeny,
         x2=f->x2-screenx,y2=f->y2-screeny;
@@ -640,7 +641,7 @@ inline int calc_light_value(light_patch *lp,   // light patch to look at
 
   light_source **lon_p=lp->lights;
 
-  for (light_count=lp->total;light_count>0;light_count--)
+  for (light_count=lp->total; light_count>0; light_count--)
   {
     light_source *fn=*lon_p;
     register int32_t *dt=&(*lon_p)->type;
@@ -665,8 +666,8 @@ inline int calc_light_value(light_patch *lp,   // light patch to look at
       else r2=dx+dy-(dy>>1);
 
       if (r2<*dt)                    // if this withing the light's outer radius?  (dt==outer_radius)
-      {        
-    int v=*dt-r2; dt++;        
+      {
+    int v=*dt-r2; dt++;
     lv+=v*(*dt)>>16;
       }
     }
@@ -704,7 +705,7 @@ inline void put_8line(uint8_t *in_line, uint8_t *out_line, uint8_t *remap, uint8
 {
   uint8_t v;
   int x;
-  for (x=0;x<count;x++)
+  for (x=0; x<count; x++)
   {
     uint8_t *off=light_lookup+(((int32_t)*remap)<<8);
 
@@ -794,7 +795,7 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
   int scr_w=screen->width();
   uint8_t *screen_line=screen->scan_line(cy1)+cx1;
 
-  for (int y=cy1;y<=cy2;)
+  for (int y=cy1; y<=cy2; )
   {
     int x,count;
 //    while (f->next && f->y2<y)
@@ -811,8 +812,8 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
     if (suffix)
     {
       light_patch *lp=f;
-      for (;(lp->y1>y-cy1 || lp->y2<y-cy1 ||
-                  lp->x1>suffix_x || lp->x2<suffix_x);lp=lp->next);
+      for (; (lp->y1>y-cy1 || lp->y2<y-cy1 ||
+                  lp->x1>suffix_x || lp->x2<suffix_x); lp=lp->next);
       uint8_t * caddr=(uint8_t *)screen_line+cx2-cx1+1-suffix;
       uint8_t *r=light_lookup+(((int32_t)calc_light_value(lp,suffix_x+screenx,calcy)<<8));
       switch (todoy)
@@ -822,9 +823,9 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
       MAP_PUT(caddr,r,suffix); caddr+=scr_w;
     }
     case 3 :
-    { MAP_PUT(caddr,r,suffix); caddr+=scr_w;}
+    { MAP_PUT(caddr,r,suffix); caddr+=scr_w; }
     case 2 :
-    { MAP_PUT(caddr,r,suffix); caddr+=scr_w;}
+    { MAP_PUT(caddr,r,suffix); caddr+=scr_w; }
     case 1 :
     {
       MAP_PUT(caddr,r,suffix);
@@ -835,8 +836,8 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
     if (prefix)
     {
       light_patch *lp=f;
-      for (;(lp->y1>y-cy1 || lp->y2<y-cy1 ||
-                  lp->x1>prefix_x || lp->x2<prefix_x);lp=lp->next);
+      for (; (lp->y1>y-cy1 || lp->y2<y-cy1 ||
+                  lp->x1>prefix_x || lp->x2<prefix_x); lp=lp->next);
 
       uint8_t *r=light_lookup+(((int32_t)calc_light_value(lp,prefix_x+screenx,calcy)<<8));
       uint8_t * caddr=(uint8_t *)screen_line;
@@ -860,10 +861,10 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
 
 
-    for (x=prefix,count=0;count<remap_size;count++,x+=8,rem++)
+    for (x=prefix,count=0; count<remap_size; count++,x+=8,rem++)
     {
       light_patch *lp=f;
-      for (;(lp->y1>y-cy1 || lp->y2<y-cy1 || lp->x1>x || lp->x2<x);lp=lp->next);
+      for (; (lp->y1>y-cy1 || lp->y2<y-cy1 || lp->x1>x || lp->x2<x); lp=lp->next);
       *rem=calc_light_value(lp,x+screenx,calcy);
     }
 
@@ -931,9 +932,9 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
     int d_skip=out->width()-sc->width()*2;
     int x,y;
     uint16_t v;
-    for (y=sc->height();y;y--)
+    for (y=sc->height(); y; y--)
     {
-      for (x=sc->width();x;x--)
+      for (x=sc->width(); x; x--)
       {
     v=*(src++);
     *(dst++)=v;
@@ -969,7 +970,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
   uint8_t *out_line=out->scan_line(cy1*2+out_y)+cx1*2+out_x;
 
 
-  for (int y=cy1;y<=cy2;)
+  for (int y=cy1; y<=cy2; )
   {
     int x,count;
 //    while (f->next && f->y2<y)
@@ -986,8 +987,8 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
     if (suffix)
     {
       light_patch *lp=f;
-      for (;(lp->y1>y-cy1 || lp->y2<y-cy1 ||
-                  lp->x1>suffix_x || lp->x2<suffix_x);lp=lp->next);
+      for (; (lp->y1>y-cy1 || lp->y2<y-cy1 ||
+                  lp->x1>suffix_x || lp->x2<suffix_x); lp=lp->next);
       uint8_t * caddr=(uint8_t *)in_line+cx2-cx1+1-suffix;
       uint8_t * daddr=(uint8_t *)out_line+(cx2-cx1+1-suffix)*2;
 
@@ -1020,8 +1021,8 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
     if (prefix)
     {
       light_patch *lp=f;
-      for (;(lp->y1>y-cy1 || lp->y2<y-cy1 ||
-                  lp->x1>prefix_x || lp->x2<prefix_x);lp=lp->next);
+      for (; (lp->y1>y-cy1 || lp->y2<y-cy1 ||
+                  lp->x1>prefix_x || lp->x2<prefix_x); lp=lp->next);
 
       uint8_t *r=light_lookup+(((int32_t)calc_light_value(lp,prefix_x+screenx,calcy)<<8));
       uint8_t * caddr=(uint8_t *)in_line;
@@ -1056,10 +1057,10 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 
 
 
-    for (x=prefix,count=0;count<remap_size;count++,x+=8,rem++)
+    for (x=prefix,count=0; count<remap_size; count++,x+=8,rem++)
     {
       light_patch *lp=f;
-      for (;(lp->y1>y-cy1 || lp->y2<y-cy1 || lp->x1>x || lp->x2<x);lp=lp->next);
+      for (; (lp->y1>y-cy1 || lp->y2<y-cy1 || lp->x1>x || lp->x2<x); lp=lp->next);
       *rem=calc_light_value(lp,x+screenx,calcy);
     }
 
@@ -1110,7 +1111,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 void add_light_spec(spec_directory *sd, char const *level_name)
 {
   int32_t size=4+4;  // number of lights and minimum light levels
-  for (light_source *f=first_light_source;f;f=f->next)
+  for (light_source *f=first_light_source; f; f=f->next)
     size+=6*4+1;
   sd->add_by_hand(new spec_entry(SPEC_LIGHT_LIST,"lights",NULL,size,0));
 }
@@ -1119,10 +1120,10 @@ void write_lights(bFILE *fp)
 {
   int t=0;
   light_source *f=first_light_source;
-  for (;f;f=f->next) t++;
+  for (; f; f=f->next) t++;
   fp->write_uint32(t);
   fp->write_uint32(min_light_level);
-  for (f=first_light_source;f;f=f->next)
+  for (f=first_light_source; f; f=f->next)
   {
     fp->write_uint32(f->x);
     fp->write_uint32(f->y);

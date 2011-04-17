@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -58,9 +59,9 @@ void text_status_manager::update(int percentage)
     len = strlen(s);
     int t=percentage*40/100;
     int i=0;
-    for (;i<t;i++)
+    for (; i<t; i++)
       s[len+i] = '.';
-    for (;i<40;i++)
+    for (; i<40; i++)
         s[len+i] = ' ';
     s[len+i++] = ']';
     s[len+i] = 0;

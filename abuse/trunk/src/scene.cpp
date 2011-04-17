@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -39,7 +40,7 @@ public :
   ~string_node() { free(n); }
   char *name() { return n; }
   string_node *left() { return l; }
-  string_node *right() { return r; }            
+  string_node *right() { return r; }
 } ;
 
 
@@ -213,7 +214,7 @@ public :
   scene_character(char *&s);
   void set_seq(char *seq_name)
   { current_seq=seq_list->get_seq(seq_name); }
-  int x() { return the_game->screenx(me->x)-cache.fig(current_frame->picture)->xcfg; }     
+  int x() { return the_game->screenx(me->x)-cache.fig(current_frame->picture)->xcfg; }
   int y() { return the_game->screeny(me->y)-cache.fig(current_frame->picture)->forward->height(); }
   int next_frame();  // true if sequence is done
   ~scene_character() { free(n); delete seq_list; if (last_frame) delete last_frame; }
@@ -228,11 +229,11 @@ int scene_character::next_frame()
   current_frame=current_frame->next;        // advance the picture
 
   if (last_frame)                           // save the time stamp, delete old one
-    delete last_frame;        
-  last_frame=new time_marker;        
+    delete last_frame;
+  last_frame=new time_marker;
 
   if (!current_frame)                      // end of sequence?
-  {        
+  {
     current_frame=current_seq->first;       // reset and return 1
     return 1;
   }
@@ -405,8 +406,8 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf,
       }
 
       word_start=buf;
-      for (word_len=0,word_start=buf,word_size=0;*buf && *buf!=' ' && *buf!='\r' && *buf!='\n' &&
-       *buf!='\t' && (*buf!='\\' || buf[1]!='n');buf++,word_size+=w,word_len++);
+      for (word_len=0,word_start=buf,word_size=0; *buf && *buf!=' ' && *buf!='\r' && *buf!='\n' &&
+       *buf!='\t' && (*buf!='\\' || buf[1]!='n'); buf++,word_size+=w,word_len++);
 
       if (word_size<x2-x1) // make sure the word can fit on the screen
       {
@@ -424,7 +425,7 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf,
     } while (y+h<y1);     // if not on screen yet, fetch next word
 
 /*    dist=100;
-    for (n=first;n;n=n->next)
+    for (n=first; n; n=n->next)
     {
       if (x<n->x1)
         minx=(n->x1-x);
@@ -512,7 +513,7 @@ void play_scene(char *script, char *filename, JCFont *font)
   {
     expect(get_token(s,token),sLEFT_PAREN,s);   // list of transitions start
     // ACTIONS
-    time_marker *last_text_time=NULL;    
+    time_marker *last_text_time=NULL;
     time_marker *last_pan_time=NULL;
     do
     {
@@ -538,7 +539,7 @@ void play_scene(char *script, char *filename, JCFont *font)
     x1=the_game->viewx1+get_number(s);
     y1=the_game->viewy1+get_number(s);
     x2=the_game->viewx1+get_number(s);
-    y2=the_game->viewy1+get_number(s);    
+    y2=the_game->viewy1+get_number(s);
     y=y2-y1;
       } else if (!strcmp(token,"text_block"))
       {
@@ -550,9 +551,9 @@ void play_scene(char *script, char *filename, JCFont *font)
       } else if (!strcmp(token,"block"))
       {
     int sx1,sy1,sx2,sy2;
-    expect(get_token(s,token),sWORD,s);    
+    expect(get_token(s,token),sWORD,s);
     cl.get(token)->area(sx1,sy1,sx2,sy2);
-    text_blockers=new text_blocker(sx1,sy1,sx2,sy2,text_blockers);    
+    text_blockers=new text_blocker(sx1,sy1,sx2,sy2,text_blockers);
       }
       else if (!strcmp(token,"scroll"))
       {
@@ -562,18 +563,18 @@ void play_scene(char *script, char *filename, JCFont *font)
       } else if (!strcmp(token,"wait"))
       {
     expect(get_token(s,token),sWORD,s);
-    printf("waiting for %s\n",token);    
+    printf("waiting for %s\n",token);
     done=0;
 
 
 
 
     int old_dev=dev;
-    dev=dev&(0xffff-DRAW_PEOPLE_LAYER);    
+    dev=dev&(0xffff-DRAW_PEOPLE_LAYER);
 
 
     do
-    {    
+    {
       the_game->draw_map();
 
       time_marker cur_time;
@@ -597,23 +598,23 @@ void play_scene(char *script, char *filename, JCFont *font)
       while (first)
       {
         first->draw();
-    
+
         if (!first->last_frame)
           first->last_frame=new time_marker;
         else
         {
           int time=first->current_frame->time,advance=0;
           if (time>=0)
-          {            
+          {
              if ((int)(cur_time.diff_time(first->last_frame)*1000)>time)
           advance=1;
           }
           else
           {
         if ((int)(cur_time.diff_time(first->last_frame)*1000)>frame_speed)
-          advance=1;        
+          advance=1;
           }
-    
+
           if (advance)
           {
             if (!strcmp(token,first->n))      // is this the character we are waiting on?
@@ -622,8 +623,8 @@ void play_scene(char *script, char *filename, JCFont *font)
             done=1;
         } else first->next_frame();
           }
-        }    
-        first=first->next;    
+        }
+        first=first->next;
       }
       if (text_loaded)
       {
@@ -631,29 +632,29 @@ void play_scene(char *script, char *filename, JCFont *font)
         if (last_text_time)
         {
           if ((int)(cur_time.diff_time(last_text_time)*1000)>scroll_speed)
-          {    
+          {
               y+=text_step;
             delete last_text_time;
         if (text_loaded)
-          last_text_time=new time_marker;    
+          last_text_time=new time_marker;
         else
           last_text_time=NULL;
           }
-        } else last_text_time=new time_marker;    
+        } else last_text_time=new time_marker;
       }
 
-    
-    
-      if (!strcmp(token,"pan"))    
+
+
+      if (!strcmp(token,"pan"))
         if (pan_steps<=0) done=1;
 
       if (!strcmp(token,"text"))
         if (!text_loaded) done=1;
-    
-      wm->flush_screen();    
+
+      wm->flush_screen();
       while (wm->event_waiting())
-      {    
-        event ev;    
+      {
+        event ev;
         wm->get_event(ev);
         if (ev.type==EV_KEY)
         {
@@ -676,8 +677,8 @@ void play_scene(char *script, char *filename, JCFont *font)
           }
         }
       }
-    
-    
+
+
     } while (!done);
     dev=old_dev;
       }

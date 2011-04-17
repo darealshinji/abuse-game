@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -53,7 +54,7 @@ int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
   if (stat_man) stat_man->push(msg,NULL);
 
   int i,total=0;
-  for (i=0;i<total_files;i++)
+  for (i=0; i<total_files; i++)
   {
     int failed=0;
     get_crc(i,failed);
@@ -81,7 +82,7 @@ int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
 
   fp->write_uint16(total);
   total=0;
-  for (i=0;i<total_files;i++)
+  for (i=0; i<total_files; i++)
   {
     uint32_t crc;
     int failed=0;
@@ -110,7 +111,7 @@ int CrcManager::load_crc_file(char const *filename)
   {
     short total=fp->read_uint16();
     int i;
-    for (i=0;i<total;i++)
+    for (i=0; i<total; i++)
     {
       char name[256];
       uint32_t crc=fp->read_uint32();
@@ -125,7 +126,7 @@ int CrcManager::load_crc_file(char const *filename)
 
 void CrcManager::clean_up()
 {
-  for (int i=0;i<total_files;i++)
+  for (int i=0; i<total_files; i++)
     delete files[i];
   if (total_files)
     free(files);
@@ -152,7 +153,7 @@ CrcManager::CrcManager()
 
 int CrcManager::get_filenumber(char const *filename)
 {
-  for (int i=0;i<total_files;i++)
+  for (int i=0; i<total_files; i++)
     if (!strcmp(filename,files[i]->filename)) return i;
   total_files++;
   files=(CrcedFile **)realloc(files,total_files*sizeof(CrcedFile *));
@@ -236,12 +237,12 @@ int CacheList::prof_size()
   int size=0;     // count up the size for a spec enrty
   size+=2;        // total filenames
   int i;
-  for (i=0;i<crc_manager.total_filenames();i++)
+  for (i=0; i<crc_manager.total_filenames(); i++)
       size+=strlen(crc_manager.get_filename(i))+2;    // filename + 0 + size of string
 
   size+=4;       // number of entries saved
 
-  for (i=0;i<total;i++)
+  for (i=0; i<total; i++)
     if (list[i].last_access>0)       // don't save unaccessed counts
       size+=2+4+1;                   // filenumber & offset & type
 
@@ -255,13 +256,13 @@ void CacheList::prof_write(bFILE *fp)
   {
     int *ordered_ids=(int *)malloc(sizeof(int)*total);
     int i;
-    for (i=0;i<total;i++) ordered_ids[i]=i;
+    for (i=0; i<total; i++) ordered_ids[i]=i;
     qsort(ordered_ids,total,sizeof(int),c_sorter);
 
     if (fp)
     {
       fp->write_uint16(crc_manager.total_filenames());
-      for (i=0;i<crc_manager.total_filenames();i++)
+      for (i=0; i<crc_manager.total_filenames(); i++)
       {
     int l=strlen(crc_manager.get_filename(i))+1;
         fp->write_uint8(l);
@@ -269,11 +270,11 @@ void CacheList::prof_write(bFILE *fp)
       }
 
       int tsaved=0;
-      for (i=0;i<total;i++)
+      for (i=0; i<total; i++)
         if (list[i].last_access>0) tsaved++;
       fp->write_uint32(tsaved);
 
-      for (i=0;i<total;i++)
+      for (i=0; i<total; i++)
       {
     int id=ordered_ids[i];
         if (list[id].last_access>0)       // don't save unaccessed counts
@@ -347,7 +348,7 @@ int CacheList::search(int *sarray, uint16_t filenum, int32_t offset)
 static int load_chars()  // returns 0 if cache filled
 {
   int i;
-  for (i=0;i<total_objects;i++)
+  for (i=0; i<total_objects; i++)
   {
     if (figures[i]->get_cflag(CFLAG_NEED_CACHE_IN))
     {
@@ -427,19 +428,19 @@ void CacheList::preload_cache(level *lev)
 {
   game_object *f;
   int i;
-  for (i=0;i<total_objects;i++)                       // mark all types as not needing loading
+  for (i=0; i<total_objects; i++)                       // mark all types as not needing loading
     figures[i]->set_cflag(CFLAG_NEED_CACHE_IN,0);
 
-  for (f=lev->first_object();f;f=f->next)               // go through each object and get requested items to cache in
+  for (f=lev->first_object(); f; f=f->next)               // go through each object and get requested items to cache in
     preload_cache_object(f->otype);
 
 
   int j;
   uint16_t *fg_line;
-  for (j=0;j<lev->foreground_height();j++)
+  for (j=0; j<lev->foreground_height(); j++)
   {
     fg_line=lev->get_fgline(j);
-    for (i=0;i<lev->foreground_width();i++,fg_line++)
+    for (i=0; i<lev->foreground_width(); i++,fg_line++)
     {
       int id=foretiles[fgvalue(*fg_line)];
       if (id>=0 && id<nforetiles)
@@ -452,10 +453,10 @@ void CacheList::preload_cache(level *lev)
   }
 
   uint16_t *bg_line;
-  for (j=0;j<lev->background_height();j++)
+  for (j=0; j<lev->background_height(); j++)
   {
     bg_line=lev->get_bgline(j);
-    for (i=0;i<lev->background_width();i++,bg_line++)
+    for (i=0; i<lev->background_width(); i++,bg_line++)
     {
       int id=backtiles[bgvalue(*bg_line)];
       if (id>=0 && id<nbacktiles)
@@ -473,7 +474,7 @@ void CacheList::preload_cache(level *lev)
 void CacheList::load_cache_prof_info(char *filename, level *lev)
 {
   int j;
-  for (j=0;j<this->total;j++)
+  for (j=0; j<this->total; j++)
     if (list[j].last_access>=0)      // reset all loaded cache items to 0, all non-load to -1
       list[j].last_access=0;
 
@@ -499,17 +500,17 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
     fnum_remap=(int *)malloc(sizeof(int)*tnames);
 
     int i;
-    for (i=0;i<tnames;i++)
+    for (i=0; i<tnames; i++)
     {
       fp->read(name,fp->read_uint8());
       fnum_remap[i]=-1;                    // initialize the map to no-map
 
       int j;
-      for (j=0;j<crc_manager.total_filenames();j++)
+      for (j=0; j<crc_manager.total_filenames(); j++)
         if (!strcmp(crc_manager.get_filename(j),name))
           fnum_remap[i]=j;
     }
-    
+
     int tsaved = fp->read_uint32();
 
 
@@ -518,10 +519,10 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
     int tmatches=0;
 
     sorted_id_list=(int *)malloc(sizeof(int)*total);
-    for (j=0;j<total;j++) sorted_id_list[j]=j;
+    for (j=0; j<total; j++) sorted_id_list[j]=j;
     qsort(sorted_id_list,total,sizeof(int),s_offset_compare);
 
-    for (i=0;i<tsaved;i++)
+    for (i=0; i<tsaved; i++)
     {
       fp->read_uint8(); // read type
       short file_num=fp->read_uint16();
@@ -532,9 +533,9 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
       uint32_t offset=fp->read_uint32();
 
       // search for a match
-      j=search(sorted_id_list,file_num,offset);    
+      j=search(sorted_id_list,file_num,offset);
       if (j!=-1)
-      {    
+      {
         if (list[j].last_access<0)  // if not loaded
           list[j].last_access=-2;      // mark as needing loading
         else list[j].last_access=2;   // mark as loaded and needing to stay that way
@@ -545,14 +546,14 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
 
     free(sorted_id_list);            // was used for searching, no longer needed
 
-    for (j=0;j<total;j++)
+    for (j=0; j<total; j++)
       if (list[j].last_access==0)
         unmalloc(list+j);             // free any cache entries that are not accessed at all in the level
 
 
     ful=0;
     int tcached=0;
-    for (j=0;j<total;j++)    // now load all of the objects until full
+    for (j=0; j<total; j++)    // now load all of the objects until full
     {
 //      stat_man->update(j*70/total+25);
       if (list[j].file_number>=0 && list[j].last_access==-2)
@@ -584,7 +585,7 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
       tmatches=tsaved+1;
 
     last_access=tmatches+1;
-    for (i=0;i<tsaved;i++)      // reorder the last access of each cache to reflect prioirties
+    for (i=0; i<tsaved; i++)      // reorder the last access of each cache to reflect prioirties
     {
       if (priority[i]!=-1)
       {
@@ -604,7 +605,7 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
   if (load_fail) // no cache file, go solely on above gueses
   {
     int j;
-    for (j=0;j<total;j++)    // now load all of the objects until full, don't free old stuff
+    for (j=0; j<total; j++)    // now load all of the objects until full, don't free old stuff
     {
 //      stat_man->update(j*70/total+25);
 
@@ -645,7 +646,7 @@ void CacheList::prof_poll_end()
   if (prof_data)
   {
     int i=0;
-    for (;i<total;i++)
+    for (; i<total; i++)
     {
       if (list[i].last_access>=poll_start_access)
         prof_data[i]++;
@@ -741,7 +742,7 @@ CacheList::~CacheList()
 
 void CacheList::empty()
 {
-  for (int i=0;i<total;i++)
+  for (int i=0; i<total; i++)
   {
     if (list[i].file_number>=0 && list[i].last_access!=-1)
       unmalloc(&list[i]);
@@ -829,7 +830,7 @@ int32_t CacheList::alloc_id()
   {
     int i;
     CacheItem *ci=list;
-    for (i=0,id=-1;i<total && id<0;i++,ci++)        // scan list for a free id
+    for (i=0,id=-1; i<total && id<0; i++,ci++)        // scan list for a free id
     {
       if (ci->file_number<0)
         id=i;
@@ -839,7 +840,7 @@ int32_t CacheList::alloc_id()
     {
       int add_size=20;
       list=(CacheItem *)realloc(list,(sizeof(CacheItem)*(total+add_size)));
-      for (i=0;i<add_size;i++)
+      for (i=0; i<add_size; i++)
       {
         list[total+i].file_number=-1;         // mark new entries as new
     list[total+i].last_access=-1;
@@ -872,7 +873,7 @@ int32_t CacheList::reg_lisp_block(Cell *block)
     delete cache_read_file;
     cache_read_file=NULL;
 
-    cache_file=new jFILE(lfname,"ab");    
+    cache_file=new jFILE(lfname,"ab");
       } else cache_file=new jFILE(lfname,"wb");     // first time we opened
     }
     if (cache_file->open_failure())
@@ -989,7 +990,7 @@ int32_t CacheList::reg(char const *filename, char const *name, int type, int rm_
 
     if (rm_dups)
     {
-        for (i=0;i<total;i++)
+        for (i=0; i<total; i++)
             if (list[i].file_number == fn && (unsigned)list[i].offset == se->offset)
                 return i;
     }
@@ -1008,7 +1009,7 @@ void CacheList::normalize()
   int j;
   CacheItem *ci=list;
   last_access=-1;
-  for (j=0;j<total;j++,ci++)
+  for (j=0; j<total; j++,ci++)
   {
     if (ci->last_access>=0)
       ci->last_access=ci->last_access>>16;        // shift everything over by 16
@@ -1228,7 +1229,7 @@ void CacheList::show_accessed()
     new_old_accessed=-1;
     new_old=NULL;
     ci=list;
-    for (int i=0;i<total;i++,ci++)
+    for (int i=0; i<total; i++,ci++)
     {
       if (ci->last_access<old && ci->last_access>0 && ci->last_access>new_old_accessed)
       {

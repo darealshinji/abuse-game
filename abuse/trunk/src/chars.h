@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -25,7 +26,7 @@ enum character_state
 {
     dead,
     dieing,
-    stopped,        
+    stopped,
     start_run_jump, run_jump, run_jump_fall, end_run_jump,
     flinch_up, flinch_down,
     morph_pose,

@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -73,7 +74,7 @@ server::server(int argc, char **argv)
 
   int i;
   // preprocessing stuff before checking for connect to server
-  for (i=1;i<argc;i++)
+  for (i=1; i<argc; i++)
   {
     if (!strcmp(argv[i],"-port"))
     {
@@ -100,7 +101,7 @@ server::server(int argc, char **argv)
     has_net=0;
   else has_net=net_init();
 
-  for (i=1;i<argc;i++)
+  for (i=1; i<argc; i++)
   {
     if (!strcmp(argv[i],"-net"))
     {
@@ -121,7 +122,7 @@ server::server(int argc, char **argv)
       exit(1);
     }
     dprintf("Connected!\n");
-    
+
     join_game(os,name,argv[i]);
 
       }
@@ -164,7 +165,7 @@ void server::tick()
 uint32_t make_sync_uint32()
 {
   uint32_t x=0;
-  for (view *v=player_list;v;v=v->next)
+  for (view *v=player_list; v; v=v->next)
   {
     x^=v->focus->x;
     x^=v->focus->y;
@@ -203,7 +204,7 @@ int server::process_command(view *f, uint8_t command, packet &pk)
       next_out.write((uint8_t *)&pn,2);
       next_out.write((uint8_t *)view_size,8*4);
     }
-      }    
+      }
     } break;
 
     case SCMD_WEAPON_CHANGE :                          // change weapon
@@ -223,7 +224,7 @@ int server::process_command(view *f, uint8_t command, packet &pk)
       next_out.write((uint8_t *)&pn,2);
       next_out.write((uint8_t *)&new_weap,4);
     }
-      }    
+      }
     } break;
 
 
@@ -232,8 +233,8 @@ int server::process_command(view *f, uint8_t command, packet &pk)
       signed char inp[5];
       if (pk.read((uint8_t *)inp,5)!=5)
         return 0;
-      else        
-        f->set_input(inp[0],inp[1],inp[2],inp[3],inp[4]);        
+      else
+        f->set_input(inp[0],inp[1],inp[2],inp[3],inp[4]);
     } break;
 
     case SCMD_ADD_VIEW :
@@ -241,7 +242,7 @@ int server::process_command(view *f, uint8_t command, packet &pk)
       view *v=add_view(pk);
       if (v)
       {
-    for (view *f=player_list;f && f->next;f=f->next);
+    for (view *f=player_list; f && f->next; f=f->next);
     if (f) f->next=v;
     else player_list=f;
       }
@@ -281,7 +282,7 @@ void server::add_change_log(view *f, packet &pk, int number)
       f->resize_view(f->suggest.cx1,f->suggest.cy1,f->suggest.cx2,f->suggest.cy2);
       f->suggest.send_view=0;
     } else dprintf("sending resize to server\n");
-    uint32_t view_size[8];              
+    uint32_t view_size[8];
     view_size[0]=lltl(f->suggest.cx1);
     view_size[1]=lltl(f->suggest.cy1);
     view_size[2]=lltl(f->suggest.cx2);
@@ -332,14 +333,14 @@ int server::send_inputs(view *f)
 void server::collect_inputs()
 {
   out_socket *collect_server=NULL;
-  for (view *f=player_list;f;)
+  for (view *f=player_list; f; )
   {
     view *next=f->next;
     if (is_server)
     {
       if (f->connect)
       {
-    packet pk;    
+    packet pk;
     if (get_pkt(f->connect,pk))
     {
       while (!pk.eop())
@@ -359,7 +360,7 @@ void server::collect_inputs()
       {
         f->get_input();
     add_change_log(f,next_out,1);
-      }    
+      }
     }
     else
     {
@@ -380,11 +381,11 @@ void server::collect_inputs()
     packet pk;
     if (!get_pkt(collect_server,pk))
     {
-      for (view *f=player_list;f;f=f->next)
+      for (view *f=player_list; f; f=f->next)
         if (f->local_player())
       remove_from_server(f);
     }
-        
+
     if (!client_do_packet(pk))
       printf("Error occurred while processing packet from server\n");
   }
@@ -399,7 +400,7 @@ void server::distribute_changes()
 {
   char cmd;
 
-  for (view *f=player_list;f;f=f->next)
+  for (view *f=player_list; f; f=f->next)
   {
     cmd=SCMD_SET_INPUT;
     next_out.write((uint8_t *)&cmd,1);
@@ -423,7 +424,7 @@ void server::distribute_changes()
     next_out.write((uint8_t *)&x,4);
   }
 
-  for (f=player_list;f;)
+  for (f=player_list; f; )
   {
     view *n=f->next;
     if (!f->local_player() && f->connect)
@@ -446,7 +447,7 @@ void server::check_for_new_players()
       if (!send_pkt(nd,pk))
       {
     printf("error writing to connection\n");
-    return ;    
+    return ;
       }
 
 //      while (!file_server->service_request()) milli_wait(1000);
@@ -454,7 +455,7 @@ void server::check_for_new_players()
       if (!get_pkt(nd,pk))
       {
     printf("error reading from connection\n");
-    return ;    
+    return ;
       } else
       {
 
@@ -470,8 +471,8 @@ void server::check_for_new_players()
     if (!get_pkt(nd,pk))
     {
       printf("error reading view info from connection\n");
-      return ;    
-    }    
+      return ;
+    }
     int32_t cx1,cy1,cx2,cy2;
     if (pk.read((uint8_t *)&cx1,4)!=4) return ;  cx1=lltl(cx1);
     if (pk.read((uint8_t *)&cy1,4)!=4) return ;  cy1=lltl(cy1);
@@ -479,9 +480,9 @@ void server::check_for_new_players()
     if (pk.read((uint8_t *)&cy2,4)!=4) return ;  cy2=lltl(cy2);
 
     /**************** Create the player  *******************/
-    for (view *f=player_list;f && f->next;f=f->next);      // find last player, add one for pn
+    for (view *f=player_list; f && f->next; f=f->next);      // find last player, add one for pn
     int i,st=0;
-    for (i=0;i<total_objects;i++)
+    for (i=0; i<total_objects; i++)
       if (!strcmp(object_names[i],"START"))
         st=i;
 
@@ -504,7 +505,7 @@ void server::check_for_new_players()
 
 
     if (current_level->send(nd))
-    {    
+    {
       uint8_t cmd=SCMD_ADD_VIEW;
       next_out.write((uint8_t *)&cmd,1);
       v->write_packet(next_out);
@@ -513,12 +514,12 @@ void server::check_for_new_players()
       /********** Send all of the views to the player **********/
       pk.reset();
       uint16_t tv=0;
-      for (f=player_list;f;f=f->next) tv++;
+      for (f=player_list; f; f=f->next) tv++;
       tv=lstl(tv);
       pk.write((uint8_t *)&tv,2);
       if (!send_pkt(nd,pk)) return ;
 
-      for (f=player_list;f;f=f->next)
+      for (f=player_list; f; f=f->next)
       {
         pk.reset();
         f->write_packet(pk);
@@ -580,7 +581,7 @@ int server::join_game(out_socket *os, char *name, char *server_name)
   if (current_level)
     delete current_level;
 
-  int32_t vs[4]={lltl(320/2-155),lltl(200/2-95),lltl(320/2+155),lltl(200/2+70)};
+  int32_t vs[4]={ lltl(320/2-155),lltl(200/2-95),lltl(320/2+155),lltl(200/2+70)};
   pk.write((uint8_t *)vs,4*4);
   if (!send_pkt(os,pk))   { printf("Unable to write to server\n"); exit(0);  }
 
@@ -602,7 +603,7 @@ int server::join_game(out_socket *os, char *name, char *server_name)
   { fputs(re,stderr); exit(0); }
   tv=lstl(tv);
   view *last=NULL;
-  for (int i=0;i<tv;i++)
+  for (int i=0; i<tv; i++)
   {
     if (!get_pkt(os,pk)) { fputs(re,stderr); exit(0); }
 
@@ -625,7 +626,7 @@ int server::join_game(out_socket *os, char *name, char *server_name)
   uint16_t rtab[1024];
   if (!pk.read((uint8_t *)rtab,1024*2)) { fputs(re,stderr); exit(0); }  // read the rand table
 
-  for (int j=0;j<1024*2;j++)
+  for (int j=0; j<1024*2; j++)
     if (((uint8_t *)rtab)[j]!=((uint8_t *)rtable)[j])
     { printf("rtables differ on byte %d\n",j); exit(0); }
 
@@ -655,7 +656,7 @@ void server::remove_player(view *f)
     player_list=player_list->next;
   else
   {
-    for (view *v=player_list;v && v->next!=f;v=v->next);
+    for (view *v=player_list; v && v->next!=f; v=v->next);
     v->next=f->next;
   }
 
@@ -687,9 +688,9 @@ view *server::add_view(packet &pk)
 {
   uint32_t x[TOT_VIEW_VARS];
   if (!pk.read((uint8_t *)x,TOT_VIEW_VARS*4)) return NULL;
-  for (int i=0;i<TOT_VIEW_VARS;i++) x[i]=lltl(x[i]);
+  for (int i=0; i<TOT_VIEW_VARS; i++) x[i]=lltl(x[i]);
   int skip=0;
-  for (view *f=player_list;f;f=f->next)
+  for (view *f=player_list; f; f=f->next)
     if (f->player_number==x[0])
       skip=1;
 
@@ -749,12 +750,12 @@ int server::client_do_packet(packet &pk)
       view *f=NULL;
       int fail=0;
       if (cmd!=SCMD_ADD_VIEW && cmd!=SCMD_SYNC)
-      {    
+      {
     uint16_t player;
     if (pk.read((uint8_t *)&player,2)!=2)
       er=1;
     player=lstl(player);
-    for (f=player_list;f && f->player_number!=player;f=f->next);
+    for (f=player_list; f && f->player_number!=player; f=f->next);
     if (!f) fail=1;
       }
       if (!fail)

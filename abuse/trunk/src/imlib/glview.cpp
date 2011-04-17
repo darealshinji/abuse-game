@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -48,16 +49,16 @@ main(int argc, char **argv)
       t++;
     i++;
   }
-  for (j=0;j<100;j++)
+  for (j=0; j<100; j++)
   {
-    for (k=1;k<t;k++)
+    for (k=1; k<t; k++)
     {
       im[k]->put_image(screen,0,0);
     printf("put image\n");
       update_dirty(screen);
       screen->bar(0,0,im[k]->width(),im[k]->height(),0);
     }
-    for (k=t-1;k>0;k--)
+    for (k=t-1; k>0; k--)
     {
       im[k]->put_image(screen,0,0);
         printf("put image\n");

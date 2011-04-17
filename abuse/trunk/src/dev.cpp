@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -125,7 +126,7 @@ char const *dev_mode_icon_names[DEV_MODES] =
     "line_mode","rect_mode","bar_mode", */ "area_select"
 };
 
-int dev_mode_ids[DEV_MODES]={ID_DMODE_DRAW,ID_DMODE_PICK, ID_DMODE_AREA};
+int dev_mode_ids[DEV_MODES]={ ID_DMODE_DRAW,ID_DMODE_PICK, ID_DMODE_AREA};
 
 int edit_mode=ID_DMODE_DRAW;
 
@@ -207,7 +208,7 @@ static void show_object_number (game_object *who)
 {
   int total=0,number=0;
   game_object *c;
-  for (c=current_level->first_object();c;c=c->next)
+  for (c=current_level->first_object(); c; c=c->next)
   {
     if (c->otype==who->otype)
       total++;
@@ -255,7 +256,7 @@ void dev_controll::search_forward()
     char *name=search_window->read(ID_SEARCH_TEXT);
     int type=-1;    // see if this type exsists
     int i;
-    for (i=0;i<total_objects;i++)
+    for (i=0; i<total_objects; i++)
       if (!strcmp(object_names[i],name))
         type=i;
     if (type==-1)
@@ -271,13 +272,13 @@ void dev_controll::search_forward()
         first=current_level->first_object();
       else
         first=search_object->next;
-      for (;!find && first;first=first->next)
+      for (; !find && first; first=first->next)
         if (first->otype==type)
       find=first;
       int loop=0;
       if (!find)
       {
-    for (first=current_level->first_object();first && !find;first=first->next)
+    for (first=current_level->first_object(); first && !find; first=first->next)
     {
       if (first->otype==type)
         find=first;
@@ -358,7 +359,7 @@ static void load_dev_icons()
   dev_forward=cache.reg(artf,"forward",SPEC_IMAGE,0);
   dev_backward=cache.reg(artf,"backward",SPEC_IMAGE,0);
 
-  for (int i=0;i<DEV_MODES;i++)
+  for (int i=0; i<DEV_MODES; i++)
     dev_mode_icon[i]=cache.reg(artf,dev_mode_icon_names[i],SPEC_IMAGE,0);
 
 }
@@ -393,11 +394,11 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
 
   screen->lock();
   im->lock();
-  for (iy=iy_start;new_height>0;new_height--,y++,iy+=ystep)
+  for (iy=iy_start; new_height>0; new_height--,y++,iy+=ystep)
   {
     sl1=im->scan_line(iy>>16);
     sl2=screen->scan_line(y)+x;
-    for (ix=ix_start,sx=0;sx<new_width;sx++,ix+=xstep,sl2++)
+    for (ix=ix_start,sx=0; sx<new_width; sx++,ix+=xstep,sl2++)
       *sl2=sl1[ix>>16];
   }
   im->unlock();
@@ -435,11 +436,11 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
 
   uint8_t d;
   screen->lock();
-  for (iy=iy_start;new_height>0;new_height--,y++,iy+=ystep)
+  for (iy=iy_start; new_height>0; new_height--,y++,iy+=ystep)
   {
     sl1=im->scan_line(iy>>16);
     sl2=screen->scan_line(y)+x;
-    for (ix=ix_start,sx=0;sx<new_width;sx++,ix+=xstep,sl2++)
+    for (ix=ix_start,sx=0; sx<new_width; sx++,ix+=xstep,sl2++)
     {
       d=sl1[ix>>16];
       if (d)
@@ -475,7 +476,7 @@ void dev_controll::dev_draw(view *v)
 
     if (dev&DRAW_LINKS)
     {
-      for (light_source *f=first_light_source;f;f=f->next)
+      for (light_source *f=first_light_source; f; f=f->next)
       {
     if (f->x-vx>=0 && f->x-vx<=(v->cx2-v->cx1+1) && f->y-vy>=0 && f->y-vy<=(v->cy2-v->cy1+1))
     {
@@ -505,7 +506,7 @@ void dev_controll::dev_draw(view *v)
 
     game_object *o;
     if (show_names)
-      for (o=current_level->first_object();o;o=o->next)
+      for (o=current_level->first_object(); o; o=o->next)
       {
     the_game->game_to_mouse(o->x,o->y,current_view,x1,y1);
     char *nm=object_names[o->otype];
@@ -515,19 +516,19 @@ void dev_controll::dev_draw(view *v)
     if (dev&DRAW_LINKS)
     {
       // draw connections between objects
-      for (o=current_level->first_object();o;o=o->next)
+      for (o=current_level->first_object(); o; o=o->next)
       {
     the_game->game_to_mouse(o->x,o->y,current_view,x1,y1);
 
     int i=0;
-    for (;i<o->total_objects();i++)
+    for (; i<o->total_objects(); i++)
     {
       game_object *other=o->get_object(i);
       the_game->game_to_mouse(other->x,other->y,current_view,x2,y2);
       screen->line(x1,y1,x2,y2,wm->bright_color());
     }
 
-    for (i=0;i<o->total_lights();i++)
+    for (i=0; i<o->total_lights(); i++)
     {
       light_source *l=o->get_light(i);
       the_game->game_to_mouse(l->x,l->y,current_view,x2,y2);
@@ -546,7 +547,7 @@ void dev_controll::dev_draw(view *v)
       screen->rectangle(rx1,ry1,rx2,ry2,wm->bright_color());
 
       the_game->game_to_mouse(selected_object->x,selected_object->y,current_view,x1,y1);
-      for (int i=0;i<selected_object->total_objects();i++)
+      for (int i=0; i<selected_object->total_objects(); i++)
       {
     game_object *other=selected_object->get_object(i);
     the_game->game_to_mouse(other->x,other->y,current_view,x2,y2);
@@ -562,7 +563,7 @@ static light_source *find_light(int32_t x, int32_t y)
 {
   image *i=cache.img(light_buttons[0]);
   int l=i->width()/2,h=i->height()/2;
-  for (light_source *f=first_light_source;f;f=f->next)
+  for (light_source *f=first_light_source; f; f=f->next)
   {
     if (x>=f->x-l && x<=f->x+l && y>=f->y-h && y<=f->y+h)
       return f;
@@ -584,7 +585,7 @@ void dev_controll::toggle_toolbar()
   {
     tbw_on=1;
     int setx=0;
-    for (int i=0;i<DEV_MODES;i++)
+    for (int i=0; i<DEV_MODES; i++)
     {
       if (edit_mode==dev_mode_ids[i])
         setx=i;
@@ -685,7 +686,7 @@ void dev_controll::toggle_omenu()
 
 static int get_omenu_item(int x)
 {
-  for (int i=0;i<total_objects;i++)
+  for (int i=0; i<total_objects; i++)
     if (listable_objs[x]==object_names[i])
       return i;
   return 0;
@@ -832,7 +833,7 @@ void dev_init(int argc, char **argv)
   prop=new property_manager;
   prop->load("defaults.prp");
 
-  for (i=1;i<argc;i++)
+  for (i=1; i<argc; i++)
   {
     if (!strcmp(argv[i],"-edit"))
     {
@@ -967,7 +968,7 @@ void dev_controll::load_stuff()
     l_user_stack.push(p);
     eval(p);
     l_user_stack.pop(1);
-    for (int i=0;i<total_pals;i++)
+    for (int i=0; i<total_pals; i++)
       pal_wins[i]->close_window();
   }
 
@@ -985,7 +986,7 @@ void dev_controll::do_command(char const *command, event &ev)
   }
 
   sscanf(command,"%s",fword);
-  for (st=command;*st && *st!=' ';st++);
+  for (st=command; *st && *st!=' '; st++);
   if (*st) st++;
   if (!strcmp(fword,"active"))
   {
@@ -1006,10 +1007,10 @@ void dev_controll::do_command(char const *command, event &ev)
   if (!strcmp(fword,"clear_weapons"))
   {
     view *f=NULL;
-    for (f=player_list;f;f=f->next)
+    for (f=player_list; f; f=f->next)
     {
       int i;
-      for (i=0;i<total_weapons;i++)
+      for (i=0; i<total_weapons; i++)
     f->weapons[i]=-1;
 
       if (total_weapons)
@@ -1057,8 +1058,8 @@ void dev_controll::do_command(char const *command, event &ev)
     dprintf("unchopped %dx%d to ",l,h);
     l=(l+the_game->btile_width()-1)/the_game->btile_width();
     h=(h+the_game->btile_height()-1)/the_game->btile_height();
-    for (y=0,i=cur_bg;y<h;y++)
-          for (x=0;x<l;x++)
+    for (y=0,i=cur_bg; y<h; y++)
+          for (x=0; x<l; x++)
             the_game->put_bg(rx+x,ry+y,i++);
     dprintf("%dx%d\n",l,h);
       } else dprintf(symbol_str("unchop1"));
@@ -1068,7 +1069,7 @@ void dev_controll::do_command(char const *command, event &ev)
   if (!strcmp(fword,"center"))
   {
     view *v=the_game->first_view;
-    for (;v;v=v->next)
+    for (; v; v=v->next)
     {
       v->pan_x=0;
       v->pan_y=0;
@@ -1164,7 +1165,7 @@ void dev_controll::do_command(char const *command, event &ev)
     char oname[100];
     sscanf(command,"%s%s",fword,oname);       // read the type of object to create
     int x,t=-1;
-    for (x=0;x<total_objects;x++)             // find the object type by name
+    for (x=0; x<total_objects; x++)             // find the object type by name
        if (!strcmp(object_names[x],oname))
          t=x;
 
@@ -1208,8 +1209,8 @@ void dev_controll::do_command(char const *command, event &ev)
   if (!strcmp(fword,"clear_auto"))
   {
     int32_t i,j;
-    for (i=0;i<current_level->foreground_width();i++)
-      for (j=0;j<current_level->foreground_height();j++)
+    for (i=0; i<current_level->foreground_width(); i++)
+      for (j=0; j<current_level->foreground_height(); j++)
         current_level->clear_fg(i,j);
   }
 
@@ -1370,17 +1371,17 @@ void dev_controll::make_ai_window(game_object *o)
   {
     int maxl=0;
     int i=0;
-    for (;i<figures[o->otype]->total_fields;i++)
+    for (; i<figures[o->otype]->total_fields; i++)
       if( strlen(figures[o->otype]->fields[i]->descript_name) > (unsigned)maxl )
         maxl=strlen(figures[o->otype]->fields[i]->descript_name);
 
     int owh=wh;
     ifield *first=NULL,*last=NULL;
-    for (i=0;i<figures[o->otype]->total_fields;i++)
+    for (i=0; i<figures[o->otype]->total_fields; i++)
     {
       char tmp[200];
       strcpy(tmp,figures[o->otype]->fields[i]->descript_name);
-      for (int j=maxl-strlen(figures[o->otype]->fields[i]->descript_name);j;j--)
+      for (int j=maxl-strlen(figures[o->otype]->fields[i]->descript_name); j; j--)
         strcat(tmp," ");
       int er;
       ifield *p=new text_field(wl,wh,ID_NULL,tmp,"######",
@@ -1474,7 +1475,7 @@ void dev_controll::close_ai_window()
       if (figures[o->otype]->total_fields)
       {
     ifield *f=aiw->inm->get(DEV_AI_OK)->next;
-    for (int i=0;i<figures[o->otype]->total_fields;i++)
+    for (int i=0; i<figures[o->otype]->total_fields; i++)
     {
       x=atoi(f->read());
       char *v=figures[o->otype]->fields[i]->real_name;
@@ -1560,7 +1561,7 @@ void dev_controll::pick_handle_input(event &ev)
   {
     int32_t mx=last_demo_mx,my=last_demo_my;
     view *v=the_game->view_in(mx,my);
-    for (area_controller *a=current_level->area_list;a;a=a->next)
+    for (area_controller *a=current_level->area_list; a; a=a->next)
     {
       int32_t x1,y1,x2,y2;
       the_game->game_to_mouse(a->x,a->y,v,x1,y1);
@@ -1638,7 +1639,7 @@ void dev_controll::handle_event(event &ev)
 
   if (!current_level) return ;
 
-  for (x=0;x<total_pals;x++)
+  for (x=0; x<total_pals; x++)
     pal_wins[x]->handle_event(ev);
   if (ev.type==EV_MOUSE_MOVE)
   {
@@ -2326,7 +2327,7 @@ void dev_controll::handle_event(event &ev)
     } break;
     case ID_GOD_MODE :
     {
-      for (view *v=player_list;v;v=v->next)
+      for (view *v=player_list; v; v=v->next)
         v->god=!v->god;
     } break;
     case ID_MOUSE_SCROLL :
@@ -2403,7 +2404,7 @@ void dev_controll::handle_event(event &ev)
         else
         {
           area_controller *a=current_level->area_list,*l=NULL;
-          for (;a!=current_area && a;a=a->next) { l=a; }
+          for (; a!=current_area && a; a=a->next) { l=a; }
           l->next=a->next;
           delete a;
         }
@@ -2419,7 +2420,7 @@ void dev_controll::handle_event(event &ev)
     {
       if (edit_object)
       {
-        for (int i=0;i<edit_object->total_objects();i++)
+        for (int i=0; i<edit_object->total_objects(); i++)
           edit_object->remove_object(edit_object->get_object(0));
         the_game->need_refresh();
       }
@@ -2429,7 +2430,7 @@ void dev_controll::handle_event(event &ev)
     {
       if (edit_object)
       {
-        for (int i=0;i<edit_object->total_lights();i++)
+        for (int i=0; i<edit_object->total_lights(); i++)
           edit_object->remove_light(edit_object->get_light(0));
         the_game->need_refresh();
       }
@@ -3003,7 +3004,7 @@ void pal_win::draw()
     image *im=new image(the_game->ftile_width(),the_game->ftile_height());
     int th=the_game->ftile_height()/scale,tw=the_game->ftile_width()/scale;
 
-    for (i=0;i<w*h;i++)
+    for (i=0; i<w*h; i++)
     {
       im->clear();
       the_game->get_fg(pat[i])->im->put_image(im,0,0);
@@ -3030,7 +3031,7 @@ void pal_win::handle_event(event &ev)
   if (d!=last_selected)  // if so see if we need to hilight any of our tiles.
   {
     int i,dr=0;
-    for (i=0;i<w*h;i++)
+    for (i=0; i<w*h; i++)
     {
       if (pat[i]==d || pat[i]==last_selected)
         dr=1;
@@ -3122,9 +3123,9 @@ void pal_win::handle_event(event &ev)
         int32_t xs,ys,xx,yy;
         the_game->ftile_on(me->x,me->y,xs,ys);
 
-        for (xx=xs;xx<xs+w;xx++)
+        for (xx=xs; xx<xs+w; xx++)
         {
-          for (yy=ys;yy<ys+h;yy++)
+          for (yy=ys; yy<ys+h; yy++)
           {
         if (xx>=0 && yy>=0 && xx<current_level->foreground_width() &&
             yy<current_level->foreground_height())
@@ -3158,8 +3159,8 @@ void pal_win::resize(int xa, int ya)
 
   npat=(unsigned short *)malloc(sizeof(unsigned short)*(w+xa)*(h+ya));
   memset(npat,0,sizeof(unsigned short)*(w+xa)*(h+ya));
-  for (i=0;i<(w+xa);i++)
-    for (j=0;j<(h+ya);j++)
+  for (i=0; i<(w+xa); i++)
+    for (j=0; j<(h+ya); j++)
       if (i+j*w<w*h)
         npat[i+j*(w+xa)]=pat[i+j*w];
   free(pat);
@@ -3182,7 +3183,7 @@ void pal_win::save(FILE *fp)
 
   fprintf(fp,"(add_palette \"%s\" %ld %ld %ld %ld %ld ",name,(long)w,(long)h,(long)x,(long)y,(long)scale);
   int i;
-  for (i=0;i<w*h;i++)
+  for (i=0; i<w*h; i++)
     fprintf(fp,"%d ",pat[i]&0x7fff);
   fprintf(fp,")\n");
 
@@ -3198,7 +3199,7 @@ void dev_controll::save()
     fprintf(fp,"(set_zoom %d)\n",the_game->zoom);
 
     int i;
-    for (i=0;i<total_pals;i++)
+    for (i=0; i<total_pals; i++)
     {
       pal_wins[i]->save(fp);
     }
@@ -3211,7 +3212,7 @@ void dev_controll::save()
 int dev_controll::is_pal_win(Jwindow *win)
 {
   int i;
-  for (i=0;i<total_pals;i++)
+  for (i=0; i<total_pals; i++)
     if (win==pal_wins[i]->me) return 1;
   return 0;
 }
@@ -3322,7 +3323,7 @@ void dev_controll::fg_fill(int color, int x, int y, pal_win *p)
 static int get_char_mem(int type, int print)
 {
   int t=0;
-  for (int j=0;j<MAX_STATE;j++)
+  for (int j=0; j<MAX_STATE; j++)
   {
     if (figures[type]->has_sequence((character_state)j))
     {
@@ -3340,7 +3341,7 @@ static int get_char_mem(int type, int print)
 void dev_controll::show_char_mem(char const *name)
 {
   int find=-1;
-  for (int i=0;i<total_objects;i++)
+  for (int i=0; i<total_objects; i++)
   {
     if (!strcmp(name,object_names[i]))
       find=i;
@@ -3356,7 +3357,7 @@ void dev_controll::show_mem()
 {
   int t=0,s=0;
   int i=0;
-  for (;i<nforetiles;i++)
+  for (; i<nforetiles; i++)
   {
     if (foretiles[i]>=0)
     {
@@ -3370,7 +3371,7 @@ void dev_controll::show_mem()
   dprintf("%d loaded foretiles=%d bytes\n",t,s);
 
   t=0; s=0;
-  for (i=0;i<nbacktiles;i++)
+  for (i=0; i<nbacktiles; i++)
   {
     if (backtiles[i]>=0)
     {
@@ -3384,7 +3385,7 @@ void dev_controll::show_mem()
   dprintf("%d loaded backtiles=%d bytes\n",t,s);
 
   t=0; s=0;
-  for (i=0;i<total_objects;i++)
+  for (i=0; i<total_objects; i++)
   {
     t++;
     s+=get_char_mem(i,0);
@@ -3421,138 +3422,138 @@ struct pmi
 
 
 static pmi filemenu[]={
-          {"menu1_load",         ID_LEVEL_LOAD,NULL,-1},
-      {NULL,0,NULL,-1},
-      {"menu1_save",     ID_LEVEL_SAVE,NULL,-1},
-      {"menu1_saveas",      ID_LEVEL_SAVEAS,NULL,-1},
-      {"menu1_savegame",          ID_GAME_SAVE,NULL,-1},
-      {"menu1_new",          ID_LEVEL_NEW,NULL,-1},
-      {"menu1_resize",         ID_LEVEL_RESIZE,NULL,-1},
-      {NULL,0,NULL,-1},
-      {"menu1_suspend",ID_SUSPEND,NULL,-1},
-      {"menu1_toggle",ID_PLAY_MODE,NULL,-1},
-      {NULL,0,NULL,-1},
-      {"menu1_savepal",ID_EDIT_SAVE,NULL,-1},
-//      {"menu1_startc",ID_CACHE_PROFILE,NULL,-1},
-//      {"menu1_endc",ID_CACHE_PROFILE_END,NULL,-1},
-      {NULL,0,NULL,-1},
-      {"menu1_quit",      ID_QUIT,NULL,-1},
-      {NULL,-1,NULL,-1}
+          { "menu1_load",         ID_LEVEL_LOAD,NULL,-1},
+      { NULL,0,NULL,-1},
+      { "menu1_save",     ID_LEVEL_SAVE,NULL,-1},
+      { "menu1_saveas",      ID_LEVEL_SAVEAS,NULL,-1},
+      { "menu1_savegame",          ID_GAME_SAVE,NULL,-1},
+      { "menu1_new",          ID_LEVEL_NEW,NULL,-1},
+      { "menu1_resize",         ID_LEVEL_RESIZE,NULL,-1},
+      { NULL,0,NULL,-1},
+      { "menu1_suspend",ID_SUSPEND,NULL,-1},
+      { "menu1_toggle",ID_PLAY_MODE,NULL,-1},
+      { NULL,0,NULL,-1},
+      { "menu1_savepal",ID_EDIT_SAVE,NULL,-1},
+//      { "menu1_startc",ID_CACHE_PROFILE,NULL,-1},
+//      { "menu1_endc",ID_CACHE_PROFILE_END,NULL,-1},
+      { NULL,0,NULL,-1},
+      { "menu1_quit",      ID_QUIT,NULL,-1},
+      { NULL,-1,NULL,-1}
     };
 
 
 static pmi editmenu[]={
-  {"menu2_light",               ID_TOGGLE_LIGHT,NULL,-1},
-  {"menu2_scroll",            ID_SET_SCROLL,NULL,-1},
-  {"menu2_center",       ID_CENTER_PLAYER,NULL,-1},
-  {"menu2_addpal",                ID_ADD_PALETTE,NULL,-1},
-  {"menu2_delay",          ID_TOGGLE_DELAY,NULL,-1},
+  { "menu2_light",               ID_TOGGLE_LIGHT,NULL,-1},
+  { "menu2_scroll",            ID_SET_SCROLL,NULL,-1},
+  { "menu2_center",       ID_CENTER_PLAYER,NULL,-1},
+  { "menu2_addpal",                ID_ADD_PALETTE,NULL,-1},
+  { "menu2_delay",          ID_TOGGLE_DELAY,NULL,-1},
 
-  {"menu2_god",                   ID_GOD_MODE,NULL,-1},
-  {"menu2_clear",          ID_CLEAR_WEAPONS,NULL,-1},
-  {"menu2_mscroll",               ID_MOUSE_SCROLL,&mouse_scrolling,-1},
-  {"menu2_lock",       ID_LOCK_PALETTES,&palettes_locked,-1},
-  {"menu2_raise",       ID_RAISE_ALL,&raise_all,-1},
-  {"menu2_names",        ID_TOGGLE_NAMES,&show_names,-1},
+  { "menu2_god",                   ID_GOD_MODE,NULL,-1},
+  { "menu2_clear",          ID_CLEAR_WEAPONS,NULL,-1},
+  { "menu2_mscroll",               ID_MOUSE_SCROLL,&mouse_scrolling,-1},
+  { "menu2_lock",       ID_LOCK_PALETTES,&palettes_locked,-1},
+  { "menu2_raise",       ID_RAISE_ALL,&raise_all,-1},
+  { "menu2_names",        ID_TOGGLE_NAMES,&show_names,-1},
 
-  {NULL,0,NULL,-1},
-  {"menu2_map",      ID_TOGGLE_MAP,NULL,-1},
-//  {"Shrink to 320x200 (F10)",    ID_SMALL_MODE,NULL,-1},
-  {"menu2_view",        ID_DISABLE_VIEW_SHIFT,&view_shift_disabled,-1},
-//  {"Ultra Smooth draw (U)",      ID_INTERPOLATE_DRAW,  &interpolate_draw,'U'},
-  {"menu2_alight",      ID_DISABLE_AUTOLIGHT, &disable_autolight,'A'},
-  {"menu2_fps",         ID_SHOW_FPS,          &fps_on,-1},
-//  {NULL,0,NULL,-1},
-//  {"Record demo",                ID_RECORD_DEMO,NULL,-1},
-//  {"Play demo",                  ID_PLAY_DEMO,NULL,-1},
-  {NULL,-1,NULL,-1}
+  { NULL,0,NULL,-1},
+  { "menu2_map",      ID_TOGGLE_MAP,NULL,-1},
+//  { "Shrink to 320x200 (F10)",    ID_SMALL_MODE,NULL,-1},
+  { "menu2_view",        ID_DISABLE_VIEW_SHIFT,&view_shift_disabled,-1},
+//  { "Ultra Smooth draw (U)",      ID_INTERPOLATE_DRAW,  &interpolate_draw,'U'},
+  { "menu2_alight",      ID_DISABLE_AUTOLIGHT, &disable_autolight,'A'},
+  { "menu2_fps",         ID_SHOW_FPS,          &fps_on,-1},
+//  { NULL,0,NULL,-1},
+//  { "Record demo",                ID_RECORD_DEMO,NULL,-1},
+//  { "Play demo",                  ID_PLAY_DEMO,NULL,-1},
+  { NULL,-1,NULL,-1}
 };
 
 
 
 // Window Menus
 static pmi winmenu[]={
-          {"menu3_fore",    ID_WIN_FORE,    &forew_on,-1},
-          {"menu3_back",    ID_WIN_BACK,    &backw_on,-1},
-          {"menu3_layers",    ID_WIN_LAYERS,  &show_menu_on,-1},
-      {"menu3_light",    ID_WIN_LIGHTING,&ledit_on,-1},
-      {"menu3_pal",    ID_WIN_PALETTES,&pmenu_on,-1},
-      {"menu3_objs",    ID_WIN_OBJECTS, &omenu_on,-1},
-//      {"menu3_console",    ID_WIN_CONSOLE, &commandw_on,-1},
-      {"menu3_toolbar",    ID_WIN_TOOLBAR, &tbw_on,-1},
-//      {"Search      (s)",    ID_SEARCH,      &searchw_on,-1},
-      {"menu3_prof",    ID_PROFILE,     &profile_on,-1},
-      {"menu3_save",     ID_SAVE_WINDOWS,NULL,-1},
-      {NULL,-1,NULL,-1}
+          { "menu3_fore",    ID_WIN_FORE,    &forew_on,-1},
+          { "menu3_back",    ID_WIN_BACK,    &backw_on,-1},
+          { "menu3_layers",    ID_WIN_LAYERS,  &show_menu_on,-1},
+      { "menu3_light",    ID_WIN_LIGHTING,&ledit_on,-1},
+      { "menu3_pal",    ID_WIN_PALETTES,&pmenu_on,-1},
+      { "menu3_objs",    ID_WIN_OBJECTS, &omenu_on,-1},
+//      { "menu3_console",    ID_WIN_CONSOLE, &commandw_on,-1},
+      { "menu3_toolbar",    ID_WIN_TOOLBAR, &tbw_on,-1},
+//      { "Search      (s)",    ID_SEARCH,      &searchw_on,-1},
+      { "menu3_prof",    ID_PROFILE,     &profile_on,-1},
+      { "menu3_save",     ID_SAVE_WINDOWS,NULL,-1},
+      { NULL,-1,NULL,-1}
     };
 
 
 
 /*
 static pmi filemenu[]={
-          {"Load Level",         ID_LEVEL_LOAD,NULL,-1},
-      {NULL,0,NULL,-1},
-      {"Save Level (S)",     ID_LEVEL_SAVE,NULL,-1},
-      {"Save level as",      ID_LEVEL_SAVEAS,NULL,-1},
-      {"Save game",          ID_GAME_SAVE,NULL,-1},
-      {"New level",          ID_LEVEL_NEW,NULL,-1},
-      {"Resize map",         ID_LEVEL_RESIZE,NULL,-1},
-      {NULL,0,NULL,-1},
-      {"Suspend non-players",ID_SUSPEND,NULL,-1},
-      {"Play mode toggle (TAB)",ID_PLAY_MODE,NULL,-1},
-      {NULL,0,NULL,-1},
-      {"Save Palettes         ",ID_EDIT_SAVE,NULL,-1},
-      {"Start cache profile   ",ID_CACHE_PROFILE,NULL,-1},
-      {"End cache profile     ",ID_CACHE_PROFILE_END,NULL,-1},
-      {NULL,0,NULL,-1},
-      {"Quit      (Q)",      ID_QUIT,NULL,-1},
-      {NULL,-1,NULL,-1}
+          { "Load Level",         ID_LEVEL_LOAD,NULL,-1},
+      { NULL,0,NULL,-1},
+      { "Save Level (S)",     ID_LEVEL_SAVE,NULL,-1},
+      { "Save level as",      ID_LEVEL_SAVEAS,NULL,-1},
+      { "Save game",          ID_GAME_SAVE,NULL,-1},
+      { "New level",          ID_LEVEL_NEW,NULL,-1},
+      { "Resize map",         ID_LEVEL_RESIZE,NULL,-1},
+      { NULL,0,NULL,-1},
+      { "Suspend non-players",ID_SUSPEND,NULL,-1},
+      { "Play mode toggle (TAB)",ID_PLAY_MODE,NULL,-1},
+      { NULL,0,NULL,-1},
+      { "Save Palettes         ",ID_EDIT_SAVE,NULL,-1},
+      { "Start cache profile   ",ID_CACHE_PROFILE,NULL,-1},
+      { "End cache profile     ",ID_CACHE_PROFILE_END,NULL,-1},
+      { NULL,0,NULL,-1},
+      { "Quit      (Q)",      ID_QUIT,NULL,-1},
+      { NULL,-1,NULL,-1}
     };
 
 
 static pmi editmenu[]={
-  {"Toggle light",               ID_TOGGLE_LIGHT,NULL,-1},
-  {"Set scroll rate",            ID_SET_SCROLL,NULL,-1},
-  {"Center on player   (c)",       ID_CENTER_PLAYER,NULL,-1},
-  {"Add palette",                ID_ADD_PALETTE,NULL,-1},
-  {"Toggle Delays      (D)",          ID_TOGGLE_DELAY,NULL,-1},
+  { "Toggle light",               ID_TOGGLE_LIGHT,NULL,-1},
+  { "Set scroll rate",            ID_SET_SCROLL,NULL,-1},
+  { "Center on player   (c)",       ID_CENTER_PLAYER,NULL,-1},
+  { "Add palette",                ID_ADD_PALETTE,NULL,-1},
+  { "Toggle Delays      (D)",          ID_TOGGLE_DELAY,NULL,-1},
 
-  {"God mode",                   ID_GOD_MODE,NULL,-1},
-  {"Clear weapons (z)",          ID_CLEAR_WEAPONS,NULL,-1},
-  {"Mouse scroll",               ID_MOUSE_SCROLL,&mouse_scrolling,-1},
-  {"Lock palette windows",       ID_LOCK_PALETTES,&palettes_locked,-1},
-  {"Raise all foreground",       ID_RAISE_ALL,&raise_all,-1},
-  {"Toggle object names",        ID_TOGGLE_NAMES,&show_names,-1},
+  { "God mode",                   ID_GOD_MODE,NULL,-1},
+  { "Clear weapons (z)",          ID_CLEAR_WEAPONS,NULL,-1},
+  { "Mouse scroll",               ID_MOUSE_SCROLL,&mouse_scrolling,-1},
+  { "Lock palette windows",       ID_LOCK_PALETTES,&palettes_locked,-1},
+  { "Raise all foreground",       ID_RAISE_ALL,&raise_all,-1},
+  { "Toggle object names",        ID_TOGGLE_NAMES,&show_names,-1},
 
-  {NULL,0,NULL,-1},
-  {"Toggle map        (m)",      ID_TOGGLE_MAP,NULL,-1},
-//  {"Shrink to 320x200 (F10)",    ID_SMALL_MODE,NULL,-1},
-  {"Disable view shifts",        ID_DISABLE_VIEW_SHIFT,&view_shift_disabled,-1},
-//  {"Ultra Smooth draw (U)",      ID_INTERPOLATE_DRAW,  &interpolate_draw,'U'},
-  {"Disable Autolight (A)",      ID_DISABLE_AUTOLIGHT, &disable_autolight,'A'},
-  {"Show FPS/Obj count",         ID_SHOW_FPS,          &fps_on,-1},
-//  {NULL,0,NULL,-1},
-//  {"Record demo",                ID_RECORD_DEMO,NULL,-1},
-//  {"Play demo",                  ID_PLAY_DEMO,NULL,-1},
-  {NULL,-1,NULL,-1}
+  { NULL,0,NULL,-1},
+  { "Toggle map        (m)",      ID_TOGGLE_MAP,NULL,-1},
+//  { "Shrink to 320x200 (F10)",    ID_SMALL_MODE,NULL,-1},
+  { "Disable view shifts",        ID_DISABLE_VIEW_SHIFT,&view_shift_disabled,-1},
+//  { "Ultra Smooth draw (U)",      ID_INTERPOLATE_DRAW,  &interpolate_draw,'U'},
+  { "Disable Autolight (A)",      ID_DISABLE_AUTOLIGHT, &disable_autolight,'A'},
+  { "Show FPS/Obj count",         ID_SHOW_FPS,          &fps_on,-1},
+//  { NULL,0,NULL,-1},
+//  { "Record demo",                ID_RECORD_DEMO,NULL,-1},
+//  { "Play demo",                  ID_PLAY_DEMO,NULL,-1},
+  { NULL,-1,NULL,-1}
 };
 
 
 
 // Window Menus
 static pmi winmenu[]={
-          {"Foreground  (f)",    ID_WIN_FORE,    &forew_on,-1},
-          {"Background  (b)",    ID_WIN_BACK,    &backw_on,-1},
-          {"Draw layers (L)",    ID_WIN_LAYERS,  &show_menu_on,-1},
-      {"Lighting    (l)",    ID_WIN_LIGHTING,&ledit_on,-1},
-      {"Palettes    (p)",    ID_WIN_PALETTES,&pmenu_on,-1},
-      {"Objects     (o)",    ID_WIN_OBJECTS, &omenu_on,-1},
-      {"Console     (/)",    ID_WIN_CONSOLE, &commandw_on,-1},
-      {"Tool Bar    (a)",    ID_WIN_TOOLBAR, &tbw_on,-1},
-//      {"Search      (s)",    ID_SEARCH,      &searchw_on,-1},
-      {"Profile     (P)",    ID_PROFILE,     &profile_on,-1},
-      {"Save positions",     ID_SAVE_WINDOWS,NULL,-1},
-      {NULL,-1,NULL,-1}
+          { "Foreground  (f)",    ID_WIN_FORE,    &forew_on,-1},
+          { "Background  (b)",    ID_WIN_BACK,    &backw_on,-1},
+          { "Draw layers (L)",    ID_WIN_LAYERS,  &show_menu_on,-1},
+      { "Lighting    (l)",    ID_WIN_LIGHTING,&ledit_on,-1},
+      { "Palettes    (p)",    ID_WIN_PALETTES,&pmenu_on,-1},
+      { "Objects     (o)",    ID_WIN_OBJECTS, &omenu_on,-1},
+      { "Console     (/)",    ID_WIN_CONSOLE, &commandw_on,-1},
+      { "Tool Bar    (a)",    ID_WIN_TOOLBAR, &tbw_on,-1},
+//      { "Search      (s)",    ID_SEARCH,      &searchw_on,-1},
+      { "Profile     (P)",    ID_PROFILE,     &profile_on,-1},
+      { "Save positions",     ID_SAVE_WINDOWS,NULL,-1},
+      { NULL,-1,NULL,-1}
     };
 
 */
@@ -3608,7 +3609,7 @@ int dev_controll::ok_to_scroll()
 
 dev_controll::~dev_controll()
 {
-  for (int i=0;i<total_pals;i++)
+  for (int i=0; i<total_pals; i++)
     delete pal_wins[i];
   if (total_pals)
     free(pal_wins);

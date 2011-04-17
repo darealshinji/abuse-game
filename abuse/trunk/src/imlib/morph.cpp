@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -33,20 +34,20 @@ void jmorph::show_step_frame(image *screen, int x, int y, int frame_on,
   {
     morph_point8 *m8=(morph_point8 *)p;
     screen->lock();
-    for (i=0;i<total;i++,m8++)
+    for (i=0; i<total; i++,m8++)
     {
       xx=x+trans(m8->x1,m8->x2,frame_on);
       yy=y+trans(m8->y1,m8->y2,frame_on);
 
       if (xx>=x1 && xx<=x2 && yy>=y1 && yy<=y2)
-      {    
+      {
     pal->get(m8->start_color,r1,g1,b1);
     pal->get(m8->end_color,r2,g2,b2);
 
     long r=trans(r1,r2,frame_on)>>3,
              g=trans(g1,g2,frame_on)>>3,
          b=trans(b1,b2,frame_on)>>3;
-    
+
         *(screen->scan_line(yy)+xx)=fli->lookup_color(r,g,b);
       }
     }
@@ -124,7 +125,7 @@ patched_morph::patched_morph(image *i1, image *hint1, image *i2, image *hint2, i
   image *im=new image(w,h);
 
 
-  for (i=0;i<patches;i++)
+  for (i=0; i<patches; i++)
   {
     pats[i].patch_data=NULL;
     pats[i].patches=0;
@@ -132,26 +133,26 @@ patched_morph::patched_morph(image *i1, image *hint1, image *i2, image *hint2, i
     {
       im->clear();
       jmorph::show_step_frame(im,0,0,i,fli,pal);
-      for (j=0;j<4;j++)
+      for (j=0; j<4; j++)
       {
-    for (y=0;y<h;y++)
-          for (sl=im->scan_line(y),x=0;x<w;x++,sl++)
-      {    
+    for (y=0; y<h; y++)
+          for (sl=im->scan_line(y),x=0; x<w; x++,sl++)
+      {
         mark_color=-1;
-    
-        tot=r=g=b=0;          
+
+        tot=r=g=b=0;
         if (x!=0 && *(sl-1))
         { tot++;
           r+=pal->red(*(sl-1));
           g+=pal->green(*(sl-1));
-          b+=pal->blue(*(sl-1));        
-        }    
+          b+=pal->blue(*(sl-1));
+        }
         if (x!=w-1 && *(sl+1))
         { tot++;
           r+=pal->red(*(sl+1));
           g+=pal->green(*(sl+1));
-          b+=pal->blue(*(sl+1));    
-        }    
+          b+=pal->blue(*(sl+1));
+        }
         if (y!=0 && im->pixel(x,y-1))
         { tot++;
           r+=pal->red(im->pixel(x,y-1));
@@ -165,7 +166,7 @@ patched_morph::patched_morph(image *i1, image *hint1, image *i2, image *hint2, i
           b+=pal->blue(im->pixel(x,y+1));
         }
 
-        if (*sl && tot==0)  // kill any separate pixels    
+        if (*sl && tot==0)  // kill any separate pixels
           mark_color=0;
         else if (*sl)
         {
@@ -173,26 +174,26 @@ patched_morph::patched_morph(image *i1, image *hint1, image *i2, image *hint2, i
           r/=tot;
           g/=tot;
           b/=tot;
-    
+
           dist=((int)ored-r)*((int)ored-r)+((int)og-g)*((int)og-g)+((int)ob-b)*((int)ob-b);
           if (i>0 && i<patches-1 && dist>3000)
           {
 //        printf("adding blur at %d %d to frame %d, dist=%d\n",x,y,i,dist);
-        mark_color=fli->lookup_color(r>>3,g>>3,b>>3);    
+        mark_color=fli->lookup_color(r>>3,g>>3,b>>3);
           }
         }
-        else if (*sl==0 && tot>=3)    
-          mark_color=fli->lookup_color((r/tot)>>3,(g/tot)>>3,(b/tot)>>3);    
+        else if (*sl==0 && tot>=3)
+          mark_color=fli->lookup_color((r/tot)>>3,(g/tot)>>3,(b/tot)>>3);
         if (mark_color>=0)
-        {    
+        {
           pats[i].patches++;
           pats[i].patch_data=(unsigned char *)realloc(pats[i].patch_data,3*pats[i].patches);
-          cur_patch=pats[i].patch_data+  (pats[i].patches-1)*3;    
+          cur_patch=pats[i].patch_data+  (pats[i].patches-1)*3;
           *(cur_patch++)=x;
           *(cur_patch++)=y;
-          *sl=mark_color;    
-          *(cur_patch++)=*sl;    
-        }    
+          *sl=mark_color;
+          *(cur_patch++)=*sl;
+        }
       }
       }
     }
@@ -213,7 +214,7 @@ void jmorph::show_8(image *screen, int x, int y, int frame_on, color_filter *fli
   if (small)
   {
     morph_point8 *p_on=(morph_point8 *)p;
-    for (i=0;i<total;i++,p_on++)
+    for (i=0; i<total; i++,p_on++)
     {
       pixelx=(long)((int)p_on->x2-(int)p_on->x1)*(long)frame_on/8+p_on->x1+x;
       pixely=(long)((int)p_on->y2-(int)p_on->y1)*(long)frame_on/8+p_on->y1+y;
@@ -231,7 +232,7 @@ void jmorph::show_8(image *screen, int x, int y, int frame_on, color_filter *fli
   else
   {
     morph_point16 *p_on=(morph_point16 *)p;
-    for (i=0;i<total;i++,p_on++)
+    for (i=0; i<total; i++,p_on++)
     {
       pixelx=(long)((int)p_on->x2-(int)p_on->x1)*(long)frame_on/8+p_on->x1+x;
       pixely=(long)((int)p_on->y2-(int)p_on->y1)*(long)frame_on/8+p_on->y1+y;
@@ -265,13 +266,13 @@ void jmorph::add_filler(int frames)
   // maps all the ending pixels
   end_map=(unsigned char *)malloc(w*h);
 
-  for (frame_on=2;frame_on<frames-1;frame_on++)
+  for (frame_on=2; frame_on<frames-1; frame_on++)
   {
     memset(middle_map,0,w*h*sizeof(morph_point8 *));            // initialize them middle pointers NULL
     memset(end_map,0,w*h);                                      // clear all end pixels
 
     morph_point8 *p_on=(morph_point8 *)p;    // p is the array of morph points
-    for (i=0;i<total;i++,p_on++)
+    for (i=0; i<total; i++,p_on++)
     {
       pixelx=(long)((int)p_on->x2-(int)p_on->x1)*(long) frame_on  /(long) frames  +p_on->x1;
       pixely=(long)((int)p_on->y2-(int)p_on->y1)*(long) frame_on  /(long) frames  +p_on->y1;
@@ -283,31 +284,31 @@ void jmorph::add_filler(int frames)
 
     int skipped=0;
 
-    for (pixely=0;pixely<h;pixely++)
+    for (pixely=0; pixely<h; pixely++)
     {
-      for (pixelx=0;pixelx<w;pixelx++)
+      for (pixelx=0; pixelx<w; pixelx++)
       {
     if (middle_map[pixelx+pixely*w]==NULL)  // we are checking for 'duds'  (misplaced black pixels)
-    {    
-      int tot;    
+    {
+      int tot;
       if (pixelx>0) if (middle_map[pixelx-1+pixely*w]) tot=1; else tot=0;
-      if (pixelx<w-1) if (middle_map[pixelx+1+pixely*w]) tot++;    
-      if (pixely>0) if (middle_map[pixelx+(pixely-1)*w]) tot++;    
-      if (pixely<h-1) if (middle_map[pixelx+(pixely+1)*w]) tot++;    
+      if (pixelx<w-1) if (middle_map[pixelx+1+pixely*w]) tot++;
+      if (pixely>0) if (middle_map[pixelx+(pixely-1)*w]) tot++;
+      if (pixely<h-1) if (middle_map[pixelx+(pixely+1)*w]) tot++;
 
-      if (tot>=3)                   // it is surronded by 3 non black squares, this is a dud    
+      if (tot>=3)                   // it is surronded by 3 non black squares, this is a dud
       {
-        int distance,shortest_distance,shortest_end_x,shortest_end_y;    
+        int distance,shortest_distance,shortest_end_x,shortest_end_y;
         morph_point8 *shortest=NULL;
-    
-        for (k=0;k<w;k++)
-             for (l=0;l<h;l++)
-          {     
+
+        for (k=0; k<w; k++)
+             for (l=0; l<h; l++)
+          {
                 other=middle_map[k+(l)*w];
         if (other)
         {
           int end_x=frames*(pixelx-other->x1)/frame_on+other->x1,
-              end_y=frames*(pixely-other->y1)/frame_on+other->y1;        
+              end_y=frames*(pixely-other->y1)/frame_on+other->y1;
           if (end_x>=0 && end_y>=0 && end_x<w && end_y<h && end_map[end_x+end_y*w])
           {
                     distance=(other->x1-end_x)*(other->x1-end_x)+
@@ -317,32 +318,32 @@ void jmorph::add_filler(int frames)
               shortest_distance=distance;
               shortest=other;
               shortest_end_x=end_x;
-              shortest_end_y=end_y;        
+              shortest_end_y=end_y;
             }
           }
         }
-          }    
+          }
         if (shortest)
         {
           total++;
-          p=(void *)realloc(p,sizeof(morph_point8)*total);        
+          p=(void *)realloc(p,sizeof(morph_point8)*total);
           morph_point8 *mod=((morph_point8 *)p)+total-1;
           mod->x1=shortest->x1;
           mod->y1=shortest->y1;
-          mod->start_color=shortest->start_color;        
+          mod->start_color=shortest->start_color;
 
           mod->x2=shortest_end_x;
-          mod->y2=shortest_end_y;        
-          mod->end_color=end_map[shortest_end_x+shortest_end_y*w];        
-        }        
+          mod->y2=shortest_end_y;
+          mod->end_color=end_map[shortest_end_x+shortest_end_y*w];
+        }
         else
-        {    
+        {
             skipped++;
           printf("skiped so far : %d (frame %d)\n",skipped,frame_on);
         }
-    
 
-      }    
+
+      }
     }
       }
     }
@@ -371,7 +372,7 @@ jmorph::jmorph(spec_entry *e, bFILE *fp)
   {
     p=(void *)malloc(sizeof(morph_point16)*total);
 
-    for (i=0;i<total;i++)
+    for (i=0; i<total; i++)
     {
       ((morph_point16 *)p+i)->x1=fp->read_uint16();
       ((morph_point16 *)p+i)->y1=fp->read_uint16();
@@ -401,7 +402,7 @@ void jmorph::show_frame(image *screen, int x, int y,
   if (small)
   {
     morph_point8 *p_on=(morph_point8 *)p;
-    for (i=0;i<total;i++,p_on++)
+    for (i=0; i<total; i++,p_on++)
     {
       pixelx=(long)((int)p_on->x2-(int)p_on->x1)*(long)frame_on/(long)frames+p_on->x1+x;
       pixely=(long)((int)p_on->y2-(int)p_on->y1)*(long)frame_on/(long)frames+p_on->y1+y;
@@ -419,7 +420,7 @@ void jmorph::show_frame(image *screen, int x, int y,
   else
   {
     morph_point16 *p_on=(morph_point16 *)p;
-    for (i=0;i<total;i++,p_on++)
+    for (i=0; i<total; i++,p_on++)
     {
       pixelx=(long)((int)p_on->x2-(int)p_on->x1)*(long)frame_on/(long)frames+p_on->x1+x;
       pixely=(long)((int)p_on->y2-(int)p_on->y1)*(long)frame_on/(long)frames+p_on->y1+y;
@@ -445,18 +446,18 @@ void jmorph::show_24frame(unsigned char *screen, int width, int height,
   if (small)
   {
     morph_point8 *p_on=(morph_point8 *)p;
-    for (i=0;i<total;i++,p_on++)
+    for (i=0; i<total; i++,p_on++)
     {
       pixelx=(long)((int)p_on->x2-(int)p_on->x1)*(long)frame_on/(long)frames+p_on->x1+x;
       pixely=(long)((int)p_on->y2-(int)p_on->y1)*(long)frame_on/(long)frames+p_on->y1+y;
 
       if (pixelx>=0 && pixely>=0 && pixelx<width && pixely<height)
-      {    
+      {
         scolor=addr+((int)p_on->start_color)*3;
         ecolor=addr+((int)p_on->end_color)*3;
         pix=screen+pixelx*3+pixely*3*width;
-        *pix=(((int)*(ecolor++))-((int)*scolor))*frame_on/frames+*scolor; scolor++; pix++;    
-        *pix=(((int)*(ecolor++))-((int)*scolor))*frame_on/frames+*scolor; scolor++; pix++;    
+        *pix=(((int)*(ecolor++))-((int)*scolor))*frame_on/frames+*scolor; scolor++; pix++;
+        *pix=(((int)*(ecolor++))-((int)*scolor))*frame_on/frames+*scolor; scolor++; pix++;
         *pix=((int)(*ecolor)-(int)(*scolor))*frame_on/frames+*scolor;
       }
     }
@@ -464,18 +465,18 @@ void jmorph::show_24frame(unsigned char *screen, int width, int height,
   else
   {
     morph_point16 *p_on=(morph_point16 *)p;
-    for (i=0;i<total;i++,p_on++)
+    for (i=0; i<total; i++,p_on++)
     {
       pixelx=(long)((int)p_on->x2-(int)p_on->x1)*(long)frame_on/(long)frames+p_on->x1+x;
       pixely=(long)((int)p_on->y2-(int)p_on->y1)*(long)frame_on/(long)frames+p_on->y1+y;
 
       if (pixelx>=0 && pixely>=0 && pixelx<width && pixely<height)
-      {    
+      {
         scolor=addr+((int)p_on->start_color)*3;
         ecolor=addr+((int)p_on->end_color)*3;
         pix=screen+pixelx*3+pixely*3*width;
-        *pix=(((int)*(ecolor++))-((int)*scolor))*frame_on/frames+*scolor; scolor++; pix++;    
-        *pix=(((int)*(ecolor++))-((int)*scolor))*frame_on/frames+*scolor; scolor++; pix++;    
+        *pix=(((int)*(ecolor++))-((int)*scolor))*frame_on/frames+*scolor; scolor++; pix++;
+        *pix=(((int)*(ecolor++))-((int)*scolor))*frame_on/frames+*scolor; scolor++; pix++;
         *pix=((int)(*ecolor)-(int)(*scolor))*frame_on/frames+*scolor;
       }
     }
@@ -510,19 +511,19 @@ jmorph::jmorph(image *i1, image *hint1, image *i2, image *hint2,
   total=0;
 
   // first found out how many hints we have to follow
-  for (y=0;y<hint1->height();y++)
+  for (y=0; y<hint1->height(); y++)
   { sl=hint1->scan_line(y);
-    for (x=hint1->width();x;x--,sl++)
+    for (x=hint1->width(); x; x--,sl++)
       if (*sl) hint_hist1[*sl]++;
   }
-  for (y=0;y<hint2->height();y++)
+  for (y=0; y<hint2->height(); y++)
   { sl=hint2->scan_line(y);
-    for (x=hint2->width();x;x--,sl++)
+    for (x=hint2->width(); x; x--,sl++)
       if (*sl) hint_hist2[*sl]++;
   }
 
   // check the user and see if the mask match up
-  for (x=0;x<256;x++)
+  for (x=0; x<256; x++)
   {
     if ((hint_hist1[x]!=0 && hint_hist2[x]==0) ||
         (hint_hist1[x]==0 && hint_hist2[x]!=0))
@@ -547,14 +548,14 @@ jmorph::jmorph(image *i1, image *hint1, image *i2, image *hint2,
   else
     plist=(void *)malloc(sizeof(morph_point16)*total);
   CHECK(plist);
-  for (i=0,color=0;i<total_hints;i++)
+  for (i=0,color=0; i<total_hints; i++)
   {
     color++; while (!hint_hist1[color]) color++;
     findx1=findx2=-1; findy1=findy2=0;
     total1=hint_hist1[color];
     total2=hint_hist2[color];
     if (total1>total2) points=total1; else points=total2;
-    for (j=0;j<points;j++)
+    for (j=0; j<points; j++)
     {
       if (total1)  // are there any more pixels left in this image?
       { total1--;
@@ -619,9 +620,9 @@ jmorph::jmorph(image *i1, image *hint1, image *i2, image *hint2,
   int swap_point,distance,new_distance,hint_color,first_point,range,start;
 
   int sx2,sy2,sec;
-  for (i=0;i<aneal_steps;i++)
+  for (i=0; i<aneal_steps; i++)
   {
-    for (j=0,first_point=0;j<total_hints;j++)
+    for (j=0,first_point=0; j<total_hints; j++)
     {
       if (small)
         hint_color=hint1->pixel(((morph_point8 *)plist)[first_point].x1,((morph_point8 *)plist)[first_point].y1);
@@ -629,7 +630,7 @@ jmorph::jmorph(image *i1, image *hint1, image *i2, image *hint2,
         hint_color=hint1->pixel(((morph_point16 *)plist)[first_point].x1,((morph_point16 *)plist)[first_point].y1);
       start=crange[hint_color].start;
       range=crange[hint_color].end-start+1;
-      for(k=crange[hint_color].start;k<=crange[hint_color].end;k++)
+      for(k=crange[hint_color].start; k<=crange[hint_color].end; k++)
       {
         swap_point=rand()%range+start;
         if (small)
@@ -708,7 +709,7 @@ int jmorph::write(bFILE *fp)
   }
   else
   {
-    for (i=0;i<total;i++)
+    for (i=0; i<total; i++)
     { fp->write_uint16(((morph_point16 *)p+i)->x1);
       fp->write_uint16(((morph_point16 *)p+i)->y1);
       fp->write_uint16(((morph_point16 *)p+i)->x2);
@@ -751,9 +752,9 @@ step_morph::step_morph(patched_morph *mor, palette *pal, int frame_direction, in
       if (frame_direction>0)
       {
     morph_point8 *m8=mor->small_points();
-    
-    for (i=0;i<total;i++,m8++)
-    {         
+
+    for (i=0; i<total; i++,m8++)
+    {
       x1=(int)m8->x1;
       x2=(int)m8->x2;
 
@@ -763,7 +764,7 @@ step_morph::step_morph(patched_morph *mor, palette *pal, int frame_direction, in
       points[i].x=x1<<8;
       points[i].y=y1<<8;
       points[i].dx=(x2-x1)<<5;
-      points[i].dy=(y2-y1)<<5;        
+      points[i].dy=(y2-y1)<<5;
 
       unsigned char r1,g1,b1,r2,g2,b2;
       pal->get(m8->start_color,r1,g1,b1);
@@ -774,14 +775,14 @@ step_morph::step_morph(patched_morph *mor, palette *pal, int frame_direction, in
 
       points[i].dr=(long)((int)r2-(int)r1)<<5;
       points[i].dg=(long)((int)g2-(int)g1)<<5;
-      points[i].db=(long)((int)b2-(int)b1)<<5;            
+      points[i].db=(long)((int)b2-(int)b1)<<5;
     }
       }
       else
       {
     morph_point8 *m8=mor->small_points();
-    for (i=0;i<total;i++,m8++)
-    {         
+    for (i=0; i<total; i++,m8++)
+    {
       x1=(int)m8->x1;
       x2=(int)m8->x2;
 
@@ -791,7 +792,7 @@ step_morph::step_morph(patched_morph *mor, palette *pal, int frame_direction, in
       points[i].x=x2<<8;
       points[i].y=y2<<8;
       points[i].dx=(x1-x2)<<5;
-      points[i].dy=(y1-y2)<<5;        
+      points[i].dy=(y1-y2)<<5;
 
       unsigned char r1,g1,b1,r2,g2,b2;
       pal->get(m8->start_color,r2,g2,b2);
@@ -802,7 +803,7 @@ step_morph::step_morph(patched_morph *mor, palette *pal, int frame_direction, in
 
       points[i].dr=(long)((int)r2-(int)r1)<<5;
       points[i].dg=(long)((int)g2-(int)g1)<<5;
-      points[i].db=(long)((int)b2-(int)b1)<<5;            
+      points[i].db=(long)((int)b2-(int)b1)<<5;
     }
       }
   }
@@ -824,7 +825,7 @@ void step_morph::show_frame(image *screen, int x, int y,  color_filter *fli)
 
   if (face_dir>0)
   {
-    for (i=0,ss=points;i<total;i++,ss++)
+    for (i=0,ss=points; i<total; i++,ss++)
     {
       px=x+(ss->x>>(16-8));
       py=y+(ss->y>>(16-8));
@@ -838,7 +839,7 @@ void step_morph::show_frame(image *screen, int x, int y,  color_filter *fli)
       ss->b+=ss->db;
     }
 
-    for (j=0;j<tp;j++,sl++)
+    for (j=0; j<tp; j++,sl++)
     {
       px=x+*(sl++);
       py=y+*(sl++);
@@ -847,7 +848,7 @@ void step_morph::show_frame(image *screen, int x, int y,  color_filter *fli)
     }
   } else
   {
-    for (i=0,ss=points;i<total;i++,ss++)
+    for (i=0,ss=points; i<total; i++,ss++)
     {
       px=x+ww-(ss->x>>(16-8));
       py=y+(ss->y>>(16-8));
@@ -861,7 +862,7 @@ void step_morph::show_frame(image *screen, int x, int y,  color_filter *fli)
       ss->b+=ss->db;
     }
 
-    for (j=0;j<tp;j++,sl++)
+    for (j=0; j<tp; j++,sl++)
     {
       px=x+(ww-(int)(*(sl++)));
       py=y+*(sl++);
@@ -878,7 +879,7 @@ void step_morph::reverse_direction()
 {
   step_struct *s=points;
   int i;
-  for (i=0;i<total;i++,s++)
+  for (i=0; i<total; i++,s++)
   {
     s->dx=-s->dx;
     s->dy=-s->dy;
@@ -898,7 +899,7 @@ patched_morph::patched_morph(spec_entry *e, bFILE *fp) : jmorph(e,fp)
   patches=fp->read_uint16();
   pats=(morph_patch *)malloc(sizeof(morph_patch)*patches);
 
-  for (i=0;i<patches;i++)
+  for (i=0; i<patches; i++)
   {
     pats[i].patches=fp->read_uint16();
     if (pats[i].patches)

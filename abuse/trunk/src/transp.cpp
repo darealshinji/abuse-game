@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -45,10 +46,10 @@ void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
   uint8_t *ssl=screen->scan_line(y)+x;
   int iw=im->width(),sw=screen->width();
 
-  for (int iy=ys;iy<ye;iy++,y++,isl+=iw,ssl+=sw)
+  for (int iy=ys; iy<ye; iy++,y++,isl+=iw,ssl+=sw)
   {
     uint8_t *s=ssl,*i=isl;
-    for (int ix=xs;ix<xe;ix++,s++,i++)
+    for (int ix=xs; ix<xe; ix++,s++,i++)
     {
       if (*i)
         *s=*i;
@@ -93,10 +94,10 @@ void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
   uint8_t *ssl=screen->scan_line(y)+x;
   int iw=im->width(),sw=screen->width();
 
-  for (int iy=ys;iy<ye;iy++,y++,isl+=iw,ssl+=sw)
+  for (int iy=ys; iy<ye; iy++,y++,isl+=iw,ssl+=sw)
   {
     uint8_t *s=ssl,*i=isl;
-    for (int ix=xs;ix<xe;ix++,s++,i++)
+    for (int ix=xs; ix<xe; ix++,s++,i++)
       *s=table[((*i)<<8)|(*s)];
   }
 }

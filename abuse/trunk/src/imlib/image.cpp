@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -1126,7 +1127,7 @@ void image::unpack_scanline(int16_t line, char bitsperpixel)
 void image::dither(palette *pal)
 {
   int16_t x, y, i, j;
-  uint8_t dt_matrix[]={0,  136, 24, 170,
+  uint8_t dt_matrix[]={ 0,  136, 24, 170,
            68, 204, 102, 238,
            51, 187, 17, 153,
            119, 255, 85, 221};
@@ -1347,10 +1348,10 @@ void image::flood_fill(int16_t x, int16_t y, uint8_t color)
 void image::burn_led(int16_t x, int16_t y, int32_t num, int16_t color, int16_t scale)
 {
   char st[100];
-  int16_t ledx[]={1, 2, 1, 2, 3, 3, 3, 3, 1, 2, 0, 0, 0, 0};
-  int16_t ledy[]={3, 3, 0, 0, 1, 2, 4, 6, 7, 7, 4, 6, 1, 2};
+  int16_t ledx[]={ 1, 2, 1, 2, 3, 3, 3, 3, 1, 2, 0, 0, 0, 0};
+  int16_t ledy[]={ 3, 3, 0, 0, 1, 2, 4, 6, 7, 7, 4, 6, 1, 2};
 
-  int16_t dig[]={2+4+8+16+32+64, 4+8, 2+4+1+32+16, 2+4+1+8+16, 64+1+4+8,
+  int16_t dig[]={ 2+4+8+16+32+64, 4+8, 2+4+1+32+16, 2+4+1+8+16, 64+1+4+8,
              2+64+1+8+16, 64+32+1+8+16, 2+4+8, 1+2+4+8+16+32+64, 64+2+4+1+8, 1};
   int16_t xx, yy, zz;
   sprintf(st, "%8ld", (long int)num);
@@ -1371,7 +1372,7 @@ void image::burn_led(int16_t x, int16_t y, int32_t num, int16_t color, int16_t s
   }
 }
 
-uint8_t dither_matrix[]={0,  136, 24, 170,
+uint8_t dither_matrix[]={ 0,  136, 24, 170,
              68, 204, 102, 238,
              51, 187, 17, 153,
              119, 255, 85, 221};

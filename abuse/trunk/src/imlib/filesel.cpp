@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -33,9 +34,9 @@ class file_picker : public spicker
 void file_picker::free_up()
 {
   int i=0;
-  for (;i<tf;i++)
+  for (; i<tf; i++)
     free(f[i]);
-  for (i=0;i<td;i++)
+  for (i=0; i<td; i++)
     free(d[i]);
   if (tf) free(f);
   if (td) free(d);
@@ -62,9 +63,9 @@ void file_picker::note_selection(image *screen, InputManager *inm, int x)
       get_directory(cd,f,tf,d,td);
       wid=0;
       int i=0;
-      for (;i<tf;i++)
+      for (; i<tf; i++)
       if ((int)strlen(f[i])>wid) wid=strlen(f[i]);
-      for (i=0;i<td;i++)
+      for (i=0; i<td; i++)
       if ((int)strlen(d[i])+2>wid) wid=strlen(d[i])+2;
       sx=0;
 
@@ -108,9 +109,9 @@ file_picker::file_picker(int X, int Y, int ID, int Rows, ifield *Next)
   get_directory(cd,f,tf,d,td);
   wid=0;
   int i=0;
-  for (;i<tf;i++)
+  for (; i<tf; i++)
     if ((int)strlen(f[i])>wid) wid=strlen(f[i]);
-  for (i=0;i<td;i++)
+  for (i=0; i<td; i++)
     if ((int)strlen(d[i])+2>wid) wid=strlen(d[i])+2;
   reconfigure();
 }

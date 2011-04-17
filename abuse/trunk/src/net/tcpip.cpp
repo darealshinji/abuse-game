@@ -1,6 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com or
@@ -24,14 +25,14 @@ extern tcpip_protocol tcpip;
 #define TCPIP_DEBUG
 
 //{{{ net logging stuff
- 
+
 FILE *log_file=NULL;
 extern int net_start();
 
 static void net_log(char const *st, void *buf, long size)
 {
-    
-  if (!log_file) 
+
+  if (!log_file)
   {
     if (net_start())
       log_file=fopen("/tmp/abuseclient.log","wb");
@@ -42,19 +43,19 @@ static void net_log(char const *st, void *buf, long size)
 
     fprintf(log_file,"%s%ld - ",st,size);
     int i;
-    for (i=0;i<size;i++) 
+    for (i=0; i<size; i++)
       if (isprint(*((unsigned char *)buf+i)))
         fprintf(log_file,"%c",*((unsigned char *)buf+i));
       else fprintf(log_file,"~");
 
     fprintf(log_file," : ");
 
-    for (i=0;i<size;i++) 
+    for (i=0; i<size; i++)
     fprintf(log_file,"%02x, ",*((unsigned char *)buf+i));
     fprintf(log_file,"\n");
     fflush(log_file);
 
-} 
+}
 //}}}
 
 ////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ static void net_log(char const *st, void *buf, long size)
 //  unix_fd methods
 //
 
-int unix_fd::read(void *buf, int size, net_address **addr) 
+int unix_fd::read(void *buf, int size, net_address **addr)
 //{{{
 {
   int tr=::read(fd,(char*)buf,size);
@@ -76,11 +77,11 @@ int unix_fd::read(void *buf, int size, net_address **addr)
 
 int unix_fd::write(void const *buf, int size, net_address *addr)
 //{{{
-{ 
+{
   net_log("tcpip.cpp: unix_fd::write:", (char *) buf, (long) size);
 
   if (addr) fprintf(stderr,"Cannot change address for this socket type\n");
-  return ::write(fd,(char*)buf,size); 
+  return ::write(fd,(char*)buf,size);
 }
 //}}}///////////////////////////////////
 
@@ -109,24 +110,24 @@ net_address *tcpip_protocol::get_local_address()
 
     ip_address *a=new ip_address();
     memset(&a->addr,0,sizeof(a->addr));
-    memcpy(&a->addr.sin_addr,*l_hn->h_addr_list,4);  
+    memcpy(&a->addr.sin_addr,*l_hn->h_addr_list,4);
 
-    return a;  
+    return a;
 #else
   char my_name[100];                        // check to see if this address is 'hostname'
   gethostname(my_name,100);
   //ip_address *ret = 0;
-  
+
   if (my_name[0]<'0' || my_name[0]>'9')
   {
       struct hostent *l_hn=gethostbyname(my_name);
-      
+
       if (l_hn)
       {
           ip_address *a=new ip_address();
           memset(&a->addr,0,sizeof(a->addr));
-          memcpy(&a->addr.sin_addr,*l_hn->h_addr_list,4);  
-    
+          memcpy(&a->addr.sin_addr,*l_hn->h_addr_list,4);
+
           return a;
       }
       else
@@ -134,12 +135,12 @@ net_address *tcpip_protocol::get_local_address()
           printf("Enter ip address:");
           fgets(my_name, sizeof( my_name ), stdin );
       }
-    }  
+    }
 
   char tmp[4];
   char const *np;
   sockaddr_in host;
-  
+
   np = my_name;
   for (int i=0; i<4; i++)
   {
@@ -156,18 +157,18 @@ net_address *tcpip_protocol::get_local_address()
     }
     tmp[i] = num;
   }
-  
+
   memset( (char*) &host,0, sizeof(host));
   host.sin_family = AF_INET;
   host.sin_addr.s_addr = htonl(INADDR_ANY);
   memcpy(&host.sin_addr,tmp,sizeof(in_addr));
-  
+
     return new ip_address(&host);
 #endif
 }
 //}}}///////////////////////////////////
 
-net_address *tcpip_protocol::get_node_address(char const *&server_name, 
+net_address *tcpip_protocol::get_node_address(char const *&server_name,
                                                                                             int def_port, int force_port)
 //{{{
 {
@@ -177,7 +178,7 @@ net_address *tcpip_protocol::get_node_address(char const *&server_name,
     {
         char tmp[4];
         char const *np;
-      
+
       np = server_name;
       for (int i=0; i<4; i++)
       {
@@ -200,13 +201,13 @@ net_address *tcpip_protocol::get_node_address(char const *&server_name,
               def_port=x;
           }
       }
-      
+
       memset( (char*) &host,0, sizeof(host));
       host.sin_family = AF_INET;
       host.sin_port = htons(def_port);
       host.sin_addr.s_addr = htonl(INADDR_ANY);
       memcpy(&host.sin_addr,tmp,sizeof(in_addr));
-      
+
       return new ip_address(&host);
     }
     else
@@ -232,16 +233,16 @@ net_address *tcpip_protocol::get_node_address(char const *&server_name,
           else return 0;
         }
       }
-    
+
       if (*server_name=='/') server_name++;
-    
+
       hostent *hp=gethostbyname(name);
       if (!hp)
-      { 
+      {
         fprintf(stderr,"unable to locate server named '%s'\n",name);
         return 0;
       }
-      
+
       memset( (char*) &host,0, sizeof(host));
       host.sin_family = AF_INET;
       host.sin_port = htons(def_port);
@@ -262,7 +263,7 @@ net_socket *tcpip_protocol::connect_to_server(net_address *addr, net_socket::soc
   }
 
   int socket_fd=socket(AF_INET,sock_type==net_socket::SOCKET_SECURE ? SOCK_STREAM : SOCK_DGRAM,0);
-  if (socket_fd<0) 
+  if (socket_fd<0)
   {
     fprintf(stderr,"unable to create socket (too many open files?)\n");
     return 0;
@@ -276,9 +277,9 @@ net_socket *tcpip_protocol::connect_to_server(net_address *addr, net_socket::soc
     return 0;
   }
 #endif
-    
+
   if (connect(socket_fd, (struct sockaddr *) &((ip_address *)addr)->addr, sizeof( ((ip_address *)addr)->addr ))==-1)
-  { 
+  {
     fprintf(stderr,"unable to connect\n");
     close(socket_fd);
     return 0;
@@ -295,7 +296,7 @@ net_socket *tcpip_protocol::create_listen_socket(int port, net_socket::socket_ty
 //{{{
 {
   int socket_fd=socket(AF_INET,sock_type==net_socket::SOCKET_SECURE ? SOCK_STREAM : SOCK_DGRAM,0);
-  if (socket_fd<0) 
+  if (socket_fd<0)
   {
     fprintf(stderr,"unable to create socket (too many open files?)\n");
     return 0;
@@ -315,7 +316,7 @@ net_socket *tcpip_protocol::create_listen_socket(int port, net_socket::socket_ty
     s=new tcp_socket(socket_fd);
   else s=new udp_socket(socket_fd);
   if (s->listen(port)==0)
-  {   
+  {
     delete s;
     return 0;
   }
@@ -333,19 +334,19 @@ net_socket *tcpip_protocol::start_notify(int port, void *data, int len)
         delete bcast;
         responder = 0;
     }
-    
+
     int resp_len = strlen(notify_response);
   notify_len = len + resp_len + 1;
   strcpy(notify_data,notify_response);
     notify_data[resp_len] = '.';
   memcpy(notify_data+resp_len+1,data,len);
-  
+
   // create notifier socket
 #ifdef TCPIP_DEBUG
     fprintf(stderr,"Creating notifier on port %d\n",port);
 #endif
   notifier = create_listen_socket(port, net_socket::SOCKET_FAST);
-  
+
   if (notifier)
   {
     notifier->read_selectable();
@@ -353,7 +354,7 @@ net_socket *tcpip_protocol::start_notify(int port, void *data, int len)
   }
   else
         fprintf(stderr,"Couldn't start notifier\n");
-  
+
   return notifier;
 }
 //}}}///////////////////////////////////
@@ -374,7 +375,7 @@ int tcpip_protocol::handle_notification()
 {
   if (!notifier)
     return 0;
-    
+
   if (notifier->ready_to_read())
   {
     char buf[513];
@@ -407,7 +408,7 @@ int tcpip_protocol::handle_notification()
         // send notification data to requester
         notifier->write(notify_data,notify_len,addr);
             }
-        
+
       delete addr;
     }
 #ifdef TCPIP_DEBUG
@@ -445,21 +446,21 @@ net_address *tcpip_protocol::find_address(int port, char *name)
             responder->write_unselectable();
             bcast = (ip_address *)get_local_address();
             bcast->set_port(port);
-    
+
 //#ifdef TCPIP_DEBUG
             *((unsigned char *)(&bcast->addr.sin_addr)+3) = 255;
             bcast->store_string(s,256);
             fprintf(stderr,"Simulating broadcast to [%s]\n",s);
 //#endif
 
-            *((unsigned char *)(&bcast->addr.sin_addr)+3) = 0;        
+            *((unsigned char *)(&bcast->addr.sin_addr)+3) = 0;
         }
     }
 
   if (responder)
   {
     int i;
-    
+
     for (i=0; i<5; i++)
     {
 #ifdef TCPIP_DEBUG
@@ -467,28 +468,28 @@ net_address *tcpip_protocol::find_address(int port, char *name)
             fprintf(stderr,"\r[%s]",s);
 #endif
         int found = 0;
-        
+
         for (p_request p = servers.begin(); !found && p!=servers.end(); ++p)
             if ( *((*p)->addr) == *bcast )
                 found = 1;
         for (p_request q = returned.begin(); !found && q!=returned.end(); ++q)
             if ( *((*q)->addr) == *bcast )
                 found = 1;
-                
+
             if (!found) {
                 responder->write((void*)notify_signature,
                                                  strlen(notify_signature),bcast);
                 select(0);
             }
         *((unsigned char *)(&bcast->addr.sin_addr)+3) += 1;
-    
+
         select(0);
-        
+
         if (!servers.empty())
             break;
         }
   }
-  
+
   if (servers.empty())
     return 0;
 
@@ -509,12 +510,12 @@ void tcpip_protocol::reset_find_list()
 //{{{
 {
     p_request p;
-    
+
     for (p=servers.begin(); p!=servers.end(); ++p)
         delete (*p)->addr;
     for (p=returned.begin(); p!=returned.end(); ++p)
         delete (*p)->addr;
-        
+
   servers.erase_all();
   returned.erase_all();
 }
@@ -525,7 +526,7 @@ int tcpip_protocol::handle_responder()
 {
   if (!responder)
     return 0;
-    
+
   if (responder->ready_to_read())
   {
     char buf[513];
@@ -560,7 +561,7 @@ int tcpip_protocol::handle_responder()
             for (p_request q = returned.begin(); !found && q!=returned.end(); ++q)
                 if ( *((*q)->addr) == *addr )
                     found = 1;
-                   
+
           if (!found)
           {
 #ifdef TCPIP_DEBUG
@@ -603,9 +604,9 @@ tcpip_protocol::tcpip_protocol()
 #if (defined(__APPLE__) && !defined(__MACH__))
   GUSISetup(GUSIwithSIOUXSockets);
   GUSISetup(GUSIwithPPCSockets);
-#endif  
-  FD_ZERO(&master_set);  
-  FD_ZERO(&master_write_set);  
+#endif
+  FD_ZERO(&master_set);
+  FD_ZERO(&master_write_set);
   FD_ZERO(&read_set);
   FD_ZERO(&exception_set);
   FD_ZERO(&write_set);
@@ -616,7 +617,7 @@ int tcpip_protocol::select(int block)
 //{{{
 {
   int ret;
-  
+
   memcpy(&read_set,&master_set,sizeof(master_set));
   memcpy(&exception_set,&master_set,sizeof(master_set));
   memcpy(&write_set,&master_write_set,sizeof(master_set));
@@ -636,7 +637,7 @@ int tcpip_protocol::select(int block)
   }
   else
   {
-    timeval tv={0,0};
+    timeval tv={ 0,0};
     // get number of sockets ready from system call
     ret = ::select(FD_SETSIZE,&read_set,&write_set,&exception_set,&tv);
 
@@ -655,9 +656,9 @@ void tcpip_protocol::cleanup()
 {
     if (notifier)
         end_notify();
-        
+
     reset_find_list();
-        
+
     if (responder) {
         delete responder;
         delete bcast;
