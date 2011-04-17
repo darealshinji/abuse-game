@@ -3139,7 +3139,7 @@ void *LispSymbol::GetName()
     return name;
 }
 
-void *LispSymbol::SetNumber(long num)
+void LispSymbol::SetNumber(long num)
 {
 #ifdef TYPE_CHECKING
     if (item_type(this) != L_SYMBOL)
@@ -3153,11 +3153,9 @@ void *LispSymbol::SetNumber(long num)
         ((LispNumber *)value)->num = num;
     else
         value = new_lisp_number(num);
-
-    return value;
 }
 
-void *LispSymbol::SetValue(void *val)
+void LispSymbol::SetValue(void *val)
 {
 #ifdef TYPE_CHECKING
     if (item_type(this) != L_SYMBOL)
@@ -3168,7 +3166,6 @@ void *LispSymbol::SetValue(void *val)
     }
 #endif
     value = val;
-    return value;
 }
 
 void *LispSymbol::GetFunction()

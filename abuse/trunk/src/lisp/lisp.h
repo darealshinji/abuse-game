@@ -84,8 +84,8 @@ struct LispSymbol : LispObject
     void *GetValue();
 
     void SetFunction(void *fun);
-    void *SetValue(void *value);
-    void *SetNumber(long num);
+    void SetValue(void *value);
+    void SetNumber(long num);
 
 #ifdef L_PROFILE
     float time_taken;
