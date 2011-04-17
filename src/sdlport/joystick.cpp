@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#include "joy.hpp"
+#include "joy.h"
 
 /* NOTE: No joystick support yet.
  */

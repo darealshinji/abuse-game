@@ -9,18 +9,18 @@
 
 #include "config.h"
 
-#include "game.hpp"
+#include "game.h"
 
-#include "demo.hpp"
-#include "specs.hpp"
-#include "macs.hpp"
-#include "jwindow.hpp"
-#include "dprint.hpp"
-#include "dev.hpp"
-#include "jrand.hpp"
-#include "lisp.hpp"
-#include "clisp.hpp"
-#include "netface.hpp"
+#include "demo.h"
+#include "specs.h"
+#include "macs.h"
+#include "jwindow.h"
+#include "dprint.h"
+#include "dev.h"
+#include "jrand.h"
+#include "lisp.h"
+#include "clisp.h"
+#include "netface.h"
 
 
 demo_manager demo_man;

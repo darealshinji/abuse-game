@@ -17,41 +17,41 @@
 #   include <SDL.h>
 #endif
 
-#include "sdlport/joy.hpp"
+#include "sdlport/joy.h"
 
-#include "dev.hpp"
-#include "game.hpp"
+#include "dev.h"
+#include "game.h"
 
-#include "id.hpp"
-#include "timing.hpp"
-#include "automap.hpp"
-#include "help.hpp"
-#include "ability.hpp"
-#include "cache.hpp"
-#include "lisp.hpp"
-#include "jrand.hpp"
-#include "config.hpp"
-#include "light.hpp"
-#include "scroller.hpp"
-#include "dprint.hpp"
-#include "nfserver.hpp"
-#include "video.hpp"
-#include "transp.hpp"
-#include "clisp.hpp"
-#include "guistat.hpp"
-#include "menu.hpp"
-#include "gamma.hpp"
-#include "lisp_gc.hpp"
-#include "demo.hpp"
-#include "sbar.hpp"
-#include "profile.hpp"
-#include "compiled.hpp"
-#include "lisp_gc.hpp"
-#include "pmenu.hpp"
-#include "timing.hpp"
-#include "chat.hpp"
-#include "demo.hpp"
-#include "netcfg.hpp"
+#include "id.h"
+#include "timing.h"
+#include "automap.h"
+#include "help.h"
+#include "ability.h"
+#include "cache.h"
+#include "lisp.h"
+#include "jrand.h"
+#include "configuration.h"
+#include "light.h"
+#include "scroller.h"
+#include "dprint.h"
+#include "nfserver.h"
+#include "video.h"
+#include "transp.h"
+#include "clisp.h"
+#include "guistat.h"
+#include "menu.h"
+#include "gamma.h"
+#include "lisp_gc.h"
+#include "demo.h"
+#include "sbar.h"
+#include "profile.h"
+#include "compiled.h"
+#include "lisp_gc.h"
+#include "pmenu.h"
+#include "timing.h"
+#include "chat.h"
+#include "demo.h"
+#include "netcfg.h"
 
 #define SHIFT_RIGHT_DEFAULT 0
 #define SHIFT_DOWN_DEFAULT 30
@@ -78,7 +78,7 @@ char req_name[100];
 extern uint8_t chatting_enabled;
 
 // Enabled TCPIP driver
-#include "tcpip.hpp"
+#include "tcpip.h"
 tcpip_protocol tcpip;
 
 FILE *open_FILE(char const *filename, char const *mode)

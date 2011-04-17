@@ -11,13 +11,13 @@
 
 #include <string.h>
 
-#include "video.hpp"
-#include "image.hpp"
-#include "input.hpp"
-#include "event.hpp"
-#include "filter.hpp"
-#include "event.hpp"
-#include "jwindow.hpp"
+#include "video.h"
+#include "image.h"
+#include "input.h"
+#include "event.h"
+#include "filter.h"
+#include "event.h"
+#include "jwindow.h"
 
 static int jw_left = 3, jw_right = 3, jw_top = 2, jw_bottom = 3;
 

@@ -9,15 +9,15 @@
 
 #include "config.h"
 
-#include "server2.hpp"
-#include "nfserver.hpp"
-#include "nfclient.hpp"
-#include "dprint.hpp"
-#include "view.hpp"
-#include "jrand.hpp"
-#include "objects.hpp"
-#include "level.hpp"
-#include "dev.hpp"
+#include "server2.h"
+#include "nfserver.h"
+#include "nfclient.h"
+#include "dprint.h"
+#include "view.h"
+#include "jrand.h"
+#include "objects.h"
+#include "level.h"
+#include "dev.h"
 
 extern char const *get_username();
 int start_running=0;

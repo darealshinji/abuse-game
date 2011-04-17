@@ -13,10 +13,10 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include "game.hpp"
+#include "game.h"
 
-#include "linked.hpp"
-#include "console.hpp"
+#include "linked.h"
+#include "console.h"
 
 void console::put_string(char const *st)
 {

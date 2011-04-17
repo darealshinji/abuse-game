@@ -9,7 +9,7 @@
 
 #include "config.h"
 
-#include "timage.hpp"
+#include "timage.h"
 
 void trans_image::make_color(int c)
 {

@@ -22,15 +22,15 @@
 #include <SDL.h>
 
 #include "system.h"
-#include "image.hpp"
-#include "palette.hpp"
-#include "video.hpp"
-#include "macs.hpp"
-#include "mouse.hpp"
-#include "event.hpp"
-#include "timing.hpp"
-#include "sprite.hpp"
-#include "game.hpp"
+#include "image.h"
+#include "palette.h"
+#include "video.h"
+#include "macs.h"
+#include "mouse.h"
+#include "event.h"
+#include "timing.h"
+#include "sprite.h"
+#include "game.h"
 
 extern int get_key_binding( char const *dir, int i );
 extern int mouse_xscale, mouse_yscale;

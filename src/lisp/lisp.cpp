@@ -16,21 +16,21 @@
 #include <stdarg.h>
 
 #define TYPE_CHECKING 1
-#include "bus_type.hpp"
+#include "bus_type.h"
 
-#include "lisp.hpp"
-#include "lisp_gc.hpp"
-#include "symbols.hpp"
+#include "lisp.h"
+#include "lisp_gc.h"
+#include "symbols.h"
 
 #ifdef NO_LIBS
-#   include "fakelib.hpp"
+#   include "fakelib.h"
 #else
-#   include "status.hpp"
-#   include "macs.hpp"
-#   include "specs.hpp"
-#   include "dprint.hpp"
-#   include "cache.hpp"
-#   include "dev.hpp"
+#   include "status.h"
+#   include "macs.h"
+#   include "specs.h"
+#   include "dprint.h"
+#   include "cache.h"
+#   include "dev.h"
 #endif
 
 /* To bypass the whole garbage collection issue of lisp I am going to have

@@ -2,11 +2,11 @@
 noinst_LIBRARIES = liblisp.a
 
 liblisp_a_SOURCES = \
-    lisp.cpp lisp.hpp \
-    lisp_opt.cpp lisp_opt.hpp \
-    lisp_gc.cpp lisp_gc.hpp \
+    lisp.cpp lisp.h \
+    lisp_opt.cpp lisp_opt.h \
+    lisp_gc.cpp lisp_gc.h \
     trig.cpp \
-    stack.hpp symbols.hpp \
+    stack.h symbols.h \
     $(NULL)
 
 INCLUDES = -I$(srcdir) -I$(srcdir)/../ -I$(srcdir)/../imlib $(SDL_CFLAGS)

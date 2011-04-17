@@ -21,17 +21,17 @@
 #include <fcntl.h>
 
 #include "system.h"
-#include "indian.hpp"
+#include "indian.h"
 
-#include "netface.hpp"
-#include "nfserver.hpp"
-#include "view.hpp"
-#include "objects.hpp"
-#include "level.hpp"
-#include "timing.hpp"
-#include "server2.hpp"
-#include "game.hpp"
-#include "jwindow.hpp"
+#include "netface.h"
+#include "nfserver.h"
+#include "view.h"
+#include "objects.h"
+#include "level.h"
+#include "timing.h"
+#include "server2.h"
+#include "game.h"
+#include "jwindow.h"
 
 extern char lsf[256];
 

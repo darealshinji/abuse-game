@@ -9,8 +9,8 @@
 
 #include "config.h"
 
-#include "level.hpp"
-#include "intsect.hpp"
+#include "level.h"
+#include "intsect.h"
 
 class collide_patch
 {

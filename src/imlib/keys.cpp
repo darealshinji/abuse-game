@@ -12,7 +12,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "keys.hpp"
+#include "keys.h"
 
 char const *jk_key_names[]=
 {

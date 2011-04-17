@@ -9,13 +9,13 @@
 
 #include "config.h"
 
-#include "jnet.hpp"
-#include "specs.hpp"
-#include "nfserver.hpp"
-#include "dprint.hpp"
-#include "timing.hpp"
-#include "cache.hpp"
-#include "crc.hpp"
+#include "jnet.h"
+#include "specs.h"
+#include "nfserver.h"
+#include "dprint.h"
+#include "timing.h"
+#include "cache.h"
+#include "crc.h"
 
 nfs_server *file_server=NULL;
 

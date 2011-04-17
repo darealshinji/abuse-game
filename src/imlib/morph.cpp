@@ -11,7 +11,7 @@
 
 #include "config.h"
 
-#include "morph.hpp"
+#include "morph.h"
 
 long trans(long x1, long x2, long frame)
 {

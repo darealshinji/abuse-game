@@ -11,10 +11,10 @@
 
 #include <string.h>
 
-#include "input.hpp"
-#include "status.hpp"
-#include "timing.hpp"
-#include "guistat.hpp"
+#include "input.h"
+#include "status.h"
+#include "timing.h"
+#include "guistat.h"
 
 class gui_status_node
 {

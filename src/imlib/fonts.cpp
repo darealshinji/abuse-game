@@ -11,7 +11,7 @@
 
 #include <ctype.h>
 
-#include "fonts.hpp"
+#include "fonts.h"
 
 texture_font::texture_font(image *letters, image *font_pattern)
 { fntpat=font_pattern;

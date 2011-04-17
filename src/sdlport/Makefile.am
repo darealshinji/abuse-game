@@ -7,10 +7,10 @@ libsdlport_a_SOURCES = \
     video.cpp \
     mouse.cpp \
     event.cpp \
-    sound.cpp sound.hpp \
+    sound.cpp sound.h \
     timing.cpp \
     jdir.cpp \
-    joystick.cpp joy.hpp \
+    joystick.cpp joy.h \
     setup.cpp setup.h \
     hmi.cpp hmi.h \
     $(NULL)

@@ -9,15 +9,15 @@
 
 #include "config.h"
 
-#include "sbar.hpp"
-#include "view.hpp"
-#include "lisp.hpp"
-#include "cache.hpp"
-#include "demo.hpp"
-#include "chars.hpp"
-#include "objects.hpp"
-#include "game.hpp"
-#include "clisp.hpp"
+#include "sbar.h"
+#include "view.h"
+#include "lisp.h"
+#include "cache.h"
+#include "demo.h"
+#include "chars.h"
+#include "objects.h"
+#include "game.h"
+#include "clisp.h"
 
 status_bar sbar;
 

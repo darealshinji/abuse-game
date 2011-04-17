@@ -11,20 +11,20 @@
 
 #include <string.h>
 
-#include "game.hpp"
+#include "game.h"
 
-#include "specs.hpp"
-#include "jwindow.hpp"
-#include "id.hpp"
-#include "input.hpp"
-#include "fonts.hpp"
-#include "lisp.hpp"
-#include "dprint.hpp"
-#include "cache.hpp"
-#include "gui.hpp"
-#include "dev.hpp"
-#include "id.hpp"
-#include "demo.hpp"
+#include "specs.h"
+#include "jwindow.h"
+#include "id.h"
+#include "input.h"
+#include "fonts.h"
+#include "lisp.h"
+#include "dprint.h"
+#include "cache.h"
+#include "gui.h"
+#include "dev.h"
+#include "id.h"
+#include "demo.h"
 
 extern void *save_order;         // load from "saveordr.lsp", contains a list ordering the save games
 

@@ -9,8 +9,8 @@
 
 #include "config.h"
 
-#include "automap.hpp"
-#include "game.hpp"
+#include "automap.h"
+#include "game.h"
 
 automap *current_automap=0;
 

@@ -35,8 +35,8 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-#include "jnet.hpp"
-#include "macs.hpp"
+#include "jnet.h"
+#include "macs.h"
 
 int current_sock_err;
 

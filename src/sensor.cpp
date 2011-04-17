@@ -9,14 +9,14 @@
 
 #include "config.h"
 
-#include "lisp.hpp"
-#include "lisp_gc.hpp"
-#include "compiled.hpp"
-#include "objects.hpp"
-#include "level.hpp"
-#include "game.hpp"
-#include "jrand.hpp"
-#include "clisp.hpp"
+#include "lisp.h"
+#include "lisp_gc.h"
+#include "compiled.h"
+#include "objects.h"
+#include "level.h"
+#include "game.h"
+#include "jrand.h"
+#include "clisp.h"
 
 enum { un_offable };     // vars
 

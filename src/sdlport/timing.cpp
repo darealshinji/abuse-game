@@ -24,7 +24,7 @@
 #include <sys/time.h>
 #include <time.h>
 
-#include "timing.hpp"
+#include "timing.h"
 
 #ifdef __APPLE__
 // OSX 10.1 has nanosleep but no header for it!

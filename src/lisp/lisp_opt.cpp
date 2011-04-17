@@ -10,13 +10,13 @@
 #include "config.h"
 
 #ifdef NO_LIBS
-#include "fakelib.hpp"
+#include "fakelib.h"
 #else
-#include "macs.hpp"
+#include "macs.h"
 #endif
 
-#include "lisp.hpp"
-#include "lisp_gc.hpp"
+#include "lisp.h"
+#include "lisp_gc.h"
 
 void *true_symbol=NULL,*l_undefined,*list_symbol,*string_symbol,     // in lisp_init()
      *quote_symbol,*backquote_symbol,*comma_symbol,*do_symbol,*in_symbol,*aref_symbol,

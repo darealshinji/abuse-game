@@ -9,10 +9,10 @@
 
 #include "config.h"
 
-#include "indian.hpp"
-#include "netfile.hpp"
-#include "../inc/netface.hpp"
-#include "engine.hpp"
+#include "indian.h"
+#include "netfile.h"
+#include "../inc/netface.h"
+#include "engine.h"
 
 
 nfs_client *first_nfs_client=NULL;

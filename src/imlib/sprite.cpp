@@ -11,12 +11,12 @@
 
 #include <math.h>
 
-#include "macs.hpp"
-#include "video.hpp"
-#include "image.hpp"
-#include "palette.hpp"
-#include "linked.hpp"
-#include "sprite.hpp"
+#include "macs.h"
+#include "video.h"
+#include "image.h"
+#include "palette.h"
+#include "linked.h"
+#include "sprite.h"
 
 
 void sprite::restore_background()

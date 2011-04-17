@@ -9,10 +9,10 @@
 
 #include "config.h"
 
-#include "cache.hpp"
-#include "gui.hpp"
-#include "dev.hpp"
-#include "loader2.hpp"
+#include "cache.h"
+#include "gui.h"
+#include "dev.h"
+#include "loader2.h"
 
 void ico_button::set_act_id(int id)
 {

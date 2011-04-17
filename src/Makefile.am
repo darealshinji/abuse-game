@@ -5,59 +5,59 @@ SUBDIRS = lisp net imlib sdlport
 bin_PROGRAMS = abuse
 
 abuse_SOURCES = \
-    specache.cpp specache.hpp \
-    netcfg.cpp netcfg.hpp \
+    specache.cpp specache.h \
+    netcfg.cpp netcfg.h \
     innet.cpp \
-    chat.cpp chat.hpp \
+    chat.cpp chat.h \
     endgame.cpp \
-    loadgame.cpp loadgame.hpp \
-    profile.cpp profile.hpp \
-    cop.cpp cop.hpp \
+    loadgame.cpp loadgame.h \
+    profile.cpp profile.h \
+    cop.cpp cop.h \
     statbar.cpp \
-    compiled.cpp compiled.hpp \
-    ant.cpp ant.hpp \
+    compiled.cpp compiled.h \
+    ant.cpp ant.h \
     sensor.cpp \
-    demo.cpp demo.hpp \
-    lcache.cpp lcache.hpp \
-    nfclient.cpp nfclient.hpp \
+    demo.cpp demo.h \
+    lcache.cpp lcache.h \
+    nfclient.cpp nfclient.h \
     username.cpp \
-    clisp.cpp clisp.hpp \
-    gui.cpp gui.hpp \
-    transp.cpp transp.hpp \
+    clisp.cpp clisp.h \
+    gui.cpp gui.h \
+    transp.cpp transp.h \
     collide.cpp \
-    property.cpp property.hpp \
-    cache.cpp cache.hpp \
-    particle.cpp particle.hpp \
-    objects.cpp objects.hpp \
-    extend.cpp extend.hpp \
-    console.cpp console.hpp \
-    ability.cpp ability.hpp \
-    items.cpp items.hpp \
-    dev.cpp dev.hpp \
-    chars.cpp chars.hpp \
-    level.cpp level.hpp \
+    property.cpp property.h \
+    cache.cpp cache.h \
+    particle.cpp particle.h \
+    objects.cpp objects.h \
+    extend.cpp extend.h \
+    console.cpp console.h \
+    ability.cpp ability.h \
+    items.cpp items.h \
+    dev.cpp dev.h \
+    chars.cpp chars.h \
+    level.cpp level.h \
     smallfnt.cpp \
-    automap.cpp automap.hpp \
-    help.cpp help.hpp \
-    intsect.cpp intsect.hpp \
-    loader2.cpp loader2.hpp \
-    seq.cpp seq.hpp \
-    points.cpp points.hpp \
+    automap.cpp automap.h \
+    help.cpp help.h \
+    intsect.cpp intsect.h \
+    loader2.cpp loader2.h \
+    seq.cpp seq.h \
+    points.cpp points.h \
     fnt6x13.cpp \
-    morpher.cpp morpher.hpp \
-    menu.cpp menu.hpp \
-    director.cpp director.hpp \
-    view.cpp view.hpp \
-    config.cpp config.hpp \
-    game.cpp game.hpp \
-    light.cpp light.hpp \
-    devsel.cpp devsel.hpp \
-    crc.cpp crc.hpp \
-    gamma.cpp gamma.hpp \
-    bus_type.hpp id.hpp netface.hpp isllist.hpp sbar.hpp \
-    nfserver.hpp exitproc.hpp \
+    morpher.cpp morpher.h \
+    menu.cpp menu.h \
+    director.cpp director.h \
+    view.cpp view.h \
+    configuration.cpp configuration.h \
+    game.cpp game.h \
+    light.cpp light.h \
+    devsel.cpp devsel.h \
+    crc.cpp crc.h \
+    gamma.cpp gamma.h \
+    bus_type.h id.h netface.h isllist.h sbar.h \
+    nfserver.h exitproc.h \
     \
-    ui/volumewindow.cpp volumewindow.hpp \
+    ui/volumewindow.cpp volumewindow.h \
     $(NULL)
 
 EXTRALIBS = lisp/liblisp.a sdlport/libsdlport.a imlib/libimlib.a net/libnet.a

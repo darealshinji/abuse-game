@@ -19,16 +19,16 @@
 #include <signal.h>
 
 #include "system.h"
-#include "macs.hpp"
-#include "gserver.hpp"
-#include "netface.hpp"
-#include "timing.hpp"
-#include "netcfg.hpp"
-#include "id.hpp"
-#include "jwindow.hpp"
-#include "input.hpp"
-#include "dev.hpp"
-#include "game.hpp"
+#include "macs.h"
+#include "gserver.h"
+#include "netface.h"
+#include "timing.h"
+#include "netcfg.h"
+#include "id.h"
+#include "jwindow.h"
+#include "input.h"
+#include "dev.h"
+#include "game.h"
 
 extern base_memory_struct *base;
 extern net_socket *comm_sock,*game_sock;

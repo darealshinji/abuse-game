@@ -16,21 +16,21 @@
 #include <fcntl.h>
 #include <string.h>
 
-#include "cache.hpp"
-#include "lisp.hpp"
-#include "video.hpp"
-#include "dprint.hpp"
-#include "exitproc.hpp"
-#include "lcache.hpp"
-#include "status.hpp"
-#include "game.hpp"
-#include "lisp_gc.hpp"
-#include "level.hpp"
-#include "status.hpp"
-#include "crc.hpp"
-#include "dev.hpp"
-#include "specache.hpp"
-#include "netface.hpp"
+#include "cache.h"
+#include "lisp.h"
+#include "video.h"
+#include "dprint.h"
+#include "exitproc.h"
+#include "lcache.h"
+#include "status.h"
+#include "game.h"
+#include "lisp_gc.h"
+#include "level.h"
+#include "status.h"
+#include "crc.h"
+#include "dev.h"
+#include "specache.h"
+#include "netface.h"
 
 char lfname[100]="";          // name of compiled lisp code cache file
 

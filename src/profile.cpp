@@ -9,13 +9,13 @@
 
 #include "config.h"
 
-#include "game.hpp"
+#include "game.h"
 
 
-#include "profile.hpp"
-#include "jwindow.hpp"
-#include "property.hpp"
-#include "objects.hpp"
+#include "profile.h"
+#include "jwindow.h"
+#include "property.h"
+#include "objects.h"
 
 
 Jwindow *prof_win=NULL;

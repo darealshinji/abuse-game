@@ -9,9 +9,9 @@
 
 #include "config.h"
 
-#include "seq.hpp"
-#include "macs.hpp"
-#include "lisp.hpp"
+#include "seq.h"
+#include "macs.h"
+#include "lisp.h"
 
 int sequence::size()
 {

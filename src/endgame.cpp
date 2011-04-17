@@ -11,21 +11,21 @@
 
 #include <math.h>
 
-#include "menu.hpp"
-#include "lisp.hpp"
-#include "game.hpp"
-#include "timing.hpp"
-#include "game.hpp"
-#include "id.hpp"
-#include "pmenu.hpp"
-#include "gui.hpp"
-#include "property.hpp"
-#include "dev.hpp"
-#include "clisp.hpp"
-#include "dprint.hpp"
-#include "jrand.hpp"
-#include "director.hpp"
-#include "lisp_gc.hpp"
+#include "menu.h"
+#include "lisp.h"
+#include "game.h"
+#include "timing.h"
+#include "game.h"
+#include "id.h"
+#include "pmenu.h"
+#include "gui.h"
+#include "property.h"
+#include "dev.h"
+#include "clisp.h"
+#include "dprint.h"
+#include "jrand.h"
+#include "director.h"
+#include "lisp_gc.h"
 
 extern palette *old_pal;
 

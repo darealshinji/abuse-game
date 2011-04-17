@@ -9,10 +9,10 @@
 
 #include "config.h"
 
-#include "devsel.hpp"
-#include "scroller.hpp"
-#include "cache.hpp"
-#include "game.hpp"
+#include "devsel.h"
+#include "scroller.h"
+#include "cache.h"
+#include "game.h"
 
 void scale_put(image *im, image *screen, int x, int y, short new_width, short new_height);
 void scale_put_trans(image *im, image *screen, int x, int y, short new_width, short new_height);

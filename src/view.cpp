@@ -9,25 +9,25 @@
 
 #include "config.h"
 
-#include "game.hpp"
+#include "game.h"
 
 
 #include "system.h"
-#include "view.hpp"
-#include "lisp.hpp"
-#include "jwindow.hpp"
-#include "config.hpp"
-#include "scroller.hpp"
-#include "id.hpp"
-#include "dev.hpp"
-#include "jrand.hpp"
-#include "dprint.hpp"
-#include "transp.hpp"
-#include "clisp.hpp"
-#include "demo.hpp"
-#include "sbar.hpp"
-#include "nfserver.hpp"
-#include "chat.hpp"
+#include "view.h"
+#include "lisp.h"
+#include "jwindow.h"
+#include "configuration.h"
+#include "scroller.h"
+#include "id.h"
+#include "dev.h"
+#include "jrand.h"
+#include "dprint.h"
+#include "transp.h"
+#include "clisp.h"
+#include "demo.h"
+#include "sbar.h"
+#include "nfserver.h"
+#include "chat.h"
 
 #define SHIFT_DOWN_DEFAULT 15
 #define SHIFT_RIGHT_DEFAULT 0

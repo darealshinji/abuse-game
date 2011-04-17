@@ -9,8 +9,8 @@
 
 #include "config.h"
 
-#include "chat.hpp"
-#include "dev.hpp"
+#include "chat.h"
+#include "dev.h"
 
 chat_console *chat = NULL;
 

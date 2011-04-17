@@ -11,15 +11,15 @@
 
 #include <math.h>
 
-#include "game.hpp"
+#include "game.h"
 
-#include "jwindow.hpp"
-#include "lisp.hpp"
-#include "scroller.hpp"
-#include "id.hpp"
-#include "cache.hpp"
-#include "dprint.hpp"
-#include "loader2.hpp"
+#include "jwindow.h"
+#include "lisp.h"
+#include "scroller.h"
+#include "id.h"
+#include "cache.h"
+#include "dprint.h"
+#include "loader2.h"
 
 extern int dev_ok;
 palette *old_pal = NULL;

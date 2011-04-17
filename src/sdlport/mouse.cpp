@@ -21,11 +21,11 @@
 
 #include <SDL.h>
 
-#include "video.hpp"
-#include "sprite.hpp"
-#include "image.hpp"
-#include "filter.hpp"
-#include "mouse.hpp"
+#include "video.h"
+#include "sprite.h"
+#include "image.h"
+#include "filter.h"
+#include "mouse.h"
 
 unsigned char def_mouse[]=
 {

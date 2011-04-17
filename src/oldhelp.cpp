@@ -11,8 +11,8 @@
 
 #include <string.h>
 
-#include "help.hpp"
-#include "game.hpp"
+#include "help.h"
+#include "game.h"
 
 int help_page=0;
 

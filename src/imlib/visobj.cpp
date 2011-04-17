@@ -11,8 +11,8 @@
 
 #include <string.h>
 
-#include "input.hpp"
-#include "visobj.hpp"
+#include "input.h"
+#include "visobj.h"
 
 void image_visual::draw(image *screen, int x, int y,
             filter *f)

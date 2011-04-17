@@ -11,8 +11,8 @@
 
 #include <string.h>
 
-#include "points.hpp"
-#include "dev.hpp"
+#include "points.h"
+#include "dev.h"
 
 point_list::point_list(unsigned char how_many, unsigned char *Data)
 {

@@ -11,27 +11,27 @@
 
 #include <math.h>
 
-#include "dev.hpp"
+#include "dev.h"
 
-#include "ui/volumewindow.hpp"
+#include "ui/volumewindow.h"
 
-#include "menu.hpp"
-#include "lisp.hpp"
-#include "game.hpp"
-#include "timing.hpp"
-#include "game.hpp"
-#include "id.hpp"
-#include "pmenu.hpp"
-#include "gui.hpp"
-#include "property.hpp"
-#include "clisp.hpp"
-#include "gamma.hpp"
-#include "dprint.hpp"
-#include "demo.hpp"
-#include "loadgame.hpp"
-#include "scroller.hpp"
-#include "netcfg.hpp"
-#include "sock.hpp"
+#include "menu.h"
+#include "lisp.h"
+#include "game.h"
+#include "timing.h"
+#include "game.h"
+#include "id.h"
+#include "pmenu.h"
+#include "gui.h"
+#include "property.h"
+#include "clisp.h"
+#include "gamma.h"
+#include "dprint.h"
+#include "demo.h"
+#include "loadgame.h"
+#include "scroller.h"
+#include "netcfg.h"
+#include "sock.h"
 
 extern net_protocol *prot;
 

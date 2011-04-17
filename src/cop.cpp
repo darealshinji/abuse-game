@@ -9,16 +9,16 @@
 
 #include "config.h"
 
-#include "lisp.hpp"
-#include "lisp_gc.hpp"
-#include "compiled.hpp"
-#include "objects.hpp"
-#include "level.hpp"
-#include "game.hpp"
-#include "jrand.hpp"
-#include "clisp.hpp"
-#include "ant.hpp"
-#include "dev.hpp"
+#include "lisp.h"
+#include "lisp_gc.h"
+#include "compiled.h"
+#include "objects.h"
+#include "level.h"
+#include "game.h"
+#include "jrand.h"
+#include "clisp.h"
+#include "ant.h"
+#include "dev.h"
 
 enum { point_angle, fire_delay1 };
 

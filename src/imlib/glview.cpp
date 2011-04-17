@@ -11,16 +11,16 @@
 
 #include <math.h>
 
-#include "macs.hpp"
-#include "mdlread.hpp"
-#include "video.hpp"
-#include "image.hpp"
-#include "palette.hpp"
-#include "linked.hpp"
+#include "macs.h"
+#include "mdlread.h"
+#include "video.h"
+#include "image.h"
+#include "palette.h"
+#include "linked.h"
 
-#include "glread.hpp"
-#include "gifread.hpp"
-#include "ppmread.hpp"
+#include "glread.h"
+#include "gifread.h"
+#include "ppmread.h"
 
 
 main(int argc, char **argv)

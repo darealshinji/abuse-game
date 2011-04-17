@@ -15,15 +15,15 @@
 #include <ctype.h>
 #include <fcntl.h>
 
-#include "specs.hpp"
-#include "timage.hpp"
-#include "jwindow.hpp"
-#include "fonts.hpp"
-#include "timing.hpp"
-#include "scene.hpp"
-#include "game.hpp"
-#include "parse.hpp"
-#include "cache.hpp"
+#include "specs.h"
+#include "timage.h"
+#include "jwindow.h"
+#include "fonts.h"
+#include "timing.h"
+#include "scene.h"
+#include "game.h"
+#include "parse.h"
+#include "cache.h"
 
 
 class string_node
