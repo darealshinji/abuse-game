@@ -221,8 +221,8 @@ static void collect_symbols(LispSymbol *root)
 {
   if (root)
   {
-    root->value = collect_object(root->value);
-    root->function = collect_object(root->function);
+    root->value = (LispObject *)collect_object(root->value);
+    root->function = (LispObject *)collect_object(root->function);
     root->name = (LispString *)collect_object(root->name);
     collect_symbols(root->left);
     collect_symbols(root->right);

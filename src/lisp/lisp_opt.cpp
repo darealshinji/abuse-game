@@ -18,7 +18,10 @@
 #include "lisp.h"
 #include "lisp_gc.h"
 
-void *true_symbol=NULL,*l_undefined,*list_symbol,*string_symbol,     // in lisp_init()
+LispObject *l_undefined;
+LispSymbol *true_symbol = NULL;
+
+void *list_symbol,*string_symbol,     // in lisp_init()
      *quote_symbol,*backquote_symbol,*comma_symbol,*do_symbol,*in_symbol,*aref_symbol,
      *colon_initial_contents,*colon_initial_element,*if_symbol,
      *progn_symbol,*eq_symbol,*zero_symbol,*eq0_symbol,*car_symbol,*cdr_symbol,
