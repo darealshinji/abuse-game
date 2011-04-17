@@ -956,7 +956,7 @@ void *pairlis(void *list1, void *list2, void *list3)
   return ret;
 }
 
-void LispSymbol::SetFunction(void *fun)
+void LispSymbol::SetFunction(LispObject *fun)
 {
     function = fun;
 }
@@ -1961,16 +1961,16 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
             case L_NUMBER :
             {
               if (x==L_NUMBER && ((LispSymbol *)i)->value!=l_undefined)
-              ((LispNumber *)(((LispSymbol *)i)->value))->num=lnumber_value(set_to);
+                ((LispSymbol *)i)->SetNumber(lnumber_value(set_to));
               else
-              ((LispSymbol *)i)->value=set_to;
+                ((LispSymbol *)i)->SetValue((LispNumber *)set_to);
             } break;
             case L_OBJECT_VAR :
             {
               l_obj_set(((LispObjectVar *)(((LispSymbol *)i)->value))->number, set_to);
             } break;
             default :
-            ((LispSymbol *)i)->value=set_to;
+              ((LispSymbol *)i)->SetValue((LispObject *)set_to);
           }
           ret=((LispSymbol *)i)->value;
         } break;
@@ -2086,7 +2086,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
 
     l_user_stack.push(((LispSymbol *)var_name)->value);
     tmp=eval(CAR(CDR(CAR(var_list))));    
-    ((LispSymbol *)var_name)->value=tmp;
+    ((LispSymbol *)var_name)->SetValue((LispObject *)tmp);
     var_list=CDR(var_list);
       }
 
@@ -2103,7 +2103,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       while (var_list)
       {
     void *var_name=CAR(CAR(var_list));
-    ((LispSymbol *)var_name)->value=l_user_stack.sdata[cur_stack++];
+    ((LispSymbol *)var_name)->SetValue((LispObject *)l_user_stack.sdata[cur_stack++]);
     var_list=CDR(var_list);
       }
       l_user_stack.son=stack_start;     // restore the stack
@@ -2545,12 +2545,12 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       l_user_stack.push(bind_var->GetValue());  // save old symbol value
       while (ilist)
       {
-                bind_var->SetValue(CAR(ilist));
+                bind_var->SetValue((LispObject *)CAR(ilist));
                 for (block=arg_list;block;block=CDR(block))
                   ret=eval(CAR(block));
                 ilist=CDR(ilist);
       }
-      bind_var->SetValue(l_user_stack.pop(1)); // restore symbol value
+      bind_var->SetValue((LispObject *)l_user_stack.pop(1)); // restore symbol value
       ret=ret;
     } break;
     case SYS_FUNC_OPEN_FILE:
@@ -2714,7 +2714,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       for (init_var=CAR(arg_list);init_var;init_var=CDR(init_var), do_evaled++)
       {
                 sym = (LispSymbol *)CAR(CAR(init_var));
-                sym->SetValue(*do_evaled);
+                sym->SetValue((LispObject *)*do_evaled);
       }
 
       i=0;       // set i to 1 when terminate conditions are meet
@@ -2736,7 +2736,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       for (init_var=CAR(arg_list);init_var;init_var=CDR(init_var), do_evaled++)
       {
                 sym = (LispSymbol *)CAR(CAR(init_var));
-                sym->SetValue(*do_evaled);
+                sym->SetValue((LispObject *)*do_evaled);
       }
 
       l_user_stack.son=ustack_start;
@@ -2936,7 +2936,7 @@ void *eval_user_fun(LispSymbol *sym, void *arg_list)
 
     // now store all the values and put them into the symbols
     for (f_arg=fun_arg_list;f_arg;f_arg=CDR(f_arg))
-      ((LispSymbol *)CAR(f_arg))->value=l_user_stack.sdata[i++];
+      ((LispSymbol *)CAR(f_arg))->SetValue((LispObject *)l_user_stack.sdata[i++]);
 
     l_user_stack.son=new_start;
   }
@@ -2956,7 +2956,7 @@ void *eval_user_fun(LispSymbol *sym, void *arg_list)
 
   long cur_stack=stack_start;
   for (f_arg=fun_arg_list;f_arg;f_arg=CDR(f_arg))
-    ((LispSymbol *)CAR(f_arg))->value=l_user_stack.sdata[cur_stack++];
+    ((LispSymbol *)CAR(f_arg))->SetValue((LispObject *)l_user_stack.sdata[cur_stack++]);
 
   l_user_stack.son=stack_start;
 
@@ -3126,7 +3126,7 @@ void clear_tmp()
   free_space[TMP_SPACE]=space[TMP_SPACE];
 }
 
-void *LispSymbol::GetName()
+LispString *LispSymbol::GetName()
 {
 #ifdef TYPE_CHECKING
     if (item_type(this) != L_SYMBOL)
@@ -3155,7 +3155,7 @@ void LispSymbol::SetNumber(long num)
         value = LispNumber::Create(num);
 }
 
-void LispSymbol::SetValue(void *val)
+void LispSymbol::SetValue(LispObject *val)
 {
 #ifdef TYPE_CHECKING
     if (item_type(this) != L_SYMBOL)
@@ -3168,7 +3168,7 @@ void LispSymbol::SetValue(void *val)
     value = val;
 }
 
-void *LispSymbol::GetFunction()
+LispObject *LispSymbol::GetFunction()
 {
 #ifdef TYPE_CHECKING
     if (item_type(this) != L_SYMBOL)
@@ -3181,7 +3181,7 @@ void *LispSymbol::GetFunction()
     return function;
 }
 
-void *LispSymbol::GetValue()
+LispObject *LispSymbol::GetValue()
 {
 #ifdef TYPE_CHECKING
     if (item_type(this) != L_SYMBOL)

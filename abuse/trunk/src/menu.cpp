@@ -384,7 +384,7 @@ void show_sell(int abortable)
 //    char *prog="((\"art/help.spe\" . \"sell2\")(\"art/help.spe\" . \"sell4\")(\"art/help.spe\" . \"sell3\")(\"art/endgame.spe\" . \"credit\"))";
 //    char *prog="((\"art/endgame.spe\" . \"credit\") (\"art/help.spe\" . \"sell6\"))";
     char const *prog="((\"art/endgame.spe\" . \"credit\"))";
-    ss->SetValue(compile(prog));
+    ss->SetValue((LispObject *)compile(prog));
     current_space=sp;
   }
 

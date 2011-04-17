@@ -12,8 +12,6 @@
 
 #include <stdint.h>
 
-#include "lisp_opt.h"
-
 #ifdef L_PROFILE
 #include "timing.h"
 #endif
@@ -88,18 +86,19 @@ struct LispSymbol : LispObject
     static LispSymbol *Find(char const *name);
     static LispSymbol *FindOrCreate(char const *name);
 
-    void *GetName();
-    void *GetFunction();
-    void *GetValue();
+    LispString *GetName();
+    LispObject *GetFunction();
+    LispObject *GetValue();
 
-    void SetFunction(void *fun);
-    void SetValue(void *value);
+    void SetFunction(LispObject *fun);
+    void SetValue(LispObject *value);
     void SetNumber(long num);
 
 #ifdef L_PROFILE
     float time_taken;
 #endif
-    void *value, *function;
+    LispObject *value;
+    LispObject *function;
     LispString *name;
     LispSymbol *left, *right; // tree structure
 };
@@ -152,11 +151,11 @@ struct LispFixedPoint : LispObject
 
 static inline void *&CAR(void *x) { return ((LispList *)x)->car; }
 static inline void *&CDR(void *x) { return ((LispList *)x)->cdr; }
+static inline ltype item_type(void *x) { if (x) return *(ltype *)x; return L_CONS_CELL; }
 
 void perm_space();
 void tmp_space();
 void use_user_space(void *addr, long size);
-#define item_type(c) ((c) ? *((ltype *)c) : (ltype)L_CONS_CELL)
 void *lpointer_value(void *lpointer);
 int32_t lnumber_value(void *lnumber);
 unsigned short lcharacter_value(void *c);
@@ -234,6 +233,6 @@ extern void l_obj_print(long number);  // exten lisp function switches on number
 static inline void *symbol_value(void *sym) { return ((LispSymbol *)sym)->GetValue(); }
 static inline char *lstring_value(void *str) { return ((LispString *)str)->GetString(); }
 
-
+#include "lisp_opt.h"
 
 #endif
