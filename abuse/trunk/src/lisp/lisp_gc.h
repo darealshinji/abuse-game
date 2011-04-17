@@ -30,6 +30,11 @@ public:
         stack.push((void **)&ref);
     }
 
+    template<typename T> inline PtrRef(T * const &ref)
+    {
+        stack.push((void **)&ref);
+    }
+
     inline ~PtrRef()
     {
         stack.pop(1);

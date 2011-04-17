@@ -47,47 +47,64 @@ typedef uint32_t ltype;    // make sure structures aren't packed differently on 
 
 struct LObject
 {
+    /* Factories */
+    static LObject *Compile(char const *&s);
+
+    /* Methods */
+    LObject *Eval();
     void Print();
 
+    /* Members */
     ltype type;
 };
 
 struct LObjectVar : LObject
 {
+    /* Factories */
     static LObjectVar *Create(int index);
 
+    /* Members */
     int index;
 };
 
 struct LList : LObject
 {
+    /* Factories */
     static LList *Create();
 
+    /* Methods */
     size_t GetLength();
 
+    /* Members */
     LObject *cdr, *car;
 };
 
 struct LNumber : LObject
 {
+    /* Factories */
     static LNumber *Create(long num);
 
+    /* Members */
     long num;
 };
 
 struct LRedirect : LObject
 {
+    /* Members */
     LObject *ref;
 };
 
 struct LString : LObject
 {
+    /* Factories */
     static LString *Create(char const *string);
     static LString *Create(char const *string, int length);
     static LString *Create(int length);
 
+    /* Methods */
     char *GetString();
 
+    /* Members */
 private:
     char str[1]; /* Can be allocated much larger than 1 */
 };
@@ -154,22 +171,28 @@ private:
 
 struct LChar : LObject
 {
+    /* Factories */
     static LChar *Create(uint16_t ch);
 
+    /* Members */
     uint16_t ch;
 };
 
 struct LPointer : LObject
 {
+    /* Factories */
     static LPointer *Create(void *addr);
 
+    /* Members */
     void *addr;
 };
 
 struct LFixedPoint : LObject
 {
+    /* Factories */
     static LFixedPoint *Create(int32_t x);
 
+    /* Members */
     int32_t x;
 };
 
@@ -185,15 +208,13 @@ int32_t lnumber_value(void *lnumber);
 unsigned short lcharacter_value(void *c);
 long lfixed_point_value(void *c);
 void *lisp_atom(void *i);
-void *lcdr(void *c);
-void *lcar(void *c);
+LObject *lcdr(void *c);
+LObject *lcar(void *c);
 void *lisp_eq(void *n1, void *n2);
 void *lisp_equal(void *n1, void *n2);
-void *eval(void *prog);
 void *eval_block(void *list);
 void *eval_function(LSymbol *sym, void *arg_list);
 void *eval_user_fun(LSymbol *sym, void *arg_list);
-void *compile(char const *&s);
 void *assoc(void *item, void *list);
 void resize_tmp(int new_size);
 void resize_perm(int new_size);

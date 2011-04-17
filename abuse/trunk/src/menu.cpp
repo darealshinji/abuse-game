@@ -384,8 +384,8 @@ void show_sell(int abortable)
     current_space=PERM_SPACE;
 //    char *prog="((\"art/help.spe\" . \"sell2\")(\"art/help.spe\" . \"sell4\")(\"art/help.spe\" . \"sell3\")(\"art/endgame.spe\" . \"credit\"))";
 //    char *prog="((\"art/endgame.spe\" . \"credit\") (\"art/help.spe\" . \"sell6\"))";
-    char const *prog="((\"art/endgame.spe\" . \"credit\"))";
-    ss->SetValue((LObject *)compile(prog));
+    char const *prog = "((\"art/endgame.spe\" . \"credit\"))";
+    ss->SetValue(LObject::Compile(prog));
     current_space=sp;
   }
 

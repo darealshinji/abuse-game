@@ -339,7 +339,7 @@ character_type::character_type(void *args, void *name)
     Cell *ab=assoc(LSymbol::FindOrCreate(ability_names[i]),l);
     PtrRef r5(ab);
     if (!NILP(ab))
-      abil[i]=lnumber_value(eval(lcar(lcdr(ab))));
+      abil[i]=lnumber_value(lcar(lcdr(ab))->Eval());
       }
     } else if (f==l_funs)
     {
@@ -360,7 +360,7 @@ character_type::character_type(void *args, void *name)
       {
     Cell *ab=assoc(LSymbol::FindOrCreate(cflag_names[i]),l);
     PtrRef r5(ab);
-    if (!NILP(ab) && eval(lcar(lcdr(ab))))
+    if (!NILP(ab) && lcar(lcdr(ab))->Eval())
     cflags|=(1<<i);
       }
 
@@ -372,25 +372,25 @@ character_type::character_type(void *args, void *name)
       }
     } else if (f==l_range)
     {
-      rangex=lnumber_value(eval(lcar(lcdr(lcar(field)))));
-      rangey=lnumber_value(eval(lcar(lcdr(lcdr(lcar(field))))));
+      rangex=lnumber_value(lcar(lcdr(lcar(field)))->Eval());
+      rangey=lnumber_value(lcar(lcdr(lcdr(lcar(field))))->Eval());
     } else if (f==l_draw_range)
     {
-      draw_rangex=lnumber_value(eval(lcar(lcdr(lcar(field)))));
-      draw_rangey=lnumber_value(eval(lcar(lcdr(lcdr(lcar(field))))));
+      draw_rangex=lnumber_value(lcar(lcdr(lcar(field)))->Eval());
+      draw_rangey=lnumber_value(lcar(lcdr(lcdr(lcar(field))))->Eval());
     } else if (f==l_states)
     {
       void *l=CDR(CAR(field));
       PtrRef r4(l);
       char fn[100];
-      strcpy(fn,lstring_value(eval(CAR(l)))); l=CDR(l);
+      strcpy(fn,lstring_value(CAR(l)->Eval())); l=CDR(l);
       while (l)
       {
       int index;
       void *e;
       sequence *mem;
       index = add_state(CAR((CAR(l))));
-      e = eval(CAR(CDR(CAR(l))));
+      e = CAR(CDR(CAR(l)))->Eval();
       mem = new sequence(fn,e,NULL);
     seq[index]=mem;
     l=CDR(l);
@@ -401,8 +401,8 @@ character_type::character_type(void *args, void *name)
       PtrRef r4(mf);
       while (!NILP(mf))
       {
-    char *real=lstring_value(eval(lcar(lcar(mf))));
-    char *fake=lstring_value(eval(lcar(lcdr(lcar(mf)))));
+    char *real=lstring_value(lcar(lcar(mf))->Eval());
+    char *fake=lstring_value(lcar(lcdr(lcar(mf)))->Eval());
     if (!isa_var_name(real))
     {
       ((LObject *)field)->Print();
@@ -417,8 +417,8 @@ character_type::character_type(void *args, void *name)
       }
     } else if (f==l_logo)
     {
-      char *fn=lstring_value(eval(CAR(CDR(CAR(field)))));
-      char *o=lstring_value(eval(CAR(CDR(CDR(CAR(field))))));
+      char *fn=lstring_value(CAR(CDR(CAR(field)))->Eval());
+      char *o=lstring_value(CAR(CDR(CDR(CAR(field))))->Eval());
       logo=cache.reg(fn,o,SPEC_IMAGE,1);
     } else if (f==l_vars)
     {
