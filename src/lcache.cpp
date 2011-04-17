@@ -26,24 +26,24 @@ long block_size(Cell *level)  // return size needed to recreate this block
     void *b=level;
     for (;b && item_type(b)==L_CONS_CELL;b=CDR(b))
     {
-      t+=sizeof(cons_cell);
+      t+=sizeof(LispList);
     }
     if (b) t+=block_size(b);
     for (b=level;b && item_type(b)==L_CONS_CELL;b=CDR(b))
       t+=block_size(CAR(b));
     ret=t;
     } else if (type== L_NUMBER)
-    { ret=sizeof(lisp_number); }
+    { ret=sizeof(LispNumber); }
     else if (type==L_CHARACTER)
-    { ret=sizeof(lisp_character); }
+    { ret=sizeof(LispChar); }
     else if (type==L_STRING)
     {
-      ret=sizeof(lisp_string)+strlen(lstring_value(level))+1;
+      ret=sizeof(LispString)+strlen(lstring_value(level))+1;
       if (ret<8)
         ret=8;
     }
     else if (type==L_POINTER)
-    { ret=sizeof(lisp_pointer); }
+    { ret=sizeof(LispPointer); }
     else ret=0;
   }
 #ifdef WORD_ALIGN
@@ -107,7 +107,7 @@ Cell *load_block(bFILE *fp)
     { return new_lisp_character(fp->read_uint16()); } break;
     case L_STRING :
     { long l=fp->read_uint32();
-      lisp_string *s=new_lisp_string(l);
+      LispString *s=new_lisp_string(l);
       fp->read(lstring_value(s),l);
       return s;
     } break;
@@ -120,10 +120,10 @@ Cell *load_block(bFILE *fp)
       else
       {
     long x=abs(t);
-    cons_cell *last=NULL,*first=NULL;
+    LispList *last=NULL,*first=NULL;
     while (x)
     {
-      cons_cell *c=new_cons_cell();
+      LispList *c=new_cons_cell();
       if (first)
         last->cdr=c;
       else first=c;
@@ -134,7 +134,7 @@ Cell *load_block(bFILE *fp)
       last->cdr=load_block(fp);
     else last->cdr=NULL;
     
-    for (last=first,x=0;x<abs(t);x++,last=(cons_cell *)last->cdr)
+    for (last=first,x=0;x<abs(t);x++,last=(LispList *)last->cdr)
       last->car=load_block(fp);    
     return first;
       }

@@ -689,7 +689,7 @@ static void post_render()
   {
     screen->dirt_off();
     clear_tmp();
-    eval_function((lisp_symbol *)l_post_render, NULL);
+    eval_function((LispSymbol *)l_post_render, NULL);
     clear_tmp();
     screen->dirt_on();
   }
@@ -2343,7 +2343,7 @@ void music_check()
       {
     int sp = current_space;
     current_space = PERM_SPACE;
-    eval_function((lisp_symbol *)l_next_song, NULL);
+    eval_function((LispSymbol *)l_next_song, NULL);
     current_space = sp;
       } */
     }

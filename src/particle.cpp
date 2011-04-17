@@ -60,7 +60,7 @@ void delete_panims()
 
 int defun_pseq(void *args)
 {
-  lisp_symbol *sym=(lisp_symbol *)lcar(args);
+  LispSymbol *sym=(LispSymbol *)lcar(args);
   if (item_type(sym)!=L_SYMBOL)
   {
     lprint(args);

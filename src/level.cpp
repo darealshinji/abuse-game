@@ -1510,7 +1510,7 @@ void level::level_loaded_notify()
     void *arg_list=NULL;
     p_ref r1(arg_list);
     push_onto_list(new_lisp_string(n),arg_list);
-    eval_function((lisp_symbol *)l_level_loaded,arg_list);
+    eval_function((LispSymbol *)l_level_loaded,arg_list);
 
     current_space=sp;
   } */
@@ -1837,7 +1837,7 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
     {
       current_object=f->focus;
       void *m=mark_heap(TMP_SPACE);
-      eval_function((lisp_symbol *)fun,NULL);
+      eval_function((LispSymbol *)fun,NULL);
       restore_heap(m,TMP_SPACE);
     }
       }    

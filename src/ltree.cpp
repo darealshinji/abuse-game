@@ -9,12 +9,12 @@
 
 #include "config.h"
 
-lisp_symbol *find_symbol(char *name)
+LispSymbol *find_symbol(char *name)
 {
-  lisp_symbol *p=lsym_root;
+  LispSymbol *p=lsym_root;
   while (p)
   {
-    int cmp=strcmp(name,((char *)((lisp_symbol *)cs->car)->name)+sizeof(lisp_string));
+    int cmp=strcmp(name,((char *)((LispSymbol *)cs->car)->name)+sizeof(LispString));
     if (cmp==0) return p;
     else if (cmp<0) p=p->left;
     else p=p->right;
@@ -24,13 +24,13 @@ lisp_symbol *find_symbol(char *name)
 
 
 
-lisp_symbol *make_find_symbol(char *name)
+LispSymbol *make_find_symbol(char *name)
 {
-  lisp_symbol *p=lsym_root;
-  lisp_symbol **parent=&lsym_root;
+  LispSymbol *p=lsym_root;
+  LispSymbol **parent=&lsym_root;
   while (p)
   {
-    int cmp=strcmp(name,((char *)((lisp_symbol *)cs->car)->name)+sizeof(lisp_string));
+    int cmp=strcmp(name,((char *)((LispSymbol *)cs->car)->name)+sizeof(LispString));
     if (cmp==0) return p;
     else if (cmp<0)
     {
@@ -44,7 +44,7 @@ lisp_symbol *make_find_symbol(char *name)
     }
   }
 
-  p=malloc(sizeof(lisp_symbol));
+  p=malloc(sizeof(LispSymbol));
   p->type=L_SYMBOL;
   p->name=new_lisp_string(name);
   p->value=l_undefined;

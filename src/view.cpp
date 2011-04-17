@@ -333,7 +333,7 @@ void view::get_input()
 //        file "input.lsp" to get our key mappings.
 /*    if( DEFINEDP( symbol_function( l_get_local_input ) ) )
     {
-        void *ret = eval_function((lisp_symbol *)l_get_local_input, NULL );
+        void *ret = eval_function((LispSymbol *)l_get_local_input, NULL );
         sug_x = lnumber_value( CAR( ret ) );
         ret = CDR( ret );
         sug_y = lnumber_value( CAR( ret ) );
@@ -460,7 +460,7 @@ void view::add_chat_key(int key)  // return string if buf is complete
       void *m=mark_heap(TMP_SPACE);
       void *list=NULL;
       push_onto_list(new_lisp_string(chat_buf),list);
-      eval_function((lisp_symbol *)l_chat_input,list);
+      eval_function((LispSymbol *)l_chat_input,list);
       restore_heap(m,TMP_SPACE);
 
       current_object=o;
@@ -882,7 +882,7 @@ void view::reset_player()
     {
       game_object *o=current_object;
       current_object=focus;
-      eval_user_fun((lisp_symbol *)figures[focus->otype]->get_fun(OFUN_CONSTRUCTOR),NULL);
+      eval_user_fun((LispSymbol *)figures[focus->otype]->get_fun(OFUN_CONSTRUCTOR),NULL);
       current_object=o;
     }
     sbar.redraw(screen);
