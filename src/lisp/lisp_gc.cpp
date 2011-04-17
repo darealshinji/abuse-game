@@ -260,7 +260,7 @@ static void collect_stacks()
 
 void collect_space(int which_space) // should be tmp or permanent
 {
-  return; /* XXX */
+  return; /* XXX: temporary hack */
 
   int old_space = current_space;
   cstart = space[which_space];

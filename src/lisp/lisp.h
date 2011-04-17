@@ -116,6 +116,8 @@ struct LSymbol : LObject
     static LSymbol *FindOrCreate(char const *name);
 
     /* Methods */
+    LObject *EvalFunction(void *arg_list);
+
     LString *GetName();
     LObject *GetFunction();
     LObject *GetValue();
@@ -213,7 +215,6 @@ LObject *lcar(void *c);
 void *lisp_eq(void *n1, void *n2);
 void *lisp_equal(void *n1, void *n2);
 void *eval_block(void *list);
-void *eval_function(LSymbol *sym, void *arg_list);
 void *eval_user_fun(LSymbol *sym, void *arg_list);
 void *assoc(void *item, void *list);
 void resize_tmp(int new_size);

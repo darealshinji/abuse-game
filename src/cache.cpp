@@ -386,7 +386,7 @@ void CacheList::preload_cache_object(int type)
     void *call_with=NULL;
     push_onto_list(LNumber::Create(type),call_with);
 
-    void *CacheList=eval_function((LSymbol *)cache_fun,call_with);
+    void *CacheList = ((LSymbol *)cache_fun)->EvalFunction(call_with);
     PtrRef r1(CacheList);
 
     if (CacheList && lcar(CacheList))
