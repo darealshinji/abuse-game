@@ -56,9 +56,10 @@ public:
 
 static char const *lang_string(char const *symbol)
 {
-  void *v=find_symbol(symbol);
-  if (!v || !DEFINEDP(symbol_value(v))) return "Language symbol missing!";
-  else return lstring_value(symbol_value(v));
+    LispSymbol *v = LispSymbol::Find(symbol);
+    if (!v || !DEFINEDP(v->GetValue()))
+        return "Language symbol missing!";
+    return lstring_value(v->GetValue());
 }
 
 void gamma_correct(palette *&pal, int force_menu)
@@ -67,7 +68,7 @@ void gamma_correct(palette *&pal, int force_menu)
     int abort=0;
 
     // see if user has already done this routine
-    Cell *gs = find_symbol("darkest_gray");
+    LispSymbol *gs = LispSymbol::Find("darkest_gray");
 
     if(old_pal)
     {
@@ -76,15 +77,15 @@ void gamma_correct(palette *&pal, int force_menu)
         old_pal = NULL;
     }
 
-    if(gs && DEFINEDP(symbol_value(gs)) && !force_menu)
+    if(gs && DEFINEDP(gs->GetValue()) && !force_menu)
     {
-        dg = lnumber_value(symbol_value(gs));
+        dg = lnumber_value(gs->GetValue());
     }
     else
     {
-        if(gs && DEFINEDP(symbol_value(gs)))
+        if(gs && DEFINEDP(gs->GetValue()))
         {
-            dg = old_dg = lnumber_value(symbol_value(gs));
+            dg = old_dg = lnumber_value(gs->GetValue());
         }
         // load in a fine gray palette they can chose from
         palette *gray_pal = pal->copy();
@@ -180,7 +181,7 @@ void gamma_correct(palette *&pal, int force_menu)
                 fclose(fp);
                 int sp = current_space;
                 current_space = PERM_SPACE;
-                set_symbol_value(make_find_symbol("darkest_gray"), new_lisp_number(dg));
+                LispSymbol::FindOrCreate("darkest_gray")->SetNumber(dg);
 
                 current_space = sp;
             }

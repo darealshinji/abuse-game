@@ -41,9 +41,9 @@ char backw_on=0,forew_on=0,show_menu_on=0,ledit_on=0,pmenu_on=0,omenu_on=0,comma
 
 char const *symbol_str(char const *name)
 {
-  void *sym=make_find_symbol(name);
-  if (symbol_value(sym) && item_type(symbol_value(sym))==L_STRING)
-    return lstring_value(symbol_value(sym));
+  LispSymbol *sym = LispSymbol::FindOrCreate(name);
+  if (sym->GetValue() && item_type(sym->GetValue())==L_STRING)
+    return lstring_value(sym->GetValue());
 
 
   // maybe english.lsp was not loaded yet, let's try to do that
@@ -66,15 +66,15 @@ char const *symbol_str(char const *name)
 
 
   // check again to see if the symbol is there
-  sym=make_find_symbol(name);
-  if (symbol_value(sym) && item_type(symbol_value(sym))==L_STRING)
-    return lstring_value(symbol_value(sym));
+  sym = LispSymbol::FindOrCreate(name);
+  if (sym->GetValue() && item_type(sym->GetValue())==L_STRING)
+    return lstring_value(sym->GetValue());
 
 
   // check to see if there is a missing symbol definition
-  sym=make_find_symbol("missing_sym");
-  if (symbol_value(sym) && item_type(symbol_value(sym))==L_STRING)
-    return lstring_value(symbol_value(sym));
+  sym = LispSymbol::FindOrCreate("missing_sym");
+  if (sym->GetValue() && item_type(sym->GetValue())==L_STRING)
+    return lstring_value(sym->GetValue());
 
   // last resort, return english string
   return "Missing language symbol!";

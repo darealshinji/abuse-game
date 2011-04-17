@@ -168,18 +168,14 @@ int demo_manager::start_playing(char *filename)
   delete probe;
 
   the_game->load_level(tname);
-  initial_difficulty=l_difficulty;
+  initial_difficulty = l_difficulty;
 
   switch (diff)
   {
-    case 0 :
-    { set_symbol_value(l_difficulty,l_easy); } break;
-    case 1 :
-    { set_symbol_value(l_difficulty,l_medium); } break;
-    case 2 :
-    { set_symbol_value(l_difficulty,l_hard); } break;
-    case 3 :
-    { set_symbol_value(l_difficulty,l_extreme); } break;
+    case 0: l_difficulty->SetValue(l_easy); break;
+    case 1: l_difficulty->SetValue(l_medium); break;
+    case 2: l_difficulty->SetValue(l_hard); break;
+    case 3: l_difficulty->SetValue(l_extreme); break;
   }
 
   state=PLAYING;
@@ -206,7 +202,7 @@ int demo_manager::set_state(demo_state new_state, char *filename)
       fade_out(8);
 */
       delete record_file;
-      l_difficulty=initial_difficulty;
+      l_difficulty = initial_difficulty;
       the_game->set_state(MENU_STATE);
       wm->push_event(new event(ID_NULL,NULL));
 

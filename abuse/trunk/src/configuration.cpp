@@ -35,13 +35,13 @@ static int binding_for_player( int player )
 {
     char tmp[40];
     sprintf( tmp, "player%d", player );
-    Cell *f = find_symbol( tmp );
-    if( !NILP( f ) && DEFINEDP( symbol_value( f ) ) )
+    LispSymbol *f = LispSymbol::Find(tmp);
+    if( !NILP(f) && DEFINEDP(f->GetValue()))
     {
-        void *what = symbol_value( f );
-        if( what == make_find_symbol( "keyboard" ) )
+        void *what = f->GetValue();
+        if(what == LispSymbol::FindOrCreate("keyboard"))
             return 1;
-        else if( what == make_find_symbol( "joystick" ) )
+        else if(what == LispSymbol::FindOrCreate("joystick"))
             return 2;
     }
     return 0;

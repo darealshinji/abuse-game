@@ -70,12 +70,28 @@ struct LispRedirect : LispObject
     void *new_reference;
 };
 
+struct LispString : LispObject
+{
+};
+
 struct LispSymbol : LispObject
 {
+    static LispSymbol *Find(char const *name);
+    static LispSymbol *FindOrCreate(char const *name);
+
+    void *GetName();
+    void *GetFunction();
+    void *GetValue();
+
+    void SetFunction(void *fun);
+    void *SetValue(void *value);
+    void *SetNumber(long num);
+
 #ifdef L_PROFILE
     float time_taken;
 #endif
-    void *value, *function, *name;
+    void *value, *function;
+    LispString *name;
     LispSymbol *left, *right; // tree structure
 };
 
@@ -106,10 +122,6 @@ struct LispArray : LispObject
 
 private:
     LispObject *data[1];
-};
-
-struct LispString : LispObject
-{
 };
 
 struct LispChar : LispObject
@@ -146,7 +158,6 @@ void *lcdr(void *c);
 void *lcar(void *c);
 void *lisp_eq(void *n1, void *n2);
 void *lisp_equal(void *n1, void *n2);
-LispSymbol *find_symbol(char const *name);
 long list_length(void *i);
 void lprint(void *i);
 void *eval(void *prog);
@@ -154,15 +165,9 @@ void *eval_block(void *list);
 void *eval_function(LispSymbol *sym, void *arg_list);
 void *eval_user_fun(LispSymbol *sym, void *arg_list);
 void *compile(char const *&s);
-void *symbol_value(void *symbol);
-void *symbol_function(void *symbol);
-void *set_symbol_number(void *symbol, long num);
-void *set_symbol_value(void *symbol, void *value);
-void *symbol_name(void *symbol);
 void *assoc(void *item, void *list);
 void resize_tmp(int new_size);
 void resize_perm(int new_size);
-LispSymbol *make_find_symbol(char const *name);
 
 void push_onto_list(void *object, void *&list);
 LispSymbol *add_c_object(void *symbol, int16_t number);
@@ -220,6 +225,9 @@ extern void *l_caller(long number, void *arg);  // exten lisp function switches 
 extern void *l_obj_get(long number);  // exten lisp function switches on number
 extern void l_obj_set(long number, void *arg);  // exten lisp function switches on number
 extern void l_obj_print(long number);  // exten lisp function switches on number
+
+// FIXME: get rid of this later
+static inline void *symbol_value(void *sym) { return ((LispSymbol *)sym)->GetValue(); }
 
 
 

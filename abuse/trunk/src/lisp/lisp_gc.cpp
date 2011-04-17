@@ -223,7 +223,7 @@ static void collect_symbols(LispSymbol *root)
   {
     root->value = collect_object(root->value);
     root->function = collect_object(root->function);
-    root->name = collect_object(root->name);
+    root->name = (LispString *)collect_object(root->name);
     collect_symbols(root->left);
     collect_symbols(root->right);
   }

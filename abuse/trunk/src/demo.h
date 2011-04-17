@@ -10,11 +10,12 @@
 #ifndef __DEMO_HPP_
 #define __DEMO_HPP_
 
+#include "lisp.h"
 #include "jwindow.h"
 
 class demo_manager
 {
-  void *initial_difficulty;
+  LispSymbol *initial_difficulty;
   bFILE *record_file;
   int skip_next;
 

@@ -125,8 +125,8 @@ void director::wait(void *arg)
   if (scene_abort) return ;
   pan_time=frame_time=text_time=NULL;
   int done=0;
-  void *pan_symbol=make_find_symbol("pan"),
-       *text_symbol=make_find_symbol("text");
+  LispSymbol *pan_symbol = LispSymbol::FindOrCreate("pan"),
+             *text_symbol = LispSymbol::FindOrCreate("text");
 
   JCFont *font=wm->font();
 

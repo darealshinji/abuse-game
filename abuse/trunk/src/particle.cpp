@@ -69,7 +69,7 @@ int defun_pseq(void *args)
   }
   int sp=current_space;
   current_space=PERM_SPACE;
-  set_symbol_number(sym,total_pseqs);   // set the symbol value to the object number
+  sym->SetNumber(total_pseqs); // set the symbol value to the object number
   current_space=sp;
   pseqs=(part_sequence **)realloc(pseqs,sizeof(part_sequence *)*(total_pseqs+1));
 

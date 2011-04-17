@@ -376,28 +376,28 @@ void fade_in(image *im, int steps);
 
 void show_sell(int abortable)
 {
-  void *ss=make_find_symbol("sell_screens");
-  if (!DEFINEDP(symbol_value(ss)))
+  LispSymbol *ss = LispSymbol::FindOrCreate("sell_screens");
+  if (!DEFINEDP(ss->GetValue()))
   {
     int sp=current_space;
     current_space=PERM_SPACE;
 //    char *prog="((\"art/help.spe\" . \"sell2\")(\"art/help.spe\" . \"sell4\")(\"art/help.spe\" . \"sell3\")(\"art/endgame.spe\" . \"credit\"))";
 //    char *prog="((\"art/endgame.spe\" . \"credit\") (\"art/help.spe\" . \"sell6\"))";
     char const *prog="((\"art/endgame.spe\" . \"credit\"))";
-    set_symbol_value(ss,compile(prog));
+    ss->SetValue(compile(prog));
     current_space=sp;
   }
 
-  if (DEFINEDP(symbol_value(ss)))
+  if (DEFINEDP(ss->GetValue()))
   {
     image blank(2,2); blank.clear();
     wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
 
-    ss=symbol_value(ss);
+    LispObject *tmp = (LispObject *)ss->GetValue();
     int quit=0;
-    while (ss && !quit)
+    while (tmp && !quit)
     {
-      int im=cache.reg_object("art/help.spe",CAR(ss),SPEC_IMAGE,1);
+      int im=cache.reg_object("art/help.spe",CAR(tmp),SPEC_IMAGE,1);
       fade_in(cache.img(im),16);
 
       event ev;
@@ -408,7 +408,7 @@ void show_sell(int abortable)
       if (ev.key==JK_ESC && abortable)
         quit=1;
       fade_out(16);
-      ss=CDR(ss);
+      tmp = (LispObject *)CDR(tmp);
     }
     wm->set_mouse_shape(cache.img(c_normal)->copy(),1,1);
   }
@@ -468,22 +468,22 @@ void menu_handler(event &ev, InputManager *inm)
 
     case ID_MEDIUM :
     {
-      set_symbol_value(l_difficulty,l_medium);
+      l_difficulty->SetValue(l_medium);
       save_difficulty();
     } break;
     case ID_HARD :
     {
-      set_symbol_value(l_difficulty,l_hard);
+      l_difficulty->SetValue(l_hard);
       save_difficulty();
     } break;
     case ID_EXTREME :
     {
-      set_symbol_value(l_difficulty,l_extreme);
+      l_difficulty->SetValue(l_extreme);
       save_difficulty();
     } break;
     case ID_EASY :
     {
-      set_symbol_value(l_difficulty,l_easy);
+      l_difficulty->SetValue(l_easy);
       save_difficulty();
     } break;
 
@@ -695,9 +695,9 @@ void main_menu()
             {
                 if (!current_demo)
                 {
-                    void *d=make_find_symbol("demos");
-                    if (DEFINEDP(symbol_value(d)))
-                        current_demo=symbol_value(d);
+                    LispSymbol *d = LispSymbol::FindOrCreate("demos");
+                    if (DEFINEDP(d->GetValue()))
+                        current_demo = d->GetValue();
                 }
                 if (current_demo)
                 {

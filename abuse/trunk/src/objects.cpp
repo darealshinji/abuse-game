@@ -104,7 +104,7 @@ int32_t game_object::get_var_by_name(char *name, int &error)
 
   for (i=0;i<figures[otype]->tiv;i++)
   {
-    if (!strcmp(lstring_value(symbol_name(figures[otype]->vars[i])),name))
+    if (!strcmp(lstring_value(((LispSymbol *)figures[otype]->vars[i])->GetName()),name))
     {
       return lvars[figures[otype]->var_index[i]];
 /*      LispObjectVar *cobj=(LispObjectVar *)symbol_value(figures[otype]->vars[i]);
@@ -134,7 +134,7 @@ int game_object::set_var_by_name(char *name, int32_t value)
     }
   }
   for (i=0;i<figures[otype]->tiv;i++)
-    if (!strcmp(lstring_value(symbol_name(figures[otype]->vars[i])),name))
+    if (!strcmp(lstring_value(((LispSymbol *)figures[otype]->vars[i])->GetName()),name))
     {
       lvars[figures[otype]->var_index[i]]=value;
       return 1;

@@ -90,38 +90,39 @@ void *comp_optimize(void *list)
   return return_val;
 }
 
-
 void l_comp_init()
 {
-  l_undefined=make_find_symbol(":UNDEFINED");  // this needs to be defined first
-  ((LispSymbol *)l_undefined)->function=NULL;  // collection problems result if we don't do this
-  ((LispSymbol *)l_undefined)->value=NULL;
+    // This needs to be defined first
+    l_undefined = LispSymbol::FindOrCreate(":UNDEFINED");
 
+    // Collection problems result if we don't do this
+    ((LispSymbol *)l_undefined)->function = NULL;
+    ((LispSymbol *)l_undefined)->value = NULL;
 
-  true_symbol=make_find_symbol("T");
+    true_symbol = LispSymbol::FindOrCreate("T");
 
+    list_symbol = LispSymbol::FindOrCreate("list");
+    string_symbol = LispSymbol::FindOrCreate("string");
+    quote_symbol = LispSymbol::FindOrCreate("quote");
+    backquote_symbol = LispSymbol::FindOrCreate("backquote");
+    comma_symbol = LispSymbol::FindOrCreate("comma");
+    in_symbol = LispSymbol::FindOrCreate("in");
+    do_symbol = LispSymbol::FindOrCreate("do");
+    aref_symbol = LispSymbol::FindOrCreate("aref");
+    colon_initial_contents = LispSymbol::FindOrCreate(":initial-contents");
+    colon_initial_element = LispSymbol::FindOrCreate(":initial-element");
 
-  list_symbol=make_find_symbol("list");
-  string_symbol=make_find_symbol("string");
-  quote_symbol=make_find_symbol("quote");
-  backquote_symbol=make_find_symbol("backquote");
-  comma_symbol=make_find_symbol("comma");
-  in_symbol=make_find_symbol("in");
-  do_symbol=make_find_symbol("do");
-  aref_symbol=make_find_symbol("aref");
-  colon_initial_contents=make_find_symbol(":initial-contents");
-  colon_initial_element=make_find_symbol(":initial-element");
-
-  if_1progn=make_find_symbol("if-1progn");
-  if_2progn=make_find_symbol("if-2progn");
-  if_12progn=make_find_symbol("if-12progn");
-  if_symbol=make_find_symbol("if");
-  progn_symbol=make_find_symbol("progn");
-  not_symbol=make_find_symbol("not");
-  eq_symbol=make_find_symbol("eq");
-  zero_symbol=make_find_symbol("0");
-  eq0_symbol=make_find_symbol("eq0");
-  car_symbol=make_find_symbol("car");
-  cdr_symbol=make_find_symbol("cdr");
-  load_warning=make_find_symbol("load_warning");
+    if_1progn = LispSymbol::FindOrCreate("if-1progn");
+    if_2progn = LispSymbol::FindOrCreate("if-2progn");
+    if_12progn = LispSymbol::FindOrCreate("if-12progn");
+    if_symbol = LispSymbol::FindOrCreate("if");
+    progn_symbol = LispSymbol::FindOrCreate("progn");
+    not_symbol = LispSymbol::FindOrCreate("not");
+    eq_symbol = LispSymbol::FindOrCreate("eq");
+    zero_symbol = LispSymbol::FindOrCreate("0");
+    eq0_symbol = LispSymbol::FindOrCreate("eq0");
+    car_symbol = LispSymbol::FindOrCreate("car");
+    cdr_symbol = LispSymbol::FindOrCreate("cdr");
+    load_warning = LispSymbol::FindOrCreate("load_warning");
 }
+
