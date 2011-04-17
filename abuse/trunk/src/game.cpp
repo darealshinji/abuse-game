@@ -1231,7 +1231,7 @@ void do_title()
         current_song->play(music_volume);
     }
 
-    void *logo_snd = LispSymbol::FindOrCreate("LOGO_SND")->GetValue();
+    void *logo_snd = LSymbol::FindOrCreate("LOGO_SND")->GetValue();
 
     if(DEFINEDP(logo_snd) && (sound_avail & SFX_INITIALIZED))
         cache.sfx(lnumber_value(logo_snd))->play(sfx_volume);
@@ -1248,13 +1248,13 @@ void do_title()
 
     milli_wait(400);
 
-    void *space_snd = LispSymbol::FindOrCreate("SPACE_SND")->GetValue();
+    void *space_snd = LSymbol::FindOrCreate("SPACE_SND")->GetValue();
 
     fade_out(32);
     milli_wait(100);
 
     int i;
-    char *str = lstring_value(eval(LispSymbol::FindOrCreate("plot_start")));
+    char *str = lstring_value(eval(LSymbol::FindOrCreate("plot_start")));
 
     bFILE *fp = open_file("art/smoke.spe", "rb");
     if(!fp->open_failure())
@@ -2343,7 +2343,7 @@ void music_check()
       {
     int sp = current_space;
     current_space = PERM_SPACE;
-    eval_function((LispSymbol *)l_next_song, NULL);
+    eval_function((LSymbol *)l_next_song, NULL);
     current_space = sp;
       } */
     }
@@ -2636,7 +2636,7 @@ int main(int argc, char *argv[])
 
     if(!(main_net_cfg && main_net_cfg->restart_state()))
     {
-      LispSymbol *end_msg = LispSymbol::FindOrCreate("end_msg");
+      LSymbol *end_msg = LSymbol::FindOrCreate("end_msg");
       if(DEFINEDP(end_msg->GetValue()))
       printf("%s\n", lstring_value(end_msg->GetValue()));
     }

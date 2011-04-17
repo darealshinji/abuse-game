@@ -18,8 +18,8 @@
 #include "lisp.h"
 #include "lisp_gc.h"
 
-LispObject *l_undefined;
-LispSymbol *true_symbol = NULL, *list_symbol, *string_symbol, *quote_symbol,
+LObject *l_undefined;
+LSymbol *true_symbol = NULL, *list_symbol, *string_symbol, *quote_symbol,
      *backquote_symbol, *comma_symbol, *do_symbol, *in_symbol, *aref_symbol,
      *if_symbol, *progn_symbol, *car_symbol, *cdr_symbol;
 
@@ -94,36 +94,36 @@ void *comp_optimize(void *list)
 void l_comp_init()
 {
     // This needs to be defined first
-    l_undefined = LispSymbol::FindOrCreate(":UNDEFINED");
+    l_undefined = LSymbol::FindOrCreate(":UNDEFINED");
 
     // Collection problems result if we don't do this
-    ((LispSymbol *)l_undefined)->function = NULL;
-    ((LispSymbol *)l_undefined)->value = NULL;
+    ((LSymbol *)l_undefined)->function = NULL;
+    ((LSymbol *)l_undefined)->value = NULL;
 
-    true_symbol = LispSymbol::FindOrCreate("T");
+    true_symbol = LSymbol::FindOrCreate("T");
 
-    list_symbol = LispSymbol::FindOrCreate("list");
-    string_symbol = LispSymbol::FindOrCreate("string");
-    quote_symbol = LispSymbol::FindOrCreate("quote");
-    backquote_symbol = LispSymbol::FindOrCreate("backquote");
-    comma_symbol = LispSymbol::FindOrCreate("comma");
-    in_symbol = LispSymbol::FindOrCreate("in");
-    do_symbol = LispSymbol::FindOrCreate("do");
-    aref_symbol = LispSymbol::FindOrCreate("aref");
-    colon_initial_contents = LispSymbol::FindOrCreate(":initial-contents");
-    colon_initial_element = LispSymbol::FindOrCreate(":initial-element");
+    list_symbol = LSymbol::FindOrCreate("list");
+    string_symbol = LSymbol::FindOrCreate("string");
+    quote_symbol = LSymbol::FindOrCreate("quote");
+    backquote_symbol = LSymbol::FindOrCreate("backquote");
+    comma_symbol = LSymbol::FindOrCreate("comma");
+    in_symbol = LSymbol::FindOrCreate("in");
+    do_symbol = LSymbol::FindOrCreate("do");
+    aref_symbol = LSymbol::FindOrCreate("aref");
+    colon_initial_contents = LSymbol::FindOrCreate(":initial-contents");
+    colon_initial_element = LSymbol::FindOrCreate(":initial-element");
 
-    if_1progn = LispSymbol::FindOrCreate("if-1progn");
-    if_2progn = LispSymbol::FindOrCreate("if-2progn");
-    if_12progn = LispSymbol::FindOrCreate("if-12progn");
-    if_symbol = LispSymbol::FindOrCreate("if");
-    progn_symbol = LispSymbol::FindOrCreate("progn");
-    not_symbol = LispSymbol::FindOrCreate("not");
-    eq_symbol = LispSymbol::FindOrCreate("eq");
-    zero_symbol = LispSymbol::FindOrCreate("0");
-    eq0_symbol = LispSymbol::FindOrCreate("eq0");
-    car_symbol = LispSymbol::FindOrCreate("car");
-    cdr_symbol = LispSymbol::FindOrCreate("cdr");
-    load_warning = LispSymbol::FindOrCreate("load_warning");
+    if_1progn = LSymbol::FindOrCreate("if-1progn");
+    if_2progn = LSymbol::FindOrCreate("if-2progn");
+    if_12progn = LSymbol::FindOrCreate("if-12progn");
+    if_symbol = LSymbol::FindOrCreate("if");
+    progn_symbol = LSymbol::FindOrCreate("progn");
+    not_symbol = LSymbol::FindOrCreate("not");
+    eq_symbol = LSymbol::FindOrCreate("eq");
+    zero_symbol = LSymbol::FindOrCreate("0");
+    eq0_symbol = LSymbol::FindOrCreate("eq0");
+    car_symbol = LSymbol::FindOrCreate("car");
+    cdr_symbol = LSymbol::FindOrCreate("cdr");
+    load_warning = LSymbol::FindOrCreate("load_warning");
 }
 

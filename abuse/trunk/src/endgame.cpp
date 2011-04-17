@@ -152,9 +152,9 @@ void show_end2()
   int ship=cache.reg("art/endgame.spe","ship",SPEC_IMAGE,1);
 
 
-  int explo_snd = lnumber_value(LispSymbol::FindOrCreate("P_EXPLODE_SND")->GetValue());
-  int space_snd = lnumber_value(LispSymbol::FindOrCreate("SPACE_SND")->GetValue());
-  int zip_snd = lnumber_value(LispSymbol::FindOrCreate("SHIP_ZIP_SND")->GetValue());
+  int explo_snd = lnumber_value(LSymbol::FindOrCreate("P_EXPLODE_SND")->GetValue());
+  int space_snd = lnumber_value(LSymbol::FindOrCreate("SPACE_SND")->GetValue());
+  int zip_snd = lnumber_value(LSymbol::FindOrCreate("SHIP_ZIP_SND")->GetValue());
 
 
   mask_line *p=make_mask_lines(cache.img(mask),cache.img(planet)->width());
@@ -369,7 +369,7 @@ void show_end2()
   for (i=0;i<32;i++)
     cmap[i]=pal->find_closest(i*256/32,i*256/32,i*256/32);
 
-  void *end_plot = LispSymbol::FindOrCreate("plot_end")->GetValue();
+  void *end_plot = LSymbol::FindOrCreate("plot_end")->GetValue();
 
 
   time_marker start;
@@ -426,10 +426,10 @@ void share_end()
 
   image *im=cache.img(cache.reg("art/endgame.spe","tbc",SPEC_IMAGE,1));
 
-  void *to_be = LispSymbol::FindOrCreate("to_be_continued")->GetValue();
+  void *to_be = LSymbol::FindOrCreate("to_be_continued")->GetValue();
   PtrRef r1(to_be);
 
-  void *mid_plot = LispSymbol::FindOrCreate("plot_middle")->GetValue();
+  void *mid_plot = LSymbol::FindOrCreate("plot_middle")->GetValue();
   PtrRef r2(mid_plot);
 
   int dx=(xres+1)/2-im->width()/2,dy=(yres+1)/2-im->height()/2;
@@ -484,7 +484,7 @@ void show_end()
 
   int dx=(xres+1)/2-320/2,dy=(yres+1)/2-200/2;
 
-  void *end_plot = LispSymbol::FindOrCreate("plot_end")->GetValue();
+  void *end_plot = LSymbol::FindOrCreate("plot_end")->GetValue();
   PtrRef r2(end_plot);
 
 

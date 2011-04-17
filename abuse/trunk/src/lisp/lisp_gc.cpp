@@ -83,33 +83,33 @@ void unregister_pointer(void **addr)
   fprintf(stderr, "Unable to locate ptr to unregister");
 }
 
-static LispObject *CollectObject(LispObject *x);
+static LObject *CollectObject(LObject *x);
 
-static LispArray *CollectArray(LispArray *x)
+static LArray *CollectArray(LArray *x)
 {
     size_t s = x->size;
-    LispArray *a = LispArray::Create(s, NULL);
-    LispObject **src = x->GetData();
-    LispObject **dst = a->GetData();
+    LArray *a = LArray::Create(s, NULL);
+    LObject **src = x->GetData();
+    LObject **dst = a->GetData();
     for (size_t i = 0; i < s; i++)
         dst[i] = CollectObject(src[i]);
 
     return a;
 }
 
-inline LispList *CollectList(LispList *x)
+inline LList *CollectList(LList *x)
 {
-    LispList *last = NULL, *first = NULL;
+    LList *last = NULL, *first = NULL;
 
     for (; x && item_type(x) == L_CONS_CELL; )
     {
-        LispList *p = LispList::Create();
-        LispObject *old_car = x->car;
-        LispObject *old_cdr = x->cdr;
-        LispObject *old_x = x;
-        x = (LispList *)CDR(x);
-        ((LispRedirect *)old_x)->type = L_COLLECTED_OBJECT;
-        ((LispRedirect *)old_x)->new_reference = p;
+        LList *p = LList::Create();
+        LObject *old_car = x->car;
+        LObject *old_cdr = x->cdr;
+        LObject *old_x = x;
+        x = (LList *)CDR(x);
+        ((LRedirect *)old_x)->type = L_COLLECTED_OBJECT;
+        ((LRedirect *)old_x)->new_reference = p;
 
         p->car = CollectObject(old_car);
         p->cdr = CollectObject(old_cdr);
@@ -125,9 +125,9 @@ inline LispList *CollectList(LispList *x)
     return first; // we already set the collection pointers
 }
 
-static LispObject *CollectObject(LispObject *x)
+static LObject *CollectObject(LObject *x)
 {
-  LispObject *ret = x;
+  LObject *ret = x;
 
   if (((uint8_t *)x) >= cstart && ((uint8_t *)x) < cend)
   {
@@ -138,64 +138,64 @@ static LispObject *CollectObject(LispObject *x)
         lbreak("error: GC corrupted cell\n");
         break;
       case L_NUMBER:
-        ret = LispNumber::Create(((LispNumber *)x)->num);
+        ret = LNumber::Create(((LNumber *)x)->num);
         break;
       case L_SYS_FUNCTION:
-        ret = new_lisp_sys_function(((LispSysFunction *)x)->min_args,
-                                    ((LispSysFunction *)x)->max_args,
-                                    ((LispSysFunction *)x)->fun_number);
+        ret = new_lisp_sys_function(((LSysFunction *)x)->min_args,
+                                    ((LSysFunction *)x)->max_args,
+                                    ((LSysFunction *)x)->fun_number);
         break;
       case L_USER_FUNCTION:
 #ifndef NO_LIBS
-        ret = new_lisp_user_function(((LispUserFunction *)x)->alist,
-                                     ((LispUserFunction *)x)->blist);
+        ret = new_lisp_user_function(((LUserFunction *)x)->alist,
+                                     ((LUserFunction *)x)->blist);
 
 #else
         {
-          LispObject *arg = CollectObject(((LispUserFunction *)x)->arg_list);
-          LispObject *block = CollectObject(((LispUserFunction *)x)->block_list);
+          LObject *arg = CollectObject(((LUserFunction *)x)->arg_list);
+          LObject *block = CollectObject(((LUserFunction *)x)->block_list);
           ret = new_lisp_user_function(arg, block);
         }
 #endif
         break;
       case L_STRING:
-        ret = LispString::Create(lstring_value(x));
+        ret = LString::Create(lstring_value(x));
         break;
       case L_CHARACTER:
         ret = new_lisp_character(lcharacter_value(x));
         break;
       case L_C_FUNCTION:
-        ret = new_lisp_c_function(((LispSysFunction *)x)->min_args,
-                                  ((LispSysFunction *)x)->max_args,
-                                  ((LispSysFunction *)x)->fun_number);
+        ret = new_lisp_c_function(((LSysFunction *)x)->min_args,
+                                  ((LSysFunction *)x)->max_args,
+                                  ((LSysFunction *)x)->fun_number);
         break;
       case L_C_BOOL:
-        ret = new_lisp_c_bool(((LispSysFunction *)x)->min_args,
-                              ((LispSysFunction *)x)->max_args,
-                              ((LispSysFunction *)x)->fun_number);
+        ret = new_lisp_c_bool(((LSysFunction *)x)->min_args,
+                              ((LSysFunction *)x)->max_args,
+                              ((LSysFunction *)x)->fun_number);
         break;
       case L_L_FUNCTION:
-        ret = new_user_lisp_function(((LispSysFunction *)x)->min_args,
-                                     ((LispSysFunction *)x)->max_args,
-                                     ((LispSysFunction *)x)->fun_number);
+        ret = new_user_lisp_function(((LSysFunction *)x)->min_args,
+                                     ((LSysFunction *)x)->max_args,
+                                     ((LSysFunction *)x)->fun_number);
         break;
       case L_POINTER:
         ret = new_lisp_pointer(lpointer_value(x));
         break;
       case L_1D_ARRAY:
-        ret = CollectArray((LispArray *)x);
+        ret = CollectArray((LArray *)x);
         break;
       case L_FIXED_POINT:
         ret = new_lisp_fixed_point(lfixed_point_value(x));
         break;
       case L_CONS_CELL:
-        ret = CollectList((LispList *)x);
+        ret = CollectList((LList *)x);
         break;
       case L_OBJECT_VAR:
-        ret = new_lisp_object_var(((LispObjectVar *)x)->number);
+        ret = new_lisp_object_var(((LObjectVar *)x)->number);
         break;
       case L_COLLECTED_OBJECT:
-        ret = ((LispRedirect *)x)->new_reference;
+        ret = ((LRedirect *)x)->new_reference;
         break;
       default:
         dump_memory(x, 8, 196);
@@ -204,30 +204,30 @@ static LispObject *CollectObject(LispObject *x)
                item_type(x));
         break;
     }
-    ((LispRedirect *)x)->type = L_COLLECTED_OBJECT;
-    ((LispRedirect *)x)->new_reference = ret;
+    ((LRedirect *)x)->type = L_COLLECTED_OBJECT;
+    ((LRedirect *)x)->new_reference = ret;
   }
   else if ((uint8_t *)x < collected_start || (uint8_t *)x >= collected_end)
   {
     if (item_type(x) == L_CONS_CELL) // still need to remap cons_cells outside of space
     {
       for (; x && item_type(x) == L_CONS_CELL; x = CDR(x))
-        ((LispList *)x)->car = CollectObject(((LispList *)x)->car);
+        ((LList *)x)->car = CollectObject(((LList *)x)->car);
       if (x)
-        ((LispList *)x)->cdr = CollectObject(((LispList *)x)->cdr);
+        ((LList *)x)->cdr = CollectObject(((LList *)x)->cdr);
     }
   }
 
   return ret;
 }
 
-static void collect_symbols(LispSymbol *root)
+static void collect_symbols(LSymbol *root)
 {
   if (root)
   {
     root->value = CollectObject(root->value);
     root->function = CollectObject(root->function);
-    root->name = (LispString *)CollectObject(root->name);
+    root->name = (LString *)CollectObject(root->name);
     collect_symbols(root->left);
     collect_symbols(root->right);
   }
@@ -239,21 +239,21 @@ static void collect_stacks()
 
   void **d = l_user_stack.sdata;
   for (int i = 0; i < t; i++, d++)
-    *d = CollectObject((LispObject *)*d);
+    *d = CollectObject((LObject *)*d);
 
   t = PtrRef::stack.son;
   void ***d2 = PtrRef::stack.sdata;
   for (int i = 0; i < t; i++, d2++)
   {
     void **ptr = *d2;
-    *ptr = CollectObject((LispObject *)*ptr);
+    *ptr = CollectObject((LObject *)*ptr);
   }
 
   d2 = reg_ptr_list;
   for (size_t i = 0; i < reg_ptr_total; i++, d2++)
   {
     void **ptr = *d2;
-    *ptr = CollectObject((LispObject *)*ptr);
+    *ptr = CollectObject((LObject *)*ptr);
   }
 }
 

@@ -13,9 +13,9 @@ int get_lprop_number(void *sybol, int def);  // returns def if symbol undefined 
 
 
 // variables for the status bar
-extern LispSymbol *l_chat_input, *l_post_render;
+extern LSymbol *l_chat_input, *l_post_render;
 
-// FIXME: port these to LispSymbol
+// FIXME: port these to LSymbol
 extern void *l_statbar_ammo_x,*l_statbar_ammo_y,
             *l_statbar_ammo_w,*l_statbar_ammo_h,
         *l_statbar_ammo_bg_color,
@@ -41,11 +41,11 @@ extern void *l_statbar_ammo_x,*l_statbar_ammo_y,
 
 
 /******************************** Lisp objects **********************************/
-extern LispSymbol *l_difficulty, *l_easy, *l_hard, *l_medium, *l_extreme,
+extern LSymbol *l_difficulty, *l_easy, *l_hard, *l_medium, *l_extreme,
     *l_max_hp, *l_max_power,
     *l_empty_cache;
 
-// FIXME: port these to LispSymbol
+// FIXME: port these to LSymbol
 extern void *l_main_menu,
      *l_logo,*l_state_art,*l_default_abilities,*l_abilities,
      *l_default_ai_function,*l_state_sfx, *l_morph,

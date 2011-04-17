@@ -367,8 +367,8 @@ void load_data(int argc, char **argv)
 
   char const *ff;
   // FIXME: unnecessary duplicate call
-  if (DEFINEDP(LispSymbol::FindOrCreate("frame_file")->GetValue()))
-    ff = lstring_value(LispSymbol::FindOrCreate("frame_file")->GetValue());
+  if (DEFINEDP(LSymbol::FindOrCreate("frame_file")->GetValue()))
+    ff = lstring_value(LSymbol::FindOrCreate("frame_file")->GetValue());
   else
     ff = "art/frame.spe";
 

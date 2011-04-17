@@ -109,7 +109,7 @@ int character_type::add_state(void *symbol) // returns index into seq to use
     if (num<MAX_STATE) num=MAX_STATE;
     int sp=current_space;
     current_space=PERM_SPACE;
-    ((LispSymbol *)symbol)->SetNumber(num);
+    ((LSymbol *)symbol)->SetNumber(num);
     current_space=sp;
   }
 
@@ -118,7 +118,7 @@ int character_type::add_state(void *symbol) // returns index into seq to use
     lprint(symbol);
     lbreak("symbol has been assigned value %d, but value already in use by state %s\n"
        "use a different symbol for this state\n",
-       lstring_value(((LispSymbol *)seq_syms[num])->GetName()));
+       lstring_value(((LSymbol *)seq_syms[num])->GetName()));
     exit(0);
   } else if (num>=ts)
   {
@@ -172,7 +172,7 @@ void *l_obj_get(long number) // exten lisp function switches on number
     lbreak("access : variable does not exsist for this class\n");
     return 0;
   }
-  return LispNumber::Create(current_object->lvars[t->var_index[number]]);
+  return LNumber::Create(current_object->lvars[t->var_index[number]]);
 }
 
 void l_obj_set(long number, void *arg)  // exten lisp function switches on number
@@ -201,7 +201,7 @@ void character_type::add_var(void *symbol, void *name)
 {
   /* First see if the variable has been defined for another object
      if so report a conflict if any occur */
-  LispSymbol *s=(LispSymbol *)symbol;
+  LSymbol *s=(LSymbol *)symbol;
   if (DEFINEDP(s->value) && (item_type(s->value)!=L_OBJECT_VAR))
   {
     lprint(symbol);
@@ -209,7 +209,7 @@ void character_type::add_var(void *symbol, void *name)
     exit(0);
   } else if (DEFINEDP(s->value))
   {
-    int index=((LispObjectVar *)s->value)->number;
+    int index=((LObjectVar *)s->value)->number;
     if (index<tiv)
     {
       if (vars[index])
@@ -218,12 +218,12 @@ void character_type::add_var(void *symbol, void *name)
            "  var '%s' was previously defined by another\n"
            "  with index %d, but %s has a var listed '%s' with same index\n"
            "  try moving definition of %s before previously declared object",
-           lstring_value(((LispSymbol *)name)->GetName()),
-           lstring_value(((LispSymbol *)symbol)->GetName()),
+           lstring_value(((LSymbol *)name)->GetName()),
+           lstring_value(((LSymbol *)symbol)->GetName()),
            index,
-           lstring_value(((LispSymbol *)name)->GetName()),
-           lstring_value(((LispSymbol *)vars[index])->GetName()),
-           lstring_value(((LispSymbol *)name)->GetName())
+           lstring_value(((LSymbol *)name)->GetName()),
+           lstring_value(((LSymbol *)vars[index])->GetName()),
+           lstring_value(((LSymbol *)name)->GetName())
            );
     exit(0);
       } else
@@ -284,7 +284,7 @@ long character_type::isa_var_name(char *name)
       return 1;
   }
   for (i=0;i<tiv;i++)
-    if (!strcmp(lstring_value(((LispSymbol *)vars[i])->GetName()),name))
+    if (!strcmp(lstring_value(((LSymbol *)vars[i])->GetName()),name))
       return 1;
   return 0;
 }
@@ -300,15 +300,15 @@ character_type::character_type(void *args, void *name)
   var_index=NULL;
   tiv=0;
 
-  LispSymbol *l_abil =   LispSymbol::FindOrCreate("abilities");
-  LispSymbol *l_funs =   LispSymbol::FindOrCreate("funs");
-  LispSymbol *l_states = LispSymbol::FindOrCreate("states");
-  LispSymbol *l_flags =  LispSymbol::FindOrCreate("flags");
-  LispSymbol *l_range =  LispSymbol::FindOrCreate("range");
-  LispSymbol *l_draw_range = LispSymbol::FindOrCreate("draw_range");
-  LispSymbol *l_fields = LispSymbol::FindOrCreate("fields");
-  LispSymbol *l_logo =   LispSymbol::FindOrCreate("logo");
-  LispSymbol *l_vars =   LispSymbol::FindOrCreate("vars");
+  LSymbol *l_abil =   LSymbol::FindOrCreate("abilities");
+  LSymbol *l_funs =   LSymbol::FindOrCreate("funs");
+  LSymbol *l_states = LSymbol::FindOrCreate("states");
+  LSymbol *l_flags =  LSymbol::FindOrCreate("flags");
+  LSymbol *l_range =  LSymbol::FindOrCreate("range");
+  LSymbol *l_draw_range = LSymbol::FindOrCreate("draw_range");
+  LSymbol *l_fields = LSymbol::FindOrCreate("fields");
+  LSymbol *l_logo =   LSymbol::FindOrCreate("logo");
+  LSymbol *l_vars =   LSymbol::FindOrCreate("vars");
 
   memset(fun_table,0,sizeof(fun_table));     // destory all hopes of fun
   fields=NULL;
@@ -335,7 +335,7 @@ character_type::character_type(void *args, void *name)
       PtrRef r4(l);
       for (i=0;i<TOTAL_ABILITIES;i++)
       {
-    Cell *ab=assoc(LispSymbol::FindOrCreate(ability_names[i]),l);
+    Cell *ab=assoc(LSymbol::FindOrCreate(ability_names[i]),l);
     PtrRef r5(ab);
     if (!NILP(ab))
       abil[i]=lnumber_value(eval(lcar(lcdr(ab))));
@@ -346,7 +346,7 @@ character_type::character_type(void *args, void *name)
       PtrRef r4(l);
       for (i=0;i<TOTAL_OFUNS;i++)
       {
-    Cell *ab=assoc(LispSymbol::FindOrCreate(ofun_names[i]),l);
+    Cell *ab=assoc(LSymbol::FindOrCreate(ofun_names[i]),l);
     PtrRef r5(ab);
     if (!NILP(ab) && lcar(lcdr(ab)))
     fun_table[i]=lcar(lcdr(ab));
@@ -357,7 +357,7 @@ character_type::character_type(void *args, void *name)
       PtrRef r4(l);
       for (i=0;i<TOTAL_CFLAGS;i++)
       {
-    Cell *ab=assoc(LispSymbol::FindOrCreate(cflag_names[i]),l);
+    Cell *ab=assoc(LSymbol::FindOrCreate(cflag_names[i]),l);
     PtrRef r5(ab);
     if (!NILP(ab) && eval(lcar(lcdr(ab))))
     cflags|=(1<<i);
@@ -439,7 +439,7 @@ character_type::character_type(void *args, void *name)
 
   if (!seq[stopped])
     lbreak("object (%s) has no stopped state, please define one!\n",
-       lstring_value(((LispSymbol *)name)->GetName()));
+       lstring_value(((LSymbol *)name)->GetName()));
 
 /*  char *fn=lstring_value(lcar(desc));
   if (!fn)
