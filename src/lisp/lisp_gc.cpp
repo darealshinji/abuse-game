@@ -85,15 +85,14 @@ void unregister_pointer(void **addr)
 static void *collect_object(void *x);
 static void *collect_array(void *x)
 {
-  long s = ((LispArray *)x)->size;
-  LispArray *a = new_lisp_1d_array(s, NULL);
-  void **src, **dst;
-  src = (void **)(((LispArray *)x)+1);
-  dst = (void **)(a+1);
-  for (int i = 0; i<s; i++)
-    dst[i] = collect_object(src[i]);
+    long s = ((LispArray *)x)->size;
+    LispArray *a = LispArray::Create(s, NULL);
+    LispObject **src = ((LispArray *)x)->GetData();
+    LispObject **dst = a->GetData();
+    for (int i = 0; i < s; i++)
+        dst[i] = (LispObject *)collect_object(src[i]);
 
-  return a;
+    return a;
 }
 
 inline void *collect_cons_cell(void *x)

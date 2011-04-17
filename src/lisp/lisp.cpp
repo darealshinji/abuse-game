@@ -219,16 +219,16 @@ void *eval_block(void *list)
   return ret;
 }
 
-LispArray *new_lisp_1d_array(int size, void *rest)
+LispArray *LispArray::Create(int size, void *rest)
 {
   p_ref r11(rest);
-  size_t s=sizeof(LispArray)+size*sizeof(void *);
-  if (s<8 + sizeof(intptr_t)) s=8 + sizeof(intptr_t);
-  void *p=(LispArray *)lmalloc(s, current_space);
-  ((LispArray *)p)->type=L_1D_ARRAY;
-  ((LispArray *)p)->size=size;
-  void **data=(void **)(((LispArray *)p)+1);
-  memset(data, 0, size*sizeof(void *));
+  size_t s = sizeof(LispArray)
+           + ((size < 1 ? 1 : size) - 1) * sizeof(LispObject *);
+  LispArray *p = (LispArray *)lmalloc(s, current_space);
+  p->type = L_1D_ARRAY;
+  p->size = size;
+  LispObject **data = p->GetData();
+  memset(data, 0, size * sizeof(LispObject *));
   p_ref r1(p);
 
   if (rest)
@@ -237,25 +237,30 @@ LispArray *new_lisp_1d_array(int size, void *rest)
     if (x==colon_initial_contents)
     {
       x=eval(CAR(CDR(rest)));
-      data=(void **)(((LispArray *)p)+1);
+      data = p->GetData();
       for (int i=0;i<size;i++, x=CDR(x))
       {
-    if (!x)
-    {
-      lprint(rest);
-      lbreak("(make-array) incorrect list length\n");
-      exit(0);
-    }
-    data[i]=CAR(x);
+        if (!x)
+        {
+          lprint(rest);
+          lbreak("(make-array) incorrect list length\n");
+          exit(0);
+        }
+        data[i] = (LispObject *)CAR(x);
       }
-      if (x) { lprint(rest); lbreak("(make-array) incorrect list length\n"); exit(0); }
+      if (x)
+      {
+        lprint(rest);
+        lbreak("(make-array) incorrect list length\n");
+        exit(0);
+      }
     }
     else if (x==colon_initial_element)
     {
       x=eval(CAR(CDR(rest)));
-      data=(void **)(((LispArray *)p)+1);
+      data = p->GetData();
       for (int i=0;i<size;i++)
-        data[i]=x;
+        data[i] = (LispObject *)x;
     }
     else
     {
@@ -265,7 +270,7 @@ LispArray *new_lisp_1d_array(int size, void *rest)
     }
   }
 
-  return ((LispArray *)p);
+  return p;
 }
 
 LispFixedPoint *new_lisp_fixed_point(int32_t x)
@@ -622,22 +627,22 @@ void *lisp_eq(void *n1, void *n2)
   return NULL;
 }
 
-void *lget_array_element(void *a, long x)
+LispObject *LispArray::Get(long x)
 {
 #ifdef TYPE_CHECKING
-  if (item_type(a)!=L_1D_ARRAY)
-  {
-    lprint(a);
-    lbreak("is not an array\n");
-    exit(0);
-  }
+    if (type != L_1D_ARRAY)
+    {
+        lprint(this);
+        lbreak("is not an array\n");
+        exit(0);
+    }
 #endif
-  if (x>=((LispArray *)a)->size || x<0)
-  {
-    lbreak("array refrence out of bounds (%d)\n", x);
-    exit(0);
-  }
-  return ((void **)(((LispArray *)a)+1))[x];
+    if (x >= size || x < 0)
+    {
+        lbreak("array reference out of bounds (%d)\n", x);
+        exit(0);
+    }
+    return GetData()[x];
 }
 
 void *lisp_equal(void *n1, void *n2)
@@ -1430,16 +1435,16 @@ void lprint(void *i)
       } break;
       case L_1D_ARRAY :
       {
-                LispArray *a=(LispArray *)i;
-                void **data=(void **)(a+1);
-                dprintf("#(");
-                for (int j=0;j<a->size;j++)
-                {
-                  lprint(data[j]);
-                  if (j!=a->size-1)
-                    dprintf(" ");
-                }
-                dprintf(")");
+          LispArray *a = (LispArray *)i;
+          LispObject **data = a->GetData();
+          dprintf("#(");
+          for (int j = 0; j < a->size; j++)
+          {
+              lprint(data[j]);
+              if (j != a->size - 1)
+                  dprintf(" ");
+          }
+          dprintf(")");
       } break;
       case L_COLLECTED_OBJECT :
       {
@@ -2025,26 +2030,25 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
           } else if (car==aref_symbol)
           {
 #endif
-            void *a=(LispArray *)eval(CAR(CDR(i)));
+            LispArray *a = (LispArray *)eval(CAR(CDR(i)));
             p_ref r1(a);
 #ifdef TYPE_CHECKING
-            if (item_type(a)!=L_1D_ARRAY)
+            if (item_type(a) != L_1D_ARRAY)
             {
-              lprint(a);
-              lbreak("is not an array (aref)\n");
-              exit(0);
+                lprint(a);
+                lbreak("is not an array (aref)\n");
+                exit(0);
             }
 #endif
             long num=lnumber_value(eval(CAR(CDR(CDR(i)))));
 #ifdef TYPE_CHECKING
-            if (num>=((LispArray *)a)->size || num<0)
+            if (num >= a->size || num < 0)
             {
               lbreak("aref : value of bounds (%d)\n", num);
               exit(0);
             }
 #endif
-            void **data=(void **)(((LispArray *)a)+1);
-            data[num]=set_to;
+            a->GetData()[num] = (LispObject *)set_to;
 #ifdef TYPE_CHECKING
           } else
           {
@@ -2645,12 +2649,12 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
                 lbreak("bad array size %d\n", l);
                 exit(0);
       }
-      ret=new_lisp_1d_array(l, CDR(arg_list));
+      ret = LispArray::Create(l, CDR(arg_list));
     } break;
     case SYS_FUNC_AREF:
     {
       long x=lnumber_value(eval(CAR(CDR(arg_list))));
-      ret=lget_array_element(eval(CAR(arg_list)), x);
+      ret = ((LispArray *)eval(CAR(arg_list)))->Get(x);
     } break;
     case SYS_FUNC_IF_1PROGN:
     {
