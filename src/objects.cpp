@@ -482,64 +482,57 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
   void *d=figures[otype]->get_fun(OFUN_DAMAGE);
   if (d)
   {
-    void    *am, *frm, *hx, *hy, *px, *py;
-    game_object *o=current_object;
-    current_object=this;
+    LispList *am, *frm, *hx, *hy, *px, *py;
+    game_object *o = current_object;
+    current_object = this;
 
-    void *m=mark_heap(TMP_SPACE);
+    void *m = mark_heap(TMP_SPACE);
 
-    am=new_cons_cell();
-    l_ptr_stack.push(&am);
+    am = LispList::Create();
+    PtrRef r1(am);
+    am->car = LispNumber::Create(amount);
 
-    ((LispList *)am)->car=LispNumber::Create(amount);
+    frm = LispList::Create();
+    PtrRef r2(frm);
+    frm->car = new_lisp_pointer(from);
 
-    frm=new_cons_cell();
-    l_ptr_stack.push(&frm);
+    hx = LispList::Create();
+    PtrRef r3(hx);
+    hx->car = LispNumber::Create(hitx);
 
-    ((LispList *)frm)->car=new_lisp_pointer(from);
+    hy = LispList::Create();
+    PtrRef r4(hy);
+    hy->car = LispNumber::Create(hity);
 
-    hx=new_cons_cell();
-    l_ptr_stack.push(&hx);
+    px = LispList::Create();
+    PtrRef r5(px);
+    px->car = LispNumber::Create(push_xvel);
 
-    ((LispList *)hx)->car=LispNumber::Create(hitx);
+    py = LispList::Create();
+    PtrRef r6(py);
+    py->car = LispNumber::Create(push_yvel);
 
-    hy=new_cons_cell();
-    l_ptr_stack.push(&hy);
-    ((LispList *)hy)->car=LispNumber::Create(hity);
+    px->cdr = py;
+    hy->cdr = px;
+    hx->cdr = hy;
+    frm->cdr = hx;
+    am->cdr = frm;
 
-    px=new_cons_cell();
-    l_ptr_stack.push(&px);
-    ((LispList *)px)->car=LispNumber::Create(push_xvel);
-
-    py=new_cons_cell();
-    l_ptr_stack.push(&py);
-    ((LispList *)py)->car=LispNumber::Create(push_yvel);
-
-
-    ((LispList *)am)->cdr = (LispObject *)frm;
-    ((LispList *)frm)->cdr = (LispObject *)hx;
-    ((LispList *)hx)->cdr = (LispObject *)hy;
-    ((LispList *)hy)->cdr = (LispObject *)px;
-    ((LispList *)px)->cdr = (LispObject *)py;
-
-    time_marker *prof1=NULL;
+    time_marker *prof1 = NULL;
     if (profiling())
-      prof1=new time_marker;
+      prof1 = new time_marker;
 
-    eval_user_fun((LispSymbol *)d,am);
+    eval_user_fun((LispSymbol *)d, am);
     if (profiling())
     {
       time_marker now;
-      profile_add_time(this->otype,now.diff_time(prof1));
+      profile_add_time(this->otype, now.diff_time(prof1));
       delete prof1;
     }
 
+    restore_heap(m, TMP_SPACE);
 
-    l_ptr_stack.pop(6);
-
-    restore_heap(m,TMP_SPACE);
-
-    current_object=o;
+    current_object = o;
   } else damage_fun(amount,from,hitx,hity,push_xvel,push_yvel);
 #ifdef SCADALISP
   ENDLOCAL();
@@ -901,7 +894,7 @@ void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
       }
 
       void *rlist=NULL;   // return list
-      p_ref r1(rlist);
+      PtrRef r1(rlist);
 
       if (hit_object)
       {
@@ -1213,32 +1206,30 @@ int game_object::move(int cx, int cy, int button)
 
   if (figures[otype]->get_fun(OFUN_MOVER))      // is a lisp move function defined?
   {
-    void *lcx,*lcy,*lb;
+    LispList *lcx, *lcy, *lb;
 
     game_object *o=current_object;
     current_object=this;
 
-
     // make a list of the parameters, and call the lisp function
-    lcx=new_cons_cell();
-    l_ptr_stack.push(&lcx);
-    ((LispList *)lcx)->car=LispNumber::Create(cx);
+    lcx = LispList::Create();
+    PtrRef r1(lcx);
+    lcx->car = LispNumber::Create(cx);
 
-    lcy=new_cons_cell();
-    l_ptr_stack.push(&lcy);
-    ((LispList *)lcy)->car=LispNumber::Create(cy);
+    lcy = LispList::Create();
+    PtrRef r2(lcy);
+    lcy->car = LispNumber::Create(cy);
 
-    lb=new_cons_cell();
-    l_ptr_stack.push(&lb);
-    ((LispList *)lb)->car=LispNumber::Create(button);
+    lb = LispList::Create();
+    PtrRef r3(lb);
+    lb->car = LispNumber::Create(button);
 
+    lcx->cdr = lcy;
+    lcy->cdr = lb;
 
-    ((LispList *)lcx)->cdr = (LispObject *)lcy;
-    ((LispList *)lcy)->cdr = (LispObject *)lb;
+    void *m = mark_heap(TMP_SPACE);
 
-    void *m=mark_heap(TMP_SPACE);
-
-    time_marker *prof1=NULL;
+    time_marker *prof1 = NULL;
     if (profiling())
       prof1=new time_marker;
 
@@ -1253,18 +1244,17 @@ int game_object::move(int cx, int cy, int button)
 
     restore_heap(m,TMP_SPACE);
 
-    l_ptr_stack.pop(3);
     if (item_type(r)!=L_NUMBER)
     {
       lprint(r);
-      lbreak("Object %s did not return a number from it's mover function!\n"
-         "It should return a number to indicate it's blocked status to the\n"
-         "ai function.",object_names[otype]);    
+      lbreak("Object %s did not return a number from its mover function!\n"
+         "It should return a number to indicate its blocked status to the\n"
+         "ai function.", object_names[otype]);
     }
-    ret|=lnumber_value(r);
-    current_object=o;
+    ret |= lnumber_value(r);
+    current_object = o;
   }
-  else ret|=mover(cx,cy,button);
+  else ret |= mover(cx, cy, button);
 
   return ret;
 }

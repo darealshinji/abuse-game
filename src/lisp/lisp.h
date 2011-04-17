@@ -56,6 +56,8 @@ struct LispObjectVar : LispObject
 
 struct LispList : LispObject
 {
+    static LispList *Create();
+
     size_t GetLength();
 
     LispObject *cdr, *car;
@@ -70,7 +72,7 @@ struct LispNumber : LispObject
 
 struct LispRedirect : LispObject
 {
-    void *new_reference;
+    LispObject *new_reference;
 };
 
 struct LispString : LispObject
@@ -184,7 +186,6 @@ LispSymbol *add_c_function(char const *name, short min_args, short max_args, sho
 LispSymbol *add_c_bool_fun(char const *name, short min_args, short max_args, short number);
 LispSymbol *add_lisp_function(char const *name, short min_args, short max_args, short number);
 int read_ltoken(char *&s, char *buffer);
-LispList *new_cons_cell();
 void print_trace_stack(int max_levels);
 
 

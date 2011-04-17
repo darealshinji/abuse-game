@@ -1508,7 +1508,7 @@ void level::level_loaded_notify()
     current_space=PERM_SPACE;
 
     void *arg_list=NULL;
-    p_ref r1(arg_list);
+    PtrRef r1(arg_list);
     push_onto_list(LispString::Create(n),arg_list);
     eval_function((LispSymbol *)l_level_loaded,arg_list);
 

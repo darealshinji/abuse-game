@@ -123,7 +123,7 @@ Cell *load_block(bFILE *fp)
     LispList *last=NULL,*first=NULL;
     while (x)
     {
-      LispList *c=new_cons_cell();
+      LispList *c = LispList::Create();
       if (first)
         last->cdr=c;
       else first=c;

@@ -427,10 +427,10 @@ void share_end()
   image *im=cache.img(cache.reg("art/endgame.spe","tbc",SPEC_IMAGE,1));
 
   void *to_be = LispSymbol::FindOrCreate("to_be_continued")->GetValue();
-  p_ref r1(to_be);
+  PtrRef r1(to_be);
 
   void *mid_plot = LispSymbol::FindOrCreate("plot_middle")->GetValue();
-  p_ref r2(mid_plot);
+  PtrRef r2(mid_plot);
 
   int dx=(xres+1)/2-im->width()/2,dy=(yres+1)/2-im->height()/2;
   im->put_image(screen,dx,dy);
@@ -485,7 +485,7 @@ void show_end()
   int dx=(xres+1)/2-320/2,dy=(yres+1)/2-200/2;
 
   void *end_plot = LispSymbol::FindOrCreate("plot_end")->GetValue();
-  p_ref r2(end_plot);
+  PtrRef r2(end_plot);
 
 
   fade_in(im,32);
