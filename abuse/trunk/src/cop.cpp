@@ -233,7 +233,7 @@ static int player_fire_weapon(game_object *o, int type, game_object *target, int
   push_onto_list(LNumber::Create(x2),list);
   push_onto_list(LNumber::Create(type),list);
   push_onto_list(LPointer::Create(o->get_object(0)),list);
-  eval_function((LSymbol *)l_fire_object,list);
+  ((LSymbol *)l_fire_object)->EvalFunction(list);
   o->lvars[top_just_fired]=1;
   other->lvars[just_fired]=1;
   other->x=ox;
@@ -662,7 +662,7 @@ void *cop_mover(int xm, int ym, int but)
       push_onto_list(l_FIRE,args);
 
       current_object=top;
-      void *ret=eval_function((LSymbol *)figures[top->otype]->get_fun(OFUN_USER_FUN),args);
+      void *ret = ((LSymbol *)figures[top->otype]->get_fun(OFUN_USER_FUN))->EvalFunction(args);
       current_object=o;
       v->add_ammo(v->current_weapon,lnumber_value(ret));
     }
@@ -672,7 +672,7 @@ void *cop_mover(int xm, int ym, int but)
       if (!o->controller() || o->controller()->key_down(JK_SPACE))
       {
         // call the user function to reset the player
-    eval_function((LSymbol *)l_restart_player,NULL);
+    ((LSymbol *)l_restart_player)->EvalFunction(NULL);
     o->controller()->reset_player();
     o->set_aistate(0);
       } else if (o->controller() && o->controller()->local_player())
@@ -766,7 +766,7 @@ void *top_draw()
     else
       o->draw_predator();
       } else
-        eval_function((LSymbol *)l_player_draw,ret);
+        ((LSymbol *)l_player_draw)->EvalFunction(ret);
 
       o->y=oldy;
       if (bot->direction<0)
@@ -829,7 +829,7 @@ void *bottom_draw()
       } break;
       case FAST_POWER :
       {
-    eval_function((LSymbol *)l_draw_fast,NULL);
+    ((LSymbol *)l_draw_fast)->EvalFunction(NULL);
     int old_state=o->state;
     switch (o->state)
     {

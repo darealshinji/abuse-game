@@ -581,7 +581,7 @@ void *l_caller(long number, void *args)
            "Are you calling from move function (not mover)?\n");
     exit(0);
       }
-      return eval_function((LSymbol *)ai,NULL);
+      return ((LSymbol *)ai)->EvalFunction(NULL);
     } break;
     case 1 :
     {
@@ -709,7 +709,7 @@ void *l_caller(long number, void *args)
     {
       void *f=figures[current_object->otype]->get_fun(OFUN_USER_FUN);
       if (!f) return NULL;
-      return eval_function((LSymbol *)f,args);
+      return ((LSymbol *)f)->EvalFunction(args);
     } break;
     case 17 :
     {
@@ -2264,7 +2264,7 @@ long c_caller(long number, void *args)
     game_object *o=current_object;
     current_object=v->focus;
 
-    eval_function((LSymbol *)l_restart_player,NULL);
+    ((LSymbol *)l_restart_player)->EvalFunction(NULL);
     v->reset_player();
     v->focus->set_aistate(0);
     current_object=o;

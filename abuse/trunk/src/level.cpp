@@ -1511,7 +1511,7 @@ void level::level_loaded_notify()
     void *arg_list=NULL;
     PtrRef r1(arg_list);
     push_onto_list(LString::Create(n),arg_list);
-    eval_function((LSymbol *)l_level_loaded,arg_list);
+    ((LSymbol *)l_level_loaded)->EvalFunction(arg_list);
 
     current_space=sp;
   } */
@@ -1838,7 +1838,7 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
     {
       current_object=f->focus;
       void *m=mark_heap(TMP_SPACE);
-      eval_function(fun,NULL);
+      fun->EvalFunction(NULL);
       restore_heap(m,TMP_SPACE);
     }
       }

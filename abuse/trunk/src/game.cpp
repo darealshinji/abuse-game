@@ -690,7 +690,7 @@ static void post_render()
   {
     screen->dirt_off();
     clear_tmp();
-    eval_function(l_post_render, NULL);
+    l_post_render->EvalFunction(NULL);
     clear_tmp();
     screen->dirt_on();
   }
@@ -2344,7 +2344,7 @@ void music_check()
       {
     int sp = current_space;
     current_space = PERM_SPACE;
-    eval_function((LSymbol *)l_next_song, NULL);
+    ((LSymbol *)l_next_song)->EvalFunction(NULL);
     current_space = sp;
       } */
     }

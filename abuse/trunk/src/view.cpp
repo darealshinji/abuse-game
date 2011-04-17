@@ -334,7 +334,7 @@ void view::get_input()
 //        file "input.lsp" to get our key mappings.
 /*    if( DEFINEDP( symbol_function( l_get_local_input ) ) )
     {
-        void *ret = eval_function((LSymbol *)l_get_local_input, NULL );
+        void *ret = ((LSymbol *)l_get_local_input->EvalFunction(NULL);
         sug_x = lnumber_value( CAR( ret ) );
         ret = CDR( ret );
         sug_y = lnumber_value( CAR( ret ) );
@@ -461,7 +461,7 @@ void view::add_chat_key(int key)  // return string if buf is complete
       void *m=mark_heap(TMP_SPACE);
       void *list=NULL;
       push_onto_list(LString::Create(chat_buf),list);
-      eval_function((LSymbol *)l_chat_input,list);
+      ((LSymbol *)l_chat_input)->EvalFunction(list);
       restore_heap(m,TMP_SPACE);
 
       current_object=o;

@@ -179,7 +179,7 @@ static int get_free_size(int which_space)
 
 void *lmalloc(int size, int which_space)
 {
-  return malloc(size);
+  return malloc(size); /* XXX: temporary hack */
 
 #ifdef WORD_ALIGN
   size=(size+3)&(~3);
@@ -1430,120 +1430,119 @@ void LObject::Print()
 
 void *eval_sys_function(LSysFunction *fun, void *arg_list);
 
-void *eval_function(LSymbol *sym, void *arg_list)
+LObject *LSymbol::EvalFunction(void *arg_list)
 {
 #ifdef TYPE_CHECKING
-  int args, req_min, req_max;
-  if (item_type(sym)!=L_SYMBOL)
-  {
-    sym->Print();
-    lbreak("EVAL : is not a function name (not symbol either)");
-    exit(0);
-  }
+    int args, req_min, req_max;
+    if (item_type(this) != L_SYMBOL)
+    {
+        Print();
+        lbreak("EVAL: is not a function name (not symbol either)");
+        exit(0);
+    }
 #endif
 
-  void *fun=(LSysFunction *)(((LSymbol *)sym)->function);
-  PtrRef ref2( fun  );
+    LObject *fun = function;
+    PtrRef ref2(fun);
+    PtrRef ref3(arg_list);
 
-  // make sure the arguments given to the function are the correct number
-  ltype t=item_type(fun);
+    // make sure the arguments given to the function are the correct number
+    ltype t = item_type(fun);
 
 #ifdef TYPE_CHECKING
-  switch (t)
-  {
-    case L_SYS_FUNCTION :
-    case L_C_FUNCTION :
-    case L_C_BOOL :
-    case L_L_FUNCTION :
+    switch (t)
     {
-      req_min=((LSysFunction *)fun)->min_args;
-      req_max=((LSysFunction *)fun)->max_args;
-    } break;
-    case L_USER_FUNCTION :
-    {
-      return eval_user_fun(sym, arg_list);
-    } break;
-    default :
-    {
-      sym->Print();
-      lbreak(" is not a function name");
-      exit(0);
-    } break;
-  }
-
-  if (req_min!=-1)
-  {
-    void *a=arg_list;
-    for (args=0; a; a=CDR(a)) args++;    // count number of paramaters
-
-    if (args<req_min)
-    {
-      ((LObject *)arg_list)->Print();
-      sym->name->Print();
-      lbreak("\nToo few parameters to function\n");
-      exit(0);
-    } else if (req_max!=-1 && args>req_max)
-    {
-      ((LObject *)arg_list)->Print();
-      sym->name->Print();
-      lbreak("\nToo many parameters to function\n");
-      exit(0);
+    case L_SYS_FUNCTION:
+    case L_C_FUNCTION:
+    case L_C_BOOL:
+    case L_L_FUNCTION:
+        req_min = ((LSysFunction *)fun)->min_args;
+        req_max = ((LSysFunction *)fun)->max_args;
+        break;
+    case L_USER_FUNCTION:
+        return (LObject *)eval_user_fun(this, arg_list);
+    default:
+        Print();
+        lbreak(" is not a function name");
+        exit(0);
+        break;
     }
-  }
+
+    if (req_min != -1)
+    {
+        void *a = arg_list;
+        for (args = 0; a; a = CDR(a))
+            args++; // count number of parameters
+
+        if (args < req_min)
+        {
+            ((LObject *)arg_list)->Print();
+            name->Print();
+            lbreak("\nToo few parameters to function\n");
+            exit(0);
+        }
+        else if (req_max != -1 && args > req_max)
+        {
+            ((LObject *)arg_list)->Print();
+            name->Print();
+            lbreak("\nToo many parameters to function\n");
+            exit(0);
+        }
+    }
 #endif
 
 #ifdef L_PROFILE
-  time_marker start;
+    time_marker start;
 #endif
 
+    LObject *ret = NULL;
 
-  PtrRef ref1(arg_list);
-  void *ret=NULL;
-
-  switch (t)
-  {
-    case L_SYS_FUNCTION :
-    { ret=eval_sys_function( ((LSysFunction *)fun), arg_list); } break;
-    case L_L_FUNCTION :
-    { ret=l_caller( ((LSysFunction *)fun)->fun_number, arg_list); } break;
-    case L_USER_FUNCTION :
+    switch (t)
     {
-      return eval_user_fun(sym, arg_list);
-    } break;
-    case L_C_FUNCTION :
-    case L_C_BOOL :
+    case L_SYS_FUNCTION:
+        ret = (LObject *)eval_sys_function(((LSysFunction *)fun), arg_list);
+        break;
+    case L_L_FUNCTION:
+        ret = (LObject *)l_caller(((LSysFunction *)fun)->fun_number, arg_list);
+        break;
+    case L_USER_FUNCTION:
+        return (LObject *)eval_user_fun(this, arg_list);
+    case L_C_FUNCTION:
+    case L_C_BOOL:
     {
-      void *first=NULL, *cur=NULL, *tmp;
-      PtrRef r1(first), r2(cur);
-      while (arg_list)
-      {
-        if (first) {
-          tmp = LList::Create();
-          ((LList *)cur)->cdr = (LObject *)tmp;
-          cur=tmp;
-        } else
-          cur=first = LList::Create();
+        LList *first = NULL, *cur = NULL;
+        PtrRef r1(first), r2(cur), r3(arg_list);
+        while (arg_list)
+        {
+            LList *tmp = LList::Create();
+            if (first)
+                cur->cdr = tmp;
+            else
+                first = tmp;
+            cur = tmp;
 
-        LObject *val = CAR(arg_list)->Eval();
-        ((LList *)cur)->car = val;
-        arg_list=lcdr(arg_list);
-      }
-      if(t == L_C_FUNCTION)
-        ret = LNumber::Create(c_caller( ((LSysFunction *)fun)->fun_number, first));
-      else if (c_caller( ((LSysFunction *)fun)->fun_number, first))
-        ret=true_symbol;
-      else ret=NULL;
-    } break;
-    default :
-      fprintf(stderr, "not a fun, shouldn't happen\n");
-  }
+            LObject *val = CAR(arg_list)->Eval();
+            ((LList *)cur)->car = val;
+            arg_list = lcdr(arg_list);
+        }
+        if (t == L_C_FUNCTION)
+            ret = LNumber::Create(c_caller(((LSysFunction *)fun)->fun_number, first));
+        else if (c_caller(((LSysFunction *)fun)->fun_number, first))
+            ret = true_symbol;
+        else
+            ret = NULL;
+        break;
+    }
+    default:
+        fprintf(stderr, "not a fun, shouldn't happen\n");
+    }
 
 #ifdef L_PROFILE
-  time_marker end;
-  ((LSymbol *)sym)->time_taken+=end.diff_time(&start);
+    time_marker end;
+    time_taken += end.diff_time(&start);
 #endif
 
-  return ret;
+    return ret;
 }
 
 #ifdef L_PROFILE
@@ -1575,13 +1574,13 @@ void *mapcar(void *arg_list)
   LObject *sym = CAR(arg_list)->Eval();
   switch ((short)item_type(sym))
   {
-    case L_SYS_FUNCTION :
-    case L_USER_FUNCTION :
-    case L_SYMBOL :
-    break;
-    default :
+    case L_SYS_FUNCTION:
+    case L_USER_FUNCTION:
+    case L_SYMBOL:
+      break;
+    default:
     {
-      ((LObject *)sym)->Print();
+      sym->Print();
       lbreak(" is not a function\n");
       exit(0);
     }
@@ -1636,7 +1635,7 @@ void *mapcar(void *arg_list)
     if (!stop)
     {
       LList *c = LList::Create();
-      c->car = (LObject *)eval_function((LSymbol *)sym, first);
+      c->car = ((LSymbol *)sym)->EvalFunction(first);
       if (return_list)
         last_return->cdr=c;
       else
@@ -2258,7 +2257,7 @@ void *eval_sys_function(LSysFunction *fun, void *arg_list)
     case SYS_FUNC_FUNCALL:
     {
       void *n1 = CAR(arg_list)->Eval();
-      ret=eval_function((LSymbol *)n1, CDR(arg_list));
+      ret = ((LSymbol *)n1)->EvalFunction(CDR(arg_list));
     } break;
     case SYS_FUNC_GT:
     {
@@ -2298,17 +2297,17 @@ void *eval_sys_function(LSysFunction *fun, void *arg_list)
       ret=true_symbol;
     break;
     case SYS_FUNC_SYMBOL_NAME:
-      void *symb;
-      symb = CAR(arg_list)->Eval();
+      LSymbol *symb;
+      symb = (LSymbol *)CAR(arg_list)->Eval();
 #ifdef TYPE_CHECKING
       if (item_type(symb)!=L_SYMBOL)
       {
-    ((LObject *)symb)->Print();
-    lbreak(" is not a symbol (symbol-name)\n");
-    exit(0);
+        symb->Print();
+        lbreak(" is not a symbol (symbol-name)\n");
+        exit(0);
       }
 #endif
-      ret=((LSymbol *)symb)->name;
+      ret = symb->name;
     break;
     case SYS_FUNC_TRACE:
       trace_level++;
@@ -2941,7 +2940,7 @@ void *eval_user_fun(LSymbol *sym, void *arg_list)
     for (f_arg=fun_arg_list; f_arg; )
     {
       if (!arg_list)
-      { ((LObject *)sym)->Print(); lbreak("too few parameter to function\n"); exit(0); }
+      { sym->Print(); lbreak("too few parameter to function\n"); exit(0); }
       l_user_stack.push(CAR(arg_list)->Eval());
       f_arg=CDR(f_arg);
       arg_list=CDR(arg_list);
@@ -2958,7 +2957,7 @@ void *eval_user_fun(LSymbol *sym, void *arg_list)
 
 
   if (f_arg)
-  { ((LObject *)sym)->Print(); lbreak("too many parameter to function\n"); exit(0); }
+  { sym->Print(); lbreak("too many parameter to function\n"); exit(0); }
 
 
   // now evaluate the function block
@@ -2976,7 +2975,7 @@ void *eval_user_fun(LSymbol *sym, void *arg_list)
 
 #ifdef L_PROFILE
   time_marker end;
-  ((LSymbol *)sym)->time_taken+=end.diff_time(&start);
+  sym->time_taken += end.diff_time(&start);
 #endif
 
 
@@ -3029,7 +3028,7 @@ LObject *LObject::Eval()
             }
             break;
         case L_CONS_CELL:
-            ret = (LObject *)eval_function((LSymbol *)CAR(this), CDR(this));
+            ret = ((LSymbol *)CAR(this))->EvalFunction(CDR(this));
             break;
         default :
             fprintf(stderr, "shouldn't happen\n");

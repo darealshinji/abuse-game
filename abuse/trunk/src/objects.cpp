@@ -265,7 +265,7 @@ void game_object::reload_notify()
     current_object=this;
 
     void *m=mark_heap(TMP_SPACE);
-    eval_function((LSymbol *)ns,NULL);
+    ((LSymbol *)ns)->EvalFunction(NULL);
     restore_heap(m,TMP_SPACE);
 
     current_object=o;
@@ -279,7 +279,7 @@ void game_object::next_sequence()
     {
         current_object = this;
         void *m = mark_heap( TMP_SPACE );
-        (void)eval_function( (LSymbol *)ns, NULL );
+        ((LSymbol *)ns)->EvalFunction(NULL);
         restore_heap( m, TMP_SPACE );
     }
     else
@@ -419,7 +419,7 @@ int game_object::decide()
     if (profiling())
       prof1=new time_marker;
 
-    Cell *ret=(Cell *)eval_function((LSymbol *)figures[otype]->get_fun(OFUN_AI),NULL);
+    LObject *ret = ((LSymbol *)figures[otype]->get_fun(OFUN_AI))->EvalFunction(NULL);
     if (profiling())
     {
       time_marker now;
@@ -635,7 +635,7 @@ void game_object::draw()
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((LSymbol *)figures[otype]->get_fun(OFUN_DRAW),NULL);
+    ((LSymbol *)figures[otype]->get_fun(OFUN_DRAW))->EvalFunction(NULL);
     if (profiling())
     {
       time_marker now;
@@ -662,7 +662,7 @@ void game_object::map_draw()
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((LSymbol *)figures[otype]->get_fun(OFUN_MAP_DRAW),NULL);
+    ((LSymbol *)figures[otype]->get_fun(OFUN_MAP_DRAW))->EvalFunction(NULL);
     if (profiling())
     {
       time_marker now;
@@ -1169,7 +1169,7 @@ game_object *create(int type, int32_t x, int32_t y, int skip_constructor, int ai
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((LSymbol *)figures[type]->get_fun(OFUN_CONSTRUCTOR),NULL);
+    ((LSymbol *)figures[type]->get_fun(OFUN_CONSTRUCTOR))->EvalFunction(NULL);
     if (profiling())
     {
       time_marker now;
@@ -1234,8 +1234,7 @@ int game_object::move(int cx, int cy, int button)
     if (profiling())
       prof1=new time_marker;
 
-    void *r=eval_function((LSymbol *)figures[otype]->get_fun(OFUN_MOVER),
-              (void *)lcx);
+    LObject *r = ((LSymbol *)figures[otype]->get_fun(OFUN_MOVER))->EvalFunction(lcx);
     if (profiling())
     {
       time_marker now;
@@ -1637,7 +1636,7 @@ void game_object::change_type(int new_type)
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((LSymbol *)figures[new_type]->get_fun(OFUN_CONSTRUCTOR),NULL);
+    ((LSymbol *)figures[new_type]->get_fun(OFUN_CONSTRUCTOR))->EvalFunction(NULL);
     if (profiling())
     {
       time_marker now;
