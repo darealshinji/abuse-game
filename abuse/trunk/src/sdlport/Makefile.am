@@ -12,6 +12,7 @@ libsdlport_a_SOURCES = \
     jdir.cpp \
     joystick.cpp joy.hpp \
     setup.cpp setup.h \
+    hmi.cpp hmi.h \
     $(NULL)
 libsdlport_a_LIBADD =
 

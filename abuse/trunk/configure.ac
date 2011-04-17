@@ -46,6 +46,11 @@ AM_PATH_SDL($SDL_VERSION, :,
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS $X_LIBS"
 
+# Add SDL_Mixer
+LIBS="$LIBS -lSDL_mixer"
+CFLAGS="${CFLAGS} -DUSE_SDL_MIXER"
+CPPFLAGS="${CPPFLAGS} -DUSE_SDL_MIXER"
+
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(HAVE_DEBUG, 1, Define to 1 to activate debug)
   OPT="-O0"

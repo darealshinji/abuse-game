@@ -22,6 +22,10 @@
 #include <string.h>
 
 #include <SDL.h>
+#ifdef USE_SDL_MIXER
+#include <SDL/SDL_mixer.h>
+#include "hmi.hpp"
+#endif
 
 #include "sound.hpp"
 #include "readwav.hpp"
@@ -76,6 +80,7 @@ static SDL_AudioSpec audioObtained;
 //
 void mix_audio(void *udata, Uint8 *stream, int len)
 {
+#ifndef USE_SDL_MIXER
     effect_handle *handle = fx_list;
 
     while( handle )
@@ -105,6 +110,7 @@ void mix_audio(void *udata, Uint8 *stream, int len)
             handle = tmp;
         }
     }
+#endif
 }
 
 //
@@ -137,6 +143,21 @@ int sound_init( int argc, char **argv )
     }
     free( sfxdir );
 
+#ifdef USE_SDL_MIXER
+    if (Mix_OpenAudio(11025, AUDIO_U8, 2, 128) < 0)
+    {
+        printf( "Sound : Unable to open audio - %s\nSound : Disabled (error)\n", SDL_GetError() );
+        return 0;
+    }
+
+    Mix_AllocateChannels(50);
+
+    int tempChannels = 0;
+    Mix_QuerySpec(&audioObtained.freq, &audioObtained.format, &tempChannels);
+    audioObtained.channels = tempChannels & 0xFF;
+
+    sound_enabled = SFX_INITIALIZED | MUSIC_INITIALIZED;
+#else
     audioWanted.freq = 11025;
     audioWanted.format = AUDIO_U8;
     audioWanted.channels = 2 - flags.mono;
@@ -151,10 +172,12 @@ int sound_init( int argc, char **argv )
         return 0;
     }
 
-    sound_enabled = 1;
-    printf( "Sound : Enabled\n" );
-
     SDL_PauseAudio( 0 );
+
+    sound_enabled = SFX_INITIALIZED;
+#endif
+
+    printf( "Sound : Enabled\n" );
 
     // It's all good
     return sound_enabled;
@@ -169,6 +192,9 @@ void sound_uninit()
 {
     if( sound_enabled )
     {
+#ifdef USE_SDL_MIXER
+        Mix_CloseAudio();
+#else
         SDL_PauseAudio( 1 );
         while( fx_list )
         {
@@ -177,6 +203,7 @@ void sound_uninit()
             free( last );
         }
         SDL_CloseAudio();
+#endif
     }
 }
 
@@ -190,7 +217,27 @@ sound_effect::sound_effect( char * filename )
     if( sound_enabled )
     {
         long sample_speed;
+
+#ifdef USE_SDL_MIXER
+        void* temp_data = (void *)read_wav( filename, sample_speed, size );
+
+        SDL_AudioCVT audiocvt;
+    
+        SDL_BuildAudioCVT( &audiocvt, AUDIO_U8, 1, 11025, audioObtained.format, audioObtained.channels, audioObtained.freq );
+        data = malloc( size * audiocvt.len_mult );
+
+        memcpy( data, temp_data, size );
+        audiocvt.buf = (Uint8*)data;
+        audiocvt.len = size;
+        SDL_ConvertAudio( &audiocvt );
+        size = (Uint32)((double)size * audiocvt.len_ratio);
+
+        free(temp_data);
+
+        this->chunk = Mix_QuickLoad_RAW((Uint8*)data, size);
+#else
         data = (void *)read_wav( filename, sample_speed, size );
+#endif
     }
 }
 
@@ -203,6 +250,19 @@ sound_effect::~sound_effect()
 {
     if( sound_enabled )
     {
+#ifdef USE_SDL_MIXER
+        // Sound effect deletion only happens on level load, so there
+        // is no problem in stopping everything. But the original playing
+        // code handles the sound effects and the "playlist" differently.
+        // Therefore with SDL_mixer, a sound that has not finished playing
+        // on a level load will cut off in the middle. This is most noticable
+        // for the button sound of the load savegame dialog.
+        Mix_FadeOutGroup(-1, 100);
+        while (Mix_Playing(-1))
+            SDL_Delay(10);
+        Mix_FreeChunk(this->chunk);
+#endif
+
         if( data )
         {
             free( data );
@@ -224,6 +284,14 @@ void sound_effect::play( int volume, int pitch, int panpot )
 {
     if( sound_enabled )
     {
+#ifdef USE_SDL_MIXER
+        int channel = Mix_PlayChannel(-1, this->chunk, 0);
+        if (channel > -1)
+        {
+            Mix_Volume(channel, volume);
+            Mix_SetPanning(channel, panpot, 255 - panpot);
+        }
+#else
         SDL_LockAudio();
 
         fx_list = new effect_handle( fx_list );
@@ -284,20 +352,36 @@ void sound_effect::play( int volume, int pitch, int panpot )
             fx_list->volume = volume;
         }
         SDL_UnlockAudio();
+#endif
     }
 }
 
 
-//
-// We don't handle songs.  These are just stubs to basically do nothing.
-// I tried using SDL_mixer to do this, but with no success.
-//
+// Play music using SDL_Mixer
 
 song::song( char const * filename )
 {
     data = NULL;
     Name = strdup(filename);
     song_id = 0;
+    
+#ifdef USE_SDL_MIXER
+    rw = NULL;
+    music = NULL;
+
+    char realname[255];
+    strcpy(realname, get_filename_prefix());
+    strcat(realname, filename);
+
+    unsigned int data_size;
+    data = load_hmi(realname, data_size);
+
+    if (data)
+    {
+        rw = SDL_RWFromMem(data, data_size);
+        music = Mix_LoadMUS_RW(rw);
+    }
+#endif
 }
 
 song::~song()
@@ -311,24 +395,46 @@ song::~song()
         free( data );
     }
     free( Name );
+
+#ifdef USE_SDL_MIXER
+    Mix_FreeMusic(this->music);
+    SDL_FreeRW(this->rw);
+#endif
 }
 
 void song::play( unsigned char volume )
 {
     song_id = 1;
+
+#ifdef USE_SDL_MIXER
+    Mix_PlayMusic(this->music, 0);
+    Mix_VolumeMusic(volume);
+#endif
 }
 
 void song::stop( long fadeout_time )
 {
     song_id = 0;
+
+#ifdef USE_SDL_MIXER
+    Mix_FadeOutMusic(100);
+#endif
 }
 
 int song::playing()
 {
+#ifdef USE_SDL_MIXER
+    return Mix_PlayingMusic();
+#else
     return song_id;
+#endif
 }
 
 void song::set_volume( int volume )
 {
-//    do nothing...
+#ifdef USE_SDL_MIXER
+    Mix_VolumeMusic(volume);
+#else
+    // do nothing...
+#endif
 }
