@@ -129,7 +129,7 @@ void lbreak(char const *format, ...)
     {
       dprintf("CLIVE Debugger\n");
       dprintf(" w, where : show calling parents\n"
-          " e, env   : show enviroment\n"
+          " e, env   : show environment\n"
           " c, cont  : continue if possible\n"
           " q, quit  : quits the program\n"
           " h, help  : this\n");
@@ -1416,7 +1416,7 @@ void LObject::Print()
         }
         break;
     case L_COLLECTED_OBJECT:
-        lprint_string("GC_refrence->");
+        lprint_string("GC_reference->");
         ((LRedirect *)this)->ref->Print();
         break;
     default:
@@ -1428,8 +1428,7 @@ void LObject::Print()
         dprintf("\n");
 }
 
-void *eval_sys_function(LSysFunction *fun, void *arg_list);
-
+/* PtrRef check: OK */
 LObject *LSymbol::EvalFunction(void *arg_list)
 {
 #ifdef TYPE_CHECKING
@@ -1500,7 +1499,7 @@ LObject *LSymbol::EvalFunction(void *arg_list)
     switch (t)
     {
     case L_SYS_FUNCTION:
-        ret = (LObject *)eval_sys_function(((LSysFunction *)fun), arg_list);
+        ret = ((LSysFunction *)fun)->EvalFunction((LList *)arg_list);
         break;
     case L_L_FUNCTION:
         ret = (LObject *)l_caller(((LSysFunction *)fun)->fun_number, arg_list);
@@ -1789,1076 +1788,1201 @@ void *backquote_eval(void *args)
   return NULL;       // for stupid compiler messages
 }
 
-
-void *eval_sys_function(LSysFunction *fun, void *arg_list)
+/* PtrRef check: OK */
+LObject *LSysFunction::EvalFunction(LList *arg_list)
 {
-  PtrRef ref1(arg_list);
-  void *ret=NULL;
-  switch (fun->fun_number)
-  {
-    case SYS_FUNC_PRINT:
+    LObject *ret = NULL;
+
+    PtrRef ref1(arg_list);
+
+    switch (fun_number)
     {
-      ret=NULL;
-      while (arg_list)
-      {
-        ret = CAR(arg_list)->Eval();
-        arg_list=CDR(arg_list);
-        ((LObject *)ret)->Print();
-      }
-      return ret;
-    } break;
+    case SYS_FUNC_PRINT:
+        while (arg_list)
+        {
+            ret = CAR(arg_list)->Eval();
+            arg_list = (LList *)CDR(arg_list);
+            ret->Print();
+        }
+        break;
     case SYS_FUNC_CAR:
-    { ret=lcar(CAR(arg_list)->Eval()); } break;
+        ret = lcar(CAR(arg_list)->Eval());
+        break;
     case SYS_FUNC_CDR:
-    { ret=lcdr(CAR(arg_list)->Eval()); } break;
+        ret = lcdr(CAR(arg_list)->Eval());
+        break;
     case SYS_FUNC_LENGTH:
     {
-      void *v = CAR(arg_list)->Eval();
-      switch (item_type(v))
-      {
-        case L_STRING : ret = LNumber::Create(strlen(lstring_value(v))); break;
-        case L_CONS_CELL : ret = LNumber::Create(((LList *)v)->GetLength()); break;
-        default :
+        LObject *v = CAR(arg_list)->Eval();
+        switch (item_type(v))
         {
-          ((LObject *)v)->Print();
-          lbreak("length : type not supported\n");
+        case L_STRING:
+            ret = LNumber::Create(strlen(lstring_value(v)));
+            break;
+        case L_CONS_CELL:
+            ret = LNumber::Create(((LList *)v)->GetLength());
+            break;
+        default:
+            v->Print();
+            lbreak("length : type not supported\n");
+            break;
         }
-      }
-    } break;
+        break;
+    }
     case SYS_FUNC_LIST:
     {
-      void *cur=NULL, *last=NULL, *first=NULL;
-      PtrRef r1(cur), r2(first), r3(last);
-      while (arg_list)
-      {
-    cur = LList::Create();
-    void *val = CAR(arg_list)->Eval();
-    ((LList *) cur)->car = (LObject *)val;
-    if (last)
-      ((LList *)last)->cdr = (LObject *)cur;
-    else first=cur;
-    last=cur;
-    arg_list=(LList *)CDR(arg_list);
-      }
-      ret=first;
-    } break;
+        LList *cur = NULL, *last = NULL, *first = NULL;
+        PtrRef r1(cur), r2(first), r3(last);
+        while (arg_list)
+        {
+            cur = LList::Create();
+            LObject *val = CAR(arg_list)->Eval();
+            cur->car = val;
+            if (last)
+                last->cdr = cur;
+            else
+                first = cur;
+            last = cur;
+            arg_list = (LList *)CDR(arg_list);
+        }
+        ret = first;
+        break;
+    }
     case SYS_FUNC_CONS:
-    { void *c = LList::Create();
-      PtrRef r1(c);
-      void *val = CAR(arg_list)->Eval();
-      ((LList *)c)->car = (LObject *)val;
-      val = CAR(CDR(arg_list))->Eval();
-      ((LList *)c)->cdr = (LObject *)val;
-      ret=c;
-    } break;
+    {
+        LList *c = LList::Create();
+        PtrRef r1(c);
+        LObject *val = CAR(arg_list)->Eval();
+        c->car = val;
+        val = CAR(CDR(arg_list))->Eval();
+        c->cdr = val;
+        ret = c;
+        break;
+    }
     case SYS_FUNC_QUOTE:
-    ret=CAR(arg_list);
-    break;
+        ret = CAR(arg_list);
+        break;
     case SYS_FUNC_EQ:
-    {
-      l_user_stack.push(CAR(arg_list)->Eval());
-      l_user_stack.push(CAR(CDR(arg_list))->Eval());
-      ret=lisp_eq(l_user_stack.pop(1), l_user_stack.pop(1));
-    } break;
+        l_user_stack.push(CAR(arg_list)->Eval());
+        l_user_stack.push(CAR(CDR(arg_list))->Eval());
+        ret = (LObject *)lisp_eq(l_user_stack.pop(1), l_user_stack.pop(1));
+        break;
     case SYS_FUNC_EQUAL:
-    {
-      l_user_stack.push(CAR(arg_list)->Eval());
-      l_user_stack.push(CAR(CDR(arg_list))->Eval());
-      ret=lisp_equal(l_user_stack.pop(1), l_user_stack.pop(1));
-    } break;
+        l_user_stack.push(CAR(arg_list)->Eval());
+        l_user_stack.push(CAR(CDR(arg_list))->Eval());
+        ret = (LObject *)lisp_equal(l_user_stack.pop(1), l_user_stack.pop(1));
+        break;
     case SYS_FUNC_PLUS:
     {
-      long sum=0;
-      while (arg_list)
-      {
-    sum+=lnumber_value(CAR(arg_list)->Eval());
-    arg_list=CDR(arg_list);
-      }
-      ret = LNumber::Create(sum);
+        int32_t sum = 0;
+        while (arg_list)
+        {
+            sum += lnumber_value(CAR(arg_list)->Eval());
+            arg_list = (LList *)CDR(arg_list);
+        }
+        ret = LNumber::Create(sum);
+        break;
     }
-    break;
     case SYS_FUNC_TIMES:
     {
-      long sum;
-      void *first = CAR(arg_list)->Eval();
-      PtrRef r1(first);
-      if (arg_list && item_type(first)==L_FIXED_POINT)
-      {
-    sum=1<<16;
-    do
-    {
-      sum=(sum>>8)*(lfixed_point_value(first)>>8);
-      arg_list=CDR(arg_list);
-      if (arg_list) first = CAR(arg_list)->Eval();
-    } while (arg_list);
-
-    ret = LFixedPoint::Create(sum);
-      } else
-      { sum=1;
-    do
-    {
-      sum*=lnumber_value(CAR(arg_list)->Eval());
-      arg_list=CDR(arg_list);
-      if (arg_list) first =CAR(arg_list)->Eval();
-    } while (arg_list);
-    ret = LNumber::Create(sum);
-      }
+        int32_t prod;
+        LObject *first = CAR(arg_list)->Eval();
+        PtrRef r1(first);
+        if (arg_list && item_type(first) == L_FIXED_POINT)
+        {
+            prod = 1 << 16;
+            do
+            {
+                prod = (prod >> 8) * (lfixed_point_value(first) >> 8);
+                arg_list = (LList *)CDR(arg_list);
+                if (arg_list)
+                    first = CAR(arg_list)->Eval();
+            } while (arg_list);
+            ret = LFixedPoint::Create(prod);
+        }
+        else
+        {
+            prod = 1;
+            do
+            {
+                prod *= lnumber_value(CAR(arg_list)->Eval());
+                arg_list = (LList *)CDR(arg_list);
+                if (arg_list)
+                    first = CAR(arg_list)->Eval();
+            } while (arg_list);
+            ret = LNumber::Create(prod);
+        }
+        break;
     }
-    break;
     case SYS_FUNC_SLASH:
     {
-      long sum=0, first=1;
-      while (arg_list)
-      {
-    void *i = CAR(arg_list)->Eval();
-    PtrRef r1(i);
-    if (item_type(i)!=L_NUMBER)
-    {
-      ((LObject *)i)->Print();
-      lbreak("/ only defined for numbers, cannot divide ");
-      exit(0);
-    } else if (first)
-    {
-      sum=((LNumber *)i)->num;
-      first=0;
+        int32_t quot = 0, first = 1;
+        while (arg_list)
+        {
+            LObject *i = CAR(arg_list)->Eval();
+            if (item_type(i) != L_NUMBER)
+            {
+                i->Print();
+                lbreak("/ only defined for numbers, cannot divide ");
+                exit(0);
+            }
+            else if (first)
+            {
+                quot = ((LNumber *)i)->num;
+                first = 0;
+            }
+            else
+                quot /= ((LNumber *)i)->num;
+            arg_list = (LList *)CDR(arg_list);
+        }
+        ret = LNumber::Create(quot);
+        break;
     }
-    else sum/=((LNumber *)i)->num;
-    arg_list=CDR(arg_list);
-      }
-      ret = LNumber::Create(sum);
-    }
-    break;
     case SYS_FUNC_MINUS:
     {
-      long x=lnumber_value(CAR(arg_list)->Eval());
-      arg_list=CDR(arg_list);
-      while (arg_list)
-      {
-    x-=lnumber_value(CAR(arg_list)->Eval());
-    arg_list=CDR(arg_list);
-      }
-      ret = LNumber::Create(x);
+        int32_t sub = lnumber_value(CAR(arg_list)->Eval());
+        arg_list = (LList *)CDR(arg_list);
+        while (arg_list)
+        {
+            sub -= lnumber_value(CAR(arg_list)->Eval());
+            arg_list = (LList *)CDR(arg_list);
+        }
+        ret = LNumber::Create(sub);
+        break;
     }
-    break;
     case SYS_FUNC_IF:
-    {
-      if (CAR(arg_list)->Eval())
-      ret=CAR(CDR(arg_list))->Eval();
-      else
-      { arg_list=CDR(CDR(arg_list));                 // check for a else part
-    if (arg_list)
-      ret = CAR(arg_list)->Eval();
-    else ret=NULL;
-      }
-    } break;
+        if (CAR(arg_list)->Eval())
+            ret = CAR(CDR(arg_list))->Eval();
+        else
+        {
+            arg_list = (LList *)CDR(CDR(arg_list)); // check for a else part
+            if (arg_list)
+                ret = CAR(arg_list)->Eval();
+            else
+                ret = NULL;
+        }
+        break;
     case SYS_FUNC_SETQ:
     case SYS_FUNC_SETF:
     {
-      void *set_to = CAR(CDR(arg_list))->Eval(), *i=NULL;
-      PtrRef r1(set_to), r2(i);
-      i=CAR(arg_list);
+        LObject *set_to = CAR(CDR(arg_list))->Eval(), *i = NULL;
+        PtrRef r1(set_to), r2(i);
+        i = CAR(arg_list);
 
-      ltype x=item_type(set_to);
-      switch (item_type(i))
-      {
-        case L_SYMBOL :
+        ltype x = item_type(set_to);
+        switch (item_type(i))
         {
-          switch (item_type (((LSymbol *)i)->value))
-          {
-            case L_NUMBER :
+        case L_SYMBOL:
+            switch (item_type(((LSymbol *)i)->value))
             {
-              if (x==L_NUMBER && ((LSymbol *)i)->value!=l_undefined)
-                ((LSymbol *)i)->SetNumber(lnumber_value(set_to));
-              else
-                ((LSymbol *)i)->SetValue((LNumber *)set_to);
-            } break;
-            case L_OBJECT_VAR :
-            {
-              l_obj_set(((LObjectVar *)(((LSymbol *)i)->value))->index, set_to);
-            } break;
-            default :
-              ((LSymbol *)i)->SetValue((LObject *)set_to);
-          }
-          ret=((LSymbol *)i)->value;
-        } break;
-        case L_CONS_CELL :   // this better be an 'aref'
+            case L_NUMBER:
+                if (x == L_NUMBER && ((LSymbol *)i)->value != l_undefined)
+                    ((LSymbol *)i)->SetNumber(lnumber_value(set_to));
+                else
+                    ((LSymbol *)i)->SetValue((LNumber *)set_to);
+                break;
+            case L_OBJECT_VAR:
+                l_obj_set(((LObjectVar *)(((LSymbol *)i)->value))->index, set_to);
+                break;
+            default:
+                ((LSymbol *)i)->SetValue((LObject *)set_to);
+            }
+            ret = ((LSymbol *)i)->value;
+            break;
+        case L_CONS_CELL:   // this better be an 'aref'
         {
 #ifdef TYPE_CHECKING
-          void *car=((LList *)i)->car;
-          if (car==car_symbol)
-          {
-            car = CAR(CDR(i))->Eval();
-            if (!car || item_type(car)!=L_CONS_CELL)
-            { ((LObject *)car)->Print(); lbreak("setq car : evaled object is not a cons cell\n"); exit(0); }
-            ((LList *)car)->car = (LObject *)set_to;
-          } else if (car==cdr_symbol)
-          {
-            car = CAR(CDR(i))->Eval();
-            if (!car || item_type(car)!=L_CONS_CELL)
-            { ((LObject *)car)->Print(); lbreak("setq cdr : evaled object is not a cons cell\n"); exit(0); }
-            ((LList *)car)->cdr = (LObject *)set_to;
-          } else if (car==aref_symbol)
-          {
+            LObject *car = ((LList *)i)->car;
+            if (car == car_symbol)
+            {
+                car = CAR(CDR(i))->Eval();
+                if (!car || item_type(car) != L_CONS_CELL)
+                {
+                    car->Print();
+                    lbreak("setq car : evaled object is not a cons cell\n");
+                    exit(0);
+                }
+                ((LList *)car)->car = set_to;
+            }
+            else if (car == cdr_symbol)
+            {
+                car = CAR(CDR(i))->Eval();
+                if (!car || item_type(car) != L_CONS_CELL)
+                {
+                    car->Print();
+                    lbreak("setq cdr : evaled object is not a cons cell\n");
+                    exit(0);
+                }
+                ((LList *)car)->cdr = set_to;
+            }
+            else if (car != aref_symbol)
+            {
+                lbreak("expected (aref, car, cdr, or symbol) in setq\n");
+                exit(0);
+            }
+            else
+            {
 #endif
-            LArray *a = (LArray *)CAR(CDR(i))->Eval();
-            PtrRef r1(a);
+                LArray *a = (LArray *)CAR(CDR(i))->Eval();
+                PtrRef r1(a);
 #ifdef TYPE_CHECKING
-            if (item_type(a) != L_1D_ARRAY)
+                if (item_type(a) != L_1D_ARRAY)
+                {
+                    a->Print();
+                    lbreak("is not an array (aref)\n");
+                    exit(0);
+                }
+#endif
+                int num = lnumber_value(CAR(CDR(CDR(i)))->Eval());
+#ifdef TYPE_CHECKING
+                if (num >= (int)a->len || num < 0)
+                {
+                    lbreak("aref : value of bounds (%d)\n", num);
+                    exit(0);
+                }
+#endif
+                a->GetData()[num] = set_to;
+#ifdef TYPE_CHECKING
+            }
+#endif
+            ret = set_to;
+            break;
+        }
+        default:
+            i->Print();
+            lbreak("setq/setf only defined for symbols and arrays now..\n");
+            exit(0);
+            break;
+        }
+        break;
+    }
+    case SYS_FUNC_SYMBOL_LIST:
+        ret = NULL;
+        break;
+    case SYS_FUNC_ASSOC:
+    {
+        LObject *item = CAR(arg_list)->Eval();
+        PtrRef r1(item);
+        LList *list = (LList *)CAR(CDR(arg_list))->Eval();
+        PtrRef r2(list);
+        ret = (LObject *)assoc(item, list);
+        break;
+    }
+    case SYS_FUNC_NOT:
+    case SYS_FUNC_NULL:
+        if (CAR(arg_list)->Eval() == NULL)
+            ret = true_symbol;
+        else
+            ret = NULL;
+        break;
+    case SYS_FUNC_ACONS:
+    {
+        LObject *i1 = CAR(arg_list)->Eval();
+        PtrRef r1(i1);
+        LObject *i2 = CAR(CDR(arg_list))->Eval();
+        PtrRef r2(i2);
+        LList *cs = LList::Create();
+        cs->car = i1;
+        cs->cdr = i2;
+        ret = cs;
+        break;
+    }
+    case SYS_FUNC_PAIRLIS:
+    {
+        l_user_stack.push(CAR(arg_list)->Eval());
+        arg_list = (LList *)CDR(arg_list);
+        l_user_stack.push(CAR(arg_list)->Eval());
+        arg_list = (LList *)CDR(arg_list);
+        LObject *n3 = CAR(arg_list)->Eval();
+        LObject *n2 = (LObject *)l_user_stack.pop(1);
+        LObject *n1 = (LObject *)l_user_stack.pop(1);
+        ret = (LObject *)pairlis(n1, n2, n3);
+        break;
+    }
+    case SYS_FUNC_LET:
+    {
+        // make an a-list of new variable names and new values
+        LObject *var_list = CAR(arg_list);
+        LObject *block_list = CDR(arg_list);
+        PtrRef r1(block_list), r2(var_list);
+        long stack_start = l_user_stack.son;
+
+        while (var_list)
+        {
+            LObject *var_name = CAR(CAR(var_list)), *tmp;
+#ifdef TYPE_CHECKING
+            if (item_type(var_name) != L_SYMBOL)
             {
-                a->Print();
-                lbreak("is not an array (aref)\n");
+                var_name->Print();
+                lbreak("should be a symbol (let)\n");
                 exit(0);
             }
 #endif
-            int num = lnumber_value(CAR(CDR(CDR(i)))->Eval());
-#ifdef TYPE_CHECKING
-            if (num >= (int)a->len || num < 0)
-            {
-              lbreak("aref : value of bounds (%d)\n", num);
-              exit(0);
-            }
-#endif
-            a->GetData()[num] = (LObject *)set_to;
-#ifdef TYPE_CHECKING
-          } else
-          {
-            lbreak("expected (aref, car, cdr, or symbol) in setq\n");
-            exit(0);
-          }
-#endif
-          ret=set_to;
-        } break;
 
-        default :
-        {
-          ((LObject *)i)->Print();
-          lbreak("setq/setf only defined for symbols and arrays now..\n");
-          exit(0);
+            l_user_stack.push(((LSymbol *)var_name)->value);
+            tmp = CAR(CDR(CAR(var_list)))->Eval();
+            ((LSymbol *)var_name)->SetValue(tmp);
+            var_list = CDR(var_list);
         }
-      }
-    } break;
-    case SYS_FUNC_SYMBOL_LIST:
-      ret=NULL;
-    break;
-    case SYS_FUNC_ASSOC:
-    {
-      void *item = CAR(arg_list)->Eval();
-      PtrRef r1(item);
-      void *list=(LList *)CAR(CDR(arg_list))->Eval();
-      PtrRef r2(list);
-      ret=assoc(item, (LList *)list);
-    } break;
-    case SYS_FUNC_NOT:
-    case SYS_FUNC_NULL:
-    if (CAR(arg_list)->Eval()==NULL) ret=true_symbol; else ret=NULL;
-    break;
-    case SYS_FUNC_ACONS:
-    {
-      void *i1 = CAR(arg_list)->Eval(), *i2 = CAR(CDR(arg_list))->Eval();
-      PtrRef r1(i1);
-      LList *cs = LList::Create();
-      cs->car = (LObject *)i1;
-      cs->cdr = (LObject *)i2;
-      ret=cs;
-    } break;
 
-    case SYS_FUNC_PAIRLIS:
-    {
-      l_user_stack.push(CAR(arg_list)->Eval());
-      arg_list=CDR(arg_list);
-      l_user_stack.push(CAR(arg_list)->Eval());
-      arg_list=CDR(arg_list);
-      void *n3 = CAR(arg_list)->Eval();
-      void *n2=l_user_stack.pop(1);
-      void *n1=l_user_stack.pop(1);
-      ret=pairlis(n1, n2, n3);
-    } break;
-    case SYS_FUNC_LET:
-    {
-      // make an a-list of new variable names and new values
-      void *var_list=CAR(arg_list),
-           *block_list=CDR(arg_list);
-      PtrRef r1(block_list), r2(var_list);
-      long stack_start=l_user_stack.son;
+        // now evaluate each of the blocks with the new environment and
+        // return value from the last block
+        while (block_list)
+        {
+            ret = CAR(block_list)->Eval();
+            block_list = CDR(block_list);
+        }
 
-      while (var_list)
-      {
-    void *var_name=CAR(CAR(var_list)), *tmp;
-#ifdef TYPE_CHECKING
-    if (item_type(var_name)!=L_SYMBOL)
-    {
-      ((LObject *)var_name)->Print();
-      lbreak("should be a symbol (let)\n");
-      exit(0);
+        long cur_stack = stack_start;
+        var_list = CAR(arg_list); // now restore the old symbol values
+        while (var_list)
+        {
+            LObject *var_name = CAR(CAR(var_list));
+            ((LSymbol *)var_name)->SetValue((LObject *)l_user_stack.sdata[cur_stack++]);
+            var_list = CDR(var_list);
+        }
+        l_user_stack.son = stack_start; // restore the stack
+        break;
     }
-#endif
-
-    l_user_stack.push(((LSymbol *)var_name)->value);
-    tmp = CAR(CDR(CAR(var_list)))->Eval();
-    ((LSymbol *)var_name)->SetValue((LObject *)tmp);
-    var_list=CDR(var_list);
-      }
-
-      // now evaluate each of the blocks with the new enviroment and return value
-      // from the last block
-      while (block_list)
-      {
-    ret = CAR(block_list)->Eval();
-    block_list=CDR(block_list);
-      }
-
-      long cur_stack=stack_start;
-      var_list=CAR(arg_list);      // now restore the old symbol values
-      while (var_list)
-      {
-    void *var_name=CAR(CAR(var_list));
-    ((LSymbol *)var_name)->SetValue((LObject *)l_user_stack.sdata[cur_stack++]);
-    var_list=CDR(var_list);
-      }
-      l_user_stack.son=stack_start;     // restore the stack
-    }
-    break;
     case SYS_FUNC_DEFUN:
     {
-      LSymbol *symbol = (LSymbol *)CAR(arg_list);
+        LSymbol *symbol = (LSymbol *)CAR(arg_list);
 #ifdef TYPE_CHECKING
-      if (item_type(symbol)!=L_SYMBOL)
-      {
-        symbol->Print();
-    lbreak(" is not a symbol! (DEFUN)\n");
-    exit(0);
-      }
+        if (item_type(symbol) != L_SYMBOL)
+        {
+            symbol->Print();
+            lbreak(" is not a symbol! (DEFUN)\n");
+            exit(0);
+        }
 
-      if (item_type(arg_list)!=L_CONS_CELL)
-      {
-    ((LObject *)arg_list)->Print();
-    lbreak("is not a lambda list (DEFUN)\n");
-    exit(0);
-      }
+        if (item_type(arg_list) != L_CONS_CELL)
+        {
+            arg_list->Print();
+            lbreak("is not a lambda list (DEFUN)\n");
+            exit(0);
+        }
 #endif
-      void *block_list=CDR(CDR(arg_list));
+        LObject *block_list = CDR(CDR(arg_list));
 
 #ifndef NO_LIBS
-      intptr_t a=cache.reg_lisp_block(lcar(lcdr(arg_list)));
-      intptr_t b=cache.reg_lisp_block(block_list);
-      LUserFunction *ufun=new_lisp_user_function(a, b);
+        intptr_t a = cache.reg_lisp_block(lcar(lcdr(arg_list)));
+        intptr_t b = cache.reg_lisp_block(block_list);
+        LUserFunction *ufun = new_lisp_user_function(a, b);
 #else
-      LUserFunction *ufun=new_lisp_user_function(lcar(lcdr(arg_list)), block_list);
+        LUserFunction *ufun = new_lisp_user_function(lcar(lcdr(arg_list)), block_list);
 #endif
-      symbol->SetFunction(ufun);
-      ret=symbol;
-    } break;
+        symbol->SetFunction(ufun);
+        ret = symbol;
+        break;
+    }
     case SYS_FUNC_ATOM:
-    { ret=lisp_atom(CAR(arg_list)->Eval()); }
+        ret = (LObject *)lisp_atom(CAR(arg_list)->Eval());
+        break;
     case SYS_FUNC_AND:
     {
-      void *l=arg_list;
-      PtrRef r1(l);
-      ret=true_symbol;
-      while (l)
-      {
-    if (!CAR(l)->Eval())
-    {
-      ret=NULL;
-      l=NULL;             // short-circuit
-    } else l=CDR(l);
-      }
-    } break;
+        LObject *l = arg_list;
+        PtrRef r1(l);
+        ret = true_symbol;
+        while (l)
+        {
+            if (!CAR(l)->Eval())
+            {
+                ret = NULL;
+                l = NULL; // short-circuit
+            }
+            else
+                l = CDR(l);
+        }
+        break;
+    }
     case SYS_FUNC_OR:
     {
-      void *l=arg_list;
-      PtrRef r1(l);
-      ret=NULL;
-      while (l)
-      {
-    if (CAR(l)->Eval())
-    {
-      ret=true_symbol;
-      l=NULL;            // short circuit
-    } else l=CDR(l);
-      }
-    } break;
+        LObject *l = arg_list;
+        PtrRef r1(l);
+        ret = NULL;
+        while (l)
+        {
+            if (CAR(l)->Eval())
+            {
+                ret = true_symbol;
+                l = NULL; // short-circuit
+            }
+            else
+                l = CDR(l);
+        }
+        break;
+    }
     case SYS_FUNC_PROGN:
-    { ret=eval_block(arg_list); } break;
+        ret = (LObject *)eval_block(arg_list);
+        break;
     case SYS_FUNC_CONCATENATE:
-      ret=concatenate(arg_list);
-    break;
+        ret = (LObject *)concatenate(arg_list);
+        break;
     case SYS_FUNC_CHAR_CODE:
     {
-      void *i = CAR(arg_list)->Eval();
-      PtrRef r1(i);
-      ret=NULL;
-      switch (item_type(i))
-      {
-        case L_CHARACTER :
-        { ret = LNumber::Create(((LChar *)i)->ch); } break;
-        case L_STRING :
-        {  ret = LNumber::Create(*lstring_value(i)); } break;
-        default :
+        LObject *i = CAR(arg_list)->Eval();
+        PtrRef r1(i);
+        ret = NULL;
+        switch (item_type(i))
         {
-          ((LObject *)i)->Print();
-          lbreak(" is not character type\n");
-          exit(0);
+        case L_CHARACTER:
+            ret = LNumber::Create(((LChar *)i)->ch);
+            break;
+        case L_STRING:
+            ret = LNumber::Create(*lstring_value(i));
+            break;
+        default:
+            i->Print();
+            lbreak(" is not character type\n");
+            exit(0);
+            break;
         }
-      }
-    } break;
+        break;
+    }
     case SYS_FUNC_CODE_CHAR:
     {
-      void *i = CAR(arg_list)->Eval();
-      PtrRef r1(i);
-      if (item_type(i)!=L_NUMBER)
-      {
-    ((LObject *)i)->Print();
-    lbreak(" is not number type\n");
-    exit(0);
-      }
-      ret = LChar::Create(((LNumber *)i)->num);
-    } break;
+        LObject *i = CAR(arg_list)->Eval();
+        PtrRef r1(i);
+        if (item_type(i) != L_NUMBER)
+        {
+            i->Print();
+            lbreak(" is not number type\n");
+            exit(0);
+        }
+        ret = LChar::Create(((LNumber *)i)->num);
+        break;
+    }
     case SYS_FUNC_COND:
     {
-      void *block_list=CAR(arg_list);
-      PtrRef r1(block_list);
-      if (!block_list) ret=NULL;
-      else
-      {
-    ret=NULL;
+        LList *block_list = (LList *)CAR(arg_list);
+        PtrRef r1(block_list);
+        ret = NULL;
+        PtrRef r2(ret); // Required to protect from the last Eval call
         while (block_list)
-    {
-      if (lcar(CAR(block_list))->Eval())
-        ret = CAR(CDR(CAR(block_list)))->Eval();
-      block_list=CDR(block_list);
+        {
+            if (lcar(CAR(block_list))->Eval())
+                ret = CAR(CDR(CAR(block_list)))->Eval();
+            block_list = (LList *)CDR(block_list);
+        }
+        break;
     }
-      }
-    } break;
     case SYS_FUNC_SELECT:
     {
-      void *selector = CAR(arg_list)->Eval();
-      void *sel=CDR(arg_list);
-      PtrRef r1(selector), r2(sel);
-      while (sel)
-      {
-    if (lisp_equal(selector, CAR(CAR(sel))->Eval()))
-    {
-      sel=CDR(CAR(sel));
-      while (sel)
-      {
-        ret = CAR(sel)->Eval();
-        sel=CDR(sel);
-      }
-      sel=NULL;
-    } else sel=CDR(sel);
-      }
-    } break;
+        LObject *selector = CAR(arg_list)->Eval();
+        LObject *sel = CDR(arg_list);
+        PtrRef r1(selector), r2(sel);
+        ret = NULL;
+        PtrRef r3(ret); // Required to protect from the last Eval call
+        while (sel)
+        {
+            if (lisp_equal(selector, CAR(CAR(sel))->Eval()))
+            {
+                sel = CDR(CAR(sel));
+                while (sel)
+                {
+                    ret = CAR(sel)->Eval();
+                    sel = CDR(sel);
+                }
+            }
+            else
+                sel = CDR(sel);
+        }
+        break;
+    }
     case SYS_FUNC_FUNCTION:
-      ret = ((LSymbol *)CAR(arg_list)->Eval())->GetFunction();
-    break;
+        ret = ((LSymbol *)CAR(arg_list)->Eval())->GetFunction();
+        break;
     case SYS_FUNC_MAPCAR:
-      ret=mapcar(arg_list);
+        ret = (LObject *)mapcar(arg_list);
+        break;
     case SYS_FUNC_FUNCALL:
     {
-      void *n1 = CAR(arg_list)->Eval();
-      ret = ((LSymbol *)n1)->EvalFunction(CDR(arg_list));
-    } break;
+        LSymbol *n1 = (LSymbol *)CAR(arg_list)->Eval();
+        ret = n1->EvalFunction(CDR(arg_list));
+        break;
+    }
     case SYS_FUNC_GT:
     {
-      long n1=lnumber_value(CAR(arg_list)->Eval());
-      long n2=lnumber_value(CAR(CDR(arg_list))->Eval());
-      if (n1>n2) ret=true_symbol; else ret=NULL;
+        int32_t n1 = lnumber_value(CAR(arg_list)->Eval());
+        int32_t n2 = lnumber_value(CAR(CDR(arg_list))->Eval());
+        ret = n1 > n2 ? true_symbol : NULL;
+        break;
     }
-    break;
     case SYS_FUNC_LT:
     {
-      long n1=lnumber_value(CAR(arg_list)->Eval());
-      long n2=lnumber_value(CAR(CDR(arg_list))->Eval());
-      if (n1<n2) ret=true_symbol; else ret=NULL;
+        int32_t n1 = lnumber_value(CAR(arg_list)->Eval());
+        int32_t n2 = lnumber_value(CAR(CDR(arg_list))->Eval());
+        ret = n1 < n2 ? true_symbol : NULL;
+        break;
     }
-    break;
     case SYS_FUNC_GE:
     {
-      long n1=lnumber_value(CAR(arg_list)->Eval());
-      long n2=lnumber_value(CAR(CDR(arg_list))->Eval());
-      if (n1>=n2) ret=true_symbol; else ret=NULL;
+        int32_t n1 = lnumber_value(CAR(arg_list)->Eval());
+        int32_t n2 = lnumber_value(CAR(CDR(arg_list))->Eval());
+        ret = n1 >= n2 ? true_symbol : NULL;
+        break;
     }
-    break;
     case SYS_FUNC_LE:
     {
-      long n1=lnumber_value(CAR(arg_list)->Eval());
-      long n2=lnumber_value(CAR(CDR(arg_list))->Eval());
-      if (n1<=n2) ret=true_symbol; else ret=NULL;
+        int32_t n1 = lnumber_value(CAR(arg_list)->Eval());
+        int32_t n2 = lnumber_value(CAR(CDR(arg_list))->Eval());
+        ret = n1 <= n2 ? true_symbol : NULL;
+        break;
     }
-    break;
-
     case SYS_FUNC_TMP_SPACE:
-      tmp_space();
-      ret=true_symbol;
-    break;
+        tmp_space();
+        ret = true_symbol;
+        break;
     case SYS_FUNC_PERM_SPACE:
-      perm_space();
-      ret=true_symbol;
-    break;
+        perm_space();
+        ret = true_symbol;
+        break;
     case SYS_FUNC_SYMBOL_NAME:
-      LSymbol *symb;
-      symb = (LSymbol *)CAR(arg_list)->Eval();
+    {
+        LSymbol *symb = (LSymbol *)CAR(arg_list)->Eval();
 #ifdef TYPE_CHECKING
-      if (item_type(symb)!=L_SYMBOL)
-      {
-        symb->Print();
-        lbreak(" is not a symbol (symbol-name)\n");
-        exit(0);
-      }
+        if (item_type(symb) != L_SYMBOL)
+        {
+            symb->Print();
+            lbreak(" is not a symbol (symbol-name)\n");
+            exit(0);
+        }
 #endif
-      ret = symb->name;
-    break;
+        ret = symb->name;
+        break;
+    }
     case SYS_FUNC_TRACE:
-      trace_level++;
-      if (arg_list)
-        trace_print_level=lnumber_value(CAR(arg_list)->Eval());
-      ret=true_symbol;
-    break;
+        trace_level++;
+        if (arg_list)
+            trace_print_level = lnumber_value(CAR(arg_list)->Eval());
+        ret = true_symbol;
+        break;
     case SYS_FUNC_UNTRACE:
-      if (trace_level>0)
-      {
-                trace_level--;
-                ret=true_symbol;
-      } else ret=NULL;
-    break;
+        if (trace_level > 0)
+        {
+            trace_level--;
+            ret = true_symbol;
+        }
+        else
+            ret = NULL;
+        break;
     case SYS_FUNC_DIGSTR:
     {
-      char tmp[50], *tp;
-      long num=lnumber_value(CAR(arg_list)->Eval());
-      long dig=lnumber_value(CAR(CDR(arg_list))->Eval());
-      tp=tmp+49;
-      *(tp--)=0;
-      for (; num; )
-      {
-                int d;
-                d=num%10;
-                *(tp--)=d+'0';
-                num/=10;
-                dig--;
-      }
-      while (dig--)
-        *(tp--)='0';
-      ret=LString::Create(tp+1);
-    } break;
+        char tmp[50], *tp;
+        int32_t num = lnumber_value(CAR(arg_list)->Eval());
+        int32_t dig = lnumber_value(CAR(CDR(arg_list))->Eval());
+        tp = tmp + 49;
+        *(tp--) = 0;
+        while (num)
+        {
+            *(tp--) = '0' + (num % 10);
+            num /= 10;
+            dig--;
+        }
+        while (dig--)
+            *(tp--) = '0';
+        ret = LString::Create(tp + 1);
+        break;
+    }
     case SYS_FUNC_LOCAL_LOAD:
     case SYS_FUNC_LOAD:
     case SYS_FUNC_COMPILE_FILE:
     {
-            void *fn = CAR(arg_list)->Eval();
-            char *st = lstring_value( fn );
-            PtrRef r1( fn );
-            bFILE *fp;
-            if( fun->fun_number == SYS_FUNC_LOCAL_LOAD )
+        LObject *fn = CAR(arg_list)->Eval();
+        PtrRef r1(fn);
+        char *st = lstring_value(fn);
+        bFILE *fp;
+        if (fun_number == SYS_FUNC_LOCAL_LOAD)
+        {
+            // A special test for gamma.lsp
+            if (strcmp(st, "gamma.lsp") == 0)
             {
-                // A special test for gamma.lsp
-                if( strcmp( st, "gamma.lsp" ) == 0 )
-                {
-                    char *gammapath;
-                    gammapath = (char *)malloc( strlen( get_save_filename_prefix() ) + 9 + 1 );
-                    sprintf( gammapath, "%sgamma.lsp", get_save_filename_prefix() );
-                    fp = new jFILE( gammapath, "rb" );
-                    free( gammapath );
-                }
-                else
-                {
-                    fp = new jFILE( st, "rb" );
-                }
+                char *gammapath;
+                gammapath = (char *)malloc(strlen(get_save_filename_prefix()) + 9 + 1);
+                sprintf(gammapath, "%sgamma.lsp", get_save_filename_prefix());
+                fp = new jFILE(gammapath, "rb");
+                free(gammapath);
             }
             else
+                fp = new jFILE(st, "rb");
+        }
+        else
+            fp = open_file(st, "rb");
+
+        if (fp->open_failure())
+        {
+            delete fp;
+            if (DEFINEDP(((LSymbol *)load_warning)->GetValue())
+                 && ((LSymbol *)load_warning)->GetValue())
+                dprintf("Warning : file %s does not exist\n", st);
+            ret = NULL;
+        }
+        else
+        {
+            size_t l = fp->file_size();
+            char *s = (char *)malloc(l + 1);
+            if (!s)
             {
-                fp = open_file(st, "rb");
+                printf("Malloc error in load_script\n");
+                exit(0);
             }
 
-            if( fp->open_failure() )
+            fp->read(s, l);
+            s[l] = 0;
+            delete fp;
+            char const *cs = s;
+#ifndef NO_LIBS
+            char msg[100];
+            sprintf(msg, "(load \"%s\")", st);
+            if (stat_man)
+                stat_man->push(msg, NULL);
+            crc_manager.get_filenumber(st); // make sure this file gets crc'ed
+#endif
+            LObject *compiled_form = NULL;
+            PtrRef r11(compiled_form);
+            while (!end_of_program(cs))  // see if there is anything left to compile and run
             {
-                delete fp;
-                if( DEFINEDP(((LSymbol *)load_warning)->GetValue())
-                     && ((LSymbol *)load_warning)->GetValue())
-                    dprintf("Warning : file %s does not exist\n", st);
-                ret = NULL;
+#ifndef NO_LIBS
+                if (stat_man)
+                    stat_man->update((cs - s) * 100 / l);
+#endif
+                void *m = mark_heap(TMP_SPACE);
+                compiled_form = LObject::Compile(cs);
+                compiled_form->Eval();
+                compiled_form = NULL;
+                restore_heap(m, TMP_SPACE);
             }
-            else
+#ifndef NO_LIBS
+            if (stat_man)
             {
-                long l=fp->file_size();
-                char *s=(char *)malloc(l + 1);
-                if (!s)
-                {
-                  printf("Malloc error in load_script\n");
-                  exit(0);
-                }
-
-                fp->read(s, l);
-                s[l]=0;
-                delete fp;
-                char const *cs=s;
-            #ifndef NO_LIBS
-                char msg[100];
-                sprintf(msg, "(load \"%s\")", st);
-                if (stat_man) stat_man->push(msg, NULL);
-                crc_manager.get_filenumber(st);               // make sure this file gets crc'ed
-            #endif
-                LObject *compiled_form = NULL;
-                PtrRef r11(compiled_form);
-                while (!end_of_program(cs))  // see if there is anything left to compile and run
-                {
-            #ifndef NO_LIBS
-                  if (stat_man) stat_man->update((cs-s)*100/l);
-            #endif
-                  void *m=mark_heap(TMP_SPACE);
-                  compiled_form=LObject::Compile(cs);
-                  compiled_form->Eval();
-                  compiled_form=NULL;
-                  restore_heap(m, TMP_SPACE);
-                }
-            #ifndef NO_LIBS
-                                if (stat_man) stat_man->update(100);
-                if (stat_man) stat_man->pop();
-            #endif
-                free(s);
-                ret=fn;
-      }
-    } break;
+                stat_man->update(100);
+                stat_man->pop();
+            }
+#endif
+            free(s);
+            ret = fn;
+        }
+        break;
+    }
     case SYS_FUNC_ABS:
-      ret = LNumber::Create(abs(lnumber_value(CAR(arg_list)->Eval()))); break;
+        ret = LNumber::Create(abs(lnumber_value(CAR(arg_list)->Eval())));
+        break;
     case SYS_FUNC_MIN:
     {
-      int x=lnumber_value(CAR(arg_list)->Eval()),
-          y=lnumber_value(CAR(CDR(arg_list))->Eval());
-      ret = LNumber::Create(x < y ? x : y);
-    } break;
+        int32_t x = lnumber_value(CAR(arg_list)->Eval());
+        int32_t y = lnumber_value(CAR(CDR(arg_list))->Eval());
+        ret = LNumber::Create(x < y ? x : y);
+        break;
+    }
     case SYS_FUNC_MAX:
     {
-      int x=lnumber_value(CAR(arg_list)->Eval()),
-          y=lnumber_value(CAR(CDR(arg_list))->Eval());
-      ret = LNumber::Create(x > y ? x : y);
-    } break;
+        int32_t x = lnumber_value(CAR(arg_list)->Eval());
+        int32_t y = lnumber_value(CAR(CDR(arg_list))->Eval());
+        ret = LNumber::Create(x > y ? x : y);
+        break;
+    }
     case SYS_FUNC_BACKQUOTE:
-    {
-      ret=backquote_eval(CAR(arg_list));
-    } break;
+        ret = (LObject *)backquote_eval(CAR(arg_list));
+        break;
     case SYS_FUNC_COMMA:
-    {
-      ((LObject *)arg_list)->Print();
-      lbreak("comma is illegal outside of backquote\n");
-      exit(0);
-      ret=NULL;
-    } break;
+        arg_list->Print();
+        lbreak("comma is illegal outside of backquote\n");
+        exit(0);
+        break;
     case SYS_FUNC_NTH:
     {
-      long x=lnumber_value(CAR(arg_list)->Eval());
-      ret=nth(x, CAR(CDR(arg_list))->Eval());
-    } break;
+        int32_t x = lnumber_value(CAR(arg_list)->Eval());
+        ret = (LObject *)nth(x, CAR(CDR(arg_list))->Eval());
+        break;
+    }
     case SYS_FUNC_RESIZE_TMP:
-        resize_tmp(lnumber_value(CAR(arg_list)->Eval())); break;
+        resize_tmp(lnumber_value(CAR(arg_list)->Eval()));
+        break;
     case SYS_FUNC_RESIZE_PERM:
-        resize_perm(lnumber_value(CAR(arg_list)->Eval())); break;
+        resize_perm(lnumber_value(CAR(arg_list)->Eval()));
+        break;
     case SYS_FUNC_COS:
-        ret = LFixedPoint::Create(lisp_cos(lnumber_value(CAR(arg_list)->Eval()))); break;
+        ret = LFixedPoint::Create(lisp_cos(lnumber_value(CAR(arg_list)->Eval())));
+        break;
     case SYS_FUNC_SIN:
-        ret = LFixedPoint::Create(lisp_sin(lnumber_value(CAR(arg_list)->Eval()))); break;
+        ret = LFixedPoint::Create(lisp_sin(lnumber_value(CAR(arg_list)->Eval())));
+        break;
     case SYS_FUNC_ATAN2:
     {
-      long y=(lnumber_value(CAR(arg_list)->Eval()));   arg_list=CDR(arg_list);
-      long x=(lnumber_value(CAR(arg_list)->Eval()));
-      ret = LNumber::Create(lisp_atan2(y, x));
-    } break;
+        int32_t y = (lnumber_value(CAR(arg_list)->Eval()));
+        int32_t x = (lnumber_value(CAR(CDR(arg_list))->Eval()));
+        ret = LNumber::Create(lisp_atan2(y, x));
+        break;
+    }
     case SYS_FUNC_ENUM:
     {
-      int sp=current_space;
-      current_space=PERM_SPACE;
-      long x=0;
-      while (arg_list)
-      {
-    void *sym = CAR(arg_list)->Eval();
-    PtrRef r1(sym);
-    switch (item_type(sym))
-    {
-      case L_SYMBOL :
-      { ((LSymbol *)sym)->value = LNumber::Create(x); } break;
-      case L_CONS_CELL :
-      {
-        void *s = CAR(sym)->Eval();
-        PtrRef r1(s);
-#ifdef TYPE_CHECKING
-        if (item_type(s)!=L_SYMBOL)
+        int sp = current_space;
+        current_space = PERM_SPACE;
+        int32_t x = 0;
+        while (arg_list)
         {
-          ((LObject *)arg_list)->Print();
-          lbreak("expecting (sybmol value) for enum\n");
-          exit(0);
-        }
+            LObject *sym = CAR(arg_list)->Eval();
+            PtrRef r1(sym);
+            switch (item_type(sym))
+            {
+            case L_SYMBOL:
+            {
+                LObject *tmp = LNumber::Create(x);
+                ((LSymbol *)sym)->value = tmp;
+                break;
+            }
+            case L_CONS_CELL:
+            {
+                LObject *s = CAR(sym)->Eval();
+                PtrRef r1(s);
+#ifdef TYPE_CHECKING
+                if (item_type(s) != L_SYMBOL)
+                {
+                    arg_list->Print();
+                    lbreak("expecting (symbol value) for enum\n");
+                    exit(0);
+                }
 #endif
-        x=lnumber_value(CAR(CDR(sym))->Eval());
-        ((LSymbol *)sym)->value = LNumber::Create(x);
-      } break;
-      default :
-      {
-        ((LObject *)arg_list)->Print();
-        lbreak("expecting symbol or (symbol value) in enum\n");
-        exit(0);
-      }
+                x = lnumber_value(CAR(CDR(sym))->Eval());
+                LObject *tmp = LNumber::Create(x);
+                ((LSymbol *)sym)->value = tmp;
+                break;
+            }
+            default:
+                arg_list->Print();
+                lbreak("expecting symbol or (symbol value) in enum\n");
+                exit(0);
+            }
+            arg_list = (LList *)CDR(arg_list);
+            x++;
+        }
+        current_space = sp;
+        break;
     }
-    arg_list=CDR(arg_list);
-    x++;
-      }
-      current_space=sp;
-    } break;
     case SYS_FUNC_QUIT:
-    {
-      exit(0);
-    } break;
+        exit(0);
+        break;
     case SYS_FUNC_EVAL:
-    {
-      ret = CAR(arg_list)->Eval()->Eval();
-    } break;
-    case SYS_FUNC_BREAK: lbreak("User break"); break;
+        ret = CAR(arg_list)->Eval()->Eval();
+        break;
+    case SYS_FUNC_BREAK:
+        lbreak("User break");
+        break;
     case SYS_FUNC_MOD:
     {
-      long x=lnumber_value(CAR(arg_list)->Eval()); arg_list=CDR(arg_list);
-      long y=lnumber_value(CAR(arg_list)->Eval());
-      if (y==0) { lbreak("mod : division by zero\n"); y=1; }
-      ret = LNumber::Create(x%y);
-    } break;
-/*    case SYS_FUNC_WRITE_PROFILE:
+        int32_t x = lnumber_value(CAR(arg_list)->Eval());
+        int32_t y = lnumber_value(CAR(CDR(arg_list))->Eval());
+        if (y == 0)
+        {
+            lbreak("mod: division by zero\n");
+            y = 1;
+        }
+        ret = LNumber::Create(x % y);
+        break;
+    }
+#if 0
+    case SYS_FUNC_WRITE_PROFILE:
     {
-      char *fn=lstring_value(CAR(arg_list)->Eval());
-      FILE *fp=fopen(fn, "wb");
-      if (!fp)
-        lbreak("could not open %s for writing", fn);
-      else
-      {
-    for (void *s=symbol_list; s; s=CDR(s))
-      fprintf(fp, "%8d  %s\n", ((LSymbol *)(CAR(s)))->call_counter,
-          lstring_value(((LSymbol *)(CAR(s)))->name));
-    fclose(fp);
-      }
-    } break; */
+        char *fn = lstring_value(CAR(arg_list)->Eval());
+        FILE *fp = fopen(fn, "wb");
+        if (!fp)
+            lbreak("could not open %s for writing", fn);
+        else
+        {
+            for (void *s = symbol_list; s; s = CDR(s))
+                fprintf(fp, "%8d  %s\n", ((LSymbol *)(CAR(s)))->call_counter,
+                        lstring_value(((LSymbol *)(CAR(s)))->name));
+            fclose(fp);
+        }
+        break;
+    }
+#endif
     case SYS_FUNC_FOR:
     {
-      LSymbol *bind_var = (LSymbol *)CAR(arg_list);
-      arg_list = CDR(arg_list);
-      PtrRef r1(bind_var);
-      if (item_type(bind_var)!=L_SYMBOL)
-      { lbreak("expecting for iterator to be a symbol\n"); exit(1); }
+        LSymbol *bind_var = (LSymbol *)CAR(arg_list);
+        PtrRef r1(bind_var);
+        if (item_type(bind_var) != L_SYMBOL)
+        {
+            lbreak("expecting for iterator to be a symbol\n");
+            exit(1);
+        }
+        arg_list = (LList *)CDR(arg_list);
 
-      if (CAR(arg_list)!=in_symbol)
-      { lbreak("expecting in after 'for iterator'\n"); exit(1); }
-      arg_list=CDR(arg_list);
+        if (CAR(arg_list) != in_symbol)
+        {
+            lbreak("expecting in after 'for iterator'\n");
+            exit(1);
+        }
+        arg_list = (LList *)CDR(arg_list);
 
-      void *ilist = CAR(arg_list)->Eval(); arg_list=CDR(arg_list);
-      PtrRef r2(ilist);
+        LObject *ilist = CAR(arg_list)->Eval();
+        PtrRef r2(ilist);
+        arg_list = (LList *)CDR(arg_list);
 
-      if (CAR(arg_list)!=do_symbol)
-      { lbreak("expecting do after 'for iterator in list'\n"); exit(1); }
-      arg_list=CDR(arg_list);
+        if (CAR(arg_list) != do_symbol)
+        {
+            lbreak("expecting do after 'for iterator in list'\n");
+            exit(1);
+        }
+        arg_list = (LList *)CDR(arg_list);
 
-      void *block=NULL, *ret=NULL;
-      PtrRef r3(block);
-      l_user_stack.push(bind_var->GetValue());  // save old symbol value
-      while (ilist)
-      {
-                bind_var->SetValue((LObject *)CAR(ilist));
-                for (block=arg_list; block; block=CDR(block))
-                  ret = CAR(block)->Eval();
-                ilist=CDR(ilist);
-      }
-      bind_var->SetValue((LObject *)l_user_stack.pop(1)); // restore symbol value
-      ret=ret;
-    } break;
+        LObject *block = NULL;
+        PtrRef r3(block);
+        PtrRef r4(ret); // Required to protect from the last SetValue call
+        l_user_stack.push(bind_var->GetValue());  // save old symbol value
+        while (ilist)
+        {
+            bind_var->SetValue((LObject *)CAR(ilist));
+            for (block = arg_list; block; block = CDR(block))
+                ret = CAR(block)->Eval();
+            ilist = CDR(ilist);
+        }
+        bind_var->SetValue((LObject *)l_user_stack.pop(1)); // restore value
+        break;
+    }
     case SYS_FUNC_OPEN_FILE:
     {
-      bFILE *old_file=current_print_file;
-      void *str1 = CAR(arg_list)->Eval();
-      PtrRef r1(str1);
-      void *str2 = CAR(CDR(arg_list))->Eval();
+        LObject *str1 = CAR(arg_list)->Eval();
+        PtrRef r1(str1);
+        LObject *str2 = CAR(CDR(arg_list))->Eval();
 
+        bFILE *old_file = current_print_file;
+        current_print_file = open_file(lstring_value(str1),
+                                       lstring_value(str2));
 
-      current_print_file=open_file(lstring_value(str1),
-                   lstring_value(str2));
-
-      if (!current_print_file->open_failure())
-      {
-                while (arg_list)
-                {
-                  ret = CAR(arg_list)->Eval();
-                  arg_list=CDR(arg_list);
-                }
-      }
-      delete current_print_file;
-      current_print_file=old_file;
-
-    } break;
+        if (!current_print_file->open_failure())
+        {
+            while (arg_list)
+            {
+                ret = CAR(arg_list)->Eval();
+                arg_list = (LList *)CDR(arg_list);
+            }
+        }
+        delete current_print_file;
+        current_print_file = old_file;
+        break;
+    }
     case SYS_FUNC_BIT_AND:
     {
-      long first=lnumber_value(CAR(arg_list)->Eval()); arg_list=CDR(arg_list);
-      while (arg_list)
-      {
-        first&=lnumber_value(CAR(arg_list)->Eval());
-                arg_list=CDR(arg_list);
-      }
-      ret = LNumber::Create(first);
-    } break;
+        int32_t first = lnumber_value(CAR(arg_list)->Eval());
+        arg_list = (LList *)CDR(arg_list);
+        while (arg_list)
+        {
+            first &= lnumber_value(CAR(arg_list)->Eval());
+            arg_list = (LList *)CDR(arg_list);
+        }
+        ret = LNumber::Create(first);
+        break;
+    }
     case SYS_FUNC_BIT_OR:
     {
-      long first=lnumber_value(CAR(arg_list)->Eval()); arg_list=CDR(arg_list);
-      while (arg_list)
-      {
-        first|=lnumber_value(CAR(arg_list)->Eval());
-                arg_list=CDR(arg_list);
-      }
-      ret = LNumber::Create(first);
-    } break;
+        int32_t first = lnumber_value(CAR(arg_list)->Eval());
+        arg_list = (LList *)CDR(arg_list);
+        while (arg_list)
+        {
+            first |= lnumber_value(CAR(arg_list)->Eval());
+            arg_list = (LList *)CDR(arg_list);
+        }
+        ret = LNumber::Create(first);
+        break;
+    }
     case SYS_FUNC_BIT_XOR:
     {
-      long first=lnumber_value(CAR(arg_list)->Eval()); arg_list=CDR(arg_list);
-      while (arg_list)
-      {
-        first^=lnumber_value(CAR(arg_list)->Eval());
-                arg_list=CDR(arg_list);
-      }
-      ret = LNumber::Create(first);
-    } break;
+        int32_t first = lnumber_value(CAR(arg_list)->Eval());
+        arg_list = (LList *)CDR(arg_list);
+        while (arg_list)
+        {
+            first ^= lnumber_value(CAR(arg_list)->Eval());
+            arg_list = (LList *)CDR(arg_list);
+        }
+        ret = LNumber::Create(first);
+        break;
+    }
     case SYS_FUNC_MAKE_ARRAY:
     {
-      long l=lnumber_value(CAR(arg_list)->Eval());
-      if (l>=2<<16 || l<=0)
-      {
-                lbreak("bad array size %d\n", l);
-                exit(0);
-      }
-      ret = LArray::Create(l, CDR(arg_list));
-    } break;
+        int32_t l = lnumber_value(CAR(arg_list)->Eval());
+        if (l >= (2 << 16) || l <= 0)
+        {
+            lbreak("bad array size %d\n", l);
+            exit(0);
+        }
+        ret = LArray::Create(l, CDR(arg_list));
+        break;
+    }
     case SYS_FUNC_AREF:
     {
-      long x=lnumber_value(CAR(CDR(arg_list))->Eval());
-      ret = ((LArray *)CAR(arg_list)->Eval())->Get(x);
-    } break;
+        int32_t x = lnumber_value(CAR(CDR(arg_list))->Eval());
+        ret = ((LArray *)CAR(arg_list)->Eval())->Get(x);
+        break;
+    }
     case SYS_FUNC_IF_1PROGN:
-    {
-      if (CAR(arg_list)->Eval())
-        ret=eval_block(CAR(CDR(arg_list)));
-      else ret = CAR(CDR(CDR(arg_list)))->Eval();
-
-    } break;
+        if (CAR(arg_list)->Eval())
+            ret = (LObject *)eval_block(CAR(CDR(arg_list)));
+        else
+            ret = CAR(CDR(CDR(arg_list)))->Eval();
+        break;
     case SYS_FUNC_IF_2PROGN:
-    {
-      if (CAR(arg_list)->Eval())
-        ret = CAR(CDR(arg_list))->Eval();
-      else ret=eval_block(CAR(CDR(CDR(arg_list))));
+        if (CAR(arg_list)->Eval())
+            ret = CAR(CDR(arg_list))->Eval();
+        else
+            ret = (LObject *)eval_block(CAR(CDR(CDR(arg_list))));
 
-    } break;
+        break;
     case SYS_FUNC_IF_12PROGN:
-    {
-      if (CAR(arg_list)->Eval())
-        ret=eval_block(CAR(CDR(arg_list)));
-      else ret=eval_block(CAR(CDR(CDR(arg_list))));
-
-    } break;
+        if (CAR(arg_list)->Eval())
+            ret = (LObject *)eval_block(CAR(CDR(arg_list)));
+        else
+            ret = (LObject *)eval_block(CAR(CDR(CDR(arg_list))));
+        break;
     case SYS_FUNC_EQ0:
     {
-      void *v = CAR(arg_list)->Eval();
-      if (item_type(v)!=L_NUMBER || (((LNumber *)v)->num!=0))
-        ret=NULL;
-      else ret=true_symbol;
-    } break;
+        LObject *v = CAR(arg_list)->Eval();
+        if (item_type(v) != L_NUMBER || (((LNumber *)v)->num != 0))
+            ret = NULL;
+        else
+            ret = true_symbol;
+        break;
+    }
     case SYS_FUNC_PREPORT:
     {
 #ifdef L_PROFILE
-      char *s=lstring_value(CAR(arg_list)->Eval());
-      preport(s);
+        char *s = lstring_value(CAR(arg_list)->Eval());
+        preport(s);
 #endif
-    } break;
+        break;
+    }
     case SYS_FUNC_SEARCH:
     {
-      void *arg1 = CAR(arg_list)->Eval(); arg_list=CDR(arg_list);
-      PtrRef r1(arg1);       // protect this refrence
-      char *haystack=lstring_value(CAR(arg_list)->Eval());
-      char *needle=lstring_value(arg1);
+        LObject *arg1 = CAR(arg_list)->Eval();
+        PtrRef r1(arg1); // protect this reference
+        arg_list = (LList *)CDR(arg_list);
+        char *haystack = lstring_value(CAR(arg_list)->Eval());
+        char *needle = lstring_value(arg1);
 
-      char *find=strstr(haystack, needle);
-      if (find)
-        ret = LNumber::Create(find-haystack);
-      else ret=NULL;
-    } break;
+        char *find = strstr(haystack, needle);
+        ret = find ? LNumber::Create(find - haystack) : NULL;
+        break;
+    }
     case SYS_FUNC_ELT:
     {
-      void *arg1 = CAR(arg_list)->Eval(); arg_list=CDR(arg_list);
-      PtrRef r1(arg1);       // protect this refrence
-      long x=lnumber_value(CAR(arg_list)->Eval());
-      char *st=lstring_value(arg1);
-      if (x < 0 || (unsigned)x >= strlen(st))
-      { lbreak("elt : out of range of string\n"); ret=NULL; }
-      else
-        ret = LChar::Create(st[x]);
-    } break;
+        LObject *arg1 = CAR(arg_list)->Eval();
+        PtrRef r1(arg1); // protect this reference
+        arg_list = (LList *)CDR(arg_list);
+        int32_t x = lnumber_value(CAR(arg_list)->Eval());
+        char *st = lstring_value(arg1);
+        if (x < 0 || x >= (int32_t)strlen(st))
+        {
+            lbreak("elt : out of range of string\n");
+            ret = NULL;
+        }
+        else
+            ret = LChar::Create(st[x]);
+        break;
+    }
     case SYS_FUNC_LISTP:
     {
-      return item_type(CAR(arg_list)->Eval())==L_CONS_CELL ? true_symbol : NULL;
-    } break;
+        ltype t = item_type(CAR(arg_list)->Eval());
+        ret = (t == L_CONS_CELL) ? true_symbol : NULL;
+        break;
+    }
     case SYS_FUNC_NUMBERP:
     {
-      int t=item_type(CAR(arg_list)->Eval());
-      if (t==L_NUMBER || t==L_FIXED_POINT) return true_symbol; else return NULL;
-    } break;
+        ltype t = item_type(CAR(arg_list)->Eval());
+        ret = (t == L_NUMBER || t == L_FIXED_POINT) ? true_symbol : NULL;
+        break;
+    }
     case SYS_FUNC_DO:
     {
-      void *init_var=CAR(arg_list);
-      PtrRef r1(init_var);
-      int i, ustack_start=l_user_stack.son;      // restore stack at end
-      LSymbol *sym = NULL;
-      PtrRef r2(sym);
+        LObject *init_var = CAR(arg_list);
+        PtrRef r1(init_var);
+        int ustack_start = l_user_stack.son;      // restore stack at end
+        LSymbol *sym = NULL;
+        PtrRef r2(sym);
 
-      // check to make sure iter vars are symbol and push old values
-      for (init_var=CAR(arg_list); init_var; init_var=CDR(init_var))
-      {
-                sym = (LSymbol *)CAR(CAR(init_var));
-                if (item_type(sym)!=L_SYMBOL)
-                { lbreak("expecting symbol name for iteration var\n"); exit(0); }
-                l_user_stack.push(sym->GetValue());
-      }
+        // check to make sure iter vars are symbol and push old values
+        for (init_var = CAR(arg_list); init_var; init_var = CDR(init_var))
+        {
+            sym = (LSymbol *)CAR(CAR(init_var));
+            if (item_type(sym) != L_SYMBOL)
+            {
+                lbreak("expecting symbol name for iteration var\n");
+                exit(0);
+            }
+            l_user_stack.push(sym->GetValue());
+        }
 
-      void **do_evaled=l_user_stack.sdata+l_user_stack.son;
-      // push all of the init forms, so we can set the symbol
-      for (init_var=CAR(arg_list); init_var; init_var=CDR(init_var))
-                l_user_stack.push(CAR(CDR(CAR((init_var))))->Eval());
+        void **do_evaled = l_user_stack.sdata + l_user_stack.son;
+        // push all of the init forms, so we can set the symbol
+        for (init_var = CAR(arg_list); init_var; init_var = CDR(init_var))
+            l_user_stack.push(CAR(CDR(CAR((init_var))))->Eval());
 
-      // now set all the symbols
-      for (init_var=CAR(arg_list); init_var; init_var=CDR(init_var), do_evaled++)
-      {
-                sym = (LSymbol *)CAR(CAR(init_var));
-                sym->SetValue((LObject *)*do_evaled);
-      }
+        // now set all the symbols
+        for (init_var = CAR(arg_list); init_var; init_var = CDR(init_var))
+        {
+            sym = (LSymbol *)CAR(CAR(init_var));
+            sym->SetValue((LObject *)*do_evaled);
+            do_evaled++;
+        }
 
-      i=0;       // set i to 1 when terminate conditions are meet
-      do
-      {
-                i = CAR(CAR(CDR(arg_list)))->Eval() != NULL;
-                if (!i)
-                {
-                  eval_block(CDR(CDR(arg_list)));
-                  for (init_var=CAR(arg_list); init_var; init_var=CDR(init_var))
+        for (int i = 0; !i; ) // set i to 1 when terminate conditions are met
+        {
+            i = CAR(CAR(CDR(arg_list)))->Eval() != NULL;
+            if (!i)
+            {
+                eval_block(CDR(CDR(arg_list)));
+                for (init_var = CAR(arg_list); init_var; init_var = CDR(init_var))
                     CAR(CDR(CDR(CAR(init_var))))->Eval();
-                }
-      } while (!i);
+            }
+        }
 
-      ret = CAR(CDR(CAR(CDR(arg_list))))->Eval();
+        ret = CAR(CDR(CAR(CDR(arg_list))))->Eval();
 
-      // restore old values for symbols
-      do_evaled=l_user_stack.sdata+ustack_start;
-      for (init_var=CAR(arg_list); init_var; init_var=CDR(init_var), do_evaled++)
-      {
-                sym = (LSymbol *)CAR(CAR(init_var));
-                sym->SetValue((LObject *)*do_evaled);
-      }
+        // restore old values for symbols
+        do_evaled = l_user_stack.sdata + ustack_start;
+        for (init_var = CAR(arg_list); init_var; init_var = CDR(init_var))
+        {
+            sym = (LSymbol *)CAR(CAR(init_var));
+            sym->SetValue((LObject *)*do_evaled);
+            do_evaled++;
+        }
 
-      l_user_stack.son=ustack_start;
-
-    } break;
+        l_user_stack.son = ustack_start;
+        break;
+    }
     case SYS_FUNC_GC:
-    {
-      collect_space(current_space);
-    } break;
+        collect_space(current_space);
+        break;
     case SYS_FUNC_SCHAR:
     {
-      char *s=lstring_value(CAR(arg_list)->Eval());
-      arg_list=CDR(arg_list);
-      long x=lnumber_value(CAR(arg_list)->Eval());
+        char *s = lstring_value(CAR(arg_list)->Eval());
+        arg_list = (LList *)CDR(arg_list);
+        int32_t x = lnumber_value(CAR(arg_list)->Eval());
 
-      if ((unsigned)x >= strlen(s))
-      { lbreak("SCHAR: index %d should be less than the length of the string\n", x); exit(0); }
-      else if (x<0)
-      { lbreak("SCHAR: index should not be negative\n"); exit(0); }
-      return LChar::Create(s[x]);
-    } break;
+        if (x < 0 || x >= (int32_t)strlen(s))
+        {
+            lbreak("SCHAR: index %d out of bounds\n", x);
+            exit(0);
+        }
+        ret = LChar::Create(s[x]);
+        break;
+    }
     case SYS_FUNC_SYMBOLP:
-    { if (item_type(CAR(arg_list)->Eval())==L_SYMBOL) return true_symbol;
-      else return NULL; } break;
+        if (item_type(CAR(arg_list)->Eval()) == L_SYMBOL)
+            ret = true_symbol;
+        break;
     case SYS_FUNC_NUM2STR:
     {
-      char str[20];
-      sprintf(str, "%ld", (long int)lnumber_value(CAR(arg_list)->Eval()));
-      ret=LString::Create(str);
-    } break;
+        char str[20];
+        sprintf(str, "%ld", (long int)lnumber_value(CAR(arg_list)->Eval()));
+        ret = LString::Create(str);
+        break;
+    }
     case SYS_FUNC_NCONC:
     {
-      void *l1=CAR(arg_list)->Eval(); arg_list=CDR(arg_list);
-      PtrRef r1(l1);
-      void *first=l1, *next;
-      PtrRef r2(first);
+        LObject *l1 = CAR(arg_list)->Eval();
+        PtrRef r1(l1);
+        arg_list = (LList *)CDR(arg_list);
+        LObject *first = l1, *next;
+        PtrRef r2(first);
 
-      if (!l1)
-      {
-                l1=first=CAR(arg_list)->Eval();
-                arg_list=CDR(arg_list);
-      }
+        if (!l1)
+        {
+            l1 = first = CAR(arg_list)->Eval();
+            arg_list = (LList *)CDR(arg_list);
+        }
 
-      if (item_type(l1)!=L_CONS_CELL)
-      { ((LObject *)l1)->Print(); lbreak("first arg should be a list\n"); }
-      do
-      {
-                next=l1;
-                while (next) { l1=next; next=lcdr(next); }
-                ((LList *)l1)->cdr = CAR(arg_list)->Eval();
-                arg_list=CDR(arg_list);
-      } while (arg_list);
-      ret=first;
-    } break;
+        if (item_type(l1) != L_CONS_CELL)
+        {
+            l1->Print();
+            lbreak("first arg should be a list\n");
+        }
+
+        do
+        {
+            next = l1;
+            while (next)
+            {
+                l1 = next;
+                next = lcdr(next);
+            }
+            LObject *tmp = CAR(arg_list)->Eval();
+            ((LList *)l1)->cdr = tmp;
+            arg_list = (LList *)CDR(arg_list);
+        } while (arg_list);
+        ret = first;
+        break;
+    }
     case SYS_FUNC_FIRST:
-    { ret=CAR(CAR(arg_list)->Eval()); } break;
+        ret = CAR(CAR(arg_list)->Eval());
+        break;
     case SYS_FUNC_SECOND:
-    { ret=CAR(CDR(CAR(arg_list)->Eval())); } break;
+        ret = CAR(CDR(CAR(arg_list)->Eval()));
+        break;
     case SYS_FUNC_THIRD:
-    { ret=CAR(CDR(CDR(CAR(arg_list)->Eval()))); } break;
+        ret = CAR(CDR(CDR(CAR(arg_list)->Eval())));
+        break;
     case SYS_FUNC_FOURTH:
-    { ret=CAR(CDR(CDR(CDR(CAR(arg_list)->Eval())))); } break;
+        ret = CAR(CDR(CDR(CDR(CAR(arg_list)->Eval()))));
+        break;
     case SYS_FUNC_FIFTH:
-    { ret=CAR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval()))))); } break;
+        ret = CAR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval())))));
+        break;
     case SYS_FUNC_SIXTH:
-    { ret=CAR(CDR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval())))))); } break;
+        ret = CAR(CDR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval()))))));
+        break;
     case SYS_FUNC_SEVENTH:
-    { ret=CAR(CDR(CDR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval()))))))); } break;
+        ret = CAR(CDR(CDR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval())))))));
+        break;
     case SYS_FUNC_EIGHTH:
-    { ret=CAR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval())))))))); } break;
+        ret = CAR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval()))))))));
+        break;
     case SYS_FUNC_NINTH:
-    { ret=CAR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval()))))))))); } break;
+        ret = CAR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval())))))))));
+        break;
     case SYS_FUNC_TENTH:
-    { ret=CAR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval())))))))))); } break;
+        ret = CAR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CDR(CAR(arg_list)->Eval()))))))))));
+        break;
     case SYS_FUNC_SUBSTR:
     {
-      long x1=lnumber_value(CAR(arg_list)->Eval()); arg_list=CDR(arg_list);
-      long x2=lnumber_value(CAR(arg_list)->Eval()); arg_list=CDR(arg_list);
-      void *st=CAR(arg_list)->Eval();
-      PtrRef r1(st);
+        int32_t x1 = lnumber_value(CAR(arg_list)->Eval());
+        int32_t x2 = lnumber_value(CAR(CDR(arg_list))->Eval());
+        LObject *st = CAR(CAR(CDR(arg_list)))->Eval();
+        PtrRef r1(st);
 
-      if (x1 < 0 || x1 > x2 || (unsigned)x2 >= strlen(lstring_value(st)))
-        lbreak("substr : bad x1 or x2 value");
+        if (x1 < 0 || x1 > x2 || x2 >= (int32_t)strlen(lstring_value(st)))
+            lbreak("substr: bad x1 or x2 value");
 
-      LString *s=LString::Create(x2-x1+2);
-      if (x2-x1)
-        memcpy(lstring_value(s), lstring_value(st)+x1, x2-x1+1);
+        LString *s = LString::Create(x2 - x1 + 2);
+        if (x2 - x1)
+            memcpy(lstring_value(s), lstring_value(st) + x1, x2 - x1 + 1);
 
-      *(lstring_value(s)+(x2-x1+1))=0;
-      ret=s;
-    } break;
-    case 99 :
+        lstring_value(s)[x2 - x1 + 1] = 0;
+        ret = s;
+        break;
+    }
+    case 99:
     {
-      void *r=NULL, *rstart=NULL;
-      PtrRef r1(r), r2(rstart);
-      while (arg_list)
-      {
-        void *q = CAR(arg_list)->Eval();
-        if (!rstart) rstart=q;
-        while (r && CDR(r)) r=CDR(r);
-        CDR(r) = (LObject *)q;
-        arg_list=CDR(arg_list);
-      }
-      return rstart;
-    } break;
+        LObject *r = NULL, *rstart = NULL;
+        PtrRef r1(r), r2(rstart);
+        while (arg_list)
+        {
+            LObject *q = CAR(arg_list)->Eval();
+            if (!rstart)
+                rstart = q;
+            while (r && CDR(r))
+                r = CDR(r);
+            CDR(r) = q;
+            arg_list = (LList *)CDR(arg_list);
+        }
+        ret = rstart;
+        break;
+    }
+    default:
+        dprintf("Undefined system function number %d\n", fun_number);
+        break;
+    }
 
-    default :
-    { dprintf("Undefined system function number %d\n", ((LSysFunction *)fun)->fun_number); }
-  }
-  return ret;
+    return ret;
 }
 
 void tmp_space()
@@ -2982,9 +3106,9 @@ void *eval_user_fun(LSymbol *sym, void *arg_list)
   return ret;
 }
 
+/* PtrRef check: OK */
 LObject *LObject::Eval()
 {
-    LObject *ret = NULL;
     PtrRef ref1(this);
 
     int tstart = trace_level;
@@ -3001,6 +3125,8 @@ LObject *LObject::Eval()
         }
         trace_level++;
     }
+
+    LObject *ret = NULL;
 
     if (this)
     {

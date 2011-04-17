@@ -142,6 +142,10 @@ struct LSymbol : LObject
 
 struct LSysFunction : LObject
 {
+    /* Methods */
+    LObject *EvalFunction(LList *arg_list);
+
+    /* Members */
     short min_args, max_args;
     short fun_number;
 };
