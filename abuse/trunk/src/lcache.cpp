@@ -8,136 +8,157 @@
  *  Jonathan Clark.
  */
 
+/*
+ * This file contains serialisation methods for the cache system. It
+ * is NOT used to load and save games.
+ * XXX: this code has not been tested after the LObject refactor.
+ */
+
 #include "config.h"
 
 #include "lisp.h"
 #include "specs.h"
 #include "bus_type.h"
 
-long block_size(Cell *level)  // return size needed to recreate this block
+size_t block_size(LObject *level)  // return size needed to recreate this block
 {
-  int ret;
-  if (!level) ret=0;    // NULL pointers don't need to be stored
-  else
-  {
-    int type=item_type(level);
-    if (type==L_CONS_CELL)
+    if (!level) // NULL pointers don't need to be stored
+        return 0;
+
+    switch (item_type(level))
     {
-    long t=0;
-    void *b=level;
-    for (; b && item_type(b)==L_CONS_CELL; b=CDR(b))
-    {
-      t+=sizeof(LList);
+    case L_CONS_CELL:
+        {
+            size_t ret = sizeof(uint8_t) + sizeof(uint32_t);
+            void *b = level;
+            for (; b && item_type(b) == L_CONS_CELL; b = CDR(b))
+                ;
+            if (b)
+                ret += block_size((LObject *)b);
+            for (b = level; b && item_type(b) == L_CONS_CELL; b = CDR(b))
+                ret += block_size(CAR(b));
+            return ret;
+        }
+    case L_CHARACTER:
+        return sizeof(uint8_t) + sizeof(uint16_t);
+    case L_STRING:
+        return sizeof(uint8_t) + sizeof(uint32_t)
+                               + strlen(lstring_value(level)) + 1;
+    case L_NUMBER:
+        return sizeof(uint8_t) + sizeof(uint32_t);
+    case L_SYMBOL:
+        return sizeof(uint8_t) + sizeof(uintptr_t);
     }
-    if (b) t+=block_size(b);
-    for (b=level; b && item_type(b)==L_CONS_CELL; b=CDR(b))
-      t+=block_size(CAR(b));
-    ret=t;
-    } else if (type== L_NUMBER)
-    { ret=sizeof(LNumber); }
-    else if (type==L_CHARACTER)
-    { ret=sizeof(LChar); }
-    else if (type==L_STRING)
-    {
-      ret=sizeof(LString)+strlen(lstring_value(level))+1;
-      if (ret<8)
-        ret=8;
-    }
-    else if (type==L_POINTER)
-    { ret=sizeof(LPointer); }
-    else ret=0;
-  }
-#ifdef WORD_ALIGN
-  return (ret+3)&(~3);
-#else
-  return ret;
-#endif
+
+    /* Do not serialise other types */
+    return 0;
 }
 
-
-
-void write_level(bFILE *fp, Cell *level)
+void write_level(bFILE *fp, LObject *level)
 {
-  int type=item_type(level);
-  fp->write_uint8(type);
+    int type = item_type(level);
+    fp->write_uint8(type);
 
+    switch (type)
+    {
+    case L_CONS_CELL:
+        if (!level)
+            fp->write_uint32(0);
+        else
+        {
+            size_t count = 0;
+            void *b = level;
+            for (; b && item_type(b) == L_CONS_CELL; b = CDR(b))
+                count++;
+            /* If last element is not the empty list, it's a dotted list
+             * and we need to save the last object. Write a negative size
+             * to reflect that. */
+            fp->write_uint32(b ? -(int32_t)count : count);
+            if (b)
+                write_level(fp, (LObject *)b);
 
-  switch (type)
-  {
-    case L_NUMBER :
-    { fp->write_uint32(lnumber_value(level)); } break;
-    case L_CHARACTER :
-    { fp->write_uint16(lcharacter_value(level)); } break;
-    case L_STRING :
-    { long l=strlen(lstring_value(level))+1;
-      fp->write_uint32(l);
-      fp->write(lstring_value(level),l);
-    } break;
-    case L_SYMBOL :
-    { fp->write_uint32((long)level); } break;
-    case L_CONS_CELL :
-    {
-      if (!level) fp->write_uint32(0);
-      else
-      {
-    long t=0;
-    void *b=level;
-    for (; b && item_type(b)==L_CONS_CELL; b=CDR(b)) t++;
-    if (b)
-    {
-      fp->write_uint32(-t);      // negative number means dotted list
-      write_level(fp,b);       // save end of dotted list
+            for (b = level; b && item_type(b) == L_CONS_CELL; b = CDR(b))
+                write_level(fp, CAR(b));
+        }
+        break;
+    case L_CHARACTER:
+        fp->write_uint16(lcharacter_value(level));
+        break;
+    case L_STRING:
+        {
+            size_t count = strlen(lstring_value(level)) + 1;
+            fp->write_uint32(count);
+            fp->write(lstring_value(level), count);
+        }
+        break;
+    case L_NUMBER:
+        fp->write_uint32(lnumber_value(level));
+        break;
+    case L_SYMBOL:
+        {
+            uintptr_t p = (uintptr_t)level;
+            for (size_t i = 0; i < sizeof(uintptr_t); i++)
+            {
+                fp->write_uint8((uint8_t)p);
+                p >>= 8;
+            }
+        }
     }
-    else fp->write_uint32(t);
-
-    for (b=level; b && item_type(b)==L_CONS_CELL; b=CDR(b))
-      write_level(fp,CAR(b));
-      }
-    } break;
-  }
 }
 
-Cell *load_block(bFILE *fp)
+LObject *load_block(bFILE *fp)
 {
-  int type=fp->read_uint8();
-  switch (type)
-  {
-    case L_NUMBER :
-    { return LNumber::Create(fp->read_uint32()); } break;
-    case L_CHARACTER :
-    { return LChar::Create(fp->read_uint16()); } break;
-    case L_STRING :
-    { long l=fp->read_uint32();
-      LString *s = LString::Create(l);
-      fp->read(lstring_value(s),l);
-      return s;
-    } break;
-    case L_SYMBOL :
-    { return (void *)fp->read_uint32(); } break;
-    case L_CONS_CELL :
-    {
-      long t=fp->read_uint32();
-      if (!t) return NULL;
-      else
-      {
-    long x=abs(t);
-    LList *last=NULL,*first=NULL;
-    while (x)
-    {
-      LList *c = LList::Create();
-      if (first)
-        last->cdr=c;
-      else first=c;
-      last=c;
-      x--;
-    }
-    last->cdr = (t < 0) ? (LObject *)load_block(fp) : NULL;
+    int type = fp->read_uint8();
 
-    for (last=first,x=0; x<abs(t); x++,last=(LList *)last->cdr)
-      last->car = (LObject *)load_block(fp);
-    return first;
-      }
+    switch (type)
+    {
+    case L_CONS_CELL:
+        {
+            int32_t t = (int32_t)fp->read_uint32();
+
+            if (!t)
+                return NULL;
+
+            LList *last = NULL, *first = NULL;
+            for (size_t count = abs(t); count--; )
+            {
+                LList *c = LList::Create();
+                if (first)
+                    last->cdr = c;
+                else
+                    first = c;
+                last = c;
+            }
+            last->cdr = (t < 0) ? (LObject *)load_block(fp) : NULL;
+
+            last = first;
+            for (size_t count = abs(t); count--; last = (LList *)last->cdr)
+                last->car = load_block(fp);
+            return first;
+        }
+    case L_CHARACTER:
+        return LChar::Create(fp->read_uint16());
+    case L_STRING:
+        {
+            size_t count = fp->read_uint32();
+            LString *s = LString::Create(count);
+            fp->read(s->GetString(), count);
+            return s;
+        }
+    case L_NUMBER:
+        return LNumber::Create(fp->read_uint32());
+    case L_SYMBOL:
+        {
+            uintptr_t ret = 0, mul = 1;
+            for (size_t i = 0; i < sizeof(uintptr_t); i++)
+            {
+                ret |= mul * fp->read_uint8();
+                mul *= 8;
+            }
+            return (LObject *)ret;
+        }
     }
-  }
-  return NULL;
+
+    return NULL;
 }
+
