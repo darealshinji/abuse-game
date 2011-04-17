@@ -133,7 +133,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   Cell *def=lcar(lcdr(lcdr(args)));
   args=CAR(CDR(args));
 
-  int options=list_length(args);
+  int options = ((LispList *)args)->GetLength();
   int mh=(font->height()+1)*options+10,maxw=0;
 
   Cell *c=(Cell *)args;

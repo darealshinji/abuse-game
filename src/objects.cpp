@@ -390,8 +390,8 @@ void game_object::draw_above(view *v)
     current_level->foreground_intersect(x,y1,tmp,draw_to);
     the_game->game_to_mouse(x1,draw_to,v,i,sy1);     // calculate sy1
 
-    sy1=max(v->cy1,sy1);
-    sy2=min(v->cy2,sy2);
+    sy1 = Max(v->cy1, sy1);
+    sy2 = Min(v->cy2, sy2);
     trans_image *p=picture();
 
     for (i=sy1;i<=sy2;i++)
@@ -516,11 +516,11 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
     ((LispList *)py)->car=LispNumber::Create(push_yvel);
 
 
-    ((LispList *)am)->cdr=frm;
-    ((LispList *)frm)->cdr=hx;
-    ((LispList *)hx)->cdr=hy;
-    ((LispList *)hy)->cdr=px;
-    ((LispList *)px)->cdr=py;
+    ((LispList *)am)->cdr = (LispObject *)frm;
+    ((LispList *)frm)->cdr = (LispObject *)hx;
+    ((LispList *)hx)->cdr = (LispObject *)hy;
+    ((LispList *)hy)->cdr = (LispObject *)px;
+    ((LispList *)px)->cdr = (LispObject *)py;
 
     time_marker *prof1=NULL;
     if (profiling())
@@ -1233,8 +1233,8 @@ int game_object::move(int cx, int cy, int button)
     ((LispList *)lb)->car=LispNumber::Create(button);
 
 
-    ((LispList *)lcx)->cdr=lcy;
-    ((LispList *)lcy)->cdr=lb;
+    ((LispList *)lcx)->cdr = (LispObject *)lcy;
+    ((LispList *)lcy)->cdr = (LispObject *)lb;
 
     void *m=mark_heap(TMP_SPACE);
 

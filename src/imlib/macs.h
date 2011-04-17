@@ -24,20 +24,9 @@
 #define CHECK(x) CONDITION(x,"Check stop");
 #endif
 
-
-#ifndef min
-#define min(x,y) (x<y ? x:y)
-#endif
-#ifndef max
-#define max(x,y) (x>y ? x:y)
-#endif
-
-//#define uchar  unsigned char
-//#define schar  signed char
-//#define ushort unsigned short
-//typedef unsigned short int ushort;
-//#define sshort signed short
-//#define ulong  unsigned long
-//typedef unsigned long int ulong;
+static inline int Min(int a, int b) { return a < b ? a : b; }
+static inline int Max(int a, int b) { return a > b ? a : b; }
+static inline float Min(float a, float b) { return a < b ? a : b; }
+static inline float Max(float a, float b) { return a > b ? a : b; }
 
 #endif

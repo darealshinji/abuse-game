@@ -130,12 +130,10 @@ Cell *load_block(bFILE *fp)
       last=c;
       x--;
     }
-    if (t<0)    
-      last->cdr=load_block(fp);
-    else last->cdr=NULL;
-    
+    last->cdr = (t < 0) ? (LispObject *)load_block(fp) : NULL;
+
     for (last=first,x=0;x<abs(t);x++,last=(LispList *)last->cdr)
-      last->car=load_block(fp);    
+      last->car = (LispObject *)load_block(fp);
     return first;
       }
     }

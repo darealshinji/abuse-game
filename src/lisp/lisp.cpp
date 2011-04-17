@@ -894,35 +894,35 @@ void *assoc(void *item, void *list)
   return NULL;
 }
 
-long list_length(void *i)
+size_t LispList::GetLength()
 {
-  long x;
+    size_t ret = 0;
 
 #ifdef TYPE_CHECKING
-  if (i && item_type(i)!=(ltype)L_CONS_CELL)
-  {
-    lprint(i);
-    lbreak(" is not a sequence\n");
-    exit(0);
-  }
+    if (this && item_type(this) != (ltype)L_CONS_CELL)
+    {
+        lprint(this);
+        lbreak(" is not a sequence\n");
+        exit(0);
+    }
 #endif
 
-  for(x = 0; i; i = CDR(i))
-    x++;
-  return x;
+    for (LispObject *p = this; p; p = CDR(p))
+        ret++;
+    return ret;
 }
 
-    
-
 void *pairlis(void *list1, void *list2, void *list3)
-{    
+{
   if (item_type(list1)!=(ltype)L_CONS_CELL || item_type(list1)!=item_type(list2))
     return NULL;
 
   void *ret=NULL;
-  long l1=list_length(list1), l2=list_length(list2);
+  size_t l1 = ((LispList *)list1)->GetLength();
+  size_t l2 = ((LispList *)list2)->GetLength();
+
   if (l1!=l2)
-  {    
+  {
     lprint(list1);
     lprint(list2);
     lbreak("... are not the same length (pairlis)\n");
@@ -937,20 +937,20 @@ void *pairlis(void *list1, void *list2, void *list3)
       cur=new_cons_cell();
       if (!first) first=cur;
       if (last)
-        ((LispList *)last)->cdr=cur;
+        ((LispList *)last)->cdr=(LispObject *)cur;
       last=cur;
-    
-      LispList *cell=new_cons_cell();    
+
+      LispList *cell=new_cons_cell();
       tmp=lcar(list1);
-      ((LispList *)cell)->car=tmp;
+      ((LispList *)cell)->car = (LispObject *)tmp;
       tmp=lcar(list2);
-      ((LispList *)cell)->cdr=tmp;
-      ((LispList *)cur)->car=cell;
+      ((LispList *)cell)->cdr = (LispObject *)tmp;
+      ((LispList *)cur)->car = (LispObject *)cell;
 
       list1=((LispList *)list1)->cdr;
       list2=((LispList *)list2)->cdr;
     }
-    ((LispList *)cur)->cdr=list3;
+    ((LispList *)cur)->cdr = (LispObject *)list3;
     ret=first;
   } else ret=NULL;
   return ret;
@@ -1106,8 +1106,8 @@ void push_onto_list(void *object, void *&list)
 {
   p_ref r1(object), r2(list);
   LispList *c=new_cons_cell();
-  c->car=object;
-  c->cdr=list;
+  c->car = (LispObject *)object;
+  c->cdr = (LispObject *)list;
   list=c;
 }
 
@@ -1130,9 +1130,9 @@ void *compile(char const *&s)
     ((LispList *)cs)->car=quote_symbol;
     c2=new_cons_cell();
     tmp=compile(s);
-    ((LispList *)c2)->car=tmp;
+    ((LispList *)c2)->car = (LispObject *)tmp;
     ((LispList *)c2)->cdr=NULL;
-    ((LispList *)cs)->cdr=c2;
+    ((LispList *)cs)->cdr = (LispObject *)c2;
     ret=cs;
   }
   else if (n[0]=='`')                    // short hand for backquote function
@@ -1143,9 +1143,9 @@ void *compile(char const *&s)
     ((LispList *)cs)->car=backquote_symbol;
     c2=new_cons_cell();
     tmp=compile(s);
-    ((LispList *)c2)->car=tmp;
+    ((LispList *)c2)->car = (LispObject *)tmp;
     ((LispList *)c2)->cdr=NULL;
-    ((LispList *)cs)->cdr=c2;
+    ((LispList *)cs)->cdr = (LispObject *)c2;
     ret=cs;
   }  else if (n[0]==',')              // short hand for comma function
   {
@@ -1155,9 +1155,9 @@ void *compile(char const *&s)
     ((LispList *)cs)->car=comma_symbol;
     c2=new_cons_cell();
     tmp=compile(s);
-    ((LispList *)c2)->car=tmp;
+    ((LispList *)c2)->car = (LispObject *)tmp;
     ((LispList *)c2)->cdr=NULL;
-    ((LispList *)cs)->cdr=c2;
+    ((LispList *)cs)->cdr = (LispObject *)c2;
     ret=cs;
   }
   else if (n[0]=='(')                     // make a list of everything in ()
@@ -1186,7 +1186,7 @@ void *compile(char const *&s)
                     void *tmp;
                     read_ltoken(s, n);              // skip the '.'
                     tmp=compile(s);
-                    ((LispList *)last)->cdr=tmp;          // link the last cdr to
+                    ((LispList *)last)->cdr = (LispObject *)tmp;          // link the last cdr to
                     last=NULL;
                   }
                 } else if (!last && first)
@@ -1198,9 +1198,9 @@ void *compile(char const *&s)
                   p_ref r1(cur);
                   if (!first) first=cur;
                   tmp=compile(s);    
-                  ((LispList *)cur)->car=tmp;
+                  ((LispList *)cur)->car = (LispObject *)tmp;
                   if (last)
-                    ((LispList *)last)->cdr=cur;
+                    ((LispList *)last)->cdr = (LispObject *)cur;
                   last=cur;
                 }
       }
@@ -1249,11 +1249,11 @@ void *compile(char const *&s)
       void *cs=new_cons_cell(), *c2=NULL, *tmp;
       p_ref r4(cs), r5(c2);
       tmp = LispSymbol::FindOrCreate("function");
-      ((LispList *)cs)->car=tmp;
+      ((LispList *)cs)->car = (LispObject *)tmp;
       c2=new_cons_cell();
       tmp=compile(s);
-      ((LispList *)c2)->car=tmp;
-      ((LispList *)cs)->cdr=c2;
+      ((LispList *)c2)->car = (LispObject *)tmp;
+      ((LispList *)cs)->cdr = (LispObject *)c2;
       ret=cs;
     }
     else
@@ -1514,13 +1514,13 @@ void *eval_function(LispSymbol *sym, void *arg_list)
       {
         if (first) {
           tmp=new_cons_cell();
-          ((LispList *)cur)->cdr=tmp;
+          ((LispList *)cur)->cdr = (LispObject *)tmp;
           cur=tmp;
         } else
           cur=first=new_cons_cell();
     
         void *val=eval(CAR(arg_list));
-        ((LispList *)cur)->car=val;
+        ((LispList *)cur)->car = (LispObject *)val;
         arg_list=lcdr(arg_list);
       }
       if(t == L_C_FUNCTION)
@@ -1581,7 +1581,7 @@ void *mapcar(void *arg_list)
       exit(0);
     }
   }
-  int num_args=list_length(CDR(arg_list)), i, stop=0;
+  int i, stop = 0, num_args = ((LispList *)CDR(arg_list))->GetLength();
   if (!num_args) return 0;
 
   void **arg_on=(void **)malloc(sizeof(void *)*num_args);
@@ -1616,14 +1616,14 @@ void *mapcar(void *arg_list)
         first=na_list=new_cons_cell();
       else
       {
-        na_list->cdr=new_cons_cell();
+        na_list->cdr = (LispObject *)new_cons_cell();
                 na_list=(LispList *)CDR(na_list);
       }
 
 
       if (arg_on[i])
       {
-                na_list->car=CAR(arg_on[i]);
+                na_list->car = (LispObject *)CAR(arg_on[i]);
                 arg_on[i]=(LispList *)CDR(arg_on[i]);
       }
       else stop=1;
@@ -1631,7 +1631,7 @@ void *mapcar(void *arg_list)
     if (!stop)
     {
       LispList *c=new_cons_cell();
-      c->car=eval_function((LispSymbol *)sym, first);
+      c->car = (LispObject *)eval_function((LispSymbol *)sym, first);
       if (return_list)
         last_return->cdr=c;
       else
@@ -1656,7 +1656,7 @@ void *concatenate(void *prog_list)
   long len=0;                                // determin the length of the resulting string
   if (rtype==string_symbol)
   {
-    int elements=list_length(el_list);       // see how many things we need to concat
+    int elements = ((LispList *)el_list)->GetLength(); // see how many things we need to concat
     if (!elements) ret = LispString::Create("");
     else
     {
@@ -1757,25 +1757,25 @@ void *backquote_eval(void *args)
     if (CAR(args)==comma_symbol)               // dot list with a comma?
     {
       tmp=eval(CAR(CDR(args)));
-      ((LispList *)last)->cdr=tmp;
+      ((LispList *)last)->cdr = (LispObject *)tmp;
       args=NULL;
     }
     else
     {
       cur=new_cons_cell();
       if (first)
-        ((LispList *)last)->cdr=cur;
+        ((LispList *)last)->cdr = (LispObject *)cur;
       else
             first=cur;
       last=cur;
           tmp=backquote_eval(CAR(args));
-          ((LispList *)cur)->car=tmp;
+          ((LispList *)cur)->car = (LispObject *)tmp;
        args=CDR(args);
     }
       } else
       {
     tmp=backquote_eval(args);
-    ((LispList *)last)->cdr=tmp;
+    ((LispList *)last)->cdr = (LispObject *)tmp;
     args=NULL;
       }
 
@@ -1812,7 +1812,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       switch (item_type(v))
       {
         case L_STRING : ret = LispNumber::Create(strlen(lstring_value(v))); break;
-        case L_CONS_CELL : ret = LispNumber::Create(list_length(v)); break;
+        case L_CONS_CELL : ret = LispNumber::Create(((LispList *)v)->GetLength()); break;
         default :
         { lprint(v);
           lbreak("length : type not supported\n");
@@ -1827,9 +1827,9 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       {
     cur=new_cons_cell();
     void *val=eval(CAR(arg_list));
-    ((LispList *) cur)->car=val;
+    ((LispList *) cur)->car = (LispObject *)val;
     if (last)
-      ((LispList *)last)->cdr=cur;
+      ((LispList *)last)->cdr = (LispObject *)cur;
     else first=cur;
     last=cur;
     arg_list=(LispList *)CDR(arg_list);
@@ -1840,9 +1840,9 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
     { void *c=new_cons_cell();
       p_ref r1(c);
       void *val=eval(CAR(arg_list));
-      ((LispList *)c)->car=val;
+      ((LispList *)c)->car = (LispObject *)val;
       val=eval(CAR(CDR(arg_list)));
-      ((LispList *)c)->cdr=val;
+      ((LispList *)c)->cdr = (LispObject *)val;
       ret=c;
     } break;
     case SYS_FUNC_QUOTE:
@@ -1983,13 +1983,13 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
             car=eval(CAR(CDR(i)));
             if (!car || item_type(car)!=L_CONS_CELL)
             { lprint(car); lbreak("setq car : evaled object is not a cons cell\n"); exit(0); }
-            ((LispList *)car)->car=set_to;
+            ((LispList *)car)->car = (LispObject *)set_to;
           } else if (car==cdr_symbol)
           {
             car=eval(CAR(CDR(i)));
             if (!car || item_type(car)!=L_CONS_CELL)
             { lprint(car); lbreak("setq cdr : evaled object is not a cons cell\n"); exit(0); }
-            ((LispList *)car)->cdr=set_to;
+            ((LispList *)car)->cdr = (LispObject *)set_to;
           } else if (car==aref_symbol)
           {
 #endif
@@ -2050,8 +2050,8 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       void *i1=eval(CAR(arg_list)), *i2=eval(CAR(CDR(arg_list)));
       p_ref r1(i1);
       LispList *cs=new_cons_cell();
-      cs->car=i1;
-      cs->cdr=i2;
+      cs->car = (LispObject *)i1;
+      cs->cdr = (LispObject *)i2;
       ret=cs;
     } break;
 
@@ -2785,7 +2785,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
       {
                 next=l1;
                 while (next) { l1=next; next=lcdr(next); }
-                ((LispList *)l1)->cdr=eval(CAR(arg_list));    
+                ((LispList *)l1)->cdr = (LispObject *)eval(CAR(arg_list));
                 arg_list=CDR(arg_list);
       } while (arg_list);
       ret=first;
@@ -2836,7 +2836,7 @@ void *eval_sys_function(LispSysFunction *fun, void *arg_list)
         void *q=eval(CAR(arg_list));
         if (!rstart) rstart=q;
         while (r && CDR(r)) r=CDR(r);
-        CDR(r)=q;    
+        CDR(r) = (LispObject *)q;
         arg_list=CDR(arg_list);
       }
       return rstart;

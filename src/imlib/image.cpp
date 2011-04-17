@@ -536,7 +536,7 @@ void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_
     xx=start;
     while (i<=x2)
     {
-      xl=min(w-xx, x2-i+1);
+      xl=Min(w-xx, x2-i+1);
 
       memcpy(&pg1[i], &pg2[xx], xl);
       xx=0;
@@ -1022,9 +1022,9 @@ void image_descriptor::add_dirty(int x1, int y1, int x2, int y2)
       else */
         {
           if (x1<p->dx1)
-            add_dirty(x1, max(y1, p->dy1), p->dx1-1, min(y2, p->dy2));
+            add_dirty(x1, Max(y1, p->dy1), p->dx1-1, Min(y2, p->dy2));
           if (x2>p->dx2)
-            add_dirty(p->dx2+1, max(y1, p->dy1), x2, min(y2, p->dy2));
+            add_dirty(p->dx2+1, Max(y1, p->dy1), x2, Min(y2, p->dy2));
           if (y1<p->dy1)
             add_dirty(x1, y1, x2, p->dy1-1);
           if (y2>p->dy2)
@@ -1198,7 +1198,7 @@ void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, i
   if (special)
   {
     special->get_clip(cx1, cy1, cx2, cy2);
-    x1=max(x1, cx1); y1=max(cy1, y1); x2=min(x2, cx2); y2=min(y2, cy2);
+    x1=Max(x1, cx1); y1=Max(cy1, y1); x2=Min(x2, cx2); y2=Min(y2, cy2);
   }
   int16_t xsrc, ysrc, xdst, ydst, xtot=x2-x1-abs(xd)+1, ytot, xt;
   uint8_t *src, *dst;

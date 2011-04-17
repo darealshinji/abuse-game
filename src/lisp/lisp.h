@@ -10,6 +10,7 @@
 #ifndef __LISP_HPP_
 #define __LISP_HPP_
 
+#include <cstdlib>
 #include <stdint.h>
 
 #ifdef L_PROFILE
@@ -55,7 +56,9 @@ struct LispObjectVar : LispObject
 
 struct LispList : LispObject
 {
-    void *cdr, *car;
+    size_t GetLength();
+
+    LispObject *cdr, *car;
 };
 
 struct LispNumber : LispObject
@@ -149,8 +152,8 @@ struct LispFixedPoint : LispObject
     int32_t x;
 };
 
-static inline void *&CAR(void *x) { return ((LispList *)x)->car; }
-static inline void *&CDR(void *x) { return ((LispList *)x)->cdr; }
+static inline LispObject *&CAR(void *x) { return ((LispList *)x)->car; }
+static inline LispObject *&CDR(void *x) { return ((LispList *)x)->cdr; }
 static inline ltype item_type(void *x) { if (x) return *(ltype *)x; return L_CONS_CELL; }
 
 void perm_space();
@@ -165,7 +168,6 @@ void *lcdr(void *c);
 void *lcar(void *c);
 void *lisp_eq(void *n1, void *n2);
 void *lisp_equal(void *n1, void *n2);
-long list_length(void *i);
 void lprint(void *i);
 void *eval(void *prog);
 void *eval_block(void *list);
