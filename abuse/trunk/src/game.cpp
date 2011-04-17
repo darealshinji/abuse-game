@@ -2312,7 +2312,7 @@ void check_for_lisp(int argc, char **argv)
                     void *prog = compile(s);
                     l_user_stack.push(prog);
                     while(*s==' ' || *s=='\t' || *s=='\r' || *s=='\n') s++;
-                    lprint(eval(prog));
+                    ((LObject *)eval(prog))->Print();
                     l_user_stack.pop(1);
                 }
                 free(l);

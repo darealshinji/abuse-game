@@ -116,7 +116,7 @@ char *men_str(void *arg)
     { return lstring_value(CAR(arg)); } break;
     default :
     {
-      lprint(arg);
+      ((LObject *)arg)->Print();
       printf(" is not a valid menu option\n");
       exit(0);
     }

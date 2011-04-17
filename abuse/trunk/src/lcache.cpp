@@ -104,7 +104,7 @@ Cell *load_block(bFILE *fp)
     case L_NUMBER :
     { return LNumber::Create(fp->read_uint32()); } break;
     case L_CHARACTER :
-    { return new_lisp_character(fp->read_uint16()); } break;
+    { return LChar::Create(fp->read_uint16()); } break;
     case L_STRING :
     { long l=fp->read_uint32();
       LString *s = LString::Create(l);

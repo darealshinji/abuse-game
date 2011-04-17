@@ -87,7 +87,7 @@ static LObject *CollectObject(LObject *x);
 
 static LArray *CollectArray(LArray *x)
 {
-    size_t s = x->size;
+    size_t s = x->len;
     LArray *a = LArray::Create(s, NULL);
     LObject **src = x->GetData();
     LObject **dst = a->GetData();
@@ -109,7 +109,7 @@ inline LList *CollectList(LList *x)
         LObject *old_x = x;
         x = (LList *)CDR(x);
         ((LRedirect *)old_x)->type = L_COLLECTED_OBJECT;
-        ((LRedirect *)old_x)->new_reference = p;
+        ((LRedirect *)old_x)->ref = p;
 
         p->car = CollectObject(old_car);
         p->cdr = CollectObject(old_cdr);
@@ -162,7 +162,7 @@ static LObject *CollectObject(LObject *x)
         ret = LString::Create(lstring_value(x));
         break;
       case L_CHARACTER:
-        ret = new_lisp_character(lcharacter_value(x));
+        ret = LChar::Create(lcharacter_value(x));
         break;
       case L_C_FUNCTION:
         ret = new_lisp_c_function(((LSysFunction *)x)->min_args,
@@ -180,22 +180,22 @@ static LObject *CollectObject(LObject *x)
                                      ((LSysFunction *)x)->fun_number);
         break;
       case L_POINTER:
-        ret = new_lisp_pointer(lpointer_value(x));
+        ret = LPointer::Create(lpointer_value(x));
         break;
       case L_1D_ARRAY:
         ret = CollectArray((LArray *)x);
         break;
       case L_FIXED_POINT:
-        ret = new_lisp_fixed_point(lfixed_point_value(x));
+        ret = LFixedPoint::Create(lfixed_point_value(x));
         break;
       case L_CONS_CELL:
         ret = CollectList((LList *)x);
         break;
       case L_OBJECT_VAR:
-        ret = new_lisp_object_var(((LObjectVar *)x)->number);
+        ret = LObjectVar::Create(((LObjectVar *)x)->index);
         break;
       case L_COLLECTED_OBJECT:
-        ret = ((LRedirect *)x)->new_reference;
+        ret = ((LRedirect *)x)->ref;
         break;
       default:
         dump_memory(x, 8, 196);
@@ -205,7 +205,7 @@ static LObject *CollectObject(LObject *x)
         break;
     }
     ((LRedirect *)x)->type = L_COLLECTED_OBJECT;
-    ((LRedirect *)x)->new_reference = ret;
+    ((LRedirect *)x)->ref = ret;
   }
   else if ((uint8_t *)x < collected_start || (uint8_t *)x >= collected_end)
   {
@@ -223,14 +223,14 @@ static LObject *CollectObject(LObject *x)
 
 static void collect_symbols(LSymbol *root)
 {
-  if (root)
-  {
+    if (!root)
+        return;
+
     root->value = CollectObject(root->value);
     root->function = CollectObject(root->function);
     root->name = (LString *)CollectObject(root->name);
     collect_symbols(root->left);
     collect_symbols(root->right);
-  }
 }
 
 static void collect_stacks()
@@ -275,7 +275,7 @@ void collect_space(int which_space) // should be tmp or permanent
 
 //dump_memory((char *)lsym_root->name, 128, 196);
 //dump_memory((char *)0xb6782025, 32, 48);
-  collect_symbols(lsym_root);
+  collect_symbols(LSymbol::root);
   collect_stacks();
 
   // for debuging clear it out

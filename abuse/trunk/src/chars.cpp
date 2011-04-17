@@ -84,7 +84,7 @@ int character_type::add_state(void *symbol) // returns index into seq to use
 {
   if (item_type(symbol)!=L_SYMBOL)
   {
-    lprint(symbol);
+    ((LObject *)symbol)->Print();
     lbreak("is not a symbol (in def_char)");
     exit(0);
   }
@@ -96,9 +96,9 @@ int character_type::add_state(void *symbol) // returns index into seq to use
   {
     if (item_type(val)!=L_NUMBER)
     {
-      lprint(symbol);
+      ((LObject *)symbol)->Print();
       dprintf("expecting symbol value to be a number, instead got : ");
-      lprint(val);
+      ((LObject *)val)->Print();
       lbreak("");
       exit(0);
     }
@@ -115,7 +115,7 @@ int character_type::add_state(void *symbol) // returns index into seq to use
 
   if (num<ts && seq[num])
   {
-    lprint(symbol);
+    ((LObject *)symbol)->Print();
     lbreak("symbol has been assigned value %d, but value already in use by state %s\n"
        "use a different symbol for this state\n",
        lstring_value(((LSymbol *)seq_syms[num])->GetName()));
@@ -204,12 +204,12 @@ void character_type::add_var(void *symbol, void *name)
   LSymbol *s=(LSymbol *)symbol;
   if (DEFINEDP(s->value) && (item_type(s->value)!=L_OBJECT_VAR))
   {
-    lprint(symbol);
+    ((LObject *)symbol)->Print();
     lbreak("symbol already has a value, cannot instantiate an object varible");
     exit(0);
   } else if (DEFINEDP(s->value))
   {
-    int index=((LObjectVar *)s->value)->number;
+    int index=((LObjectVar *)s->value)->index;
     if (index<tiv)
     {
       if (vars[index])
@@ -404,7 +404,7 @@ character_type::character_type(void *args, void *name)
     char *fake=lstring_value(eval(lcar(lcdr(lcar(mf)))));
     if (!isa_var_name(real))
     {
-      lprint(field);
+      ((LObject *)field)->Print();
       lbreak("fields : no such var name \"%s\"\n",name);
       exit(0);
     }
@@ -431,7 +431,7 @@ character_type::character_type(void *args, void *name)
     }
     else
     {
-      lprint(lcar(field));
+      ((LObject *)lcar(field))->Print();
       lbreak("Unknown field for character definition");
       exit(0);
     }

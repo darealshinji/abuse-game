@@ -111,12 +111,12 @@ static void fire_at_player(game_object *o, game_object *b)
     int angle=lisp_atan2(firey-playery,playerx-firex);
     void *call_list=NULL;
     PtrRef r1(call_list);
-    push_onto_list(new_lisp_pointer(b),call_list);
+    push_onto_list(LPointer::Create(b),call_list);
     push_onto_list(LNumber::Create(angle),call_list);
     push_onto_list(LNumber::Create(firey),call_list);
     push_onto_list(LNumber::Create(firex),call_list);
     push_onto_list(LNumber::Create(o->aitype()),call_list);
-    push_onto_list(new_lisp_pointer(o),call_list);
+    push_onto_list(LPointer::Create(o),call_list);
     eval_user_fun((LSymbol *)l_fire_object,call_list);
     o->set_state((character_state)S_weapon_fire);
   }
