@@ -899,9 +899,9 @@ int32_t CacheList::reg_lisp_block(Cell *block)
   ci->data=NULL;                  // assume that it is in tmp memory, need to cache in on access
   ci->offset=cache_file->tell();
 
-  s=block_size(block);
+  s = block_size((LObject *)block);
   cache_file->write_uint32(s);
-  write_level(cache_file,block);
+  write_level(cache_file, (LObject *)block);
   return id;
 }
 

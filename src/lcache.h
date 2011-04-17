@@ -18,8 +18,10 @@
 #define can_cache_lisp() 0 /* XXX */
 #endif
 
-long block_size(Cell *level);              // return number of bytes to save this block of code
-void write_level(bFILE *fp, Cell *level);
-Cell *load_block(bFILE *fp);
+// return number of bytes to save this block of code
+size_t block_size(LObject *level);
+void write_level(bFILE *fp, LObject *level);
+LObject *load_block(bFILE *fp);
 
 #endif
+
