@@ -523,7 +523,7 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
     if (profiling())
       prof1 = new time_marker;
 
-    eval_user_fun((LSymbol *)d, am);
+    ((LSymbol *)d)->EvalUserFunction(am);
     if (profiling())
     {
       time_marker now;
@@ -1593,7 +1593,7 @@ void game_object::change_aitype(int new_type)
       if (profiling())
         prof1=new time_marker;
 
-      eval_user_fun((LSymbol *)f,NULL);
+      ((LSymbol *)f)->EvalUserFunction(NULL);
 
       if (profiling())
       {

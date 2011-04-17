@@ -883,7 +883,7 @@ void view::reset_player()
     {
       game_object *o=current_object;
       current_object=focus;
-      eval_user_fun((LSymbol *)figures[focus->otype]->get_fun(OFUN_CONSTRUCTOR),NULL);
+      ((LSymbol *)figures[focus->otype]->get_fun(OFUN_CONSTRUCTOR))->EvalUserFunction(NULL);
       current_object=o;
     }
     sbar.redraw(screen);
