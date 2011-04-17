@@ -385,7 +385,7 @@ void CacheList::preload_cache_object(int type)
     void *call_with=NULL;
     push_onto_list(new_lisp_number(type),call_with);
 
-    void *CacheList=eval_function((lisp_symbol *)cache_fun,call_with);
+    void *CacheList=eval_function((LispSymbol *)cache_fun,call_with);
     p_ref r1(CacheList);
 
     if (CacheList && lcar(CacheList))

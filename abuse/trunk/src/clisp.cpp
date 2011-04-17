@@ -575,7 +575,7 @@ void *l_caller(long number, void *args)
            "Are you calling from move function (not mover)?\n");
     exit(0);
       }
-      return eval_function((lisp_symbol *)ai,NULL);
+      return eval_function((LispSymbol *)ai,NULL);
     } break;
     case 1 :
     {
@@ -703,7 +703,7 @@ void *l_caller(long number, void *args)
     {
       void *f=figures[current_object->otype]->get_fun(OFUN_USER_FUN);
       if (!f) return NULL;
-      return eval_function((lisp_symbol *)f,args);
+      return eval_function((LispSymbol *)f,args);
     } break;
     case 17 :
     {
@@ -752,7 +752,7 @@ void *l_caller(long number, void *args)
     } break;
     case 23 :         // def_character
     {
-      lisp_symbol *sym=(lisp_symbol *)lcar(args);
+      LispSymbol *sym=(LispSymbol *)lcar(args);
       if (item_type(sym)!=L_SYMBOL)
       {
     lbreak("expecting first arg to def-character to be a symbol!\n");
@@ -1349,10 +1349,10 @@ long c_caller(long number, void *args)
                         } break;
     case 133 :  // def_sound
     {
-      lisp_symbol *sym=NULL;
+      LispSymbol *sym=NULL;
       if (CDR(args))
       {
-    sym=(lisp_symbol *)lcar(args);
+    sym=(LispSymbol *)lcar(args);
     if (item_type(sym)!=L_SYMBOL)
     {
       lbreak("expecting first arg to def-character to be a symbol!\n");
@@ -2258,7 +2258,7 @@ long c_caller(long number, void *args)
     game_object *o=current_object;
     current_object=v->focus;
 
-    eval_function((lisp_symbol *)l_restart_player,NULL);
+    eval_function((LispSymbol *)l_restart_player,NULL);
     v->reset_player();
     v->focus->set_aistate(0);
     current_object=o;    

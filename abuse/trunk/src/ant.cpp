@@ -117,7 +117,7 @@ static void fire_at_player(game_object *o, game_object *b)
     push_onto_list(new_lisp_number(firex),call_list);
     push_onto_list(new_lisp_number(o->aitype()),call_list);
     push_onto_list(new_lisp_pointer(o),call_list);
-    eval_user_fun((lisp_symbol *)l_fire_object,call_list);
+    eval_user_fun((LispSymbol *)l_fire_object,call_list);
     o->set_state((character_state)S_weapon_fire);
   }
 }

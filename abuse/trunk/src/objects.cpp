@@ -107,7 +107,7 @@ int32_t game_object::get_var_by_name(char *name, int &error)
     if (!strcmp(lstring_value(symbol_name(figures[otype]->vars[i])),name))
     {
       return lvars[figures[otype]->var_index[i]];
-/*      lisp_object_var *cobj=(lisp_object_var *)symbol_value(figures[otype]->vars[i]);
+/*      LispObjectVar *cobj=(LispObjectVar *)symbol_value(figures[otype]->vars[i]);
       character_type *t=figures[otype];
       int number=cobj->number;
       if (t->tiv<=number || !t->vars[number])
@@ -264,7 +264,7 @@ void game_object::reload_notify()
     current_object=this;
 
     void *m=mark_heap(TMP_SPACE);
-    eval_function((lisp_symbol *)ns,NULL);
+    eval_function((LispSymbol *)ns,NULL);
     restore_heap(m,TMP_SPACE);
 
     current_object=o;
@@ -278,7 +278,7 @@ void game_object::next_sequence()
     {
         current_object = this;
         void *m = mark_heap( TMP_SPACE );
-        (void)eval_function( (lisp_symbol *)ns, NULL );
+        (void)eval_function( (LispSymbol *)ns, NULL );
         restore_heap( m, TMP_SPACE );
     }
     else
@@ -418,7 +418,7 @@ int game_object::decide()
     if (profiling())
       prof1=new time_marker;
 
-    Cell *ret=(Cell *)eval_function((lisp_symbol *)figures[otype]->get_fun(OFUN_AI),NULL);
+    Cell *ret=(Cell *)eval_function((LispSymbol *)figures[otype]->get_fun(OFUN_AI),NULL);
     if (profiling())
     {
       time_marker now;
@@ -491,42 +491,42 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
     am=new_cons_cell();
     l_ptr_stack.push(&am);
 
-    ((cons_cell *)am)->car=new_lisp_number(amount);
+    ((LispList *)am)->car=new_lisp_number(amount);
 
     frm=new_cons_cell();
     l_ptr_stack.push(&frm);
 
-    ((cons_cell *)frm)->car=new_lisp_pointer(from);
+    ((LispList *)frm)->car=new_lisp_pointer(from);
 
     hx=new_cons_cell();
     l_ptr_stack.push(&hx);
 
-    ((cons_cell *)hx)->car=new_lisp_number(hitx);
+    ((LispList *)hx)->car=new_lisp_number(hitx);
 
     hy=new_cons_cell();
     l_ptr_stack.push(&hy);
-    ((cons_cell *)hy)->car=new_lisp_number(hity);
+    ((LispList *)hy)->car=new_lisp_number(hity);
 
     px=new_cons_cell();
     l_ptr_stack.push(&px);
-    ((cons_cell *)px)->car=new_lisp_number(push_xvel);
+    ((LispList *)px)->car=new_lisp_number(push_xvel);
 
     py=new_cons_cell();
     l_ptr_stack.push(&py);
-    ((cons_cell *)py)->car=new_lisp_number(push_yvel);
+    ((LispList *)py)->car=new_lisp_number(push_yvel);
 
 
-    ((cons_cell *)am)->cdr=frm;
-    ((cons_cell *)frm)->cdr=hx;
-    ((cons_cell *)hx)->cdr=hy;
-    ((cons_cell *)hy)->cdr=px;
-    ((cons_cell *)px)->cdr=py;
+    ((LispList *)am)->cdr=frm;
+    ((LispList *)frm)->cdr=hx;
+    ((LispList *)hx)->cdr=hy;
+    ((LispList *)hy)->cdr=px;
+    ((LispList *)px)->cdr=py;
 
     time_marker *prof1=NULL;
     if (profiling())
       prof1=new time_marker;
 
-    eval_user_fun((lisp_symbol *)d,am);
+    eval_user_fun((LispSymbol *)d,am);
     if (profiling())
     {
       time_marker now;
@@ -641,7 +641,7 @@ void game_object::draw()
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((lisp_symbol *)figures[otype]->get_fun(OFUN_DRAW),NULL);
+    eval_function((LispSymbol *)figures[otype]->get_fun(OFUN_DRAW),NULL);
     if (profiling())
     {
       time_marker now;
@@ -668,7 +668,7 @@ void game_object::map_draw()
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((lisp_symbol *)figures[otype]->get_fun(OFUN_MAP_DRAW),NULL);
+    eval_function((LispSymbol *)figures[otype]->get_fun(OFUN_MAP_DRAW),NULL);
     if (profiling())
     {
       time_marker now;
@@ -1175,7 +1175,7 @@ game_object *create(int type, int32_t x, int32_t y, int skip_constructor, int ai
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((lisp_symbol *)figures[type]->get_fun(OFUN_CONSTRUCTOR),NULL);
+    eval_function((LispSymbol *)figures[type]->get_fun(OFUN_CONSTRUCTOR),NULL);
     if (profiling())
     {
       time_marker now;
@@ -1222,19 +1222,19 @@ int game_object::move(int cx, int cy, int button)
     // make a list of the parameters, and call the lisp function
     lcx=new_cons_cell();
     l_ptr_stack.push(&lcx);
-    ((cons_cell *)lcx)->car=new_lisp_number(cx);
+    ((LispList *)lcx)->car=new_lisp_number(cx);
 
     lcy=new_cons_cell();
     l_ptr_stack.push(&lcy);
-    ((cons_cell *)lcy)->car=new_lisp_number(cy);
+    ((LispList *)lcy)->car=new_lisp_number(cy);
 
     lb=new_cons_cell();
     l_ptr_stack.push(&lb);
-    ((cons_cell *)lb)->car=new_lisp_number(button);
+    ((LispList *)lb)->car=new_lisp_number(button);
 
 
-    ((cons_cell *)lcx)->cdr=lcy;
-    ((cons_cell *)lcy)->cdr=lb;
+    ((LispList *)lcx)->cdr=lcy;
+    ((LispList *)lcy)->cdr=lb;
 
     void *m=mark_heap(TMP_SPACE);
 
@@ -1242,7 +1242,7 @@ int game_object::move(int cx, int cy, int button)
     if (profiling())
       prof1=new time_marker;
 
-    void *r=eval_function((lisp_symbol *)figures[otype]->get_fun(OFUN_MOVER),
+    void *r=eval_function((LispSymbol *)figures[otype]->get_fun(OFUN_MOVER),
               (void *)lcx);
     if (profiling())
     {
@@ -1603,7 +1603,7 @@ void game_object::change_aitype(int new_type)
       if (profiling())
         prof1=new time_marker;
 
-      eval_user_fun((lisp_symbol *)f,NULL);
+      eval_user_fun((LispSymbol *)f,NULL);
 
       if (profiling())
       {
@@ -1646,7 +1646,7 @@ void game_object::change_type(int new_type)
     if (profiling())
       prof1=new time_marker;
 
-    eval_function((lisp_symbol *)figures[new_type]->get_fun(OFUN_CONSTRUCTOR),NULL);
+    eval_function((LispSymbol *)figures[new_type]->get_fun(OFUN_CONSTRUCTOR),NULL);
     if (profiling())
     {
       time_marker now;

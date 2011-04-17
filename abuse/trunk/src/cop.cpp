@@ -232,7 +232,7 @@ static int player_fire_weapon(game_object *o, int type, game_object *target, int
   push_onto_list(new_lisp_number(x2),list);
   push_onto_list(new_lisp_number(type),list);
   push_onto_list(new_lisp_pointer(o->get_object(0)),list);
-  eval_function((lisp_symbol *)l_fire_object,list);
+  eval_function((LispSymbol *)l_fire_object,list);
   o->lvars[top_just_fired]=1;
   other->lvars[just_fired]=1;
   other->x=ox;
@@ -661,7 +661,7 @@ void *cop_mover(int xm, int ym, int but)
       push_onto_list(l_FIRE,args);
 
       current_object=top;
-      void *ret=eval_function((lisp_symbol *)figures[top->otype]->get_fun(OFUN_USER_FUN),args);    
+      void *ret=eval_function((LispSymbol *)figures[top->otype]->get_fun(OFUN_USER_FUN),args);    
       current_object=o;
       v->add_ammo(v->current_weapon,lnumber_value(ret));    
     }
@@ -671,7 +671,7 @@ void *cop_mover(int xm, int ym, int but)
       if (!o->controller() || o->controller()->key_down(JK_SPACE))
       {
         // call the user function to reset the player
-    eval_function((lisp_symbol *)l_restart_player,NULL);
+    eval_function((LispSymbol *)l_restart_player,NULL);
     o->controller()->reset_player();
     o->set_aistate(0);
       } else if (o->controller() && o->controller()->local_player())
@@ -765,7 +765,7 @@ void *top_draw()
     else
       o->draw_predator();
       } else
-        eval_function((lisp_symbol *)l_player_draw,ret);
+        eval_function((LispSymbol *)l_player_draw,ret);
 
       o->y=oldy;
       if (bot->direction<0)
@@ -828,7 +828,7 @@ void *bottom_draw()
       } break;
       case FAST_POWER :
       {
-    eval_function((lisp_symbol *)l_draw_fast,NULL);
+    eval_function((LispSymbol *)l_draw_fast,NULL);
     int old_state=o->state;
     switch (o->state)
     {

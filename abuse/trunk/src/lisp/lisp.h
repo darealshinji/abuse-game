@@ -42,94 +42,87 @@ enum { L_BAD_CELL,   // error catching type
        L_OBJECT_VAR, L_1D_ARRAY,
        L_FIXED_POINT, L_COLLECTED_OBJECT };
 
-typedef uint64_t ltype;    // make sure structures aren't packed differently on various compiler
+typedef uint32_t ltype;    // make sure structures aren't packed differently on various compiler
                        // and sure that word, etc are word aligned
 
-struct lisp_object_var
+struct LispObject
 {
-  ltype type;
-  long number;
-} ;
+    ltype type;
+};
 
-struct cons_cell
+struct LispObjectVar : LispObject
 {
-  ltype type;
-  void *cdr,*car;
-} ;
+    long number;
+};
 
-struct lisp_number
+struct LispList : LispObject
 {
-  ltype type;
-  long num;
-} ;
+    void *cdr, *car;
+};
 
-struct lisp_collected_object
+struct LispNumber : LispObject
 {
-  ltype type;
-  void *new_reference;
-} ;
+    long num;
+};
 
-struct lisp_symbol
+struct LispRedirect : LispObject
 {
-  ltype type;
+    void *new_reference;
+};
+
+struct LispSymbol : LispObject
+{
 #ifdef L_PROFILE
-  float time_taken;
+    float time_taken;
 #endif
-  void *value, *function, *name;
-  lisp_symbol *left,*right;       // tree structure
-} ;
+    void *value, *function, *name;
+    LispSymbol *left, *right; // tree structure
+};
 
-struct lisp_sys_function
+struct LispSysFunction : LispObject
 {
-  ltype type;
-  short min_args,max_args,
-        fun_number;
-} ;
+    short min_args, max_args;
+    short fun_number;
+};
 
-struct lisp_user_function
+struct LispUserFunction : LispObject
 {
-  ltype type;
 #ifndef NO_LIBS
-  intptr_t alist,blist;      // id for cached blocks
+    intptr_t alist, blist;      // id for cached blocks
 #else
-  void *arg_list,*block_list;
+    void *arg_list, *block_list;
 #endif
-} ;
+};
 
-struct lisp_1d_array
+struct LispArray : LispObject
 {
-  ltype type;
-  unsigned short size;
-  // size * sizeof (void *) follows1
-} ;
+    unsigned short size;
+    // size * sizeof (void *) follows1
+};
 
-struct lisp_string
+struct LispString : LispObject
 {
-  ltype type;
-} ;
+};
 
-struct lisp_character
+struct LispChar : LispObject
 {
-  ltype type;
-  int16_t pad;
-  uint16_t ch;
-} ;
+    int16_t pad;
+    uint16_t ch;
+};
 
-struct lisp_pointer
+struct LispPointer : LispObject
 {
-  ltype type;
-  void *addr;
-} ;
+    void *addr;
+};
 
 
-struct lisp_fixed_point
+struct LispFixedPoint : LispObject
 {
-  ltype type;
-  int32_t x;
-} ;
+    int32_t x;
+};
 
-static inline void *&CAR(void *x) { return ((cons_cell *)x)->car; }
-static inline void *&CDR(void *x) { return ((cons_cell *)x)->cdr; }
+static inline void *&CAR(void *x) { return ((LispList *)x)->car; }
+static inline void *&CDR(void *x) { return ((LispList *)x)->cdr; }
 
 void perm_space();
 void tmp_space();
@@ -146,13 +139,13 @@ void *lcdr(void *c);
 void *lcar(void *c);
 void *lisp_eq(void *n1, void *n2);
 void *lisp_equal(void *n1, void *n2);
-lisp_symbol *find_symbol(char const *name);
+LispSymbol *find_symbol(char const *name);
 long list_length(void *i);
 void lprint(void *i);
 void *eval(void *prog);
 void *eval_block(void *list);
-void *eval_function(lisp_symbol *sym, void *arg_list);
-void *eval_user_fun(lisp_symbol *sym, void *arg_list);
+void *eval_function(LispSymbol *sym, void *arg_list);
+void *eval_user_fun(LispSymbol *sym, void *arg_list);
 void *compile(char const *&s);
 void *symbol_value(void *symbol);
 void *symbol_function(void *symbol);
@@ -162,44 +155,44 @@ void *symbol_name(void *symbol);
 void *assoc(void *item, void *list);
 void resize_tmp(int new_size);
 void resize_perm(int new_size);
-lisp_symbol *make_find_symbol(char const *name);
+LispSymbol *make_find_symbol(char const *name);
 
 void push_onto_list(void *object, void *&list);
-lisp_symbol *add_c_object(void *symbol, int16_t number);
-lisp_symbol *add_c_function(char const *name, short min_args, short max_args, short number);
-lisp_symbol *add_c_bool_fun(char const *name, short min_args, short max_args, short number);
-lisp_symbol *add_lisp_function(char const *name, short min_args, short max_args, short number);
+LispSymbol *add_c_object(void *symbol, int16_t number);
+LispSymbol *add_c_function(char const *name, short min_args, short max_args, short number);
+LispSymbol *add_c_bool_fun(char const *name, short min_args, short max_args, short number);
+LispSymbol *add_lisp_function(char const *name, short min_args, short max_args, short number);
 int read_ltoken(char *&s, char *buffer);
-cons_cell *new_cons_cell();
+LispList *new_cons_cell();
 void print_trace_stack(int max_levels);
 
 
-lisp_number *new_lisp_number(long num);
-lisp_pointer *new_lisp_pointer(void *addr);
-lisp_character *new_lisp_character(uint16_t ch);
-lisp_string *new_lisp_string(char const *string);
-lisp_string *new_lisp_string(char const *string, int length);
-lisp_string *new_lisp_string(int length);
-lisp_fixed_point *new_lisp_fixed_point(int32_t x);
-lisp_object_var *new_lisp_object_var(int16_t number);
-lisp_1d_array   *new_lisp_1d_array(int size, void *rest);
-lisp_sys_function *new_lisp_sys_function(int min_args, int max_args, int fun_number);
-lisp_sys_function *new_lisp_c_function(int min_args, int max_args, int fun_number);
-lisp_sys_function *new_lisp_c_bool(int min_args, int max_args, int fun_number);
+LispNumber *new_lisp_number(long num);
+LispPointer *new_lisp_pointer(void *addr);
+LispChar *new_lisp_character(uint16_t ch);
+LispString *new_lisp_string(char const *string);
+LispString *new_lisp_string(char const *string, int length);
+LispString *new_lisp_string(int length);
+LispFixedPoint *new_lisp_fixed_point(int32_t x);
+LispObjectVar *new_lisp_object_var(int16_t number);
+LispArray   *new_lisp_1d_array(int size, void *rest);
+LispSysFunction *new_lisp_sys_function(int min_args, int max_args, int fun_number);
+LispSysFunction *new_lisp_c_function(int min_args, int max_args, int fun_number);
+LispSysFunction *new_lisp_c_bool(int min_args, int max_args, int fun_number);
 
 #ifdef NO_LIBS
-lisp_user_function *new_lisp_user_function(void *arg_list, void *block_list);
+LispUserFunction *new_lisp_user_function(void *arg_list, void *block_list);
 #else
-lisp_user_function *new_lisp_user_function(intptr_t arg_list, intptr_t block_list);
+LispUserFunction *new_lisp_user_function(intptr_t arg_list, intptr_t block_list);
 #endif
 
-lisp_sys_function *new_user_lisp_function(int min_args, int max_args, int fun_number);
+LispSysFunction *new_user_lisp_function(int min_args, int max_args, int fun_number);
 
 int end_of_program(char *s);
 void clear_tmp();
 void lisp_init(long perm_size, long tmp_size);
 void lisp_uninit();
-extern lisp_symbol *lsym_root;
+extern LispSymbol *lsym_root;
 
 extern uint8_t *space[4], *free_space[4];
 extern int space_size[4];

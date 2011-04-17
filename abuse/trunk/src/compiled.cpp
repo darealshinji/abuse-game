@@ -44,10 +44,10 @@ static int32_t c_state(char const *name)
   void *sym=find_symbol(name);
   if (sym)
   {
-    if (item_type(((lisp_symbol *)sym)->value)!=L_NUMBER)
+    if (item_type(((LispSymbol *)sym)->value)!=L_NUMBER)
       compile_error=1;
     else
-      return lnumber_value(((lisp_symbol *)sym)->value);
+      return lnumber_value(((LispSymbol *)sym)->value);
   } else compile_error=1;
   return 0;
 }

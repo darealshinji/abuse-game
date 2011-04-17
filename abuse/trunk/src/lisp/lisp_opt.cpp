@@ -94,8 +94,8 @@ void *comp_optimize(void *list)
 void l_comp_init()
 {
   l_undefined=make_find_symbol(":UNDEFINED");  // this needs to be defined first
-  ((lisp_symbol *)l_undefined)->function=NULL;  // collection problems result if we don't do this
-  ((lisp_symbol *)l_undefined)->value=NULL;
+  ((LispSymbol *)l_undefined)->function=NULL;  // collection problems result if we don't do this
+  ((LispSymbol *)l_undefined)->value=NULL;
 
 
   true_symbol=make_find_symbol("T");

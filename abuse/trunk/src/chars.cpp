@@ -201,7 +201,7 @@ void character_type::add_var(void *symbol, void *name)
 {
   /* First see if the variable has been defined for another object
      if so report a conflict if any occur */
-  lisp_symbol *s=(lisp_symbol *)symbol;
+  LispSymbol *s=(LispSymbol *)symbol;
   if (DEFINEDP(s->value) && (item_type(s->value)!=L_OBJECT_VAR))
   {
     lprint(symbol);
@@ -209,7 +209,7 @@ void character_type::add_var(void *symbol, void *name)
     exit(0);
   } else if (DEFINEDP(s->value))
   {
-    int index=((lisp_object_var *)s->value)->number;
+    int index=((LispObjectVar *)s->value)->number;
     if (index<tiv)
     {
       if (vars[index])
