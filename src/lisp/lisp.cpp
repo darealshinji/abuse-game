@@ -35,7 +35,7 @@
 
 /* To bypass the whole garbage collection issue of lisp I am going to have
  * separate spaces where lisp objects can reside.  Compiled code and gloabal
- * varibles will reside in permanant space.  Eveything else will reside in
+ * variables will reside in permanant space.  Eveything else will reside in
  * tmp space which gets thrown away after completion of eval.  system
  * functions reside in permant space. */
 
@@ -45,7 +45,7 @@ long ltotal_syms=0;
 
 
 
-char *space[4], *free_space[4];
+uint8_t *space[4], *free_space[4];
 int space_size[4], print_level=0, trace_level=0, trace_print_level=1000;
 int total_user_functions;
 
@@ -166,39 +166,44 @@ void *mark_heap(int heap)
 
 void restore_heap(void *val, int heap)
 {
-  free_space[heap]=(char *)val;
+  free_space[heap] = (uint8_t *)val;
+}
+
+static int get_free_size(int which_space)
+{
+    return space_size[which_space]
+            - (free_space[which_space] - space[which_space]);
 }
 
 void *lmalloc(int size, int which_space)
 {
-  return malloc(size); /* XXX FIXME: do we want to fix this one day? */
+  return malloc(size);
 
 #ifdef WORD_ALIGN
   size=(size+3)&(~3);
 #endif
 
-  if ((char *)free_space[which_space]-(char *)space[which_space]+size>space_size[which_space])
+  if (size > get_free_size(which_space))
   {
-    int fart=1;
-    if (which_space==PERM_SPACE)
+    int fart = 1;
+    fprintf(stderr, "%i > %i !!!\n", size, get_free_size(which_space));
+
+    if (which_space == PERM_SPACE || which_space == TMP_SPACE)
     {
-      collect_space(PERM_SPACE);
-      if ((char *)free_space[which_space]-(char *)space[which_space]+size<=space_size[which_space])
-        fart=0;
-    } else if (which_space==TMP_SPACE)
-    {
-      collect_space(TMP_SPACE);
-      if ((char *)free_space[which_space]-(char *)space[which_space]+size<=space_size[which_space])
-        fart=0;
+      collect_space(which_space);
+      if (size <= get_free_size(which_space))
+        fart = 0;
     }
+
     if (fart)
     {
-      lbreak("lisp : cannot malloc %d bytes in space #%d\n", size, which_space);
+      lbreak("lisp: cannot malloc %d bytes in space #%d\n", size, which_space);
       exit(0);
     }
+    fprintf(stderr, "%i <= %i\n", size, get_free_size(which_space));
   }
-  void *ret=(void *)free_space[which_space];
-  free_space[which_space]+=size;
+  void *ret = (void *)free_space[which_space];
+  free_space[which_space] += size;
   return ret;
 }
 
@@ -217,8 +222,8 @@ void *eval_block(void *list)
 lisp_1d_array *new_lisp_1d_array(int size, void *rest)
 {
   p_ref r11(rest);
-  long s=sizeof(lisp_1d_array)+size*sizeof(void *);
-  if (s<8) s=8;
+  size_t s=sizeof(lisp_1d_array)+size*sizeof(void *);
+  if (s<8 + sizeof(intptr_t)) s=8 + sizeof(intptr_t);
   void *p=(lisp_1d_array *)lmalloc(s, current_space);
   ((lisp_1d_array *)p)->type=L_1D_ARRAY;
   ((lisp_1d_array *)p)->size=size;
@@ -300,8 +305,8 @@ struct lisp_character *new_lisp_character(uint16_t ch)
 
 struct lisp_string *new_lisp_string(char const *string)
 {
-  int size=sizeof(lisp_string)+strlen(string)+1;
-  if (size<8) size=8;
+  size_t size=sizeof(lisp_string)+strlen(string)+1;
+  if (size<8 + sizeof(intptr_t)) size=8 + sizeof(intptr_t);
 
   lisp_string *s=(lisp_string *)lmalloc(size, current_space);
   s->type=L_STRING;
@@ -312,8 +317,8 @@ struct lisp_string *new_lisp_string(char const *string)
 
 struct lisp_string *new_lisp_string(char const *string, int length)
 {
-  int size=sizeof(lisp_string)+length+1;
-  if (size<8) size=8;
+  size_t size=sizeof(lisp_string)+length+1;
+  if (size<8 + sizeof(intptr_t)) size=8 + sizeof(intptr_t);
   lisp_string *s=(lisp_string *)lmalloc(size, current_space);
   s->type=L_STRING;
   char *sloc=((char *)s)+sizeof(lisp_string);
@@ -324,8 +329,8 @@ struct lisp_string *new_lisp_string(char const *string, int length)
 
 struct lisp_string *new_lisp_string(int length)
 {
-  int size=sizeof(lisp_string)+length;
-  if (size<8) size=8;
+  size_t size=sizeof(lisp_string)+length;
+  if (size<8 + sizeof(intptr_t)) size=8 + sizeof(intptr_t);
   lisp_string *s=(lisp_string *)lmalloc(size, current_space);
   s->type=L_STRING;
   char *sloc=((char *)s)+sizeof(lisp_string);
@@ -2886,9 +2891,9 @@ void perm_space()
 
 void use_user_space(void *addr, long size)
 {
-  current_space=2;
-  free_space[USER_SPACE]=space[USER_SPACE]=(char *)addr;
-  space_size[USER_SPACE]=size;
+  current_space = 2;
+  free_space[USER_SPACE] = space[USER_SPACE] = (uint8_t *)addr;
+  space_size[USER_SPACE] = size;
 }
 
 
@@ -3105,8 +3110,8 @@ void resize_tmp(int new_size)
     exit(0);
   } else if (free_space[TMP_SPACE]==space[TMP_SPACE])
   {
-    free_space[TMP_SPACE]=space[TMP_SPACE]=(char *)realloc(space[TMP_SPACE], new_size);
-    space_size[TMP_SPACE]=new_size;
+    free_space[TMP_SPACE] = space[TMP_SPACE] = (uint8_t *)realloc(space[TMP_SPACE], new_size);
+    space_size[TMP_SPACE] = new_size;
     dprintf("Lisp : tmp space resized to %d\n", new_size);
   } else dprintf("Lisp :tmp not empty, cannot resize\n");
 }
@@ -3115,14 +3120,14 @@ void l_comp_init();
 void lisp_init(long perm_size, long tmp_size)
 {
   unsigned int i;
-  lsym_root=NULL;
-  total_user_functions=0;
-  free_space[0]=space[0]=(char *)malloc(perm_size);
-  space_size[0]=perm_size;
+  lsym_root = NULL;
+  total_user_functions = 0;
 
+  free_space[0] = space[0] = (uint8_t *)malloc(perm_size);
+  space_size[0] = perm_size;
 
-  free_space[1]=space[1]=(char *)malloc(tmp_size);
-  space_size[1]=tmp_size;
+  free_space[1] = space[1] = (uint8_t *)malloc(tmp_size);
+  space_size[1] = tmp_size;
 
 
   current_space=PERM_SPACE;

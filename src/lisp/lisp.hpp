@@ -24,9 +24,6 @@ enum { PERM_SPACE,
        TMP_SPACE,
        USER_SPACE,
        GC_SPACE };
-#define CAR(x) ((cons_cell *)x)->car
-#define CDR(x) ((cons_cell *)x)->cdr
-
 
 #define FIXED_TRIG_SIZE 360               // 360 degrees stored in table
 extern int32_t sin_table[FIXED_TRIG_SIZE];   // this should be filled in by external module
@@ -131,6 +128,8 @@ struct lisp_fixed_point
   int32_t x;
 } ;
 
+static inline void *&CAR(void *x) { return ((cons_cell *)x)->car; }
+static inline void *&CDR(void *x) { return ((cons_cell *)x)->cdr; }
 
 void perm_space();
 void tmp_space();
@@ -202,7 +201,7 @@ void lisp_init(long perm_size, long tmp_size);
 void lisp_uninit();
 extern lisp_symbol *lsym_root;
 
-extern char *space[4],*free_space[4];
+extern uint8_t *space[4], *free_space[4];
 extern int space_size[4];
 void *nth(int num, void *list);
 int32_t lisp_atan2(int32_t dy, int32_t dx);
