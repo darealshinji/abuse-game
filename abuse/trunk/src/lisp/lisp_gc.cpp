@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "lisp.h"
+#include "lisp_gc.h"
 #ifdef NO_LIBS
 #include "fakelib.h"
 #else
@@ -33,7 +34,7 @@
 // Stack where user programs can push data and have it GCed
 grow_stack<void> l_user_stack(150);
 // Stack of user pointers
-grow_stack<void *> l_ptr_stack(1500);
+grow_stack<void *> PtrRef::stack(1500);
 
 size_t reg_ptr_total = 0;
 size_t reg_ptr_list_size = 0;
@@ -82,48 +83,51 @@ void unregister_pointer(void **addr)
   fprintf(stderr, "Unable to locate ptr to unregister");
 }
 
-static void *collect_object(void *x);
-static void *collect_array(void *x)
+static LispObject *CollectObject(LispObject *x);
+
+static LispArray *CollectArray(LispArray *x)
 {
-    long s = ((LispArray *)x)->size;
+    size_t s = x->size;
     LispArray *a = LispArray::Create(s, NULL);
-    LispObject **src = ((LispArray *)x)->GetData();
+    LispObject **src = x->GetData();
     LispObject **dst = a->GetData();
-    for (int i = 0; i < s; i++)
-        dst[i] = (LispObject *)collect_object(src[i]);
+    for (size_t i = 0; i < s; i++)
+        dst[i] = CollectObject(src[i]);
 
     return a;
 }
 
-inline void *collect_cons_cell(void *x)
+inline LispList *CollectList(LispList *x)
 {
-  LispList *last = NULL, *first = NULL;
-  if (!x) return x;
-  for (; x && item_type(x) == L_CONS_CELL; )
-  {
-    LispList *p = new_cons_cell();
-    void *old_car = ((LispList *)x)->car;
-    void *old_cdr = ((LispList *)x)->cdr;
-    void *old_x = x;
-    x = CDR(x);
-    ((LispRedirect *)old_x)->type = L_COLLECTED_OBJECT;
-    ((LispRedirect *)old_x)->new_reference = p;
+    LispList *last = NULL, *first = NULL;
 
-    p->car = (LispObject *)collect_object(old_car);
-    p->cdr = (LispObject *)collect_object(old_cdr);
+    for (; x && item_type(x) == L_CONS_CELL; )
+    {
+        LispList *p = LispList::Create();
+        LispObject *old_car = x->car;
+        LispObject *old_cdr = x->cdr;
+        LispObject *old_x = x;
+        x = (LispList *)CDR(x);
+        ((LispRedirect *)old_x)->type = L_COLLECTED_OBJECT;
+        ((LispRedirect *)old_x)->new_reference = p;
 
-    if (last) last->cdr = p;
-    else first = p;
-    last = p;
-  }
-  if (x)
-    last->cdr = (LispObject *)collect_object(x);
-  return first;                    // we already set the collection pointers
+        p->car = CollectObject(old_car);
+        p->cdr = CollectObject(old_cdr);
+
+        if (last)
+            last->cdr = p;
+        else
+            first = p;
+        last = p;
+    }
+    if (x)
+        last->cdr = CollectObject(x);
+    return first; // we already set the collection pointers
 }
 
-static void *collect_object(void *x)
+static LispObject *CollectObject(LispObject *x)
 {
-  void *ret = x;
+  LispObject *ret = x;
 
   if (((uint8_t *)x) >= cstart && ((uint8_t *)x) < cend)
   {
@@ -148,8 +152,8 @@ static void *collect_object(void *x)
 
 #else
         {
-          void *arg = collect_object(((LispUserFunction *)x)->arg_list);
-          void *block = collect_object(((LispUserFunction *)x)->block_list);
+          LispObject *arg = CollectObject(((LispUserFunction *)x)->arg_list);
+          LispObject *block = CollectObject(((LispUserFunction *)x)->block_list);
           ret = new_lisp_user_function(arg, block);
         }
 #endif
@@ -179,13 +183,13 @@ static void *collect_object(void *x)
         ret = new_lisp_pointer(lpointer_value(x));
         break;
       case L_1D_ARRAY:
-        ret = collect_array(x);
+        ret = CollectArray((LispArray *)x);
         break;
       case L_FIXED_POINT:
         ret = new_lisp_fixed_point(lfixed_point_value(x));
         break;
       case L_CONS_CELL:
-        ret = collect_cons_cell((LispList *)x);
+        ret = CollectList((LispList *)x);
         break;
       case L_OBJECT_VAR:
         ret = new_lisp_object_var(((LispObjectVar *)x)->number);
@@ -208,9 +212,9 @@ static void *collect_object(void *x)
     if (item_type(x) == L_CONS_CELL) // still need to remap cons_cells outside of space
     {
       for (; x && item_type(x) == L_CONS_CELL; x = CDR(x))
-        ((LispList *)x)->car = (LispObject *)collect_object(((LispList *)x)->car);
+        ((LispList *)x)->car = CollectObject(((LispList *)x)->car);
       if (x)
-        ((LispList *)x)->cdr = (LispObject *)collect_object(((LispList *)x)->cdr);
+        ((LispList *)x)->cdr = CollectObject(((LispList *)x)->cdr);
     }
   }
 
@@ -221,9 +225,9 @@ static void collect_symbols(LispSymbol *root)
 {
   if (root)
   {
-    root->value = (LispObject *)collect_object(root->value);
-    root->function = (LispObject *)collect_object(root->function);
-    root->name = (LispString *)collect_object(root->name);
+    root->value = CollectObject(root->value);
+    root->function = CollectObject(root->function);
+    root->name = (LispString *)CollectObject(root->name);
     collect_symbols(root->left);
     collect_symbols(root->right);
   }
@@ -235,21 +239,21 @@ static void collect_stacks()
 
   void **d = l_user_stack.sdata;
   for (int i = 0; i < t; i++, d++)
-    *d = collect_object(*d);
+    *d = CollectObject((LispObject *)*d);
 
-  t = l_ptr_stack.son;
-  void ***d2 = l_ptr_stack.sdata;
+  t = PtrRef::stack.son;
+  void ***d2 = PtrRef::stack.sdata;
   for (int i = 0; i < t; i++, d2++)
   {
     void **ptr = *d2;
-    *ptr = collect_object(*ptr);
+    *ptr = CollectObject((LispObject *)*ptr);
   }
 
   d2 = reg_ptr_list;
   for (size_t i = 0; i < reg_ptr_total; i++, d2++)
   {
     void **ptr = *d2;
-    *ptr = collect_object(*ptr);
+    *ptr = CollectObject((LispObject *)*ptr);
   }
 }
 

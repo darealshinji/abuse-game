@@ -225,7 +225,7 @@ static int player_fire_weapon(game_object *o, int type, game_object *target, int
   }
 
   void *list=NULL;
-  p_ref r1(list);
+  PtrRef r1(list);
   push_onto_list(new_lisp_pointer(target),list);
   push_onto_list(LispNumber::Create(angle),list);
   push_onto_list(LispNumber::Create(y2),list);
@@ -246,7 +246,7 @@ static int player_fire_weapon(game_object *o, int type, game_object *target, int
 void *laser_ufun(void *args)
 {
   game_object *o=current_object;
-  p_ref r1(args);
+  PtrRef r1(args);
   void *signal=CAR(args);  args=CDR(args);
   void *ret=NULL;
 
@@ -288,7 +288,7 @@ static int ammo_type(int otype)
 void *top_ufun(void *args)                       // generic top character ai GRENADE && FIREBOMB
 {
   game_object *o=current_object;
-  p_ref r1(args);
+  PtrRef r1(args);
   void *signal=CAR(args);  args=CDR(args);
   void *ret=NULL;
 
@@ -315,7 +315,7 @@ static int climb_handler(game_object *, int xm, int ym, int but);
 void *plaser_ufun(void *args)
 {
   game_object *o=current_object;
-  p_ref r1(args);
+  PtrRef r1(args);
   void *signal=CAR(args);  args=CDR(args);
   void *ret=NULL;
 
@@ -339,7 +339,7 @@ void *plaser_ufun(void *args)
 void *lsaber_ufun(void *args)
 {
   game_object *o=current_object;
-  p_ref r1(args);
+  PtrRef r1(args);
   void *signal=CAR(args);  args=CDR(args);
   void *ret=NULL;
 
@@ -366,7 +366,7 @@ void *lsaber_ufun(void *args)
 void *player_rocket_ufun(void *args)
 {
   game_object *o=current_object;
-  p_ref r1(args);
+  PtrRef r1(args);
   void *signal=CAR(args);  args=CDR(args);
   void *ret=NULL;
   int xd,yd,cl=0xfffffff,d;
@@ -654,7 +654,7 @@ void *cop_mover(int xm, int ym, int but)
     if ((but&2) && !o->lvars[is_teleporting] && o->state!=S_climbing && o->state!=S_climb_off)
     {
       void *args=NULL;
-      p_ref r1(args);
+      PtrRef r1(args);
       view *v=o->controller();
 
       push_onto_list(LispNumber::Create(v->weapon_total(v->current_weapon)),args);
@@ -752,7 +752,7 @@ void *top_draw()
       o->y=bot->y+29-bot->picture()->height();
 
       void *ret=NULL;
-      p_ref r1(ret);
+      PtrRef r1(ret);
 
       push_onto_list(LispNumber::Create(bot->get_tint()),ret);
 

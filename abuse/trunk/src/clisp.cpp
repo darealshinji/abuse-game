@@ -566,7 +566,7 @@ void clisp_init()                            // call by lisp_init, defines symbo
 // Note : args for l_caller have not been evaluated yet!
 void *l_caller(long number, void *args)
 {
-  p_ref r1(args);
+  PtrRef r1(args);
   switch (number)
   {
     case 0 :
@@ -748,7 +748,7 @@ void *l_caller(long number, void *args)
       long a2=lnumber_value(eval(CAR(args))); args=CDR(args);
 
       void *list=eval(CAR(args));
-      p_ref r1(list);
+      PtrRef r1(list);
       game_object *find=current_level->find_object_in_angle(current_object->x,
                             current_object->y,
                             a1,a2,list,current_object);
@@ -876,7 +876,7 @@ void *l_caller(long number, void *args)
       else b1=b2=b3=xv=yv=0;
 
       void *ret=NULL;
-      p_ref r1(ret);
+      PtrRef r1(ret);
       push_onto_list(LispNumber::Create(b3),ret);
       push_onto_list(LispNumber::Create(b2),ret);
       push_onto_list(LispNumber::Create(b1),ret);
@@ -888,7 +888,7 @@ void *l_caller(long number, void *args)
     {
       void *ret=NULL;
       {
-    p_ref r1(ret);
+    PtrRef r1(ret);
     push_onto_list(LispNumber::Create((last_demo_mbut&4)==4),ret);
     push_onto_list(LispNumber::Create((last_demo_mbut&2)==2),ret);
     push_onto_list(LispNumber::Create((last_demo_mbut&1)==1),ret);
@@ -906,7 +906,7 @@ void *l_caller(long number, void *args)
       the_game->mouse_to_game(x,y,rx,ry);
       void *ret=NULL;
       {
-    p_ref r1(ret);
+    PtrRef r1(ret);
     push_onto_list(LispNumber::Create(ry),ret);
     push_onto_list(LispNumber::Create(rx),ret);
       }
@@ -921,7 +921,7 @@ void *l_caller(long number, void *args)
       the_game->game_to_mouse(x,y,current_view,rx,ry);
       void *ret=NULL;
       {
-    p_ref r1(ret);
+    PtrRef r1(ret);
     push_onto_list(LispNumber::Create(ry),ret);
     push_onto_list(LispNumber::Create(rx),ret);
       }
@@ -949,7 +949,7 @@ void *l_caller(long number, void *args)
       void *fn=eval(CAR(args)); args=CDR(args);
       char tmp[200];
       {
-    p_ref r1(fn);
+    PtrRef r1(fn);
     char *slash=lstring_value(eval(CAR(args)));
     char *filename=lstring_value(fn);
 
@@ -973,7 +973,7 @@ void *l_caller(long number, void *args)
       get_directory(lstring_value(eval(CAR(args))),files,tfiles,dirs,tdirs);
       void *fl=NULL,*dl=NULL,*rl=NULL;
       {
-    p_ref r1(fl),r2(dl);
+    PtrRef r1(fl),r2(dl);
     
     for (i=tfiles-1;i>=0;i--) { push_onto_list(LispString::Create(files[i]),fl); free(files[i]); }
     free(files);
@@ -1004,7 +1004,7 @@ void *l_caller(long number, void *args)
       long last=lnumber_value(eval(CAR(args)));
       long i;
       void *ret=NULL;
-      p_ref r1(ret);
+      PtrRef r1(ret);
 
       if (last>=first)
       {
@@ -1032,7 +1032,7 @@ void *l_caller(long number, void *args)
 // arguments have already been evaled..
 long c_caller(long number, void *args)
 {
-    p_ref r1(args);
+    PtrRef r1(args);
     switch (number)
     {
         case 1:
@@ -1377,7 +1377,7 @@ long c_caller(long number, void *args)
     case 134 :  // play_sound
     {
       void *a=args;
-      p_ref r1(a);
+      PtrRef r1(a);
       int id=lnumber_value(lcar(a));
       if (id<0) return 0;
       a=CDR(a);

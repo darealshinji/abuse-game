@@ -110,7 +110,7 @@ static void fire_at_player(game_object *o, game_object *b)
   {
     int angle=lisp_atan2(firey-playery,playerx-firex);
     void *call_list=NULL;
-    p_ref r1(call_list);
+    PtrRef r1(call_list);
     push_onto_list(new_lisp_pointer(b),call_list);
     push_onto_list(LispNumber::Create(angle),call_list);
     push_onto_list(LispNumber::Create(firey),call_list);

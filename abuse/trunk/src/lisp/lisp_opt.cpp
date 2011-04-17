@@ -31,18 +31,18 @@ void *if_1progn,*if_2progn,*if_12progn,*not_symbol;
 void *comp_optimize(void *list)
 {
   void *return_val=list;
-  p_ref r1(list);
+  PtrRef r1(list);
   if (list)
   {
     if (CAR(list)==if_symbol)
     {
       void *eval1=lcar(lcdr(lcdr(list)));
-      p_ref r2(eval1);
+      PtrRef r2(eval1);
       void *eval2=lcar(lcdr(lcdr(lcdr(list))));
-      p_ref r3(eval2);
+      PtrRef r3(eval2);
 
       void *ret=NULL;
-      p_ref r1(ret);
+      PtrRef r4(ret);
       if (lcar(list)==eq_symbol && (lcar(lcdr(list))==zero_symbol))  //  simplify (eq 0 x) -> (eq0 x)
       {
     push_onto_list(lcar(lcdr(lcdr(list))),ret);

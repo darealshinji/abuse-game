@@ -2662,7 +2662,8 @@ int main(int argc, char *argv[])
     }
 
     l_user_stack.clean_up();
-    l_ptr_stack.clean_up();
+    // FIXME: this is now private in PtrRef::stack
+    //l_ptr_stack.clean_up();
 
     sound_uninit();
 

@@ -291,7 +291,7 @@ long character_type::isa_var_name(char *name)
 
 character_type::character_type(void *args, void *name)
 {
-  p_ref r2(args);
+  PtrRef r2(args);
   int i;
   ts=tv=0;
   seq=NULL;
@@ -323,42 +323,42 @@ character_type::character_type(void *args, void *name)
   for (i=0;i<TOTAL_ABILITIES;i++)
     abil[i]=get_ability_default((ability)i);
   void *field=args;
-  p_ref r7(field);
+  PtrRef r7(field);
   for (;field;field=CDR(field))
   {
     void *f=CAR(CAR(field));
-    p_ref r1(f);
+    PtrRef r1(f);
 
     if (f==l_abil)
     {
       void *l=CDR(CAR(field));
-      p_ref r4(l);
+      PtrRef r4(l);
       for (i=0;i<TOTAL_ABILITIES;i++)
       {
     Cell *ab=assoc(LispSymbol::FindOrCreate(ability_names[i]),l);
-    p_ref r5(ab);
+    PtrRef r5(ab);
     if (!NILP(ab))
       abil[i]=lnumber_value(eval(lcar(lcdr(ab))));
       }
     } else if (f==l_funs)
     {
       void *l=CDR(CAR(field));
-      p_ref r4(l);
+      PtrRef r4(l);
       for (i=0;i<TOTAL_OFUNS;i++)
       {
     Cell *ab=assoc(LispSymbol::FindOrCreate(ofun_names[i]),l);
-    p_ref r5(ab);
+    PtrRef r5(ab);
     if (!NILP(ab) && lcar(lcdr(ab)))
     fun_table[i]=lcar(lcdr(ab));
       }
     } else if (f==l_flags)
     {
       void *l=CDR(CAR(field));
-      p_ref r4(l);
+      PtrRef r4(l);
       for (i=0;i<TOTAL_CFLAGS;i++)
       {
     Cell *ab=assoc(LispSymbol::FindOrCreate(cflag_names[i]),l);
-    p_ref r5(ab);
+    PtrRef r5(ab);
     if (!NILP(ab) && eval(lcar(lcdr(ab))))
     cflags|=(1<<i);
       }
@@ -380,7 +380,7 @@ character_type::character_type(void *args, void *name)
     } else if (f==l_states)
     {
       void *l=CDR(CAR(field));
-      p_ref r4(l);
+      PtrRef r4(l);
       char fn[100];
       strcpy(fn,lstring_value(eval(CAR(l)))); l=CDR(l);
       while (l)
@@ -397,7 +397,7 @@ character_type::character_type(void *args, void *name)
     } else if (f==l_fields)
     {
       void *mf=CDR(CAR(field));
-      p_ref r4(mf);
+      PtrRef r4(mf);
       while (!NILP(mf))
       {
     char *real=lstring_value(eval(lcar(lcar(mf))));
@@ -422,7 +422,7 @@ character_type::character_type(void *args, void *name)
     } else if (f==l_vars)
     {
       void *l=CDR(CAR(field));
-      p_ref r8(l);
+      PtrRef r8(l);
       while (l)
       {
     add_var(CAR(l),name);
