@@ -147,18 +147,13 @@ static LObject *CollectObject(LObject *x)
                                     ((LSysFunction *)x)->fun_number);
         break;
       case L_USER_FUNCTION:
-#ifndef NO_LIBS
-        ret = new_lisp_user_function(((LUserFunction *)x)->alist,
-                                     ((LUserFunction *)x)->blist);
-
-#else
-        {
-          LObject *arg = CollectObject(((LUserFunction *)x)->arg_list);
-          LObject *block = CollectObject(((LUserFunction *)x)->block_list);
-          ret = new_lisp_user_function(arg, block);
-        }
-#endif
+      {
+        LUserFunction *fun = (LUserFunction *)x;
+        LList *arg = (LList *)CollectObject(fun->arg_list);
+        LList *block = (LList *)CollectObject(fun->block_list);
+        ret = new_lisp_user_function(arg, block);
         break;
+      }
       case L_STRING:
         ret = LString::Create(lstring_value(x));
         break;
@@ -260,8 +255,6 @@ static void collect_stacks()
 
 void collect_space(int which_space) // should be tmp or permanent
 {
-  return; /* XXX: temporary hack */
-
   int old_space = current_space;
   cstart = space[which_space];
   cend = free_space[which_space];

@@ -153,11 +153,7 @@ struct LSysFunction : LObject
 
 struct LUserFunction : LObject
 {
-#ifndef NO_LIBS
-    intptr_t alist, blist;      // id for cached blocks
-#else
-    void *arg_list, *block_list;
-#endif
+    LList *arg_list, *block_list;
 };
 
 struct LArray : LObject
@@ -237,11 +233,7 @@ LSysFunction *new_lisp_sys_function(int min_args, int max_args, int fun_number);
 LSysFunction *new_lisp_c_function(int min_args, int max_args, int fun_number);
 LSysFunction *new_lisp_c_bool(int min_args, int max_args, int fun_number);
 
-#ifdef NO_LIBS
-LUserFunction *new_lisp_user_function(void *arg_list, void *block_list);
-#else
-LUserFunction *new_lisp_user_function(intptr_t arg_list, intptr_t block_list);
-#endif
+LUserFunction *new_lisp_user_function(LList *arg_list, LList *block_list);
 
 LSysFunction *new_user_lisp_function(int min_args, int max_args, int fun_number);
 

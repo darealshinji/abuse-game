@@ -2486,10 +2486,7 @@ int main(int argc, char *argv[])
         }
 
         game_net_init(argc, argv);
-//        lisp_init(0x100000, 0x94000);
         lisp_init(0x80000, 0x94000);
-//        lisp_init(0x20000, 0x94000);
-//        lisp_init(0x100000, 0x10000);
 
         dev_init(argc, argv);
 
