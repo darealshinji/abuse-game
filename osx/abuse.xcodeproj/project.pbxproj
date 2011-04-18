@@ -148,7 +148,6 @@
 		B99CE1630D833D8F00E42436 /* ant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ant.h; sourceTree = "<group>"; };
 		B99CE1640D833D8F00E42436 /* automap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = automap.cpp; sourceTree = "<group>"; };
 		B99CE1650D833D8F00E42436 /* automap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = automap.h; sourceTree = "<group>"; };
-		B99CE1660D833D8F00E42436 /* bus_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bus_type.h; sourceTree = "<group>"; };
 		B99CE1670D833D8F00E42436 /* cache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cache.cpp; sourceTree = "<group>"; };
 		B99CE1680D833D8F00E42436 /* cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cache.h; sourceTree = "<group>"; };
 		B99CE1690D833D8F00E42436 /* chars.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chars.cpp; sourceTree = "<group>"; };
@@ -443,7 +442,6 @@
 				B99CE1630D833D8F00E42436 /* ant.h */,
 				B99CE1640D833D8F00E42436 /* automap.cpp */,
 				B99CE1650D833D8F00E42436 /* automap.h */,
-				B99CE1660D833D8F00E42436 /* bus_type.h */,
 				B99CE1670D833D8F00E42436 /* cache.cpp */,
 				B99CE1680D833D8F00E42436 /* cache.h */,
 				B99CE1690D833D8F00E42436 /* chars.cpp */,

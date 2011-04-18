@@ -217,8 +217,8 @@ void *lisp_eq(void *n1, void *n2);
 void *lisp_equal(void *n1, void *n2);
 void *eval_block(void *list);
 void *assoc(void *item, void *list);
-void resize_tmp(int new_size);
-void resize_perm(int new_size);
+void resize_tmp(size_t new_size);
+void resize_perm(size_t new_size);
 
 void push_onto_list(void *object, void *&list);
 LSymbol *add_c_object(void *symbol, int index);
@@ -243,7 +243,7 @@ void lisp_init(long perm_size, long tmp_size);
 void lisp_uninit();
 
 extern uint8_t *space[4], *free_space[4];
-extern int space_size[4];
+extern size_t space_size[4];
 void *nth(int num, void *list);
 int32_t lisp_atan2(int32_t dy, int32_t dx);
 int32_t lisp_sin(int32_t x);
