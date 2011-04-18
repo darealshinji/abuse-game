@@ -46,9 +46,9 @@ public:
     CrcManager();
 
     int get_filenumber(char const *filename);
-    uint32_t get_crc(int32_t filenumber, int &failed);
-    void set_crc(int32_t filenumber, uint32_t crc);
-    char *get_filename(int32_t filenumber);
+    uint32_t get_crc(int filenumber, int &failed);
+    void set_crc(int filenumber, uint32_t crc);
+    char *get_filename(int filenumber);
     void clean_up();
     int total_filenames() { return total_files; }
     int write_crc_file(char const *filename);
@@ -89,7 +89,8 @@ private:
                          // we don't need to
 
     int16_t lcache_number;
-    int32_t alloc_id();
+
+    int AllocId();
     void locate(CacheItem *i, int local_only = 0); // set up file and offset for this item
     void normalize();
     void unmalloc(CacheItem *i);
@@ -107,11 +108,10 @@ public:
     void free_oldest();
     int in_use() { if (used) { used = 0; return 1; } else return 0; }
     int full() { if (ful) { ful = 0; return 1; } else return 0; }
-    int32_t reg_object(char const *filename, void *object, int type,
-                       int rm_dups); // lisp object
-    int32_t reg(char const *filename, char const *name, int type = -1,
+    int reg_object(char const *filename, LObject *object, int type,
+                   int rm_dups); // lisp object
+    int reg(char const *filename, char const *name, int type = -1,
                 int rm_dups = 0); // returns id to item
-    int32_t reg_lisp_block(Cell *block);
     int loaded(int id);
     void unreg(int id);
     void note_need(int id);
@@ -122,7 +122,7 @@ public:
     image *img(int id);
     part_frame *part(int id);
     sound_effect *sfx(int id);
-    Cell *lblock(int id);
+    LObject *lblock(int id);
     char_tint *ctint(int id);
 
     void prof_init();

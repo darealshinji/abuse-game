@@ -44,7 +44,7 @@ sequence::sequence(char *filename, void *pict_list, void *advance_list)
 
   seq=(int *) malloc(sizeof(int)*total);
   if (item_type(pict_list)==L_STRING)
-    seq[0]=cache.reg_object(filename,pict_list,SPEC_CHARACTER2,1);
+    seq[0]=cache.reg_object(filename,(LObject *)pict_list,SPEC_CHARACTER2,1);
   else
   {
     int i;
