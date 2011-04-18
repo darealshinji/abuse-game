@@ -186,7 +186,6 @@ void *lmalloc(int size, int which_space)
   if (size > get_free_size(which_space))
   {
     int fart = 1;
-    fprintf(stderr, "%i > %i !!!\n", size, get_free_size(which_space));
 
     if (which_space == PERM_SPACE || which_space == TMP_SPACE)
     {
@@ -200,7 +199,6 @@ void *lmalloc(int size, int which_space)
       lbreak("lisp: cannot malloc %d bytes in space #%d\n", size, which_space);
       exit(0);
     }
-    fprintf(stderr, "%i <= %i\n", size, get_free_size(which_space));
   }
   void *ret = (void *)free_space[which_space];
   free_space[which_space] += size;
