@@ -656,13 +656,13 @@ void CacheList::prof_poll_end()
 
 void CacheList::unreg(int id)
 {
-  if (list[id].file_number)
-  {
-    unmalloc(&list[id]);
-    list[id].file_number=-1;
-  }
-  else
-    printf("Error : trying to unregister free object\n");
+    if (list[id].file_number >= 0)
+    {
+        unmalloc(&list[id]);
+        list[id].file_number = -1;
+    }
+    else
+        printf("Error : trying to unregister free object\n");
 }
 
 static void cache_cleanup2()
