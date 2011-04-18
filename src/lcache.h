@@ -12,12 +12,6 @@
 #define __LCACHE_HPP_
 #include "lisp.h"
 
-#ifdef SCADALISP
-#define can_cache_lisp() 0
-#else
-#define can_cache_lisp() 0 /* XXX */
-#endif
-
 // return number of bytes to save this block of code
 size_t block_size(LObject *level);
 void write_level(bFILE *fp, LObject *level);

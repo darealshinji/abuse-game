@@ -856,53 +856,20 @@ int32_t CacheList::alloc_id()
   return id;
 }
 
-
-
 int32_t CacheList::reg_lisp_block(Cell *block)
 {
-  uint32_t s;
-  if (lcache_number==-1)
-    lcache_number=crc_manager.get_filenumber(lfname);
+    if (lcache_number == -1)
+        lcache_number = crc_manager.get_filenumber(lfname);
 
-  if (can_cache_lisp())
-  {
-    if (!cache_file)
-    {
-      if (cache_read_file)
-      {
-    delete cache_read_file;
-    cache_read_file=NULL;
+    int id = alloc_id(), fn = crc_manager.get_filenumber(lfname);
+    CacheItem *ci = list + id;
+    CHECK(id < total && list[id].file_number < 0);
 
-    cache_file=new jFILE(lfname,"ab");
-      } else cache_file=new jFILE(lfname,"wb");     // first time we opened
-    }
-    if (cache_file->open_failure())
-    {
-      delete cache_file;
-      ((LObject *)block)->Print();
-      fprintf(stderr,"Unable to open lisp cache file name %s\n",lfname);
-      exit(0);
-    }
-  }
-  int id=alloc_id(),fn=crc_manager.get_filenumber(lfname);
-  CacheItem *ci=list+id;
-  CHECK(id<total && list[id].file_number<0);
-
-  ci->file_number=fn;
-  ci->last_access=-1;
-  ci->type=SPEC_EXTERNAL_LCACHE;
-  if (!can_cache_lisp())
-  {
-    ci->data=(void *)block;                // we can't cache it out so it must be in memory
+    ci->file_number = fn;
+    ci->last_access = -1;
+    ci->type = SPEC_EXTERNAL_LCACHE;
+    ci->data = (void *)block; // we can't cache it out so it must be in memory
     return id;
-  }
-  ci->data=NULL;                  // assume that it is in tmp memory, need to cache in on access
-  ci->offset=cache_file->tell();
-
-  s = block_size((LObject *)block);
-  cache_file->write_uint32(s);
-  write_level(cache_file, (LObject *)block);
-  return id;
 }
 
 int32_t CacheList::reg_object(char const *filename, void *object, int type, int rm_dups)
@@ -1143,50 +1110,7 @@ Cell *CacheList::lblock(int id)
 {
   CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
-  if (!can_cache_lisp()) return (Cell *)me->data;
-  if (me->last_access>=0)
-  {
-    touch(me);
-    return (Cell *)me->data;
-  }
-  else
-  {
-    if (cache_file)
-    {
-      delete cache_file;
-      cache_file=NULL;
-    }
-    touch(me);
-
-    if (!cache_read_file)
-    {
-      cache_read_file=new jFILE(crc_manager.get_filename(me->file_number),"rb");
-
-      int cache_size=80*1024;                   // 80K
-      cache_read_file->set_read_buffer_size(cache_size);
-      uint8_t mini_buf;
-      cache_read_file->read(&mini_buf,1);       // prime the buffer
-    }
-
-    cache_read_file->seek(me->offset,0);
-
-    uint32_t size=cache_read_file->read_uint32();
-    void *space;
-
-    if (size)
-      space=malloc(size);
-    else space=NULL;
-
-    int cs=current_space;
-    use_user_space(space,size);
-    load_block(cache_read_file);
-    current_space=cs;
-
-    if (size)
-      me->data=(Cell *)space;
-    else me->data=NULL;
-    return (Cell *)me->data;
-  }
+  return (Cell *)me->data;
 }
 
 CacheList cache;
@@ -1248,7 +1172,6 @@ void CacheList::show_accessed()
   } while (new_old);
 }
 
-
 int CacheList::loaded(int id)
 {
   CacheItem *me=list+id;
@@ -1257,8 +1180,6 @@ int CacheList::loaded(int id)
     return 1;
   else return 0;
 }
-
-
 
 char_tint *CacheList::ctint(int id)
 {
@@ -1278,7 +1199,4 @@ char_tint *CacheList::ctint(int id)
     return (char_tint *)me->data;
   }
 }
-
-
-
 
