@@ -179,8 +179,6 @@ static int get_free_size(int which_space)
 
 void *lmalloc(int size, int which_space)
 {
-  return malloc(size); /* XXX: temporary hack */
-
 #ifdef WORD_ALIGN
   size=(size+3)&(~3);
 #endif
@@ -354,8 +352,7 @@ struct LString *LString::Create(int length)
     return s;
 }
 
-#ifdef NO_LIBS
-LUserFunction *new_lisp_user_function(void *arg_list, void *block_list)
+LUserFunction *new_lisp_user_function(LList *arg_list, LList *block_list)
 {
     PtrRef r1(arg_list), r2(block_list);
 
@@ -369,28 +366,6 @@ LUserFunction *new_lisp_user_function(void *arg_list, void *block_list)
     lu->block_list = block_list;
     return lu;
 }
-#else
-LUserFunction *new_lisp_user_function(intptr_t arg_list, intptr_t block_list)
-{
-    // Make sure all functions get defined in permanent space
-    int sp = current_space;
-    if (current_space != GC_SPACE)
-        current_space = PERM_SPACE;
-
-    size_t size = sizeof(LUserFunction);
-    if (size < sizeof(LRedirect))
-        size = sizeof(LRedirect);
-
-    LUserFunction *lu = (LUserFunction *)lmalloc(size, current_space);
-    lu->type = L_USER_FUNCTION;
-    lu->alist = arg_list;
-    lu->blist = block_list;
-
-    current_space = sp;
-
-    return lu;
-}
-#endif
 
 LSysFunction *new_lisp_sys_function(int min_args, int max_args, int fun_number)
 {
@@ -2147,6 +2122,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
     case SYS_FUNC_DEFUN:
     {
         LSymbol *symbol = (LSymbol *)CAR(arg_list);
+        PtrRef r1(symbol);
 #ifdef TYPE_CHECKING
         if (item_type(symbol) != L_SYMBOL)
         {
@@ -2164,13 +2140,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
 #endif
         LObject *block_list = CDR(CDR(arg_list));
 
-#ifndef NO_LIBS
-        intptr_t a = cache.reg_lisp_block(lcar(lcdr(arg_list)));
-        intptr_t b = cache.reg_lisp_block(block_list);
-        LUserFunction *ufun = new_lisp_user_function(a, b);
-#else
-        LUserFunction *ufun = new_lisp_user_function(lcar(lcdr(arg_list)), block_list);
-#endif
+        LUserFunction *ufun = new_lisp_user_function((LList *)lcar(lcdr(arg_list)), (LList *)block_list);
         symbol->SetFunction(ufun);
         ret = symbol;
         break;
@@ -3001,7 +2971,7 @@ void perm_space()
 
 void use_user_space(void *addr, long size)
 {
-    current_space = 2;
+    current_space = USER_SPACE;
     free_space[USER_SPACE] = space[USER_SPACE] = (uint8_t *)addr;
     space_size[USER_SPACE] = size;
 }
@@ -3034,15 +3004,9 @@ LObject *LSymbol::EvalUserFunction(LList *arg_list)
     }
 #endif
 
-#ifndef NO_LIBS
-    void *fun_arg_list = cache.lblock(fun->alist);
-    void *block_list = cache.lblock(fun->blist);
+    LList *fun_arg_list = fun->arg_list;
+    LList *block_list = fun->block_list;
     PtrRef r9(block_list), r10(fun_arg_list);
-#else
-    void *fun_arg_list = fun->arg_list;
-    void *block_list = fun->block_list;
-    PtrRef r9(block_list), r10(fun_arg_list);
-#endif
 
     // mark the start start, so we can restore when done
     long stack_start = l_user_stack.son;
@@ -3052,7 +3016,7 @@ LObject *LSymbol::EvalUserFunction(LList *arg_list)
     PtrRef r18(f_arg);
     PtrRef r19(arg_list);
 
-    for (f_arg = (LObject *)fun_arg_list; f_arg; f_arg = CDR(f_arg))
+    for (f_arg = fun_arg_list; f_arg; f_arg = CDR(f_arg))
     {
         LSymbol *s = (LSymbol *)CAR(f_arg);
         l_user_stack.push(s->value);
@@ -3063,7 +3027,7 @@ LObject *LSymbol::EvalUserFunction(LList *arg_list)
         int new_start = l_user_stack.son;
         int i = new_start;
         // now push all the values we wish to gather
-        for (f_arg = (LObject *)fun_arg_list; f_arg; f_arg = CDR(f_arg))
+        for (f_arg = fun_arg_list; f_arg; f_arg = CDR(f_arg))
         {
             if (!arg_list)
             {
@@ -3076,7 +3040,7 @@ LObject *LSymbol::EvalUserFunction(LList *arg_list)
         }
 
         // now store all the values and put them into the symbols
-        for (f_arg = (LObject *)fun_arg_list; f_arg; f_arg = CDR(f_arg))
+        for (f_arg = fun_arg_list; f_arg; f_arg = CDR(f_arg))
             ((LSymbol *)CAR(f_arg))->SetValue((LObject *)l_user_stack.sdata[i++]);
 
         l_user_stack.son = new_start;
@@ -3093,11 +3057,11 @@ LObject *LSymbol::EvalUserFunction(LList *arg_list)
     while (block_list)
     {
         ret = CAR(block_list)->Eval();
-        block_list = CDR(block_list);
+        block_list = (LList *)CDR(block_list);
     }
 
     long cur_stack = stack_start;
-    for (f_arg = (LObject *)fun_arg_list; f_arg; f_arg = CDR(f_arg))
+    for (f_arg = fun_arg_list; f_arg; f_arg = CDR(f_arg))
         ((LSymbol *)CAR(f_arg))->SetValue((LObject *)l_user_stack.sdata[cur_stack++]);
 
     l_user_stack.son = stack_start;
