@@ -17,7 +17,6 @@
 #include <stdarg.h>
 
 #define TYPE_CHECKING 1
-#include "bus_type.h"
 
 #include "lisp.h"
 #include "lisp_gc.h"
@@ -47,7 +46,8 @@ size_t LSymbol::count = 0;
 
 
 uint8_t *space[4], *free_space[4];
-int space_size[4], print_level=0, trace_level=0, trace_print_level=1000;
+size_t space_size[4];
+int print_level = 0, trace_level = 0, trace_print_level = 1000;
 int total_user_functions;
 
 int current_space;  // normally set to TMP_SPACE, unless compiling or other needs
@@ -171,38 +171,34 @@ void restore_heap(void *val, int heap)
   free_space[heap] = (uint8_t *)val;
 }
 
-static int get_free_size(int which_space)
+static size_t get_free_size(int which_space)
 {
-    return space_size[which_space]
-            - (free_space[which_space] - space[which_space]);
+    size_t used = free_space[which_space] - space[which_space];
+    return space_size[which_space] > used ? space_size[which_space] - used : 0;
 }
 
-void *lmalloc(int size, int which_space)
+static void *lmalloc(size_t size, int which_space)
 {
-#ifdef WORD_ALIGN
-  size=(size+3)&(~3);
-#endif
+    // Align allocation
+    size = (size + sizeof(intptr_t) - 1) & ~(sizeof(intptr_t) - 1);
 
-  if (size > get_free_size(which_space))
-  {
-    int fart = 1;
-
-    if (which_space == PERM_SPACE || which_space == TMP_SPACE)
+    // Collect garbage if necessary
+    if (size > get_free_size(which_space))
     {
-      collect_space(which_space);
-      if (size <= get_free_size(which_space))
-        fart = 0;
+        if (which_space == PERM_SPACE || which_space == TMP_SPACE)
+            collect_space(which_space);
+
+        if (size > get_free_size(which_space))
+        {
+            lbreak("lisp: cannot find %d bytes in space #%d\n",
+                   size, which_space);
+            exit(0);
+        }
     }
 
-    if (fart)
-    {
-      lbreak("lisp: cannot malloc %d bytes in space #%d\n", size, which_space);
-      exit(0);
-    }
-  }
-  void *ret = (void *)free_space[which_space];
-  free_space[which_space] += size;
-  return ret;
+    void *ret = (void *)free_space[which_space];
+    free_space[which_space] += size;
+    return ret;
 }
 
 void *eval_block(void *list)
@@ -3146,7 +3142,7 @@ LObject *LObject::Eval()
     return ret;
 }
 
-void resize_perm(int new_size)
+void resize_perm(size_t new_size)
 {
   if (new_size<((char *)free_space[PERM_SPACE]-(char *)space[PERM_SPACE]))
   {
@@ -3160,7 +3156,7 @@ void resize_perm(int new_size)
     dprintf("doesn't work yet!\n");
 }
 
-void resize_tmp(int new_size)
+void resize_tmp(size_t new_size)
 {
   if (new_size<((char *)free_space[TMP_SPACE]-(char *)space[TMP_SPACE]))
   {

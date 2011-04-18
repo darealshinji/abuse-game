@@ -18,7 +18,6 @@
 
 #include "lisp.h"
 #include "specs.h"
-#include "bus_type.h"
 
 size_t block_size(LObject *level)  // return size needed to recreate this block
 {
