@@ -161,13 +161,13 @@ int CrcManager::get_filenumber(char const *filename)
   return total_files-1;
 }
 
-char *CrcManager::get_filename(int32_t filenumber)
+char *CrcManager::get_filename(int filenumber)
 {
   CHECK(filenumber>=0 && filenumber<total_files);
   return files[filenumber]->filename;
 }
 
-uint32_t CrcManager::get_crc(int32_t filenumber, int &failed)
+uint32_t CrcManager::get_crc(int filenumber, int &failed)
 {
   CHECK(filenumber>=0 && filenumber<total_files);
   if (files[filenumber]->crc_calculated)
@@ -179,7 +179,7 @@ uint32_t CrcManager::get_crc(int32_t filenumber, int &failed)
   return 0;
 }
 
-void CrcManager::set_crc(int32_t filenumber, uint32_t crc)
+void CrcManager::set_crc(int filenumber, uint32_t crc)
 {
   CHECK(filenumber>=0 && filenumber<total_files);
   files[filenumber]->crc_calculated=1;
@@ -812,161 +812,149 @@ void CacheList::locate(CacheItem *i, int local_only)
   used=1;
 }
 
-int32_t CacheList::alloc_id()
+int CacheList::AllocId()
 {
-  int id;
-  if (prof_data)
-  {
-    the_game->show_help("new id allocated, cache profiling turned off\n");
-    prof_uninit();
-  }
-
-  // see if we previously allocated an id, if so check the next spot in the array
-  // otherwise we will have to scan the whole list for a free id and possible
-  // grow the list.
-  if (last_registered+1<total && list[last_registered+1].file_number<0)
-    id=last_registered+1;
-  else
-  {
-    int i;
-    CacheItem *ci=list;
-    for (i=0,id=-1; i<total && id<0; i++,ci++)        // scan list for a free id
+    if (prof_data)
     {
-      if (ci->file_number<0)
-        id=i;
+        the_game->show_help("new id allocated, cache profiling turned off\n");
+        prof_uninit();
     }
 
-    if (id<0)                                 // if no free id's then make list bigger
+    // See if we previously allocated an id, if so check the next spot in
+    // the array otherwise we will have to scan the whole list for a free
+    // id and possibly grow the list.
+    int ret = last_registered + 1;
+    if (ret >= total || list[ret].file_number < 0)
     {
-      int add_size=20;
-      list=(CacheItem *)realloc(list,(sizeof(CacheItem)*(total+add_size)));
-      for (i=0; i<add_size; i++)
-      {
-        list[total+i].file_number=-1;         // mark new entries as new
-    list[total+i].last_access=-1;
-    list[total+i].data=NULL;
-      }
-      id=total;
-      if (prof_data)                          // new id's have been added old prof_data size won't work
-      { free(prof_data); prof_data=NULL; }
-      total+=add_size;
+        // Scan list for a free id
+        CacheItem *ci = list;
+        ret = -1;
+        for (int i = 0; i < total && ret < 0; i++, ci++)
+            if (ci->file_number < 0)
+                ret = i;
+
+        if (ret < 0) // if no free id then make list bigger
+        {
+            int add_size = 20;
+            list = (CacheItem *)realloc(list,
+                                  (sizeof(CacheItem) * (total + add_size)));
+            for (int i = 0; i < add_size; i++)
+            {
+                list[total + i].file_number = -1; // mark new entries as new
+                list[total + i].last_access = -1;
+                list[total + i].data = NULL;
+            }
+            ret = total;
+            // If new id's have been added, old prof_data size won't work
+            if (prof_data)
+            {
+                free(prof_data);
+                prof_data = NULL;
+            }
+            total += add_size;
+        }
     }
-  }
-  last_registered=id;
-  return id;
+    last_registered = ret;
+    return ret;
 }
 
-int32_t CacheList::reg_lisp_block(Cell *block)
+int CacheList::reg_object(char const *filename, LObject *object,
+                          int type, int rm_dups)
 {
-    if (lcache_number == -1)
-        lcache_number = crc_manager.get_filenumber(lfname);
+    // See if we got a object with a filename included. Otherwise,
+    // it's a string.
+    if (item_type(object) == L_CONS_CELL)
+    {
+        filename = lstring_value(lcar(object));
+        object = lcdr(object);
+    }
 
-    int id = alloc_id(), fn = crc_manager.get_filenumber(lfname);
-    CacheItem *ci = list + id;
-    CHECK(id < total && list[id].file_number < 0);
-
-    ci->file_number = fn;
-    ci->last_access = -1;
-    ci->type = SPEC_EXTERNAL_LCACHE;
-    ci->data = (void *)block; // we can't cache it out so it must be in memory
-    return id;
-}
-
-int32_t CacheList::reg_object(char const *filename, void *object, int type, int rm_dups)
-{
-  char *name;
-  if (item_type(object)==L_CONS_CELL)      // see if we got a object with a filename included
-  {
-    filename=lstring_value(lcar(object));
-    name=lstring_value(lcdr(object));
-  }
-  else name=lstring_value(object);        // otherwise should be a string
-  return reg(filename,name,type,rm_dups);
+    return reg(filename, lstring_value(object), type, rm_dups);
 }
 
 extern int total_files_open;
 
-int32_t CacheList::reg(char const *filename, char const *name, int type, int rm_dups)
+int CacheList::reg(char const *filename, char const *name, int type, int rm_dups)
 {
-    int id=alloc_id(),i,fn=crc_manager.get_filenumber(filename);
-    CacheItem *ci=list+id;
-    CHECK(id<total && list[id].file_number<0);
+    int fn = crc_manager.get_filenumber(filename);
+    int offset = 0;
 
-    if( type == SPEC_EXTERN_SFX ) // If a extern sound effect then just make sure it's there
+    if (type == SPEC_EXTERN_SFX)
     {
-        bFILE *check=open_file(filename,"rb");
-        if (check->open_failure())
+        // If an extern sound effect then just make sure it's there. If sound
+        // is disabled, ignore the load error, just pretend it's all OK.
+        bFILE *check = open_file(filename, "rb");
+        if (!check->open_failure())
         {
-            delete check;
-            if( sound_avail )
+            char buf[4];
+            check->read(buf, 4);
+            if (memcmp(buf, "RIFF", 4))
             {
-                printf("Unable to open file '%s' for reading\n",filename);
+                printf("File %s is not a WAV file\n", filename);
                 exit(0);
             }
-            else
-            {
-                // Sound is disabled, we don't really care if the sound file
-                // is there or not, just pretend it's all ok.
-                return id;
-            }
         }
-        char buf[4];
-        check->read(buf,4);
-        delete check;
-        if (memcmp(buf,"RIFF",4))
+        else if (sound_avail)
         {
-            printf("File %s is not a WAV file\n",filename);
+            printf("Unable to open file '%s' for reading\n", filename);
             exit(0);
         }
-        ci->file_number=fn;
-        ci->last_access=-1;
-        ci->data=NULL;
-        ci->offset=0;
-        ci->type=type;
-        return id;
+        delete check;
     }
-
-    spec_directory *sd=sd_cache.get_spec_directory(filename);
-
-    if (!sd)
+    else
     {
-        printf("Unable to open filename %s for requested item %s\n",filename,name);
-        exit(0);
+        // If a classic spec item, look for it in the archive.
+        spec_directory *sd = sd_cache.get_spec_directory(filename);
+
+        if (!sd)
+        {
+            printf("Unable to open file %s for item %s\n", filename, name);
+            exit(0);
+        }
+
+        spec_entry *se = NULL;
+        if (type != -1)
+            se = sd->find(name, type);
+        if (!se)
+            se = sd->find(name);
+        if (!se)
+        {
+            printf("No such item %s in file %s\n", name, filename);
+            exit(0);
+        }
+
+        if (type >= 0 && type != se->type &&
+             ((type != SPEC_CHARACTER2 && type != SPEC_CHARACTER)
+               || (se->type != SPEC_CHARACTER && se->type != SPEC_CHARACTER2)))
+        {
+            printf("Item %s of file %s should be type %s\n",
+                   name, filename, spec_types[type]);
+            exit(0);
+        }
+
+        type = se->type;
+        offset = se->offset;
     }
 
-    spec_entry *se;
-    if (type!=-1)
-    {
-        se=sd->find(name,type);
-        if (!se) se=sd->find(name);
-    }
-    else se=sd->find(name);
-
-
-    if (!se)
-    {
-        printf("No such item %s in file %s\n",name,filename);
-        exit(0);
-    }
-    else if (type>=0 && (type!=se->type && ((type!=SPEC_CHARACTER2 && type!=SPEC_CHARACTER)  ||
-                        (se->type!=SPEC_CHARACTER && se->type!=SPEC_CHARACTER2))))
-    {
-        printf("Item %s of file %s should be type %s\n",name,filename,spec_types[type]);
-        exit(0);
-    }
-
+    // Check whether there is another entry pointing to the same
+    // file and offset, and return it as a shortcut.
     if (rm_dups)
     {
-        for (i=0; i<total; i++)
-            if (list[i].file_number == fn && (unsigned)list[i].offset == se->offset)
+        for (int i = 0; i < total; i++)
+            if (list[i].file_number == fn && list[i].offset == offset)
                 return i;
     }
 
-    ci->file_number=fn;
-    ci->last_access=-1;
-    ci->data=NULL;
-    ci->offset=se->offset;
-    ci->type=se->type;
+    int id = AllocId();
+
+    CHECK(id < total && list[id].file_number < 0);
+
+    list[id].file_number = fn;
+    list[id].last_access = -1;
+    list[id].data = NULL;
+    list[id].offset = offset;
+    list[id].type = type;
+
     return id;
 }
 
@@ -1041,7 +1029,7 @@ figure *CacheList::fig(int id)
     touch(me);
     locate(me);
     me->data=(void *)new figure(fp,me->type);
-    last_offset=fp->tell();
+     last_offset=fp->tell();
     return (figure *)me->data;
   }
 }
@@ -1106,11 +1094,11 @@ part_frame *CacheList::part(int id)
 }
 
 
-Cell *CacheList::lblock(int id)
+LObject *CacheList::lblock(int id)
 {
   CacheItem *me=list+id;
   CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
-  return (Cell *)me->data;
+  return (LObject *)me->data;
 }
 
 CacheList cache;

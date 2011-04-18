@@ -425,11 +425,11 @@ void load_data(int argc, char **argv)
   }
 
   if (DEFINEDP(symbol_value(l_title_screen)))
-    title_screen=cache.reg_object(NULL,symbol_value(l_title_screen),SPEC_IMAGE,1);
+    title_screen=cache.reg_object(NULL,(LObject *)symbol_value(l_title_screen),SPEC_IMAGE,1);
   else title_screen=-1;
 
   if (DEFINEDP(symbol_value(l_cdc_logo)))
-    cdc_logo=cache.reg_object(NULL,symbol_value(l_cdc_logo),SPEC_IMAGE,1);
+    cdc_logo=cache.reg_object(NULL,(LObject *)symbol_value(l_cdc_logo),SPEC_IMAGE,1);
   else cdc_logo=-1;
 
   start_position_type=0xffff;
