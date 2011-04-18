@@ -33,8 +33,6 @@
 #include "specache.h"
 #include "netface.h"
 
-char lfname[100]="";          // name of compiled lisp code cache file
-
 #define touch(x) { (x)->last_access=last_access++; \
            if ((x)->last_access<0) { normalize(); (x)->last_access=1; } }
 
@@ -665,75 +663,19 @@ void CacheList::unreg(int id)
         printf("Error : trying to unregister free object\n");
 }
 
-static void cache_cleanup2()
-{ unlink(lfname);
-}
-
-static void cache_cleanup(int ret, void *arg)
-{ unlink(lfname);
-}
-
-void CacheList::create_lcache()
-{
-#ifdef WIN32
-    char *prefix="c:\\";
-#else
-    char const *prefix = "/tmp/";     // for UNIX store lisp cache in tmp dir
-    int flags = O_CREAT | O_RDWR;
-#endif
-
-    int cfail = 1, num = 0;
-    do
-    {
-        sprintf(lfname,"%slcache%02d.tmp",prefix,num);
-
-#if defined( __APPLE__ )
-        unlink(lfname);
-        FILE *fp=fopen(lfname,"wb");
-        if (fp)
-        {
-            fclose(fp);
-            cfail=0;
-        }
-#else
-        int fd=open(lfname,flags,S_IRWXU | S_IRWXG | S_IRWXO);     // can we get exclusive rights to this file?
-        if (fd<0) close(fd); else cfail=0;
-#endif
-
-        if (cfail)
-            num++;
-
-    } while (cfail && num<15);
-
-    if (cfail)
-    {
-        fprintf(stderr,"Error : Unable to open cache file for compiled code.\n"
-            "        Please delete all files named lcacheXX.tmp\n"
-            "        and make sure you have write permission to\n"
-            "        directory (%s)\n",prefix);
-        exit(0);
-    }
-    else
-    {
-        exit_proc(cache_cleanup,cache_cleanup2);    // make sure this file gets deleted on exit..
-    }
-    lcache_number=-1;
-}
-
 CacheList::CacheList()
 {
-  // start out with a decent sized cache buffer because it's going to get allocated anyway.
-  total=0;
-  list=NULL;
-  last_registered=-1;
-  cache_file=fp=NULL;
-  last_access=1;
-  used=ful=0;
-  last_dir=NULL;
-  last_file=-1;
-  prof_data=NULL;
-  cache_read_file=NULL;
-  create_lcache();
+    // Start out with a decent sized cache buffer because it's going to
+    // get allocated anyway.
+    total = 0;
+    list = NULL;
+    last_registered = -1;
+    fp = NULL;
+    last_access = 1;
+    used = ful = 0;
+    last_dir = NULL;
+    last_file = -1;
+    prof_data = NULL;
 }
 
 CacheList::~CacheList()
@@ -750,12 +692,6 @@ void CacheList::empty()
   free(list);
   if (fp) delete fp;
   if (last_dir) delete last_dir;
-  if (cache_file)
-  {
-    delete cache_file;
-    cache_file=NULL;
-  }
-  unlink(lfname);
 
   if (prof_data)
   {
@@ -766,12 +702,7 @@ void CacheList::empty()
   total=0;                    // reinitalize
   list=NULL;
   last_registered=-1;
-  cache_file=fp=NULL;
-  if (cache_read_file)
-  {
-    delete cache_read_file;
-    cache_read_file=NULL;
-  }
+  fp=NULL;
 
   last_access=1;
   used=ful=0;

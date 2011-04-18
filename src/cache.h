@@ -83,12 +83,10 @@ private:
     int32_t total, last_registered, last_access, poll_start_access;
     int16_t last_file; // for speed leave the last file accessed open
 
-    bFILE *fp,*cache_file,*cache_read_file;
+    bFILE *fp;
     spec_directory *last_dir;
     int32_t last_offset; // store the last offset so we don't have to seek if
                          // we don't need to
-
-    int16_t lcache_number;
 
     int AllocId();
     void locate(CacheItem *i, int local_only = 0); // set up file and offset for this item
@@ -104,7 +102,6 @@ public:
     CacheList();
     ~CacheList();
 
-    void create_lcache();
     void free_oldest();
     int in_use() { if (used) { used = 0; return 1; } else return 0; }
     int full() { if (ful) { ful = 0; return 1; } else return 0; }
