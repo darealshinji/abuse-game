@@ -25,7 +25,7 @@ libimlib_a_SOURCES = \
     guistat.cpp guistat.h \
     sprite.cpp sprite.h \
     jwindow.cpp jwindow.h \
-    main.h macs.h video.h event.h mouse.h timing.h jdir.h \
+    macs.h video.h event.h mouse.h timing.h jdir.h \
     system.h \
     $(NULL)
 
