@@ -68,7 +68,7 @@ fi
 # Optimizations
 CXXFLAGS="${CXXFLAGS} ${OPT} ${REL}"
 # Code qui fait des warnings == code de porc == deux baffes dans ta gueule
-CXXFLAGS="${CXXFLAGS} -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Waggregate-return -Wsign-compare"
+CXXFLAGS="${CXXFLAGS} -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Wsign-compare"
 
 dnl Checks for header files
 AC_HEADER_DIRENT
