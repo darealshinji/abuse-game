@@ -2394,21 +2394,19 @@ int main(int argc, char *argv[])
     start_argc = argc;
     start_argv = argv;
 
-    for(int i = 0; i < argc; i++)
+    for (int i = 0; i < argc; i++)
     {
-        if(!strcmp(argv[i], "-cprint"))
-        {
+        if (!strcmp(argv[i], "-cprint"))
             external_print = 1;
-        }
     }
 
-#if(defined(__APPLE__) && !defined(__MACH__))
+#if (defined(__APPLE__) && !defined(__MACH__))
     unsigned char km[16];
 
     fprintf(stderr, "Mac Options: ");
     xres = 320; yres = 200;
     GetKeys((uint32_t*)&km);
-    if((km[ 0x3a >>3] >> (0x3a & 7)) &1 != 0)
+    if ((km[ 0x3a >>3] >> (0x3a & 7)) &1 != 0)
     {
         dev|=EDIT_MODE;
         start_edit = 1;
@@ -2416,7 +2414,7 @@ int main(int argc, char *argv[])
         disable_autolight = 1;
         fprintf(stderr, "Edit Mode...");
     }
-    if((km[ 0x3b >>3] >> (0x3b & 7)) &1 != 0)
+    if ((km[ 0x3b >>3] >> (0x3b & 7)) &1 != 0)
     {
         PixMult = 1;
         fprintf(stderr, "Single Pixel...");
@@ -2426,14 +2424,14 @@ int main(int argc, char *argv[])
         PixMult = 2;
         fprintf(stderr, "Double Pixel...");
     }
-    if((km[ 0x38 >>3] >> (0x38 & 7)) &1 != 0)
+    if ((km[ 0x38 >>3] >> (0x38 & 7)) &1 != 0)
     {
         xres *= 2;  yres *= 2;
         fprintf(stderr, "Double Size...");
     }
     fprintf(stderr, "\n");
 
-    if(tcpip.installed())
+    if (tcpip.installed())
         fprintf(stderr, "Using %s\n", tcpip.name());
 #endif
 
@@ -2448,41 +2446,31 @@ int main(int argc, char *argv[])
     start_sound(argc, argv);
 
     stat_man = new text_status_manager();
-    if(!get_option("-no_timer"))
-    {
+    if (!get_option("-no_timer"))
         timer_init();
-    }
 
     // look to see if we are supposed to fetch the data elsewhere
-    if(getenv("ABUSE_PATH"))
-    {
+    if (getenv("ABUSE_PATH"))
         set_filename_prefix(getenv("ABUSE_PATH"));
-    }
 
     // look to see if we are supposed to save the data elsewhere
-    if(getenv("ABUSE_SAVE_PATH"))
-    {
+    if (getenv("ABUSE_SAVE_PATH"))
         set_save_filename_prefix(getenv("ABUSE_SAVE_PATH"));
-    }
 
     jrand_init();
-    jrand();        // so compiler doesn't complain
+    jrand(); // so compiler doesn't complain
 
     set_spec_main_file("abuse.spe");
-
     check_for_lisp(argc, argv);
 
     do
     {
-        if(main_net_cfg)
+        if (main_net_cfg && !main_net_cfg->notify_reset())
         {
-            if(!main_net_cfg->notify_reset())
-            {
-                if(!get_option("-no_timer"))
-                    timer_uninit();
-                sound_uninit();
-                exit(0);
-            }
+            if (!get_option("-no_timer"))
+                timer_uninit();
+            sound_uninit();
+            exit(0);
         }
 
         game_net_init(argc, argv);
@@ -2495,177 +2483,138 @@ int main(int argc, char *argv[])
         dev_cont = new dev_controll();
         dev_cont->load_stuff();
 
-        g->get_input();        // prime the net
+        g->get_input(); // prime the net
 
-        int xx;
-        for(xx = 1; xx < argc; xx++)
+        for (int i = 1; i + 1 < argc; i++)
         {
-            if(!strcmp(argv[xx], "-server"))
+            if (!strcmp(argv[i], "-server"))
             {
-                xx++;
-                if(!become_server(argv[xx]))
+                if (!become_server(argv[i + 1]))
                 {
                     dprintf("unable to become a server\n");
                     exit(0);
                 }
-                xx = argc + 1;
+                break;
             }
         }
 
-        if(main_net_cfg)
-        {
+        if (main_net_cfg)
             wait_min_players();
-        }
 
         net_send(1);
-        if(net_start())
+        if (net_start())
         {
-            g->step();                // process all the objects in the
+            g->step(); // process all the objects in the world
             g->calc_speed();
-            g->update_screen();        // redraw the screen with any changes
+            g->update_screen(); // redraw the screen with any changes
         }
 
-    while(!g->done())
-    {
-      music_check();
+        while (!g->done())
+        {
+            music_check();
 
-      if(req_end)
-      {
-                delete current_level;
-                current_level = NULL;
+            if (req_end)
+            {
+                delete current_level; current_level = NULL;
 
                 show_end();
 
                 the_game->set_state(MENU_STATE);
                 req_end = 0;
-      }
+            }
 
-      if(demo_man.current_state()==demo_manager::NORMAL)
-      {
+            if (demo_man.current_state() == demo_manager::NORMAL)
                 net_receive();
-      }
 
-      if(req_name[0])            // see if a request for a level load was made during the last tick
-      {
-        g->load_level(req_name);
-        req_name[0]=0;
-        g->draw(g->state == SCENE_STATE);
-      }
+            // see if a request for a level load was made during the last tick
+            if (req_name[0])
+            {
+                g->load_level(req_name);
+                req_name[0] = 0;
+                g->draw(g->state == SCENE_STATE);
+            }
 
-      //    if(demo_man.current_state()!=demo_manager::PLAYING)
-      g->get_input();
+            //if (demo_man.current_state() != demo_manager::PLAYING)
+                g->get_input();
 
-      if(demo_man.current_state()==demo_manager::NORMAL)
-      net_send();
-      else demo_man.do_inputs();
+            if (demo_man.current_state() == demo_manager::NORMAL)
+                net_send();
+            else
+                demo_man.do_inputs();
 
-      service_net_request();
+            service_net_request();
 
-      g->step();                        // process all the objects in the
+            // process all the objects in the world
+            g->step();
+            server_check();
+            g->calc_speed();
 
-      server_check();
+            // see if a request for a level load was made during the last tick
+            if (!req_name[0])
+                g->update_screen(); // redraw the screen with any changes
+        }
 
-      g->calc_speed();
-      if(!req_name[0])                // see if a request for a level load was made during the last tick
-        g->update_screen();               // redraw the screen with any changes
+        net_uninit();
 
+        if (net_crcs)
+            net_crcs->clean_up();
+        delete net_crcs; net_crcs = NULL;
 
+        delete chat;
+
+        milli_wait(500);
+
+        delete small_render; small_render = NULL;
+
+        if (current_song)
+            current_song->stop();
+        delete current_song; current_song = NULL;
+
+        cache.empty();
+
+        delete dev_console; dev_console = NULL;
+        delete dev_menu; dev_menu = NULL;
+        delete g; g = NULL;
+        delete old_pal; old_pal = NULL;
+
+        compiled_uninit();
+        delete_all_lights();
+        free(white_light_initial);
+
+        for (int i = 0; i < TTINTS; i++)
+            free(tints[i]);
+
+        dev_cleanup();
+        delete dev_cont; dev_cont = NULL;
+        delete stat_man; stat_man = new text_status_manager();
+
+        if (!(main_net_cfg && main_net_cfg->restart_state()))
+        {
+            LSymbol *end_msg = LSymbol::FindOrCreate("end_msg");
+            if (DEFINEDP(end_msg->GetValue()))
+                printf("%s\n", lstring_value(end_msg->GetValue()));
+        }
+
+        lisp_uninit();
+
+        base->packet.packet_reset();
     }
-
-    net_uninit();
-
-    if(net_crcs)
-    {
-      net_crcs->clean_up();
-      delete net_crcs;
-      net_crcs = NULL;
-    }
-
-    delete chat;
-
-    milli_wait(500);
-
-    if(small_render) { delete small_render; small_render = NULL; }
-
-    if(current_song)
-    { current_song->stop();
-      delete current_song;
-      current_song = NULL;
-    }
-
-
-    cache.empty();
-
-
-    if(dev_console)
-    {
-      delete dev_console;
-      dev_console = NULL;
-    }
-
-    if(dev_menu)
-    {
-      delete dev_menu;
-      dev_menu = NULL;
-    }
-
-    if(g)
-    {
-        delete g;
-        g = NULL;
-    }
-
-    if(old_pal) delete old_pal; old_pal = NULL;
-    compiled_uninit();
-    delete_all_lights();
-    free(white_light_initial);
-
-    for(int i = 0; i < TTINTS; i++) free(tints[i]);
-
-
-    dev_cleanup();
-    if(dev_cont)
-    {
-        delete dev_cont;
-        dev_cont = NULL;
-    }
-    delete stat_man;
-    stat_man = new text_status_manager();
-
-    if(!(main_net_cfg && main_net_cfg->restart_state()))
-    {
-      LSymbol *end_msg = LSymbol::FindOrCreate("end_msg");
-      if(DEFINEDP(end_msg->GetValue()))
-      printf("%s\n", lstring_value(end_msg->GetValue()));
-    }
-
-    lisp_uninit();
-
-    base->packet.packet_reset();
-  } while(main_net_cfg && main_net_cfg->restart_state());
+    while (main_net_cfg && main_net_cfg->restart_state());
 
     delete stat_man;
+    delete main_net_cfg; main_net_cfg = NULL;
 
-    if(main_net_cfg)
-    {
-        delete main_net_cfg;
-        main_net_cfg = NULL;
-    }
     set_filename_prefix(NULL);  // dealloc this mem if there was any
     set_save_filename_prefix(NULL);
 
-    if(!get_option("-no_timer"))
-    {
+    if (!get_option("-no_timer"))
         timer_uninit();
-    }
 
     l_user_stack.clean_up();
     // FIXME: this is now private in PtrRef::stack
     //l_ptr_stack.clean_up();
 
     sound_uninit();
-
-    exit(0);
 
     return 0;
 }
