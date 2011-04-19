@@ -18,6 +18,8 @@
 #   include <SDL.h>
 #endif
 
+#include "common.h"
+
 #include "sdlport/joy.h"
 
 #include "dev.h"
@@ -468,7 +470,7 @@ void Game::joy_calb(event &ev)
         if(but) but = 1;
         int dx = 20, dy = 5;
         image *jim = cache.img(joy_picts[but * 9+(y + 1)*3 + x + 1]);
-        joy_win->screen->bar(dx, dy, dx + jim->width()+6, dy + jim->height()+6, wm->black());
+        joy_win->screen->bar(dx, dy, dx + jim->Size().x+6, dy + jim->Size().y+6, wm->black());
         jim->put_image(joy_win->screen, dx + 3, dy + 3);
 
         if(but)
@@ -623,7 +625,7 @@ void Game::dev_scroll()
 
     int xs, ys;
     if(mousex < xmargin &&  dev_cont->ok_to_scroll()) xs = -18;
-    else if(mousex>(screen->width()-xmargin) &&  dev_cont->ok_to_scroll()) xs = 18;
+    else if(mousex>(screen->Size().x-xmargin) &&  dev_cont->ok_to_scroll()) xs = 18;
     else if(wm->key_pressed(JK_LEFT) && !last_input && !dev_cont->need_arrows())
       xs = -18;
     else if(wm->key_pressed(JK_RIGHT) && !last_input && !dev_cont->need_arrows())
@@ -632,7 +634,7 @@ void Game::dev_scroll()
 
 
     if(mousey < ymargin && dev_cont->ok_to_scroll()) ys = -18;
-    else if(mousey>(screen->height()-ymargin) &&  dev_cont->ok_to_scroll()) ys = 18;
+    else if(mousey>(screen->Size().y-ymargin) &&  dev_cont->ok_to_scroll()) ys = 18;
     else if(wm->key_pressed(JK_UP) && !last_input)
       ys = -18;
     else if(wm->key_pressed(JK_DOWN) && !last_input)
@@ -670,7 +672,7 @@ void remap_area(image *screen, int x1, int y1, int x2, int y2, uint8_t *remap)
     screen->lock();
 
     uint8_t *sl = (uint8_t *)screen->scan_line(y1) + x1;
-    int step = screen->width() - (x2 - x1 + 1);
+    int step = screen->Size().x - (x2 - x1 + 1);
 
     for(int y = y1; y <= y2; y++)
     {
@@ -710,8 +712,8 @@ void Game::draw_map(view *v, int interpolate)
       if(state == SCENE_STATE)
         screen->set_clip(v->cx1, v->cy1, v->cx2, v->cy2);
       image *tit = cache.img(title_screen);
-      tit->put_image(screen, screen->width()/2 - tit->width()/2,
-                    screen->height()/2 - tit->height()/2);
+      tit->put_image(screen, screen->Size().x/2 - tit->Size().x/2,
+                    screen->Size().y/2 - tit->Size().y/2);
       if(state == SCENE_STATE)
         screen->set_clip(cx1, cy1, cx2, cy2);
       wm->flush_screen();
@@ -752,8 +754,8 @@ void Game::draw_map(view *v, int interpolate)
 
     v->cx1 = 0;
     v->cy1 = 0;
-    v->cx2 = small_render->width()-1;
-    v->cy2 = small_render->height()-1;
+    v->cx2 = small_render->Size().x-1;
+    v->cy2 = small_render->Size().y-1;
 
     old_screen = screen;
     screen = small_render;
@@ -882,7 +884,7 @@ void Game::draw_map(view *v, int interpolate)
     short ncx1, ncy1, ncx2, ncy2;
     screen->get_clip(ncx1, ncy1, ncx2, ncy2);
 
-    int scr_w = screen->width();
+    int scr_w = screen->Size().x;
     if(dev & MAP_MODE)
     {
       if(dev & EDIT_MODE)
@@ -1073,7 +1075,7 @@ void Game::draw_map(view *v, int interpolate)
     if(dev_cont)
     dev_cont->dev_draw(v);
     if(cache.in_use())
-    cache.img(vmm_image)->put_image(screen, v->cx1, v->cy2 - cache.img(vmm_image)->height()+1);
+    cache.img(vmm_image)->put_image(screen, v->cx1, v->cy2 - cache.img(vmm_image)->Size().y+1);
 
     if(dev & DRAW_LIGHTS)
     {
@@ -1163,7 +1165,7 @@ void fade_in(image *im, int steps)
   if(im)
   {
     screen->clear();
-    im->put_image(screen, (xres + 1)/2 - im->width()/2, (yres + 1)/2 - im->height()/2);
+    im->put_image(screen, (xres + 1)/2 - im->Size().x/2, (yres + 1)/2 - im->Size().y/2);
   }
 
   for(i = 0; i < steps; i++)
@@ -1278,7 +1280,7 @@ void do_title()
         screen->clear();
         pal->load();
 
-        int dx = (xres + 1) / 2 - gray->width() / 2, dy = (yres + 1) / 2 - gray->height() / 2;
+        int dx = (xres + 1) / 2 - gray->Size().x / 2, dy = (yres + 1) / 2 - gray->Size().y / 2;
         gray->put_image(screen, dx, dy);
         smoke[0]->put_image(screen, dx + 24, dy + 5);
 
@@ -1508,8 +1510,8 @@ Game::Game(int argc, char **argv)
     if(title_screen >= 0)
     {
       image *tit = cache.img(title_screen);
-      tit->put_image(screen, screen->width()/2 - tit->width()/2,
-                    screen->height()/2 - tit->height()/2);
+      tit->put_image(screen, screen->Size().x/2 - tit->Size().x/2,
+                    screen->Size().y/2 - tit->Size().y/2);
     }
     set_state(MENU_STATE);   // then go to menu state so windows will turn off
   }
@@ -1585,7 +1587,7 @@ void Game::update_screen()
     if(state == PAUSE_STATE)
     {
       for(view *f = first_view; f; f = f->next)
-        cache.img(pause_image)->put_image(screen, (f->cx1 + f->cx2)/2 - cache.img(pause_image)->width()/2,
+        cache.img(pause_image)->put_image(screen, (f->cx1 + f->cx2)/2 - cache.img(pause_image)->Size().x/2,
                    f->cy1 + 5, 1);
     }
 
@@ -2151,24 +2153,24 @@ void Game::draw(int scene_mode)
     if(scene_mode)
     {
         char const *helpstr = "ARROW KEYS CHANGE TEXT SPEED";
-        wm->font()->put_string(screen, screen->width()/2-(wm->font()->width()*strlen(helpstr))/2 + 1,
-            screen->height()-wm->font()->height()-5 + 1, helpstr, wm->dark_color());
-        wm->font()->put_string(screen, screen->width()/2-(wm->font()->width()*strlen(helpstr))/2,
-            screen->height()-wm->font()->height()-5, helpstr, wm->bright_color());
+        wm->font()->put_string(screen, screen->Size().x/2-(wm->font()->width()*strlen(helpstr))/2 + 1,
+            screen->Size().y-wm->font()->height()-5 + 1, helpstr, wm->dark_color());
+        wm->font()->put_string(screen, screen->Size().x/2-(wm->font()->width()*strlen(helpstr))/2,
+            screen->Size().y-wm->font()->height()-5, helpstr, wm->bright_color());
     }
 /*    else
     {
         char *helpstr="PRESS h FOR HELP";
-        wm->font()->put_string(screen, screen->width()-wm->font()->width()*strlen(helpstr)-5,
-            screen->height()-wm->font()->height()-5, helpstr);
+        wm->font()->put_string(screen, screen->Size().x-wm->font()->width()*strlen(helpstr)-5,
+            screen->Size().y-wm->font()->height()-5, helpstr);
     }*/
 /*    int dc = cache.img(window_colors)->pixel(0, 2);
     int mc = cache.img(window_colors)->pixel(1, 2);
     int bc = cache.img(window_colors)->pixel(2, 2);
-    screen->line(0, 0, screen->width()-1, 0, dc);
-    screen->line(0, 0, 0, screen->height()-1, dc);
-    screen->line(0, screen->height()-1, screen->width()-1, screen->height()-1, bc);
-    screen->line(screen->width()-1, 0, screen->width()-1, screen->height()-1, bc); */
+    screen->line(0, 0, screen->Size().x-1, 0, dc);
+    screen->line(0, 0, 0, screen->Size().y-1, dc);
+    screen->line(0, screen->Size().y-1, screen->Size().x-1, screen->Size().y-1, bc);
+    screen->line(screen->Size().x-1, 0, screen->Size().x-1, screen->Size().y-1, bc); */
 
     for(view *f = first_view; f; f = f->next)
         draw_map(f, 0);

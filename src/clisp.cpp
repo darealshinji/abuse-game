@@ -12,6 +12,8 @@
 
 #include <string.h>
 
+#include "common.h"
+
 #include "sdlport/joy.h"
 
 #include "ant.h"
@@ -2136,11 +2138,11 @@ long c_caller(long number, void *args)
     } break;
     case 268 :
     {
-      return cache.img(lnumber_value(CAR(args)))->width();
+      return cache.img(lnumber_value(CAR(args)))->Size().x;
     } break;
     case 269 :
     {
-      return cache.img(lnumber_value(CAR(args)))->height();
+      return cache.img(lnumber_value(CAR(args)))->Size().y;
     } break;
     case 270 :
     {

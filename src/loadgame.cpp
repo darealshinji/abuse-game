@@ -12,6 +12,8 @@
 
 #include <string.h>
 
+#include "common.h"
+
 #include "game.h"
 
 #include "specs.h"
@@ -59,7 +61,7 @@ Jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
 {
   ico_button *buts[MAX_SAVE_GAMES];
   int y = 0, i;
-  int ih=cache.img(save_buts[0])->height();
+  int ih=cache.img(save_buts[0])->Size().y;
   int x=0;
   for (i=0; i<total_saved; i++,y+=ih)
   {
@@ -92,7 +94,7 @@ int get_save_spot()
 
   if (last_free) return last_free;    // if there are any slots not created yet...
 
-  int w=cache.img(save_buts[0])->width();
+  int w=cache.img(save_buts[0])->Size().x;
   int mx=last_demo_mx-w/2;
   if(mx + w + 10 > xres) mx = xres - w - 10;
   if(mx < 0) mx = 0;
@@ -178,8 +180,8 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
             if (se && se->type==SPEC_IMAGE)
             {
                 thumb_nails[start_num]=new image(se,fp);
-                if (thumb_nails[start_num]->width()>max_w) max_w=thumb_nails[start_num]->width();
-                if (thumb_nails[start_num]->height()>max_h) max_h=thumb_nails[start_num]->height();
+                if (thumb_nails[start_num]->Size().x>max_w) max_w=thumb_nails[start_num]->Size().x;
+                if (thumb_nails[start_num]->Size().y>max_h) max_h=thumb_nails[start_num]->Size().y;
                 if (!first) first=thumb_nails[start_num];
                 total_saved++;
             }
@@ -202,7 +204,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         total_saved=MAX_SAVE_GAMES;
 
     int i;
-/*  int ih=cache.img(save_buts[0])->height();
+/*  int ih=cache.img(save_buts[0])->Size().y;
   ico_button *buts[MAX_SAVE_GAMES];
   int y=0;
 

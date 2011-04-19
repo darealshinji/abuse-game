@@ -12,6 +12,8 @@
 
 #include <math.h>
 
+#include "common.h"
+
 #include "dev.h"
 
 #include "ui/volumewindow.h"
@@ -145,8 +147,8 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   }
 
   int mw=(font->width())*maxw+20;
-  int mx=screen->width()/2-mw/2,
-      my=screen->height()/2-mh/2;
+  int mx=screen->Size().x/2-mw/2,
+      my=screen->Size().y/2-mh/2;
 
 
   screen->add_dirty(mx,my,mx+mw-1,my+mh-1);
@@ -154,7 +156,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   if (title)
   {
     int tl=strlen(title)*font->width();
-    int tx=screen->width()/2-tl/2;
+    int tx=screen->Size().x/2-tl/2;
     dark_widget(tx-2,my-font->height()-4,tx+tl+2,my-2,wm->medium_color(),wm->dark_color(),180);
     font->put_string(screen,tx+1,my-font->height()-2,title,wm->bright_color());
   }
@@ -511,8 +513,8 @@ void menu_handler(event &ev, InputManager *inm)
       if (title_screen>=0)
       {
         image *tit=cache.img(title_screen);
-          tit->put_image(screen,screen->width()/2-tit->width()/2,
-                          screen->height()/2-tit->height()/2);
+          tit->put_image(screen,screen->Size().x/2-tit->Size().x/2,
+                          screen->Size().y/2-tit->Size().y/2);
       }
       inm->redraw();
       fade_in(NULL,8);
@@ -545,7 +547,7 @@ static ico_button *load_icon(int num, int id, int x, int y, int &h, ifield *next
   sprintf(name,"%s%04d.pcx",base,num*3+3);
   c=cache.reg("art/icons.spe",name,SPEC_IMAGE,1);
 
-  h=cache.img(a)->height();
+  h=cache.img(a)->Size().y;
 
   return new ico_button(x,y,id,b,b,a,c,next,-1,key);
 }

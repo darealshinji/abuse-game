@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "scroller.h"
 #define HS_ICON_W 10
 #define HS_ICON_H 8
@@ -491,11 +493,11 @@ void pick_list::scroll_event(int newx, image *screen)
     short cx1,cy1,cx2,cy2;
     screen->get_clip(cx1,cy1,cx2,cy2);
     screen->set_clip(x,y,x+l-1,y+h-1);
-    int tw=(l+tex->width()-1)/tex->width();
-    int th=(h+tex->height()-1)/tex->height();
+    int tw=(l+tex->Size().x-1)/tex->Size().x;
+    int th=(h+tex->Size().y-1)/tex->Size().y;
     int dy=y;
-    for (int j=0; j<th; j++,dy+=tex->height())
-      for (int i=0,dx=x; i<tw; i++,dx+=tex->width())
+    for (int j=0; j<th; j++,dy+=tex->Size().y)
+      for (int i=0,dx=x; i<tw; i++,dx+=tex->Size().x)
         tex->put_image(screen,dx,dy);
 
     screen->set_clip(cx1,cy1,cx2,cy2);

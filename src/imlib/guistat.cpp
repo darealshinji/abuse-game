@@ -12,6 +12,8 @@
 
 #include <string.h>
 
+#include "common.h"
+
 #include "input.h"
 #include "status.h"
 #include "timing.h"

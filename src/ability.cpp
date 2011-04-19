@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "ability.h"
 #include "chars.h"
 

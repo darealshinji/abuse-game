@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "extend.h"
 #include "view.h"
 #include "objects.h"

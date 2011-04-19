@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "morpher.h"
 #include "game.h"
 #include "objects.h"

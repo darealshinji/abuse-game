@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "sbar.h"
 #include "view.h"
 #include "lisp.h"
@@ -77,8 +79,8 @@ void status_bar::draw_num(image *screen, int x, int y, int num, int *offset)
   }
 
   image *im=cache.img(*offset);
-  int dw=small_render ? im->width()*2 : im->width();
-  int dh=small_render ? im->height()*2 : im->height();
+  int dw=small_render ? im->Size().x*2 : im->Size().x;
+  int dh=small_render ? im->Size().y*2 : im->Size().y;
 
   int n=num/100;
   scale_put(cache.img(offset[n]),screen,x,y,dw,dh);
@@ -104,8 +106,8 @@ void status_bar::redraw(image *screen)
     image *sb=cache.img(sbar);
 
     // status bar width & height
-    int sb_w=(small_render ? sb->width()*2 : sb->width()),
-    sb_h=(small_render ? sb->height()*2 : sb->height());
+    int sb_w=(small_render ? sb->Size().x*2 : sb->Size().x),
+    sb_h=(small_render ? sb->Size().y*2 : sb->Size().y);
 
     // status bar x & y position
     int sx=xres/2-sb_w/2,sy=yres-sb_h;
@@ -114,18 +116,18 @@ void status_bar::redraw(image *screen)
     int wx=small_render ? 80 : 40,wa=small_render ? 34*2 : 34;
 
     // weapon icon width & height
-    int ww=small_render ? cache.img(bweap[0])->width()*2 : cache.img(bweap[0])->width();
-    int wh=small_render ? cache.img(bweap[0])->height()*2 : cache.img(bweap[0])->height();
+    int ww=small_render ? cache.img(bweap[0])->Size().x*2 : cache.img(bweap[0])->Size().x;
+    int wh=small_render ? cache.img(bweap[0])->Size().y*2 : cache.img(bweap[0])->Size().y;
 
 
     // numpad y offset
     int np_yo=small_render ? 42 : 21;
-    int np_w=small_render ? cache.img(sbar_numpad)->width()*2 : cache.img(sbar_numpad)->width();
-    int np_h=small_render ? cache.img(sbar_numpad)->height()*2 : cache.img(sbar_numpad)->height();
+    int np_w=small_render ? cache.img(sbar_numpad)->Size().x*2 : cache.img(sbar_numpad)->Size().x;
+    int np_h=small_render ? cache.img(sbar_numpad)->Size().y*2 : cache.img(sbar_numpad)->Size().y;
 
     // selection bar width * height
-    int sel_w=small_render ? cache.img(sbar_select)->width()*2 : cache.img(sbar_select)->width();
-    int sel_h=small_render ? cache.img(sbar_select)->height()*2 : cache.img(sbar_select)->height();
+    int sel_w=small_render ? cache.img(sbar_select)->Size().x*2 : cache.img(sbar_select)->Size().x;
+    int sel_h=small_render ? cache.img(sbar_select)->Size().y*2 : cache.img(sbar_select)->Size().y;
 
     int sel_off=small_render ?  8 : 4;
     scale_put(sb,screen,sx,sy,sb_w,sb_h);
@@ -179,8 +181,8 @@ void status_bar::area(int &x1, int &y1, int &x2, int &y2)
   image *sb=cache.img(sbar);
 
   // status bar width & height
-  int sb_w=sb->width(),
-      sb_h=sb->height();
+  int sb_w=sb->Size().x,
+      sb_h=sb->Size().y;
 
   if (small_render) { sb_w*=2; sb_h*=2; }
 
@@ -275,8 +277,8 @@ void status_bar::step()
     image *sb=cache.img(sbar);
 
     // status bar width & height
-    sb_w=sb->width();
-    sb_h=sb->height();
+    sb_w=sb->Size().x;
+    sb_h=sb->Size().y;
   }
 
   // see if the mouse is in the sbar region (demo_x already corrected for small_render)

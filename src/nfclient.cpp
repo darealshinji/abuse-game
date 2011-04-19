@@ -17,6 +17,8 @@
 #include <unistd.h>
 #include <ctype.h>
 
+#include "common.h"
+
 #include "system.h"
 #include "netface.h"
 

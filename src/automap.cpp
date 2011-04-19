@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "automap.h"
 #include "game.h"
 
@@ -150,7 +152,7 @@ void automap::draw()
   automap_window->screen->unlock();
 
   // set the clip back to full window size because soemthing else could mess with the area
-  automap_window->screen->set_clip(0,0,screen->width()-1,screen->height()-1);
+  automap_window->screen->set_clip(0,0,screen->Size().x-1,screen->Size().y-1);
 }
 
 

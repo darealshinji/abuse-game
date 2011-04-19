@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "lisp.h"
 #include "lisp_gc.h"
 #include "compiled.h"

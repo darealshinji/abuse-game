@@ -12,6 +12,8 @@
 
 #include <string.h>
 
+#include "common.h"
+
 #include "points.h"
 #include "dev.h"
 

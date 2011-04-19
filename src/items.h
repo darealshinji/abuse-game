@@ -36,7 +36,7 @@ public :
   image *im;
   backtile(spec_entry *e, bFILE *fp);
   backtile(bFILE *fp);
-  int32_t size() { return 2+4+im->width()*im->height(); }
+  int32_t size() { vec2i s = im->Size(); return 2 + 4 + s.x * s.y; }
   ~backtile() { delete im; }
 } ;
 

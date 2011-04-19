@@ -12,6 +12,8 @@
 
 #include <string.h>
 
+#include "common.h"
+
 #include "video.h"
 #include "image.h"
 #include "input.h"
@@ -313,10 +315,10 @@ void WindowManager::remove_window(Jwindow *win)
 Jwindow * WindowManager::new_window(int x, int y, int l, int h,
                                      ifield * fields, char const *name)
 {
-    if(x > screen->width () - 4)
-        x = screen->width () - 25;
-    if(y > screen->height () - 4)
-        y = screen->height () - 10;
+    if(x > screen->Size().x - 4)
+        x = screen->Size().x - 25;
+    if(y > screen->Size().y - 4)
+        y = screen->Size().y - 10;
 
     Jwindow * j = new Jwindow (x, y, l, h, fields, name);
     j->show();
@@ -339,8 +341,8 @@ void WindowManager::flush_screen()
         my = eh->mouse->drawy();
 
         screen->put_part(mouse_save, 0, 0, mx, my,
-                         mx + mouse_pic->width() - 1,
-                         my + mouse_pic->height() - 1);
+                         mx + mouse_pic->Size().x - 1,
+                         my + mouse_pic->Size().y - 1);
         mouse_pic->put_image(screen, mx, my, 1);
     }
 
@@ -360,8 +362,8 @@ void WindowManager::flush_screen()
         if(has_mouse())
         {
             p->screen->put_part(mouse_save, 0, 0, mx - p->x, my - p->y,
-                                mx - p->x + mouse_pic->width() - 1,
-                                my - p->y + mouse_pic->height() - 1);
+                                mx - p->x + mouse_pic->Size().x - 1,
+                                my - p->y + mouse_pic->Size().y - 1);
             if(has_mouse())
                 mouse_pic->put_image(p->screen, mx - p->x, my - p->y, 1);
         }
@@ -528,7 +530,7 @@ void Jwindow::redraw()
   if (_name && _name[0])
     {
       screen->bar (top_border(), 1,
-                    top_border() + fnt->width () * strlen (_name) + 1,
+                    top_border() + fnt->width() * strlen (_name) + 1,
                     top_border() - 2, med);
       fnt->put_string (screen, top_border() + 1, 1, _name, low);
     }

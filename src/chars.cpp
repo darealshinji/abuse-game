@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "chars.h"
 #include "game.h"
 #include "intsect.h"

@@ -19,6 +19,8 @@
 #include <string.h>
 #include <signal.h>
 
+#include "common.h"
+
 #include "system.h"
 #include "macs.h"
 #include "gserver.h"

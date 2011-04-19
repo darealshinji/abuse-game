@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "lisp.h"
 #include "lisp_gc.h"
 #include "compiled.h"
@@ -1044,7 +1046,7 @@ void *show_kills()
   screen->clear();
   image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
   im->put_image(screen,0,0);
-  int x1=im->width()+1,y1=0,y2=screen->height();
+  int x1=im->Size().x+1,y1=0,y2=screen->Size().y;
   JCFont *fnt=wm->font();
 
   view *v=player_list; int tp=0,i;

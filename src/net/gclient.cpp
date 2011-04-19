@@ -19,6 +19,8 @@
 #include <string.h>
 #include <signal.h>
 
+#include "common.h"
+
 #include "netcfg.h"
 #include "gclient.h"
 #include "netface.h"

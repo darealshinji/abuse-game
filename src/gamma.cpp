@@ -12,6 +12,8 @@
 
 #include <math.h>
 
+#include "common.h"
+
 #include "game.h"
 
 #include "jwindow.h"

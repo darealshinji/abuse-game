@@ -22,6 +22,8 @@
 
 #include <SDL.h>
 
+#include "common.h"
+
 #include "video.h"
 #include "sprite.h"
 #include "image.h"
@@ -63,8 +65,8 @@ JCMouse::JCMouse( image *Screen, palette *pal )
     im = new image( 8, 10, def_mouse );
     f.apply( im );
     sp = new sprite( Screen, im, 100, 100 );
-    mx = Screen->width() / 2;
-    my = Screen->height() / 2;
+    mx = Screen->Size().x / 2;
+    my = Screen->Size().y / 2;
 }
 
 //
@@ -97,13 +99,13 @@ void JCMouse::set_shape( image *im, int centerx, int centery )
 void JCMouse::set_position( int new_mx, int new_my )
 {
     // Make sure the values we are given are sensible.
-    if( new_mx > screen->width() - 1 )
+    if( new_mx > screen->Size().x - 1 )
     {
-        new_mx = screen->width() - 1;
+        new_mx = screen->Size().x - 1;
     }
-    if( new_my > screen->height() - 1 )
+    if( new_my > screen->Size().y - 1 )
     {
-        new_my = screen->height() - 1;
+        new_my = screen->Size().y - 1;
     }
 
     // Set the new position

@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "include.h"
 #include "ctype.h"
 
@@ -52,11 +54,11 @@ void write_include(image *im, palette *pal, char *filename, char *name)
         else fprintf(fp,", ");
       }
     }
-    fprintf(fp,"unsigned char %s[%d*%d]={\n    ",tmp_name,
-            im->width(),im->height());
-    int x,y,max=im->width()*im->height()-1;
-    for (y=0,i=0; y<im->height(); y++)
-      for (x=0; x<im->width(); x++,i++)
+    vec2i size = im->Size();
+    fprintf(fp,"unsigned char %s[%d*%d]={\n    ",tmp_name, size.x, size.y);
+    int x,y,max=size.x*size.y-1;
+    for (y=0,i=0; y<size.y; y++)
+      for (x=0; x<size.x; x++,i++)
       {
         fprintf(fp,"%d",(int)im->pixel(x,y));
         if (i==max)

@@ -12,13 +12,15 @@
 
 #include <ctype.h>
 
+#include "common.h"
+
 #include "fonts.h"
 
 texture_font::texture_font(image *letters, image *font_pattern)
 { fntpat=font_pattern;
   let=letters;
-  tl=(let->width()+1)/32;
-  th=(let->height()+1)/8;
+  tl=(let->Size().x+1)/32;
+  th=(let->Size().y+1)/8;
 }
 
 void texture_font::put_char(image *screen,  int x, int y, char ch)
@@ -59,8 +61,8 @@ void JCFont::put_char(image *screen,  int x, int y, char ch, int color)
 
 JCFont::JCFont(image *letters)
 {
-  tl=(letters->width()+1)/32;
-  th=(letters->height()+1)/8;
+  tl=(letters->Size().x+1)/32;
+  th=(letters->Size().y+1)/8;
 
   image tmp(tl,th);
 

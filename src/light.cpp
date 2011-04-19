@@ -12,6 +12,8 @@
 
 #include <stdlib.h>
 
+#include "common.h"
+
 #include "light.h"
 #include "image.h"
 #include "macs.h"
@@ -792,7 +794,7 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
   screen->lock();
 
-  int scr_w=screen->width();
+  int scr_w=screen->Size().x;
   uint8_t *screen_line=screen->scan_line(cy1)+cx1;
 
   for (int y=cy1; y<=cy2; )
@@ -898,8 +900,8 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient,
              image *out, int32_t out_x, int32_t out_y)
 {
-  if (sc->width()*2+out_x>out->width() ||
-      sc->height()*2+out_y>out->height())
+  if (sc->Size().x*2+out_x>out->Size().x ||
+      sc->Size().y*2+out_y>out->Size().y)
     return ;   // screen was resized and small_render has not changed size yet
 
 
@@ -929,20 +931,20 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
   {
     uint8_t *src=sc->scan_line(0);
     uint8_t *dst=out->scan_line(out_y+cy1*2)+cx1*2+out_x;
-    int d_skip=out->width()-sc->width()*2;
+    int d_skip=out->Size().x-sc->Size().x*2;
     int x,y;
     uint16_t v;
-    for (y=sc->height(); y; y--)
+    for (y=sc->Size().y; y; y--)
     {
-      for (x=sc->width(); x; x--)
+      for (x=sc->Size().x; x; x--)
       {
     v=*(src++);
     *(dst++)=v;
     *(dst++)=v;
       }
       dst=dst+d_skip;
-      memcpy(dst,dst-out->width(),sc->width()*2);
-      dst+=out->width();
+      memcpy(dst,dst-out->Size().x,sc->Size().x*2);
+      dst+=out->Size().x;
     }
 
     return ;
@@ -950,8 +952,8 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 
   light_patch *first=make_patch_list(cx2-cx1+1,cy2-cy1+1,screenx,screeny);
 
-  int scr_w=sc->width();
-  int dscr_w=out->width();
+  int scr_w=sc->Size().x;
+  int dscr_w=out->Size().x;
 
   int prefix_x=(screenx&7);
   int prefix=screenx&7;

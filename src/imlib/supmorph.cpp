@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "supmorph.h"
 #include "specs.h"
 #include "timage.h"

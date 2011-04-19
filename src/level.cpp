@@ -18,6 +18,8 @@
 #include <limits.h>
 #include <time.h>
 
+#include "common.h"
+
 #include "light.h"
 #include "level.h"
 #include "game.h"
@@ -1653,12 +1655,12 @@ void level::write_thumb_nail(bFILE *fp, image *im)
   strftime(buf,80,"%T %A %B %d",localtime(&t));
   wm->font()->put_string(i,80-strlen(buf)*wm->font()->width()/2,100+wm->font()->height(),buf);
 
-  fp->write_uint16(i->width());
-  fp->write_uint16(i->height());
+  fp->write_uint16(i->Size().x);
+  fp->write_uint16(i->Size().y);
 
   i->lock();
-  for(int y = 0; y < i->height(); y++)
-    fp->write(i->scan_line(y),i->width());
+  for(int y = 0; y < i->Size().y; y++)
+    fp->write(i->scan_line(y),i->Size().x);
   i->unlock();
 
   delete i;

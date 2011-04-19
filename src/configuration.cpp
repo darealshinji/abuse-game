@@ -12,6 +12,8 @@
 
 #include <ctype.h>
 
+#include "common.h"
+
 #include "sdlport/joy.h"
 #include "game.h"
 
