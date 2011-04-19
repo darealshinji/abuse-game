@@ -272,11 +272,11 @@ void parseCommandLine( int argc, char **argv )
         }
         else if( !strcasecmp( argv[ii], "-size" ) )
         {
-            if( !sscanf( argv[++ii], "%d", &xres ) )
+            if( ii + 1 < argc && !sscanf( argv[++ii], "%d", &xres ) )
             {
                 xres = 320;
             }
-            if( !sscanf( argv[++ii], "%d", &yres ) )
+            if( ii + 1 < argc && !sscanf( argv[++ii], "%d", &yres ) )
             {
                 yres = 200;
             }
@@ -330,7 +330,7 @@ void parseCommandLine( int argc, char **argv )
         else if( !strcasecmp( argv[ii], "-datadir" ) )
         {
             char datadir[255];
-            if( sscanf( argv[++ii], "%s", datadir ) )
+            if( ii + 1 < argc && sscanf( argv[++ii], "%s", datadir ) )
             {
                 set_filename_prefix( datadir );
             }
