@@ -5,6 +5,10 @@ SUBDIRS = lisp net imlib sdlport
 bin_PROGRAMS = abuse
 
 abuse_SOURCES = \
+    common.h \
+    \
+    lol/matrix.cpp lol/matrix.h \
+    \
     specache.cpp specache.h \
     netcfg.cpp netcfg.h \
     innet.cpp \
