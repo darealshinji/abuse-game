@@ -118,7 +118,7 @@ class image : public linked_node
 {
 private:
     uint8_t *data;
-    int16_t w, h;
+    vec2i size;
     void make_page(int16_t width, int16_t height, uint8_t *page_buffer);
     void delete_page();
     bool _locked;
@@ -139,28 +139,20 @@ public:
     void putpixel(int16_t x, int16_t y, char color);
     uint8_t *scan_line(int16_t y)
     {
-        return data + y * w;
+        return data + y * size.x;
     }
     uint8_t *next_line(int16_t lasty, uint8_t *last_scan)
     {
-        return last_scan + w;
+        return last_scan + size.x;
     }
     int32_t total_pixels(uint8_t background=0);
     image *copy(); // makes a copy of an image
     void clear(int16_t color = -1); // -1 is background color
     void to_24bit(palette &pal);
-    int16_t width()
-    {
-        return (int16_t)w;
-    }
-    int16_t height()
-    {
-        return (int16_t)h;
-    }
-    int16_t pitch()
-    {
-        return (int16_t)w; // FIXME: for now, pitch == width
-    }
+
+    vec2i Size() const { return size; }
+    int Pitch() const { return size.x; } // FIXME: for now, pitch == width
+
     void scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2,
                 int16_t xd, int16_t yd);
     void fill_image(image *screen, int16_t x1, int16_t y1,

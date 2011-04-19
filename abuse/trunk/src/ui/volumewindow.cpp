@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "volumewindow.h" // class VolumeWindow
 #include "property.h"     // class property_manager
 #include "gui.h"          // ico_button
@@ -37,8 +39,8 @@ VolumeWindow::VolumeWindow() : Jwindow("Volume")
 
     //reconfigure();
     bg = cache.reg(ff, "vcontrol", SPEC_IMAGE, 1);
-    l = cache.img(bg)->width();
-    h = cache.img(bg)->height();
+    l = cache.img(bg)->Size().x;
+    h = cache.img(bg)->Size().y;
     screen = new image(l, h, NULL, 2);
     redraw();
 }

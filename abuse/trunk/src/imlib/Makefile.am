@@ -29,6 +29,6 @@ libimlib_a_SOURCES = \
     system.h \
     $(NULL)
 
-INCLUDES = -I$(srcdir) $(SDL_CFLAGS)
+INCLUDES = -I$(srcdir) -I$(srcdir)/.. $(SDL_CFLAGS)
 
 CPPFLAGS = @CPPFLAGS@ -DNO_CHECK

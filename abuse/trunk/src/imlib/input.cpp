@@ -12,6 +12,8 @@
 
 #include <string.h>
 
+#include "common.h"
+
 #include "input.h"
 #include "macs.h"
 
@@ -201,8 +203,8 @@ void button::area(int &x1, int &y1, int &x2, int &y2)
   x1=x; y1=y;
   if (pressed)
   {
-    x2=x+pressed->width()-1;
-    y2=y+pressed->height()-1;
+    x2=x+pressed->Size().x-1;
+    y2=y+pressed->Size().y-1;
   }
   else
   {
@@ -212,8 +214,8 @@ void button::area(int &x1, int &y1, int &x2, int &y2)
       y2=y+wm->font()->height()+6;
     } else
     {
-      x2=x+6+visual->width();
-      y2=y+6+visual->height();
+      x2=x+6+visual->Size().x;
+      y2=y+6+visual->Size().y;
     }
   }
 }

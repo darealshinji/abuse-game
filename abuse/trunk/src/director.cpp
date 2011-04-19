@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "director.h"
 #include "game.h"
 #include "lisp.h"

@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "macs.h"
 #include "particle.h"
 #include "view.h"
@@ -246,7 +248,7 @@ void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
 
     screen->lock();
 
-    int w = screen->width();
+    int w = screen->Size().x;
     uint8_t *addr;
 
     while( t-- )

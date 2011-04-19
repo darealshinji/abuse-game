@@ -12,6 +12,8 @@
 
 #include <string.h>
 
+#include "common.h"
+
 #include "pmenu.h"
 
 void pmenu::move(int new_x, int new_y)
@@ -284,7 +286,7 @@ void pmenu_item::draw(Jwindow *parent, int x, int y, int w, int top,
 int pmenu::itemx(pmenu_item *p)
 {
   if (p->xp!=-1) return p->xp;
-  int w=bar->screen->width();
+  int w=bar->screen->Size().x;
 
 
   int total=0,tw,i=0,x=0;
@@ -375,7 +377,7 @@ pmenu_item *pmenu::inarea(int mx, int my, image *screen)
   screen->get_clip(cx1,cy1,cx2,cy2);
   mx-=bar->x;
   my-=bar->y;
-  if (mx<0 || my<0 || mx>=bar->screen->width() || my>=bar->screen->height()) return NULL;
+  if (mx<0 || my<0 || mx>=bar->screen->Size().x || my>=bar->screen->Size().y) return NULL;
   else
   {
     for (pmenu_item *p=top; p; p=p->next)

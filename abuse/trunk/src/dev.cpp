@@ -13,6 +13,8 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "common.h"
+
 #include "dev.h"
 #include "input.h"
 #include "objects.h"
@@ -108,8 +110,8 @@ class cached_image : public visual_object
     else
       cache.img(id)->put_image(screen,x,y);
   }
-  virtual int width() { return cache.img(id)->width(); }
-  virtual int height() { return cache.img(id)->height(); }
+  virtual int width() { return cache.img(id)->Size().x; }
+  virtual int height() { return cache.img(id)->Size().y; }
 } ;
 
 
@@ -367,8 +369,8 @@ static void load_dev_icons()
 void scale_put(image *im, image *screen, int x, int y, short new_width, short new_height)
 {
   unsigned char *sl1,*sl2;
-  int32_t xstep=(im->width()<<16)/new_width,
-       ystep=(im->height()<<16)/new_height,iy,ix,sx,ix_start,iy_start;
+  int32_t xstep=(im->Size().x<<16)/new_width,
+       ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
   screen->add_dirty(x,y,x+new_width-1,y+new_height-1);
 
 
@@ -409,8 +411,8 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
 void scale_put_trans(image *im, image *screen, int x, int y, short new_width, short new_height)
 {
   unsigned char *sl1,*sl2;
-  int32_t xstep=(im->width()<<16)/new_width,
-       ystep=(im->height()<<16)/new_height,iy,ix,sx,ix_start,iy_start;
+  int32_t xstep=(im->Size().x<<16)/new_width,
+       ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
   screen->add_dirty(x,y,x+new_width-1,y+new_height-1);
 
 
@@ -481,7 +483,7 @@ void dev_controll::dev_draw(view *v)
     if (f->x-vx>=0 && f->x-vx<=(v->cx2-v->cx1+1) && f->y-vy>=0 && f->y-vy<=(v->cy2-v->cy1+1))
     {
       image *im=cache.img(light_buttons[f->type]);
-      im->put_image(screen,f->x-vx+v->cx1-im->width()/2,f->y-vy+v->cy1-im->height()/2,1);
+      im->put_image(screen,f->x-vx+v->cx1-im->Size().x/2,f->y-vy+v->cy1-im->Size().y/2,1);
       screen->rectangle(f->x1-vx+v->cx1,f->y1-vy+v->cy1,f->x2-vx+v->cx1,f->y2-vy+v->cy1,
                 wm->medium_color());
     }
@@ -498,7 +500,7 @@ void dev_controll::dev_draw(view *v)
     if (selected_light)
     {
       image *i=cache.img(light_buttons[0]);
-      int l=i->width()/2,h=i->height()/2;
+      int l=i->Size().x/2,h=i->Size().y/2;
       int32_t rx1,ry1;
       the_game->game_to_mouse(selected_light->x,selected_light->y,v,rx1,ry1);
       screen->rectangle(rx1-l,ry1-h,rx1+l,ry1+h,wm->bright_color());
@@ -562,7 +564,7 @@ void dev_controll::dev_draw(view *v)
 static light_source *find_light(int32_t x, int32_t y)
 {
   image *i=cache.img(light_buttons[0]);
-  int l=i->width()/2,h=i->height()/2;
+  int l=i->Size().x/2,h=i->Size().y/2;
   for (light_source *f=first_light_source; f; f=f->next)
   {
     if (x>=f->x-l && x<=f->x+l && y>=f->y-h && y<=f->y+h)
@@ -802,7 +804,7 @@ void dev_controll::toggle_search_window()
         return;
     }
 
-    int bw = cache.img(dev_forward)->width();
+    int bw = cache.img(dev_forward)->Size().x;
     /* FIXME: previous code had 1,1 instead of 0,0 -- investigate */
     search_window = wm->new_window(prop->getd("searchw x", -30),
                                    prop->getd("searchw y", 0), -1, -1,
@@ -1578,7 +1580,7 @@ void dev_controll::pick_handle_input(event &ev)
     if (find && current_area && dc)
     {
       if (area_win) close_area_win(0);
-      int wl=0,wh=0,th=wm->font()->height()+12,bw=cache.img(dev_ok)->width()+10;
+      int wl=0,wh=0,th=wm->font()->height()+12,bw=cache.img(dev_ok)->Size().x+10;
       area_win=wm->new_window(prop->getd("area_box x",0),
                   prop->getd("area_box y",0),
                   -1,-1,

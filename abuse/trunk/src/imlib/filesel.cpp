@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "filesel.h"
 #include "input.h"
 #include "scroller.h"

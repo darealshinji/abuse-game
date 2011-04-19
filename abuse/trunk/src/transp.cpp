@@ -10,13 +10,15 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "transp.h"
 
 void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
 {
   short cx1,cy1,cx2,cy2;
   screen->get_clip(cx1,cy1,cx2,cy2);
-  int xs=0,ys=0,xl=im->width(),yl=im->height();
+  int xs=0,ys=0,xl=im->Size().x,yl=im->Size().y;
   if (x<cx1)
   {
     int chop=cx1-x;
@@ -44,7 +46,7 @@ void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
 
   uint8_t *isl=im->scan_line(ys)+xs;
   uint8_t *ssl=screen->scan_line(y)+x;
-  int iw=im->width(),sw=screen->width();
+  int iw=im->Size().x,sw=screen->Size().x;
 
   for (int iy=ys; iy<ye; iy++,y++,isl+=iw,ssl+=sw)
   {

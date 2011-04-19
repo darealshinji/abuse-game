@@ -12,6 +12,8 @@
 
 #include <ctype.h>
 
+#include "common.h"
+
 #include "ant.h"
 #include "lisp.h"
 #include "lisp_gc.h"
@@ -449,7 +451,7 @@ void show_stats()
     im->put_image(screen,0,0);
 
 
-    int x1=im->width()+1,y1=0,x2=xres,y2=screen->height();
+    int x1=im->Size().x+1,y1=0,x2=xres,y2=screen->Size().y;
     fade_in(NULL,16);
 
     char name[50];

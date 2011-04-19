@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "devsel.h"
 #include "scroller.h"
 #include "cache.h"
@@ -34,7 +36,7 @@ int tile_picker::picw()
     } break;
     case SPEC_BACKTILE :
     {
-      return cache.backt(backtiles[0])->im->width()/scale;
+      return cache.backt(backtiles[0])->im->Size().x/scale;
     } break;
     default :
       return 30/scale;
@@ -51,7 +53,7 @@ int tile_picker::pich()
     } break;
     case SPEC_BACKTILE :
     {
-      return cache.backt(backtiles[0])->im->height()/scale;
+      return cache.backt(backtiles[0])->im->Size().y/scale;
     } break;
     default :
       return 40/scale;

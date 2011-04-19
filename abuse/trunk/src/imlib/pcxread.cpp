@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "pcxread.h"
 #include "specs.h"
 
@@ -59,13 +61,13 @@ void write_PCX(image *im, palette *pal, char const *filename)
   PCX_header.bits_per_pixel=8;
   PCX_header.xmin=0;
   PCX_header.ymin=0;
-  PCX_header.xmax=im->width()-1;
-  PCX_header.ymax=im->height()-1;
+  PCX_header.xmax=im->Size().x-1;
+  PCX_header.ymax=im->Size().y-1;
   PCX_header.hres=320;
   PCX_header.vres=200;
   PCX_header.reserved=0;
   PCX_header.color_planes=1;
-  PCX_header.bytes_per_line=im->width();
+  PCX_header.bytes_per_line=im->Size().x;
   PCX_header.palette_type=0;
   memset(PCX_header.filter,0,58);
 
@@ -77,13 +79,13 @@ void write_PCX(image *im, palette *pal, char const *filename)
 
   int y,run_length,x;
   unsigned char *sl,code;
-  for (y=0; y<im->height(); y++)
+  for (y=0; y<im->Size().y; y++)
   {
     sl=im->scan_line(y);
-    for (x=0; x<im->width(); )
+    for (x=0; x<im->Size().x; )
     {
       run_length=1;
-      while (x+run_length<im->width() && sl[x]==sl[x+run_length])
+      while (x+run_length<im->Size().x && sl[x]==sl[x+run_length])
         run_length++;
       if (run_length==1 && sl[x]<64)
         fputc(sl[x],fp);

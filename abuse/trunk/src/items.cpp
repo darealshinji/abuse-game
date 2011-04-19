@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "items.h"
 #include "lisp.h"
 #include "dev.h"
@@ -215,7 +217,7 @@ foretile::foretile(bFILE *fp)
     // in 2×2 space and storing the closest match
 
     //uint8_t *buffer=(uint8_t *)&micro_image;
-    int x, y, w = img->width(), h = img->height(), l;
+    int x, y, w = img->Size().x, h = img->Size().y, l;
     int r[AUTOTILE_WIDTH * AUTOTILE_HEIGHT],
         g[AUTOTILE_WIDTH * AUTOTILE_HEIGHT],
         b[AUTOTILE_WIDTH * AUTOTILE_HEIGHT],

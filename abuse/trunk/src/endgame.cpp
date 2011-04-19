@@ -12,6 +12,8 @@
 
 #include <math.h>
 
+#include "common.h"
+
 #include "menu.h"
 #include "lisp.h"
 #include "game.h"
@@ -42,8 +44,8 @@ extern int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCF
 
 static mask_line *make_mask_lines(image *mask, int map_width)
 {
-  mask_line *p=(mask_line *)malloc(mask->height()*sizeof(mask_line));
-  for (int y=0; y<mask->height(); y++)
+  mask_line *p=(mask_line *)malloc(mask->Size().y*sizeof(mask_line));
+  for (int y=0; y<mask->Size().y; y++)
   {
     // find the start of the run..
     uint8_t *sl=mask->scan_line(y);
@@ -55,7 +57,7 @@ static mask_line *make_mask_lines(image *mask, int map_width)
     // find the length of the run
     int size=0;
     uint8_t *sl_start=sl;
-    while (*sl!=0 && x<mask->width()) { sl++; x++; size++; }
+    while (*sl!=0 && x<mask->Size().x) { sl++; x++; size++; }
     p[y].size=size;
 
     // now calculate remap for line
@@ -74,7 +76,7 @@ static mask_line *make_mask_lines(image *mask, int map_width)
       else
         *rem=map_width/2-(int)(sqrt((size-x)/(double)(size*2.0))*map_width/2.0);
 
-//      (int)(mask->width()-(sqrt((size-x)/(double)size)*map_width/2.0)+mask->width()/2);
+//      (int)(mask->Size().x-(sqrt((size-x)/(double)size)*map_width/2.0)+mask->Size().x/2);
     }
   }
   return p;
@@ -85,7 +87,7 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
           int xoff, int coff)
 {
   int x1=10000,x2=0;
-  int iw=im1->width();
+  int iw=im1->Size().x;
   uint16_t r,off;
   int y=0;
   uint8_t *l;
@@ -158,7 +160,7 @@ void show_end2()
   int zip_snd = lnumber_value(LSymbol::FindOrCreate("SHIP_ZIP_SND")->GetValue());
 
 
-  mask_line *p=make_mask_lines(cache.img(mask),cache.img(planet)->width());
+  mask_line *p=make_mask_lines(cache.img(mask),cache.img(planet)->Size().x);
 
   int explo_frames1[8],explo_frames2[7];
 
@@ -174,8 +176,8 @@ void show_end2()
 
   int eoff=0,coff=0;
 
-  int ex=xres/2-cache.img(mask)->width()/2;
-  int ey=yres/2-cache.img(mask)->height()/2;
+  int ex=xres/2-cache.img(mask)->Size().x/2;
+  int ey=yres/2-cache.img(mask)->Size().y/2;
   fade_out(16);
 
   image blank(2,2); blank.clear();
@@ -211,7 +213,7 @@ void show_end2()
   int dx=(xres+1)/2-320/2,dy=(yres+1)/2-200/2;
 
 
-  scan_map(screen,ex,ey,cache.img(planet),cache.img(planet2),0,paddr,p,cache.img(mask)->height(),eoff,coff);
+  scan_map(screen,ex,ey,cache.img(planet),cache.img(planet2),0,paddr,p,cache.img(mask)->Size().y,eoff,coff);
   image *tcopy=cache.img(planet)->copy();
   fade_in(NULL,32);
 
@@ -240,22 +242,22 @@ void show_end2()
         scan_map(screen,ex,ey,tcopy,
            cache.img(planet2),
            0,paddr,
-           p,cache.img(mask)->height(),eoff,coff);
+           p,cache.img(mask)->Size().y,eoff,coff);
       }
       else
         scan_map(screen,ex,ey,cache.img(planet),
            cache.img(planet2),
            0,paddr,
-           p,cache.img(mask)->height(),eoff,coff);
+           p,cache.img(mask)->Size().y,eoff,coff);
       if (i>38)
       {
     int t=i-38;
     image *s=cache.img(ship);
-    int nw=s->width()*(t+2)/16,
-        nh=s->height()*(t+2)/16;
+    int nw=s->Size().x*(t+2)/16,
+        nh=s->Size().y*(t+2)/16;
 
 
-        scale_put_trans(s,screen,ex-(i-38)*5,ey+cache.img(mask)->height()/2+t*4,nw,nh);
+        scale_put_trans(s,screen,ex-(i-38)*5,ey+cache.img(mask)->Size().y/2+t*4,nw,nh);
     if (i==77)
       if (sound_avail&SFX_INITIALIZED)
             cache.sfx(zip_snd)->play(127);
@@ -287,7 +289,7 @@ void show_end2()
 
 
       scan_map(screen,ex,ey,cache.img(planet),
-           cache.img(planet2),i*256/200,paddr,p,cache.img(mask)->height(),eoff,coff);
+           cache.img(planet2),i*256/200,paddr,p,cache.img(mask)->Size().y,eoff,coff);
 
       eoff+=2; if (eoff>=320) eoff-=320;
       coff+=1; if (coff>=320) coff-=320;
@@ -295,14 +297,14 @@ void show_end2()
       i++;
       if (i<150 || (i<170 && ((i-149)%2)==0) || (i<180 && ((i-149)%4)==0) || (i<190 && ((i-149)%8)==0))
       {
-        clist=new ex_char(ex+jrand()%(cache.img(mask)->width()-cache.img(mask)->width()/3),
-            ey+jrand()%(cache.img(mask)->height()-cache.img(mask)->height()/3),0,1,clist);
+        clist=new ex_char(ex+jrand()%(cache.img(mask)->Size().x-cache.img(mask)->Size().x/3),
+            ey+jrand()%(cache.img(mask)->Size().y-cache.img(mask)->Size().y/3),0,1,clist);
     if (sound_avail&SFX_INITIALIZED)
           cache.sfx(explo_snd)->play(127);
       }
 
-//      clist=new ex_char(ex+jrand()%(cache.img(mask)->width(),
-//            ey+jrand()%(cache.img(mask)->height(),0,1,clist);
+//      clist=new ex_char(ex+jrand()%(cache.img(mask)->Size().x,
+//            ey+jrand()%(cache.img(mask)->Size().y,0,1,clist);
 
       ex_char *c=clist,*last=NULL;
       for (; c; )
@@ -353,7 +355,7 @@ void show_end2()
       scan_map(screen,ex,ey,cache.img(planet),
            cache.img(planet2),
            256,paddr,
-           p,cache.img(mask)->height(),eoff,coff);
+           p,cache.img(mask)->Size().y,eoff,coff);
       eoff+=2; if (eoff>=320) eoff-=320;
       coff+=1; if (coff>=320) coff-=320;
       wm->flush_screen();
@@ -386,7 +388,7 @@ void show_end2()
     scan_map(screen,ex,ey,cache.img(planet),
          cache.img(planet2),
          256,paddr,
-         p,cache.img(mask)->height(),eoff,coff);
+         p,cache.img(mask)->Size().y,eoff,coff);
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),wm->font(),cmap,wm->bright_color());
     wm->flush_screen();
     time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
@@ -396,7 +398,7 @@ void show_end2()
 
 
 
-  for (i=0; i<cache.img(mask)->height(); i++)
+  for (i=0; i<cache.img(mask)->Size().y; i++)
   {
     free(p[i].remap);
     free(p[i].light);
@@ -433,7 +435,7 @@ void share_end()
   void *mid_plot = LSymbol::FindOrCreate("plot_middle")->GetValue();
   PtrRef r2(mid_plot);
 
-  int dx=(xres+1)/2-im->width()/2,dy=(yres+1)/2-im->height()/2;
+  int dx=(xres+1)/2-im->Size().x/2,dy=(yres+1)/2-im->Size().y/2;
   im->put_image(screen,dx,dy);
   console_font->put_string(screen,xres/2+35,yres/2+100-console_font->height()-2,
                lstring_value(to_be));

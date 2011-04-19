@@ -21,6 +21,8 @@
 #   include <sys/stat.h>
 #endif
 
+#include "common.h"
+
 #include "image.h"
 #include "palette.h"
 #include "specs.h"

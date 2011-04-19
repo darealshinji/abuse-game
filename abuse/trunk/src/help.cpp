@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "help.h"
 #include "game.h"
 #include "netcfg.h"
@@ -24,8 +26,8 @@ void fade_out(int steps);
 void draw_help()
 {
   image *im=cache.img(help_screens[help_page]);
-  int x1=xres/2-im->width()/2,y1=yres/2-im->height()/2;
-  int x2=x1+im->width(),y2=y1+im->height();
+  int x1=xres/2-im->Size().x/2,y1=yres/2-im->Size().y/2;
+  int x2=x1+im->Size().x,y2=y1+im->Size().y;
   im->put_image(screen,x1,y1);
   screen->bar(0,0,x1-1,yres,0);
   screen->bar(0,0,xres,y1-1,0);

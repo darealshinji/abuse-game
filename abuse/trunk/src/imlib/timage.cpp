@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "timage.h"
 
 void trans_image::make_color(int c)
@@ -69,13 +71,13 @@ trans_image::trans_image(image *im, char const *name)
 {
   int size=0,x,y;
   uint8_t *sl,*datap,*marker;
-  w=im->width();
-  h=im->height();
+  w=im->Size().x;
+  h=im->Size().y;
 
   im->lock();
 
   // first we must find out how much data to allocate
-  for (y=0; y<im->height(); y++)
+  for (y=0; y<im->Size().y; y++)
   {
     sl=im->scan_line(y);
     x=0;
@@ -98,10 +100,10 @@ trans_image::trans_image(image *im, char const *name)
   }
 
   data=(uint8_t *)malloc(size);
-  int ww=im->width(),hh=im->height();
+  int ww=im->Size().x,hh=im->Size().y;
   datap=data;
   if (!datap)
-  { printf("size = %d %d (%d)\n",im->width(),im->height(),size);  }
+  { printf("size = %d %d (%d)\n",im->Size().x,im->Size().y,size);  }
   CONDITION(datap,"malloc error for trans_image::data");
 
   for (y=0; y<hh; y++)  // now actually make the runs
@@ -111,7 +113,7 @@ trans_image::trans_image(image *im, char const *name)
     while (x<ww)
     {
       *datap=0;  // start the skip at 0
-      while (x<im->width() && (*sl)==0)
+      while (x<im->Size().x && (*sl)==0)
       { sl++; x++; (*datap)++; }
       datap++;
 
@@ -120,7 +122,7 @@ trans_image::trans_image(image *im, char const *name)
         marker=datap;   // let marker be the run size
     *marker=0;
     datap++;    // skip over this spot
-        while (x<im->width() && (*sl)!=0)
+        while (x<im->Size().x && (*sl)!=0)
         {
           (*marker)++;
       (*datap)=*sl;
@@ -273,7 +275,7 @@ void trans_image::put_image_filled(image *screen, int x, int y,
   screen->lock();
 
   screen_line=screen->scan_line(y)+x;
-  int sw=screen->width()-w;
+  int sw=screen->Size().x-w;
   x1-=x; x2-=x;
   for (; ysteps>0; ysteps--)
   {
@@ -342,7 +344,7 @@ void trans_image::put_image_offseted(image *screen, uint8_t *s_off)   // if scre
   uint8_t skip,*datap=data;
 
   screen->lock();
-  screen_skip = screen->width() - w;
+  screen_skip = screen->Size().x - w;
   for (; ysteps; ysteps--)
   {
     for (ix=0; ix<w; )
@@ -365,7 +367,7 @@ void trans_image::put_image_offseted(image *screen, uint8_t *s_off)   // if scre
     s_off+=skip;
     ix+=skip;
 
-    if (s_off>=screen->scan_line(screen->height()+1))
+    if (s_off>=screen->scan_line(screen->Size().y+1))
             printf("bad write in trans_image::put_image_offseted");
       }
     }
@@ -385,7 +387,7 @@ void trans_image::put_image(image *screen, int x, int y)
 
   screen->lock();
   screen_line=screen->scan_line(y)+x;
-  int sw=screen->width();
+  int sw=screen->Size().x;
   x1-=x; x2-=x;
   for (; ysteps>0; ysteps--)
   {
@@ -450,7 +452,7 @@ void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap)
 
   screen->lock();
   screen_line=screen->scan_line(y)+x;
-  int sw=screen->width();
+  int sw=screen->Size().x;
   x1-=x; x2-=x;
   for (; ysteps>0; ysteps--)
   {
@@ -528,7 +530,7 @@ void trans_image::put_double_remaped(image *screen, int x, int y, uint8_t *remap
 
   screen->lock();
   screen_line=screen->scan_line(y)+x;
-  int sw=screen->width();
+  int sw=screen->Size().x;
   x1-=x; x2-=x;
   for (; ysteps>0; ysteps--)
   {
@@ -856,7 +858,7 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
   uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
                 *blend_line,*screen_line;
   if (!datap) return ;
-  CONDITION(y>=blendy && y+ysteps<blendy+blend->height()+1,"Blend doesn't fit on trans_image");
+  CONDITION(y>=blendy && y+ysteps<blendy+blend->Size().y+1,"Blend doesn't fit on trans_image");
 
   blend_amount=16-blend_amount;
 
@@ -978,7 +980,7 @@ void trans_image::put_predator(image *screen, int x, int y)
 
   screen->lock();
   screen_line=screen->scan_line(y)+x;
-  int sw=screen->width();
+  int sw=screen->Size().x;
   x1-=x; x2-=x;
   for (; ysteps>0; ysteps--)
   {

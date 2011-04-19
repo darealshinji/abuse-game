@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "image.h"
 #include "macs.h"
 #include "filter.h"
@@ -83,10 +85,10 @@ void filter::apply(image *im)
   unsigned char *c;
   CONDITION(im,"null image passed in filter::apply\n");
   im->lock();
-  for (y=im->height()-1; y>=0; y--)
+  for (y=im->Size().y-1; y>=0; y--)
   {
     c=im->scan_line(y);
-    for (x=im->width()-1; x>=0; x--)
+    for (x=im->Size().x-1; x>=0; x--)
     {
       CONDITION((unsigned) c[x]<nc,"not enough filter colors");
       c[x]=fdat[(unsigned) c[x]];
@@ -178,7 +180,7 @@ void filter::put_image(image *screen, image *im, short x, short y,
                        char transparent)
 {
     short cx1, cy1, cx2, cy2, x1 = 0, y1 = 0,
-          x2 = im->width() - 1, y2 = im->height() - 1;
+          x2 = im->Size().x - 1, y2 = im->Size().y - 1;
     screen->get_clip(cx1,cy1,cx2,cy2);
 
     // see if the image gets clipped off the screen

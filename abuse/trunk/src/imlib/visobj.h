@@ -32,8 +32,8 @@ class image_visual : public visual_object
 
   image_visual(image *img) { im=img; }
   virtual void draw(image *screen, int x, int y, filter *f);
-  virtual int width() { return im->width(); }
-  virtual int height() { return im->height(); }
+  virtual int width() { return im->Size().x; }
+  virtual int height() { return im->Size().y; }
 } ;
 
 

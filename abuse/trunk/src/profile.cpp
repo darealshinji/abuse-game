@@ -10,8 +10,9 @@
 
 #include "config.h"
 
-#include "game.h"
+#include "common.h"
 
+#include "game.h"
 
 #include "profile.h"
 #include "jwindow.h"
@@ -118,7 +119,7 @@ void profile_update()
 
   float time_scaler=(float)max_bar_length/prof_list[0].total_time;
 
-  prof_win->screen->bar(0,prof_win->y1(),prof_win->screen->width()-1,prof_win->screen->height(),0);
+  prof_win->screen->bar(0,prof_win->y1(),prof_win->screen->Size().x-1,prof_win->screen->Size().y,0);
   int dy = 0;
   for (; i<prof_height; i++)
   {

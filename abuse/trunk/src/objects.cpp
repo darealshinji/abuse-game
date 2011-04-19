@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "timage.h"
 #include "objects.h"
 #include "chars.h"

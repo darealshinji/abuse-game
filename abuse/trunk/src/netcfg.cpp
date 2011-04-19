@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include "common.h"
+
 #include "game.h"
 
 #include "netcfg.h"
@@ -261,7 +263,7 @@ void net_configuration::error(char const *message)
   image *screen_backup=screen->copy();
 
   image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
-  int ns_w=ns->width(),ns_h=ns->height();
+  int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
   ns->put_image(screen,x,y);
   JCFont *fnt=wm->font();
@@ -269,7 +271,7 @@ void net_configuration::error(char const *message)
   uint8_t *remap=white_light+30*256;
 
   uint8_t *sl=screen->scan_line(0);
-  int xx=screen->width()*screen->height();
+  int xx=screen->Size().x*screen->Size().y;
   for (; xx; xx--,sl++) *sl=remap[*sl];
 
   int fx=x+ns_w/2-strlen(message)*fnt->width()/2,
@@ -326,7 +328,7 @@ ifield *net_configuration::center_ifield(ifield *i,int x1, int x2, ifield *place
 int net_configuration::get_options(int server)
 {
   image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
-  int ns_w=ns->width(),ns_h=ns->height();
+  int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
   ns->put_image(screen,x,y);
   JCFont *fnt=wm->font();
@@ -445,7 +447,7 @@ int net_configuration::input()   // pulls up dialog box and input fileds
   screen->clear();
 
   image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
-  int ns_w=ns->width(),ns_h=ns->height();
+  int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
   ns->put_image(screen,x,y);
   char const *nw_s = symbol_str("Networking");

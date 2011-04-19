@@ -22,6 +22,8 @@
 
 #include <SDL.h>
 
+#include "common.h"
+
 #include "system.h"
 #include "image.h"
 #include "palette.h"
@@ -374,13 +376,13 @@ void handle_mouse( event &ev )
     buttons = SDL_GetMouseState( &x, &y );
     x = (x << 16) / mouse_xscale;
     y = (y << 16) / mouse_yscale;
-    if( x > screen->width() - 1 )
+    if( x > screen->Size().x - 1 )
     {
-        x = screen->width() - 1;
+        x = screen->Size().x - 1;
     }
-    if( y > screen->height() - 1 )
+    if( y > screen->Size().y - 1 )
     {
-        y = screen->height() - 1;
+        y = screen->Size().y - 1;
     }
     ev.mouse_move.x = x;
     ev.mouse_move.y = y;

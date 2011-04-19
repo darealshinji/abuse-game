@@ -17,6 +17,8 @@
 #include <fcntl.h>
 #include <string.h>
 
+#include "common.h"
+
 #include "cache.h"
 #include "lisp.h"
 #include "video.h"

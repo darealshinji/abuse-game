@@ -12,6 +12,8 @@
 
 #include <math.h>
 
+#include "common.h"
+
 #include "timing.h"
 #include "loader2.h"
 #include "chars.h"
@@ -74,7 +76,7 @@ image *load_image(spec_entry *e, bFILE *fp)
 {
   image *im=new image(e,fp);
   if (scale_mult!=1 || scale_div!=1)
-    im->resize(im->width()*scale_mult/scale_div,im->height()*scale_mult/scale_div);
+    im->resize(im->Size().x*scale_mult/scale_div,im->Size().y*scale_mult/scale_div);
   return im;
 }
 
@@ -82,7 +84,7 @@ image *load_image(bFILE *fp)
 {
   image *im=new image(fp);
   if (scale_mult!=1 || scale_div!=1)
-    im->resize(im->width()*scale_mult/scale_div,im->height()*scale_mult/scale_div);
+    im->resize(im->Size().x*scale_mult/scale_div,im->Size().y*scale_mult/scale_div);
 
   return im;
 }
@@ -455,8 +457,8 @@ void load_data(int argc, char **argv)
     "No font loaded (use load_big_font or load_small_font)!");
   f_wid=cache.foret(foretiles[0])->im->width();
   f_hi=cache.foret(foretiles[0])->im->height();
-  b_wid=cache.backt(backtiles[0])->im->width();
-  b_hi=cache.backt(backtiles[0])->im->height();
+  b_wid=cache.backt(backtiles[0])->im->Size().x;
+  b_hi=cache.backt(backtiles[0])->im->Size().y;
 
 #if 0
     if( should_save_sd_cache )

@@ -10,8 +10,9 @@
 
 #include "config.h"
 
-#include "game.h"
+#include "common.h"
 
+#include "game.h"
 
 #include "system.h"
 #include "view.h"

@@ -12,6 +12,8 @@
 
 #include <stdio.h>
 
+#include "common.h"
+
 #include "demo.h"
 #include "macs.h"
 #include "specs.h"

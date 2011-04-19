@@ -32,6 +32,8 @@
 #   endif    /* __APPLE__ */
 #endif    /* HAVE_OPENGL */
 
+#include "common.h"
+
 #include "filter.h"
 #include "system.h"
 #include "video.h"
@@ -342,7 +344,7 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
 //
 void put_image(image * im, int x, int y)
 {
-    put_part_image(im, x, y, 0, 0, im->width() - 1, im->height() - 1);
+    put_part_image(im, x, y, 0, 0, im->Size().x - 1, im->Size().y - 1);
 }
 
 //
