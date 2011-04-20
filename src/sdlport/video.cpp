@@ -355,23 +355,23 @@ void update_dirty_window(image *im, int xoff, int yoff)
 {
     int count;
     dirty_rect *dr, *q;
-    CHECK(im->special); // make sure the image has the ability to contain dirty areas
-    if(im->special->keep_dirt == 0)
+    CHECK(im->m_special); // make sure the image has the ability to contain dirty areas
+    if(im->m_special->keep_dirt == 0)
     {
         put_image(im, xoff, yoff);
     }
     else
     {
-        count = im->special->dirties.number_nodes();
+        count = im->m_special->dirties.number_nodes();
         if(!count)
             return;  // if nothing to update, return
-        dr = (dirty_rect *)(im->special->dirties.first());
+        dr = (dirty_rect *)(im->m_special->dirties.first());
         while(count > 0)
         {
             put_part_image(im, xoff + dr->dx1, yoff + dr->dy1, dr->dx1, dr->dy1, dr->dx2 + 1, dr->dy2 + 1);
             q = dr;
             dr = (dirty_rect *)(dr->next());
-            im->special->dirties.unlink((linked_node *)q);
+            im->m_special->dirties.unlink((linked_node *)q);
             delete q;
             count--;
         }
@@ -386,26 +386,6 @@ void update_dirty(image *im, int xoff, int yoff)
 {
     update_dirty_window(im, xoff, yoff);
     update_window_done();
-}
-
-//
-// make_page()
-//
-void image::make_page(vec2i size, uint8_t *page_buffer)
-{
-    if (page_buffer)
-        m_data = page_buffer;
-    else
-        m_data = (uint8_t *)malloc(size.x * size.y);
-}
-
-//
-// delete_page()
-//
-void image::delete_page()
-{
-    if(!special || !special->static_mem)
-        free(m_data);
 }
 
 //

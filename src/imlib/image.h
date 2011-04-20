@@ -17,7 +17,6 @@
 #include "system.h"
 #include "specs.h"
 #define MAX_DIRTY 200
-#define Inew(pointer,type); { make_block(sizeof(type)); pointer=new type; }
 
 extern char const *imerr_messages[];  // correspond to imERRORS
 #define imREAD_ERROR            1
@@ -33,7 +32,6 @@ int16_t current_error();
 void clear_errors();
 void set_error(int16_t x);
 int16_t last_error();
-void make_block(size_t size);
 void image_init();
 void image_uninit();
 extern linked_list image_list;
@@ -55,7 +53,7 @@ public :
   dirty_rect(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
   { dx1=x1; dy1=y1; dx2=x2; dy2=y2;
     if(x2<x1 || y2<y1)
-      printf("add inccorect dirty\n");
+      printf("add incorrect dirty\n");
   }
   virtual int16_t compare(void *n1, int16_t field)
   { return((dirty_rect *)n1)->dy1>dy1; }
@@ -118,29 +116,30 @@ class image : public linked_node
 private:
     uint8_t *m_data;
     vec2i m_size;
-
-    void make_page(vec2i size, uint8_t *page_buffer);
-    void delete_page();
     bool m_locked;
 
+    void MakePage(vec2i size, uint8_t *page_buffer);
+    void DeletePage();
+
 public:
-    image_descriptor *special;
+    image_descriptor *m_special;
 
     image(spec_entry *e, bFILE *fp);
     image(bFILE *fp);
     image(vec2i size, uint8_t *page_buffer = NULL, int create_descriptor = 0);
     ~image();
 
-    void lock();
-    void unlock();
+    void Lock();
+    void Unlock();
 
-    uint8_t pixel(int16_t x, int16_t y);
-    void putpixel(int16_t x, int16_t y, char color);
-    uint8_t *scan_line(int16_t y)
+    uint8_t Pixel(vec2i pos);
+    void PutPixel(vec2i pos, uint8_t color);
+
+    inline uint8_t *scan_line(int16_t y)
     {
         return m_data + y * m_size.x;
     }
-    uint8_t *next_line(int16_t lasty, uint8_t *last_scan)
+    inline uint8_t *next_line(int16_t lasty, uint8_t *last_scan)
     {
         return last_scan + m_size.x;
     }
@@ -180,24 +179,24 @@ public:
 
     void dirt_off()
     {
-        if(special && special->keep_dirt) special->keep_dirt = 0;
+        if(m_special && m_special->keep_dirt) m_special->keep_dirt = 0;
     }
     void dirt_on()
     {
-        if(special) special->keep_dirt = 1;
+        if(m_special) m_special->keep_dirt = 1;
     }
 
     void add_dirty(int x1, int y1, int x2, int y2)
     {
-        if(special) special->add_dirty(x1, y1, x2, y2);
+        if(m_special) m_special->add_dirty(x1, y1, x2, y2);
     }
     void delete_dirty(int x1, int y1, int x2, int y2)
     {
-        if(special) special->delete_dirty(x1, y1, x2, y2);
+        if(m_special) m_special->delete_dirty(x1, y1, x2, y2);
     }
     void clear_dirties()
     {
-        if(special) special->clear_dirties();
+        if(m_special) m_special->clear_dirties();
     }
     void dither(palette *pal); // use a b&w palette!
     void Scale(vec2i size);

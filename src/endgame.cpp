@@ -196,7 +196,7 @@ void show_end2()
     *(si++)=jrand()%320;
     *(si++)=jrand()%200;
     *(si++)=c[jrand()%4];
-    screen->putpixel(si[-3],si[-2],si[-1]);
+    screen->PutPixel(vec2i(si[-3],si[-2]),si[-1]);
   }
   int32_t paddr[256];
   if (old_pal)
@@ -233,7 +233,7 @@ void show_end2()
       screen->clear();
       int j;
       for (si=sinfo,j=0; j<800; j++,si+=3)
-        screen->putpixel(dx+si[0],dy+si[1],si[2]);
+        screen->PutPixel(vec2i(dx+si[0],dy+si[1]),si[2]);
 
       if (i>=30 && i<=37)
       {
@@ -285,7 +285,7 @@ void show_end2()
       screen->clear();
       int j;
       for (si=sinfo,j=0; j<800; j++,si+=3)
-        screen->putpixel(dx+si[0],dy+si[1],si[2]);
+        screen->PutPixel(vec2i(dx+si[0],dy+si[1]),si[2]);
 
 
       scan_map(screen,ex,ey,cache.img(planet),
@@ -339,7 +339,7 @@ void show_end2()
   screen->clear();
   int j;
   for (si=sinfo,j=0; j<800; j++,si+=3)
-    screen->putpixel(si[0],si[1],si[2]);
+    screen->PutPixel(vec2i(si[0],si[1]),si[2]);
 
   event ev;
   i=0;
@@ -383,7 +383,7 @@ void show_end2()
     screen->clear();
     int j;
     for (si=sinfo,j=0; j<800; j++,si+=3)
-      screen->putpixel(dx+si[0],dy+si[1],si[2]);
+      screen->PutPixel(vec2i(dx+si[0],dy+si[1]),si[2]);
 
     scan_map(screen,ex,ey,cache.img(planet),
          cache.img(planet2),

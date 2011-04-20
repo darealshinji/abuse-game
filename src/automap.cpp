@@ -61,13 +61,13 @@ void automap::draw()
   // if view position hasn't changed, only update the binking dot and return
   if (draw_xstart==old_dx && draw_ystart==old_dy)
   {
-   automap_window->screen->lock();
+   automap_window->screen->Lock();
    automap_window->screen->add_dirty(centerx,centery,centerx,centery);
     if ((tick++)&4)
-      automap_window->screen->putpixel(centerx,centery,255);
+      automap_window->screen->PutPixel(vec2i(centerx,centery),255);
     else
-      automap_window->screen->putpixel(centerx,centery,27);
-   automap_window->screen->unlock();
+      automap_window->screen->PutPixel(vec2i(centerx,centery),27);
+   automap_window->screen->Unlock();
     return ;
   }
 
@@ -135,26 +135,21 @@ void automap::draw()
       }
       else
         screen->bar(i,j,i+AUTOTILE_WIDTH-1,j+AUTOTILE_HEIGHT-1,0);
-
-
     }
-
   }
-
 
   // draw the person as a dot, no need to add a dirty because we marked the
   // whole screen already
-  automap_window->screen->lock();
+  automap_window->screen->Lock();
   if ((tick++)&4)
-    automap_window->screen->putpixel(centerx,centery,255);
+    automap_window->screen->PutPixel(vec2i(centerx,centery),255);
   else
-    automap_window->screen->putpixel(centerx,centery,27);
-  automap_window->screen->unlock();
+    automap_window->screen->PutPixel(vec2i(centerx,centery),27);
+  automap_window->screen->Unlock();
 
   // set the clip back to full window size because soemthing else could mess with the area
   automap_window->screen->set_clip(0,0,screen->Size().x-1,screen->Size().y-1);
 }
-
 
 void automap::toggle_window()
 {

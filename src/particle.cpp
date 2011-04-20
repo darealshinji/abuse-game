@@ -180,7 +180,7 @@ void part_frame::draw(image *screen, int x, int y, int dir)
   int i=t;
   while (i && pon->y<cy1) { pon++; i--; }
   if (!i) return ;
-  screen->lock();
+  screen->Lock();
   if (dir>0)
   {
     while (i && pon->y<=cy2)
@@ -202,7 +202,7 @@ void part_frame::draw(image *screen, int x, int y, int dir)
       pon++;
     }
   }
-  screen->unlock();
+  screen->Unlock();
 }
 
 void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
@@ -217,7 +217,7 @@ void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
     int ym = ( 1 << s );
     s = ( 15 - s );
 
-    screen->lock();
+    screen->Lock();
     while( t-- )
     {
         x = ( xo >> 16 ) + ( jrand() >> s ) - xm;
@@ -229,7 +229,7 @@ void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
         xo += dx;
         yo += dy;
     }
-    screen->unlock();
+    screen->Unlock();
 }
 
 
@@ -246,7 +246,7 @@ void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
     int ym = ( 1 << s );
     s = ( 15 - s );
 
-    screen->lock();
+    screen->Lock();
 
     int w = screen->Size().x;
     uint8_t *addr;
@@ -268,6 +268,6 @@ void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
         yo += dy;
     }
 
-    screen->unlock();
+    screen->Unlock();
 }
 
