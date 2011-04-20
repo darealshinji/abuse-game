@@ -58,11 +58,11 @@ void automap::draw()
   else
     draw_ystart=centery-(y*AUTOTILE_HEIGHT/f_hi-sy*AUTOTILE_HEIGHT);
 
-  // if view position hasn't changed, only update the binking dot and return
+  // if view position hasn't changed, only update the blinking dot and return
   if (draw_xstart==old_dx && draw_ystart==old_dy)
   {
    automap_window->screen->Lock();
-   automap_window->screen->add_dirty(centerx,centery,centerx,centery);
+   automap_window->screen->AddDirty(centerx,centery,centerx + 1,centery + 1);
     if ((tick++)&4)
       automap_window->screen->PutPixel(vec2i(centerx,centery),255);
     else
@@ -95,7 +95,7 @@ void automap::draw()
 
   // we are going to redraw the whole map, so make the dirty rect work easier by marking
   // everything dirty
-  screen->add_dirty(window_xstart,window_ystart,window_xend,window_yend);
+  screen->AddDirty(window_xstart,window_ystart,window_xend+1,window_yend+1);
 
 
 
@@ -104,7 +104,7 @@ void automap::draw()
   // because it handles clipping, but for ths reason is slower, the rest
   // we will slam on as fast as possible
 
-  screen->set_clip(window_xstart,window_ystart,window_xend,window_yend);
+  screen->SetClip(window_xstart,window_ystart,window_xend+1,window_yend+1);
 /*  for (i=draw_xstart,j=draw_ystart,x=sx,y=sy; y<=ey; j+=AUTOTILE_HEIGHT,y++)
     foretiles[cur_lev->get_fg(x,y)]->micro_image->put_image(screen,i,j,0);
 
@@ -148,7 +148,7 @@ void automap::draw()
   automap_window->screen->Unlock();
 
   // set the clip back to full window size because soemthing else could mess with the area
-  automap_window->screen->set_clip(0,0,screen->Size().x-1,screen->Size().y-1);
+  automap_window->screen->SetClip(0,0,screen->Size().x,screen->Size().y);
 }
 
 void automap::toggle_window()

@@ -178,12 +178,12 @@ int color_filter::write(bFILE *fp)
 void filter::put_image(image *screen, image *im, short x, short y,
                        char transparent)
 {
-    short cx1, cy1, cx2, cy2, x1 = 0, y1 = 0,
-          x2 = im->Size().x - 1, y2 = im->Size().y - 1;
-    screen->get_clip(cx1,cy1,cx2,cy2);
+    int cx1, cy1, cx2, cy2, x1 = 0, y1 = 0,
+          x2 = im->Size().x, y2 = im->Size().y;
+    screen->GetClip(cx1, cy1, cx2, cy2);
 
     // see if the image gets clipped off the screen
-    if(x > cx2 || y > cy2 || x + (x2 - x1) < cx1 || y + (y2 - y1) < cy1)
+    if(x >= cx2 || y >= cy2 || x + (x2 - x1) <= cx1 || y + (y2 - y1) <= cy1)
         return;
 
     if(x < cx1)
@@ -197,19 +197,19 @@ void filter::put_image(image *screen, image *im, short x, short y,
          y = cy1;
     }
 
-    if(x + x2 - x1 + 1 > cx2)
+    if(x + x2 - x1 >= cx2)
         x2 = cx2 - x + x1;
 
-    if(y + y2 - y1 + 1 > cy2)
+    if(y + y2 - y1 >= cy2)
         y2 = cy2 - y + y1;
 
-    if(x1 > x2 || y1 > y2)
+    if(x1 >= x2 || y1 >= y2)
         return;
 
-    int xl = x2 - x1 + 1;
-    int yl = y2 - y1 + 1;
+    int xl = x2 - x1;
+    int yl = y2 - y1;
 
-    screen->add_dirty(x, y, x + xl - 1, y + yl - 1);
+    screen->AddDirty(x, y, x + xl, y + yl);
 
     screen->Lock();
     im->Lock();

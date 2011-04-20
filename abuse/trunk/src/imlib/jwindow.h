@@ -122,8 +122,8 @@ public:
     int y1() { return _y1; }
     int x2() { return _x2; }
     int y2() { return _y2; }
-    void clip_in() { screen->set_clip(x1(), y1(), x2(), y2()); }
-    void clip_out() { screen->set_clip(0, 0, l - 1, h - 1); }
+    void clip_in() { screen->SetClip(x1(), y1(), x2() + 1, y2() + 1); }
+    void clip_out() { screen->SetClip(0, 0, l, h); }
     char *read(int id) { return inm->get(id)->read(); }
     void local_close();
 

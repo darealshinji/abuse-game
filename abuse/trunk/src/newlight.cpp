@@ -569,15 +569,15 @@ void light_screen(image *sc, long screenx, long screeny, uchar *light_lookup)
     return ;
   }
 
-  short cx1,cy1,cx2,cy2;
-  sc->get_clip(cx1,cy1,cx2,cy2);
-//  sc->add_dirty(cx1,cy1,cx2,cy2);
-  unsigned char *mint=light_lookup+min_light_level*256;
+  int cx1, cy1, cx2, cy2;
+  sc->GetClip(cx1, cy1, cx2, cy2);
+//  sc->AddDirty(cx1, cy1, cx2, cy2);
+  uint8_t *mint = light_lookup + min_light_level * 256;
   screenx-=cx1;
   screeny-=cy1;
 
 
-  light_patch *first=make_patch_list(cx1,cy1,cx2,cy2,screenx,screeny);
+  light_patch *first = make_patch_list(cx1, cy1, cx2 - 1, cy2 - 1, screenx, screeny);
 
 
   int ytry=(1<<ly_run),xtry=(1<<lx_run);

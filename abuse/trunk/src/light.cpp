@@ -773,20 +773,20 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
   else min_light_level=(int)ambient+ambient_ramp;
 
   if (ambient==63) return ;
-  short cx1,cy1,cx2,cy2;
-  sc->get_clip(cx1,cy1,cx2,cy2);
+  int cx1, cy1, cx2, cy2;
+  sc->GetClip(cx1, cy1, cx2, cy2);
 
-  light_patch *first=make_patch_list(cx2-cx1+1,cy2-cy1+1,screenx,screeny);
+  light_patch *first = make_patch_list(cx2 - cx1, cy2 - cy1, screenx, screeny);
 
   int prefix_x=(screenx&7);
   int prefix=screenx&7;
   if (prefix)
     prefix=8-prefix;
-  int suffix_x=cx2-cx1-(screenx&7);
+  int suffix_x = cx2 - 1 - cx1 - (screenx & 7);
 
-  int suffix=(cx2-cx1-prefix+1)&7;
+  int suffix=(cx2 - cx1 - prefix) & 7;
 
-  int32_t remap_size=((cx2-cx1+1-prefix-suffix)>>lx_run);
+  int32_t remap_size=((cx2 - cx1 - prefix - suffix)>>lx_run);
 
   uint8_t *remap_line=(uint8_t *)malloc(remap_size);
 
@@ -797,7 +797,7 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
   int scr_w=screen->Size().x;
   uint8_t *screen_line=screen->scan_line(cy1)+cx1;
 
-  for (int y=cy1; y<=cy2; )
+  for (int y = cy1; y < cy2; )
   {
     int x,count;
 //    while (f->next && f->y2<y)
@@ -805,8 +805,8 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
     uint8_t *rem=remap_line;
 
     int todoy=4-((screeny+y)&3);
-    if (y+todoy>cy2)
-      todoy=cy2-y+1;
+    if (y + todoy >= cy2)
+      todoy = cy2 - y;
 
     int calcy=((y+screeny)&(~3))-cy1;
 
@@ -816,7 +816,7 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
       light_patch *lp=f;
       for (; (lp->y1>y-cy1 || lp->y2<y-cy1 ||
                   lp->x1>suffix_x || lp->x2<suffix_x); lp=lp->next);
-      uint8_t * caddr=(uint8_t *)screen_line+cx2-cx1+1-suffix;
+      uint8_t * caddr=(uint8_t *)screen_line + cx2 - cx1 - suffix;
       uint8_t *r=light_lookup+(((int32_t)calc_light_value(lp,suffix_x+screenx,calcy)<<8));
       switch (todoy)
       {
@@ -923,8 +923,8 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
     min_light_level=63;
   else min_light_level=(int)ambient+ambient_ramp;
 
-  short cx1,cy1,cx2,cy2;
-  sc->get_clip(cx1,cy1,cx2,cy2);
+  int cx1, cy1, cx2, cy2;
+  sc->GetClip(cx1, cy1, cx2, cy2);
 
 
   if (ambient==63)      // lights off, just double the pixels
@@ -950,7 +950,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
     return ;
   }
 
-  light_patch *first=make_patch_list(cx2-cx1+1,cy2-cy1+1,screenx,screeny);
+  light_patch *first = make_patch_list(cx2 - cx1, cy2 - cy1, screenx, screeny);
 
   int scr_w=sc->Size().x;
   int dscr_w=out->Size().x;
@@ -959,11 +959,11 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
   int prefix=screenx&7;
   if (prefix)
     prefix=8-prefix;
-  int suffix_x=cx2-cx1-(screenx&7);
+  int suffix_x = cx2 - 1 - cx1 - (screenx & 7);
 
-  int suffix=(cx2-cx1-prefix+1)&7;
+  int suffix = (cx2 - cx1 - prefix) & 7;
 
-  int32_t remap_size=((cx2-cx1+1-prefix-suffix)>>lx_run);
+  int32_t remap_size = ((cx2 - cx1 - prefix - suffix)>>lx_run);
 
   uint8_t *remap_line=(uint8_t *)malloc(remap_size);
 
@@ -972,7 +972,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
   uint8_t *out_line=out->scan_line(cy1*2+out_y)+cx1*2+out_x;
 
 
-  for (int y=cy1; y<=cy2; )
+  for (int y = cy1; y < cy2; )
   {
     int x,count;
 //    while (f->next && f->y2<y)
@@ -980,8 +980,8 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
     uint8_t *rem=remap_line;
 
     int todoy=4-((screeny+y)&3);
-    if (y+todoy>cy2)
-      todoy=cy2-y+1;
+    if (y + todoy >= cy2)
+      todoy = cy2 - y;
 
     int calcy=((y+screeny)&(~3))-cy1;
 
@@ -991,8 +991,8 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
       light_patch *lp=f;
       for (; (lp->y1>y-cy1 || lp->y2<y-cy1 ||
                   lp->x1>suffix_x || lp->x2<suffix_x); lp=lp->next);
-      uint8_t * caddr=(uint8_t *)in_line+cx2-cx1+1-suffix;
-      uint8_t * daddr=(uint8_t *)out_line+(cx2-cx1+1-suffix)*2;
+      uint8_t * caddr=(uint8_t *)in_line + cx2 - cx1 - suffix;
+      uint8_t * daddr=(uint8_t *)out_line+(cx2 - cx1 - suffix)*2;
 
       uint8_t *r=light_lookup+(((int32_t)calc_light_value(lp,suffix_x+screenx,calcy)<<8));
       switch (todoy)

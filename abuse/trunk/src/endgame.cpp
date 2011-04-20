@@ -126,10 +126,8 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
     if (sx+n->x+x>x2) x2=sx+n->x+x;
 
   }
-  screen->add_dirty(x1,sy,x2,sy+mask_height-1);
-
+  screen->AddDirty(x1, sy, x2 + 1, sy + mask_height);
 }
-
 
 
 void fade_in(image *im, int steps);
