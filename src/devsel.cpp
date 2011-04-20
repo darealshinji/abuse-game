@@ -91,7 +91,7 @@ tile_picker::tile_picker(int X, int Y, int ID, int spec_type,
 void tile_picker::scroll_event(int newx, image *screen)
 {
   int yo=y,ya=pich(),xw=picw(),c=get_current(),xo;
-  image im(xw,ya);
+  image im(vec2i(xw, ya));
   last_sel=newx;
 
   screen->bar(x,y,x+l-1,y+h-1,wm->black());

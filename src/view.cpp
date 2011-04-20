@@ -501,7 +501,7 @@ int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went 
       shift_right=lltl(x[7]);
       if (small_render)
       {
-    small_render->resize(cx2-cx1+1,cy2-cy1+1);
+        small_render->Scale(vec2i(cx2 - cx1 + 1, cy2 - cy1 + 1));
       }
 
       suggest.send_view=0;

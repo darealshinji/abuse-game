@@ -38,9 +38,9 @@ sprite::sprite(image *Screen, image *Visual, int X, int Y)
 {
   CHECK(Visual && Screen);
   x=X; y=Y; visual=Visual; screen=Screen;
-  save=new image(visual->Size().x,visual->Size().y);
+  save = new image(visual->Size());
   get_background();
-} ;
+}
 
 sprite::~sprite()
 {
@@ -63,10 +63,10 @@ void sprite::change_visual(image *Visual, int delete_old)
 { if (delete_old)
     delete visual;
   visual=Visual;
-  if (save->Size().x!=Visual->Size().x || save->Size().y!=Visual->Size().y)
+  if (save->Size() != Visual->Size())
   {
     delete save;
-    save=new image(visual->Size().x,visual->Size().y);
+    save = new image(visual->Size());
   }
   get_background();
 }

@@ -64,7 +64,7 @@ JCFont::JCFont(image *letters)
   tl=(letters->Size().x+1)/32;
   th=(letters->Size().y+1)/8;
 
-  image tmp(tl,th);
+  image tmp(vec2i(tl,th));
 
   int ch;
 

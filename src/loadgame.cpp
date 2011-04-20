@@ -190,7 +190,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         }
         if (fail && show_all)
         {
-            thumb_nails[start_num]=new image(160,100);
+            thumb_nails[start_num] = new image(vec2i(160, 100));
             thumb_nails[start_num]->clear();
             console_font->put_string(thumb_nails[start_num],0,0,symbol_str("no_saved"));
             total_saved++;

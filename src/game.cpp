@@ -1243,7 +1243,7 @@ void do_title()
     // is not and the window gets closed during do_title, then
     // exit() will try to delete (through the desctructor of
     // image_list in image.cpp) the image on the stack -> boom.
-    image *blank = new image(2, 2);
+    image *blank = new image(vec2i(2, 2));
     blank->clear();
     wm->set_mouse_shape(blank->copy(), 0, 0); // hide mouse
     delete blank;

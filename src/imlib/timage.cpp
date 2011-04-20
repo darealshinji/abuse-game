@@ -37,7 +37,7 @@ void trans_image::make_color(int c)
 
 image *trans_image::make_image()
 {
-  image *im=new image(w,h);
+  image *im=new image(vec2i(w,h));
 
   im->lock();
   uint8_t *d=im->scan_line(0),*dp=data,*dline;

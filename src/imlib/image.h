@@ -74,8 +74,7 @@ public:
     linked_list dirties;
     void *extended_descriptor;
 
-    image_descriptor(int16_t length, int16_t height,
-                     int keep_dirties = 1, int static_memory = 0);
+    image_descriptor(vec2i size, int keep_dirties = 1, int static_memory = 0);
     int16_t bound_x1(int16_t x1)  { return x1 < clipx1 ? clipx1 : x1; }
     int16_t bound_y1(int16_t y1)  { return y1 < clipy1 ? clipy1 : y1; }
     int16_t bound_x2(int16_t x2)  { return x2 > clipx2 ? clipx2 : x2; }
@@ -117,19 +116,19 @@ public:
 class image : public linked_node
 {
 private:
-    uint8_t *data;
-    vec2i size;
-    void make_page(int16_t width, int16_t height, uint8_t *page_buffer);
+    uint8_t *m_data;
+    vec2i m_size;
+
+    void make_page(vec2i size, uint8_t *page_buffer);
     void delete_page();
-    bool _locked;
+    bool m_locked;
 
 public:
     image_descriptor *special;
 
     image(spec_entry *e, bFILE *fp);
     image(bFILE *fp);
-    image(int16_t width, int16_t height,
-          uint8_t *page_buffer = NULL, int16_t create_descriptor = 0);
+    image(vec2i size, uint8_t *page_buffer = NULL, int create_descriptor = 0);
     ~image();
 
     void lock();
@@ -139,19 +138,18 @@ public:
     void putpixel(int16_t x, int16_t y, char color);
     uint8_t *scan_line(int16_t y)
     {
-        return data + y * size.x;
+        return m_data + y * m_size.x;
     }
     uint8_t *next_line(int16_t lasty, uint8_t *last_scan)
     {
-        return last_scan + size.x;
+        return last_scan + m_size.x;
     }
     int32_t total_pixels(uint8_t background=0);
     image *copy(); // makes a copy of an image
     void clear(int16_t color = -1); // -1 is background color
     void to_24bit(palette &pal);
 
-    vec2i Size() const { return size; }
-    int Pitch() const { return size.x; } // FIXME: for now, pitch == width
+    vec2i Size() const { return m_size; }
 
     void scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2,
                 int16_t xd, int16_t yd);
@@ -202,9 +200,8 @@ public:
         if(special) special->clear_dirties();
     }
     void dither(palette *pal); // use a b&w palette!
-    void resize(int16_t new_width, int16_t new_height);
-    void change_size(int16_t new_width, int16_t new_height,
-                     uint8_t *page = NULL);
+    void Scale(vec2i size);
+    void SetSize(vec2i size, uint8_t *page = NULL);
     void flood_fill(int16_t x, int16_t y, uint8_t color);
     image *create_smooth(int16_t smoothness = 1); // 0 no smoothness
     void unpack_scanline(int16_t line, char bitsperpixel = 1);

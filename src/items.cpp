@@ -251,7 +251,7 @@ foretile::foretile(bFILE *fp)
       t[l]++;
     }
   }
-  micro_image=new image(AUTOTILE_WIDTH,AUTOTILE_HEIGHT);
+  micro_image = new image(vec2i(AUTOTILE_WIDTH, AUTOTILE_HEIGHT));
 
   for (l=0; l<AUTOTILE_WIDTH*AUTOTILE_HEIGHT; l++)
     micro_image->putpixel(  l%AUTOTILE_WIDTH , l/AUTOTILE_WIDTH,

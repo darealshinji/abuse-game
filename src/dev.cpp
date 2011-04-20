@@ -246,8 +246,7 @@ static void double_render()
   the_game->first_view->cy2=the_game->first_view->cy1+
                             (the_game->first_view->cy2-the_game->first_view->cy1+1)/2;
 
-  small_render=new image((the_game->first_view->cx2-the_game->first_view->cx1+1),
-             (the_game->first_view->cy2-the_game->first_view->cy1+1),NULL,2);
+  small_render=new image(vec2i(the_game->first_view->cx2-the_game->first_view->cx1+1, the_game->first_view->cy2-the_game->first_view->cy1+1),NULL,2);
 }
 
 
@@ -3003,7 +3002,7 @@ void pal_win::draw()
   if (me)
   {
     me->clear();
-    image *im=new image(the_game->ftile_width(),the_game->ftile_height());
+    image *im=new image(vec2i(the_game->ftile_width(),the_game->ftile_height()));
     int th=the_game->ftile_height()/scale,tw=the_game->ftile_width()/scale;
 
     for (i=0; i<w*h; i++)

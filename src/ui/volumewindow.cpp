@@ -41,7 +41,7 @@ VolumeWindow::VolumeWindow() : Jwindow("Volume")
     bg = cache.reg(ff, "vcontrol", SPEC_IMAGE, 1);
     l = cache.img(bg)->Size().x;
     h = cache.img(bg)->Size().y;
-    screen = new image(l, h, NULL, 2);
+    screen = new image(cache.img(bg)->Size(), NULL, 2);
     redraw();
 }
 
