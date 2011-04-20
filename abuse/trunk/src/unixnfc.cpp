@@ -598,7 +598,7 @@ int get_inputs_from_server(unsigned char *buf)
       while (input.first())               // push all the key events
       {
     event *ev=(event *)input.first();
-    input.unlink((linked_node *)ev);
+    input.unlink(ev);
     wm->push_event(ev);
       }
     }

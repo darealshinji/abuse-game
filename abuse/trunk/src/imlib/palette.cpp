@@ -384,7 +384,7 @@ void quant_palette::re_delete(quant_node *who, int lev)  // removes all children
     {
       CONDITION(lev<8,"Levl > 7");
       re_delete(who->children[x],lev+1);
-      level[lev].unlink((linked_node *)who->children[x]);
+      level[lev].unlink(who->children[x]);
       delete who->children[x];
     }
     }
@@ -407,7 +407,7 @@ void quant_palette::prune()
         if (f->children[x]->next()!=p->next())        // if this son is not me!
         pruned=1;                   //  I have a brother! stop
        p=(quant_node *)p->next();
-      } while ((linked_node *) p!=level[lev-1].first() && !pruned);
+      } while (p != level[lev-1].first() && !pruned);
     }
   }
   CONDITION(lev>0,"could not prune!");
@@ -446,7 +446,7 @@ void quant_palette::add_color(unsigned char r, unsigned char g, unsigned char b)
       if (lev>2 && !fat)
     printf("h");
       (*p)=new quant_node(lev,fat);
-      level[lev-1].add_end((linked_node *)(*p));
+      level[lev-1].add_end(*p);
     }
 
     if (!(*p)->is_leaf())

@@ -48,7 +48,7 @@ sprite::~sprite()
 }
 
 void sprite_controller::add_sprite(sprite *sp)
-{ sprites.add_end((linked_node *)sp); }
+{ sprites.add_end(sp); }
 
 void sprite_controller::remove_sprites()
 { sprite *sp; loopt(sprite,sp,sprites.first(),sp->restore_background(); ); }
@@ -73,12 +73,12 @@ void sprite::change_visual(image *Visual, int delete_old)
 
 void sprite_controller::bring_front(sprite *sp)
 {
-  ERROR(sprites.unlink((linked_node *)sp),"unlink failure");
-  sprites.add_end((linked_node *)sp);
+  ERROR(sprites.unlink(sp),"unlink failure");
+  sprites.add_end(sp);
 }
 
 void sprite_controller::delete_sprite(sprite *sp)
 {
-  ERROR(sprites.unlink((linked_node *)sp),"unlink failure");
+  ERROR(sprites.unlink(sp),"unlink failure");
   delete sp;
 }

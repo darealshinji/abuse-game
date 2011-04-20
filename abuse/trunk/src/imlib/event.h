@@ -67,7 +67,7 @@ public :
       x=mouse->x(); y=mouse->y(); button=mouse->button();
     } else x=y=button=0;
   }
-  void push_event(event *ev) { events.add_end((linked_node *)ev); }
+  void push_event(event *ev) { events.add_end(ev); }
   void flush_screen();
   int has_mouse() { return mouse->exsist(); }
   void set_mouse_shape(image *im, int centerx, int centery) { mouse->set_shape(im,-centerx,-centery); }

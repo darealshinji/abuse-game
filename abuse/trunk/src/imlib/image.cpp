@@ -115,7 +115,7 @@ image::~image()
         Unlock();
     }
 
-    image_list.unlink((linked_node *)this);
+    image_list.unlink(this);
     DeletePage();
     delete m_special;
 }
@@ -154,7 +154,7 @@ image::image(vec2i size, uint8_t *page_buffer, int create_descriptor)
     else
         m_special = NULL;
     MakePage(size, page_buffer);
-    image_list.add_end((linked_node *)this);
+    image_list.add_end(this);
     m_locked = false;
 }
 
@@ -167,7 +167,7 @@ image::image(spec_entry *e, bFILE *fp)
     MakePage(m_size, NULL);
     for (int i = 0; i < m_size.y; i++)
         fp->read(scan_line(i), m_size.x);
-    image_list.add_end((linked_node *) this);
+    image_list.add_end(this);
     m_locked = false;
 }
 
@@ -179,7 +179,7 @@ image::image(bFILE *fp)
     MakePage(m_size, NULL);
     for (int i = 0; i < m_size.y; i++)
         fp->read(scan_line(i), m_size.x);
-    image_list.add_end((linked_node *) this);
+    image_list.add_end(this);
     m_locked = false;
 }
 
@@ -208,7 +208,7 @@ void image_uninit()
   while (image_list.first())
   {
     im=(image *)image_list.first();
-    image_list.unlink((linked_node *)im);
+    image_list.unlink(im);
     delete im;
   } */
 }
