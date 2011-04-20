@@ -120,7 +120,7 @@ void event_handler::add_redraw( int X1, int Y1, int X2, int Y2, void *Start )
     ev->redraw.y1 = Y1;
     ev->redraw.y2 = Y2;
     ev->redraw.start = Start;
-    events.add_end( (linked_node *)ev );
+    events.add_end(ev);
 }
 
 //
@@ -142,7 +142,7 @@ void event_handler::get_event( event &ev )
     if( ep )
     {
         ev = *ep;
-        events.unlink( (linked_node *)ep );
+        events.unlink(ep);
         delete ep;
         ewaiting = events.first() != NULL;
     }

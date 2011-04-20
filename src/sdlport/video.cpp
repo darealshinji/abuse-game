@@ -371,7 +371,7 @@ void update_dirty_window(image *im, int xoff, int yoff)
             put_part_image(im, xoff + dr->dx1, yoff + dr->dy1, dr->dx1, dr->dy1, dr->dx2 + 1, dr->dy2 + 1);
             q = dr;
             dr = (dirty_rect *)(dr->next());
-            im->m_special->dirties.unlink((linked_node *)q);
+            im->m_special->dirties.unlink(q);
             delete q;
             count--;
         }

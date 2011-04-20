@@ -27,18 +27,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define loop(controll,first,inside) { (linked_node *)controll=first; \
-  if (first) do { inside (linked_node *) controll=controll->next(); } \
-  while ((linked_node *) controll!=first); }
+#define loop(controll,first,inside) { controll=first; \
+  if (first) do { inside controll=controll->next(); } \
+  while (controll!=first); }
 
 #define loopt(type,controll,first,inside) { controll=(type *)(first); \
   if (first) do { inside controll=(type *)(controll->next()); } \
   while (controll!=(type *)(first)); }
 
 
-#define loop_rev(controll,last,inside) { (linked_node *)controll=last; \
-  if (first) do { inside (linked_node *) controll=controll->last(); } \
-  while ((linked_node *) controll!=last); }
+#define loop_rev(controll,last,inside) { controll=last; \
+  if (first) do { inside controll=controll->last(); } \
+  while (controll!=last); }
 
 #define loopct(type,controll,first,cond,inside) { controll=(type *)first; \
   if (first && (cond)) do { inside controll=(type *)controll->next(); } \
@@ -72,9 +72,8 @@ public:
 // its features should be self-explanatory.
 // openly use the functions listed after the keyword PUBLIC
 // type conversions may be nessary if you derive a class of nodes of your own
-// for example shape is an class derived from linked_node.
-// to add a shape to linked lis I have to say
-// mylist.add_end( (linked_node *) myshape_pointer);
+// for example shape is an class derived from linked_node. to add a shape to
+// linked list I have to say mylist.add_end(myshape_pointer);
 // unlink removes a node from the list via pointers but does not deallocate
 // it from the heap
 // the destructor for linked_list will get dispose of all the nodes as

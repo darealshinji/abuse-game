@@ -1551,16 +1551,17 @@ int32_t object_list_length(object_node *list)
 
 game_object::game_object(int Type, int load)
 {
+  lvars = NULL;
+
   if (Type<0xffff)
   {
-    int t=figures[Type]->tv;
+    int t = figures[Type]->tv;
     if (t)
     {
-      lvars=(int32_t *)malloc(t * 4);
-      memset(lvars,0,t*4);
+      lvars = (int32_t *)malloc(t * sizeof(int32_t));
+      memset(lvars, 0, t * sizeof(int32_t));
     }
-    else lvars=NULL;
-  } else lvars=NULL;
+  }
 
   otype=Type;
   if (!load) defaults();
@@ -1613,18 +1614,19 @@ void game_object::change_aitype(int new_type)
 
 void game_object::change_type(int new_type)
 {
-  if (lvars) free(lvars);     // free old variable
+  free(lvars);     // free old variable
+  lvars = NULL;
 
   if (otype<0xffff)
   {
-    int t=figures[new_type]->tv;
+    int t = figures[new_type]->tv;
     if (t)
     {
-      lvars=(int32_t *)malloc(t*4);
-      memset(lvars,0,t*4);
+      lvars = (int32_t *)malloc(t * sizeof(int32_t));
+      memset(lvars, 0, t * sizeof(int32_t));
     }
-    else lvars=NULL;
-  } else return;
+  }
+  else return;
   otype=new_type;
 
   if (figures[new_type]->get_fun(OFUN_CONSTRUCTOR))
