@@ -1642,7 +1642,7 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
 
 void level::write_thumb_nail(bFILE *fp, image *im)
 {
-  image *i=new image(160,100+wm->font()->height()*2);
+  image *i = new image(vec2i(160, 100 + wm->font()->height() * 2));
   i->clear();
   scale_put(im,i,0,0,160,100);
   if (first_name)

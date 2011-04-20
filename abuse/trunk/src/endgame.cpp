@@ -180,7 +180,7 @@ void show_end2()
   int ey=yres/2-cache.img(mask)->Size().y/2;
   fade_out(16);
 
-  image blank(2,2); blank.clear();
+  image blank(vec2i(2)); blank.clear();
   wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
 
 
@@ -423,7 +423,7 @@ void show_sell(int abortable);
 void share_end()
 {
   fade_out(16);
-  image blank(2,2); blank.clear();
+  image blank(vec2i(2, 2)); blank.clear();
   wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
   screen->clear();
 
@@ -479,7 +479,7 @@ void share_end()
 void show_end()
 {
   fade_out(16);
-  image blank(2,2); blank.clear();
+  image blank(vec2i(2, 2)); blank.clear();
   wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
   screen->clear();
 

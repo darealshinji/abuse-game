@@ -62,9 +62,9 @@ JCMouse::JCMouse( image *Screen, palette *pal )
     dr = pal->darkest( 1 );
     f.set( 1, br );
     f.set( 2, dr );
-    im = new image( 8, 10, def_mouse );
+    im = new image(vec2i(8, 10), def_mouse);
     f.apply( im );
-    sp = new sprite( Screen, im, 100, 100 );
+    sp = new sprite(Screen, im, 100, 100);
     mx = Screen->Size().x / 2;
     my = Screen->Size().y / 2;
 }

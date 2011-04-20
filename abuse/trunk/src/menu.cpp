@@ -177,7 +177,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   event ev;
   int choice=0,done=0;
   int bh=font->height()+3;
-  image *save=new image(mw-2,bh);
+  image *save = new image(vec2i(mw - 2,bh));
   int color=128,cdir=50;
 
   time_marker *last_color_time=NULL;
@@ -393,7 +393,7 @@ void show_sell(int abortable)
 
   if (DEFINEDP(ss->GetValue()))
   {
-    image blank(2,2); blank.clear();
+    image blank(vec2i(2, 2)); blank.clear();
     wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
 
     LObject *tmp = (LObject *)ss->GetValue();

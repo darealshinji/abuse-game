@@ -125,7 +125,7 @@ void set_mode(int mode, int argc, char **argv)
     }
 
     // Create the screen image
-    screen = new image(xres, yres, NULL, 2);
+    screen = new image(vec2i(xres, yres), NULL, 2);
     if(screen == NULL)
     {
         // Our screen image is no good, we have to bail.
@@ -391,12 +391,12 @@ void update_dirty(image *im, int xoff, int yoff)
 //
 // make_page()
 //
-void image::make_page(short width, short height, unsigned char *page_buffer)
+void image::make_page(vec2i size, uint8_t *page_buffer)
 {
-    if(page_buffer)
-        data = page_buffer;
+    if (page_buffer)
+        m_data = page_buffer;
     else
-        data = (unsigned char *)malloc(width * height);
+        m_data = (uint8_t *)malloc(size.x * size.y);
 }
 
 //
@@ -405,7 +405,7 @@ void image::make_page(short width, short height, unsigned char *page_buffer)
 void image::delete_page()
 {
     if(!special || !special->static_mem)
-        free(data);
+        free(m_data);
 }
 
 //

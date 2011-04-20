@@ -74,19 +74,18 @@ int light_connection_color;
 
 image *load_image(spec_entry *e, bFILE *fp)
 {
-  image *im=new image(e,fp);
-  if (scale_mult!=1 || scale_div!=1)
-    im->resize(im->Size().x*scale_mult/scale_div,im->Size().y*scale_mult/scale_div);
-  return im;
+    image *im = new image(e, fp);
+    if (scale_mult != 1 || scale_div != 1)
+        im->Scale(im->Size() * scale_mult / scale_div);
+    return im;
 }
 
 image *load_image(bFILE *fp)
 {
-  image *im=new image(fp);
-  if (scale_mult!=1 || scale_div!=1)
-    im->resize(im->Size().x*scale_mult/scale_div,im->Size().y*scale_mult/scale_div);
-
-  return im;
+    image *im = new image(fp);
+    if (scale_mult != 1 || scale_div != 1)
+        im->Scale(im->Size() * scale_mult / scale_div);
+    return im;
 }
 
 void use_file(char *filename, bFILE *&fp, spec_directory *&sd)
@@ -363,7 +362,7 @@ void load_data(int argc, char **argv)
   }
 
 
-  image *tmp_image=new image(192,104,fnt6x13);
+  image *tmp_image = new image(vec2i(192, 104), fnt6x13);
   big_font=new JCFont(tmp_image);
   delete tmp_image;
 

@@ -222,7 +222,7 @@ void WindowManager::get_event(event &ev)
 
 void Jwindow::resize(int L, int H)
 {
-  screen->change_size(L,H);
+  screen->SetSize(vec2i(L,H));
   l=L; h=H;
 }
 
@@ -434,7 +434,7 @@ Jwindow::Jwindow(int X, int Y, int L, int H, ifield *f, char const *name)
     if(H == -1)
         if(h < top_border() + bottom_border())
             h = top_border() + bottom_border();
-    screen = new image(l, h, NULL, 2);
+    screen = new image(vec2i(l, h), NULL, 2);
     screen->clear(backg);
     // Keep this from getting destroyed when image list is cleared
     image_list.unlink(screen);
