@@ -669,7 +669,7 @@ void Game::dev_scroll()
 
 void remap_area(image *screen, int x1, int y1, int x2, int y2, uint8_t *remap)
 {
-    screen->lock();
+    screen->Lock();
 
     uint8_t *sl = (uint8_t *)screen->scan_line(y1) + x1;
     int step = screen->Size().x - (x2 - x1 + 1);
@@ -683,7 +683,7 @@ void remap_area(image *screen, int x1, int y1, int x2, int y2, uint8_t *remap)
         }
         sl += step;
     }
-    screen->unlock();
+    screen->Unlock();
 }
 
 static void post_render()
@@ -735,10 +735,10 @@ void Game::draw_map(view *v, int interpolate)
   if(v->draw_solid != -1)      // fill the screen and exit..
   {
     int c = v->draw_solid;
-    screen->lock();
+    screen->Lock();
     for(int y = v->cy1; y <= v->cy2; y++)
       memset(screen->scan_line(y)+v->cx1, c, v->cx2 - v->cx1 + 1);
-    screen->unlock();
+    screen->Unlock();
     v->draw_solid = -1;
     return;
   }
@@ -891,7 +891,7 @@ void Game::draw_map(view *v, int interpolate)
         screen->clear(wm->bright_color());
       else
         screen->clear(wm->black());
-      screen->lock();
+      screen->Lock();
       for(y = y1, draw_y = yo; y <= y2; y++, draw_y += yinc)
       {
     if(!(draw_y < ncy1 ||draw_y + yinc >= ncy2))
@@ -916,7 +916,7 @@ void Game::draw_map(view *v, int interpolate)
       }
     }
       }
-      screen->unlock();
+      screen->Unlock();
 
       if(dev & EDIT_MODE)
         current_level->draw_areas(v);
@@ -1427,13 +1427,13 @@ Game::Game(int argc, char **argv)
 
   recalc_local_view_space();   // now that we know what size the screen is...
 
-  dark_color = get_color(cache.img(window_colors)->pixel(2, 0));
-  bright_color = get_color(cache.img(window_colors)->pixel(0, 0));
-  med_color = get_color(cache.img(window_colors)->pixel(1, 0));
+  dark_color = get_color(cache.img(window_colors)->Pixel(vec2i(2, 0)));
+  bright_color = get_color(cache.img(window_colors)->Pixel(vec2i(0, 0)));
+  med_color = get_color(cache.img(window_colors)->Pixel(vec2i(1, 0)));
 
-  morph_dark_color = get_color(cache.img(window_colors)->pixel(2, 1));
-  morph_bright_color = get_color(cache.img(window_colors)->pixel(0, 1));
-  morph_med_color = get_color(cache.img(window_colors)->pixel(1, 1));
+  morph_dark_color = get_color(cache.img(window_colors)->Pixel(vec2i(2, 1)));
+  morph_bright_color = get_color(cache.img(window_colors)->Pixel(vec2i(0, 1)));
+  morph_med_color = get_color(cache.img(window_colors)->Pixel(vec2i(1, 1)));
   morph_sel_frame_color = pal->find_closest(255, 255, 0);
   light_connection_color = morph_sel_frame_color;
 

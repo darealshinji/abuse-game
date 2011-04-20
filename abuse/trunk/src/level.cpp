@@ -1658,10 +1658,10 @@ void level::write_thumb_nail(bFILE *fp, image *im)
   fp->write_uint16(i->Size().x);
   fp->write_uint16(i->Size().y);
 
-  i->lock();
+  i->Lock();
   for(int y = 0; y < i->Size().y; y++)
     fp->write(i->scan_line(y),i->Size().x);
-  i->unlock();
+  i->Unlock();
 
   delete i;
 }

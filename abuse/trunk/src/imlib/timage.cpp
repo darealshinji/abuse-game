@@ -39,7 +39,7 @@ image *trans_image::make_image()
 {
   image *im=new image(vec2i(w,h));
 
-  im->lock();
+  im->Lock();
   uint8_t *d=im->scan_line(0),*dp=data,*dline;
   int y,x;
   for (y=0; y<h; y++)
@@ -63,7 +63,7 @@ image *trans_image::make_image()
     }
     d=im->next_line(y,d);
   }
-  im->unlock();
+  im->Unlock();
   return im;
 }
 
@@ -74,7 +74,7 @@ trans_image::trans_image(image *im, char const *name)
   w=im->Size().x;
   h=im->Size().y;
 
-  im->lock();
+  im->Lock();
 
   // first we must find out how much data to allocate
   for (y=0; y<im->Size().y; y++)
@@ -133,7 +133,7 @@ trans_image::trans_image(image *im, char const *name)
       }
     }
   }
-  im->unlock();
+  im->Unlock();
 }
 
 void trans_image::put_scan_line(image *screen, int x, int y, int line)   // always transparent
@@ -164,7 +164,7 @@ void trans_image::put_scan_line(image *screen, int x, int y, int line)   // alwa
 
 
   // now slam this list of runs to the screen
-  screen->lock();
+  screen->Lock();
   uint8_t *screen_line=screen->scan_line(y)+x;
 
   for (ix=0; ix<w; )
@@ -198,13 +198,13 @@ void trans_image::put_scan_line(image *screen, int x, int y, int line)   // alwa
 
     if (x+ix>x2)                      // clipped totally on the right?
         {
-          screen->unlock();
+          screen->Unlock();
           return ;                        // we are done, return!
         }
     else if (x+ix+run_length-1>x2)    // partially clipped?
     {
       memcpy(screen_line,datap,(x+ix+run_length-1)-x2);   // slam what we can
-          screen->unlock();
+          screen->Unlock();
       return ;    // and return 'cause we are done with the line
         } else
         {
@@ -216,7 +216,7 @@ void trans_image::put_scan_line(image *screen, int x, int y, int line)   // alwa
       }
     }
   }
-  screen->unlock();
+  screen->Unlock();
 }
 
 
@@ -272,7 +272,7 @@ void trans_image::put_image_filled(image *screen, int x, int y,
   uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
 
-  screen->lock();
+  screen->Lock();
 
   screen_line=screen->scan_line(y)+x;
   int sw=screen->Size().x-w;
@@ -334,7 +334,7 @@ void trans_image::put_image_filled(image *screen, int x, int y,
     }
     screen_line+=sw;
   }
-  screen->unlock();
+  screen->Unlock();
 }
 
 void trans_image::put_image_offseted(image *screen, uint8_t *s_off)   // if screen x & y offset already calculated save a mul
@@ -343,7 +343,7 @@ void trans_image::put_image_offseted(image *screen, uint8_t *s_off)   // if scre
   int screen_skip;
   uint8_t skip,*datap=data;
 
-  screen->lock();
+  screen->Lock();
   screen_skip = screen->Size().x - w;
   for (; ysteps; ysteps--)
   {
@@ -373,7 +373,7 @@ void trans_image::put_image_offseted(image *screen, uint8_t *s_off)   // if scre
     }
     s_off+=screen_skip;
   }
-  screen->unlock();
+  screen->Unlock();
 }
 
 void trans_image::put_image(image *screen, int x, int y)
@@ -385,7 +385,7 @@ void trans_image::put_image(image *screen, int x, int y)
   uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
 
-  screen->lock();
+  screen->Lock();
   screen_line=screen->scan_line(y)+x;
   int sw=screen->Size().x;
   x1-=x; x2-=x;
@@ -438,7 +438,7 @@ void trans_image::put_image(image *screen, int x, int y)
     }
     screen_line+=sw;
   }
-  screen->unlock();
+  screen->Unlock();
 }
 
 void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap)
@@ -450,7 +450,7 @@ void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap)
   uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
 
-  screen->lock();
+  screen->Lock();
   screen_line=screen->scan_line(y)+x;
   int sw=screen->Size().x;
   x1-=x; x2-=x;
@@ -514,7 +514,7 @@ void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap)
     }
     screen_line+=sw;
   }
-  screen->unlock();
+  screen->Unlock();
 }
 
 
@@ -528,7 +528,7 @@ void trans_image::put_double_remaped(image *screen, int x, int y, uint8_t *remap
   uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
 
-  screen->lock();
+  screen->Lock();
   screen_line=screen->scan_line(y)+x;
   int sw=screen->Size().x;
   x1-=x; x2-=x;
@@ -592,7 +592,7 @@ void trans_image::put_double_remaped(image *screen, int x, int y, uint8_t *remap
     }
     screen_line+=sw;
   }
-  screen->unlock();
+  screen->Unlock();
 }
 
 
@@ -613,7 +613,7 @@ void trans_image::put_fade(image *screen, int x, int y,
                 *caddr1,*caddr2,r_dest,g_dest,b_dest;
 
   long fixmul=(frame_on<<16)/total_frames;
-  screen->lock();
+  screen->Lock();
   for (; ysteps>0; ysteps--,y++)
   {
     screen_line=screen->scan_line(y);
@@ -684,7 +684,7 @@ void trans_image::put_fade(image *screen, int x, int y,
       }
     }
   }
-  screen->unlock();
+  screen->Unlock();
 }
 
 
@@ -703,7 +703,7 @@ void trans_image::put_fade_tint(image *screen, int x, int y,
                 *screen_line;
   if (!datap) return ;
 
-  screen->lock();
+  screen->Lock();
   uint8_t *screen_run,*paddr=(uint8_t *)pal->addr(),
                 *caddr1,*caddr2,r_dest,g_dest,b_dest;
 
@@ -778,7 +778,7 @@ void trans_image::put_fade_tint(image *screen, int x, int y,
       }
     }
   }
-  screen->unlock();
+  screen->Unlock();
 }
 
 void trans_image::put_color(image *screen, int x, int y, int color)
@@ -791,7 +791,7 @@ void trans_image::put_color(image *screen, int x, int y, int color)
                 *screen_line;
   if (!datap) return ;
 
-  screen->lock();
+  screen->Lock();
   for (; ysteps>0; ysteps--,y++)
   {
     screen_line=screen->scan_line(y);
@@ -841,7 +841,7 @@ void trans_image::put_color(image *screen, int x, int y, int color)
       }
     }
   }
-  screen->unlock();
+  screen->Unlock();
 }
 
 
@@ -862,7 +862,7 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
 
   blend_amount=16-blend_amount;
 
-  screen->lock();
+  screen->Lock();
   for (; ysteps>0; ysteps--,y++)
   {
     screen_line=screen->scan_line(y);
@@ -945,7 +945,7 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
     }
   }
 
-  screen->unlock();
+  screen->Unlock();
 }
 
 void trans_image::put_predator(image *screen, int x, int y)
@@ -978,7 +978,7 @@ void trans_image::put_predator(image *screen, int x, int y)
       y++;
   }*/
 
-  screen->lock();
+  screen->Lock();
   screen_line=screen->scan_line(y)+x;
   int sw=screen->Size().x;
   x1-=x; x2-=x;
@@ -1031,7 +1031,7 @@ void trans_image::put_predator(image *screen, int x, int y)
     }
     screen_line+=sw;
   }
-  screen->unlock();
+  screen->Unlock();
 }
 
 int trans_image::size()

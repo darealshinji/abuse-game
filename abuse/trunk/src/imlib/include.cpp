@@ -60,7 +60,7 @@ void write_include(image *im, palette *pal, char *filename, char *name)
     for (y=0,i=0; y<size.y; y++)
       for (x=0; x<size.x; x++,i++)
       {
-        fprintf(fp,"%d",(int)im->pixel(x,y));
+        fprintf(fp,"%d",(int)im->Pixel(vec2i(x,y)));
         if (i==max)
           fprintf(fp,"};\n\n");
         else

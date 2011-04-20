@@ -74,7 +74,6 @@ filter::filter(int colors)
 {
   CONDITION(colors>=0 && colors<=256,"bad colors value");
   nc=colors;
-  make_block(nc);
   fdat=(unsigned char *)malloc(nc);
   clear();
 }
@@ -84,7 +83,7 @@ void filter::apply(image *im)
   int x,y;
   unsigned char *c;
   CONDITION(im,"null image passed in filter::apply\n");
-  im->lock();
+  im->Lock();
   for (y=im->Size().y-1; y>=0; y--)
   {
     c=im->scan_line(y);
@@ -94,7 +93,7 @@ void filter::apply(image *im)
       c[x]=fdat[(unsigned) c[x]];
     }
   }
-  im->unlock();
+  im->Unlock();
 }
 
 
@@ -212,8 +211,8 @@ void filter::put_image(image *screen, image *im, short x, short y,
 
     screen->add_dirty(x, y, x + xl - 1, y + yl - 1);
 
-    screen->lock();
-    im->lock();
+    screen->Lock();
+    im->Lock();
 
     uint8_t *pg1 = screen->scan_line(y), *source, *dest;
     uint8_t *pg2 = im->scan_line(y1);
@@ -231,7 +230,7 @@ void filter::put_image(image *screen, image *im, short x, short y,
         pg2 = im->next_line(y1 + j, pg2);
     }
 
-    im->unlock();
-    screen->unlock();
+    im->Unlock();
+    screen->Unlock();
 }
 
