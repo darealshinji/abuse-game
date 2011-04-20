@@ -44,12 +44,12 @@ static VolumeWindow *volume_window;
 void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int percent)
 {
   int x,y;
-  short cx1,cy1,cx2,cy2;
-  screen->get_clip(cx1,cy1,cx2,cy2);
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
   if (x1<cx1) x1=cx1;
   if (y1<cy1) y1=cy1;
-  if (x2>cx2) x2=cx2;
-  if (y2>cy2) y2=cy2;
+  if (x2>cx2-1) x2=cx2-1;
+  if (y2>cy2-1) y2=cy2-1;
   if (x2<x1 || y2<y1) return ;
 
   percent=256-percent;
@@ -67,19 +67,19 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
       *sl=color_table->lookup_color((r)>>3,(g)>>3,(b)>>3);
     }
   }
-  screen->add_dirty(x1,y1,x2,y2);
+  screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
   screen->Unlock();
 }
 
 void darken_area(int x1, int y1, int x2, int y2, int amount)
 {
   int x,y;
-  short cx1,cy1,cx2,cy2;
-  screen->get_clip(cx1,cy1,cx2,cy2);
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
   if (x1<cx1) x1=cx1;
   if (y1<cy1) y1=cy1;
-  if (x2>cx2) x2=cx2;
-  if (y2>cy2) y2=cy2;
+  if (x2>cx2-1) x2=cx2-1;
+  if (y2>cy2-1) y2=cy2-1;
   if (x2<x1 || y2<y1) return ;
 
   screen->Lock();
@@ -95,13 +95,13 @@ void darken_area(int x1, int y1, int x2, int y2, int amount)
       *sl=color_table->lookup_color((r)>>3,(g)>>3,(b)>>3);
     }
   }
-  screen->add_dirty(x1,y1,x2,y2);
+  screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
   screen->Unlock();
 }
 
 void dark_widget(int x1, int y1, int x2, int y2, int br, int dr, int amount)
 {
-  screen->add_dirty(x1,y1,x2,y2);
+  screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
   screen->line(x1,y1,x1,y2,br);
   screen->line(x1+1,y1,x2,y1,br);
   screen->line(x2,y1+1,x2,y2,dr);
@@ -151,7 +151,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       my=screen->Size().y/2-mh/2;
 
 
-  screen->add_dirty(mx,my,mx+mw-1,my+mh-1);
+  screen->AddDirty(mx, my, mx + mw, my + mh);
 
   if (title)
   {
@@ -658,7 +658,7 @@ void main_menu()
     inm->allow_no_selections();
     inm->clear_current();
 
-    screen->add_dirty(0,0,319,199);
+    screen->AddDirty(0, 0, 320, 200);
 
     event ev;
 

@@ -25,9 +25,4 @@
 #define CHECK(x) CONDITION(x,"Check stop");
 #endif
 
-static inline int Min(int a, int b) { return a < b ? a : b; }
-static inline int Max(int a, int b) { return a > b ? a : b; }
-static inline float Min(float a, float b) { return a < b ? a : b; }
-static inline float Max(float a, float b) { return a > b ? a : b; }
-
 #endif

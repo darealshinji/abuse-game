@@ -262,9 +262,9 @@ int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette 
   if (f_left)
   {
     int i,px,py,ix,iy;
-    short x1,y1,x2,y2;
-    screen->get_clip(x1,y1,x2,y2);
-    screen->add_dirty(x,y,x+w-1,y+h-1);
+    int x1, y1, x2, y2;
+    screen->GetClip(x1, y1, x2, y2);
+    screen->AddDirty(x, y, x + w, y + h);
     stepper *ss;
     memset(hole,0,w*h);
     unsigned char *paddr=(unsigned char *)pal->addr();
@@ -274,7 +274,7 @@ int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette 
       iy=(ss->y>>(16));
       px=ix+x;
       py=iy+y;
-      if (px>=x1 && px<=x2 && py>=y1 && py<=y2)
+      if (px>=x1 && px < x2 && py>=y1 && py < y2)
       {
         hole[ix+iy*w]=*(screen->scan_line(py)+px)=fil->lookup_color(ss->r>>(19),
                                     ss->g>>(19),
@@ -295,7 +295,7 @@ int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette 
     {
       for (ix=1; ix<w-1; ix++,ll++,tl++,nl++)
       {
-    if (x+ix>=x1 && x+ix<=x2 && y+iy>=y1 && y+iy<=y2)
+    if (x+ix>=x1 && x+ix < x2 && y+iy>=y1 && y+iy < y2)
     {
       int t=0;
       unsigned char *pa;

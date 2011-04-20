@@ -65,15 +65,14 @@ void WindowManager::close_window(Jwindow *j)
 
 void WindowManager::hide_windows()
 {
-  Jwindow *p;
-  for (p=first; p; p=p->next)
-  {
-    if (!p->is_hidden())
+    for (Jwindow *p = first; p; p = p->next)
     {
-      p->hide();
-      screen->add_dirty(p->x,p->y,p->x+p->l-1,p->y+p->h-1);
+        if (!p->is_hidden())
+        {
+            p->hide();
+            screen->AddDirty(p->x, p->y, p->x + p->l, p->y + p->h);
+        }
     }
-  }
 }
 
 void WindowManager::show_windows()
@@ -86,29 +85,29 @@ void WindowManager::show_windows()
 
 void WindowManager::hide_window(Jwindow *j)
 {
-  Jwindow *k;
-  if (j==first)
-    first=first->next;
-  else
-  {
-    for (k=first; k->next!=j; k=k->next)
-      k->screen->add_dirty(j->x-k->x,j->y-k->y,
-                   j->x+j->l-1-k->x,j->y+j->h-1-k->y);
-    k->screen->add_dirty(j->x-k->x,j->y-k->y,
-                   j->x+j->l-1-k->x,j->y+j->h-1-k->y);
-    k->next=j->next;
-  }
-  screen->add_dirty(j->x,j->y,j->x+j->l-1,j->y+j->h-1);
-  j->hide();
+    if (j == first)
+        first = first->next;
+    else
+    {
+        Jwindow *k;
+        for (k = first; k->next != j; k = k->next)
+            k->screen->AddDirty(j->x - k->x, j->y - k->y,
+                                j->x + j->l - k->x, j->y + j->h - k->y);
+        k->screen->AddDirty(j->x - k->x, j->y - k->y,
+                            j->x + j->l - k->x, j->y + j->h - k->y);
+        k->next = j->next;
+    }
+    screen->AddDirty(j->x, j->y, j->x + j->l, j->y + j->h);
+    j->hide();
 }
 
 void WindowManager::show_window(Jwindow *j)
 {
-  if (j->is_hidden())
-  {
-    j->show();
-    j->screen->add_dirty(0,0,j->l-1,j->h-1);
-  }
+    if (j->is_hidden())
+    {
+        j->show();
+        j->screen->AddDirty(0, 0, j->l, j->h);
+    }
 }
 
 void WindowManager::get_event(event &ev)
@@ -178,10 +177,10 @@ void WindowManager::get_event(event &ev)
     if (red)
     {
       Jwindow *j=ev.window;
-/*      screen->add_dirty(j->x,j->y,j->x+j->l-1,j->y+j->h-1);
+/*      screen->AddDirty(j->x,j->y,j->x+j->l,j->y+j->h);
       for (p=first; p!=j; p=p->next)
-        p->screen->add_dirty(j->x-p->x,j->y-p->y,j->x+j->l-1-p->x,j->y+j->h-1-p->y); */
-      j->screen->add_dirty(0,0,j->l-1,j->h-1);
+        p->screen->AddDirty(j->x-p->x,j->y-p->y,j->x+j->l-p->x,j->y+j->h-p->y); */
+      j->screen->AddDirty(0, 0, j->l, j->h);
       flush_screen();
     }
 
@@ -209,12 +208,12 @@ void WindowManager::get_event(event &ev)
        ev.window_position.y=ev.mouse_move.y+drag_mousey;
     }
   }
-  if (ev.type==EV_REDRAW)
+  if (ev.type == EV_REDRAW)
   {
     for (j=first; j; j=j->next)
-       j->screen->add_dirty(ev.redraw.x1-j->x,ev.redraw.y1-j->y,
-             ev.redraw.x2-j->x,ev.redraw.y2-j->y);
-    screen->add_dirty(ev.redraw.x1,ev.redraw.y1,ev.redraw.x2,ev.redraw.y2);
+       j->screen->AddDirty(ev.redraw.x1 - j->x, ev.redraw.y1 - j->y,
+                           ev.redraw.x2 + 1 - j->x, ev.redraw.y2 + 1 - j->y);
+    screen->AddDirty(ev.redraw.x1, ev.redraw.y1, ev.redraw.x2 + 1, ev.redraw.y2 + 1);
     flush_screen();
     ev.type=EV_SPURIOUS;   // we took care of this one by ourselves.
   }
@@ -229,9 +228,9 @@ void Jwindow::resize(int L, int H)
 void WindowManager::resize_window(Jwindow *j, int l, int h)
 {
   Jwindow *p;
-  screen->add_dirty(j->x,j->y,j->x+j->l-1,j->y+j->h-1);
+  screen->AddDirty(j->x, j->y, j->x + j->l, j->y + j->h);
   for (p=first; p!=j; p=p->next)
-    p->screen->add_dirty(j->x-p->x,j->y-p->y,j->x+j->l-1-p->x,j->y+j->h-1-p->y);
+    p->screen->AddDirty(j->x - p->x, j->y - p->y, j->x + j->l - p->x, j->y + j->h - p->y);
   j->resize(l,h);
   if (!frame_suppress)
   j->redraw();
@@ -239,13 +238,13 @@ void WindowManager::resize_window(Jwindow *j, int l, int h)
 
 void WindowManager::move_window(Jwindow *j, int x, int y)
 {
-    screen->add_dirty(j->x, j->y, j->x + j->l - 1, j->y + j->h - 1);
+    screen->AddDirty(j->x, j->y, j->x + j->l, j->y + j->h);
     for(Jwindow *p = first; p != j; p = p->next)
-        p->screen->add_dirty(j->x - p->x, j->y - p->y, j->x + j->l - 1 - p->x,
-                             j->y + j->h - 1 - p->y);
+        p->screen->AddDirty(j->x - p->x, j->y - p->y,
+                            j->x + j->l - p->x, j->y + j->h - p->y);
     j->x = x;
     j->y = y;
-    j->screen->add_dirty(0, 0, j->l - 1, j->h - 1);
+    j->screen->AddDirty(0, 0, j->l, j->h);
 }
 
 WindowManager::WindowManager(image *Screen, palette *Pal, int Hi,
@@ -298,18 +297,17 @@ void WindowManager::remove_window(Jwindow *win)
     {
         Jwindow * search;
         for(search = first; search->next != win; search = search->next)
-            search->screen->add_dirty(win->x - search->x,
-                                      win->y - search->y,
-                                      win->x + win->l - 1 - search->x,
-                                      win->y + win->h - 1 - search->y);
-        search->screen->add_dirty(win->x - search->x, win->y - search->y,
-                                  win->x + win->l - 1 - search->x,
-                                  win->y + win->h - 1 - search->y);
+            search->screen->AddDirty(win->x - search->x,
+                                     win->y - search->y,
+                                     win->x + win->l - search->x,
+                                     win->y + win->h - search->y);
+        search->screen->AddDirty(win->x - search->x, win->y - search->y,
+                                 win->x + win->l - search->x,
+                                 win->y + win->h - search->y);
         search->next = win->next;
     }
 
-    screen->add_dirty(win->x, win->y, win->x + win->l - 1,
-                      win->y + win->h - 1);
+    screen->AddDirty(win->x, win->y, win->x + win->l, win->y + win->h);
 }
 
 Jwindow * WindowManager::new_window(int x, int y, int l, int h,
@@ -348,7 +346,7 @@ void WindowManager::flush_screen()
 
     for(p = first; p; p = p->next)
         if(!p->is_hidden())
-            screen->delete_dirty(p->x, p->y, p->x + p->l - 1, p->y + p->h - 1);
+            screen->delete_dirty(p->x, p->y, p->x + p->l, p->y + p->h);
     update_dirty(screen);
 
     if(has_mouse())
@@ -368,12 +366,11 @@ void WindowManager::flush_screen()
                 mouse_pic->put_image(p->screen, mx - p->x, my - p->y, 1);
         }
 
-//          screen->delete_dirty(p->x, p->y, p->x+p->l-1, p->y+p->h-1);
+//          screen->delete_dirty(p->x, p->y, p->x+p->l, p->y+p->h);
         for(q = p->next; q; q = q->next)
             if(!q->is_hidden())
                 p->screen->delete_dirty(q->x - p->x, q->y - p->y,
-                                        q->x + q->l - 1 - p->x,
-                                        q->y + q->h - 1 - p->y);
+                                        q->x + q->l - p->x, q->y + q->h - p->y);
         update_dirty(p->screen, p->x, p->y);
         if(has_mouse())
             mouse_save->put_image(p->screen, mx - p->x, my - p->y, 0);

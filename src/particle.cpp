@@ -169,13 +169,13 @@ void draw_panims(view *v)
 
 void part_frame::draw(image *screen, int x, int y, int dir)
 {
-  int16_t cx1,cy1,cx2,cy2;
-  screen->get_clip(cx1,cy1,cx2,cy2);
-  if (x+x1>cx2 || x+x2<cx1 || y+y1>cy2 || y+y2<cy1) return ;
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
+  if (x + x1 >= cx2 || x + x2 < cx1 || y + y1 >= cy2 || y + y2 < cy1) return;
 
   part *pon=data;
-  cy1-=y;
-  cy2-=y;
+  cy1 -= y;
+  cy2 -= y;
 
   int i=t;
   while (i && pon->y<cy1) { pon++; i--; }
@@ -183,20 +183,20 @@ void part_frame::draw(image *screen, int x, int y, int dir)
   screen->Lock();
   if (dir>0)
   {
-    while (i && pon->y<=cy2)
+    while (i && pon->y < cy2)
     {
       long dx=x-pon->x;
-      if (dx>=cx1 && dx<=cx2)
+      if (dx >= cx1 && dx < cx2)
       *(screen->scan_line(pon->y+y)+dx)=pon->color;
       i--;
       pon++;
     }
   } else
   {
-    while (i && pon->y<=cy2)
+    while (i && pon->y < cy2)
     {
       long dx=pon->x+x;
-      if (dx>=cx1 && dx<=cx2)
+      if (dx >= cx1 && dx < cx2)
         *(screen->scan_line(pon->y+y)+dx)=pon->color;
       i--;
       pon++;
@@ -207,8 +207,8 @@ void part_frame::draw(image *screen, int x, int y, int dir)
 
 void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
 {
-    int16_t cx1, cy1, cx2, cy2;
-    screen->get_clip( cx1, cy1, cx2, cy2 );
+    int cx1, cy1, cx2, cy2;
+    screen->GetClip(cx1, cy1, cx2, cy2);
 
     int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
     long xo = x1 << 16, yo = y1 << 16, dx = ( ( x2 - x1 ) << 16 ) / t, dy = ( ( y2 - y1 ) << 16 ) / t, x, y;
@@ -222,7 +222,7 @@ void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
     {
         x = ( xo >> 16 ) + ( jrand() >> s ) - xm;
         y = ( yo >> 16 ) + ( jrand() >> s ) - ym;
-        if( !( x < cx1 || y < cy1 || x > cx2 || y > cy2 ) )
+        if( !( x < cx1 || y < cy1 || x >= cx2 || y >= cy2 ) )
         {
             *(screen->scan_line( y ) + x ) = c;
         }
@@ -236,8 +236,8 @@ void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
 
 void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
 {
-    int16_t cx1, cy1, cx2, cy2;
-    screen->get_clip( cx1, cy1, cx2, cy2 );
+    int cx1, cy1, cx2, cy2;
+    screen->GetClip(cx1, cy1, cx2, cy2);
 
     int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
     long xo = x1 << 16, yo = y1 << 16, dx = ( ( x2 - x1 ) << 16 ) / t, dy = ( ( y2 - y1 ) <<16 ) / t, x, y;
@@ -255,7 +255,9 @@ void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
     {
         x = ( xo >> 16 ) + ( jrand() >> s ) - xm;
         y = ( yo >> 16 ) + ( jrand() >> s ) - ym;
-        if( !( x <= cx1 || y <= cy1 || x >= cx2 || y >= cy2 ) )
+        // FIXME: these clip values seemed wrong to me before the GetClip
+        // refactoring.
+        if( !( x <= cx1 || y <= cy1 || x >= cx2 - 1 || y >= cy2 - 1) )
         {
             addr = screen->scan_line( y ) + x;
             *addr = c1;

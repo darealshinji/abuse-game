@@ -138,10 +138,10 @@ trans_image::trans_image(image *im, char const *name)
 
 void trans_image::put_scan_line(image *screen, int x, int y, int line)   // always transparent
 {
-  int16_t x1,y1,x2,y2;
-  screen->get_clip(x1,y1,x2,y2);
-  if (y+line<y1 || y+line>y2 || x>x2 || x+w-1<x1)            // clipped off completely?
-    return;
+  int x1, y1, x2, y2;
+  screen->GetClip(x1, y1, x2, y2);
+  if (y + line < y1 || y + line >= y2 || x >= x2 || x + w - 1 < x1)
+    return; // clipped off completely?
 
   uint8_t *datap=data;
   int ix;
@@ -196,15 +196,15 @@ void trans_image::put_scan_line(image *screen, int x, int y, int line)   // alwa
       ix+=clip;
     }
 
-    if (x+ix>x2)                      // clipped totally on the right?
+    if (x + ix >= x2)                      // clipped totally on the right?
         {
           screen->Unlock();
           return ;                        // we are done, return!
         }
-    else if (x+ix+run_length-1>x2)    // partially clipped?
+    else if (x + ix + run_length > x2)    // partially clipped?
     {
-      memcpy(screen_line,datap,(x+ix+run_length-1)-x2);   // slam what we can
-          screen->Unlock();
+      memcpy(screen_line, datap, x + ix + run_length - x2); // slam what we can
+      screen->Unlock();
       return ;    // and return 'cause we are done with the line
         } else
         {
@@ -258,25 +258,26 @@ inline uint8_t *trans_image::clip_y(image *screen, int x1, int y1, int x2, int y
   if (y+ysteps>y2)  // check to see if it gets clipped at the bottom
     ysteps-=(y+ysteps-y2-1);
 
-  screen->add_dirty(Max(x,x1),y,Min(x+width()-1,x2),y+h-1);
+  screen->AddDirty(Max(x, x1), y, Min(x + width(), x2 + 1), y + h);
   return datap;
 }
 
 void trans_image::put_image_filled(image *screen, int x, int y,
                    uint8_t fill_color)
 {
- int16_t x1,y1,x2,y2;
+  int x1, y1, x2, y2;
   int chop_length,ysteps;
 
-  screen->get_clip(x1,y1,x2,y2);
-  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
+  screen->GetClip(x1, y1, x2, y2);
+  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+          *screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
 
   screen->Lock();
 
   screen_line=screen->scan_line(y)+x;
   int sw=screen->Size().x-w;
-  x1-=x; x2-=x;
+  x1 -= x; x2 -= x;
   for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
@@ -292,7 +293,7 @@ void trans_image::put_image_filled(image *screen, int x, int y,
       {
     slam_length=*datap;     // find the length of this run
     datap++;
-    if (ix+slam_length<x1 || ix>x2)  // see if this run is totally clipped
+    if (ix + slam_length < x1 || ix >= x2)  // see if this run is totally clipped
     {
       datap+=slam_length;
       ix+=slam_length;
@@ -321,8 +322,8 @@ void trans_image::put_image_filled(image *screen, int x, int y,
 
       if (slam_length)   // see if there is anything left to slam
       {
-        if (ix+slam_length>x2) // see if right side needs to be chopped off
-          memcpy(screen_line,datap,x2-ix+1);
+        if (ix + slam_length >= x2) // see if right side needs to be chopped off
+          memcpy(screen_line, datap, x2 - ix);
         else
           memcpy(screen_line,datap,slam_length);
         datap+=slam_length;
@@ -378,17 +379,18 @@ void trans_image::put_image_offseted(image *screen, uint8_t *s_off)   // if scre
 
 void trans_image::put_image(image *screen, int x, int y)
 {
-  int16_t x1,y1,x2,y2;
+  int x1, y1, x2, y2;
   int chop_length,ysteps;
 
-  screen->get_clip(x1,y1,x2,y2);
-  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
+  screen->GetClip(x1, y1, x2, y2);
+  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+          *screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
 
   screen->Lock();
   screen_line=screen->scan_line(y)+x;
   int sw=screen->Size().x;
-  x1-=x; x2-=x;
+  x1 -= x; x2 -= x;
   for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
@@ -400,7 +402,7 @@ void trans_image::put_image(image *screen, int x, int y)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
-    if (ix+slam_length<x1 || ix>x2)  // see if this run is totally clipped
+    if (ix + slam_length < x1 || ix >= x2)  // see if this run is totally clipped
     {
       datap+=slam_length;
       ix+=slam_length;
@@ -426,8 +428,8 @@ void trans_image::put_image(image *screen, int x, int y)
 
       if (slam_length)   // see if there is anything left to slam
       {
-        if (ix+slam_length>x2) // see if right side needs to be chopped off
-          memcpy(screen_line+ix,datap,x2-ix+1);
+        if (ix + slam_length >= x2) // see if right side needs to be chopped off
+          memcpy(screen_line + ix, datap, x2 - ix);
         else
           memcpy(screen_line+ix,datap,slam_length);
         datap+=slam_length;
@@ -443,17 +445,18 @@ void trans_image::put_image(image *screen, int x, int y)
 
 void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap)
 {
-  int16_t x1,y1,x2,y2;
-  int chop_length,ysteps;
+  int x1, y1, x2, y2;
+  int chop_length, ysteps;
 
-  screen->get_clip(x1,y1,x2,y2);
-  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
+  screen->GetClip(x1, y1, x2, y2);
+  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+          *screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
 
   screen->Lock();
   screen_line=screen->scan_line(y)+x;
   int sw=screen->Size().x;
-  x1-=x; x2-=x;
+  x1 -= x; x2 -= x;
   for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
@@ -465,7 +468,7 @@ void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
-    if (ix+slam_length<x1 || ix>x2)  // see if this run is totally clipped
+    if (ix + slam_length < x1 || ix >= x2)  // see if this run is totally clipped
     {
       datap+=slam_length;
       ix+=slam_length;
@@ -493,10 +496,10 @@ void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap)
       if (slam_length)   // see if there is anything left to slam
       {
         int counter;
-        if (ix+slam_length>x2) // see if right side needs to be chopped off
-          counter=x2-ix+1;
+        if (ix + slam_length >= x2) // see if right side needs to be chopped off
+          counter = x2 - ix;
         else
-          counter=slam_length;
+          counter = slam_length;
 
         uint8_t *sl=screen_line+ix,*sl2=datap;
         ix+=slam_length;
@@ -521,17 +524,18 @@ void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap)
 
 void trans_image::put_double_remaped(image *screen, int x, int y, uint8_t *remap, uint8_t *remap2)
 {
-  int16_t x1,y1,x2,y2;
-  int chop_length,ysteps;
+  int x1, y1, x2, y2;
+  int chop_length, ysteps;
 
-  screen->get_clip(x1,y1,x2,y2);
-  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
+  screen->GetClip(x1, y1, x2, y2);
+  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+          *screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
 
   screen->Lock();
   screen_line=screen->scan_line(y)+x;
   int sw=screen->Size().x;
-  x1-=x; x2-=x;
+  x1 -= x; x2 -= x;
   for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
@@ -543,7 +547,7 @@ void trans_image::put_double_remaped(image *screen, int x, int y, uint8_t *remap
       {
     slam_length=*datap;     // find the length of this run
     datap++;
-    if (ix+slam_length<x1 || ix>x2)  // see if this run is totally clipped
+    if (ix + slam_length < x1 || ix >= x2)  // see if this run is totally clipped
     {
       datap+=slam_length;
       ix+=slam_length;
@@ -571,10 +575,10 @@ void trans_image::put_double_remaped(image *screen, int x, int y, uint8_t *remap
       if (slam_length)   // see if there is anything left to slam
       {
         int counter;
-        if (ix+slam_length>x2) // see if right side needs to be chopped off
-          counter=x2-ix+1;
+        if (ix + slam_length >= x2) // see if right side needs to be chopped off
+          counter = x2 - ix;
         else
-          counter=slam_length;
+          counter = slam_length;
 
         uint8_t *sl=screen_line+ix,*sl2=datap;
         ix+=slam_length;
@@ -601,12 +605,12 @@ void trans_image::put_fade(image *screen, int x, int y,
                int frame_on, int total_frames,
                color_filter *f, palette *pal)
 {
-  int16_t x1,y1,x2,y2;
+  int x1, y1, x2, y2;
   int ix,slam_length,chop_length,ysteps;
 
-  screen->get_clip(x1,y1,x2,y2);
-  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
-                *screen_line;
+  screen->GetClip(x1, y1, x2, y2);
+  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+          *screen_line;
   if (!datap) return ;
 
   uint8_t *screen_run,*paddr=(uint8_t *)pal->addr(),
@@ -626,7 +630,7 @@ void trans_image::put_fade(image *screen, int x, int y,
       {
     slam_length=*datap;     // find the length of this run
     datap++;
-    if (x+ix+slam_length<x1 || x+ix>x2)  // see if this run is totally clipped
+    if (x + ix + slam_length < x1 || x + ix >= x2)  // see if this run is totally clipped
     {
       datap+=slam_length;
       ix+=slam_length;
@@ -652,9 +656,10 @@ void trans_image::put_fade(image *screen, int x, int y,
 
       if (slam_length)   // see if there is anything left to slam
       {
-        if (x+ix+slam_length>x2) // see if right side needs to be chopped off
-          chop_length=x2-x-ix;
-        else chop_length=slam_length;
+        if (x + ix + slam_length >= x2) // see if right side needs to be chopped off
+          chop_length = x2 - 1 - x - ix;
+        else
+          chop_length = slam_length;
         screen_run=screen_line+x+ix;
 
         slam_length-=chop_length;
@@ -695,12 +700,12 @@ void trans_image::put_fade_tint(image *screen, int x, int y,
                 uint8_t *tint,
                 color_filter *f, palette *pal)
 {
-  int16_t x1,y1,x2,y2;
+  int x1, y1, x2, y2;
   int ix,slam_length,chop_length,ysteps;
 
-  screen->get_clip(x1,y1,x2,y2);
-  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
-                *screen_line;
+  screen->GetClip(x1, y1, x2, y2);
+  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+          *screen_line;
   if (!datap) return ;
 
   screen->Lock();
@@ -720,7 +725,7 @@ void trans_image::put_fade_tint(image *screen, int x, int y,
       {
     slam_length=*datap;     // find the length of this run
     datap++;
-    if (x+ix+slam_length<x1 || x+ix>x2)  // see if this run is totally clipped
+    if (x + ix + slam_length < x1 || x + ix >= x2)  // see if this run is totally clipped
     {
       datap+=slam_length;
       ix+=slam_length;
@@ -746,8 +751,8 @@ void trans_image::put_fade_tint(image *screen, int x, int y,
 
       if (slam_length)   // see if there is anything left to slam
       {
-        if (x+ix+slam_length>x2) // see if right side needs to be chopped off
-          chop_length=x2-x-ix;
+        if (x + ix + slam_length >= x2) // see if right side needs to be chopped off
+          chop_length = x2 - 1 - x - ix;
         else chop_length=slam_length;
         screen_run=screen_line+x+ix;
 
@@ -783,12 +788,12 @@ void trans_image::put_fade_tint(image *screen, int x, int y,
 
 void trans_image::put_color(image *screen, int x, int y, int color)
 {
-  int16_t x1,y1,x2,y2;
+  int x1, y1, x2, y2;
   int ix,slam_length,chop_length,ysteps;
 
-  screen->get_clip(x1,y1,x2,y2);
-  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
-                *screen_line;
+  screen->GetClip(x1, y1, x2, y2);
+  uint8_t *datap = clip_y(screen, x1, y1, x2, y2, x, y, ysteps),
+          *screen_line;
   if (!datap) return ;
 
   screen->Lock();
@@ -804,7 +809,7 @@ void trans_image::put_color(image *screen, int x, int y, int color)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
-    if (x+ix+slam_length<x1 || x+ix>x2)  // see if this run is totally clipped
+    if (x + ix + slam_length < x1 || x + ix >= x2)  // see if this run is totally clipped
     {
       datap+=slam_length;
       ix+=slam_length;
@@ -830,10 +835,10 @@ void trans_image::put_color(image *screen, int x, int y, int color)
 
       if (slam_length)   // see if there is anything left to slam
       {
-        if (x+ix+slam_length>x2) // see if right side needs to be chopped off
-          memset(screen_line+x+ix,color,x2-x-ix+1);
+        if (x + ix + slam_length >= x2) // see if right side needs to be chopped off
+          memset(screen_line + x + ix, color, x2 - x - ix);
         else
-          memset(screen_line+x+ix,color,slam_length);
+          memset(screen_line + x + ix, color, slam_length);
         datap+=slam_length;
         ix+=slam_length;
       }
@@ -850,13 +855,13 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
                   int blendx, int blendy, int blend_amount, color_filter *f, palette *pal)
 
 {
-  int16_t x1,y1,x2,y2;
+  int x1, y1, x2, y2;
   int ix,slam_length,chop_length,ysteps;
   uint8_t *paddr=(uint8_t *)pal->addr();
 
-  screen->get_clip(x1,y1,x2,y2);
-  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),
-                *blend_line,*screen_line;
+  screen->GetClip(x1, y1, x2, y2);
+  uint8_t *datap=clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+          *blend_line, *screen_line;
   if (!datap) return ;
   CONDITION(y>=blendy && y+ysteps<blendy+blend->Size().y+1,"Blend doesn't fit on trans_image");
 
@@ -877,7 +882,7 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
       {
     slam_length=*datap;     // find the length of this run
     datap++;
-    if (x+ix+slam_length<x1 || x+ix>x2)  // see if this run is totally clipped
+    if (x + ix + slam_length < x1 || x + ix >= x2)  // see if this run is totally clipped
     {
       datap+=slam_length;
       ix+=slam_length;
@@ -904,9 +909,10 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
       if (slam_length)   // see if there is anything left to slam
       {
 
-        if (x+ix+slam_length>x2) // see if right side needs to be chopped off
-          chop_length=x2-x-ix;
-        else chop_length=slam_length;
+        if (x + ix + slam_length >= x2) // see if right side needs to be chopped off
+          chop_length = x2 - 1 - x - ix;
+        else
+          chop_length = slam_length;
 
         uint8_t *screen_run=screen_line+x+ix,
                       *blend_run=blend_line+x+ix-blendx,
@@ -950,16 +956,17 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
 
 void trans_image::put_predator(image *screen, int x, int y)
 {
-  int16_t x1,y1,x2,y2;
+  int x1, y1, x2, y2;
   int chop_length,ysteps;
 
-  screen->get_clip(x1,y1,x2,y2);
-  uint8_t *datap=clip_y(screen,x1,y1,x2,y2,x,y,ysteps),*screen_line;
+  screen->GetClip(x1, y1, x2, y2);
+  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+          *screen_line;
   if (!datap) return ;     // if clip_y says nothing to draw, return
 
   // see if the last scanline is clipped off
-  if (y+ysteps==y2) ysteps-=2;
-  else if (y+ysteps==y2-1) ysteps--;
+  if (y + ysteps == y2 - 1) ysteps -= 2;
+  else if (y + ysteps == y2 - 2) ysteps--;
 /*  {
     for (int x=0; x<w; )
     {
@@ -972,7 +979,7 @@ void trans_image::put_predator(image *screen, int x, int y)
     x+=run_size;
       }
     }
-    if (y==y2)
+    if (y==y2 - 1)
       return;
     else
       y++;
@@ -981,7 +988,7 @@ void trans_image::put_predator(image *screen, int x, int y)
   screen->Lock();
   screen_line=screen->scan_line(y)+x;
   int sw=screen->Size().x;
-  x1-=x; x2-=x;
+  x1 -= x; x2 -= x;
   for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
@@ -993,7 +1000,7 @@ void trans_image::put_predator(image *screen, int x, int y)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
-    if (ix+slam_length<x1 || ix>x2)  // see if this run is totally clipped
+    if (ix + slam_length < x1 || ix >= x2)  // see if this run is totally clipped
     {
       datap+=slam_length;
       ix+=slam_length;
@@ -1019,10 +1026,10 @@ void trans_image::put_predator(image *screen, int x, int y)
 
       if (slam_length)   // see if there is anything left to slam
       {
-        if (ix+slam_length>x2) // see if right side needs to be chopped off
-          memcpy(screen_line+ix,screen_line+sw+sw+ix,x2-ix+1);
+        if (ix + slam_length >= x2) // see if right side needs to be chopped off
+          memcpy(screen_line + ix, screen_line + sw + sw + ix, x2 - ix);
         else
-          memcpy(screen_line+ix,screen_line+sw+sw+ix,slam_length);
+          memcpy(screen_line + ix, screen_line + sw + sw + ix, slam_length);
         datap+=slam_length;
         ix+=slam_length;
       }

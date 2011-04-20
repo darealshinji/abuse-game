@@ -82,9 +82,9 @@ linked_list image_list;
 image_descriptor::image_descriptor(vec2i size,
                    int keep_dirties, int static_memory)
 {
-    clipx1 = 0; clipy1 = 0;
-    l = size.x; h = size.y;
-    clipx2 = l - 1; clipy2 = h - 1;
+    m_clipx1 = 0; m_clipy1 = 0;
+    m_l = size.x; m_h = size.y;
+    m_clipx2 = m_l; m_clipy2 = m_h;
     keep_dirt = keep_dirties;
     static_mem = static_memory;
 }
@@ -133,8 +133,8 @@ void image::PutPixel(vec2i pos, uint8_t color)
               "image::PutPixel Bad pixel xy");
 
     if (m_special &&
-         pos.x >= m_special->x1_clip() && pos.x <= m_special->x2_clip() &&
-         pos.y >= m_special->y1_clip() && pos.y <= m_special->y2_clip())
+         pos.x >= m_special->x1_clip() && pos.x < m_special->x2_clip() &&
+         pos.y >= m_special->y1_clip() && pos.y < m_special->y2_clip())
         return;
 
     scan_line(pos.y)[pos.x] = color;
@@ -260,15 +260,15 @@ void image::clear(int16_t color)
         color = current_background;
     if(m_special)
     {
-        if(m_special->x1_clip() <= m_special->x2_clip())
-            for(i = m_special->y2_clip(); i >= m_special->y1_clip(); i--)
+        if(m_special->x1_clip() < m_special->x2_clip())
+            for(i = m_special->y2_clip() - 1; i >= m_special->y1_clip(); i--)
                 memset(scan_line(i) + m_special->x1_clip(), color,
-                       m_special->x2_clip() - m_special->x1_clip() + 1);
+                       m_special->x2_clip() - m_special->x1_clip());
     }
     else
         for(i = m_size.y - 1; i >= 0; i--)
             memset(scan_line(i), color, m_size.x);
-    add_dirty(0, 0, m_size.x - 1, m_size.y - 1);
+    AddDirty(0, 0, m_size.x, m_size.y);
     Unlock();
 }
 
@@ -290,13 +290,13 @@ void image::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
   unsigned dcy, dcx;
   // check to make sure that both endpoint are on the screen
 
-  int16_t cx1, cy1, cx2, cy2;
+  int cx1, cy1, cx2, cy2;
 
   // check to see if the line is completly clipped off
-  get_clip(cx1, cy1, cx2, cy2);
-  if ((x1<cx1 && x2<cx1) || (x1>cx2 && x2>cx2) ||
-      (y1<cy1 && y2<cy1) || (y1>cy2 && y2>cy2))
-    return ;
+  GetClip(cx1, cy1, cx2, cy2);
+  if ((x1 < cx1 && x2 < cx1) || (x1 >= cx2 && x2 >= cx2) ||
+      (y1 < cy1 && y2 < cy1) || (y1 >= cy2 && y2 >= cy2))
+    return;
 
   if (x1>x2)        // make sure that x1 is to the left
   {
@@ -320,7 +320,7 @@ void image::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
   }
 
   // clip the right side
-  if (x2>cx2)
+  if (x2 >= cx2)
   {
     int my=(y2-y1);
     int mx=(x2-x1), b;
@@ -328,10 +328,10 @@ void image::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
     if (my)
     {
       b=y1-(y2-y1)*x1/mx;
-      y2=my*cx2/mx+b;
-      x2=cx2;
+      y2=my * (cx2 - 1) / mx + b;
+      x2 = cx2 - 1;
     }
-    else x2=cx2;
+    else x2 = cx2 - 1;
   }
 
   if (y1>y2)        // make sure that y1 is on top
@@ -341,7 +341,7 @@ void image::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
   }
 
   // clip the bottom
-  if (y2>cy2)
+  if (y2 >= cy2)
   {
     int mx=(x2-x1);
     int my=(y2-y1), b;
@@ -349,11 +349,11 @@ void image::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
       return ;
     if (mx)
     {
-      b=y1-(y2-y1)*x1/mx;
-      x2=(cy2-b)*mx/my;
-      y2=cy2;
+      b = y1 - (y2 - y1) * x1 / mx;
+      x2 = (cy2 - 1 - b) * mx / my;
+      y2 = cy2 - 1;
     }
-    else y2=cy2;
+    else y2 = cy2 - 1;
   }
 
   // clip the top
@@ -373,8 +373,8 @@ void image::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 
 
   // see if it got cliped into the box, out out
-  if (x1<cx1 || x2<cx1 || x1>cx2 || x2>cx2 || y1<cy1 || y2 <cy1 || y1>cy2 || y2>cy2)
-    return ;
+  if (x1<cx1 || x2<cx1 || x1 >= cx2 || x2 >= cx2 || y1<cy1 || y2 <cy1 || y1 >= cy2 || y2 >= cy2)
+    return;
 
 
 
@@ -386,7 +386,7 @@ void image::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
   // assume y1<=y2 from above swap operation
   yi=y2; yc=y1;
 
-  add_dirty(xc, yc, xi, yi);
+  AddDirty(xc, yc, xi + 1, yi + 1);
   dcx=x1; dcy=y1;
   xc=(x2-x1); yc=(y2-y1);
   if (xc<0) xi=-1; else xi=1;
@@ -464,7 +464,7 @@ void image::put_image(image *screen, int16_t x, int16_t y, char transparent)
         if(xl < 0 || yl < 0)
             return;
 
-        screen->add_dirty(x, y, x + xl - 1, y + yl - 1);
+        screen->AddDirty(x, y, x + xl, y + yl);
         screen->Lock();
         Lock();
         for(j = starty; j < yl; j++, y++)
@@ -498,8 +498,8 @@ void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_
   if (screen->m_special)
   { x1=screen->m_special->bound_x1(x1);
     y1=screen->m_special->bound_y1(y1);
-    x2=screen->m_special->bound_x2(x2);
-    y2=screen->m_special->bound_y2(y2);
+    x2=screen->m_special->bound_x2(x2+1)-1;
+    y2=screen->m_special->bound_y2(y2+1)-1;
   }
   else
   { if (x1<0) x1=0;
@@ -509,7 +509,7 @@ void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_
   }
   if (x2<0 || y2<0 || x1>=screen->Size().x || y1>=screen->Size().y)
     return ;
-  screen->add_dirty(x1, y1, x2, y2);
+  screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
   w=m_size.x;
   if (align)
   {
@@ -547,11 +547,11 @@ void image::put_part(image *screen, int16_t x, int16_t y,
         int16_t x1, int16_t y1, int16_t x2, int16_t y2, char transparent)
 {
   int16_t xlen, ylen, j, i;
-  int16_t cx1, cy1, cx2, cy2;
   uint8_t *pg1, *pg2, *source, *dest;
   CHECK(x1<=x2 && y1<=y2);
 
-  screen->get_clip(cx1, cy1, cx2, cy2);
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
 
 
   // see if the are to be put is outside of actual image, if so adjust
@@ -564,7 +564,8 @@ void image::put_part(image *screen, int16_t x, int16_t y,
 
 
   // see if the image gets clipped off the screen
-  if (x>cx2 || y>cy2 || x+(x2-x1)<cx1 || y+(y2-y1)<cy1) return ;
+  if (x >= cx2 || y >= cy2 || x + (x2 - x1) < cx1 || y + (y2 - y1) < cy1)
+    return ;
 
 
   if (x<cx1)
@@ -572,11 +573,11 @@ void image::put_part(image *screen, int16_t x, int16_t y,
   if (y<cy1)
   { y1+=(cy1-y); y=cy1; }
 
-  if (x+x2-x1+1>cx2)
-  { x2=cx2-x+x1; }
+  if (x + x2 - x1 + 1 >= cx2)
+  { x2 = cx2 - 1 - x + x1; }
 
-  if (y+y2-y1+1>cy2)
-  { y2=cy2-y+y1; }
+  if (y + y2 - y1 + 1 >= cy2)
+  { y2 = cy2 - 1 - y + y1; }
   if (x1>x2 || y1>y2) return ;
 
 
@@ -585,7 +586,7 @@ void image::put_part(image *screen, int16_t x, int16_t y,
   xlen=x2-x1+1;
   ylen=y2-y1+1;
 
-  screen->add_dirty(x, y, x+xlen-1, y+ylen-1);
+  screen->AddDirty(x, y, x + xlen, y + ylen);
 
   screen->Lock();
   Lock();
@@ -617,7 +618,6 @@ void image::put_part_xrev(image *screen, int16_t x, int16_t y,
         int16_t x1, int16_t y1, int16_t x2, int16_t y2, char transparent)
 {
   int16_t xl, yl, j, i;
-  int16_t cx1, cy1, cx2, cy2;
   uint8_t *pg1, *pg2, *source, *dest;
   CHECK(x1<=x2 && y1<=y2);
 
@@ -631,16 +631,19 @@ void image::put_part_xrev(image *screen, int16_t x, int16_t y,
 
   if (screen->m_special)
   {
-    screen->m_special->get_clip(cx1, cy1, cx2, cy2);
-    if (x>cx2 || y>cy2 || x+(x2-x1)<0 || y+(y2-y1)<0) return ;
+    int cx1, cy1, cx2, cy2;
+    screen->m_special->GetClip(cx1, cy1, cx2, cy2);
+    // FIXME: don't we need < cx1 instead of < 0 here?
+    if (x >= cx2 || y >= cy2 || x + (x2 - x1) < 0 || y + (y2 - y1) < 0)
+      return;
     if (x<cx1)
     { x1+=(cx1-x); x=cx1; }
     if (y<cy1)
     { y1+=(cy1-y); y=cy1; }
-    if (x+x2-x1+1>cx2)
-    { x2=cx2-x+x1; }
-    if (y+y2-y1+1>cy2)
-    { y2=cy2-y+y1; }
+    if (x + x2 - x1 + 1 >= cx2)
+    { x2 = cx2 - 1 - x + x1; }
+    if (y + y2 - y1 + 1 >= cy2)
+    { y2 = cy2 - 1 - y + y1; }
   }
   else  if (x>screen->Size().x || y>screen->Size().y || x+x2<0 || y+y2<0)
     return ;
@@ -658,7 +661,7 @@ void image::put_part_xrev(image *screen, int16_t x, int16_t y,
     yl=y2-y1+1;
     if (y+yl>screen->Size().y)
       yl=screen->Size().y-y;
-    screen->add_dirty(x, y, x+xl-1, y+yl-1);
+    screen->AddDirty(x, y, x + xl, y + yl);
     screen->Lock();
     Lock();
     for (j=0; j<yl; j++)
@@ -685,22 +688,22 @@ void image::put_part_masked(image *screen, image *mask, int16_t x, int16_t y,
         int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
   int16_t xl, yl, j, i, ml, mh;
-  int16_t cx1, cy1, cx2, cy2;
   uint8_t *pg1, *pg2, *pg3;
   CHECK(x1<=x2 && y1<=y2);
 
   if (screen->m_special)
   {
-    screen->m_special->get_clip(cx1, cy1, cx2, cy2);
-    if (x>cx2 || y>cy2 || x+(x2-x1)<0 || y+(y2-y1)<0) return ;
+    int cx1, cy1, cx2, cy2;
+    screen->m_special->GetClip(cx1, cy1, cx2, cy2);
+    if (x >= cx2 || y >= cy2 || x+(x2-x1)<0 || y+(y2-y1)<0) return ;
     if (x<cx1)
     { x1+=(cx1-x); x=cx1; }
     if (y<cy1)
     { y1+=(cy1-y); y=cy1; }
-    if (x+x2-x1>cx2)
-    { x2=cx2+x1-x; }
-    if (y+y2-y1>cy2)
-    { y2=cy2+y1-y; }
+    if (x + x2 - x1 >= cx2)
+    { x2 = cx2 - 1 + x1 - x; }
+    if (y + y2 - y1 >= cy2)
+    { y2 = cy2 - 1 + y1 - y; }
   }
   else  if (x>screen->Size().x || y>screen->Size().y || x+x1<0 || y+y1<0)
     return ;
@@ -721,7 +724,7 @@ void image::put_part_masked(image *screen, image *mask, int16_t x, int16_t y,
     yl=y2-y1+1;
     if (y+yl>screen->Size().y)
       yl=screen->Size().y-y-1;
-    screen->add_dirty(x, y, x+xl-1, y+yl-1);
+    screen->AddDirty(x, y, x + xl, y + yl);
     screen->Lock();
     mask->Lock();
     Lock();
@@ -799,7 +802,7 @@ void image::rectangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t co
   line(x1, y1, x1, y2, color);
 }
 
-void image::set_clip(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+void image::SetClip(int x1, int y1, int x2, int y2)
 {
     // If the image does not already have an Image descriptor, allocate one
     // with no dirty rectangle keeping.
@@ -808,179 +811,173 @@ void image::set_clip(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 
     // set the image descriptor what the clip
     // should be it will adjust to fit within the image.
-    m_special->set_clip(x1, y1, x2, y2);
+    m_special->SetClip(x1, y1, x2, y2);
 }
 
-void image::get_clip (int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2)
+void image::GetClip(int &x1, int &y1, int &x2, int &y2)
 {
-  if (m_special)
-    m_special->get_clip(x1, y1, x2, y2);
-  else
-  { x1=0; y1=0; x2=m_size.x-1; y2=m_size.y-1; }
+    if (m_special)
+        m_special->GetClip(x1, y1, x2, y2);
+    else
+    {
+        x1 = 0; y1 = 0; x2 = m_size.x; y2 = m_size.y;
+    }
 }
 
-void image::in_clip  (int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+void image::InClip(int x1, int y1, int x2, int y2)
 {
-  if (m_special)
-  {
-    if (x1<m_special->x1_clip())
-      x1=m_special->x1_clip();
-    if (y1<m_special->y1_clip())
-      y1=m_special->y1_clip();
-    if (x2>m_special->x2_clip())
-      x2=m_special->x2_clip();
-    if (y2>m_special->y2_clip())
-      y2=m_special->y2_clip();
-  }
-  set_clip(x1, y1, x2, y2);
+    if (m_special)
+    {
+        x1 = Min(x1, m_special->x1_clip());
+        y1 = Min(y1, m_special->y1_clip());
+        x2 = Max(x2, m_special->x2_clip());
+        y2 = Max(y2, m_special->y2_clip());
+    }
+
+    SetClip(x1, y1, x2, y2);
 }
 
 //
 // reduce the number of dirty rectanges to 1 by finding the minmum area that
 // can contain all the rectangles and making this the new dirty area
 //
-void image_descriptor::reduce_dirties()
+void image_descriptor::ReduceDirties()
 {
-  dirty_rect *p, *q;
-  int16_t x1, y1, x2, y2, nn;
-  x1=6000; y1=6000;
-  x2=0; y2=0;
-  p=(dirty_rect *)dirties.first();
-  nn=dirties.number_nodes();
-  while (nn>0)
-  {
-    if (p->dx1<x1) x1=p->dx1;
-    if (p->dy1<y1) y1=p->dy1;
-    if (p->dx2>x2) x2=p->dx2;
-    if (p->dy2>y2) y2=p->dy2;
-    q=p;
-    p=(dirty_rect *)p->next();
-    dirties.unlink((linked_node *)q);
-    delete q;
-    nn--;
-  }
-  dirties.add_front((linked_node *) new dirty_rect(x1, y1, x2, y2));
+    dirty_rect *p = (dirty_rect *)dirties.first();
+    int x1 = 6000, y1 = 6000, x2 = -1, y2 = -1;
+
+    for (int i = dirties.number_nodes(); i--; )
+    {
+        x1 = Min(x1, p->dx1); y1 = Min(y1, p->dy1);
+        x2 = Max(x1, p->dx1); y2 = Max(y1, p->dy1);
+        dirty_rect *tmp = (dirty_rect *)p->next();
+        dirties.unlink(p);
+        delete p;
+        p = tmp;
+    }
+    dirties.add_front(new dirty_rect(x1, y1, x2, y2));
 }
 
 void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
 {
-  int16_t i, ax1, ay1, ax2, ay2;
-  dirty_rect *p, *next;
-  if (keep_dirt)
-  {
-    if (x1<0) x1=0;
-    if (y1<0) y1=0;
-    if (x2>=(int)l) x2=l-1;
-    if (y2>=(int)h) y2=h-1;
-    if (x1>x2) return;
-    if (y1>y2) return ;
+    int ax1, ay1, ax2, ay2;
+    dirty_rect *p, *next;
 
-    i=dirties.number_nodes();
+    if (!keep_dirt)
+        return;
+
+    x1 = Max(0, x1); x2 = Min(m_l, x2);
+    y1 = Max(0, y1); y2 = Min(m_h, y2);
+
+    if (x1 >= x2 || y1 >= y2)
+        return;
+
+    int i = dirties.number_nodes();
     if (!i)
-      return ;
-    else
+        return;
+
+    for (p = (dirty_rect *)dirties.first(); i; i--, p = next)
     {
-      for (p=(dirty_rect *)dirties.first(); i; i--, p=(dirty_rect *)next)
-      {
-        next=(dirty_rect *)p->next();
+        next = (dirty_rect *)p->next();
+
         // are the two touching?
-    if (!(x2<p->dx1 || y2<p->dy1 || x1>p->dx2 || y1>p->dy2))
+        if (x2 <= p->dx1 || y2 <= p->dy1 || x1 > p->dx2 || y1 > p->dy2)
+            continue;
+
+        // does it take a x slice off? (across)
+        if (x2 >= p->dx2 + 1 && x1 <= p->dx1)
         {
-          // does it take a x slice off? (across)
-          if (x2>=p->dx2 && x1<=p->dx1)
-          {
-            if (y2>=p->dy2 && y1<=p->dy1)
+            if (y2 >= p->dy2 + 1 && y1 <= p->dy1)
             {
-              dirties.unlink((linked_node *)p);
-              delete p;
+                dirties.unlink(p);
+                delete p;
             }
-            else if (y2>=p->dy2)
-              p->dy2=y1-1;
-            else if (y1<=p->dy1)
-              p->dy1=y2+1;
+            else if (y2 >= p->dy2 + 1)
+                p->dy2 = y1 - 1;
+            else if (y1 <= p->dy1)
+                p->dy1 = y2;
             else
             {
-              dirties.add_front((linked_node *) new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
-              p->dy1=y2+1;
+                dirties.add_front(new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
+                p->dy1 = y2;
             }
-          }
-          // does it take a y slice off (down)
-          else if (y2>=p->dy2 && y1<=p->dy1)
-          {
-            if (x2>=p->dx2)
-              p->dx2=x1-1;
+        }
+        // does it take a y slice off (down)
+        else if (y2 - 1>=p->dy2 && y1<=p->dy1)
+        {
+            if (x2 - 1>=p->dx2)
+                p->dx2=x1-1;
             else if (x1<=p->dx1)
-              p->dx1=x2+1;
+                p->dx1=x2;
             else
             {
-              dirties.add_front((linked_node *) new dirty_rect(p->dx1, p->dy1, x1-1, p->dy2));
-              p->dx1=x2+1;
+                dirties.add_front(new dirty_rect(p->dx1, p->dy1, x1-1, p->dy2));
+                p->dx1=x2;
             }
-          }
-          // otherwise it just takes a little chunk off
-          else
-          {
-            if (x2>=p->dx2)      { ax1=p->dx1; ax2=x1-1; }
-            else if (x1<=p->dx1) { ax1=x2+1; ax2=p->dx2; }
-            else                { ax1=p->dx1; ax2=x1-1; }
-            if (y2>=p->dy2)      { ay1=y1; ay2=p->dy2; }
+        }
+        // otherwise it just takes a little chunk off
+        else
+        {
+            if (x2 - 1>=p->dx2)      { ax1=p->dx1; ax2=x1; }
+            else if (x1<=p->dx1) { ax1=x2; ax2=p->dx2+1; }
+            else                { ax1=p->dx1; ax2=x1; }
+            if (y2 - 1>=p->dy2)      { ay1=y1; ay2=p->dy2+1; }
             else if (y1<=p->dy1) { ay1=p->dy1; ay2=y2; }
             else                { ay1=y1; ay2=y2; }
-            dirties.add_front((linked_node *) new dirty_rect(ax1, ay1, ax2, ay2));
+            dirties.add_front(new dirty_rect(ax1, ay1, ax2-1, ay2-1));
 
-            if (x2>=p->dx2 || x1<=p->dx1)  { ax1=p->dx1; ax2=p->dx2; }
-            else                         { ax1=x2+1; ax2=p->dx2; }
+            if (x2 - 1>=p->dx2 || x1<=p->dx1)  { ax1=p->dx1; ax2=p->dx2+1; }
+            else                         { ax1=x2; ax2=p->dx2+1; }
 
-            if (y2>=p->dy2)
-            { if (ax1==p->dx1) { ay1=p->dy1; ay2=y1-1; }
-                          else { ay1=y1; ay2=p->dy2;   } }
-            else if (y1<=p->dy1) { if (ax1==p->dx1) { ay1=y2+1; ay2=p->dy2; }
+            if (y2 - 1>=p->dy2)
+            { if (ax1==p->dx1) { ay1=p->dy1; ay2=y1; }
+                          else { ay1=y1; ay2=p->dy2+1;   } }
+            else if (y1<=p->dy1) { if (ax1==p->dx1) { ay1=y2; ay2=p->dy2+1; }
                                              else  { ay1=p->dy1; ay2=y2; } }
-            else           { if (ax1==p->dx1) { ay1=p->dy1; ay2=y1-1; }
+            else           { if (ax1==p->dx1) { ay1=p->dy1; ay2=y1; }
                              else { ay1=y1; ay2=y2; } }
-            dirties.add_front((linked_node *) new dirty_rect(ax1, ay1, ax2, ay2));
+            dirties.add_front(new dirty_rect(ax1, ay1, ax2 - 1, ay2 - 1));
 
-            if (x1>p->dx1 && x2<p->dx2)
+            if (x1>p->dx1 && x2 - 1<p->dx2)
             {
-              if (y1>p->dy1 && y2<p->dy2)
-              {
-                dirties.add_front((linked_node *) new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
-                dirties.add_front((linked_node *) new dirty_rect(p->dx1, y2+1, p->dx2, p->dy2));
-              } else if (y1<=p->dy1)
-                dirties.add_front((linked_node *) new dirty_rect(p->dx1, y2+1, p->dx2, p->dy2));
-              else
-                dirties.add_front((linked_node *) new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
-            } else if (y1>p->dy1 && y2<p->dy2)
-              dirties.add_front((linked_node *) new dirty_rect(p->dx1, y2+1, p->dx2, p->dy2));
-            dirties.unlink((linked_node *) p);
+                if (y1>p->dy1 && y2 - 1<p->dy2)
+                {
+                    dirties.add_front(new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
+                    dirties.add_front(new dirty_rect(p->dx1, y2, p->dx2, p->dy2));
+                }
+                else if (y1<=p->dy1)
+                    dirties.add_front(new dirty_rect(p->dx1, y2, p->dx2, p->dy2));
+                else
+                    dirties.add_front(new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
+            }
+            else if (y1>p->dy1 && y2 - 1<p->dy2)
+                dirties.add_front(new dirty_rect(p->dx1, y2, p->dx2, p->dy2));
+            dirties.unlink(p);
             delete p;
-          }
         }
-      }
     }
-  }
 }
 
 // specifies that an area is a dirty
-void image_descriptor::add_dirty(int x1, int y1, int x2, int y2)
+void image_descriptor::AddDirty(int x1, int y1, int x2, int y2)
 {
-  int16_t i;
-  dirty_rect *p;
-  if (keep_dirt)
-  {
-    if (x1<0) x1=0;
-    if (y1<0) y1=0;
-    if (x2>=(int)l) x2=l-1;
-    if (y2>=(int)h) y2=h-1;
-    if (x1>x2) return;
-    if (y1>y2) return ;
-    i=dirties.number_nodes();
+    dirty_rect *p;
+    if (!keep_dirt)
+        return;
+
+    x1 = Max(0, x1); x2 = Min(m_l, x2);
+    y1 = Max(0, y1); y2 = Min(m_h, y2);
+
+    if (x1 >= x2 || y1 >= y2)
+        return;
+
+    int i = dirties.number_nodes();
     if (!i)
-      dirties.add_front((linked_node *) new dirty_rect(x1, y1, x2, y2));
-    else if (i>=MAX_DIRTY)
+        dirties.add_front(new dirty_rect(x1, y1, x2 - 1, y2 - 1));
+    else if (i >= MAX_DIRTY)
     {
-      dirties.add_front((linked_node *) new dirty_rect(x1, y1, x2, y2));
-      reduce_dirties();  // reduce to one dirty rectangle, we have to many
+        dirties.add_front(new dirty_rect(x1, y1, x2 - 1, y2 - 1));
+        ReduceDirties();  // reduce to one dirty rectangle, we have to many
     }
     else
     {
@@ -988,24 +985,24 @@ void image_descriptor::add_dirty(int x1, int y1, int x2, int y2)
       {
 
         // check to see if this new rectangle completly encloses the check rectangle
-    if (x1<=p->dx1 && y1<=p->dy1 && x2>=p->dx2 && y2>=p->dy2)
-    {
-      dirty_rect *tmp=(dirty_rect*) p->next();
-      dirties.unlink((linked_node *)p);
-      delete p;
-      if (!dirties.first())
-          i=0;
-      else p=tmp;
-    }
-    else if (!(x2<p->dx1 || y2<p->dy1 || x1>p->dx2 || y1>p->dy2))
-    {
+        if (x1<=p->dx1 && y1<=p->dy1 && x2>=p->dx2+1 && y2>=p->dy2+1)
+        {
+          dirty_rect *tmp=(dirty_rect*) p->next();
+          dirties.unlink(p);
+          delete p;
+          if (!dirties.first())
+              i=0;
+          else p=tmp;
+        }
+        else if (!(x2 - 1 <p->dx1 || y2 - 1 <p->dy1 || x1>p->dx2 || y1>p->dy2))
+        {
 
 
 
 /*          if (x1<=p->dx1) { a+=p->dx1-x1; ax1=x1; } else ax1=p->dx1;
           if (y1<=p->dy1) { a+=p->dy1-y1; ay1=y1; } else ay1=p->dy1;
-          if (x2>=p->dx2) { a+=x2-p->dx2; ax2=x2; } else ax2=p->dx2;
-          if (y2>=p->dy2) { a+=y2-p->dy2; ay2=y2; } else ay2=p->dy2;
+          if (x2 - 1 >=p->dx2) { a+=x2 - 1 -p->dx2; ax2=x2 - 1; } else ax2=p->dx2;
+          if (y2 - 1 >=p->dy2) { a+=y2 - 1 -p->dy2; ay2=y2 - 1; } else ay2=p->dy2;
 
       if (a<50)
       { p->dx1=ax1;                         // then expand the dirty
@@ -1015,25 +1012,24 @@ void image_descriptor::add_dirty(int x1, int y1, int x2, int y2)
         return ;
       }
       else */
-        {
-          if (x1<p->dx1)
-            add_dirty(x1, Max(y1, p->dy1), p->dx1-1, Min(y2, p->dy2));
-          if (x2>p->dx2)
-            add_dirty(p->dx2+1, Max(y1, p->dy1), x2, Min(y2, p->dy2));
-          if (y1<p->dy1)
-            add_dirty(x1, y1, x2, p->dy1-1);
-          if (y2>p->dy2)
-            add_dirty(x1, p->dy2+1, x2, y2);
-          return ;
-        }
-        p=(dirty_rect *)p->next();
-      } else p=(dirty_rect *)p->next();
+            {
+              if (x1<p->dx1)
+                AddDirty(x1, Max(y1, p->dy1), p->dx1, Min(y2, p->dy2 + 1));
+              if (x2>p->dx2+1)
+                AddDirty(p->dx2+1, Max(y1, p->dy1), x2, Min(y2, p->dy2 + 1));
+              if (y1<p->dy1)
+                AddDirty(x1, y1, x2, p->dy1);
+              if (y2 - 1>p->dy2)
+                AddDirty(x1, p->dy2+1, x2, y2);
+              return ;
+            }
+            p=(dirty_rect *)p->next();
+          } else p=(dirty_rect *)p->next();
 
       }
-      CHECK(x1<=x2 && y1<=y2);
-      dirties.add_end((linked_node *)new dirty_rect(x1, y1, x2, y2));
+      CHECK(x1 < x2 && y1 < y2);
+      dirties.add_end(new dirty_rect(x1, y1, x2 - 1, y2 - 1));
     }
-  }
 }
 
 void image::bar      (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
@@ -1043,8 +1039,8 @@ void image::bar      (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t co
   if (m_special)
   { x1=m_special->bound_x1(x1);
     y1=m_special->bound_y1(y1);
-    x2=m_special->bound_x2(x2);
-    y2=m_special->bound_y2(y2);
+    x2=m_special->bound_x2(x2+1)-1;
+    y2=m_special->bound_y2(y2+1)-1;
   }
   else
   { if (x1<0) x1=0;
@@ -1058,7 +1054,7 @@ void image::bar      (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t co
   for (y=y1; y<=y2; y++)
     memset(scan_line(y)+x1, color, (x2-x1+1));
   Unlock();
-  add_dirty(x1, y1, x2, y2);
+  AddDirty(x1, y1, x2 + 1, y2 + 1);
 }
 
 void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
@@ -1068,8 +1064,8 @@ void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t co
   if (m_special)
   { x1=m_special->bound_x1(x1);
     y1=m_special->bound_y1(y1);
-    x2=m_special->bound_x2(x2);
-    y2=m_special->bound_y2(y2);
+    x2=m_special->bound_x2(x2+1)-1;
+    y2=m_special->bound_y2(y2+1)-1;
   }
   else
   { if (x1<0) x1=0;
@@ -1091,7 +1087,7 @@ void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t co
   }
   Unlock();
 
-  add_dirty(x1, y1, x2, y2);
+  AddDirty(x1, y1, x2 + 1, y2 + 1);
 }
 
 
@@ -1142,15 +1138,15 @@ void image::dither(palette *pal)
   Unlock();
 }
 
-void image_descriptor::clear_dirties()
+void image_descriptor::ClearDirties()
 {
-  dirty_rect *dr;
-  dr=(dirty_rect *)dirties.first();
-  while (dr)
-  { dirties.unlink(dr);
-    delete dr;
-    dr=(dirty_rect *)dirties.first();
-  }
+    dirty_rect *dr = (dirty_rect *)dirties.first();
+    while (dr)
+    {
+        dirties.unlink(dr);
+        delete dr;
+        dr = (dirty_rect *)dirties.first();
+    }
 }
 
 void image::Scale(vec2i new_size)
@@ -1180,18 +1176,18 @@ void image::Scale(vec2i new_size)
     }
     free(im);
     if (m_special)
-        m_special->resize(new_size.x, new_size.y);
+        m_special->Resize(new_size);
     Unlock();
 }
 
 void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, int16_t yd)
 {
-  int16_t cx1, cy1, cx2, cy2;
   CHECK(x1>=0 && y1>=0 && x1<x2 && y1<y2 && x2<m_size.x && y2<m_size.y);
   if (m_special)
   {
-    m_special->get_clip(cx1, cy1, cx2, cy2);
-    x1=Max(x1, cx1); y1=Max(cy1, y1); x2=Min(x2, cx2); y2=Min(y2, cy2);
+    int cx1, cy1, cx2, cy2;
+    m_special->GetClip(cx1, cy1, cx2, cy2);
+    x1=Max(x1, cx1); y1=Max(cy1, y1); x2=Min(x2, cx2 - 1); y2=Min(y2, cy2 - 1);
   }
   int16_t xsrc, ysrc, xdst, ydst, xtot=x2-x1-abs(xd)+1, ytot, xt;
   uint8_t *src, *dst;
@@ -1207,7 +1203,7 @@ void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, i
         *(dst--)=*(src--);
     if (yd<0) { ysrc++; ydst++; } else { ysrc--; ydst--; }
   }
-  add_dirty(x1, y1, x2, y2);
+  AddDirty(x1, y1, x2 + 1, y2 + 1);
 }
 
 
@@ -1371,14 +1367,14 @@ uint8_t dither_matrix[]={ 0,  136, 24, 170,
 
 image *image::copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-  int16_t x, y, cx1, cy1, cx2, cy2, ry, rx, bo, dity, ditx;
+  int x, y, cx1, cy1, cx2, cy2, ry, rx, bo, dity, ditx;
   image *ret;
   uint8_t *sl1, *sl2;
-  get_clip(cx1, cy1, cx2, cy2);
+  GetClip(cx1, cy1, cx2, cy2);
   if (y1<cy1) y1=cy1;
   if (x1<cx1) x1=cx1;
-  if (y2>cy2) y2=cy2;
-  if (x2>cx2) x2=cx2;
+  if (y2>cy2 - 1) y2=cy2 - 1;
+  if (x2>cx2 - 1) x2=cx2 - 1;
   CHECK(x2>=x1 && y2>=y1);
   if (x2<x1 || y2<y1) return NULL;
   ret=new image(vec2i((x2-x1+8)/8, (y2-y1+1)));

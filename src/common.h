@@ -11,8 +11,19 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+//
+// Lol Engine
+//
 #include "lol/matrix.h"
 using namespace lol;
+
+//
+// Custom utility functions
+//
+static inline int Min(int a, int b) { return a < b ? a : b; }
+static inline int Max(int a, int b) { return a > b ? a : b; }
+static inline float Min(float a, float b) { return a < b ? a : b; }
+static inline float Max(float a, float b) { return a > b ? a : b; }
 
 #endif // __COMMON_H__
 

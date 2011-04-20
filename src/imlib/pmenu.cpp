@@ -26,10 +26,10 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
   top=first;
   active=NULL;
 
-  short cx1,cy1,cx2,cy2;
-  screen->get_clip(cx1,cy1,cx2,cy2);
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
   if (cx1<X) cx1=X;
-  int w = cx2 - cx1 - Jwindow::left_border() - Jwindow::right_border() + 1;
+  int w = cx2 - cx1 - Jwindow::left_border() - Jwindow::right_border();
   int h = Jwindow::top_border() + Jwindow::bottom_border();
 
   bar=wm->new_window(X, Y, w, 0, NULL);
@@ -144,11 +144,12 @@ void psub_menu::hide(Jwindow *parent, int x, int y)
 {
   int w,h;
   calc_size(w,h);
-  short cx1,cy1,cx2,cy2;
-  screen->get_clip(cx1,cy1,cx2,cy2);
-  if (w+x>cx2)
-    x=cx2-w;
-
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
+  // FIXME: is this correct? it looks like it used to be incorrect
+  // before the GetClip refactoring...
+  if (w+x>cx2-1)
+    x=cx2-1-w;
 
   if (win)
   {
@@ -186,13 +187,13 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
 
   int w,h,i=0;
   calc_size(w,h);
-  short cx1,cy1,cx2,cy2;
-  screen->get_clip(cx1,cy1,cx2,cy2);
-  if (parent->x+w+x>cx2)
-    x=cx2-w-parent->x;
-  if (h+y+parent->y>cy2)
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
+  if (parent->x+w+x>=cx2)
+    x=cx2-1-w-parent->x;
+  if (h+y+parent->y>=cy2)
   {
-    if (parent->y+parent->h+wm->font()->height()>cy2)
+    if (parent->y+parent->h+wm->font()->height()>=cy2)
       y=-h;
     else y=y-h+wm->font()->height()+5;
   }
@@ -311,8 +312,8 @@ int psub_menu::handle_event(Jwindow *parent, int x, int y, event &ev)
 {
   int w,h;
   calc_size(w,h);
-  short cx1,cy1,cx2,cy2;
-  screen->get_clip(cx1,cy1,cx2,cy2);
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
 
   x=win->x;
   y=win->y;
@@ -373,8 +374,8 @@ int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top,
 
 pmenu_item *pmenu::inarea(int mx, int my, image *screen)
 {
-  short cx1,cy1,cx2,cy2;
-  screen->get_clip(cx1,cy1,cx2,cy2);
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
   mx-=bar->x;
   my-=bar->y;
   if (mx<0 || my<0 || mx>=bar->screen->Size().x || my>=bar->screen->Size().y) return NULL;

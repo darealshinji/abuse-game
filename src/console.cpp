@@ -55,7 +55,7 @@ void console::show()
   {
     con_win=wm->new_window(lastx,lasty,screen_w(),screen_h(),NULL,name);
     redraw();
-    con_win->screen->set_clip(con_win->x1(),con_win->y1(),con_win->x2(),con_win->y2());
+    con_win->screen->SetClip(con_win->x1(),con_win->y1(),con_win->x2()+1,con_win->y2()+1);
   }
 }
 

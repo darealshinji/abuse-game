@@ -379,9 +379,9 @@ public :
 int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf,
           text_blocker *first, JCFont *font)
 {
-  short cx1,cy1,cx2,cy2,word_size,word_len;
-  screen->get_clip(cx1,cy1,cx2,cy2);
-  screen->in_clip(x1,y1,x2,y2);
+  int cx1, cy1, cx2, cy2, word_size, word_len;
+  screen->GetClip(cx1, cy1, cx2, cy2);
+  screen->InClip(x1,y1,x2+1,y2+1);
   int h=font->height()+2,w=font->width(),x=x1,dist;
   y+=y1;
   char const *word_start;
@@ -466,7 +466,7 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf,
 
   }
 
-  screen->set_clip(cx1,cy1,cx2,cy2);
+  screen->SetClip(cx1, cy1, cx2, cy2);
   return (y<=y1);
 }
 
@@ -494,13 +494,13 @@ void play_scene(char *script, char *filename, JCFont *font)
   int x1,y1,x2,y2,done,pan_xv=0,pan_yv=0,pan_steps=0,
       text_loaded=0,frame_speed=100,scroll_speed=50,pan_speed=60,abort=0,text_step=-2;
 
-  short cx1,cy1,cx2,cy2;
+  int cx1, cy1, cx2, cy2;
 
   the_game->draw(1);
 
-  screen->get_clip(cx1,cy1,cx2,cy2);
-  screen->set_clip(the_game->viewx1,the_game->viewy1,
-           the_game->viewx2,the_game->viewy2);
+  screen->GetClip(cx1, cy1, cx2, cy2);
+  screen->SetClip(the_game->viewx1, the_game->viewy1,
+                   the_game->viewx2 + 1, the_game->viewy2 + 1);
 
 
 
@@ -708,10 +708,8 @@ void play_scene(char *script, char *filename, JCFont *font)
     next_token(s);
 
   free(strng);
-  screen->set_clip(cx1,cy1,cx2,cy2);
+  screen->SetClip(cx1, cy1, cx2, cy2);
 
   the_game->draw(0);
 }
-
-
 

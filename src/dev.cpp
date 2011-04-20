@@ -370,20 +370,19 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
   unsigned char *sl1,*sl2;
   int32_t xstep=(im->Size().x<<16)/new_width,
        ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
-  screen->add_dirty(x,y,x+new_width-1,y+new_height-1);
+  screen->AddDirty(x, y, x + new_width, y + new_height);
 
-
-  short cx1,cy1,cx2,cy2;
-  screen->get_clip(cx1,cy1,cx2,cy2);
-  if (cx1>cx2 || cy1>cy2 || x>cx2 || y>cy2 || x+new_width<=cx1 || y+new_height<=cy1) return ;
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
+  if (cx1>cx2 || cy1>cy2 || x>cx2-1 || y>cy2-1 || x+new_width<=cx1 || y+new_height<=cy1) return ;
   if (x<cx1)
   {
     ix_start=(cx1-x)*xstep;
     new_width-=(cx1-x);
     x=cx1;
   } else ix_start=0;
-  if (x+new_width>=cx2)
-    new_width-=x+new_width-1-cx2;
+  if (x+new_width>cx2)
+    new_width-=x+new_width-cx2;
   if (y<cy1)
   {
     iy_start=(cy1-y)*ystep;
@@ -412,20 +411,19 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
   unsigned char *sl1,*sl2;
   int32_t xstep=(im->Size().x<<16)/new_width,
        ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
-  screen->add_dirty(x,y,x+new_width-1,y+new_height-1);
+  screen->AddDirty(x, y, x + new_width, y + new_height);
 
-
-  short cx1,cy1,cx2,cy2;
-  screen->get_clip(cx1,cy1,cx2,cy2);
-  if (cx1>cx2 || cy1>cy2 || x>cx2 || y>cy2 || x+new_width<=cx1 || y+new_height<=cy1) return ;
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
+  if (cx1>cx2 || cy1>cy2 || x>cx2-1 || y>cy2-1 || x+new_width<=cx1 || y+new_height<=cy1) return ;
   if (x<cx1)
   {
     ix_start=(cx1-x)*xstep;
     new_width-=(cx1-x);
     x=cx1;
   } else ix_start=0;
-  if (x+new_width>=cx2)
-    new_width-=x+new_width-1-cx2;
+  if (x+new_width>cx2)
+    new_width-=x+new_width-cx2;
   if (y<cy1)
   {
     iy_start=(cy1-y)*ystep;

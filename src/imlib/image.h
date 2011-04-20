@@ -62,8 +62,8 @@ public :
 class image_descriptor
 {
 private:
-    int16_t l, h;
-    int16_t clipx1, clipy1, clipx2, clipy2;
+    int m_l, m_h;
+    int m_clipx1, m_clipy1, m_clipx2, m_clipy2;
 
 public:
     uint8_t keep_dirt,
@@ -73,41 +73,33 @@ public:
     void *extended_descriptor;
 
     image_descriptor(vec2i size, int keep_dirties = 1, int static_memory = 0);
-    int16_t bound_x1(int16_t x1)  { return x1 < clipx1 ? clipx1 : x1; }
-    int16_t bound_y1(int16_t y1)  { return y1 < clipy1 ? clipy1 : y1; }
-    int16_t bound_x2(int16_t x2)  { return x2 > clipx2 ? clipx2 : x2; }
-    int16_t bound_y2(int16_t y2)  { return y2 > clipy2 ? clipy2 : y2; }
-    int16_t x1_clip() { return clipx1; }
-    int16_t y1_clip() { return clipy1; }
-    int16_t x2_clip() { return clipx2; }
-    int16_t y2_clip() { return clipy2; }
-    void dirty_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2) { ; }
-    void clean_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2) { ; }
-    void clear_dirties();
-    int16_t get_dirty_area(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2)
+    int bound_x1(int x1) { return x1 < m_clipx1 ? m_clipx1 : x1; }
+    int bound_y1(int y1) { return y1 < m_clipy1 ? m_clipy1 : y1; }
+    int bound_x2(int x2) { return x2 > m_clipx2 ? m_clipx2 : x2; }
+    int bound_y2(int y2) { return y2 > m_clipy2 ? m_clipy2 : y2; }
+    inline int x1_clip() { return m_clipx1; }
+    inline int y1_clip() { return m_clipy1; }
+    inline int x2_clip() { return m_clipx2; }
+    inline int y2_clip() { return m_clipy2; }
+    void ClearDirties();
+    void GetClip(int &x1, int &y1, int &x2, int &y2)
     {
-        return 0;
+        x1 = m_clipx1; y1 = m_clipy1; x2 = m_clipx2; y2 = m_clipy2;
     }
-    void get_clip(int16_t &x1, int16_t &y1, int16_t &x2, int16_t &y2)
+    void SetClip(int x1, int y1, int x2, int y2)
     {
-        x1 = clipx1; y1 = clipy1; x2 = clipx2; y2 = clipy2;
+        if(x2 < x1 + 1) x2 = x1 + 1;
+        if(y2 < y1 + 1) y2 = y1 + 1;
+        m_clipx1 = Max(x1, 0); m_clipy1 = Max(y1, 0);
+        m_clipx2 = Min(x2, m_l); m_clipy2 = Min(y2, m_h);
     }
-    void set_clip(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
-    {
-        if(x2 < x1) x2 = x1;
-        if(y2 < y1) y2 = y1;
-        if(x1 < 0) clipx1 = 0; else clipx1 = x1;
-        if(y1 < 0) clipy1 = 0; else clipy1 = y1;
-        if(x2 >= l) clipx2 = l - 1; else clipx2 = x2;
-        if(y2 >= h) clipy2 = h - 1; else clipy2 = y2;
-    }
-    void reduce_dirties();
-    void add_dirty(int x1, int y1, int x2, int y2);
+    void ReduceDirties();
+    void AddDirty(int x1, int y1, int x2, int y2);
     void delete_dirty(int x1, int y1, int x2, int y2);
-    void resize(int16_t length, int16_t height)
+    void Resize(vec2i size)
     {
-        l = length; h = height;
-        clipx1 = 0; clipy1 = 0; clipx2 = l - 1; clipy2 = h - 1;
+        m_l = size.x; m_h = size.y;
+        m_clipx1 = 0; m_clipy1 = 0; m_clipx2 = m_l; m_clipy2 = m_h;
     }
 };
 
@@ -173,9 +165,9 @@ public:
                    uint8_t color);
     void burn_led(int16_t x, int16_t y, int32_t num, int16_t color,
                   int16_t scale = 1);
-    void set_clip(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-    void get_clip(int16_t &x1,int16_t &y1,int16_t &x2,int16_t &y2);
-    void in_clip(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+    void SetClip(int x1, int y1, int x2, int y2);
+    void GetClip(int &x1, int &y1, int &x2, int &y2);
+    void InClip(int x1, int y1, int x2, int y2);
 
     void dirt_off()
     {
@@ -186,17 +178,17 @@ public:
         if(m_special) m_special->keep_dirt = 1;
     }
 
-    void add_dirty(int x1, int y1, int x2, int y2)
+    void AddDirty(int x1, int y1, int x2, int y2)
     {
-        if(m_special) m_special->add_dirty(x1, y1, x2, y2);
+        if (m_special) m_special->AddDirty(x1, y1, x2, y2);
     }
     void delete_dirty(int x1, int y1, int x2, int y2)
     {
         if(m_special) m_special->delete_dirty(x1, y1, x2, y2);
     }
-    void clear_dirties()
+    void ClearDirties()
     {
-        if(m_special) m_special->clear_dirties();
+        if (m_special) m_special->ClearDirties();
     }
     void dither(palette *pal); // use a b&w palette!
     void Scale(vec2i size);

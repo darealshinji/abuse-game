@@ -572,12 +572,12 @@ void Game::put_block_fg(int x, int y, trans_image *im)
       int xoff = f->xoff(), yoff = f->yoff(), viewx1 = f->cx1, viewy1 = f->cy1, viewx2 = f->cx2, viewy2 = f->cy2;
       if(xoff / ftile_width()>x || xoff / ftile_width()+(viewx2 - viewx1)/ftile_width()+1 < x ||
       yoff / ftile_height()>y || yoff / ftile_height()+(viewy2 - viewy1)/ftile_height()+1 < y) return;
-      short cx1, cy1, cx2, cy2;
-      screen->get_clip(cx1, cy1, cx2, cy2);
-      screen->set_clip(viewx1, viewy1, viewx2, viewy2);
+      int cx1, cy1, cx2, cy2;
+      screen->GetClip(cx1, cy1, cx2, cy2);
+      screen->SetClip(viewx1, viewy1, viewx2 + 1, viewy2 + 1);
       im->put_image(screen, (x - xoff / ftile_width())*ftile_width()+viewx1 - xoff % ftile_width(),
             (y - yoff / ftile_height())*ftile_height()+viewy1 - yoff % ftile_height());
-      screen->set_clip(cx1, cy1, cx2, cy2);
+      screen->SetClip(cx1, cy1, cx2, cy2);
     }
   }
 }
@@ -594,12 +594,12 @@ void Game::put_block_bg(int x, int y, image *im)
 
       if(xo / btile_width()>x || xo / btile_width()+(viewx2 - viewx1)/btile_width()+1 < x ||
       yo / btile_height()>y || yo / btile_height()+(viewy2 - viewy1)/btile_height()+1 < y) return;
-      short cx1, cy1, cx2, cy2;
-      screen->get_clip(cx1, cy1, cx2, cy2);
-      screen->set_clip(viewx1, viewy1, viewx2, viewy2);
+      int cx1, cy1, cx2, cy2;
+      screen->GetClip(cx1, cy1, cx2, cy2);
+      screen->SetClip(viewx1, viewy1, viewx2 + 1, viewy2 + 1);
       im->put_image(screen, (x - xo / btile_width())*btile_width()+viewx1 - xo % btile_width(),
             (y - yo / btile_height())*btile_height()+viewy1 - yo % btile_height(), 0);
-      screen->set_clip(cx1, cy1, cx2, cy2);
+      screen->SetClip(cx1, cy1, cx2, cy2);
     }
   }
 }
@@ -702,20 +702,20 @@ void Game::draw_map(view *v, int interpolate)
 {
   backtile *bt;
   int x1, y1, x2, y2, x, y, xo, yo, nxoff, nyoff;
-  short cx1, cy1, cx2, cy2;
-  screen->get_clip(cx1, cy1, cx2, cy2);
+  int cx1, cy1, cx2, cy2;
+  screen->GetClip(cx1, cy1, cx2, cy2);
 
   if(!current_level || state == MENU_STATE)
   {
     if(title_screen >= 0)
     {
       if(state == SCENE_STATE)
-        screen->set_clip(v->cx1, v->cy1, v->cx2, v->cy2);
+        screen->SetClip(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
       image *tit = cache.img(title_screen);
       tit->put_image(screen, screen->Size().x/2 - tit->Size().x/2,
                     screen->Size().y/2 - tit->Size().y/2);
       if(state == SCENE_STATE)
-        screen->set_clip(cx1, cy1, cx2, cy2);
+        screen->SetClip(cx1, cy1, cx2, cy2);
       wm->flush_screen();
     }
     return;
@@ -728,9 +728,9 @@ void Game::draw_map(view *v, int interpolate)
   // view area dirty alreadt
 
   if(small_render)
-    screen->add_dirty(v->cx1, v->cy1, (v->cx2 - v->cx1 + 1)*2 + v->cx1, v->cy1+(v->cy2 - v->cy1 + 1)*2);
+    screen->AddDirty(v->cx1, v->cy1, (v->cx2 - v->cx1 + 1)*2 + v->cx1 + 1, v->cy1+(v->cy2 - v->cy1 + 1)*2 + 1);
   else
-    screen->add_dirty(v->cx1, v->cy1, v->cx2, v->cy2);
+    screen->AddDirty(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
 
   if(v->draw_solid != -1)      // fill the screen and exit..
   {
@@ -780,7 +780,7 @@ void Game::draw_map(view *v, int interpolate)
   current_vxadd = xoff - v->cx1;
   current_vyadd = yoff - v->cy1;
 
-  screen->set_clip(v->cx1, v->cy1, v->cx2, v->cy2);
+  screen->SetClip(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
 
   nxoff = xoff * bg_xmul / bg_xdiv;
   nyoff = yoff * bg_ymul / bg_ydiv;
@@ -881,8 +881,8 @@ void Game::draw_map(view *v, int interpolate)
 
   if(dev & DRAW_FG_LAYER)
   {
-    short ncx1, ncy1, ncx2, ncy2;
-    screen->get_clip(ncx1, ncy1, ncx2, ncy2);
+    int ncx1, ncy1, ncx2, ncy2;
+    screen->GetClip(ncx1, ncy1, ncx2, ncy2);
 
     int scr_w = screen->Size().x;
     if(dev & MAP_MODE)
@@ -894,13 +894,13 @@ void Game::draw_map(view *v, int interpolate)
       screen->Lock();
       for(y = y1, draw_y = yo; y <= y2; y++, draw_y += yinc)
       {
-    if(!(draw_y < ncy1 ||draw_y + yinc >= ncy2))
+    if(!(draw_y < ncy1 ||draw_y + yinc > ncy2))
     {
       uint16_t *cl = current_level->get_fgline(y)+x1;
       uint8_t *sl1 = screen->scan_line(draw_y)+xo;
       for(x = x1, draw_x = xo; x <= x2; x++, cl++, sl1 += xinc, draw_x += xinc)
       {
-        if(!(draw_x < ncx1 || draw_x + xinc >= ncx2))
+        if(!(draw_x < ncx1 || draw_x + xinc > ncx2))
         {
           int fort_num;
 //          if(*cl & 0x8000 || (dev & EDIT_MODE))
@@ -945,7 +945,7 @@ void Game::draw_map(view *v, int interpolate)
           int fort_num = fgvalue(*cl);
           if(fort_num != BLACK)
           {
-        if(draw_y < ncy1 || draw_y + yinc >= ncy2 || draw_x < ncx1 || draw_x + xinc >= ncx2)
+        if(draw_y < ncy1 || draw_y + yinc > ncy2 || draw_x < ncx1 || draw_x + xinc > ncx2)
             get_fg(fort_num)->im->put_image(screen, draw_x, draw_y);
         else
             get_fg(fort_num)->im->put_image_offseted(screen, sl1);
@@ -1109,7 +1109,7 @@ void Game::draw_map(view *v, int interpolate)
 
   post_render();
 
-  screen->set_clip(cx1, cy1, cx2, cy2);
+  screen->SetClip(cx1, cy1, cx2 + 1, cy2 + 1);
 
 
 
@@ -1886,8 +1886,8 @@ void Game::get_input()
                             } break;
                             case EV_REDRAW:
                             {
-                                screen->add_dirty(ev.redraw.x1, ev.redraw.y1,
-                                    ev.redraw.x2, ev.redraw.y2);
+                                screen->AddDirty(ev.redraw.x1, ev.redraw.y1,
+                                    ev.redraw.x2 + 1, ev.redraw.y2 + 1);
                             } break;
                             case EV_MESSAGE:
                             {
@@ -2146,7 +2146,7 @@ Game::~Game()
 
 void Game::draw(int scene_mode)
 {
-    screen->add_dirty(0, 0, xres, yres);
+    screen->AddDirty(0, 0, xres + 1, yres + 1);
 
     screen->clear();
 
