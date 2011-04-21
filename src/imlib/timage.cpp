@@ -220,46 +220,35 @@ void trans_image::put_scan_line(image *screen, int x, int y, int line)   // alwa
 }
 
 
-inline uint8_t *trans_image::clip_y(image *screen, int x1, int y1, int x2, int y2,
-                   int x, int &y, int &ysteps)
+uint8_t *trans_image::ClipToLine(image *screen, int x1, int y1, int x2, int y2,
+                                 int x, int &y, int &ysteps)
 {
-  // check to see if it is total clipped out first
-  if (y+h<=y1 || y>y2 || x>x2 || x+w<=x1)
-    return NULL;
+    // check to see if it is totally clipped out first
+    if (y + h <= y1 || y >= y2 || x >= x2 || x + w <= x1)
+        return NULL;
 
-  uint8_t *datap=data;
+    uint8_t *parser = data;
 
+    int skiplines = Max(y1 - y, 0); // number of lines to skip
+    ysteps = Min(y2 - y, height() - skiplines); // number of lines to draw
+    y += skiplines; // first line to draw
 
-  ysteps=height();
-
-  if (y<y1)  // check to see if the image gets clipped at the top
-  {
-
-
-    // because data is stored in runs, we need to skip over the top clipped portion
-    int skips=(y1-y);     // how many lines do we need to skip?
-    ysteps-=skips;        // reduce h (number of lines to draw)
-    y=y1;                // start drawing here now
-    while (skips--)
+    while (skiplines--)
     {
-      int ix=0;
-      while (ix<w)
-      {
-        ix+=(*datap);       // skip over empty space
-        datap++;
-        if (ix<w)
-        { ix+=*datap;
-        datap+=(*datap)+1;   // skip over data
+        for (int ix = 0; ix < w; )
+        {
+            ix += *parser++; // skip over empty space
+
+            if (ix >= w)
+                break;
+
+            ix += *parser;
+            parser += *parser + 1; // skip over data
         }
-      }
     }
-  }
 
-  if (y+ysteps>y2)  // check to see if it gets clipped at the bottom
-    ysteps-=(y+ysteps-y2-1);
-
-  screen->AddDirty(Max(x, x1), y, Min(x + width(), x2 + 1), y + h);
-  return datap;
+    screen->AddDirty(Max(x, x1), y, Min(x + width(), x2), y + h);
+    return parser;
 }
 
 void trans_image::put_image_filled(image *screen, int x, int y,
@@ -269,9 +258,10 @@ void trans_image::put_image_filled(image *screen, int x, int y,
   int chop_length,ysteps;
 
   screen->GetClip(x1, y1, x2, y2);
-  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+  uint8_t *datap = ClipToLine(screen, x1, y1, x2, y2, x, y, ysteps),
           *screen_line;
-  if (!datap) return ;     // if clip_y says nothing to draw, return
+  if (!datap)
+    return; // if ClipToLine says nothing to draw, return
 
   screen->Lock();
 
@@ -383,9 +373,9 @@ void trans_image::put_image(image *screen, int x, int y)
   int chop_length,ysteps;
 
   screen->GetClip(x1, y1, x2, y2);
-  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+  uint8_t *datap = ClipToLine(screen, x1, y1, x2, y2, x, y, ysteps),
           *screen_line;
-  if (!datap) return ;     // if clip_y says nothing to draw, return
+  if (!datap) return; // if ClipToLine says nothing to draw, return
 
   screen->Lock();
   screen_line=screen->scan_line(y)+x;
@@ -449,9 +439,9 @@ void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap)
   int chop_length, ysteps;
 
   screen->GetClip(x1, y1, x2, y2);
-  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+  uint8_t *datap = ClipToLine(screen, x1, y1, x2, y2, x, y, ysteps),
           *screen_line;
-  if (!datap) return ;     // if clip_y says nothing to draw, return
+  if (!datap) return; // if ClipToLine says nothing to draw, return
 
   screen->Lock();
   screen_line=screen->scan_line(y)+x;
@@ -528,9 +518,9 @@ void trans_image::put_double_remaped(image *screen, int x, int y, uint8_t *remap
   int chop_length, ysteps;
 
   screen->GetClip(x1, y1, x2, y2);
-  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+  uint8_t *datap = ClipToLine(screen, x1, y1, x2, y2, x, y, ysteps),
           *screen_line;
-  if (!datap) return ;     // if clip_y says nothing to draw, return
+  if (!datap) return; // if ClipToLine says nothing to draw, return
 
   screen->Lock();
   screen_line=screen->scan_line(y)+x;
@@ -609,9 +599,9 @@ void trans_image::put_fade(image *screen, int x, int y,
   int ix,slam_length,chop_length,ysteps;
 
   screen->GetClip(x1, y1, x2, y2);
-  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+  uint8_t *datap = ClipToLine(screen, x1, y1, x2, y2, x, y, ysteps),
           *screen_line;
-  if (!datap) return ;
+  if (!datap) return;
 
   uint8_t *screen_run,*paddr=(uint8_t *)pal->addr(),
                 *caddr1,*caddr2,r_dest,g_dest,b_dest;
@@ -704,9 +694,9 @@ void trans_image::put_fade_tint(image *screen, int x, int y,
   int ix,slam_length,chop_length,ysteps;
 
   screen->GetClip(x1, y1, x2, y2);
-  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+  uint8_t *datap = ClipToLine(screen, x1, y1, x2, y2, x, y, ysteps),
           *screen_line;
-  if (!datap) return ;
+  if (!datap) return;
 
   screen->Lock();
   uint8_t *screen_run,*paddr=(uint8_t *)pal->addr(),
@@ -792,9 +782,9 @@ void trans_image::put_color(image *screen, int x, int y, int color)
   int ix,slam_length,chop_length,ysteps;
 
   screen->GetClip(x1, y1, x2, y2);
-  uint8_t *datap = clip_y(screen, x1, y1, x2, y2, x, y, ysteps),
+  uint8_t *datap = ClipToLine(screen, x1, y1, x2, y2, x, y, ysteps),
           *screen_line;
-  if (!datap) return ;
+  if (!datap) return;
 
   screen->Lock();
   for (; ysteps>0; ysteps--,y++)
@@ -860,9 +850,9 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
   uint8_t *paddr=(uint8_t *)pal->addr();
 
   screen->GetClip(x1, y1, x2, y2);
-  uint8_t *datap=clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+  uint8_t *datap = ClipToLine(screen, x1, y1, x2, y2, x, y, ysteps),
           *blend_line, *screen_line;
-  if (!datap) return ;
+  if (!datap) return;
   CONDITION(y>=blendy && y+ysteps<blendy+blend->Size().y+1,"Blend doesn't fit on trans_image");
 
   blend_amount=16-blend_amount;
@@ -960,9 +950,9 @@ void trans_image::put_predator(image *screen, int x, int y)
   int chop_length,ysteps;
 
   screen->GetClip(x1, y1, x2, y2);
-  uint8_t *datap = clip_y(screen, x1, y1, x2 - 1, y2 - 1, x, y, ysteps),
+  uint8_t *datap = ClipToLine(screen, x1, y1, x2, y2, x, y, ysteps),
           *screen_line;
-  if (!datap) return ;     // if clip_y says nothing to draw, return
+  if (!datap) return; // if ClipToLine says nothing to draw, return
 
   // see if the last scanline is clipped off
   if (y + ysteps == y2 - 1) ysteps -= 2;
