@@ -1446,17 +1446,3 @@ void image::flip_y()
   free(rev);
 }
 
-void image::make_color(uint8_t color)
-{
-  uint8_t *sl;
-  int y, x;
-  Lock();
-  for (y=0; y<m_size.y; y++)
-  {
-    sl=scan_line(y);
-    for (x=m_size.x; x; x--, sl++)
-      if (*sl)
-        *sl=color;
-  }
-  Unlock();
-}

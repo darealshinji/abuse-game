@@ -199,7 +199,6 @@ public:
     uint8_t brightest_color(palette *pal);
     void flip_x();
     void flip_y();
-    void make_color(uint8_t color);
     uint8_t darkest_color(palette *pal, int16_t noblack = 0);
 };
 

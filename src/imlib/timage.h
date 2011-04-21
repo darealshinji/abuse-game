@@ -55,7 +55,6 @@ public :
   void put_predator(image *screen, int x, int y);
   void put_scan_line(image *screen, int x, int y, int line);   // always transparent
   unsigned char *t_data() { return data; }
-  void make_color(int c);
   int size();
   image *make_image();
   ~trans_image() { free(data); }
