@@ -47,8 +47,6 @@ public :
              uint8_t *tint,
              color_filter *f, palette *pal);
   void put_color(image *screen, int x, int y, int color);
-  unsigned char *clip_y(image *screen, int x1, int y1, int x2, int y2,
-                                   int x, int &y, int &ysteps);
 
   void put_blend16(image *screen, image *blend, int x, int y,
                int blendx, int blendy, int blend_amount, color_filter *f, palette *pal);
@@ -61,6 +59,10 @@ public :
   int size();
   image *make_image();
   ~trans_image() { free(data); }
+
+private:
+  uint8_t *ClipToLine(image *screen, int x1, int y1, int x2, int y2,
+                      int x, int &y, int &ysteps);
 } ;
 
 
