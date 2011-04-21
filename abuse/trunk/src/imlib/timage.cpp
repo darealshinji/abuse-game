@@ -14,27 +14,6 @@
 
 #include "timage.h"
 
-void trans_image::make_color(int c)
-{
-  uint8_t *dp=data;
-  int y,x;
-  for (y=0; y<h; y++)
-  {
-    x=0;
-    while(x<w)
-    {
-      x+=*(dp++);
-      if (x<w)
-      {
-    int run=*(dp++);
-    memset(dp,c,run);
-    x+=run;
-    dp+=run;
-      }
-    }
-  }
-}
-
 image *trans_image::make_image()
 {
   image *im=new image(vec2i(w,h));
