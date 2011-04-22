@@ -127,7 +127,7 @@ public :
   void put_bg(int x, int y, int type);
   void draw_map(view *v, int interpolate=0);
   void dev_scroll();
-  void put_block_fg(int x, int y, trans_image *im);
+  void put_block_fg(int x, int y, TImage *im);
   void put_block_bg(int x, int y, image *im);
 
 

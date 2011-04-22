@@ -24,43 +24,42 @@
  *   (no scan line wraps allowed, there can be a last skip value)
  */
 
-class trans_image // transparent image
+class TImage // transparent image
 {
 public:
-    trans_image(image *im, char const *name);
-    ~trans_image();
+    TImage(image *im, char const *name);
+    ~TImage();
 
     inline vec2i Size() { return m_size; }
     inline uint8_t *Data() { return m_data; }
 
     image *ToImage();
 
-    void PutImage(image *screen, int x, int y); // always transparent
-    void PutRemap(image *screen, int x, int y, uint8_t *remap);
-    void PutDoubleRemap(image *screen, int x, int y,
-                        uint8_t *remap, uint8_t *remap2);
-    void PutFade(image *screen, int x, int y, int amount, int total_frames,
+    void PutImage(image *screen, vec2i pos);
+    void PutRemap(image *screen, vec2i pos, uint8_t *map);
+    void PutDoubleRemap(image *screen, vec2i pos, uint8_t *map, uint8_t *map2);
+    void PutFade(image *screen, vec2i pos, int amount, int total_frames,
                  color_filter *f, palette *pal);
-    void PutFadeTint(image *screen, int x, int y, int amount, int total_frames,
+    void PutFadeTint(image *screen, vec2i pos, int amount, int total_frames,
                      uint8_t *tint, color_filter *f, palette *pal);
-    void PutColor(image *screen, int x, int y, uint8_t color);
-    void PutFilled(image *screen, int x, int y, uint8_t color);
-    void PutPredator(image *screen, int x, int y);
-    void PutBlend(image *screen, int x, int y, image *blend, int bx, int by,
+    void PutColor(image *screen, vec2i pos, uint8_t color);
+    void PutFilled(image *screen, vec2i pos, uint8_t color);
+    void PutPredator(image *screen, vec2i pos);
+    void PutBlend(image *screen, vec2i pos, image *blend, vec2i bpos,
                   int blend_amount, color_filter *f, palette *pal);
-    void PutScanLine(image *screen, int x, int y, int line);
+    void PutScanLine(image *screen, vec2i pos, int line);
 
     size_t MemUsage();
 
 private:
-    uint8_t *ClipToLine(image *screen, int x1, int y1, int x2, int y2,
-                        int x, int &y, int &ysteps);
+    uint8_t *ClipToLine(image *screen, vec2i pos1, vec2i pos2,
+                        vec2i &posy, int &ysteps);
 
     enum PutMode { NORMAL, REMAP, REMAP2, FADE, FADE_TINT, COLOR,
                    FILLED, PREDATOR, BLEND, SCANLINE };
     template<int N>
-    void PutImageGeneric(image *dest, int x, int y, uint8_t color,
-                         image *blend, int bx, int by,
+    void PutImageGeneric(image *dest, vec2i pos, uint8_t color,
+                         image *blend, vec2i bpos,
                          uint8_t *map1, uint8_t *map2, int amount,
                          int total_frames, uint8_t *tint,
                          color_filter *f, palette *pal);

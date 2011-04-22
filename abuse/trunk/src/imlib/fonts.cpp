@@ -54,8 +54,8 @@ void JCFont::put_char(image *screen,  int x, int y, char ch, int color)
   if (let[(int)ch])
   {
     if (color>=0)
-      let[(int)ch]->PutColor(screen,x,y,color);
-    else let[(int)ch]->PutImage(screen,x,y);
+      let[(int)ch]->PutColor(screen,vec2i(x,y),color);
+    else let[(int)ch]->PutImage(screen,vec2i(x,y));
   }
 }
 
@@ -73,7 +73,7 @@ JCFont::JCFont(image *letters)
     tmp.clear();
     letters->put_part(&tmp,0,0,((int)ch%32)*tl,((int)ch/32)*th,
               ((int)ch%32)*tl+tl-1,((int)ch/32)*th+th-1,1);
-    let[ch]=new trans_image(&tmp,"JCfont");
+    let[ch]=new TImage(&tmp,"JCfont");
   }
 }
 

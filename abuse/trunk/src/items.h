@@ -43,7 +43,7 @@ public :
 class foretile
 {
 public :
-  trans_image *im;
+  TImage *im;
   uint16_t next;
   uint8_t damage;
   uint8_t ylevel;            // for fast intersections, this is the y level offset for the ground
@@ -60,7 +60,7 @@ public :
 class figure
 {
 public :
-  trans_image *forward,*backward;
+  TImage *forward,*backward;
   uint8_t hit_damage,xcfg;
   int8_t advance;
   point_list *hit;

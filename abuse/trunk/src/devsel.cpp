@@ -111,7 +111,7 @@ void tile_picker::scroll_event(int newx, image *screen)
         else
         {
           im.clear();
-          the_game->get_fg(i)->im->PutImage(&im,0,0);
+          the_game->get_fg(i)->im->PutImage(&im,vec2i(0,0));
 
           if (rev)
           {
@@ -130,7 +130,7 @@ void tile_picker::scroll_event(int newx, image *screen)
       } break;
       case SPEC_CHARACTER :
       {
-        figures[i]->get_sequence(stopped)->get_figure(0)->forward->PutImage(&im,0,0);
+        figures[i]->get_sequence(stopped)->get_figure(0)->forward->PutImage(&im,vec2i(0,0));
         scale_put(&im,screen,xo,yo,xw,ya);
       } break;
     }

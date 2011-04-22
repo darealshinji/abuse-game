@@ -236,7 +236,7 @@ void show_end2()
       if (i>=30 && i<=37)
       {
     cache.img(planet)->put_image(tcopy,0,0);
-    cache.fig(explo_frames1[i-30])->forward->PutImage(tcopy,100,50);
+    cache.fig(explo_frames1[i-30])->forward->PutImage(tcopy,vec2i(100,50));
         scan_map(screen,ex,ey,tcopy,
            cache.img(planet2),
            0,paddr,
@@ -319,7 +319,7 @@ void show_end2()
     {
       last=c;
       if (c->char_num)
-        cache.fig(explo_frames2[c->frame])->forward->PutImage(screen,c->x,c->y);
+        cache.fig(explo_frames2[c->frame])->forward->PutImage(screen,vec2i(c->x,c->y));
 
       c->x-=3;
       c=c->next;
