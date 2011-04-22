@@ -206,14 +206,10 @@ public :
 
 uint16_t read_uint16(FILE *fp);
 uint32_t read_uint32(FILE *fp);
-uint32_t read_other_uint32(FILE *fp);
-uint16_t read_other_uint16(FILE *fp);
 uint8_t read_uint8(FILE *fp);
 
 void write_uint16(FILE *fp, uint16_t x);
 void write_uint32(FILE *fp, uint32_t x);
-void write_other_uint16(FILE *fp, uint16_t x);
-void write_other_uint32(FILE *fp, uint32_t x);
 void write_uint8(FILE *fp, uint8_t x);
 
 void set_spec_main_file(char *filename, int Search_order);

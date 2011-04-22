@@ -599,7 +599,7 @@ uint16_t bFILE::read_uint16()
 {
   uint16_t x;
   read(&x,2);
-  return uint16_to_local(x);
+  return lstl(x);
 }
 
 
@@ -607,7 +607,7 @@ uint32_t bFILE::read_uint32()
 {
   uint32_t x;
   read(&x,4);
-  return uint32_to_local(x);
+  return lltl(x);
 }
 
 void bFILE::write_uint8(uint8_t x)
@@ -617,14 +617,14 @@ void bFILE::write_uint8(uint8_t x)
 
 void bFILE::write_uint16(uint16_t x)
 {
-  x=uint16_to_local(x);
+  x=lstl(x);
   write(&x,2);
 }
 
 
 void bFILE::write_uint32(uint32_t x)
 {
-  x=uint32_to_local(x);
+  x=lltl(x);
   write(&x,4);
 }
 
@@ -887,9 +887,9 @@ int spec_directory::write(bFILE *fp)
     flags=0;
     if (fp->write(&flags,1)!=1)                     return 0;
 
-    data_size=uint32_to_intel((*e)->size);
+    data_size=lltl((*e)->size);
     if (fp->write((char *)&data_size,4)!=4)              return 0;
-    offset=uint32_to_intel((*e)->offset);
+    offset=lltl((*e)->offset);
     if (fp->write((char *)&offset,4)!=4)                  return 0;
 
   }
@@ -913,56 +913,29 @@ uint16_t read_uint16(FILE *fp)
 {
   uint16_t x;
   fread(&x,1,2,fp);
-  return uint16_to_local(x);
+  return lstl(x);
 }
 
 uint32_t read_uint32(FILE *fp)
 {
   uint32_t x;
   fread(&x,1,4,fp);
-  return uint32_to_local(x);
+  return lltl(x);
 }
 void write_uint16(FILE *fp, uint16_t x)
 {
-  x=uint16_to_local(x);
+  x=lstl(x);
   fwrite(&x,1,2,fp);
 }
 
 void write_uint32(FILE *fp, uint32_t x)
 {
-  x=uint32_to_local(x);
+  x=lltl(x);
   fwrite(&x,1,4,fp);
 }
 
 uint8_t read_uint8(FILE *fp) { return fgetc(fp)&0xff; }
 void write_uint8(FILE *fp, uint8_t x) { fputc((unsigned char)x,fp); }
-
-uint32_t read_other_uint32(FILE *fp)
-{
-  uint32_t x;
-  fread(&x,1,4,fp);
-  return big_uint32_to_local(x);
-}
-
-uint16_t read_other_uint16(FILE *fp)
-{
-  uint16_t x;
-  fread(&x,1,2,fp);
-  return big_uint16_to_local(x);
-}
-
-
-void write_other_uint16(FILE *fp, uint16_t x)
-{
-  x=big_uint16_to_local(x);
-  fwrite(&x,1,2,fp);
-}
-
-void write_other_int32(FILE *fp, uint32_t x)
-{
-  x=big_uint32_to_local(x);
-  fwrite(&x,1,4,fp);
-}
 
 void spec_directory::remove(spec_entry *e)
 {
