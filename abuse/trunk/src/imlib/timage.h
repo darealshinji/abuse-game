@@ -24,13 +24,12 @@
 
 class trans_image       // transpernet image
 {
-  unsigned char *data;
-  short w,h;
-
-public :
-  short height() { return h; }
-  short width() { return w; }
+public:
   trans_image(image *im, char const *name);  // name has no meaning if MEM_CHECK is off
+
+  inline vec2i Size() { return m_size; }
+  uint8_t *Data() { return m_data; }
+
   void put_image(image *screen, int x, int y);   // always transparent
 
   // if screen x & y offset already calculated save a mul
@@ -53,20 +52,17 @@ public :
   void put_remaped(image *screen, int x, int y, unsigned char *remap);
   void put_predator(image *screen, int x, int y);
   void put_scan_line(image *screen, int x, int y, int line);   // always transparent
-  unsigned char *t_data() { return data; }
-  int size();
+  size_t MemUsage();
   image *make_image();
-  ~trans_image() { free(data); }
+  ~trans_image();
 
 private:
   uint8_t *ClipToLine(image *screen, int x1, int y1, int x2, int y2,
                       int x, int &y, int &ysteps);
-} ;
 
+  vec2i m_size;
+  uint8_t *m_data;
+};
 
 #endif
-
-
-
-
 

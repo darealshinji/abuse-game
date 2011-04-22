@@ -15,15 +15,13 @@
 #include "seq.h"
 #include "lisp.h"
 
-int sequence::size()
+size_t sequence::MemUsage()
 {
-  int t=0;
-  for (int i=0; i<total; i++)
-  {
-    if (cache.loaded(seq[i]))
-      t+=cache.fig(seq[i])->size();
-  }
-  return t;
+    size_t t = 0;
+    for (int i = 0; i < total; i++)
+        if (cache.loaded(seq[i]))
+            t += cache.fig(seq[i])->MemUsage();
+    return t;
 }
 
 int sequence::cache_in()

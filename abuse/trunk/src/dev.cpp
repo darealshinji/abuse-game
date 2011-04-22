@@ -3326,7 +3326,7 @@ static int get_char_mem(int type, int print)
   {
     if (figures[type]->has_sequence((character_state)j))
     {
-      int s=figures[type]->get_sequence((character_state)j)->size();
+      int s=figures[type]->get_sequence((character_state)j)->MemUsage();
       if (print)
         dprintf("(%s=%d)",state_names[j],s);
       t+=s;

@@ -182,7 +182,7 @@ void *top_ai()
           q->x-=4;
 
     o->x=q->x;
-    o->y=q->y+29-q->picture()->height();
+    o->y=q->y+29-q->picture()->Size().y;
 
     rand_on+=o->lvars[point_angle];
     o->current_frame=best_num;
@@ -652,7 +652,7 @@ void *cop_mover(int xm, int ym, int but)
     undo_special_power(o);
     ret=player_move(o,xm,ym,but);
     top->x=o->x;
-    top->y=o->y+29-top->picture()->height();
+    top->y=o->y+29-top->picture()->Size().y;
 
     if ((but&2) && !o->lvars[is_teleporting] && o->state!=S_climbing && o->state!=S_climb_off)
     {
@@ -752,7 +752,7 @@ void *top_draw()
       o->x=bot->x;
       if (bot->direction<0)
         o->x+=4;
-      o->y=bot->y+29-bot->picture()->height();
+      o->y=bot->y+29-bot->picture()->Size().y;
 
       void *ret=NULL;
       PtrRef r1(ret);

@@ -27,10 +27,10 @@
 super_morph::super_morph(trans_image *hint1, trans_image *hint2,
              int aneal_steps, void (*stat_fun)(int))
 {
-  int x,y,w1=hint1->width(),
-          h1=hint1->height(),
-          w2=hint2->width(),
-          h2=hint2->height();
+  int x,y,w1=hint1->Size().x,
+          h1=hint1->Size().y,
+          w2=hint2->Size().x,
+          h2=hint2->Size().y;
   if (w1>w2) w=w1; else w=w2;
   if (h1>h2) h=h1; else h=h2;
   unsigned char *dp;
@@ -40,7 +40,7 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
   memset(hints1,0,256*2);
   memset(hints2,0,256*2);
 
-  dp=hint1->t_data();
+  dp=hint1->Data();
   for (y=0; y<h1; y++)
   {
     x=0;
@@ -57,7 +57,7 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
   }
 
   // hint2 image2
-  dp=hint2->t_data();
+  dp=hint2->Data();
   for (y=0; y<h2; y++)
   {
     x=0;
@@ -101,7 +101,7 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
 
 
   /**************** Now scan the images again setup hints *********************/
-  dp=hint1->t_data();
+  dp=hint1->Data();
   for (y=0; y<h1; y++)
   {
     x=0;
@@ -123,7 +123,7 @@ super_morph::super_morph(trans_image *hint1, trans_image *hint2,
     }
   }
 
-  dp=hint2->t_data();
+  dp=hint2->Data();
   for (y=0; y<h2; y++)
   {
     x=0;

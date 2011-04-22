@@ -53,7 +53,7 @@ public :
   image *micro_image;
 
   foretile(bFILE *fp);
-  int32_t size() { return im->width()*im->height()+4+2+1+points->size(); }
+  int32_t size() { return im->Size().x*im->Size().y+4+2+1+points->size(); }
   ~foretile() { delete im; delete points; delete micro_image; }
 } ;
 
@@ -65,25 +65,14 @@ public :
   int8_t advance;
   point_list *hit;
   boundary *f_damage,*b_damage;
-  int size();
+  size_t MemUsage();
 
   figure(bFILE *fp, int type);
-  int width() { return forward->width(); }
-  int height() { return forward->height(); }
+  int width() { return forward->Size().x; }
+  int height() { return forward->Size().y; }
 
-/*  int32_t size(int type)         // taken from spaint items
-  {
-    if
-    return forward->width()*backward->height()+4+
-                       1+1+       // hit & xcfg
-               touch->size()+
-               hit->size()+
-               damage->size();
-  }*/
-
-  ~figure() { delete forward; delete backward;
-          delete hit;
-          delete f_damage; delete b_damage; }
+  ~figure() { delete forward; delete backward; delete hit;
+              delete f_damage; delete b_damage; }
 } ;
 
 class char_tint
