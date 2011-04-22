@@ -105,90 +105,6 @@ image *trans_image::ToImage()
     return im;
 }
 
-void trans_image::put_scan_line(image *screen, int x, int y, int line)   // always transparent
-{
-  int x1, y1, x2, y2;
-  screen->GetClip(x1, y1, x2, y2);
-  if (y + line < y1 || y + line >= y2 || x >= x2 || x + m_size.x - 1 < x1)
-    return; // clipped off completely?
-
-  uint8_t *datap=m_data;
-  int ix;
-  while (line)            // skip scan line data until we get to the line of interest
-  {
-    for (ix=0; ix<m_size.x; )
-    {
-      ix+=*datap;        // skip blank space
-      datap++;
-      if (ix<m_size.x)
-      {
-    int run_length=*datap;     // skip run
-    ix+=run_length;
-    datap+=run_length+1;
-      }
-    }
-    line--;
-    y++;
-  }
-
-
-  // now slam this list of runs to the screen
-  screen->Lock();
-  uint8_t *screen_line=screen->scan_line(y)+x;
-
-  for (ix=0; ix<m_size.x; )
-  {
-    int skip=*datap;              // how much space to skip?
-    datap++;
-    screen_line+=skip;
-    ix+=skip;
-
-    if (ix<m_size.x)
-    {
-      int run_length=*datap;
-      datap++;
-
-      if (x+ix+run_length-1<x1)      // is this run clipped out totally?
-      {
-    datap+=run_length;
-    ix+=run_length;
-    screen_line+=run_length;
-      }
-      else
-      {
-    if (x+ix<x1)                 // is the run clipped partially?
-    {
-      int clip=(x1-(x+ix));
-      datap+=clip;
-      run_length-=clip;
-      screen_line+=clip;
-      ix+=clip;
-    }
-
-    if (x + ix >= x2)                      // clipped totally on the right?
-        {
-          screen->Unlock();
-          return ;                        // we are done, return!
-        }
-    else if (x + ix + run_length > x2)    // partially clipped?
-    {
-      memcpy(screen_line, datap, x + ix + run_length - x2); // slam what we can
-      screen->Unlock();
-      return ;    // and return 'cause we are done with the line
-        } else
-        {
-      memcpy(screen_line,datap,run_length);
-      screen_line+=run_length;
-        datap+=run_length;
-        ix+=run_length;
-        }
-      }
-    }
-  }
-  screen->Unlock();
-}
-
-
 uint8_t *trans_image::ClipToLine(image *screen, int x1, int y1, int x2, int y2,
                                  int x, int &y, int &ysteps)
 {
@@ -220,12 +136,6 @@ uint8_t *trans_image::ClipToLine(image *screen, int x1, int y1, int x2, int y2,
     return parser;
 }
 
-void trans_image::PutFilled(image *screen, int x, int y, uint8_t color)
-{
-    PutImageGeneric<FILLED>(screen, x, y, color, NULL, 0, 0, NULL, NULL,
-                            0, 1, NULL, NULL, NULL);
-}
-
 template<int N>
 void trans_image::PutImageGeneric(image *screen, int x, int y, uint8_t color,
                                   image *blend, int bx, int by,
@@ -237,6 +147,15 @@ void trans_image::PutImageGeneric(image *screen, int x, int y, uint8_t color,
     int ysteps, mul = 0;
 
     screen->GetClip(x1, y1, x2, y2);
+
+    if (N == SCANLINE)
+    {
+        y1 = Max(y1, y + amount);
+        y2 = Min(y2, y + amount + 1);
+        if (y1 >= y2)
+            return;
+    }
+
     uint8_t *datap = ClipToLine(screen, x1, y1, x2, y2, x, y, ysteps),
             *screen_line, *blend_line = NULL, *paddr = NULL;
     if (!datap)
@@ -293,7 +212,7 @@ void trans_image::PutImageGeneric(image *screen, int x, int y, uint8_t color,
             // Chop right side if necessary and process the remaining pixels
             int count = Min(todo, Max(x2 - ix, 0));
 
-            if (N == NORMAL)
+            if (N == NORMAL || N == SCANLINE)
             {
                 memcpy(screen_line, datap, count);
             }
@@ -311,7 +230,7 @@ void trans_image::PutImageGeneric(image *screen, int x, int y, uint8_t color,
                 while (count--)
                     *sl++ = remap[*sl2++];
             }
-            else if (N == DOUBLE_REMAP)
+            else if (N == REMAP2)
             {
                 uint8_t *sl = screen_line, *sl2 = datap;
                 while (count--)
@@ -360,8 +279,8 @@ void trans_image::PutRemap(image *screen, int x, int y, uint8_t *remap)
 void trans_image::PutDoubleRemap(image *screen, int x, int y,
                                  uint8_t *remap, uint8_t *remap2)
 {
-    PutImageGeneric<DOUBLE_REMAP>(screen, x, y, 0, NULL, 0, 0, remap, remap2,
-                                  0, 1, NULL, NULL, NULL);
+    PutImageGeneric<REMAP2>(screen, x, y, 0, NULL, 0, 0, remap, remap2,
+                            0, 1, NULL, NULL, NULL);
 }
 
 // Used when eg. the player teleports, or in rocket trails
@@ -397,10 +316,22 @@ void trans_image::PutBlend(image *screen, int x, int y,
                            amount, 1, NULL, f, pal);
 }
 
+void trans_image::PutFilled(image *screen, int x, int y, uint8_t color)
+{
+    PutImageGeneric<FILLED>(screen, x, y, color, NULL, 0, 0, NULL, NULL,
+                            0, 1, NULL, NULL, NULL);
+}
+
 void trans_image::PutPredator(image *screen, int x, int y)
 {
     PutImageGeneric<PREDATOR>(screen, x, y, 0, NULL, 0, 0, NULL, NULL,
                               0, 1, NULL, NULL, NULL);
+}
+
+void trans_image::PutScanLine(image *screen, int x, int y, int line)
+{
+    PutImageGeneric<SCANLINE>(screen, x, y, 0, NULL, 0, 0, NULL, NULL,
+                              line, 1, NULL, NULL, NULL);
 }
 
 size_t trans_image::MemUsage()
