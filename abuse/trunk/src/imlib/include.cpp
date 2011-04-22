@@ -34,9 +34,7 @@ void write_include(image *im, palette *pal, char *filename, char *name)
   }
   else fp=fopen(filename,"wb");
 
-  if (!fp)
-    set_error(imWRITE_ERROR);
-  else
+  if (fp)
   {
     fprintf(fp,"/* File produced by Satan Paint (c) 1994 Jonathan Clark */\n\n");
     if (!append)
@@ -68,7 +66,7 @@ void write_include(image *im, palette *pal, char *filename, char *name)
             fprintf(fp,",\n    ");
           else fprintf(fp,", ");
       }
+    fclose(fp);
   }
-  fclose(fp);
 }
 

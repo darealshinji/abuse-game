@@ -25,62 +25,10 @@
 #include "system.h"
 #include "system.h"
 
-extern uint8_t current_background;
-
-char const *imerr_messages[] =
-{
-    "No error",
-    "Error occurred while reading",
-    "Incorrect file type",
-    "File is corrupted",
-    "File not found",
-    "Memory allocation trouble",
-    "Operation/file type not supported",
-    "Error occurred while writing, (disk full?)"
-};
-
-
-int16_t imerror=0;
-int16_t swpfile_num=0;
-
-int16_t current_error()
-{ return imerror; }
-
-void clear_errors()
-{
-  if (imerror)
-  { printf("Program stopped, error : ");
-    if (imerror<=imMAX_ERROR)
-      printf("%s\n", imerr_messages[imerror]);
-    else
-      printf("Unsonsponsered error code, you got trouble\n");
-#ifdef __DOS_ONLY
-    sound(300);
-    delay(100);
-    nosound();
-#else
-    printf("%c%c\n", 7, 8);
-#endif
-    exit(1);
-  }
-}
-
-void set_error(int16_t x)
-{ imerror=x; }
-
-int16_t last_error()
-{
-  int16_t ec;
-  ec=imerror;
-  imerror=0;
-  return ec;
-}
-
-linked_list image_list;
-
+linked_list image_list; // FIXME: only jwindow.cpp needs this
 
 image_descriptor::image_descriptor(vec2i size,
-                   int keep_dirties, int static_memory)
+                                   int keep_dirties, int static_memory)
 {
     m_clipx1 = 0; m_clipy1 = 0;
     m_l = size.x; m_h = size.y;
@@ -144,35 +92,19 @@ void image::PutPixel(vec2i pos, uint8_t color)
 image::image(vec2i size, uint8_t *page_buffer, int create_descriptor)
 {
     m_size = size;
+    m_special = NULL;
     if (create_descriptor || page_buffer)
-    {
-        if (create_descriptor==2)
-            m_special=new image_descriptor(size, 1, (page_buffer!=NULL));
-        else
-            m_special=new image_descriptor(size, 0, (page_buffer!=NULL));
-    }
-    else
-        m_special = NULL;
+        m_special = new image_descriptor(size, create_descriptor == 2,
+                                         (page_buffer != NULL));
     MakePage(size, page_buffer);
     image_list.add_end(this);
     m_locked = false;
 }
 
-image::image(spec_entry *e, bFILE *fp)
+image::image(bFILE *fp, spec_entry *e /* = NULL */)
 {
-    fp->seek(e->offset, 0);
-    m_size.x = fp->read_uint16();
-    m_size.y = fp->read_uint16();
-    m_special = NULL;
-    MakePage(m_size, NULL);
-    for (int i = 0; i < m_size.y; i++)
-        fp->read(scan_line(i), m_size.x);
-    image_list.add_end(this);
-    m_locked = false;
-}
-
-image::image(bFILE *fp)
-{
+    if (e)
+        fp->seek(e->offset, 0);
     m_size.x = fp->read_uint16();
     m_size.y = fp->read_uint16();
     m_special = NULL;
@@ -203,57 +135,25 @@ void image::Unlock()
 
 void image_uninit()
 {
-    /* FIXME: is this used at all? */
-/*  image *im;
-  while (image_list.first())
-  {
-    im=(image *)image_list.first();
-    image_list.unlink(im);
-    delete im;
-  } */
+    while (image_list.first())
+    {
+        image *im = (image *)image_list.first();
+        image_list.unlink(im);
+        delete im;
+    }
 }
 
-
-void image_cleanup(int ret, void *arg)
-{ image_uninit(); }
 
 void image_init()
 {
-  uint8_t bt[2];
-  uint16_t wrd, *up;
-  bt[0]=1;
-  bt[1]=0;
-  up=(uint16_t *)bt;
-  wrd=uint16_to_intel(*up);
-  if (wrd!=0x01)
-  { printf("compiled with wrong endianness, edit system.h and try again\n");
-    printf("1 (intel) = %d\n", (int)wrd);
-    exit(1);
-  }
-  imerror=0;
-}
-
-
-int32_t image::total_pixels(uint8_t background)
-{
-    int ret = 0;
-    Lock();
-    for(int i = 0; i < m_size.y; i++)
-    {
-        uint8_t *c = scan_line(i);
-        for (int x = 0; x < m_size.x; x++)
-            if (c[x] != background)
-                ret++;
-    }
-    Unlock();
-    return ret;
+    ;
 }
 
 void image::clear(int16_t color)
 {
     Lock();
     if(color == -1)
-        color = current_background;
+        color = 0; // transparent
     if(m_special)
     {
         if(m_special->x1_clip() < m_special->x2_clip())
@@ -473,7 +373,7 @@ void image::put_image(image *screen, int16_t x, int16_t y, char transparent)
                     i < xl;
                     i++, source++, dest++)
                 {
-                    if(*source != current_background)
+                    if (*source)
                         *dest = *source;
                 }
             }
@@ -594,7 +494,7 @@ void image::put_part(image *screen, int16_t x, int16_t y,
     for (j=0; j<ylen; j++)
     {
       for (i=0, source=&pg2[x1], dest=&pg1[x]; i<xlen; i++, source++, dest++)
-        if (*source!=current_background) *dest=*source;
+        if (*source) *dest=*source;
       pg1=screen->next_line(y+j, pg1);
       pg2=next_line(y1+j, pg2);
     }
@@ -667,7 +567,7 @@ void image::put_part_xrev(image *screen, int16_t x, int16_t y,
       if (transparent)
       {
     for (i=0, source=&pg2[x1], dest=&pg1[x+xl-1]; i<xl; i++, source++, dest--)
-          if (*source!=current_background) *dest=*source;
+          if (*source) *dest=*source;
       }
       else
     for (i=0, source=&pg2[x1], dest=&pg1[x+xl-1]; i<xl; i++, source++, dest++)
@@ -743,51 +643,6 @@ void image::put_part_masked(image *screen, image *mask, int16_t x, int16_t y,
     mask->Unlock();
     screen->Unlock();
   }
-}
-
-
-
-uint8_t image::brightest_color(palette *pal)
-{ uint8_t *p, r, g, b, bri;
-  int16_t i, j;
-  int32_t brv;
-  brv=0; bri=0;
-  Lock();
-  for (j=0; j<m_size.y; j++)
-  {
-    p=scan_line(j);
-    for (i=0; i<m_size.x; i++)
-    { pal->get(p[i], r, g, b);
-      if ((int32_t)r*(int32_t)g*(int32_t)b>brv)
-      { brv=(int32_t)r*(int32_t)g*(int32_t)b;
-    bri=p[i];
-      }
-    }
-  }
-  Unlock();
-  return bri;
-}
-
-uint8_t image::darkest_color(palette *pal, int16_t noblack)
-{ uint8_t *p, r, g, b, bri;
-  int16_t i, j;
-  int32_t brv, x;
-  brv=(int32_t)258*(int32_t)258*(int32_t)258; bri=0;
-  Lock();
-  for (j=0; j<m_size.y; j++)
-  {
-    p=scan_line(j);
-    for (i=0; i<m_size.x; i++)
-    { pal->get(p[i], r, g, b);
-      x=(int32_t)r*(int32_t)g*(int32_t)b;
-      if (x<brv && (x || !noblack))
-      { brv=x;
-    bri=p[i];
-      }
-    }
-  }
-  Unlock();
-  return bri;
 }
 
 void image::rectangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)

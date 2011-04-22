@@ -74,7 +74,7 @@ int light_connection_color;
 
 image *load_image(spec_entry *e, bFILE *fp)
 {
-    image *im = new image(e, fp);
+    image *im = new image(fp, e);
     if (scale_mult != 1 || scale_div != 1)
         im->Scale(im->Size() * scale_mult / scale_div);
     return im;

@@ -50,10 +50,7 @@ void write_PCX(image *im, palette *pal, char const *filename)
 {
   FILE *fp=fopen(filename,"wb");
   if (!fp)
-  {
-    set_error(imWRITE_ERROR);
     return ;
-  }
 
   PCX_header.manufactururer=10;
   PCX_header.version=5;
@@ -73,8 +70,8 @@ void write_PCX(image *im, palette *pal, char const *filename)
 
   if (!write_PCX_header(fp))
   {
-    set_error( imWRITE_ERROR);
-    return ;
+    fclose(fp);
+    return;
   }
 
   int y,run_length,x;

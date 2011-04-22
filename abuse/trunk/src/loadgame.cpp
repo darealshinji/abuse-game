@@ -179,7 +179,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
             spec_entry *se=sd.find("thumb nail");
             if (se && se->type==SPEC_IMAGE)
             {
-                thumb_nails[start_num]=new image(se,fp);
+                thumb_nails[start_num] = new image(fp, se);
                 if (thumb_nails[start_num]->Size().x>max_w) max_w=thumb_nails[start_num]->Size().x;
                 if (thumb_nails[start_num]->Size().y>max_h) max_h=thumb_nails[start_num]->Size().y;
                 if (!first) first=thumb_nails[start_num];
