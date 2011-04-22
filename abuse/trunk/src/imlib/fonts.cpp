@@ -54,8 +54,8 @@ void JCFont::put_char(image *screen,  int x, int y, char ch, int color)
   if (let[(int)ch])
   {
     if (color>=0)
-      let[(int)ch]->put_color(screen,x,y,color);
-    else let[(int)ch]->put_image(screen,x,y);
+      let[(int)ch]->PutColor(screen,x,y,color);
+    else let[(int)ch]->PutImage(screen,x,y);
   }
 }
 
