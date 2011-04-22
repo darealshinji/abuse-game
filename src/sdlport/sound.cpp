@@ -68,7 +68,9 @@ public:
     }
 };
 
+#ifndef USE_SDL_MIXER
 static effect_handle * fx_list = NULL;
+#endif
 extern flags_struct flags;
 static int sound_enabled = 0;
 static SDL_AudioSpec audioObtained;
@@ -120,7 +122,6 @@ void mix_audio(void *udata, Uint8 *stream, int len)
 //
 int sound_init( int argc, char **argv )
 {
-    SDL_AudioSpec audioWanted;
     char *sfxdir, *datadir;
     FILE *fd = NULL;
 
@@ -128,7 +129,7 @@ int sound_init( int argc, char **argv )
     if( flags.nosound )
     {
         // User requested that sound be disabled
-        printf( "Sound : Disabled (-nosound)\n" );
+        printf( "Sound: Disabled (-nosound)\n" );
         return 0;
     }
 
@@ -139,7 +140,7 @@ int sound_init( int argc, char **argv )
     if( (fd = fopen( sfxdir,"r" )) == NULL )
     {
         // Didn't find the directory, so disable sound.
-        printf( "Sound : Disabled (couldn't find the sfx directory)\n" );
+        printf( "Sound: Disabled (couldn't find the sfx directory)\n" );
         return 0;
     }
     free( sfxdir );
@@ -147,7 +148,7 @@ int sound_init( int argc, char **argv )
 #ifdef USE_SDL_MIXER
     if (Mix_OpenAudio(11025, AUDIO_U8, 2, 128) < 0)
     {
-        printf( "Sound : Unable to open audio - %s\nSound : Disabled (error)\n", SDL_GetError() );
+        printf( "Sound: Unable to open audio - %s\nSound: Disabled (error)\n", SDL_GetError() );
         return 0;
     }
 
@@ -158,7 +159,10 @@ int sound_init( int argc, char **argv )
     audioObtained.channels = tempChannels & 0xFF;
 
     sound_enabled = SFX_INITIALIZED | MUSIC_INITIALIZED;
+
+    printf( "Music: Enabled\n" );
 #else
+    SDL_AudioSpec audioWanted;
     audioWanted.freq = 11025;
     audioWanted.format = AUDIO_U8;
     audioWanted.channels = 2 - flags.mono;
@@ -169,7 +173,7 @@ int sound_init( int argc, char **argv )
     // Now open the audio device
     if( SDL_OpenAudio( &audioWanted, &audioObtained ) < 0 )
     {
-        printf( "Sound : Unable to open audio - %s\nSound : Disabled (error)\n", SDL_GetError() );
+        printf( "Sound: Unable to open audio - %s\nSound: Disabled (error)\n", SDL_GetError() );
         return 0;
     }
 
@@ -178,7 +182,7 @@ int sound_init( int argc, char **argv )
     sound_enabled = SFX_INITIALIZED;
 #endif
 
-    printf( "Sound : Enabled\n" );
+    printf( "Sound: Enabled\n" );
 
     // It's all good
     return sound_enabled;
@@ -298,7 +302,7 @@ void sound_effect::play( int volume, int pitch, int panpot )
         fx_list = new effect_handle( fx_list );
         if( fx_list == NULL )
         {
-            printf( "Sound : ERROR - Failed to create new effect.\n" );
+            printf( "Sound: ERROR - Failed to create new effect.\n" );
             SDL_UnlockAudio();
             return;
         }
@@ -360,7 +364,7 @@ void sound_effect::play( int volume, int pitch, int panpot )
 
 // Play music using SDL_Mixer
 
-song::song( char const * filename )
+song::song(char const * filename)
 {
     data = NULL;
     Name = strdup(filename);
@@ -377,29 +381,34 @@ song::song( char const * filename )
     unsigned int data_size;
     data = load_hmi(realname, data_size);
 
-    if (data)
+    if (!data)
     {
-        rw = SDL_RWFromMem(data, data_size);
-        music = Mix_LoadMUS_RW(rw);
+        printf("Music: ERROR - could not load %s\n", realname);
+        return;
+    }
+
+    rw = SDL_RWFromMem(data, data_size);
+    music = Mix_LoadMUS_RW(rw);
+
+    if (!music)
+    {
+        printf("Music: ERROR - %s while loading %s\n",
+               Mix_GetError(), realname);
+        return;
     }
 #endif
 }
 
 song::~song()
 {
-    if( playing() )
-    {
+    if(playing())
         stop();
-    }
-    if( data )
-    {
-        free( data );
-    }
-    free( Name );
+    free(data);
+    free(Name);
 
 #ifdef USE_SDL_MIXER
-    Mix_FreeMusic(this->music);
-    SDL_FreeRW(this->rw);
+    Mix_FreeMusic(music);
+    SDL_FreeRW(rw);
 #endif
 }
 
