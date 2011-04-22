@@ -285,7 +285,7 @@ figure::figure(bFILE *fp, int type)
 {
   image *im=load_image(fp);
   forward=new trans_image(im,"figure data");
-  im->flip_x();
+  im->FlipX();
   backward=new trans_image(im,"figure backward data");
   delete im;
 
