@@ -44,10 +44,6 @@ public:
   void PutBlend(image *screen, int x, int y, image *blend, int bx, int by,
                 int blend_amount, color_filter *f, palette *pal);
 
-  // if screen x & y offset already calculated save a mul
-  // and no clipping, but fast use this
-  void put_image_offseted(image *screen, uint8_t *s_off);
-
   void put_scan_line(image *screen, int x, int y, int line);   // always transparent
   size_t MemUsage();
   image *make_image();

@@ -932,9 +932,8 @@ void Game::draw_map(view *v, int interpolate)
     if(y < fg_h)
       cl = current_level->get_fgline(y)+x1;
     else cl = NULL;
-    uint8_t *sl1 = draw_y < ncy1 ? 0 : screen->scan_line(draw_y)+xo;
 
-    for(x = x1, draw_x = xo; x <= x2; x++, draw_x += xinc, cl++, sl1 += xinc)
+    for(x = x1, draw_x = xo; x <= x2; x++, draw_x += xinc, cl++)
     {
       if(x < fg_w && y < fg_h)
       {
@@ -945,10 +944,7 @@ void Game::draw_map(view *v, int interpolate)
           int fort_num = fgvalue(*cl);
           if(fort_num != BLACK)
           {
-        if(draw_y < ncy1 || draw_y + yinc > ncy2 || draw_x < ncx1 || draw_x + xinc > ncx2)
             get_fg(fort_num)->im->PutImage(screen, draw_x, draw_y);
-        else
-            get_fg(fort_num)->im->put_image_offseted(screen, sl1);
 
         if(!(dev & EDIT_MODE))
             *cl|=0x8000;      // mark as has - been - seen

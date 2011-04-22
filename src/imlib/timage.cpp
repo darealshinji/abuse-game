@@ -240,45 +240,6 @@ void trans_image::PutFilled(image *screen, int x, int y, uint8_t color)
                             0, 1, NULL, NULL, NULL);
 }
 
-void trans_image::put_image_offseted(image *screen, uint8_t *s_off)   // if screen x & y offset already calculated save a mul
-{
-  int ix,ysteps=m_size.y;
-  int screen_skip;
-  uint8_t skip,*datap=m_data;
-
-  screen->Lock();
-  screen_skip = screen->Size().x - m_size.x;
-  for (; ysteps; ysteps--)
-  {
-    for (ix=0; ix<m_size.x; )
-    {
-      skip=*datap;       // skip leading blank space
-      datap++;
-      ix+=skip;
-      s_off+=skip;
-
-      if (s_off<screen->scan_line(0))
-          printf("bad write in trans_image::put_image_offseted");
-
-
-      if (ix<m_size.x)
-      {
-    skip=*datap;
-    datap++;
-    memcpy(s_off,datap,skip);
-    datap+=skip;
-    s_off+=skip;
-    ix+=skip;
-
-    if (s_off>=screen->scan_line(screen->Size().y+1))
-            printf("bad write in trans_image::put_image_offseted");
-      }
-    }
-    s_off+=screen_skip;
-  }
-  screen->Unlock();
-}
-
 template<int N>
 void trans_image::PutImageGeneric(image *screen, int x, int y, uint8_t color,
                                   image *blend, int bx, int by,
