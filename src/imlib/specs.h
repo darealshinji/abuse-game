@@ -114,7 +114,6 @@ class bFILE     // base file type which other files should be derived from (jFIL
     void write_uint32(uint32_t x);
     void write_uint8(uint8_t x);
     void write_double(double x);
-    void set_read_buffer_size(long size);
 };
 
 class jFILE : public bFILE     // this file type will use virtual opens inside of a spe
