@@ -14,109 +14,95 @@
 
 #include "timage.h"
 
-image *trans_image::make_image()
-{
-  image *im = new image(m_size);
-
-  im->Lock();
-  uint8_t *d=im->scan_line(0),*dp=m_data,*dline;
-  int y,x;
-  for (y=0; y<m_size.y; y++)
-  {
-    x=0;
-    dline=d;
-    memset(dline,0,m_size.x);
-    while(x<m_size.x)
-    {
-      int skip=*(dp++);
-      dline+=skip;
-      x+=skip;
-      if (x<m_size.x)
-      {
-    int run=*(dp++);
-    memcpy(dline,dp,run);
-    x+=run;
-    dline+=run;
-    dp+=run;
-      }
-    }
-    d=im->next_line(y,d);
-  }
-  im->Unlock();
-  return im;
-}
-
 trans_image::trans_image(image *im, char const *name)
 {
-  int size=0,x,y;
-  uint8_t *sl,*datap,*marker;
-  m_size = im->Size();
+    m_size = im->Size();
 
-  im->Lock();
+    im->Lock();
 
-  // first we must find out how much data to allocate
-  for (y=0; y<im->Size().y; y++)
-  {
-    sl=im->scan_line(y);
-    x=0;
-    while (x<m_size.x)
+    // First find out how much data to allocate
+    size_t bytes = 0;
+    for (int y = 0; y < m_size.y; y++)
     {
-      size++;
-      while (x<m_size.x && *sl==0) { sl++; x++; }
-
-      if (x<m_size.x)
-      {
-        size++;  // byte for the size of the run
-        while (x<m_size.x && (*sl)!=0)
+        uint8_t *parser = im->scan_line(y);
+        for (int x = 0; x < m_size.x; )
         {
-      size++;
-      x++;
-      sl++;
-    }
-      }
-    }
-  }
+            bytes++;
+            while (x < m_size.x && *parser == 0)
+            {
+                parser++; x++;
+            }
 
-  m_data=(uint8_t *)malloc(size);
-  int ww=im->Size().x,hh=im->Size().y;
-  datap=m_data;
-  if (!datap)
-  { printf("size = %d %d (%d)\n",im->Size().x,im->Size().y,size);  }
-  CONDITION(datap,"malloc error for trans_image::m_data");
+            if (x >= m_size.x)
+                break;
 
-  for (y=0; y<hh; y++)  // now actually make the runs
-  {
-    sl=im->scan_line(y);
-    x=0;
-    while (x<ww)
+            bytes++;  // byte for the size of the run
+            while (x < m_size.x && *parser != 0)
+            {
+                bytes++;
+                x++;
+                parser++;
+            }
+        }
+    }
+
+    uint8_t *parser = m_data = (uint8_t *)malloc(bytes);
+    if (!parser)
     {
-      *datap=0;  // start the skip at 0
-      while (x<im->Size().x && (*sl)==0)
-      { sl++; x++; (*datap)++; }
-      datap++;
+        printf("size = %d %d (%d bytes)\n",im->Size().x,im->Size().y,bytes);
+        CONDITION(parser, "malloc error for trans_image::m_data");
+    }
 
-      if (x<ww)
-      {
-        marker=datap;   // let marker be the run size
-    *marker=0;
-    datap++;    // skip over this spot
-        while (x<im->Size().x && (*sl)!=0)
+    // Now fill the RLE transparency image
+    for (int y = 0; y < m_size.y; y++)
+    {
+        uint8_t *sl = im->scan_line(y);
+
+        for (int x = 0; x < m_size.x; )
         {
-          (*marker)++;
-      (*datap)=*sl;
-          datap++;
-      x++;
-      sl++;
+            uint8_t len = 0;
+            while (x + len < m_size.x && sl[len] == 0)
+                len++;
+
+            *parser++ = len;
+            x += len;
+            sl += len;
+
+            if (x >= m_size.x)
+                break;
+
+            len = 0;
+            while (x + len < m_size.x && sl[len] != 0)
+            {
+                parser[len + 1] = sl[len];
+                len++;
+            }
+
+            *parser++ = len;
+            parser += len;
+            x += len;
+            sl += len;
+        }
     }
-      }
-    }
-  }
-  im->Unlock();
+    im->Unlock();
 }
 
 trans_image::~trans_image()
 {
     free(m_data);
+}
+
+image *trans_image::ToImage()
+{
+    image *im = new image(m_size);
+
+    // FIXME: this is required until FILLED mode is fixed
+    im->Lock();
+    memset(im->scan_line(0), 0, m_size.x * m_size.y);
+    im->Unlock();
+
+    PutImage(im, 0, 0);
+    return im;
 }
 
 void trans_image::put_scan_line(image *screen, int x, int y, int line)   // always transparent
@@ -272,7 +258,7 @@ void trans_image::PutImageGeneric(image *screen, int x, int y, uint8_t color,
 
     screen->Lock();
 
-    screen_line = screen->scan_line(y)+x;
+    screen_line = screen->scan_line(y) + x;
     int sw = screen->Size().x;
     x1 -= x; x2 -= x;
 
@@ -420,20 +406,20 @@ void trans_image::PutPredator(image *screen, int x, int y)
 size_t trans_image::MemUsage()
 {
     uint8_t *d = m_data;
-    size_t t = 0;
+    size_t ret = 0;
 
     for (int y = 0; y < m_size.y; y++)
     {
         for (int x = 0; x < m_size.x; x++)
         {
-            x += *d; d++; t++;
+            x += *d++; ret++;
 
             if (x >= m_size.x)
                 break;
 
-            int s = *d; d++; t += s + 1; d += s; x += s;
+            size_t run = *d++; ret += run + 1; d += run; x += run;
         }
     }
-    return t + 4 + 4;
+    return ret + sizeof(void *) + sizeof(vec2i);
 }
 

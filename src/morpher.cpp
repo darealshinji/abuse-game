@@ -66,8 +66,8 @@ morph_char::morph_char(game_object *who, int to_type, void (*stat_fun)(int), int
       delete h2;
       figure *f1=t1->get_sequence(morph_pose)->get_figure(0),
       *f2=t2->get_sequence(morph_pose)->get_figure(0);
-      image *i1=f1->forward->make_image(),
-      *i2=f2->forward->make_image();
+      image *i1=f1->forward->ToImage(),
+      *i2=f2->forward->ToImage();
 
       mor=new smorph_player(sm,pal,i1,i2,fleft,who->direction);
       delete i2;
