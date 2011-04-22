@@ -33,21 +33,21 @@ extern void *save_order;         // load from "saveordr.lsp", contains a list or
 
 extern JCFont *console_font;
 
-#define MAX_SAVE_GAMES 5
+#define MAX_SAVE_GAMES 15
+#define MAX_SAVE_LINES 5
 int last_save_game_number=0;
 
-int save_buts[MAX_SAVE_GAMES*3];
+int save_buts[MAX_SAVE_GAMES * 3];
 
 
 void load_number_icons()
 {
-  char name[100];
-  int i;
-  for (i=0; i<MAX_SAVE_GAMES*3; i++)
-  {
-    sprintf(name,"nums%04d.pcx",i+1);
-    save_buts[i]=cache.reg("art/icons.spe",name,SPEC_IMAGE,1);
-  }
+    for (int i = 0; i < MAX_SAVE_GAMES * 3; i++)
+    {
+        char name[100];
+        sprintf(name, "nums%04d.pcx", i % (5 * 3) + 1); // FIXME
+        save_buts[i] = cache.reg("art/icons.spe", name, SPEC_IMAGE, 1);
+    }
 }
 
 
@@ -57,25 +57,34 @@ void last_savegame_name(char *buf)
     sprintf(buf,"%ssave%04d.spe",get_save_filename_prefix(), (last_save_game_number+MAX_SAVE_GAMES-1)%MAX_SAVE_GAMES+1);
 }
 
-Jwindow *create_num_window(int mx, int total_saved, image **thumb_nails)
+Jwindow *create_num_window(int mx, int total_saved, int lines, image **thumb_nails)
 {
   ico_button *buts[MAX_SAVE_GAMES];
-  int y = 0, i;
+  int y = 0, x = 0, i;
+  int iw=cache.img(save_buts[0])->Size().x;
   int ih=cache.img(save_buts[0])->Size().y;
-  int x=0;
+  int maxih = ih, maxiw = iw;
+  int n=0;
   for (i=0; i<total_saved; i++,y+=ih)
   {
-    if (thumb_nails) { while (!thumb_nails[x]) x++; }
-    buts[i]=new ico_button(0, y, ID_LOAD_GAME_NUMBER + x,
-               save_buts[x*3+0],save_buts[x*3+0],save_buts[x*3+1],save_buts[x*3+2],NULL);
-    buts[i]->set_act_id(ID_LOAD_GAME_PREVIEW+x);
-    x++;
+    maxih = Max(ih, maxih);
+    maxiw = Max(iw, maxiw);
+    if (y >= lines * ih)
+    {
+        y = 0;
+        x += iw;
+    }
+    if (thumb_nails) { while (!thumb_nails[n]) n++; }
+    buts[i]=new ico_button(x, y, ID_LOAD_GAME_NUMBER + n,
+               save_buts[n*3+0],save_buts[n*3+0],save_buts[n*3+1],save_buts[n*3+2],NULL);
+    buts[i]->set_act_id(ID_LOAD_GAME_PREVIEW+n);
+    n++;
   }
 
   for (i=0; i<total_saved-1; i++)
     buts[i]->next=buts[i+1];
 
-  return wm->new_window(mx,yres/2-(Jwindow::top_border()+ih*5)/2,-1,-1,buts[0]);
+  return wm->new_window(mx,yres/2-(Jwindow::top_border()+maxih*5)/2,-1,-1,buts[0]);
 }
 
 int get_save_spot()
@@ -99,7 +108,7 @@ int get_save_spot()
   if(mx + w + 10 > xres) mx = xres - w - 10;
   if(mx < 0) mx = 0;
 
-  Jwindow *l_win=create_num_window(mx,MAX_SAVE_GAMES,NULL);
+  Jwindow *l_win=create_num_window(mx,MAX_SAVE_GAMES,MAX_SAVE_LINES,NULL);
   event ev;
   int got_level=0;
   int quit=0;
@@ -221,7 +230,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 */
 
 
-    Jwindow *l_win=create_num_window(0,total_saved,thumb_nails);
+    Jwindow *l_win=create_num_window(0,total_saved,MAX_SAVE_LINES,thumb_nails);
     Jwindow *preview=wm->new_window(l_win->x+l_win->l+5,l_win->y,max_w,max_h,NULL,title);
 
     first->put_image(preview->screen,preview->x1(),preview->y1());
