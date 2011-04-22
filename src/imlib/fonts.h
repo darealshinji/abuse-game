@@ -34,7 +34,7 @@ public:
 class JCFont
 {
   int tl,th;
-  trans_image *let[256];
+  TImage *let[256];
 public:
   JCFont(image *letters);
   void put_char(image *screen,  int x, int y, char ch, int color=-1);

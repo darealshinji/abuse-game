@@ -19,7 +19,7 @@ public :
   int t;
   unsigned char *movers;
   int w,h;
-  super_morph(trans_image *h1, trans_image *h2, int aneal_steps, void (*stat_fun)(int));
+  super_morph(TImage *h1, TImage *h2, int aneal_steps, void (*stat_fun)(int));
   ~super_morph() { if (t) free(movers); }
 } ;
 

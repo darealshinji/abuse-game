@@ -563,7 +563,7 @@ void Game::end_session()
   }
 }
 
-void Game::put_block_fg(int x, int y, trans_image *im)
+void Game::put_block_fg(int x, int y, TImage *im)
 {
   for(view *f = first_view; f; f = f->next)
   {
@@ -575,8 +575,8 @@ void Game::put_block_fg(int x, int y, trans_image *im)
       int cx1, cy1, cx2, cy2;
       screen->GetClip(cx1, cy1, cx2, cy2);
       screen->SetClip(viewx1, viewy1, viewx2 + 1, viewy2 + 1);
-      im->PutImage(screen, (x - xoff / ftile_width())*ftile_width()+viewx1 - xoff % ftile_width(),
-            (y - yoff / ftile_height())*ftile_height()+viewy1 - yoff % ftile_height());
+      im->PutImage(screen, vec2i((x - xoff / ftile_width())*ftile_width()+viewx1 - xoff % ftile_width(),
+            (y - yoff / ftile_height())*ftile_height()+viewy1 - yoff % ftile_height()));
       screen->SetClip(cx1, cy1, cx2, cy2);
     }
   }
@@ -944,7 +944,7 @@ void Game::draw_map(view *v, int interpolate)
           int fort_num = fgvalue(*cl);
           if(fort_num != BLACK)
           {
-            get_fg(fort_num)->im->PutImage(screen, draw_x, draw_y);
+            get_fg(fort_num)->im->PutImage(screen, vec2i(draw_x, draw_y));
 
         if(!(dev & EDIT_MODE))
             *cl|=0x8000;      // mark as has - been - seen
@@ -986,9 +986,9 @@ void Game::draw_map(view *v, int interpolate)
         if(fort_num != BLACK)
         {
           if(dev & DRAW_BG_LAYER)
-          get_fg(fort_num)->im->PutImage(screen, draw_x, draw_y);
+          get_fg(fort_num)->im->PutImage(screen, vec2i(draw_x, draw_y));
           else
-          get_fg(fort_num)->im->PutFilled(screen, draw_x, draw_y, 0);
+          get_fg(fort_num)->im->PutFilled(screen, vec2i(draw_x, draw_y), 0);
 
           if(!(dev & EDIT_MODE))
           current_level->mark_seen(x, y);

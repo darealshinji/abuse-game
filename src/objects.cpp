@@ -395,10 +395,10 @@ void game_object::draw_above(view *v)
 
     sy1 = Max(v->cy1, sy1);
     sy2 = Min(v->cy2, sy2);
-    trans_image *p=picture();
+    TImage *p=picture();
 
     for (i=sy1; i<=sy2; i++)
-      p->PutScanLine(screen,sx,i,0);
+      p->PutScanLine(screen,vec2i(sx,i),0);
   }
 }
 
@@ -679,10 +679,10 @@ void game_object::map_draw()
 
 void game_object::draw_trans(int count, int max)
 {
-  trans_image *cpict=picture();
+  TImage *cpict=picture();
   cpict->PutFade(screen,
-          (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
-          y-cpict->Size().y+1-current_vyadd,
+          vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+                y-cpict->Size().y+1-current_vyadd),
           count,max,
           color_table,the_game->current_palette());
 }
@@ -690,11 +690,11 @@ void game_object::draw_trans(int count, int max)
 
 void game_object::draw_tint(int tint_id)
 {
-  trans_image *cpict=picture();
+  TImage *cpict=picture();
   if (fade_count())
     cpict->PutFadeTint(screen,
-               (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
-               y-cpict->Size().y+1-current_vyadd,
+               vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+                     y-cpict->Size().y+1-current_vyadd),
                fade_count(),fade_max(),
                cache.ctint(tint_id)->data,
                color_table,the_game->current_palette());
@@ -702,19 +702,19 @@ void game_object::draw_tint(int tint_id)
 
   else
     cpict->PutRemap(screen,
-               (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
-               y-cpict->Size().y+1-current_vyadd,
+               vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+                     y-cpict->Size().y+1-current_vyadd),
                cache.ctint(tint_id)->data);
 }
 
 
 void game_object::draw_double_tint(int tint_id, int tint2)
 {
-  trans_image *cpict=picture();
+  TImage *cpict=picture();
   if (fade_count())
     cpict->PutFadeTint(screen,
-               (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
-               y-cpict->Size().y+1-current_vyadd,
+               vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+                     y-cpict->Size().y+1-current_vyadd),
                fade_count(),fade_max(),
                cache.ctint(tint_id)->data,
                color_table,the_game->current_palette());
@@ -722,8 +722,8 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 
   else
     cpict->PutDoubleRemap(screen,
-               (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
-               y-cpict->Size().y+1-current_vyadd,
+               vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+                     y-cpict->Size().y+1-current_vyadd),
                cache.ctint(tint_id)->data,
                cache.ctint(tint2)->data);
 }
@@ -732,10 +732,10 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 
 void game_object::draw_predator()
 {
-  trans_image *cpict=picture();
+  TImage *cpict=picture();
   cpict->PutPredator(screen,
-             (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
-             y-cpict->Size().y+1-current_vyadd);
+             vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+                   y-cpict->Size().y+1-current_vyadd));
 
 }
 
@@ -755,10 +755,10 @@ void game_object::drawer()
       draw_trans(fade_count(),fade_max());
     else
     {
-      trans_image *cpict=picture();
+      TImage *cpict=picture();
       cpict->PutImage(screen,
-               (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
-               y-cpict->Size().y+1-current_vyadd);
+               vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+                     y-cpict->Size().y+1-current_vyadd));
     }
   }
 }

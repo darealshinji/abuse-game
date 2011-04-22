@@ -103,7 +103,7 @@ void elevator::draw()  // draw cables above the elevator
     sy1=the_game->screeny(draw_to);
     sy1=max(the_game->viewy1,sy1);
     sy2=min(the_game->viewy2,sy2);
-    trans_image *p=picture();
+    TImage *p=picture();
 
     for (i=sy1; i<=sy2; i++)
       p->PutScanLine(screen,sx,i,0);
