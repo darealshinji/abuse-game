@@ -217,9 +217,3 @@ void set_no_space_handler(void (*handle_fun)());
 bFILE *open_file(char const *filename, char const *mode);
 #endif
 
-
-
-
-
-
-

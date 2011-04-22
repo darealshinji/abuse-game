@@ -10,62 +10,29 @@
 
 // linked.h  - linked list and linked list node classes
 // written June 2, 1992 by Jonathan Clark  (at home)
-// these classes provide the basic groundwork for any future linked list
-// please derive your own linked_node subclass and define the virtual
-// function compare.
-// example compare function
-//   virtual int compare(void *n1, int field)
-//        { return ((classname *) n1)->data > data); }
-//  should return (1 if n1 is greater than (self)) else return 0
-//  field is the value determined by linked_list::set_sort_field
-//  this defaults to 1
 
+#ifndef __LINKED_H__
+#define __LINKED_H__
 
-#ifndef linkman
-#define linkman
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define loop(controll,first,inside) { controll=first; \
-  if (first) do { inside controll=controll->next(); } \
-  while (controll!=first); }
-
-#define loopt(type,controll,first,inside) { controll=(type *)(first); \
-  if (first) do { inside controll=(type *)(controll->next()); } \
-  while (controll!=(type *)(first)); }
-
-
-#define loop_rev(controll,last,inside) { controll=last; \
-  if (first) do { inside controll=controll->last(); } \
-  while (controll!=last); }
-
-#define loopct(type,controll,first,cond,inside) { controll=(type *)first; \
-  if (first && (cond)) do { inside controll=(type *)controll->next(); } \
-  while (controll!=(type *)first && (cond)); }
-
-#define loop_fort(type,controll,first,x) \
-  int x=0; \
-  if (first) \
-     for (controll=(type *)(first); \
-          (!x || (controll)!=(type *)(first)); \
-          controll=(type *)(controll->next()),x++)
-
-#define loop_forct(type,controll,first,cond,x) int x=0; if (first) for \
-  (controll=(type *)(first); cond && (!x || controll!=(type *)(first)); \
-  controll=(type *)(controll->next()),x++)
-
 class linked_node
 {
-  class linked_node *nextp, *lastp;
+    friend class linked_list;
+
 public:
-  virtual int compare(void *n1, int field)     { return(0); }  // default is = (equal)
-  class linked_node *next()              { return nextp; }
-  class linked_node *last()              { return lastp; }
-  void set_next(class linked_node *p)    { nextp=p; }
-  void set_last(class linked_node *p)    { lastp=p; }
-  virtual ~linked_node() { ; }
-  linked_node() { nextp=NULL; lastp=NULL; }
+    linked_node() { m_next = m_prev = NULL; }
+    virtual ~linked_node() { ; }
+
+    inline class linked_node *Next() { return m_next; }
+    inline class linked_node *Prev() { return m_prev; }
+    inline void SetNext(class linked_node *p) { m_next = p; }
+    inline void SetPrev(class linked_node *p) { m_prev = p; }
+
+private:
+    class linked_node *m_next, *m_prev;
 };
 
 // this is the basic class for all linked_list
@@ -82,30 +49,22 @@ public:
 
 class linked_list
 {
-  class linked_node *fn, *cn;     // first and current nodes
-  int nn; char sortby;
-public :
-  linked_list(linked_node *first=NULL);
-  void add_front(class linked_node *p);
-  void add_end(class linked_node *p);
-  void insert(class linked_node *p);
-  void set_sort_field(int x) { sortby=x; }   // this is passed to compare
-  class linked_node *current() { return cn; }
-  class linked_node *first() { return fn; }
-  class linked_node *last() { return fn->last(); }
-  class linked_node *get_node(int x);
-  void set_current(class linked_node *p) { cn=p; }
-  void go_first() { cn=fn; }
-  void go_end() { cn=fn->last(); }
-  void go_next() { cn=cn->next(); }
-  void go_last() { cn=cn->last(); }
-  int number_nodes()  { return nn; }
-  int node_number(linked_node *p);
-  int unlink(linked_node *p);
-  ~linked_list();
+public:
+    linked_list();
+    ~linked_list();
+
+    void add_front(class linked_node *p);
+    void add_end(class linked_node *p);
+    int unlink(linked_node *p);
+
+    inline class linked_node *first() { return m_first; }
+    inline class linked_node *prev() { return m_first->Prev(); }
+    inline size_t Count() { return m_count; }
+
+private:
+    linked_node *m_first;
+    size_t m_count;
 };
 
 #endif
-
-
 

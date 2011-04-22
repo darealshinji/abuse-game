@@ -9,7 +9,7 @@
  */
 
 #ifndef __CLISP_HPP_
-#ifndef SCADALISP
+
 int get_lprop_number(void *sybol, int def);  // returns def if symbol undefined or not number type
 
 
@@ -56,5 +56,4 @@ extern void *l_main_menu,
      *l_cop_dead_parts,*l_restart_player,*l_help_screens,*l_save_order;
 
 
-#endif
 #endif

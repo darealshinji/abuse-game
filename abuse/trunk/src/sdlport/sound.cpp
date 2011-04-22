@@ -217,7 +217,7 @@ sound_effect::sound_effect( char * filename )
 {
     if( sound_enabled )
     {
-        long sample_speed;
+        int sample_speed;
 
 #ifdef USE_SDL_MIXER
         void* temp_data = (void *)read_wav( filename, sample_speed, size );

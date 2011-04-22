@@ -27,14 +27,6 @@
 #include "lisp_gc.h"
 #include "profile.h"
 
-#ifdef SCADALISP
-#define LCAR(x)        CAR(x)
-#define LCDR(x)        CDR(x)
-#else
-#define LCAR(x)        (x)->car
-#define LCDR(x)        (x)->cdr
-#endif /* SCADALISP */
-
 char **object_names;
 int total_objects;
 game_object *current_object;
@@ -537,9 +529,6 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
 
     current_object = o;
   } else damage_fun(amount,from,hitx,hity,push_xvel,push_yvel);
-#ifdef SCADALISP
-  ENDLOCAL();
-#endif
 }
 
 void game_object::damage_fun(int amount, game_object *from, int32_t hitx, int32_t hity,

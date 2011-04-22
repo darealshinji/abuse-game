@@ -47,7 +47,6 @@ public:
   void add(ifield *i);
   void remap(filter *f);
   ifield *unlink(int id);     // unlinks ID from fields list and return the pointer to it
-  ifield *current() { return active; }
   void clear_current();
   void grab_focus(ifield *i);
   void release_focus();
