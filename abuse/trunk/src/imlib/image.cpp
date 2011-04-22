@@ -236,38 +236,34 @@ void image_init()
 
 int32_t image::total_pixels(uint8_t background)
 {
-    int16_t i, j;
-    int32_t co;
-    uint8_t *c;
-
+    int ret = 0;
     Lock();
-    for(co = 0, i = m_size.y - 1; i >= 0; i--)
+    for(int i = 0; i < m_size.y; i++)
     {
-        c = scan_line(i);
-        for(j = m_size.x - 1; j >= 0; j--, c++)
-            if(*c != background) co++;
+        uint8_t *c = scan_line(i);
+        for (int x = 0; x < m_size.x; x++)
+            if (c[x] != background)
+                ret++;
     }
     Unlock();
-    return co;
+    return ret;
 }
 
 void image::clear(int16_t color)
 {
-    int16_t i;
-
     Lock();
     if(color == -1)
         color = current_background;
     if(m_special)
     {
         if(m_special->x1_clip() < m_special->x2_clip())
-            for(i = m_special->y2_clip() - 1; i >= m_special->y1_clip(); i--)
-                memset(scan_line(i) + m_special->x1_clip(), color,
+            for(int j = m_special->y1_clip(); j <m_special->y2_clip(); j++)
+                memset(scan_line(j) + m_special->x1_clip(), color,
                        m_special->x2_clip() - m_special->x1_clip());
     }
     else
-        for(i = m_size.y - 1; i >= 0; i--)
-            memset(scan_line(i), color, m_size.x);
+        for(int j = 0; j < m_size.y; j++)
+            memset(scan_line(j), color, m_size.x);
     AddDirty(0, 0, m_size.x, m_size.y);
     Unlock();
 }
@@ -277,8 +273,8 @@ image *image::copy()
     Lock();
     image *im = new image(m_size);
     im->Lock();
-    for(int i = m_size.y - 1; i >= 0; i--)
-        memcpy(im->scan_line(i), scan_line(i), m_size.x);
+    for(int j = 0; j < m_size.y; j++)
+        memcpy(im->scan_line(j), scan_line(j), m_size.x);
     im->Unlock();
     Unlock();
     return im;
@@ -1124,16 +1120,11 @@ void image::dither(palette *pal)
 
   uint8_t *sl;
   Lock();
-  for (y=m_size.y-1; y>=0; y--)
+  for (y = 0; y < m_size.y; y++)
   {
     sl=scan_line(y);
-    for (i=0, j=y%4, x=m_size.x-1; x>=0; x--)
-    {
-      if (pal->red(sl[x])>dt_matrix[j*4+i])
-    sl[x]=255;
-      else sl[x]=0;
-      if (i==3) i=0; else i++;
-    }
+    for (i=0, j=y%4, x=0; x < m_size.x; x++)
+      sl[x] = (pal->red(sl[x]) > dt_matrix[j * 4 + (x & 3)]) ? 255 : 0;
   }
   Unlock();
 }
@@ -1197,10 +1188,10 @@ void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, i
   { src=scan_line(ysrc)+xsrc;
     dst=scan_line(ydst)+xdst;
     if (xd<0)
-      for (xt=xtot; xt; xt--)
-        *(dst++)=*(src++);
-      else for (xt=xtot; xt; xt--)
-        *(dst--)=*(src--);
+      for (xt = 0; xt < xtot; xt++)
+        *dst++ = *src++;
+      else for (xt = 0; xt < xtot; xt++)
+        *dst-- = *src--;
     if (yd<0) { ysrc++; ydst++; } else { ysrc--; ydst--; }
   }
   AddDirty(x1, y1, x2 + 1, y2 + 1);
