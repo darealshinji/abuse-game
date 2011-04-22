@@ -264,16 +264,6 @@ int bFILE::tell()
 int bFILE::allow_read_buffering() { return 1; }
 int bFILE::allow_write_buffering() { return 1; }
 
-void bFILE::set_read_buffer_size(long size)
-{
-  unbuffered_seek(tell(),SEEK_SET);
-  rbuf_start=rbuf_end=0;
-  if (rbuf)
-    free(rbuf);
-  rbuf_size=size;
-  rbuf=(unsigned char *)malloc(rbuf_size);
-}
-
 void set_spec_main_file(char const *filename, int Search_order)
 {
   dprintf("Specs : main file set to %s\n",filename);
