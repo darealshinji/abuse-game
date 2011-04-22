@@ -25,10 +25,13 @@
 class trans_image       // transpernet image
 {
 public:
-  trans_image(image *im, char const *name);  // name has no meaning if MEM_CHECK is off
+  trans_image(image *im, char const *name);
+  ~trans_image();
 
   inline vec2i Size() { return m_size; }
-  uint8_t *Data() { return m_data; }
+  inline uint8_t *Data() { return m_data; }
+
+  image *ToImage();
 
   void PutImage(image *screen, int x, int y); // always transparent
   void PutRemap(image *screen, int x, int y, uint8_t *remap);
@@ -46,8 +49,6 @@ public:
 
   void put_scan_line(image *screen, int x, int y, int line);   // always transparent
   size_t MemUsage();
-  image *make_image();
-  ~trans_image();
 
 private:
   uint8_t *ClipToLine(image *screen, int x1, int y1, int x2, int y2,
