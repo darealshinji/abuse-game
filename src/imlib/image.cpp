@@ -689,11 +689,11 @@ void image_descriptor::ReduceDirties()
     dirty_rect *p = (dirty_rect *)dirties.first();
     int x1 = 6000, y1 = 6000, x2 = -1, y2 = -1;
 
-    for (int i = dirties.number_nodes(); i--; )
+    for (int i = dirties.Count(); i--; )
     {
         x1 = Min(x1, p->dx1); y1 = Min(y1, p->dy1);
         x2 = Max(x1, p->dx1); y2 = Max(y1, p->dy1);
-        dirty_rect *tmp = (dirty_rect *)p->next();
+        dirty_rect *tmp = (dirty_rect *)p->Next();
         dirties.unlink(p);
         delete p;
         p = tmp;
@@ -715,13 +715,13 @@ void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
     if (x1 >= x2 || y1 >= y2)
         return;
 
-    int i = dirties.number_nodes();
+    int i = dirties.Count();
     if (!i)
         return;
 
     for (p = (dirty_rect *)dirties.first(); i; i--, p = next)
     {
-        next = (dirty_rect *)p->next();
+        next = (dirty_rect *)p->Next();
 
         // are the two touching?
         if (x2 <= p->dx1 || y2 <= p->dy1 || x1 > p->dx2 || y1 > p->dy2)
@@ -814,7 +814,7 @@ void image_descriptor::AddDirty(int x1, int y1, int x2, int y2)
     if (x1 >= x2 || y1 >= y2)
         return;
 
-    int i = dirties.number_nodes();
+    int i = dirties.Count();
     if (!i)
         dirties.add_front(new dirty_rect(x1, y1, x2 - 1, y2 - 1));
     else if (i >= MAX_DIRTY)
@@ -830,7 +830,7 @@ void image_descriptor::AddDirty(int x1, int y1, int x2, int y2)
         // check to see if this new rectangle completly encloses the check rectangle
         if (x1<=p->dx1 && y1<=p->dy1 && x2>=p->dx2+1 && y2>=p->dy2+1)
         {
-          dirty_rect *tmp=(dirty_rect*) p->next();
+          dirty_rect *tmp=(dirty_rect*) p->Next();
           dirties.unlink(p);
           delete p;
           if (!dirties.first())
@@ -866,8 +866,8 @@ void image_descriptor::AddDirty(int x1, int y1, int x2, int y2)
                 AddDirty(x1, p->dy2+1, x2, y2);
               return ;
             }
-            p=(dirty_rect *)p->next();
-          } else p=(dirty_rect *)p->next();
+            p=(dirty_rect *)p->Next();
+          } else p=(dirty_rect *)p->Next();
 
       }
       CHECK(x1 < x2 && y1 < y2);

@@ -49,6 +49,10 @@ sprite::~sprite()
 void sprite_controller::add_sprite(sprite *sp)
 { sprites.add_end(sp); }
 
+#define loopt(type,controll,first,inside) { controll=(type *)(first); \
+  if (first) do { inside controll=(type *)(controll->Next()); } \
+  while (controll!=(type *)(first)); }
+
 void sprite_controller::remove_sprites()
 { sprite *sp; loopt(sprite,sp,sprites.first(),sp->restore_background(); ); }
 
@@ -81,3 +85,4 @@ void sprite_controller::delete_sprite(sprite *sp)
   ERROR(sprites.unlink(sp),"unlink failure");
   delete sp;
 }
+

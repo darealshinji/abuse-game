@@ -8,14 +8,11 @@
  *  Jonathan Clark.
  */
 
-#ifndef __READ_WAV_HPP_
-#define __READ_WAV_HPP_
-#include "specs.h"
-unsigned char *read_wav(char *filename, long &sample_rate, long &data_size);
-void write_wav(char *filename, long sample_rate, long data_size, unsigned char *data);
+#ifndef __READ_WAV_H__
+#define __READ_WAV_H__
 
+#include "specs.h"
+uint8_t *read_wav(char const *filename, int &sample_rate, int &data_size);
 
 #endif
-
-
 

@@ -63,11 +63,7 @@ int get_key_binding(char const *dir, int i)
     if( item_type( k ) != L_SYMBOL )
         return 0;
 
-#ifdef SCADALISP
-    strcpy( tmp, symbol_name( k ) );
-#else
     strcpy( tmp, lstring_value( symbol_name( k ) ) );
-#endif
 
     for( char *c = tmp; *c; c++ )
     {

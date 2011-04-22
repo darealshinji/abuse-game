@@ -403,9 +403,9 @@ void quant_palette::prune()
     f=p->father();
     for (x=0; x<8 && !pruned; x++)
       if (f->children[x])
-        if (f->children[x]->next()!=p->next())        // if this son is not me!
+        if (f->children[x]->Next()!=p->Next())        // if this son is not me!
         pruned=1;                   //  I have a brother! stop
-       p=(quant_node *)p->next();
+       p=(quant_node *)p->Next();
       } while (p != level[lev-1].first() && !pruned);
     }
   }
@@ -472,7 +472,7 @@ palette *quant_palette::create_pal()
   p=new palette(mx);
   for (x=0,i=7; i>=0; i++)
     for (pn=(quant_node *)level[i].first();
-     pn!=(quant_node *)level[i].first(); pn=(quant_node *)pn->next())
+     pn!=(quant_node *)level[i].first(); pn=(quant_node *)pn->Next())
       if (pn->is_leaf())
     p->set(x++,pn->red,pn->green,pn->blue);
   return p;
