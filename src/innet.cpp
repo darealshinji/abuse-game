@@ -15,7 +15,6 @@
 #include "common.h"
 
 #include "demo.h"
-#include "macs.h"
 #include "specs.h"
 #include "level.h"
 #include "game.h"

@@ -16,7 +16,6 @@
 
 #include "demo.h"
 #include "specs.h"
-#include "macs.h"
 #include "jwindow.h"
 #include "dprint.h"
 #include "dev.h"

@@ -13,7 +13,6 @@
 #include "common.h"
 
 #include "seq.h"
-#include "macs.h"
 #include "lisp.h"
 
 int sequence::size()

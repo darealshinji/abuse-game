@@ -12,7 +12,6 @@
 
 #include "common.h"
 
-#include "macs.h"
 #include "particle.h"
 #include "view.h"
 #include "lisp.h"

@@ -10,7 +10,6 @@
 
 #ifndef __SPRITE_HPP
 #define __SPRITE_HPP
-#include "macs.h"
 #include "image.h"
 #include "linked.h"
 

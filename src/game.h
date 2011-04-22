@@ -13,7 +13,6 @@
 
 #include "loader2.h"
 
-#include "macs.h"
 #include "image.h"
 #include "video.h"
 #include "event.h"

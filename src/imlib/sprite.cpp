@@ -14,7 +14,6 @@
 
 #include "common.h"
 
-#include "macs.h"
 #include "video.h"
 #include "image.h"
 #include "palette.h"

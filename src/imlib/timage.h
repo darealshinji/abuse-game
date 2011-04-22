@@ -12,7 +12,6 @@
 #define __TIMAGE_HPP_
 
 #include "image.h"
-#include "macs.h"
 #include "palette.h"
 #include "filter.h"
 

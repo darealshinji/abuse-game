@@ -14,7 +14,6 @@
 #include <malloc.h>
 
 #include "lisp.h"
-#include "macs.h"
 
 extern int total_objects;
 

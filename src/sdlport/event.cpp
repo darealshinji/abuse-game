@@ -24,11 +24,9 @@
 
 #include "common.h"
 
-#include "system.h"
 #include "image.h"
 #include "palette.h"
 #include "video.h"
-#include "macs.h"
 #include "mouse.h"
 #include "event.h"
 #include "timing.h"

@@ -21,9 +21,6 @@
 #include <sys/fcntl.h>
 #include <fcntl.h>
 
-#include "system.h"
-#include "indian.h"
-
 #include "netface.h"
 #include "nfserver.h"
 #include "view.h"

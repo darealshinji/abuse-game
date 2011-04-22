@@ -13,7 +13,6 @@
 #define __LEVEL_HPP_
 
 #include "specs.h"
-#include "macs.h"
 #include "objects.h"
 #include "view.h"
 #include "id.h"

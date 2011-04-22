@@ -14,7 +14,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "macs.h"
+#include "common.h"
 
 void  (*dprint_fun)(char *) = NULL;
 void  (*dget_fun)(char *,int) = NULL;

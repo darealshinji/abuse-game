@@ -14,7 +14,6 @@
 
 #include "light.h"
 #include "image.h"
-#include "macs.h"
 #include "video.h"
 #include "palette.h"
 #include "timing.h"

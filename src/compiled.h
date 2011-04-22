@@ -10,7 +10,7 @@
 
 #ifndef __COMPILED_HPP_
 #define __COMPILED_HPP_
-#include "macs.h"
+
 extern int32_t S_fall_start,S_falling,S_landing,S_pounce_wait,
             S_turn_around,S_fire_wait,S_ceil_fire,S_top_walk,
             S_blown_back_dead,S_jump_up,S_hiding,S_weapon_fire,

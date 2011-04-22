@@ -12,7 +12,6 @@
 
 #include <math.h>
 
-#include "macs.h"
 #include "mdlread.h"
 #include "video.h"
 #include "image.h"

@@ -17,8 +17,6 @@
 #include "lisp_gc.h"
 #ifdef NO_LIBS
 #include "fakelib.h"
-#else
-#include "macs.h"
 #endif
 
 #include "stack.h"

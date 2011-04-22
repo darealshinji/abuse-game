@@ -20,7 +20,6 @@
 
 #include "lisp/lisp.h"
 
-#include "macs.h"
 #include "morpher.h"
 #include "chars.h"
 

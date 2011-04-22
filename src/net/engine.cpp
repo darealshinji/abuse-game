@@ -10,7 +10,8 @@
 
 #include "config.h"
 
-#include "indian.h"
+#include "common.h"
+
 #include "../inc/netface.h"      // net interface structures to the engine will use
 #include "netfile.h"
 #include "engine.h"

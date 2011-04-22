@@ -12,8 +12,6 @@
 
 #ifdef NO_LIBS
 #include "fakelib.h"
-#else
-#include "macs.h"
 #endif
 
 #include "lisp.h"

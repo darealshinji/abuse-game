@@ -17,7 +17,6 @@
 //#include "sound.h"
 #include "ability.h"
 #include "event.h"
-#include "macs.h"
 #include <stdarg.h>
 #include <time.h>
 

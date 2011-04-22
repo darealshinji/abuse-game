@@ -11,19 +11,11 @@
 #include "config.h"
 
 #include <math.h>
-#ifdef __DOS
-#   include <dir.h>
-#else
-#   include <unistd.h>
-#endif
 #include <stdlib.h>
 
 #include "common.h"
 
 #include "image.h"
-#include "macs.h"
-#include "system.h"
-#include "system.h"
 
 linked_list image_list; // FIXME: only jwindow.cpp needs this
 
