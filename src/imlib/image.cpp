@@ -1248,39 +1248,36 @@ image *image::copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2
   return ret;
 }
 
-void image::flip_x()
+void image::FlipX()
 {
-  uint8_t *rev=(uint8_t *)malloc(m_size.x), *sl;
-  CONDITION(rev, "memory allocation");
-  int y, x, i;
-
-  /* FIXME: Abuse Win32 uses RestoreSurface() here instead of locking */
-  Lock();
-  for (y=0; y<m_size.y; y++)
-  { sl=scan_line(y);
-    for (i=0, x=m_size.x-1; x>=0; x--, i++)
-      rev[i]=sl[x];
-    memcpy(sl, rev, m_size.x);
-  }
-  Unlock();
-  free(rev);
+    Lock();
+    for (int y = 0; y < m_size.y; y++)
+    {
+        uint8_t *sl = scan_line(y);
+        for (int x = 0; x < m_size.x / 2; x++)
+        {
+            uint8_t tmp = sl[x];
+            sl[x] = sl[m_size.x - 1 - x];
+            sl[m_size.x - 1 - x] = tmp;
+        }
+    }
+    Unlock();
 }
 
-void image::flip_y()
+void image::FlipY()
 {
-  uint8_t *rev=(uint8_t *)malloc(m_size.x), *sl;
-  CONDITION(rev, "memory allocation");
-  int y;
-
-  /* FIXME: Abuse Win32 uses RestoreSurface() here instead of locking */
-  Lock();
-  for (y=0; y<m_size.y/2; y++)
-  { sl=scan_line(y);
-    memcpy(rev, sl, m_size.x);
-    memcpy(sl, scan_line(m_size.y-y-1), m_size.x);
-    memcpy(scan_line(m_size.y-y-1), rev, m_size.x);
-  }
-  Unlock();
-  free(rev);
+    Lock();
+    for (int y = 0; y < m_size.y / 2; y++)
+    {
+        uint8_t *sl1 = scan_line(y);
+        uint8_t *sl2 = scan_line(m_size.y - 1 - y);
+        for (int x = 0; x < m_size.x; x++)
+        {
+            uint8_t tmp = sl1[x];
+            sl1[x] = sl2[x];
+            sl2[x] = tmp;
+        }
+    }
+    Unlock();
 }
 

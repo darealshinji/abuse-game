@@ -168,8 +168,8 @@ public:
     void flood_fill(int16_t x, int16_t y, uint8_t color);
     image *create_smooth(int16_t smoothness = 1); // 0 no smoothness
     void unpack_scanline(int16_t line, char bitsperpixel = 1);
-    void flip_x();
-    void flip_y();
+    void FlipX();
+    void FlipY();
 };
 
 class image_controller
