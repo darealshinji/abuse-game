@@ -16,22 +16,22 @@
 
 image *trans_image::make_image()
 {
-  image *im=new image(vec2i(w,h));
+  image *im = new image(m_size);
 
   im->Lock();
-  uint8_t *d=im->scan_line(0),*dp=data,*dline;
+  uint8_t *d=im->scan_line(0),*dp=m_data,*dline;
   int y,x;
-  for (y=0; y<h; y++)
+  for (y=0; y<m_size.y; y++)
   {
     x=0;
     dline=d;
-    memset(dline,0,w);
-    while(x<w)
+    memset(dline,0,m_size.x);
+    while(x<m_size.x)
     {
       int skip=*(dp++);
       dline+=skip;
       x+=skip;
-      if (x<w)
+      if (x<m_size.x)
       {
     int run=*(dp++);
     memcpy(dline,dp,run);
@@ -50,8 +50,7 @@ trans_image::trans_image(image *im, char const *name)
 {
   int size=0,x,y;
   uint8_t *sl,*datap,*marker;
-  w=im->Size().x;
-  h=im->Size().y;
+  m_size = im->Size();
 
   im->Lock();
 
@@ -60,15 +59,15 @@ trans_image::trans_image(image *im, char const *name)
   {
     sl=im->scan_line(y);
     x=0;
-    while (x<w)
+    while (x<m_size.x)
     {
       size++;
-      while (x<w && *sl==0) { sl++; x++; }
+      while (x<m_size.x && *sl==0) { sl++; x++; }
 
-      if (x<w)
+      if (x<m_size.x)
       {
         size++;  // byte for the size of the run
-        while (x<w && (*sl)!=0)
+        while (x<m_size.x && (*sl)!=0)
         {
       size++;
       x++;
@@ -78,12 +77,12 @@ trans_image::trans_image(image *im, char const *name)
     }
   }
 
-  data=(uint8_t *)malloc(size);
+  m_data=(uint8_t *)malloc(size);
   int ww=im->Size().x,hh=im->Size().y;
-  datap=data;
+  datap=m_data;
   if (!datap)
   { printf("size = %d %d (%d)\n",im->Size().x,im->Size().y,size);  }
-  CONDITION(datap,"malloc error for trans_image::data");
+  CONDITION(datap,"malloc error for trans_image::m_data");
 
   for (y=0; y<hh; y++)  // now actually make the runs
   {
@@ -115,22 +114,27 @@ trans_image::trans_image(image *im, char const *name)
   im->Unlock();
 }
 
+trans_image::~trans_image()
+{
+    free(m_data);
+}
+
 void trans_image::put_scan_line(image *screen, int x, int y, int line)   // always transparent
 {
   int x1, y1, x2, y2;
   screen->GetClip(x1, y1, x2, y2);
-  if (y + line < y1 || y + line >= y2 || x >= x2 || x + w - 1 < x1)
+  if (y + line < y1 || y + line >= y2 || x >= x2 || x + m_size.x - 1 < x1)
     return; // clipped off completely?
 
-  uint8_t *datap=data;
+  uint8_t *datap=m_data;
   int ix;
   while (line)            // skip scan line data until we get to the line of interest
   {
-    for (ix=0; ix<w; )
+    for (ix=0; ix<m_size.x; )
     {
       ix+=*datap;        // skip blank space
       datap++;
-      if (ix<w)
+      if (ix<m_size.x)
       {
     int run_length=*datap;     // skip run
     ix+=run_length;
@@ -146,14 +150,14 @@ void trans_image::put_scan_line(image *screen, int x, int y, int line)   // alwa
   screen->Lock();
   uint8_t *screen_line=screen->scan_line(y)+x;
 
-  for (ix=0; ix<w; )
+  for (ix=0; ix<m_size.x; )
   {
     int skip=*datap;              // how much space to skip?
     datap++;
     screen_line+=skip;
     ix+=skip;
 
-    if (ix<w)
+    if (ix<m_size.x)
     {
       int run_length=*datap;
       datap++;
@@ -203,22 +207,22 @@ uint8_t *trans_image::ClipToLine(image *screen, int x1, int y1, int x2, int y2,
                                  int x, int &y, int &ysteps)
 {
     // check to see if it is totally clipped out first
-    if (y + h <= y1 || y >= y2 || x >= x2 || x + w <= x1)
+    if (y + m_size.y <= y1 || y >= y2 || x >= x2 || x + m_size.x <= x1)
         return NULL;
 
-    uint8_t *parser = data;
+    uint8_t *parser = m_data;
 
     int skiplines = Max(y1 - y, 0); // number of lines to skip
-    ysteps = Min(y2 - y, height() - skiplines); // number of lines to draw
+    ysteps = Min(y2 - y, m_size.y - skiplines); // number of lines to draw
     y += skiplines; // first line to draw
 
     while (skiplines--)
     {
-        for (int ix = 0; ix < w; )
+        for (int ix = 0; ix < m_size.x; )
         {
             ix += *parser++; // skip over empty space
 
-            if (ix >= w)
+            if (ix >= m_size.x)
                 break;
 
             ix += *parser;
@@ -226,7 +230,7 @@ uint8_t *trans_image::ClipToLine(image *screen, int x1, int y1, int x2, int y2,
         }
     }
 
-    screen->AddDirty(Max(x, x1), y, Min(x + width(), x2), y + h);
+    screen->AddDirty(Max(x, x1), y, Min(x + m_size.x, x2), y + m_size.y);
     return parser;
 }
 
@@ -245,12 +249,12 @@ void trans_image::put_image_filled(image *screen, int x, int y,
   screen->Lock();
 
   screen_line=screen->scan_line(y)+x;
-  int sw=screen->Size().x-w;
+  int sw=screen->Size().x-m_size.x;
   x1 -= x; x2 -= x;
   for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
-    for (ix=0; ix<w; )
+    for (ix=0; ix<m_size.x; )
     {
       int blank=(*datap);
       memset(screen_line,fill_color,blank);
@@ -258,7 +262,7 @@ void trans_image::put_image_filled(image *screen, int x, int y,
       screen_line+=blank;
 
       datap++;
-      if (ix<w)
+      if (ix<m_size.x)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
@@ -309,15 +313,15 @@ void trans_image::put_image_filled(image *screen, int x, int y,
 
 void trans_image::put_image_offseted(image *screen, uint8_t *s_off)   // if screen x & y offset already calculated save a mul
 {
-  int ix,ysteps=height();
+  int ix,ysteps=m_size.y;
   int screen_skip;
-  uint8_t skip,*datap=data;
+  uint8_t skip,*datap=m_data;
 
   screen->Lock();
-  screen_skip = screen->Size().x - w;
+  screen_skip = screen->Size().x - m_size.x;
   for (; ysteps; ysteps--)
   {
-    for (ix=0; ix<w; )
+    for (ix=0; ix<m_size.x; )
     {
       skip=*datap;       // skip leading blank space
       datap++;
@@ -328,7 +332,7 @@ void trans_image::put_image_offseted(image *screen, uint8_t *s_off)   // if scre
           printf("bad write in trans_image::put_image_offseted");
 
 
-      if (ix<w)
+      if (ix<m_size.x)
       {
     skip=*datap;
     datap++;
@@ -363,11 +367,11 @@ void trans_image::put_image(image *screen, int x, int y)
   for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
-    for (ix=0; ix<w; )
+    for (ix=0; ix<m_size.x; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
-      if (ix<w)
+      if (ix<m_size.x)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
@@ -429,11 +433,11 @@ void trans_image::put_remaped(image *screen, int x, int y, uint8_t *remap)
   for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
-    for (ix=0; ix<w; )
+    for (ix=0; ix<m_size.x; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
-      if (ix<w)
+      if (ix<m_size.x)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
@@ -508,11 +512,11 @@ void trans_image::put_double_remaped(image *screen, int x, int y, uint8_t *remap
   for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
-    for (ix=0; ix<w; )
+    for (ix=0; ix<m_size.x; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
-      if (ix<w)
+      if (ix<m_size.x)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
@@ -591,11 +595,11 @@ void trans_image::put_fade(image *screen, int x, int y,
   {
     screen_line=screen->scan_line(y);
 
-    for (ix=0; ix<w; )
+    for (ix=0; ix<m_size.x; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
-      if (ix<w)
+      if (ix<m_size.x)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
@@ -686,11 +690,11 @@ void trans_image::put_fade_tint(image *screen, int x, int y,
   {
     screen_line=screen->scan_line(y);
 
-    for (ix=0; ix<w; )
+    for (ix=0; ix<m_size.x; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
-      if (ix<w)
+      if (ix<m_size.x)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
@@ -770,11 +774,11 @@ void trans_image::put_color(image *screen, int x, int y, int color)
   {
     screen_line=screen->scan_line(y);
 
-    for (ix=0; ix<w; )
+    for (ix=0; ix<m_size.x; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
-      if (ix<w)
+      if (ix<m_size.x)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
@@ -843,11 +847,11 @@ void trans_image::put_blend16(image *screen, image *blend, int x, int y,
     blend_line=blend->scan_line(y-blendy);
 
 
-    for (ix=0; ix<w; )
+    for (ix=0; ix<m_size.x; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
-      if (ix<w)
+      if (ix<m_size.x)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
@@ -934,25 +938,7 @@ void trans_image::put_predator(image *screen, int x, int y)
   if (!datap) return; // if ClipToLine says nothing to draw, return
 
   // see if the last scanline is clipped off
-  if (y + ysteps == y2 - 1) ysteps -= 2;
-  else if (y + ysteps == y2 - 2) ysteps--;
-/*  {
-    for (int x=0; x<w; )
-    {
-      int skip=*datap; datap++;
-      x+=skip;
-      if (x<w)
-      {
-    int run_size=*datap;
-    datap+=run_size+1;
-    x+=run_size;
-      }
-    }
-    if (y==y2 - 1)
-      return;
-    else
-      y++;
-  }*/
+  ysteps = Min(ysteps, y2 - 1 - y - 2);
 
   screen->Lock();
   screen_line=screen->scan_line(y)+x;
@@ -961,11 +947,11 @@ void trans_image::put_predator(image *screen, int x, int y)
   for (; ysteps>0; ysteps--)
   {
     int ix,slam_length;
-    for (ix=0; ix<w; )
+    for (ix=0; ix<m_size.x; )
     {
       ix+=(*datap);       // skip over empty space
       datap++;
-      if (ix<w)
+      if (ix<m_size.x)
       {
     slam_length=*datap;     // find the length of this run
     datap++;
@@ -1010,23 +996,23 @@ void trans_image::put_predator(image *screen, int x, int y)
   screen->Unlock();
 }
 
-int trans_image::size()
+size_t trans_image::MemUsage()
 {
-  uint8_t *d=data;
-  int t=0;
-  for (int y=0; y<h; y++)
-  {
-    int x=0;
-    while (x<w)
+    uint8_t *d = m_data;
+    size_t t = 0;
+
+    for (int y = 0; y < m_size.y; y++)
     {
-      x+=*d; d++; t++;
-      if (x<w)
-      {
-    int s=*d; d++; t+=s+1;
-    d+=s;
-    x+=s;
-      }
+        for (int x = 0; x < m_size.x; x++)
+        {
+            x += *d; d++; t++;
+
+            if (x >= m_size.x)
+                break;
+
+            int s = *d; d++; t += s + 1; d += s; x += s;
+        }
     }
-  }
-  return t+4+4;
+    return t + 4 + 4;
 }
+

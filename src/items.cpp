@@ -272,12 +272,10 @@ foretile::foretile(bFILE *fp)
 
 }
 
-int figure::size()
+size_t figure::MemUsage()
 {
-  return forward->size()+backward->size()+
-  hit->size()+
-  f_damage->size()+
-  b_damage->size()+sizeof(figure);
+    return forward->MemUsage() + backward->MemUsage() + hit->size()
+            + f_damage->size() + b_damage->size() + sizeof(figure);
 }
 
 

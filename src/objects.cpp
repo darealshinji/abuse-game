@@ -586,7 +586,7 @@ int game_object::facing_attacker(int attackerx)
 
 void game_object::picture_space(int32_t &x1, int32_t &y1,int32_t &x2, int32_t &y2)
 {
-  int xc=x_center(),w=picture()->width(),h=picture()->height();
+  int xc=x_center(),w=picture()->Size().x,h=picture()->Size().y;
   if (direction>0)
     x1=x-xc;
   else x1=x-(w-xc-1);
@@ -681,8 +681,8 @@ void game_object::draw_trans(int count, int max)
 {
   trans_image *cpict=picture();
   cpict->put_fade(screen,
-          (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
-          y-cpict->height()+1-current_vyadd,
+          (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+          y-cpict->Size().y+1-current_vyadd,
           count,max,
           color_table,the_game->current_palette());
 }
@@ -693,8 +693,8 @@ void game_object::draw_tint(int tint_id)
   trans_image *cpict=picture();
   if (fade_count())
     cpict->put_fade_tint(screen,
-               (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
-               y-cpict->height()+1-current_vyadd,
+               (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+               y-cpict->Size().y+1-current_vyadd,
                fade_count(),fade_max(),
                cache.ctint(tint_id)->data,
                color_table,the_game->current_palette());
@@ -702,8 +702,8 @@ void game_object::draw_tint(int tint_id)
 
   else
     cpict->put_remaped(screen,
-               (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
-               y-cpict->height()+1-current_vyadd,
+               (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+               y-cpict->Size().y+1-current_vyadd,
                cache.ctint(tint_id)->data);
 }
 
@@ -713,8 +713,8 @@ void game_object::draw_double_tint(int tint_id, int tint2)
   trans_image *cpict=picture();
   if (fade_count())
     cpict->put_fade_tint(screen,
-               (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
-               y-cpict->height()+1-current_vyadd,
+               (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+               y-cpict->Size().y+1-current_vyadd,
                fade_count(),fade_max(),
                cache.ctint(tint_id)->data,
                color_table,the_game->current_palette());
@@ -722,8 +722,8 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 
   else
     cpict->put_double_remaped(screen,
-               (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
-               y-cpict->height()+1-current_vyadd,
+               (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+               y-cpict->Size().y+1-current_vyadd,
                cache.ctint(tint_id)->data,
                cache.ctint(tint2)->data);
 }
@@ -734,8 +734,8 @@ void game_object::draw_predator()
 {
   trans_image *cpict=picture();
   cpict->put_predator(screen,
-             (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
-             y-cpict->height()+1-current_vyadd);
+             (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+             y-cpict->Size().y+1-current_vyadd);
 
 }
 
@@ -757,8 +757,8 @@ void game_object::drawer()
     {
       trans_image *cpict=picture();
       cpict->put_image(screen,
-               (direction<0 ? x-(cpict->width()-x_center()-1) : x-x_center())-current_vxadd,
-               y-cpict->height()+1-current_vyadd);
+               (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
+               y-cpict->Size().y+1-current_vyadd);
     }
   }
 }
@@ -786,7 +786,7 @@ game_object *game_object::try_move(int32_t x, int32_t y, int32_t &xv, int32_t &y
 
     if (checks&2)
     {
-      h=picture()->height();
+      h=picture()->Size().y;
       x2=x+xv;
       y2=y-h+1+yv;
       current_level->foreground_intersect(x,y-h+1,x2,y2);

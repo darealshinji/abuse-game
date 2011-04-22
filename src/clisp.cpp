@@ -1350,8 +1350,8 @@ long c_caller(long number, void *args)
     case 122 : current_object->set_fyvel(lnumber_value(CAR(args))); break;
     case 123 : current_object->set_fxacel(lnumber_value(CAR(args))); break;
     case 124 : current_object->set_fyacel(lnumber_value(CAR(args))); break;
-    case 125 : return current_object->picture()->width(); break;
-    case 126 : return current_object->picture()->height(); break;
+    case 125 : return current_object->picture()->Size().x; break;
+    case 126 : return current_object->picture()->Size().y; break;
     case 127 : { dprintf("trap\n"); } break;   // I use this to set gdb break points
     case 128 : { return current_level->platform_push(current_object,lnumber_value(CAR(args)),
                         lnumber_value(CAR(CDR(args))));
@@ -1499,7 +1499,7 @@ long c_caller(long number, void *args)
     {
       game_object *o=(game_object *)lpointer_value(CAR(args));
       int32_t x=o->x-current_object->x,
-        y=-(o->y-o->picture()->height()/2-(current_object->y-(current_object->picture()->height()/2)));
+        y=-(o->y-o->picture()->Size().y/2-(current_object->y-(current_object->picture()->Size().y/2)));
       return lisp_atan2(y,x);
     } break;
     case 154 :

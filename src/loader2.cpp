@@ -454,8 +454,8 @@ void load_data(int argc, char **argv)
   ERROR(backtiles[0]>=0,"No black (0) background tile defined!");
   ERROR(big_font_pict!=-1 || small_font_pict!=-1,
     "No font loaded (use load_big_font or load_small_font)!");
-  f_wid=cache.foret(foretiles[0])->im->width();
-  f_hi=cache.foret(foretiles[0])->im->height();
+  f_wid=cache.foret(foretiles[0])->im->Size().x;
+  f_hi=cache.foret(foretiles[0])->im->Size().y;
   b_wid=cache.backt(backtiles[0])->im->Size().x;
   b_hi=cache.backt(backtiles[0])->im->Size().y;
 

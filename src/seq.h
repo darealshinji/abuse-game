@@ -37,7 +37,7 @@ public :
   int x_center(short current) { return (short) (cache.fig(seq[current])->xcfg); }
   int length() { return total; }
   int get_advance(int current) { return cache.fig(seq[current])->advance; }
-  int size();
+  size_t MemUsage();
   ~sequence();
 };
 

@@ -126,7 +126,7 @@ public :
   int total_frames() { return current_sequence()->length(); }
   void picture_space(int32_t &x1, int32_t &y1,int32_t &x2, int32_t &y2);
   int tx(int x) { if (direction>0) return x-x_center(); else return x_center()-x; }
-  int ty(int y) { return y-picture()->height()+1; }
+  int ty(int y) { return y-picture()->Size().y+1; }
   void defaults();
 
   game_object(int Type, int load=0);

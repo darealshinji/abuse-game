@@ -3006,7 +3006,7 @@ void level::hurt_radius(int32_t x, int32_t y,int32_t r, int32_t m, game_object *
   {
     if (o!=exclude && o->hurtable())
     {
-      int32_t y1=o->y,y2=o->y-o->picture()->height();
+      int32_t y1=o->y,y2=o->y-o->picture()->Size().y;
       int32_t cx=abs(o->x-x),cy1=abs(y1-y),d1,d2,cy2=abs(y2-y);
       if (cx<cy1)
         d1=cx+cy1-(cx>>1);
