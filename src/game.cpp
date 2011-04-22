@@ -575,7 +575,7 @@ void Game::put_block_fg(int x, int y, trans_image *im)
       int cx1, cy1, cx2, cy2;
       screen->GetClip(cx1, cy1, cx2, cy2);
       screen->SetClip(viewx1, viewy1, viewx2 + 1, viewy2 + 1);
-      im->put_image(screen, (x - xoff / ftile_width())*ftile_width()+viewx1 - xoff % ftile_width(),
+      im->PutImage(screen, (x - xoff / ftile_width())*ftile_width()+viewx1 - xoff % ftile_width(),
             (y - yoff / ftile_height())*ftile_height()+viewy1 - yoff % ftile_height());
       screen->SetClip(cx1, cy1, cx2, cy2);
     }
@@ -946,7 +946,7 @@ void Game::draw_map(view *v, int interpolate)
           if(fort_num != BLACK)
           {
         if(draw_y < ncy1 || draw_y + yinc > ncy2 || draw_x < ncx1 || draw_x + xinc > ncx2)
-            get_fg(fort_num)->im->put_image(screen, draw_x, draw_y);
+            get_fg(fort_num)->im->PutImage(screen, draw_x, draw_y);
         else
             get_fg(fort_num)->im->put_image_offseted(screen, sl1);
 
@@ -990,9 +990,9 @@ void Game::draw_map(view *v, int interpolate)
         if(fort_num != BLACK)
         {
           if(dev & DRAW_BG_LAYER)
-          get_fg(fort_num)->im->put_image(screen, draw_x, draw_y);
+          get_fg(fort_num)->im->PutImage(screen, draw_x, draw_y);
           else
-          get_fg(fort_num)->im->put_image_filled(screen, draw_x, draw_y, 0);
+          get_fg(fort_num)->im->PutFilled(screen, draw_x, draw_y, 0);
 
           if(!(dev & EDIT_MODE))
           current_level->mark_seen(x, y);

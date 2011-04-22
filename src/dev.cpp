@@ -3006,7 +3006,7 @@ void pal_win::draw()
     for (i=0; i<w*h; i++)
     {
       im->clear();
-      the_game->get_fg(pat[i])->im->put_image(im,0,0);
+      the_game->get_fg(pat[i])->im->PutImage(im,0,0);
       scale_put(im,me->screen,me->x1()+(i%w)*tw,
         me->y1()+(i/w)*th,tw,th);
       if (d==pat[i])

@@ -680,7 +680,7 @@ void game_object::map_draw()
 void game_object::draw_trans(int count, int max)
 {
   trans_image *cpict=picture();
-  cpict->put_fade(screen,
+  cpict->PutFade(screen,
           (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
           y-cpict->Size().y+1-current_vyadd,
           count,max,
@@ -692,7 +692,7 @@ void game_object::draw_tint(int tint_id)
 {
   trans_image *cpict=picture();
   if (fade_count())
-    cpict->put_fade_tint(screen,
+    cpict->PutFadeTint(screen,
                (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                y-cpict->Size().y+1-current_vyadd,
                fade_count(),fade_max(),
@@ -701,7 +701,7 @@ void game_object::draw_tint(int tint_id)
 
 
   else
-    cpict->put_remaped(screen,
+    cpict->PutRemap(screen,
                (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                y-cpict->Size().y+1-current_vyadd,
                cache.ctint(tint_id)->data);
@@ -712,7 +712,7 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 {
   trans_image *cpict=picture();
   if (fade_count())
-    cpict->put_fade_tint(screen,
+    cpict->PutFadeTint(screen,
                (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                y-cpict->Size().y+1-current_vyadd,
                fade_count(),fade_max(),
@@ -721,7 +721,7 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 
 
   else
-    cpict->put_double_remaped(screen,
+    cpict->PutDoubleRemap(screen,
                (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                y-cpict->Size().y+1-current_vyadd,
                cache.ctint(tint_id)->data,
@@ -733,7 +733,7 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 void game_object::draw_predator()
 {
   trans_image *cpict=picture();
-  cpict->put_predator(screen,
+  cpict->PutPredator(screen,
              (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
              y-cpict->Size().y+1-current_vyadd);
 
@@ -756,7 +756,7 @@ void game_object::drawer()
     else
     {
       trans_image *cpict=picture();
-      cpict->put_image(screen,
+      cpict->PutImage(screen,
                (direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                y-cpict->Size().y+1-current_vyadd);
     }
