@@ -15,8 +15,6 @@
 #include "common.h"
 
 #include "input.h"
-#include "macs.h"
-
 
 void button::remap(filter *f)
 {

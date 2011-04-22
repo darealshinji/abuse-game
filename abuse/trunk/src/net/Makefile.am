@@ -7,7 +7,7 @@ libnet_a_SOURCES = \
     fileman.cpp fileman.h \
     sock.cpp sock.h \
     tcpip.cpp tcpip.h \
-    indian.h ghandler.h undrv.h \
+    ghandler.h undrv.h \
     $(NULL)
 
 INCLUDES = -I$(srcdir) -I$(srcdir)/../ -I$(srcdir)/../imlib $(SDL_CFLAGS)

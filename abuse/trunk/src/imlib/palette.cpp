@@ -16,7 +16,6 @@
 
 #include "palette.h"
 #include "image.h"
-#include "macs.h"
 #include "video.h"
 #include "filter.h"
 

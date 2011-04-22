@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include "linked.h"
 #include "palette.h"
-#include "system.h"
 #include "specs.h"
 #define MAX_DIRTY 200
 

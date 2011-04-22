@@ -17,6 +17,7 @@
 #include <string.h>
 #include <limits.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "common.h"
 
@@ -29,7 +30,6 @@
 #include "particle.h"
 #include "objects.h"
 #include "jrand.h"
-#include "macs.h"
 #include "clisp.h"
 #include "status.h"
 #include "dev.h"

@@ -10,11 +10,12 @@
 
 #include "config.h"
 
+#include <unistd.h>
+
 #include "common.h"
 
 #include "game.h"
 
-#include "system.h"
 #include "view.h"
 #include "lisp.h"
 #include "jwindow.h"

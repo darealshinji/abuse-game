@@ -12,7 +12,6 @@
 
 #include <string.h>
 
-#include "macs.h"
 #include "status.h"
 #include "dprint.h"
 

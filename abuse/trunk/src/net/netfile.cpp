@@ -10,7 +10,8 @@
 
 #include "config.h"
 
-#include "indian.h"
+#include "common.h"
+
 #include "netfile.h"
 #include "../inc/netface.h"
 #include "engine.h"

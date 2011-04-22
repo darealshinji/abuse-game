@@ -18,7 +18,7 @@
 #include <signal.h>
 #include <sys/stat.h>
 
-#include "macs.h"
+#include "common.h"
 
 #include "fileman.h"
 #include "netface.h"

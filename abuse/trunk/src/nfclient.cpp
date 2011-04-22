@@ -19,7 +19,6 @@
 
 #include "common.h"
 
-#include "system.h"
 #include "netface.h"
 
 #include "specs.h"

@@ -13,11 +13,13 @@
 #ifndef __NETFACE_HPP_
 #define __NETFACE_HPP_
 
+#include <stdint.h>
+
 #define PACKET_MAX_SIZE 1024    // this is a game data packet (udp/ipx)
 #define READ_PACKET_SIZE 1024   // this is a file service packet (tcp/spx)
 #define NET_CRC_FILENAME "#net_crc"
 #define NET_STARTFILE    "netstart.spe"
-#include "indian.h"
+
 #include <string.h>
 
 

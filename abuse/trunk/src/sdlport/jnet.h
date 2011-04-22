@@ -13,7 +13,6 @@
 #ifndef __NET_HPP_
 #define __NET_HPP_
 
-#include "macs.h"
 #include "packet.h"
 
 enum { SOCK_BAD_HOST       = -1,

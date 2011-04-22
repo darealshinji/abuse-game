@@ -25,8 +25,8 @@ libimlib_a_SOURCES = \
     guistat.cpp guistat.h \
     sprite.cpp sprite.h \
     jwindow.cpp jwindow.h \
-    macs.h video.h event.h mouse.h timing.h jdir.h \
-    system.h \
+    video.cpp video.h \
+    event.h mouse.h timing.h jdir.h \
     $(NULL)
 
 INCLUDES = -I$(srcdir) -I$(srcdir)/.. $(SDL_CFLAGS)

@@ -13,7 +13,6 @@
 #include "common.h"
 
 #include "image.h"
-#include "macs.h"
 #include "filter.h"
 
 filter::filter(palette *from, palette *to)   // creates a conversion filter from one palette to another

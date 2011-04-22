@@ -10,6 +10,8 @@
 
 #include "config.h"
 
+#include <unistd.h>
+
 #include "common.h"
 
 #include "filesel.h"

@@ -14,7 +14,6 @@
 
 #include "common.h"
 
-#include "macs.h"
 #include "status.h"
 #include "dprint.h"
 

@@ -16,6 +16,7 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <math.h>
+#include <unistd.h>
 #if (defined(__MACH__) || !defined(__APPLE__))
 #   include <sys/types.h>
 #   include <sys/stat.h>
@@ -26,7 +27,6 @@
 #include "image.h"
 #include "palette.h"
 #include "specs.h"
-#include "system.h"
 #include "dprint.h"
 
 char const *spec_types[] =

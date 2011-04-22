@@ -10,7 +10,7 @@
 
 #include "config.h"
 
-#include "system.h"
+#include "common.h"
 
 /* Python code to generate the tables:
  *  import math

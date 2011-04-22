@@ -21,8 +21,6 @@
 
 #include "common.h"
 
-#include "system.h"
-#include "macs.h"
 #include "gserver.h"
 #include "netface.h"
 #include "timing.h"

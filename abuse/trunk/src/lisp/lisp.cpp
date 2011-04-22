@@ -28,7 +28,6 @@
 #   include "fakelib.h"
 #else
 #   include "status.h"
-#   include "macs.h"
 #   include "specs.h"
 #   include "dprint.h"
 #   include "cache.h"

@@ -27,11 +27,10 @@
 #include <sys/shm.h>
 #include <netdb.h>
 
-#include "indian.h"
-#include "undrv.h"
-#include "../include/netface.h"      // net interface structures to the engine will use
+#include "common.h"
 
-#include "../include/netface.h"
+#include "undrv.h"
+#include "../include/netface.h" // net interface structures the engine will use
 
 //#include "netdrv.h"
 #include "gserver.h"

@@ -12,7 +12,6 @@
 #define __NFSERVER_HPP_
 
 #include "specs.h"
-#include "system.h"
 #include "netface.h"
 #include "sock.h"
 

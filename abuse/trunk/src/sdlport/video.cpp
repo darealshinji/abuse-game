@@ -35,9 +35,7 @@
 #include "common.h"
 
 #include "filter.h"
-#include "system.h"
 #include "video.h"
-#include "macs.h"
 #include "image.h"
 #include "setup.h"
 
@@ -54,9 +52,7 @@ GLuint texid;
 SDL_Surface *texture = NULL;
 #endif
 
-// Forward declarations
-void update_window_part(SDL_Rect *rect);
-void update_window_done();
+static void update_window_part(SDL_Rect *rect);
 
 //
 // power_of_two()
@@ -338,56 +334,6 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
 }
 
 //
-// put_image()
-// Draw the entire image
-//
-void put_image(image * im, int x, int y)
-{
-    put_part_image(im, x, y, 0, 0, im->Size().x - 1, im->Size().y - 1);
-}
-
-//
-// update_dirty_window()
-// Update the dirty parts of the window
-//
-void update_dirty_window(image *im, int xoff, int yoff)
-{
-    int count;
-    dirty_rect *dr, *q;
-    CHECK(im->m_special); // make sure the image has the ability to contain dirty areas
-    if(im->m_special->keep_dirt == 0)
-    {
-        put_image(im, xoff, yoff);
-    }
-    else
-    {
-        count = im->m_special->dirties.number_nodes();
-        if(!count)
-            return;  // if nothing to update, return
-        dr = (dirty_rect *)(im->m_special->dirties.first());
-        while(count > 0)
-        {
-            put_part_image(im, xoff + dr->dx1, yoff + dr->dy1, dr->dx1, dr->dy1, dr->dx2 + 1, dr->dy2 + 1);
-            q = dr;
-            dr = (dirty_rect *)(dr->next());
-            im->m_special->dirties.unlink(q);
-            delete q;
-            count--;
-        }
-    }
-}
-
-//
-// update_dirty()
-// Update the dirty parts of the image
-//
-void update_dirty(image *im, int xoff, int yoff)
-{
-    update_dirty_window(im, xoff, yoff);
-    update_window_done();
-}
-
-//
 // load()
 // Set the palette
 //
@@ -460,7 +406,7 @@ void update_window_done()
 #endif
 }
 
-void update_window_part(SDL_Rect *rect)
+static void update_window_part(SDL_Rect *rect)
 {
     // no partial blit's in case of opengl
     // complete blit + scaling just before flip
