@@ -15,6 +15,7 @@
 // Globally required headers
 //
 #include <stdint.h>
+#include <stdio.h>
 
 //
 // Lol Engine
@@ -39,30 +40,21 @@ static inline int BigEndian()
     return u.t[0];
 }
 
-static inline uint16_t Swap16(uint16_t x)
+static inline uint16_t lstl(uint16_t x)
 {
-    return ((uint16_t)x << 8 ) | ((uint16_t)x >> 8);
+    if (BigEndian())
+        return ((uint16_t)x << 8 ) | ((uint16_t)x >> 8);
+    return x;
 }
 
-static inline uint32_t Swap32(uint32_t x)
+static inline uint32_t lltl(uint32_t x)
 {
-    return ((uint32_t)x >> 24) | (((uint32_t)x & 0x00ff0000) >> 8)
-         | (((uint32_t)x & 0x0000ff00) << 8) | ((uint32_t)x << 24);
+    if (BigEndian())
+        return ((uint32_t)x >> 24) | (((uint32_t)x & 0x00ff0000) >> 8)
+             | (((uint32_t)x & 0x0000ff00) << 8) | ((uint32_t)x << 24);
+    return x;
 }
 
-#define uint16_to_intel(x) (BigEndian() ? Swap16((x)) : (x))
-#define uint32_to_intel(x) (BigEndian() ? Swap32((x)) : (x))
-#define big_uint16_to_local(x) (BigEndian() ? (x) : Swap16((x)))
-#define big_uint32_to_local(x) (BigEndian() ? (x) : Swap32((x)))
-#define uint16_to_local(x) (BigEndian() ? Swap16((x)) : (x))
-#define uint32_to_local(x) (BigEndian() ? Swap32((x)) : (x))
-
-#define bltl(x) big_uint32_to_local(x)
-#define bstl(x) big_uint16_to_local(x)
-#define lltl(x) uint32_to_intel(x)
-#define lstl(x) uint16_to_intel(x)
-
-#include <stdio.h>
 #define ERROR(x,st) { if (!(x)) \
    { printf("Error on line %d of %s : %s\n", \
      __LINE__,__FILE__,st); exit(1); } }
