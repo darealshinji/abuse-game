@@ -29,6 +29,8 @@ linked_list::linked_list()
 //
 linked_list::~linked_list()
 {
+    m_count = 0; // ensure destructors calling unlink() won't mess with us
+
     if (m_first)
         m_first->Prev()->SetNext(NULL); // set the prev nodes next to NULL
                                         // so we can go until we hit NULL
