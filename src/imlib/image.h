@@ -18,33 +18,9 @@
 #include "specs.h"
 #define MAX_DIRTY 200
 
-extern char const *imerr_messages[];  // correspond to imERRORS
-#define imREAD_ERROR            1
-#define imINCORRECT_FILETYPE   2
-#define imFILE_CORRUPTED       3
-#define imFILE_NOT_FOUND       4
-#define imMEMORY_ERROR         5
-#define imNOT_SUPPORTED        6
-#define imWRITE_ERROR          7
-#define imMAX_ERROR            7
-
-int16_t current_error();
-void clear_errors();
-void set_error(int16_t x);
-int16_t last_error();
 void image_init();
 void image_uninit();
 extern linked_list image_list;
-
-typedef struct image_color_t
-{
-    uint16_t r;
-    uint16_t g;
-    uint16_t b;
-} image_color;
-
-class filter;
-
 
 class dirty_rect : public linked_node
 {
@@ -116,8 +92,7 @@ private:
 public:
     image_descriptor *m_special;
 
-    image(spec_entry *e, bFILE *fp);
-    image(bFILE *fp);
+    image(bFILE *fp, spec_entry *e = NULL);
     image(vec2i size, uint8_t *page_buffer = NULL, int create_descriptor = 0);
     ~image();
 
@@ -135,10 +110,8 @@ public:
     {
         return last_scan + m_size.x;
     }
-    int32_t total_pixels(uint8_t background=0);
     image *copy(); // makes a copy of an image
     void clear(int16_t color = -1); // -1 is background color
-    void to_24bit(palette &pal);
 
     vec2i Size() const { return m_size; }
 
@@ -196,10 +169,8 @@ public:
     void flood_fill(int16_t x, int16_t y, uint8_t color);
     image *create_smooth(int16_t smoothness = 1); // 0 no smoothness
     void unpack_scanline(int16_t line, char bitsperpixel = 1);
-    uint8_t brightest_color(palette *pal);
     void flip_x();
     void flip_y();
-    uint8_t darkest_color(palette *pal, int16_t noblack = 0);
 };
 
 class image_controller

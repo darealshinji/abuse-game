@@ -43,7 +43,6 @@
 
 SDL_Surface *window = NULL, *surface = NULL;
 image *screen = NULL;
-unsigned char current_background;
 int win_xscale, win_yscale, mouse_xscale, mouse_yscale;
 int xres, yres;
 

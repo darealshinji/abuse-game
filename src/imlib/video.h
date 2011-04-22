@@ -23,7 +23,6 @@
 #include "image.h"
 
 
-extern unsigned char current_background;
 extern int xres,yres;
 extern int xoff,yoff;
 extern image *screen;

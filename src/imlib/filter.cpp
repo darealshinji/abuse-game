@@ -16,8 +16,6 @@
 #include "macs.h"
 #include "filter.h"
 
-extern unsigned char current_background;
-
 filter::filter(palette *from, palette *to)   // creates a conversion filter from one palette to another
 {
   nc=from->pal_size() > to->pal_size() ? from->pal_size() : to->pal_size();
@@ -223,7 +221,7 @@ void filter::put_image(image *screen, image *im, short x, short y,
             i < xl;
             i++, source++, dest++)
         {
-            if(!transparent || *source != current_background)
+            if (!transparent || *source)
                 *dest=fdat[*source];
         }
         pg1 = screen->next_line(y + j, pg1);

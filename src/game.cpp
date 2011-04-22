@@ -1267,14 +1267,14 @@ void do_title()
         pal = new palette(sd.find(SPEC_PALETTE), fp);
         pal->shift(1);
 
-        image *gray = new image(sd.find("gray_pict"), fp);
+        image *gray = new image(fp, sd.find("gray_pict"));
         image *smoke[5];
 
         char nm[20];
         for(i = 0; i < 5; i++)
         {
             sprintf(nm, "smoke%04d.pcx", i + 1);
-            smoke[i] = new image(sd.find(nm), fp);
+            smoke[i] = new image(fp, sd.find(nm));
         }
 
         screen->clear();
