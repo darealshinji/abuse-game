@@ -398,7 +398,7 @@ void game_object::draw_above(view *v)
     trans_image *p=picture();
 
     for (i=sy1; i<=sy2; i++)
-      p->put_scan_line(screen,sx,i,0);
+      p->PutScanLine(screen,sx,i,0);
   }
 }
 
