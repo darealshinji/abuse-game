@@ -335,6 +335,11 @@ void parseCommandLine( int argc, char **argv )
                 set_filename_prefix( datadir );
             }
         }
+        else if (ii + 1 < argc && !strcasecmp(argv[ii], "-export"))
+        {
+            spec_directory::extract(argv[++ii]);
+            exit(0);
+        }
         else if( !strcasecmp( argv[ii], "-h" ) || !strcasecmp( argv[ii], "--help" ) )
         {
             showHelp();

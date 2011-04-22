@@ -21,30 +21,33 @@
 
 extern char const *spec_types[];
 
-#define SPEC_INVALID_TYPE    0
-#define SPEC_COLOR_TABLE     1
-#define SPEC_PALETTE         2
-#define SPEC_IMAGE           4
-#define SPEC_FORETILE        5
-#define SPEC_BACKTILE        6
-#define SPEC_CHARACTER       7
-#define SPEC_MORPH_POINTS_8  8
-#define SPEC_MORPH_POINTS_16 9
-#define SPEC_GRUE_OBJS       10
-#define SPEC_EXTERN_SFX      11
-#define SPEC_DMX_MUS         12
-#define SPEC_PATCHED_MORPH   13
-#define SPEC_NORMAL_FILE     14
-#define SPEC_COMPRESS1_FILE  15
-#define SPEC_VECTOR_IMAGE    16
-#define SPEC_LIGHT_LIST      17
-#define SPEC_GRUE_FGMAP      18
-#define SPEC_GRUE_BGMAP      19
-#define SPEC_DATA_ARRAY      20
-#define SPEC_CHARACTER2      21
-#define SPEC_PARTICLE        22
-#define SPEC_EXTERNAL_LCACHE 23
-
+enum
+{
+    SPEC_INVALID_TYPE = 0,
+    SPEC_COLOR_TABLE,
+    SPEC_PALETTE,
+    SPEC_, /* Unused */
+    SPEC_IMAGE,
+    SPEC_FORETILE,
+    SPEC_BACKTILE,
+    SPEC_CHARACTER,
+    SPEC_MORPH_POINTS_8,
+    SPEC_MORPH_POINTS_16,
+    SPEC_GRUE_OBJS,
+    SPEC_EXTERN_SFX,
+    SPEC_DMX_MUS,
+    SPEC_PATCHED_MORPH,
+    SPEC_NORMAL_FILE,
+    SPEC_COMPRESS1_FILE,
+    SPEC_VECTOR_IMAGE,
+    SPEC_LIGHT_LIST,
+    SPEC_GRUE_FGMAP,
+    SPEC_GRUE_BGMAP,
+    SPEC_DATA_ARRAY,
+    SPEC_CHARACTER2,
+    SPEC_PARTICLE,
+    SPEC_EXTERNAL_LCACHE,
+};
 
 #define SPEC_SIGNATURE    "SPEC1.0"
 #define SPEC_SIG_SIZE     8
@@ -55,21 +58,29 @@ extern char const *spec_types[];
 #define SPEC_SEARCH_OUTSIDE_INSIDE 2
 #define SPEC_SEARCH_INSIDE_ONLY    3
 
-/* file specs
-              8   signature
-              2   number entries
-                  [entries]
-              1      entry type
-              1      entry name length
-              X      entry name (with null terminator)
-              1      flags
-                     if (flags&LINK)
-              1        link filename length
-              X        link filename
-                     else
-              4        data size
-              4        offset
-*/
+/*  struct spec_header
+ *  {
+ *      char signature[8];
+ *      uint16_t entries_count;
+ *      struct entry
+ *      {
+ *          uint8_t type;
+ *          uint8_t name_length;
+ *          char name[name_length];
+ *          uint8_t flags;
+ *          if (flags & LINK)
+ *          {
+ *              uint8_t filename_length;
+ *              char filename[filename_length];
+ *          }
+ *          else
+ *          {
+ *              uint32_t data_size;
+ *              uint32_t offset;
+ *          }
+ *      } entries[entries_count];
+ *  }
+ */
 
 void set_spec_main_file(char const *filename, int search_order=SPEC_SEARCH_OUTSIDE_INSIDE);
 
@@ -195,6 +206,8 @@ public :
   void print();
   void delete_entries();   // if the directory was created by hand instead of by file
   ~spec_directory();
+
+  static void extract(char const *name);
 } ;
 
 /*jFILE *add_directory_entry(char *filename,
