@@ -11,9 +11,9 @@
 #ifndef __ITEMS_HPP__
 #define __ITEMS_HPP__
 #include "image.h"
+#include "transimage.h"
 #include "specs.h"
 #include "points.h"
-#include "timage.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -43,7 +43,7 @@ public :
 class foretile
 {
 public :
-  TImage *im;
+  TransImage *im;
   uint16_t next;
   uint8_t damage;
   uint8_t ylevel;            // for fast intersections, this is the y level offset for the ground
@@ -60,7 +60,7 @@ public :
 class figure
 {
 public :
-  TImage *forward,*backward;
+  TransImage *forward,*backward;
   uint8_t hit_damage,xcfg;
   int8_t advance;
   point_list *hit;

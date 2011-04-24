@@ -4,6 +4,7 @@ noinst_LIBRARIES = libimlib.a
 libimlib_a_SOURCES = \
     filter.cpp filter.h \
     image.cpp image.h \
+    transimage.cpp transimage.h \
     linked.cpp linked.h \
     input.cpp input.h \
     palette.cpp palette.h \
@@ -12,7 +13,6 @@ libimlib_a_SOURCES = \
     specs.cpp specs.h \
     supmorph.cpp supmorph.h \
     pcxread.cpp pcxread.h \
-    timage.cpp timage.h \
     jrand.cpp jrand.h \
     keys.cpp keys.h \
     dprint.cpp dprint.h \

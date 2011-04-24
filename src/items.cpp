@@ -260,7 +260,7 @@ foretile::foretile(bFILE *fp)
                  (b[l]/(t[l]*4/5))>>3));
 
 
-  im=new TImage(img,"foretile");
+  im=new TransImage(img,"foretile");
   delete img;
 
   next=fp->read_uint16();
@@ -274,7 +274,7 @@ foretile::foretile(bFILE *fp)
 
 size_t figure::MemUsage()
 {
-    return forward->MemUsage() + backward->MemUsage() + hit->size()
+    return forward->DiskUsage() + backward->DiskUsage() + hit->size()
             + f_damage->size() + b_damage->size() + sizeof(figure);
 }
 
@@ -282,9 +282,9 @@ size_t figure::MemUsage()
 figure::figure(bFILE *fp, int type)
 {
   image *im=load_image(fp);
-  forward=new TImage(im,"figure data");
+  forward=new TransImage(im,"figure data");
   im->FlipX();
-  backward=new TImage(im,"figure backward data");
+  backward=new TransImage(im,"figure backward data");
   delete im;
 
   fp->read(&hit_damage,1);

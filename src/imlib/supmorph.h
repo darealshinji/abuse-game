@@ -11,7 +11,7 @@
 #ifndef __SUPER_MORPH_HPP__
 #define __SUPER_MORPH_HPP__
 
-#include "timage.h"
+#include "transimage.h"
 
 class super_morph
 {
@@ -19,7 +19,7 @@ public :
   int t;
   unsigned char *movers;
   int w,h;
-  super_morph(TImage *h1, TImage *h2, int aneal_steps, void (*stat_fun)(int));
+  super_morph(TransImage *h1, TransImage *h2, int aneal_steps, void (*stat_fun)(int));
   ~super_morph() { if (t) free(movers); }
 } ;
 

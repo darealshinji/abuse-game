@@ -17,7 +17,6 @@
 #include <fcntl.h>
 
 #include "specs.h"
-#include "timage.h"
 #include "jwindow.h"
 #include "fonts.h"
 #include "timing.h"

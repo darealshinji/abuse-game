@@ -14,7 +14,7 @@
 
 #include "supmorph.h"
 #include "specs.h"
-#include "timage.h"
+#include "transimage.h"
 #include "timing.h"
 #include "filter.h"
 #include "video.h"
@@ -24,7 +24,7 @@
 #define p_dist(x1,y1,x2,y2) (((int)(x1)-(int)x2)*((int)(x1)-(int)x2)+      \
                              ((int)(y1)-(int)y2)*((int)(y1)-(int)y2))
 
-super_morph::super_morph(TImage *hint1, TImage *hint2,
+super_morph::super_morph(TransImage *hint1, TransImage *hint2,
              int aneal_steps, void (*stat_fun)(int))
 {
   int x,y,w1=hint1->Size().x,
@@ -355,7 +355,7 @@ main(int argc, char **argv)
 
   int steps=atoi(argv[1]);
   if (steps<2) steps=50;
-  TImage *hh1=new TImage(h1,"hint1"),*hh2=new TImage(h2,"hint2");
+  TransImage *hh1=new TransImage(h1,"hint1"),*hh2=new TransImage(h2,"hint2");
 
   time_marker time1;
   super_morph sm(hh1,hh2,steps);

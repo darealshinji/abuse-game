@@ -563,7 +563,7 @@ void Game::end_session()
   }
 }
 
-void Game::put_block_fg(int x, int y, TImage *im)
+void Game::put_block_fg(int x, int y, TransImage *im)
 {
   for(view *f = first_view; f; f = f->next)
   {

@@ -12,7 +12,7 @@
 
 #include "common.h"
 
-#include "timage.h"
+#include "transimage.h"
 #include "objects.h"
 #include "chars.h"
 
@@ -387,7 +387,7 @@ void game_object::draw_above(view *v)
 
     sy1 = Max(v->cy1, sy1);
     sy2 = Min(v->cy2, sy2);
-    TImage *p=picture();
+    TransImage *p=picture();
 
     for (i=sy1; i<=sy2; i++)
       p->PutScanLine(screen,vec2i(sx,i),0);
@@ -668,7 +668,7 @@ void game_object::map_draw()
 
 void game_object::draw_trans(int count, int max)
 {
-  TImage *cpict=picture();
+  TransImage *cpict=picture();
   cpict->PutFade(screen,
           vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                 y-cpict->Size().y+1-current_vyadd),
@@ -679,7 +679,7 @@ void game_object::draw_trans(int count, int max)
 
 void game_object::draw_tint(int tint_id)
 {
-  TImage *cpict=picture();
+  TransImage *cpict=picture();
   if (fade_count())
     cpict->PutFadeTint(screen,
                vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
@@ -699,7 +699,7 @@ void game_object::draw_tint(int tint_id)
 
 void game_object::draw_double_tint(int tint_id, int tint2)
 {
-  TImage *cpict=picture();
+  TransImage *cpict=picture();
   if (fade_count())
     cpict->PutFadeTint(screen,
                vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
@@ -721,7 +721,7 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 
 void game_object::draw_predator()
 {
-  TImage *cpict=picture();
+  TransImage *cpict=picture();
   cpict->PutPredator(screen,
              vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                    y-cpict->Size().y+1-current_vyadd));
@@ -744,7 +744,7 @@ void game_object::drawer()
       draw_trans(fade_count(),fade_max());
     else
     {
-      TImage *cpict=picture();
+      TransImage *cpict=picture();
       cpict->PutImage(screen,
                vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                      y-cpict->Size().y+1-current_vyadd));

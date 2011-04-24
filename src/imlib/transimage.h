@@ -24,11 +24,11 @@
  *   (no scan line wraps allowed, there can be a last skip value)
  */
 
-class TImage // transparent image
+class TransImage
 {
 public:
-    TImage(image *im, char const *name);
-    ~TImage();
+    TransImage(image *im, char const *name);
+    ~TransImage();
 
     inline vec2i Size() { return m_size; }
     inline uint8_t *Data() { return m_data; }
@@ -38,9 +38,9 @@ public:
     void PutImage(image *screen, vec2i pos);
     void PutRemap(image *screen, vec2i pos, uint8_t *map);
     void PutDoubleRemap(image *screen, vec2i pos, uint8_t *map, uint8_t *map2);
-    void PutFade(image *screen, vec2i pos, int amount, int total_frames,
+    void PutFade(image *screen, vec2i pos, int amount, int nframes,
                  color_filter *f, palette *pal);
-    void PutFadeTint(image *screen, vec2i pos, int amount, int total_frames,
+    void PutFadeTint(image *screen, vec2i pos, int amount, int nframes,
                      uint8_t *tint, color_filter *f, palette *pal);
     void PutColor(image *screen, vec2i pos, uint8_t color);
     void PutFilled(image *screen, vec2i pos, uint8_t color);
@@ -49,7 +49,7 @@ public:
                   int blend_amount, color_filter *f, palette *pal);
     void PutScanLine(image *screen, vec2i pos, int line);
 
-    size_t MemUsage();
+    size_t DiskUsage();
 
 private:
     uint8_t *ClipToLine(image *screen, vec2i pos1, vec2i pos2,
@@ -61,7 +61,7 @@ private:
     void PutImageGeneric(image *dest, vec2i pos, uint8_t color,
                          image *blend, vec2i bpos,
                          uint8_t *map1, uint8_t *map2, int amount,
-                         int total_frames, uint8_t *tint,
+                         int nframes, uint8_t *tint,
                          color_filter *f, palette *pal);
 
     vec2i m_size;
