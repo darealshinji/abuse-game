@@ -206,8 +206,6 @@ public :
   void print();
   void delete_entries();   // if the directory was created by hand instead of by file
   ~spec_directory();
-
-  static void extract(char const *name);
 } ;
 
 /*jFILE *add_directory_entry(char *filename,

@@ -24,7 +24,6 @@
 
 #include "image.h"
 #include "palette.h"
-#include "pcxread.h"
 #include "specs.h"
 #include "dprint.h"
 
@@ -960,88 +959,6 @@ void spec_directory::delete_entries()   // if the directory was created by hand 
 
   if (total)
     free(entries);
-}
-
-void spec_directory::extract(char const *name)
-{
-    jFILE fp(name, "rb");
-    if (fp.open_failure())
-    {
-        fprintf(stderr, "Spec: ERROR - could not open %s\n", name);
-        return;
-    }
-
-    spec_directory dir(&fp);
-    if (dir.total <= 0)
-    {
-        fprintf(stderr, "Spec: ERROR - no signature or no data in %s\n", name);
-        return;
-    }
-
-    char const *out = "SPEC.DIR";
-    mkdir(out, S_IRUSR | S_IWUSR | S_IXUSR);
-    if (chdir(out))
-    {
-        fprintf(stderr, "Spec: ERROR - could not create or cd to %s\n", out);
-        return;
-    }
-
-    palette *pal = NULL;
-
-    for (int i = 0; i < dir.total; i++)
-    {
-        spec_entry *se = dir.entries[i];
-
-        FILE *fp2 = fopen(se->name, "wb");
-        if (!fp2)
-        {
-            fprintf(stderr, "Spec: ERROR - could not write to %s\n", se->name);
-            continue;
-        }
-
-        fp.seek(se->offset, SEEK_SET);
-        uint8_t buf[1024];
-        size_t todo = se->size;
-        while (todo > 0)
-        {
-            fp.read(buf, Min(todo, 1024));
-            fwrite(buf, Min(todo, 1024), 1, fp2);
-            todo -= Min(todo, 1024);
-        }
-        fclose(fp2);
-
-        fprintf(stderr, "Spec: %s (type %i): %i bytes\n",
-                se->name, se->type, (int)se->size);
-
-        /* If it's a palette, keep it */
-        if (!pal && se->type == SPEC_PALETTE)
-            pal = new palette(se, &fp);
-    }
-
-    /* If we have a palette, output all images */
-    for (int i = 0; pal && i < dir.total; i++)
-    {
-        char buf[1024];
-        spec_entry *se = dir.entries[i];
-
-        switch (se->type)
-        {
-        case SPEC_IMAGE:
-        case SPEC_FORETILE:
-        case SPEC_BACKTILE:
-        case SPEC_CHARACTER:
-        case SPEC_CHARACTER2:
-            sprintf(buf, "%s-export.pcx", se->name);
-            image *im = new image(&fp, se);
-            write_PCX(im, pal, buf);
-            delete im;
-            fprintf(stderr, "Spec: %s is an image\n", buf);
-            break;
-        }
-    }
-
-    /* Clean up */
-    delete pal;
 }
 
 void note_open_fd(int fd, char const *str)
