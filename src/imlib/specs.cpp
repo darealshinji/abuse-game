@@ -281,7 +281,7 @@ void set_spec_main_file(char const *filename, int Search_order)
 
 void fast_load_start_recording(char *filename)
 {
-    fast_load_fd = ::open(filename,O_CREAT|O_RDWR,S_IRWXU | S_IRWXG | S_IRWXO);
+    fast_load_fd = ::open(filename,O_CREAT|O_RDWR,S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
     fast_load_mode = 1;
 }
 
@@ -330,7 +330,7 @@ void jFILE::open_external(char const *filename, char const *mode, int flags)
     flags-=O_WRONLY;
     flags|=O_CREAT|O_RDWR;
 
-    fd=open(tmp_name,flags,S_IRWXU | S_IRWXG | S_IRWXO);
+    fd=open(tmp_name,flags,S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
   } else
     fd=open(tmp_name,flags);
 
