@@ -2,7 +2,7 @@
 
 SUBDIRS = lisp net imlib sdlport
 
-bin_PROGRAMS = abuse
+bin_PROGRAMS = abuse abuse-tool
 
 abuse_SOURCES = \
     common.h \
@@ -67,6 +67,11 @@ abuse_SOURCES = \
 EXTRALIBS = lisp/liblisp.a sdlport/libsdlport.a imlib/libimlib.a net/libnet.a
 abuse_LDADD = $(EXTRALIBS)
 abuse_DEPENDENCIES = $(EXTRALIBS)
+
+abuse_tool_SOURCES = \
+    tool/abuse-tool.cpp
+abuse_tool_LDADD = imlib/libimlib.a
+abuse_tool_DEPENDENCIES = $(abuse_tool_LDADD)
 
 INCLUDES = -I$(srcdir) -I $(srcdir)/lisp -I$(srcdir)/imlib \
            -I$(srcdir)/net $(SDL_CFLAGS)

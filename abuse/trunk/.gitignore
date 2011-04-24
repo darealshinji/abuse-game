@@ -15,3 +15,4 @@ stamp-*
 .deps
 abuse.6
 src/abuse
+src/abuse-tool
