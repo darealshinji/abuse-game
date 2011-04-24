@@ -11,7 +11,7 @@
 #ifndef __FONTS_HPP_
 #define __FONTS_HPP_
 #include "image.h"
-#include "timage.h"
+#include "transimage.h"
 
 
 
@@ -34,7 +34,7 @@ public:
 class JCFont
 {
   int tl,th;
-  TImage *let[256];
+  TransImage *let[256];
 public:
   JCFont(image *letters);
   void put_char(image *screen,  int x, int y, char ch, int color=-1);

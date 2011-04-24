@@ -61,7 +61,7 @@ public:
  *  - character
  *  - sound
  *  - image
- *  - TImage
+ *  - TransImage
  */
 
 struct CacheItem

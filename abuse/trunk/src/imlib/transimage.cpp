@@ -15,9 +15,9 @@
 
 #include "common.h"
 
-#include "timage.h"
+#include "transimage.h"
 
-TImage::TImage(image *im, char const *name)
+TransImage::TransImage(image *im, char const *name)
 {
     m_size = im->Size();
 
@@ -52,8 +52,8 @@ TImage::TImage(image *im, char const *name)
     uint8_t *parser = m_data = (uint8_t *)malloc(bytes);
     if (!parser)
     {
-        printf("size = %d %d (%d bytes)\n", m_size.x, m_size.y, bytes);
-        CONDITION(parser, "malloc error for TImage::m_data");
+        printf("size = %d %d (%ld bytes)\n", m_size.x, m_size.y, (long)bytes);
+        CONDITION(parser, "malloc error for TransImage::m_data");
     }
 
     // Now fill the RLE transparency image
@@ -90,12 +90,12 @@ TImage::TImage(image *im, char const *name)
     im->Unlock();
 }
 
-TImage::~TImage()
+TransImage::~TransImage()
 {
     free(m_data);
 }
 
-image *TImage::ToImage()
+image *TransImage::ToImage()
 {
     image *im = new image(m_size);
 
@@ -108,8 +108,8 @@ image *TImage::ToImage()
     return im;
 }
 
-uint8_t *TImage::ClipToLine(image *screen, vec2i pos1, vec2i pos2,
-                            vec2i &pos, int &ysteps)
+uint8_t *TransImage::ClipToLine(image *screen, vec2i pos1, vec2i pos2,
+                                vec2i &pos, int &ysteps)
 {
     // check to see if it is totally clipped out first
     if (pos.y + m_size.y <= pos1.y || pos.y >= pos2.y
@@ -143,10 +143,10 @@ uint8_t *TImage::ClipToLine(image *screen, vec2i pos1, vec2i pos2,
 }
 
 template<int N>
-void TImage::PutImageGeneric(image *screen, vec2i pos, uint8_t color,
-                             image *blend, vec2i bpos, uint8_t *map,
-                             uint8_t *map2, int amount, int total_frames,
-                             uint8_t *tint, color_filter *f, palette *pal)
+void TransImage::PutImageGeneric(image *screen, vec2i pos, uint8_t color,
+                                 image *blend, vec2i bpos, uint8_t *map,
+                                 uint8_t *map2, int amount, int nframes,
+                                 uint8_t *tint, color_filter *f, palette *pal)
 {
     vec2i pos1, pos2;
     int ysteps, mul = 0;
@@ -168,13 +168,13 @@ void TImage::PutImageGeneric(image *screen, vec2i pos, uint8_t color,
 
     CONDITION(N == BLEND && pos.y >= bpos.y
                          && pos.y + ysteps < bpos.y + blend->Size().y + 1,
-              "Blend doesn't fit on TImage");
+              "Blend doesn't fit on TransImage");
 
     if (N == FADE || N == FADE_TINT || N == BLEND)
         paddr = (uint8_t *)pal->addr();
 
     if (N == FADE || N == FADE_TINT)
-        mul = (amount << 16) / total_frames;
+        mul = (amount << 16) / nframes;
     else if (N == BLEND)
         mul = ((16 - amount) << 16 / 16);
 
@@ -272,19 +272,19 @@ void TImage::PutImageGeneric(image *screen, vec2i pos, uint8_t color,
     screen->Unlock();
 }
 
-void TImage::PutImage(image *screen, vec2i pos)
+void TransImage::PutImage(image *screen, vec2i pos)
 {
     PutImageGeneric<NORMAL>(screen, pos, 0, NULL, 0, NULL, NULL,
                             0, 1, NULL, NULL, NULL);
 }
 
-void TImage::PutRemap(image *screen, vec2i pos, uint8_t *map)
+void TransImage::PutRemap(image *screen, vec2i pos, uint8_t *map)
 {
     PutImageGeneric<REMAP>(screen, pos, 0, NULL, 0, map, NULL,
                            0, 1, NULL, NULL, NULL);
 }
 
-void TImage::PutDoubleRemap(image *screen, vec2i pos,
+void TransImage::PutDoubleRemap(image *screen, vec2i pos,
                             uint8_t *map, uint8_t *map2)
 {
     PutImageGeneric<REMAP2>(screen, pos, 0, NULL, 0, map, map2,
@@ -292,21 +292,21 @@ void TImage::PutDoubleRemap(image *screen, vec2i pos,
 }
 
 // Used when eg. the player teleports, or in rocket trails
-void TImage::PutFade(image *screen, vec2i pos, int amount, int total_frames,
-                     color_filter *f, palette *pal)
+void TransImage::PutFade(image *screen, vec2i pos, int amount, int nframes,
+                         color_filter *f, palette *pal)
 {
     PutImageGeneric<FADE>(screen, pos, 0, NULL, 0, NULL, NULL,
-                          amount, total_frames, NULL, f, pal);
+                          amount, nframes, NULL, f, pal);
 }
 
-void TImage::PutFadeTint(image *screen, vec2i pos, int amount, int total_frames,
-                         uint8_t *tint, color_filter *f, palette *pal)
+void TransImage::PutFadeTint(image *screen, vec2i pos, int amount, int nframes,
+                             uint8_t *tint, color_filter *f, palette *pal)
 {
     PutImageGeneric<FADE_TINT>(screen, pos, 0, NULL, 0, NULL, NULL,
-                               amount, total_frames, tint, f, pal);
+                               amount, nframes, tint, f, pal);
 }
 
-void TImage::PutColor(image *screen, vec2i pos, uint8_t color)
+void TransImage::PutColor(image *screen, vec2i pos, uint8_t color)
 {
     PutImageGeneric<COLOR>(screen, pos, color, NULL, 0, NULL, NULL,
                            0, 1, NULL, NULL, NULL);
@@ -314,32 +314,32 @@ void TImage::PutColor(image *screen, vec2i pos, uint8_t color)
 
 // This method is unused but is believed to work.
 // Assumes that the blend image completely covers the transparent image.
-void TImage::PutBlend(image *screen, vec2i pos, image *blend, vec2i bpos,
-                      int amount, color_filter *f, palette *pal)
+void TransImage::PutBlend(image *screen, vec2i pos, image *blend, vec2i bpos,
+                          int amount, color_filter *f, palette *pal)
 {
     PutImageGeneric<BLEND>(screen, pos, 0, blend, bpos, NULL, NULL,
                            amount, 1, NULL, f, pal);
 }
 
-void TImage::PutFilled(image *screen, vec2i pos, uint8_t color)
+void TransImage::PutFilled(image *screen, vec2i pos, uint8_t color)
 {
     PutImageGeneric<FILLED>(screen, pos, color, NULL, 0, NULL, NULL,
                             0, 1, NULL, NULL, NULL);
 }
 
-void TImage::PutPredator(image *screen, vec2i pos)
+void TransImage::PutPredator(image *screen, vec2i pos)
 {
     PutImageGeneric<PREDATOR>(screen, pos, 0, NULL, 0, NULL, NULL,
                               0, 1, NULL, NULL, NULL);
 }
 
-void TImage::PutScanLine(image *screen, vec2i pos, int line)
+void TransImage::PutScanLine(image *screen, vec2i pos, int line)
 {
     PutImageGeneric<SCANLINE>(screen, pos, 0, NULL, 0, NULL, NULL,
                               line, 1, NULL, NULL, NULL);
 }
 
-size_t TImage::MemUsage()
+size_t TransImage::DiskUsage()
 {
     uint8_t *d = m_data;
     size_t ret = 0;

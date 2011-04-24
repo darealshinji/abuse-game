@@ -57,8 +57,8 @@ morph_char::morph_char(game_object *who, int to_type, void (*stat_fun)(int), int
     }
 
     fleft=frames;
-    TImage *h1=new TImage(cache.img(t1->morph_mask),"morph tmp"),
-                *h2=new TImage(cache.img(t2->morph_mask),"morph tmp");
+    TransImage *h1=new TransImage(cache.img(t1->morph_mask),"morph tmp"),
+                *h2=new TransImage(cache.img(t2->morph_mask),"morph tmp");
     super_morph *sm=new super_morph(h1,h2,anneal,stat_fun);
     if (sm->t)
     {

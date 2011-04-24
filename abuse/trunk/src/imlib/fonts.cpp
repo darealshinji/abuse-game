@@ -73,7 +73,7 @@ JCFont::JCFont(image *letters)
     tmp.clear();
     letters->put_part(&tmp,0,0,((int)ch%32)*tl,((int)ch/32)*th,
               ((int)ch%32)*tl+tl-1,((int)ch/32)*th+th-1,1);
-    let[ch]=new TImage(&tmp,"JCfont");
+    let[ch]=new TransImage(&tmp,"JCfont");
   }
 }
 
