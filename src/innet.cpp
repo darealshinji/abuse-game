@@ -87,7 +87,10 @@ int net_init(int argc, char **argv)
         else if( !strcmp( argv[i], "-net" ) && i < argc-1 )
         {
             i++;
-            strcpy( main_net_cfg->server_name, argv[i] );
+            strncpy(main_net_cfg->server_name, argv[i],
+                    sizeof(main_net_cfg->server_name) - 1);
+            main_net_cfg->server_name[sizeof(main_net_cfg->server_name) - 1]
+                = '\0';
             main_net_cfg->state = net_configuration::CLIENT;
         }
         else if (!strcmp(argv[i],"-ndb"))

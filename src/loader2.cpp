@@ -95,7 +95,7 @@ void use_file(char *filename, bFILE *&fp, spec_directory *&sd)
   if (fp->open_failure())
   {
     delete fp;
-    sprintf(fn,"art/%s",filename);
+    snprintf(fn, sizeof(fn), "art/%s", filename);
     fp=open_file(fn,"rb");
     if (fp->open_failure())
     {
@@ -324,7 +324,7 @@ void load_data(int argc, char **argv)
       if (!strcmp(argv[i],"-a"))
       {
     i++;
-    sprintf(lsf,"addon/%s/%s.lsp",argv[i],argv[i]);
+    snprintf(lsf, sizeof(lsf), "addon/%s/%s.lsp", argv[i], argv[i]);
       }
     }
   } else if (!get_remote_lsf(net_server,lsf))
@@ -341,7 +341,7 @@ void load_data(int argc, char **argv)
   c_target=cache.reg("art/dev.spe","c_target",SPEC_IMAGE,0);
 
 
-  sprintf(prog,"(load \"%s\")\n",lsf);
+  snprintf(prog, sizeof(prog), "(load \"%s\")\n", lsf);
 
   cs=prog;
   if (!LObject::Compile(cs)->Eval())
@@ -357,7 +357,7 @@ void load_data(int argc, char **argv)
   for (int z=0; z<=11; z++)
   {
     char nm[10];
-    sprintf(nm,"l%d",z);
+    snprintf(nm, sizeof(nm), "l%d", z);
     light_buttons[z]=cache.reg("art/dev.spe",nm,SPEC_IMAGE,0);
   }
 
@@ -487,7 +487,7 @@ char *load_script(char *name)
   char fn[100];
   char *s;
 
-  sprintf(fn,"%s",name);
+  snprintf(fn, sizeof(fn), "%s", name);
   bFILE *fp=open_file(fn,"rb");
   if (fp->open_failure())
   {
