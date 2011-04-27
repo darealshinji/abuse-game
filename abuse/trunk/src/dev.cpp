@@ -866,7 +866,8 @@ void dev_init(int argc, char **argv)
     else if (!strcmp(argv[i],"-f"))
     {
       i++;
-      strcpy(level_file,argv[i]);
+      strncpy(level_file, argv[i], sizeof(level_file) - 1);
+      level_file[sizeof(level_file) - 1] = '\0';
     } else if (!strcmp(argv[i],"-2"))
       start_doubled=1;
     else if (!strcmp(argv[i],"-demo"))
