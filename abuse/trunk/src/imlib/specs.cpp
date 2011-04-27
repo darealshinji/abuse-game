@@ -562,29 +562,56 @@ spec_directory::~spec_directory()
   }
 }
 
-void spec_entry::print()
+void spec_directory::FullyLoad(bFILE *fp)
 {
-  printf("%15s%25s%8ld%8ld\n",spec_types[type],name,size,offset);
+    for (int i = 0; i < total; i++)
+    {
+        spec_entry *se = entries[i];
+        if (se->data)
+            free(data);
+
+        se->data = malloc(se->size);
+        fp->seek(se->offset, SEEK_SET);
+        fp->read(se->data, se->size);
+    }
+}
+
+spec_entry::spec_entry(uint8_t spec_type, char const *object_name,
+                       char const *link_filename,
+                       unsigned long data_size, unsigned long data_offset)
+{
+    type = spec_type;
+    name = strdup(object_name);
+    data = NULL;
+    size = data_size;
+    offset = data_offset;
+}
+
+spec_entry::~spec_entry()
+{
+    free(name);
+    free(data);
+}
+
+void spec_entry::Print()
+{
+    printf("%15s%25s%8ld%8ld\n", spec_types[type], name, size, offset);
 }
 
 void spec_directory::calc_offsets()
 {
-  spec_entry **e;
-  int i;
-  long o=SPEC_SIG_SIZE+2;
-  if (total)
-  {
-    for (i=0,e=entries; i<total; i++,e++)          // calculate the size of directory info
-    {
-      o+=1+1+strlen((*e)->name)+1 +1 +8;
-    }
+    size_t o = SPEC_SIG_SIZE + 2;
 
-    for (i=0,e=entries; i<total; i++,e++)          // calculate offset for each entry
+    // calculate the size of directory info
+    for (int i = 0; i < total; i++)
+        o += 1 + 1 + strlen(entries[i]->name) + 1 + 1 + 8;
+
+    // calculate offset for each entry
+    for (int i = 0; i < total; i++)
     {
-      (*e)->offset=o;
-      o+=(*e)->size;
+        entries[i]->offset = o;
+        o += entries[i]->size;
     }
-  }
 }
 
 spec_entry *spec_directory::find(char const *name, int type)
@@ -652,7 +679,7 @@ void spec_directory::print()
   int i;
   printf("[   Entry type   ][   Entry name   ][  Size  ][ Offset ]\n");
   for (i=0,se=entries; i<total; i++,se++)
-    (*se)->print();
+    (*se)->Print();
 }
 
 

@@ -157,39 +157,33 @@ public :
 
 class spec_entry
 {
-public :
-  char *name;
-  unsigned long size,offset;
-  unsigned char type;
+public:
+    spec_entry(uint8_t spec_type, char const *object_name,
+               char const *link_filename,
+               unsigned long data_size, unsigned long data_offset);
+    ~spec_entry();
 
-  spec_entry(unsigned char spec_type,
-             char const *object_name,
-             char const *link_filename,
-             unsigned long data_size,
-             unsigned long data_offset)
-  { type = spec_type;
-    name = strdup(object_name);
-    size = data_size;
-    offset = data_offset;
-  }
-  void print();
-  ~spec_entry() { if (name) free(name); }
-} ;
+    void Print();
+
+    char *name;
+    void *data;
+    unsigned long size, offset;
+    uint8_t type;
+};
 
 
 class spec_directory
 {
 public :
-  void startup(bFILE *fp);
+    spec_directory(FILE *fp);
+    spec_directory(bFILE *fp);
+    spec_directory();
+    ~spec_directory();
 
-  int total;
-  spec_entry **entries;
-  void *data;
-  long size;
+    void startup(bFILE *fp);
+    void FullyLoad(bFILE *fp);
+
 //  spec_directory(char *filename);  ; ; not allowed anymore, user must construct file first!
-  spec_directory(FILE *fp);
-  spec_directory(bFILE *fp);
-  spec_directory();
   spec_entry *find(char const *name);
   spec_entry *find(char const *name, int type);
   spec_entry *find(int type);
@@ -205,8 +199,12 @@ public :
   int    write(bFILE *fp);
   void print();
   void delete_entries();   // if the directory was created by hand instead of by file
-  ~spec_directory();
-} ;
+
+    int total;
+    spec_entry **entries;
+    void *data;
+    size_t size;
+};
 
 /*jFILE *add_directory_entry(char *filename,
                          unsigned short data_type,
