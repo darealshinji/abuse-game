@@ -67,9 +67,6 @@ static int spec_main_fd = -1;
 static long spec_main_offset = -1;
 static spec_directory spec_main_sd;
 
-static int fast_load_fd = -1;
-static int fast_load_mode = 0;
-
 void set_filename_prefix(char const *prefix)
 {
     if( spec_prefix )
@@ -279,28 +276,6 @@ void set_spec_main_file(char const *filename, int Search_order)
   spec_main_sd.startup(&spec_main_jfile);
 }
 
-void fast_load_start_recording(char *filename)
-{
-    fast_load_fd = ::open(filename,O_CREAT|O_RDWR,S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
-    fast_load_mode = 1;
-}
-
-void fast_load_stop_recording()
-{
-    fast_load_mode = 0;
-}
-
-void fast_load_start_reloading(char *filename)
-{
-    fast_load_fd = ::open(filename,O_RDONLY);
-    fast_load_mode = 2;
-}
-
-void fast_load_stop_reloading()
-{
-    fast_load_mode = 0;
-}
-
 jFILE::jFILE(FILE *file_pointer)                       // assumes fp is at begining of file
 {
   access=0;
@@ -474,49 +449,15 @@ int jFILE::unbuffered_read(void *buf, size_t count)
 
     if (fd == spec_main_fd)
     {
-        switch (fast_load_mode)
-        {
-        case 0:
-            if (current_offset+start_offset != spec_main_offset)
-                spec_main_offset = lseek(fd, start_offset+current_offset, SEEK_SET);
+        if (current_offset+start_offset != spec_main_offset)
+            spec_main_offset = lseek(fd, start_offset+current_offset, SEEK_SET);
 
-            len = ::read(fd,(char*)buf,count);
-            break;
-        case 1:
-            if (current_offset+start_offset != spec_main_offset)
-                spec_main_offset = lseek(fd, start_offset+current_offset, SEEK_SET);
-
-            len = ::read(fd,(char*)buf,count);
-            ::write(fast_load_fd,(char*)&len,sizeof(len));
-            ::write(fast_load_fd,(char*)buf,len);
-            break;
-        case 2:
-            ::read(fast_load_fd,(char*)&len,sizeof(len));
-            len = ::read(fast_load_fd,(char*)buf,len);
-            break;
-        }
-
+        len = ::read(fd,(char*)buf,count);
         spec_main_offset += len;
     }
     else
     {
-        switch (fast_load_mode)
-        {
-        case 0:
-          len = ::read(fd,(char*)buf,count);
-          break;
-        case 1:
-          len = ::read(fd,(char*)buf,count);
-            ::write(fast_load_fd,(char*)&len,sizeof(len));
-            ::write(fast_load_fd,(char*)buf,len);
-          break;
-        case 2:
-            ::read(fast_load_fd,(char*)&len,sizeof(len));
-            len = ::read(fast_load_fd,(char*)buf,len);
-            if (count != len)
-                printf("short read! %ld:%ld\n",current_offset,len);
-          break;
-      }
+      len = ::read(fd,(char*)buf,count);
     }
     current_offset += len;
     return len;
@@ -532,26 +473,6 @@ int jFILE::unbuffered_write(void const *buf, size_t count)
 int jFILE::unbuffered_seek(long offset, int whence) // whence=SEEK_SET, SEEK_CUR, SEEK_END, ret=0=success
 {
   long ret;
-
-  if (fast_load_mode == 2)
-  {
-    switch (whence)
-    {
-    case SEEK_SET :
-      current_offset = start_offset+offset;
-      break;
-    case SEEK_END :
-      current_offset = start_offset+file_length-offset;
-      break;
-    case SEEK_CUR :
-      current_offset += offset;
-      break;
-    default:
-      ret = -1;
-      break;
-    }
-    return current_offset;
-  }
 
   switch (whence)
   {

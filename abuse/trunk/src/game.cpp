@@ -1338,11 +1338,6 @@ void Game::request_end()
   req_end = 1;
 }
 
-extern void fast_load_start_recording(char *name);
-extern void fast_load_stop_recording();
-extern void fast_load_start_reloading(char *name);
-extern void fast_load_stop_reloading();
-
 Game::Game(int argc, char **argv)
 {
   int i;
@@ -1383,14 +1378,14 @@ Game::Game(int argc, char **argv)
   }
   else has_joystick = 0;
 
-//    ProfilerInit(collectDetailed, bestTimeBase, 2000, 200); //prof
-    char *fastpath;
-    fastpath = (char *)malloc(strlen(get_save_filename_prefix()) + 12 + 1);
+    // Clean up that old crap
+    char *fastpath = (char *)malloc(strlen(get_save_filename_prefix()) + 13);
     sprintf(fastpath, "%sfastload.dat", get_save_filename_prefix());
-    fast_load_start_recording(fastpath);
-    load_data(argc, argv);
-    fast_load_stop_recording();
+    unlink(fastpath);
     free(fastpath);
+
+//    ProfilerInit(collectDetailed, bestTimeBase, 2000, 200); //prof
+    load_data(argc, argv);
 //    ProfilerDump("\pabuse.prof");  //prof
 //    ProfilerTerm();
 
