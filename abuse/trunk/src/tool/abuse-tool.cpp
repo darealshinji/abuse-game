@@ -16,6 +16,7 @@
 #include "common.h"
 #include "specs.h"
 #include "image.h"
+#include "pcxread.h"
 
 static void Usage();
 
@@ -98,7 +99,9 @@ int main(int argc, char *argv[])
     }
 
     /* Open the SPEC file */
+    char tmpfile[4096];
     char const *file = argv[1];
+    snprintf(tmpfile, 4096, "%s.tmp", file);
 
     jFILE fp(file, mode);
     if (fp.open_failure())
@@ -174,6 +177,54 @@ int main(int argc, char *argv[])
             fwrite(buf, step, 1, stdout);
             todo -= step;
         }
+        return EXIT_SUCCESS;
+    }
+
+    if (cmd == CMD_GETPCX)
+    {
+        palette *pal;
+        int imgid = atoi(argv[3]);
+        int palid = argc > 4 ? atoi(argv[4]) : -1;
+
+        for (int i = 0; palid == -1 && i < dir.total; i++)
+            if (dir.entries[i]->type == SPEC_PALETTE)
+                palid = i;
+
+        if (palid == -1)
+            pal = new palette(256);
+        else
+            pal = new palette(dir.entries[palid], &fp);
+
+        image *im = new image(&fp, dir.entries[imgid]);
+        write_PCX(im, pal, "/dev/stdout");
+        delete im;
+        delete pal;
+        return EXIT_SUCCESS;
+    }
+
+    if (cmd == CMD_MOVE)
+    {
+        int src = atoi(argv[3]);
+        int dst = atoi(argv[4]);
+
+        if (src < 0 || dst < 0 || src >= dir.total || dst >= dir.total)
+        {
+            fprintf(stderr, "abuse-tool: ids %i/%i out of range\n", src, dst);
+            return EXIT_FAILURE;
+        }
+
+        dir.FullyLoad(&fp);
+
+        spec_entry *tmp = dir.entries[src];
+        for (int d = src < dst ? 1 : -1; src != dst; src += d)
+            dir.entries[src] = dir.entries[src + d];
+        dir.entries[dst] = tmp;
+
+        dir.calc_offsets();
+        fp.seek(0, SEEK_SET); // FIXME: create a new file
+        dir.write(&fp);
+        for (int i = 0; i < dir.total; i++)
+            fp.write(dir.entries[i]->data, dir.entries[i]->size);
     }
 
     return EXIT_SUCCESS;
@@ -184,7 +235,9 @@ static void Usage()
     fprintf(stderr, "%s",
             "Usage: abuse-tool <spec_file> <command> [args...]\n"
             "List of available commands:\n"
-            "  list          list the contents of a SPEC file\n"
-            "  get <id>      dump entry <id> to stdout\n");
+            "  list                  list the contents of a SPEC file\n"
+            "  get <id>              dump entry <id> to stdout\n"
+            "  getpcx <id>           dump PCX image <id> to stdout\n"
+            "  move <i1> <i2>        move entry <i1> to <i2>\n");
 }
 
