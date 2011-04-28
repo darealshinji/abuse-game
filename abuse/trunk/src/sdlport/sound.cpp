@@ -27,7 +27,6 @@
 
 #include "sound.h"
 #include "hmi.h"
-#include "readwav.h"
 #include "specs.h"
 #include "setup.h"
 
@@ -91,10 +90,10 @@ int sound_init( int argc, char **argv )
 //
 void sound_uninit()
 {
-    if (sound_enabled)
-    {
-        Mix_CloseAudio();
-    }
+    if (!sound_enabled)
+        return;
+
+    Mix_CloseAudio();
 }
 
 //
@@ -102,29 +101,20 @@ void sound_uninit()
 //
 // Read in the requested .wav file.
 //
-sound_effect::sound_effect( char * filename )
+sound_effect::sound_effect(char const *filename)
 {
-    if( sound_enabled )
-    {
-        int sample_speed;
+    if (!sound_enabled)
+        return;
 
-        void* temp_data = (void *)read_wav( filename, sample_speed, size );
+    jFILE fp(filename, "rb");
+    if (fp.open_failure())
+        return;
 
-        SDL_AudioCVT audiocvt;
-
-        SDL_BuildAudioCVT( &audiocvt, AUDIO_U8, 1, 11025, audioObtained.format, audioObtained.channels, audioObtained.freq );
-        data = malloc( size * audiocvt.len_mult );
-
-        memcpy( data, temp_data, size );
-        audiocvt.buf = (Uint8*)data;
-        audiocvt.len = size;
-        SDL_ConvertAudio( &audiocvt );
-        size = (Uint32)((double)size * audiocvt.len_ratio);
-
-        free(temp_data);
-
-        this->chunk = Mix_QuickLoad_RAW((Uint8*)data, size);
-    }
+    void *temp_data = malloc(fp.file_size());
+    fp.read(temp_data, fp.file_size());
+    SDL_RWops *rw = SDL_RWFromMem(temp_data, fp.file_size());
+    m_chunk = Mix_LoadWAV_RW(rw, 1);
+    free(temp_data);
 }
 
 //
@@ -134,24 +124,19 @@ sound_effect::sound_effect( char * filename )
 //
 sound_effect::~sound_effect()
 {
-    if( sound_enabled )
-    {
-        // Sound effect deletion only happens on level load, so there
-        // is no problem in stopping everything. But the original playing
-        // code handles the sound effects and the "playlist" differently.
-        // Therefore with SDL_mixer, a sound that has not finished playing
-        // on a level load will cut off in the middle. This is most noticable
-        // for the button sound of the load savegame dialog.
-        Mix_FadeOutGroup(-1, 100);
-        while (Mix_Playing(-1))
-            SDL_Delay(10);
-        Mix_FreeChunk(this->chunk);
+    if(!sound_enabled)
+        return;
 
-        if( data )
-        {
-            free( data );
-        }
-    }
+    // Sound effect deletion only happens on level load, so there
+    // is no problem in stopping everything. But the original playing
+    // code handles the sound effects and the "playlist" differently.
+    // Therefore with SDL_mixer, a sound that has not finished playing
+    // on a level load will cut off in the middle. This is most noticable
+    // for the button sound of the load savegame dialog.
+    Mix_FadeOutGroup(-1, 100);
+    while (Mix_Playing(-1))
+        SDL_Delay(10);
+    Mix_FreeChunk(m_chunk);
 }
 
 //
@@ -163,16 +148,16 @@ sound_effect::~sound_effect()
 //   128 - Centered.
 //   255 - Completely to the left.
 //
-void sound_effect::play( int volume, int pitch, int panpot )
+void sound_effect::play(int volume, int pitch, int panpot)
 {
-    if (sound_enabled)
+    if (!sound_enabled)
+        return;
+
+    int channel = Mix_PlayChannel(-1, m_chunk, 0);
+    if (channel > -1)
     {
-        int channel = Mix_PlayChannel(-1, this->chunk, 0);
-        if (channel > -1)
-        {
-            Mix_Volume(channel, volume);
-            Mix_SetPanning(channel, panpot, 255 - panpot);
-        }
+        Mix_Volume(channel, volume);
+        Mix_SetPanning(channel, panpot, 255 - panpot);
     }
 }
 
