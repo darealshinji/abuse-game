@@ -29,6 +29,7 @@ enum
     CMD_DEL,
     CMD_PUT,
     CMD_RENAME,
+    CMD_TYPE,
     CMD_GETPCX,
     CMD_PUTPCX,
 };
@@ -47,6 +48,7 @@ int main(int argc, char *argv[])
             : !strcmp(argv[2], "put") ? CMD_PUT
             : !strcmp(argv[2], "move") ? CMD_MOVE
             : !strcmp(argv[2], "rename") ? CMD_RENAME
+            : !strcmp(argv[2], "type") ? CMD_TYPE
             : !strcmp(argv[2], "getpcx") ? CMD_GETPCX
             : !strcmp(argv[2], "putpcx") ? CMD_PUTPCX
             : CMD_INVALID;
@@ -77,6 +79,9 @@ int main(int argc, char *argv[])
         minargc = 5;
         break;
     case CMD_RENAME:
+        minargc = 5;
+        break;
+    case CMD_TYPE:
         minargc = 5;
         break;
     case CMD_DEL:
@@ -217,7 +222,7 @@ int main(int argc, char *argv[])
             dir.entries[src] = dir.entries[src + d];
         dir.entries[dst] = tmp;
     }
-    else if (cmd == CMD_RENAME)
+    else if (cmd == CMD_RENAME || cmd == CMD_TYPE)
     {
         int id = atoi(argv[3]);
 
@@ -228,7 +233,10 @@ int main(int argc, char *argv[])
         }
 
         dir.FullyLoad(&fp);
-        dir.entries[id]->name = argv[4];
+        if (cmd == CMD_RENAME)
+            dir.entries[id]->name = argv[4];
+        else
+            dir.entries[id]->type = (uint8_t)atoi(argv[4]);
     }
     else if (cmd == CMD_DEL)
     {
@@ -245,6 +253,67 @@ int main(int argc, char *argv[])
             dir.entries[i] = dir.entries[i + 1];
 
         dir.FullyLoad(&fp);
+    }
+    else if (cmd == CMD_PUT || cmd == CMD_PUTPCX)
+    {
+        int id = atoi(argv[3]);
+        uint8_t type = atoi(argv[4]);
+
+        if (id == -1)
+            id = dir.total;
+
+        if (id < 0 || id > dir.total)
+        {
+            fprintf(stderr, "abuse-tool: id %i out of range\n", id);
+            return EXIT_FAILURE;
+        }
+
+        dir.FullyLoad(&fp);
+        dir.total++;
+        dir.entries = (spec_entry **)realloc(dir.entries,
+                                             dir.total * sizeof(spec_entry *));
+        for (int i = id + 1; i < dir.total; i++)
+            dir.entries[i] = dir.entries[i - 1];
+
+        char *name = strrchr(argv[5], '/');
+        if (!name)
+            name = argv[5];
+
+        uint8_t *data;
+        size_t len;
+
+        if (cmd == CMD_PUT)
+        {
+            jFILE fp2(argv[5], "rb");
+            if (fp2.open_failure())
+            {
+                fprintf(stderr, "abuse-tool: cannot open %s\n", argv[5]);
+                return EXIT_FAILURE;
+            }
+            len = fp2.file_size();
+            data = (uint8_t *)malloc(len);
+            fp2.read(data, len);
+        }
+        else
+        {
+            palette *pal = NULL;
+            image *im = read_PCX(argv[5], pal);
+            if (!im)
+            {
+                fprintf(stderr, "abuse-tool: cannot open %s\n", argv[5]);
+                return EXIT_FAILURE;
+            }
+            vec2i size = im->Size();
+            len = 2 * sizeof(uint16_t) + size.x * size.y;
+            data = (uint8_t *)malloc(len);
+            uint16_t x = lltl((uint16_t)size.x);
+            uint16_t y = lltl((uint16_t)size.y);
+            memcpy(data, &x, sizeof(x));
+            memcpy(data + 2, &y, sizeof(y));
+            memcpy(data + 4, im->scan_line(0), size.x * size.y);
+        }
+        dir.entries[id] = new spec_entry(type, name, NULL, len, 0);
+        dir.entries[id]->data = data;
     }
     else
     {
@@ -265,13 +334,22 @@ int main(int argc, char *argv[])
 static void Usage()
 {
     fprintf(stderr, "%s",
-            "Usage: abuse-tool <spec_file> <command> [args...]\n"
-            "List of available commands:\n"
-            "  list                  list the contents of a SPEC file\n"
-            "  get <id>              dump entry <id> to stdout\n"
-            "  getpcx <id>           dump PCX image <id> to stdout\n"
-            "  del <id>              delete entry <id>\n"
-            "  rename <id> <name>    rename entry <id> to <name>\n"
-            "  move <id1> <id2>      move entry <id1> to <id2>\n");
+        "Usage: abuse-tool <spec_file> <command> [args...]\n"
+        "\n"
+        "abuse-tool is a low-level tool to edit Abuse SPEC (.spe) files.\n"
+        "\n"
+        "Commands:\n"
+        "   list                         list the contents of a SPEC file\n"
+        "   get <id>                     dump entry <id> to stdout\n"
+        "   getpcx <id>                  dump PCX image <id> to stdout\n"
+        "   put <id> <type> <name>       insert file <name> of type <type> at position\n"
+        "                                <id>\n"
+        "   putpcx <id> <type> <name>    insert PCX image <name> of type <type> at\n"
+        "                                position <id>\n"
+        "   rename <id> <name>           rename entry <id> to <name>\n"
+        "   type <id> <type>             set entry <id> type to <type>\n"
+        "   move <id1> <id2>             move entry <id1> to position <id2>\n"
+        "   del <id>                     delete entry <id>\n"
+        "See the abuse-tool(6) manual page for more information.\n");
 }
 
