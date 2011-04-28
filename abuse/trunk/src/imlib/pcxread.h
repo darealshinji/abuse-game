@@ -15,5 +15,6 @@
 #include "palette.h"
 
 void write_PCX(image *im, palette *pal, char const *filename);
+image *read_PCX(char const *filename, palette *&pal);
 
 #endif
