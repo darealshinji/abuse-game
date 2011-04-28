@@ -41,21 +41,6 @@ void ***reg_ptr_list = NULL;
 
 static uint8_t *cstart, *cend, *collected_start, *collected_end;
 
-static void dump_memory(void *mem, int before, int after)
-{
-  uint8_t *p = (uint8_t *)mem;
-
-  fprintf(stderr, "dumping memory around %p:\n", p);
-  for (int i = -before; i < after; i++)
-  {
-    if (!(i & 15))
-      fprintf(stderr, "%p: ", p + i);
-    fprintf(stderr, "%c%02x%c", i ? ' ' : '[', p[i], i ? ' ' : ']');
-    if (!((i + 1) & 15))
-      fprintf(stderr, "\n");
-  }
-}
-
 void register_pointer(void **addr)
 {
   if (reg_ptr_total >= reg_ptr_list_size)
@@ -130,7 +115,6 @@ static LObject *CollectObject(LObject *x)
 
   if (((uint8_t *)x) >= cstart && ((uint8_t *)x) < cend)
   {
-    //dump_memory(x, 32, 48);
     switch (item_type(x))
     {
       case L_BAD_CELL:
@@ -192,10 +176,7 @@ static LObject *CollectObject(LObject *x)
         ret = ((LRedirect *)x)->ref;
         break;
       default:
-        dump_memory(x, 8, 196);
-        //*(char *)NULL = 0;
-        lbreak("shouldn't happen. collecting bad object 0x%x\n",
-               item_type(x));
+        lbreak("shouldn't happen. collecting bad object 0x%x\n", item_type(x));
         break;
     }
     ((LRedirect *)x)->type = L_COLLECTED_OBJECT;
@@ -265,8 +246,6 @@ void collect_space(int which_space) // should be tmp or permanent
   collected_start = new_space;
   collected_end = new_space + space_size[GC_SPACE];
 
-//dump_memory((char *)lsym_root->name, 128, 196);
-//dump_memory((char *)0xb6782025, 32, 48);
   collect_symbols(LSymbol::root);
   collect_stacks();
 
