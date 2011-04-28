@@ -50,12 +50,12 @@ dnl Check for SDL mixer
 ac_cv_my_have_sdl_mixer="no"
 save_CPPFLAGS="${CPPFLAGS}"
 CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS}"
-AC_CHECK_HEADERS(SDL/SDL_mixer.h, [ac_cv_my_have_sdl="yes"])
+AC_CHECK_HEADERS(SDL/SDL_mixer.h, [ac_cv_my_have_sdl_mixer="yes"])
 CPPFLAGS="${save_CPPFLAGS}"
-if test "${ac_cv_my_have_sdl}" != "no"; then
-  AC_DEFINE(USE_SDL_MIXER, 1, Define to 1 to use SDL_Mixer)
-  LIBS="$LIBS -lSDL_mixer"
+if test "${ac_cv_my_have_sdl_mixer}" = "no"; then
+  AC_MSG_ERROR([*** SDL_mixer not found!])
 fi
+LIBS="$LIBS -lSDL_mixer"
 
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(HAVE_DEBUG, 1, Define to 1 to activate debug)
