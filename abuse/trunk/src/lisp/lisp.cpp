@@ -187,7 +187,10 @@ static void *lmalloc(size_t size, int which_space)
     if (size > get_free_size(which_space))
     {
         if (which_space == PERM_SPACE || which_space == TMP_SPACE)
-            collect_space(which_space);
+            collect_space(which_space, 0);
+
+        if (size > get_free_size(which_space))
+            collect_space(which_space, 1);
 
         if (size > get_free_size(which_space))
         {
@@ -2817,7 +2820,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
         break;
     }
     case SYS_FUNC_GC:
-        collect_space(current_space);
+        collect_space(current_space, 0);
         break;
     case SYS_FUNC_SCHAR:
     {
