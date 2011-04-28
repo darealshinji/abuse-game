@@ -20,101 +20,20 @@
 
 #include "config.h"
 
-#include <string.h>
+#include <cstring>
 
 #include <SDL.h>
-#ifdef USE_SDL_MIXER
 #include <SDL/SDL_mixer.h>
-#include "hmi.h"
-#endif
 
 #include "sound.h"
+#include "hmi.h"
 #include "readwav.h"
 #include "specs.h"
 #include "setup.h"
 
-class effect_handle
-{
-public:
-    effect_handle    *prev;        // Handle to the previous effect
-    effect_handle    *next;        // Handle to the next effect
-    Uint8            *data;        // Audio data
-    Uint8            *pos;        // current playing position in the data
-    Uint32            length;        // Length of the data
-    Uint32            volume;        // Volume for this effect.
-
-    effect_handle( effect_handle *Next )
-    {
-        next = Next;
-        if( next )
-        {
-            next->prev = this;
-        }
-        prev = NULL;
-        data = NULL;
-        pos = NULL;
-    }
-
-    ~effect_handle()
-    {
-        if( next )
-        {
-            next->prev = prev;
-        }
-        if( prev )
-        {
-            prev->next = next;
-        }
-    }
-};
-
-#ifndef USE_SDL_MIXER
-static effect_handle * fx_list = NULL;
-#endif
 extern flags_struct flags;
 static int sound_enabled = 0;
 static SDL_AudioSpec audioObtained;
-
-//
-// mix_audio
-//
-// Do the actual playing of the audio by looping through our effects list
-// and mixing each sample.
-//
-void mix_audio(void *udata, Uint8 *stream, int len)
-{
-#ifndef USE_SDL_MIXER
-    effect_handle *handle = fx_list;
-
-    while( handle )
-    {
-        if( handle->length > 0 && handle->pos )
-        {
-            len = ( len > (int)handle->length ? handle->length : len );
-            SDL_MixAudio( stream, handle->pos, len, handle->volume );
-            handle->pos += len;
-            handle->length -= len;
-            handle = handle->next;
-        }
-        else
-        {
-            // update the list pointer if we're deleting the first node
-            if( fx_list == handle )
-            {
-                fx_list = handle->next;
-            }
-            effect_handle *tmp = handle->next;
-            if( !flags.mono )
-            {
-                // delete the audio buffer
-                free( handle->data );
-            }
-            delete handle;
-            handle = tmp;
-        }
-    }
-#endif
-}
 
 //
 // sound_init()
@@ -145,7 +64,6 @@ int sound_init( int argc, char **argv )
     }
     free( sfxdir );
 
-#ifdef USE_SDL_MIXER
     if (Mix_OpenAudio(11025, AUDIO_U8, 2, 128) < 0)
     {
         printf( "Sound: Unable to open audio - %s\nSound: Disabled (error)\n", SDL_GetError() );
@@ -160,28 +78,6 @@ int sound_init( int argc, char **argv )
 
     sound_enabled = SFX_INITIALIZED | MUSIC_INITIALIZED;
 
-    printf( "Music: Enabled\n" );
-#else
-    SDL_AudioSpec audioWanted;
-    audioWanted.freq = 11025;
-    audioWanted.format = AUDIO_U8;
-    audioWanted.channels = 2 - flags.mono;
-    audioWanted.samples = 128;
-    audioWanted.callback = mix_audio;
-    audioWanted.userdata = NULL;
-
-    // Now open the audio device
-    if( SDL_OpenAudio( &audioWanted, &audioObtained ) < 0 )
-    {
-        printf( "Sound: Unable to open audio - %s\nSound: Disabled (error)\n", SDL_GetError() );
-        return 0;
-    }
-
-    SDL_PauseAudio( 0 );
-
-    sound_enabled = SFX_INITIALIZED;
-#endif
-
     printf( "Sound: Enabled\n" );
 
     // It's all good
@@ -195,20 +91,9 @@ int sound_init( int argc, char **argv )
 //
 void sound_uninit()
 {
-    if( sound_enabled )
+    if (sound_enabled)
     {
-#ifdef USE_SDL_MIXER
         Mix_CloseAudio();
-#else
-        SDL_PauseAudio( 1 );
-        while( fx_list )
-        {
-            effect_handle *last = fx_list;
-            fx_list = fx_list->next;
-            free( last );
-        }
-        SDL_CloseAudio();
-#endif
     }
 }
 
@@ -223,7 +108,6 @@ sound_effect::sound_effect( char * filename )
     {
         int sample_speed;
 
-#ifdef USE_SDL_MIXER
         void* temp_data = (void *)read_wav( filename, sample_speed, size );
 
         SDL_AudioCVT audiocvt;
@@ -240,9 +124,6 @@ sound_effect::sound_effect( char * filename )
         free(temp_data);
 
         this->chunk = Mix_QuickLoad_RAW((Uint8*)data, size);
-#else
-        data = (void *)read_wav( filename, sample_speed, size );
-#endif
     }
 }
 
@@ -255,7 +136,6 @@ sound_effect::~sound_effect()
 {
     if( sound_enabled )
     {
-#ifdef USE_SDL_MIXER
         // Sound effect deletion only happens on level load, so there
         // is no problem in stopping everything. But the original playing
         // code handles the sound effects and the "playlist" differently.
@@ -266,7 +146,6 @@ sound_effect::~sound_effect()
         while (Mix_Playing(-1))
             SDL_Delay(10);
         Mix_FreeChunk(this->chunk);
-#endif
 
         if( data )
         {
@@ -278,8 +157,7 @@ sound_effect::~sound_effect()
 //
 // sound_effect::play
 //
-// Insert a new effect_handle into the list and modify the audio
-// if we're doing stereo.
+// Add a new sample for playing.
 // panpot defines the pan position for the sound effect.
 //   0   - Completely to the right.
 //   128 - Centered.
@@ -287,77 +165,14 @@ sound_effect::~sound_effect()
 //
 void sound_effect::play( int volume, int pitch, int panpot )
 {
-    if( sound_enabled )
+    if (sound_enabled)
     {
-#ifdef USE_SDL_MIXER
         int channel = Mix_PlayChannel(-1, this->chunk, 0);
         if (channel > -1)
         {
             Mix_Volume(channel, volume);
             Mix_SetPanning(channel, panpot, 255 - panpot);
         }
-#else
-        SDL_LockAudio();
-
-        fx_list = new effect_handle( fx_list );
-        if( fx_list == NULL )
-        {
-            printf( "Sound: ERROR - Failed to create new effect.\n" );
-            SDL_UnlockAudio();
-            return;
-        }
-
-        if( !flags.mono )
-        {
-            unsigned int i;
-            Uint32 cvtBufferSize;
-            SDL_AudioCVT audiocvt;
-
-            // Do some audio conversion
-            SDL_BuildAudioCVT( &audiocvt, AUDIO_U8, 1, 11025, audioObtained.format, audioObtained.channels, audioObtained.freq );
-            audiocvt.buf = (Uint8 *)malloc( size * audiocvt.len_mult );
-            audiocvt.len = size;
-            memcpy( audiocvt.buf, data, size );
-            SDL_ConvertAudio( &audiocvt );
-            cvtBufferSize = (Uint32)((double)size * audiocvt.len_ratio);
-
-            // Adjust for requested pan position
-            if( panpot != 128 )
-            {
-                if( panpot > 128 )
-                {
-                    // Pan to the left
-                    panpot = (panpot - 255) * -1;
-                    for( i = 1 ; i <= cvtBufferSize; i += 2 )
-                    {
-                        audiocvt.buf[i] = (((audiocvt.buf[i] - 128) * panpot) / 128) + 128;
-                    }
-                }
-                else
-                {
-                    // Pan to the right
-                    for( i = 0 ; i < cvtBufferSize; i += 2 )
-                    {
-                        audiocvt.buf[i] = (((audiocvt.buf[i] - 128) * panpot) / 128) + 128;
-                    }
-                }
-            }
-
-            fx_list->data = audiocvt.buf;
-            fx_list->pos = audiocvt.buf;
-            fx_list->length = cvtBufferSize;
-            fx_list->volume = volume;
-        }
-        else
-        {
-            // Only doing mono so don't mess with the audio data.
-            fx_list->data = (Uint8 *)data;
-            fx_list->pos = (Uint8 *)data;
-            fx_list->length = size;
-            fx_list->volume = volume;
-        }
-        SDL_UnlockAudio();
-#endif
     }
 }
 
@@ -370,7 +185,6 @@ song::song(char const * filename)
     Name = strdup(filename);
     song_id = 0;
 
-#ifdef USE_SDL_MIXER
     rw = NULL;
     music = NULL;
 
@@ -383,7 +197,7 @@ song::song(char const * filename)
 
     if (!data)
     {
-        printf("Music: ERROR - could not load %s\n", realname);
+        printf("Sound: ERROR - could not load %s\n", realname);
         return;
     }
 
@@ -392,11 +206,10 @@ song::song(char const * filename)
 
     if (!music)
     {
-        printf("Music: ERROR - %s while loading %s\n",
+        printf("Sound: ERROR - %s while loading %s\n",
                Mix_GetError(), realname);
         return;
     }
-#endif
 }
 
 song::~song()
@@ -406,45 +219,32 @@ song::~song()
     free(data);
     free(Name);
 
-#ifdef USE_SDL_MIXER
     Mix_FreeMusic(music);
     SDL_FreeRW(rw);
-#endif
 }
 
 void song::play( unsigned char volume )
 {
     song_id = 1;
 
-#ifdef USE_SDL_MIXER
     Mix_PlayMusic(this->music, 0);
     Mix_VolumeMusic(volume);
-#endif
 }
 
 void song::stop( long fadeout_time )
 {
     song_id = 0;
 
-#ifdef USE_SDL_MIXER
     Mix_FadeOutMusic(100);
-#endif
 }
 
 int song::playing()
 {
-#ifdef USE_SDL_MIXER
     return Mix_PlayingMusic();
-#else
-    return song_id;
-#endif
 }
 
 void song::set_volume( int volume )
 {
-#ifdef USE_SDL_MIXER
     Mix_VolumeMusic(volume);
-#else
-    // do nothing...
-#endif
 }
+

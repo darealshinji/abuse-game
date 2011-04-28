@@ -11,9 +11,7 @@
 #ifndef __SOUND_H__
 #define __SOUND_H__
 
-#ifdef USE_SDL_MIXER
-#   include <SDL/SDL_mixer.h>
-#endif
+#include <SDL/SDL_mixer.h>
 
 /* options are passed via command line */
 
@@ -33,9 +31,7 @@ public:
 
 private:
     void *data;
-#ifdef USE_SDL_MIXER
     Mix_Chunk* chunk;
-#endif
     int size;
 };
 
@@ -54,10 +50,8 @@ private:
     char *Name;
     unsigned char *data;
     unsigned long song_id;
-#ifdef USE_SDL_MIXER
     Mix_Music* music;
     SDL_RWops* rw;
-#endif
 };
 
 #endif
