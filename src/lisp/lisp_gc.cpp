@@ -232,13 +232,18 @@ static void collect_stacks()
   }
 }
 
-void collect_space(int which_space) // should be tmp or permanent
+void collect_space(int which_space, int grow) // should be tmp or permanent
 {
   int old_space = current_space;
   cstart = space[which_space];
   cend = free_space[which_space];
 
   space_size[GC_SPACE] = space_size[which_space];
+  if (grow)
+  {
+    space_size[GC_SPACE] += space_size[which_space] >> 1;
+    space_size[GC_SPACE] -= (space_size[GC_SPACE] & 7);
+  }
   uint8_t *new_space = (uint8_t *)malloc(space_size[GC_SPACE]);
   current_space = GC_SPACE;
   free_space[GC_SPACE] = space[GC_SPACE] = new_space;
@@ -254,6 +259,7 @@ void collect_space(int which_space) // should be tmp or permanent
   free(space[which_space]);
 
   space[which_space] = new_space;
+  space_size[which_space] = space_size[GC_SPACE];
   free_space[which_space] = new_space
                           + (free_space[GC_SPACE] - space[GC_SPACE]);
   current_space = old_space;

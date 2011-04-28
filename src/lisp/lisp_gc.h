@@ -14,7 +14,7 @@
 
 extern grow_stack<void> l_user_stack;       // stack user progs can push data and have it GCed
 
-void collect_space(int which_space); // should be tmp or permenant
+void collect_space(int which_space, int grow); // should be tmp or permenant
 
 void register_pointer(void *&addr);
 void unregister_pointer(void *&addr);
