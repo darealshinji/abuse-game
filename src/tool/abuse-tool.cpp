@@ -155,8 +155,7 @@ int main(int argc, char *argv[])
 
         return EXIT_SUCCESS;
     }
-
-    if (cmd == CMD_GET)
+    else if (cmd == CMD_GET)
     {
         int id = atoi(argv[3]);
 
@@ -179,8 +178,7 @@ int main(int argc, char *argv[])
         }
         return EXIT_SUCCESS;
     }
-
-    if (cmd == CMD_GETPCX)
+    else if (cmd == CMD_GETPCX)
     {
         palette *pal;
         int imgid = atoi(argv[3]);
@@ -201,8 +199,7 @@ int main(int argc, char *argv[])
         delete pal;
         return EXIT_SUCCESS;
     }
-
-    if (cmd == CMD_MOVE)
+    else if (cmd == CMD_MOVE)
     {
         int src = atoi(argv[3]);
         int dst = atoi(argv[4]);
@@ -219,13 +216,48 @@ int main(int argc, char *argv[])
         for (int d = src < dst ? 1 : -1; src != dst; src += d)
             dir.entries[src] = dir.entries[src + d];
         dir.entries[dst] = tmp;
-
-        dir.calc_offsets();
-        fp.seek(0, SEEK_SET); // FIXME: create a new file
-        dir.write(&fp);
-        for (int i = 0; i < dir.total; i++)
-            fp.write(dir.entries[i]->data, dir.entries[i]->size);
     }
+    else if (cmd == CMD_RENAME)
+    {
+        int id = atoi(argv[3]);
+
+        if (id < 0 || id >= dir.total)
+        {
+            fprintf(stderr, "abuse-tool: id %i out of range\n", id);
+            return EXIT_FAILURE;
+        }
+
+        dir.FullyLoad(&fp);
+        dir.entries[id]->name = argv[4];
+    }
+    else if (cmd == CMD_DEL)
+    {
+        int id = atoi(argv[3]);
+
+        if (id < 0 || id >= dir.total)
+        {
+            fprintf(stderr, "abuse-tool: id %i out of range\n", id);
+            return EXIT_FAILURE;
+        }
+
+        dir.total--;
+        for (int i = id; i < dir.total; i++)
+            dir.entries[i] = dir.entries[i + 1];
+
+        dir.FullyLoad(&fp);
+    }
+    else
+    {
+        /* Not implemented yet */
+        return EXIT_FAILURE;
+    }
+
+    /* If we get here, we need to write the directory back */
+    dir.calc_offsets();
+    fp.seek(0, SEEK_SET); // FIXME: create a new file
+    dir.write(&fp);
+    for (int i = 0; i < dir.total; i++)
+        fp.write(dir.entries[i]->data, dir.entries[i]->size);
 
     return EXIT_SUCCESS;
 }
@@ -238,6 +270,8 @@ static void Usage()
             "  list                  list the contents of a SPEC file\n"
             "  get <id>              dump entry <id> to stdout\n"
             "  getpcx <id>           dump PCX image <id> to stdout\n"
-            "  move <i1> <i2>        move entry <i1> to <i2>\n");
+            "  del <id>              delete entry <id>\n"
+            "  rename <id> <name>    rename entry <id> to <name>\n"
+            "  move <id1> <id2>      move entry <id1> to <id2>\n");
 }
 

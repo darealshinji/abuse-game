@@ -567,9 +567,7 @@ void spec_directory::FullyLoad(bFILE *fp)
     for (int i = 0; i < total; i++)
     {
         spec_entry *se = entries[i];
-        if (se->data)
-            free(data);
-
+        free(se->data);
         se->data = malloc(se->size);
         fp->seek(se->offset, SEEK_SET);
         fp->read(se->data, se->size);
@@ -719,6 +717,7 @@ void spec_directory::startup(bFILE *fp)
       fp->read(&type,1);
       fp->read(&len,1);
       se->type=type;
+      se->data = NULL;
       se->name=dp+sizeof(spec_entry);
       fp->read(se->name,len);
       fp->read(&flags,1);
