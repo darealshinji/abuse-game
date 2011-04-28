@@ -17,7 +17,6 @@ libimlib_a_SOURCES = \
     keys.cpp keys.h \
     dprint.cpp dprint.h \
     status.cpp status.h \
-    readwav.cpp readwav.h \
     pmenu.cpp pmenu.h \
     scroller.cpp scroller.h \
     filesel.cpp filesel.h \

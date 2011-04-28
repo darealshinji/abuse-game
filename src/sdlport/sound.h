@@ -25,14 +25,13 @@ void print_sound_options(); // print the options avaible for sound
 class sound_effect
 {
 public:
-    sound_effect(char *filename);
-    void play(int volume = 127, int pitch = 128, int panpot = 128);
+    sound_effect(char const *filename);
     ~sound_effect();
 
+    void play(int volume = 127, int pitch = 128, int panpot = 128);
+
 private:
-    void *data;
-    Mix_Chunk* chunk;
-    int size;
+    Mix_Chunk* m_chunk;
 };
 
 class song
