@@ -2308,7 +2308,7 @@ void check_for_lisp(int argc, char **argv)
     {
         if(!strcmp(argv[i], "-lisp"))
         {
-            lisp_init(0xf000, 0x30000);
+            lisp_init();
             char const *eof_char = "Ctrl-D";
             fprintf(stderr,
                     " CLIVE (C) 1995 Jonathan Clark, all rights reserved\n"
@@ -2489,7 +2489,7 @@ int main(int argc, char *argv[])
         }
 
         game_net_init(argc, argv);
-        lisp_init(0x8000, 0x94000);
+        lisp_init();
 
         dev_init(argc, argv);
 
