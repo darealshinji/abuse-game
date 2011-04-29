@@ -79,8 +79,8 @@ CXXFLAGS="${CXXFLAGS} -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Wsign-comp
 dnl Checks for header files
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS(fcntl.h malloc.h string.h sys/ioctl.h sys/time.h unistd.h
-                 netinet/in.h)
+AC_CHECK_HEADERS(fcntl.h malloc.h string.h sys/ioctl.h sys/time.h unistd.h)
+AC_CHECK_HEADERS(netinet/in.h)
 
 dnl Checks for functions
 AC_FUNC_MEMCMP
