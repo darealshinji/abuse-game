@@ -279,9 +279,7 @@ LArray *LArray::Create(size_t len, void *rest)
 
 LFixedPoint *LFixedPoint::Create(int32_t x)
 {
-    size_t size = sizeof(LFixedPoint);
-    if (size < sizeof(LRedirect))
-        size = sizeof(LRedirect);
+    size_t size = Max(sizeof(LFixedPoint), sizeof(LRedirect));
 
     LFixedPoint *p = (LFixedPoint *)lmalloc(size, current_space);
     p->type = L_FIXED_POINT;
@@ -291,9 +289,7 @@ LFixedPoint *LFixedPoint::Create(int32_t x)
 
 LObjectVar *LObjectVar::Create(int index)
 {
-    size_t size = sizeof(LObjectVar);
-    if (size < sizeof(LRedirect))
-        size = sizeof(LRedirect);
+    size_t size = Max(sizeof(LObjectVar), sizeof(LRedirect));
 
     LObjectVar *p = (LObjectVar *)lmalloc(size, current_space);
     p->type = L_OBJECT_VAR;
@@ -305,9 +301,7 @@ LPointer *LPointer::Create(void *addr)
 {
     if (addr == NULL)
         return NULL;
-    size_t size = sizeof(LPointer);
-    if (size < sizeof(LRedirect))
-        size = sizeof(LRedirect);
+    size_t size = Max(sizeof(LPointer), sizeof(LRedirect));
 
     LPointer *p = (LPointer *)lmalloc(size, current_space);
     p->type = L_POINTER;
@@ -317,9 +311,7 @@ LPointer *LPointer::Create(void *addr)
 
 LChar *LChar::Create(uint16_t ch)
 {
-    size_t size = sizeof(LChar);
-    if (size < sizeof(LRedirect))
-        size = sizeof(LRedirect);
+    size_t size = Max(sizeof(LChar), sizeof(LRedirect));
 
     LChar *c = (LChar *)lmalloc(size, current_space);
     c->type = L_CHARACTER;
@@ -344,9 +336,7 @@ struct LString *LString::Create(char const *string, int length)
 
 struct LString *LString::Create(int length)
 {
-    size_t size = sizeof(LString) + length - 1;
-    if (size < sizeof(LRedirect))
-        size = sizeof(LRedirect);
+    size_t size = Max(sizeof(LString) + length - 1, sizeof(LRedirect));
 
     LString *s = (LString *)lmalloc(size, current_space);
     s->type = L_STRING;
@@ -358,9 +348,7 @@ LUserFunction *new_lisp_user_function(LList *arg_list, LList *block_list)
 {
     PtrRef r1(arg_list), r2(block_list);
 
-    size_t size = sizeof(LUserFunction);
-    if (size < sizeof(LRedirect))
-        size = sizeof(LRedirect);
+    size_t size = Max(sizeof(LUserFunction), sizeof(LRedirect));
 
     LUserFunction *lu = (LUserFunction *)lmalloc(size, current_space);
     lu->type = L_USER_FUNCTION;
@@ -371,9 +359,7 @@ LUserFunction *new_lisp_user_function(LList *arg_list, LList *block_list)
 
 LSysFunction *new_lisp_sys_function(int min_args, int max_args, int fun_number)
 {
-    size_t size = sizeof(LSysFunction);
-    if (size < sizeof(LRedirect))
-        size = sizeof(LRedirect);
+    size_t size = Max(sizeof(LSysFunction), sizeof(LRedirect));
 
     // System functions should reside in permanant space
     int space = (current_space == GC_SPACE) ? GC_SPACE : PERM_SPACE;
@@ -408,11 +394,11 @@ LSysFunction *new_user_lisp_function(int min_args, int max_args, int fun_number)
 
 LSymbol *new_lisp_symbol(char *name)
 {
-    size_t size = sizeof(LSymbol);
-    if (size < sizeof(LRedirect))
-        size = sizeof(LRedirect);
+    size_t size = Max(sizeof(LSymbol), sizeof(LRedirect));
 
     LSymbol *s = (LSymbol *)lmalloc(size, current_space);
+    PtrRef ref(s);
+
     s->type = L_SYMBOL;
     s->name = LString::Create(name);
     s->value = l_undefined;
@@ -425,9 +411,7 @@ LSymbol *new_lisp_symbol(char *name)
 
 LNumber *LNumber::Create(long num)
 {
-    size_t size = sizeof(LNumber);
-    if (size < sizeof(LRedirect))
-        size = sizeof(LRedirect);
+    size_t size = Max(sizeof(LNumber), sizeof(LRedirect));
 
     LNumber *n = (LNumber *)lmalloc(size, current_space);
     n->type = L_NUMBER;
@@ -437,9 +421,7 @@ LNumber *LNumber::Create(long num)
 
 LList *LList::Create()
 {
-    size_t size = sizeof(LList);
-    if (size < sizeof(LRedirect))
-        size = sizeof(LRedirect);
+    size_t size = Max(sizeof(LList), sizeof(LRedirect));
 
     LList *c = (LList *)lmalloc(size, current_space);
     c->type = L_CONS_CELL;
