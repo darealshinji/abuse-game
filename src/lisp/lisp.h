@@ -239,7 +239,7 @@ LSysFunction *new_user_lisp_function(int min_args, int max_args, int fun_number)
 
 int end_of_program(char *s);
 void clear_tmp();
-void lisp_init(long perm_size, long tmp_size);
+void lisp_init();
 void lisp_uninit();
 
 extern uint8_t *space[4], *free_space[4];

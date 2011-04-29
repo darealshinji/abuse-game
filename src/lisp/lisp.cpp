@@ -3149,30 +3149,29 @@ LObject *LObject::Eval()
 }
 
 void l_comp_init();
-void lisp_init(long perm_size, long tmp_size)
+
+void lisp_init()
 {
-  unsigned int i;
-  LSymbol::root = NULL;
-  total_user_functions = 0;
+    LSymbol::root = NULL;
+    total_user_functions = 0;
 
-  free_space[0] = space[0] = (uint8_t *)malloc(perm_size);
-  space_size[0] = perm_size;
+    free_space[0] = space[0] = (uint8_t *)malloc(0x1000);
+    space_size[0] = 0x1000;
 
-  free_space[1] = space[1] = (uint8_t *)malloc(tmp_size);
-  space_size[1] = tmp_size;
+    free_space[1] = space[1] = (uint8_t *)malloc(0x1000);
+    space_size[1] = 0x1000;
 
+    current_space = PERM_SPACE;
 
-  current_space=PERM_SPACE;
-
-
-  l_comp_init();
-  for(i = 0; i < sizeof(sys_funcs) / sizeof(*sys_funcs); i++)
-    add_sys_function(sys_funcs[i].name,
-                     sys_funcs[i].min_args, sys_funcs[i].max_args, i);
-  clisp_init();
-  current_space=TMP_SPACE;
-  dprintf("Lisp : %d symbols defined, %d system functions, %d pre-compiled functions\n",
-      LSymbol::count, sizeof(sys_funcs) / sizeof(*sys_funcs), total_user_functions);
+    l_comp_init();
+    for(size_t i = 0; i < sizeof(sys_funcs) / sizeof(*sys_funcs); i++)
+        add_sys_function(sys_funcs[i].name,
+                         sys_funcs[i].min_args, sys_funcs[i].max_args, i);
+    clisp_init();
+    current_space = TMP_SPACE;
+    dprintf("Lisp: %d symbols defined, %d system functions, "
+            "%d pre-compiled functions\n", LSymbol::count,
+            sizeof(sys_funcs) / sizeof(*sys_funcs), total_user_functions);
 }
 
 void lisp_uninit()
