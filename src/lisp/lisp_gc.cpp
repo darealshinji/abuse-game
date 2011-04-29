@@ -113,89 +113,94 @@ inline LList *CollectList(LList *x)
 
 static LObject *CollectObject(LObject *x)
 {
-  LObject *ret = x;
+    LObject *ret = x;
 
-  if (((uint8_t *)x) >= cstart && ((uint8_t *)x) < cend)
-  {
-    switch (item_type(x))
+    if ((uint8_t *)x >= cstart && (uint8_t *)x < cend)
     {
-      case L_BAD_CELL:
-        lbreak("error: GC corrupted cell\n");
-        break;
-      case L_NUMBER:
-        ret = LNumber::Create(((LNumber *)x)->num);
-        break;
-      case L_SYS_FUNCTION:
-        ret = new_lisp_sys_function(((LSysFunction *)x)->min_args,
-                                    ((LSysFunction *)x)->max_args,
-                                    ((LSysFunction *)x)->fun_number);
-        break;
-      case L_USER_FUNCTION:
-      {
-        LUserFunction *fun = (LUserFunction *)x;
-        LList *arg = (LList *)CollectObject(fun->arg_list);
-        LList *block = (LList *)CollectObject(fun->block_list);
-        ret = new_lisp_user_function(arg, block);
-        break;
-      }
-      case L_STRING:
-        ret = LString::Create(lstring_value(x));
-        break;
-      case L_CHARACTER:
-        ret = LChar::Create(lcharacter_value(x));
-        break;
-      case L_C_FUNCTION:
-        ret = new_lisp_c_function(((LSysFunction *)x)->min_args,
+        switch (item_type(x))
+        {
+        case L_BAD_CELL:
+            lbreak("error: collecting corrupted cell\n");
+            break;
+        case L_NUMBER:
+            ret = LNumber::Create(((LNumber *)x)->num);
+            break;
+        case L_SYS_FUNCTION:
+            ret = new_lisp_sys_function(((LSysFunction *)x)->min_args,
+                                        ((LSysFunction *)x)->max_args,
+                                        ((LSysFunction *)x)->fun_number);
+            break;
+        case L_USER_FUNCTION:
+        {
+            LUserFunction *fun = (LUserFunction *)x;
+            LList *arg = (LList *)CollectObject(fun->arg_list);
+            LList *block = (LList *)CollectObject(fun->block_list);
+            ret = new_lisp_user_function(arg, block);
+            break;
+        }
+        case L_STRING:
+            ret = LString::Create(lstring_value(x));
+            break;
+        case L_CHARACTER:
+            ret = LChar::Create(lcharacter_value(x));
+            break;
+        case L_C_FUNCTION:
+            ret = new_lisp_c_function(((LSysFunction *)x)->min_args,
+                                      ((LSysFunction *)x)->max_args,
+                                      ((LSysFunction *)x)->fun_number);
+            break;
+        case L_C_BOOL:
+            ret = new_lisp_c_bool(((LSysFunction *)x)->min_args,
                                   ((LSysFunction *)x)->max_args,
                                   ((LSysFunction *)x)->fun_number);
-        break;
-      case L_C_BOOL:
-        ret = new_lisp_c_bool(((LSysFunction *)x)->min_args,
-                              ((LSysFunction *)x)->max_args,
-                              ((LSysFunction *)x)->fun_number);
-        break;
-      case L_L_FUNCTION:
-        ret = new_user_lisp_function(((LSysFunction *)x)->min_args,
-                                     ((LSysFunction *)x)->max_args,
-                                     ((LSysFunction *)x)->fun_number);
-        break;
-      case L_POINTER:
-        ret = LPointer::Create(lpointer_value(x));
-        break;
-      case L_1D_ARRAY:
-        ret = CollectArray((LArray *)x);
-        break;
-      case L_FIXED_POINT:
-        ret = LFixedPoint::Create(lfixed_point_value(x));
-        break;
-      case L_CONS_CELL:
-        ret = CollectList((LList *)x);
-        break;
-      case L_OBJECT_VAR:
-        ret = LObjectVar::Create(((LObjectVar *)x)->index);
-        break;
-      case L_COLLECTED_OBJECT:
-        ret = ((LRedirect *)x)->ref;
-        break;
-      default:
-        lbreak("shouldn't happen. collecting bad object 0x%x\n", item_type(x));
-        break;
+            break;
+        case L_L_FUNCTION:
+            ret = new_user_lisp_function(((LSysFunction *)x)->min_args,
+                                         ((LSysFunction *)x)->max_args,
+                                         ((LSysFunction *)x)->fun_number);
+            break;
+        case L_POINTER:
+            ret = LPointer::Create(lpointer_value(x));
+            break;
+        case L_1D_ARRAY:
+            ret = CollectArray((LArray *)x);
+            break;
+        case L_FIXED_POINT:
+            ret = LFixedPoint::Create(lfixed_point_value(x));
+            break;
+        case L_CONS_CELL:
+            ret = CollectList((LList *)x);
+            break;
+        case L_OBJECT_VAR:
+            ret = LObjectVar::Create(((LObjectVar *)x)->index);
+            break;
+        case L_COLLECTED_OBJECT:
+            ret = ((LRedirect *)x)->ref;
+            break;
+        default:
+            lbreak("error: collecting bad object 0x%x\n", item_type(x));
+            break;
+        }
+        ((LRedirect *)x)->type = L_COLLECTED_OBJECT;
+        ((LRedirect *)x)->ref = ret;
     }
-    ((LRedirect *)x)->type = L_COLLECTED_OBJECT;
-    ((LRedirect *)x)->ref = ret;
-  }
-  else if ((uint8_t *)x < collected_start || (uint8_t *)x >= collected_end)
-  {
-    if (item_type(x) == L_CONS_CELL) // still need to remap cons_cells outside of space
+    else if ((uint8_t *)x < collected_start || (uint8_t *)x >= collected_end)
     {
-      for (; x && item_type(x) == L_CONS_CELL; x = CDR(x))
-        ((LList *)x)->car = CollectObject(((LList *)x)->car);
-      if (x)
-        ((LList *)x)->cdr = CollectObject(((LList *)x)->cdr);
+        // Still need to remap cons_cells lying outside of space, for
+        // instance on the stack.
+        for (LObject *cell = NULL; x; cell = x, x = CDR(x))
+        {
+            if (item_type(x) != L_CONS_CELL)
+            {
+                if (cell)
+                    CDR(cell) = CollectObject(CDR(cell));
+                break;
+            }
+            CAR(x) = CollectObject(CAR(x));
+        }
     }
-  }
 
-  return ret;
+    return ret;
 }
 
 static void collect_symbols(LSymbol *root)
