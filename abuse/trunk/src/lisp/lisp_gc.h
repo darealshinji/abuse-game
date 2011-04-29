@@ -12,12 +12,22 @@
 #ifndef __LISP_GC_HPP_
 #define __LISP_GC_HPP_
 
-extern grow_stack<void> l_user_stack;       // stack user progs can push data and have it GCed
+// Stack user progs can push data and have it GCed
+extern grow_stack<void> l_user_stack;
 
-void collect_space(int which_space, int grow); // should be tmp or permenant
+class LispGC
+{
+public:
+    // Collect temporary or permanent spaces
+    static void CollectSpace(int which_space, int grow);
 
-void register_pointer(void *&addr);
-void unregister_pointer(void *&addr);
+private:
+    static LArray *CollectArray(LArray *x);
+    static LList *CollectList(LList *x);
+    static LObject *CollectObject(LObject *x);
+    static void CollectSymbols(LSymbol *root);
+    static void CollectStacks();
+};
 
 // This pointer reference stack lists all pointers to temporary lisp
 // objects. This allows the pointers to be automatically modified if an
@@ -40,8 +50,8 @@ public:
         stack.pop(1);
     }
 
-    // stack of user pointers, user pointers get remapped on GC
-    static grow_stack<void *>stack;
+    // Stack of user pointers, user pointers get remapped on GC
+    static grow_stack<void *> stack;
 };
 
 #endif
