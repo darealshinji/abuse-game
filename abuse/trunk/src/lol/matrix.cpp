@@ -17,6 +17,8 @@
 
 #include "lol/matrix.h"
 
+using namespace std;
+
 namespace lol
 {
 

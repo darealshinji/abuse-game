@@ -24,7 +24,6 @@ abuse_SOURCES = \
     demo.cpp demo.h \
     lcache.cpp lcache.h \
     nfclient.cpp nfclient.h \
-    username.cpp \
     clisp.cpp clisp.h \
     gui.cpp gui.h \
     transp.cpp transp.h \

@@ -4,11 +4,13 @@
  *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
- *  domain software, no warranty is made or implied by Crack dot Com or
- *  Jonathan Clark.
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
  */
 
-#include "config.h"
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
 #include <math.h>
 
@@ -312,7 +314,12 @@ void load_data(int argc, char **argv)
     delete load;
 #endif
 
-  if (!net_start())              // don't let them specify a startup file we are connect elsewhere
+#if defined __CELLOS_LV2__
+  if (1)
+#else
+  // don't let them specify a startup file we are connect elsewhere
+  if (!net_start())
+#endif
   {
     for (int i=1; i<argc; i++)
     {
@@ -327,11 +334,14 @@ void load_data(int argc, char **argv)
     snprintf(lsf, sizeof(lsf), "addon/%s/%s.lsp", argv[i], argv[i]);
       }
     }
-  } else if (!get_remote_lsf(net_server,lsf))
+  }
+#if !defined __CELLOS_LV2__
+  else if (!get_remote_lsf(net_server,lsf))
   {
     dprintf("Unable to get remote lsf from %s\n",net_server);
     exit(0);
   }
+#endif
   char prog[100];
   char const *cs;
 

@@ -4,8 +4,8 @@
  *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
- *  domain software, no warranty is made or implied by Crack dot Com or
- *  Jonathan Clark.
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
  */
 
 #ifndef __LOADER_HPP_
@@ -37,7 +37,7 @@ extern int big_font_pict,small_font_pict,console_font_pict;
 
 
 extern int damage_pict,block_pict;
-extern ushort current_start_type,start_position_type;
+extern uint16_t current_start_type,start_position_type;
 
 
 /******************************* SOUND EFFECTS **********************************/

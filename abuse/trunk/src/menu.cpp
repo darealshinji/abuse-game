@@ -4,11 +4,13 @@
  *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
- *  domain software, no warranty is made or implied by Crack dot Com or
- *  Jonathan Clark.
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
  */
 
-#include "config.h"
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
 #include <math.h>
 
@@ -34,9 +36,13 @@
 #include "loadgame.h"
 #include "scroller.h"
 #include "netcfg.h"
-#include "sock.h"
 
+#if !defined __CELLOS_LV2__
+#   include "net/sock.h"
 extern net_protocol *prot;
+#else
+static int const prot = 0;
+#endif
 
 static VolumeWindow *volume_window;
 

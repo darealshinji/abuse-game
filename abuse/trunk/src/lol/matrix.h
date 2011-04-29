@@ -113,6 +113,7 @@ namespace lol
     \
     inline float len() const \
     { \
+        using namespace std; \
         return sqrtf((float)sqlen()); \
     }
 
