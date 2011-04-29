@@ -17,9 +17,6 @@
 
 #include "lisp.h"
 #include "lisp_gc.h"
-#ifdef NO_LIBS
-#include "fakelib.h"
-#endif
 
 #include "stack.h"
 
@@ -34,44 +31,16 @@
 
 // Stack where user programs can push data and have it GCed
 grow_stack<void> l_user_stack(150);
+
 // Stack of user pointers
 grow_stack<void *> PtrRef::stack(1500);
 
-size_t reg_ptr_total = 0;
-size_t reg_ptr_list_size = 0;
-void ***reg_ptr_list = NULL;
+static size_t reg_ptr_total = 0;
+static void ***reg_ptr_list = NULL;
 
 static uint8_t *cstart, *cend, *collected_start, *collected_end;
 
-void register_pointer(void **addr)
-{
-  if (reg_ptr_total >= reg_ptr_list_size)
-  {
-    reg_ptr_list_size += 0x100;
-    reg_ptr_list = (void ***)realloc(reg_ptr_list, sizeof(void **) * reg_ptr_list_size);
-  }
-  reg_ptr_list[reg_ptr_total++] = addr;
-}
-
-void unregister_pointer(void **addr)
-{
-  void ***reg_on = reg_ptr_list;
-  for (size_t i = 0; i < reg_ptr_total; i++, reg_on++)
-  {
-    if (*reg_on == addr)
-    {
-      reg_ptr_total--;
-      for (size_t j = i; j < reg_ptr_total; j++, reg_on++)
-        reg_on[0] = reg_on[1];
-      return ;
-    }
-  }
-  fprintf(stderr, "Unable to locate ptr to unregister");
-}
-
-static LObject *CollectObject(LObject *x);
-
-static LArray *CollectArray(LArray *x)
+LArray *LispGC::CollectArray(LArray *x)
 {
     size_t s = x->len;
     LArray *a = LArray::Create(s, NULL);
@@ -83,7 +52,7 @@ static LArray *CollectArray(LArray *x)
     return a;
 }
 
-inline LList *CollectList(LList *x)
+LList *LispGC::CollectList(LList *x)
 {
     LList *last = NULL, *first = NULL;
 
@@ -111,7 +80,7 @@ inline LList *CollectList(LList *x)
     return first; // we already set the collection pointers
 }
 
-static LObject *CollectObject(LObject *x)
+LObject *LispGC::CollectObject(LObject *x)
 {
     LObject *ret = x;
 
@@ -203,7 +172,7 @@ static LObject *CollectObject(LObject *x)
     return ret;
 }
 
-static void collect_symbols(LSymbol *root)
+void LispGC::CollectSymbols(LSymbol *root)
 {
     if (!root)
         return;
@@ -211,64 +180,64 @@ static void collect_symbols(LSymbol *root)
     root->value = CollectObject(root->value);
     root->function = CollectObject(root->function);
     root->name = (LString *)CollectObject(root->name);
-    collect_symbols(root->left);
-    collect_symbols(root->right);
+    CollectSymbols(root->left);
+    CollectSymbols(root->right);
 }
 
-static void collect_stacks()
+void LispGC::CollectStacks()
 {
-  long t = l_user_stack.son;
+    size_t t = l_user_stack.son;
 
-  void **d = l_user_stack.sdata;
-  for (int i = 0; i < t; i++, d++)
-    *d = CollectObject((LObject *)*d);
+    void **d = l_user_stack.sdata;
+    for (size_t i = 0; i < t; i++, d++)
+        *d = CollectObject((LObject *)*d);
 
-  t = PtrRef::stack.son;
-  void ***d2 = PtrRef::stack.sdata;
-  for (int i = 0; i < t; i++, d2++)
-  {
-    void **ptr = *d2;
-    *ptr = CollectObject((LObject *)*ptr);
-  }
+    t = PtrRef::stack.son;
+    void ***d2 = PtrRef::stack.sdata;
+    for (size_t i = 0; i < t; i++, d2++)
+    {
+        void **ptr = *d2;
+        *ptr = CollectObject((LObject *)*ptr);
+    }
 
-  d2 = reg_ptr_list;
-  for (size_t i = 0; i < reg_ptr_total; i++, d2++)
-  {
-    void **ptr = *d2;
-    *ptr = CollectObject((LObject *)*ptr);
-  }
+    d2 = reg_ptr_list;
+    for (size_t i = 0; i < reg_ptr_total; i++, d2++)
+    {
+        void **ptr = *d2;
+        *ptr = CollectObject((LObject *)*ptr);
+    }
 }
 
-void collect_space(int which_space, int grow) // should be tmp or permanent
+void LispGC::CollectSpace(int which_space, int grow)
 {
-  int old_space = current_space;
-  cstart = space[which_space];
-  cend = free_space[which_space];
+    int old_space = current_space;
+    cstart = space[which_space];
+    cend = free_space[which_space];
 
-  space_size[GC_SPACE] = space_size[which_space];
-  if (grow)
-  {
-    space_size[GC_SPACE] += space_size[which_space] >> 1;
-    space_size[GC_SPACE] -= (space_size[GC_SPACE] & 7);
-  }
-  uint8_t *new_space = (uint8_t *)malloc(space_size[GC_SPACE]);
-  current_space = GC_SPACE;
-  free_space[GC_SPACE] = space[GC_SPACE] = new_space;
+    space_size[GC_SPACE] = space_size[which_space];
+    if (grow)
+    {
+        space_size[GC_SPACE] += space_size[which_space] >> 1;
+        space_size[GC_SPACE] -= (space_size[GC_SPACE] & 7);
+    }
+    uint8_t *new_space = (uint8_t *)malloc(space_size[GC_SPACE]);
+    current_space = GC_SPACE;
+    free_space[GC_SPACE] = space[GC_SPACE] = new_space;
 
-  collected_start = new_space;
-  collected_end = new_space + space_size[GC_SPACE];
+    collected_start = new_space;
+    collected_end = new_space + space_size[GC_SPACE];
 
-  collect_symbols(LSymbol::root);
-  collect_stacks();
+    CollectSymbols(LSymbol::root);
+    CollectStacks();
 
-  // for debuging clear it out
-  memset(space[which_space], 0, space_size[which_space]);
-  free(space[which_space]);
+    // for debuging clear it out
+    memset(space[which_space], 0, space_size[which_space]);
+    free(space[which_space]);
 
-  space[which_space] = new_space;
-  space_size[which_space] = space_size[GC_SPACE];
-  free_space[which_space] = new_space
-                          + (free_space[GC_SPACE] - space[GC_SPACE]);
-  current_space = old_space;
+    space[which_space] = new_space;
+    space_size[which_space] = space_size[GC_SPACE];
+    free_space[which_space] = new_space
+                            + (free_space[GC_SPACE] - space[GC_SPACE]);
+    current_space = old_space;
 }
 
