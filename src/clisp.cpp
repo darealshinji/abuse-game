@@ -4,11 +4,13 @@
  *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
- *  domain software, no warranty is made or implied by Crack dot Com or
- *  Jonathan Clark.
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
  */
 
-#include "config.h"
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
 #include <string.h>
 #include <unistd.h>
@@ -942,12 +944,21 @@ void *l_caller(long number, void *args)
     } break;
     case 54 :
     {
+#if defined __CELLOS_LV2__
+      /* FIXME: retrieve the PS3 account name */
+      char const *cd = "Player";
+#else
       char cd[150];
-      getcwd(cd,100);
+      getcwd(cd, 100);
+#endif
       return LString::Create(cd);
     } break;
     case 55 :
-    { system(lstring_value(CAR(args)->Eval())); } break;
+#if !defined __CELLOS_LV2__
+      /* FIXME: this looks rather dangerous */
+      system(lstring_value(CAR(args)->Eval()));
+#endif
+      break;
     case 56 :
     {
       void *fn=CAR(args)->Eval(); args=CDR(args);
@@ -2176,8 +2187,12 @@ long c_caller(long number, void *args)
     } break;
     case 276 :
     {
+#if defined __CELLOS_LV2__
+      return 0;
+#else
       if (!main_net_cfg) return 0;
       return become_server(game_name);
+#endif
     } break;
     case 277 :
     {

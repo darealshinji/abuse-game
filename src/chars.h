@@ -4,8 +4,8 @@
  *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
- *  domain software, no warranty is made or implied by Crack dot Com or
- *  Jonathan Clark.
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
  */
 
 #ifndef __CHARACTERZ_HPP_
@@ -86,7 +86,7 @@ extern char const *ofun_names[TOTAL_OFUNS];
 class character_type
 {
 public :
-  ushort ts,tiv,tv; // total states, total index vars, total local vars
+  uint16_t ts,tiv,tv; // total states, total index vars, total local vars
   sequence **seq;   // [0..ts-1]
   void **seq_syms;  // symbol describing what this state is [0..ts-1]
 
@@ -100,7 +100,7 @@ public :
   int logo,morph_mask,morph_power;
   long rangex,rangey,draw_rangex,draw_rangey;             // range off screen before character is skipped
 
-  ushort cflags;
+  uint16_t cflags;
   void *get_fun(int name) { return fun_table[name]; }
   int get_cflag(int name) { return cflags&(1<<name); }
   void set_cflag(int name, int x) { if (x) cflags|=(1<<name);  else cflags&=~(1<<name); }

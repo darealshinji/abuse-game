@@ -1,34 +1,46 @@
-#include "sock.h"
+/*
+ *  Abuse - dark 2D side-scrolling platform game
+ *  Copyright (c) 1995 Crack dot Com
+ *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *
+ *  This software was released into the Public Domain. As with most public
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
+ */
 
 #include <stdlib.h>
 #include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#if defined HAVE_SYS_IOCTL_H
+#   include <sys/ioctl.h>
+#   include <sys/stat.h>
+#   include <sys/types.h>
 #include <signal.h>
+#endif
 #include <sys/types.h>
+
+#if defined __APPLE__ && !defined __MACH__
+#   include "GUSI.h"
+#elif defined HAVE_NETINET_IN_H
+#   include <netdb.h>
+#   include <netinet/in.h>
+#   include <stdio.h>
+#   include <string.h>
+#   include <sys/time.h>
+#   include <sys/ipc.h>
+#   include <sys/shm.h>
+#   include <sys/socket.h>
+#   include <unistd.h>
+#   ifdef HAVE_BSTRING_H
+#       include <bstring.h>
+#   else
+#       include <sys/select.h>
+#   endif
+#endif
+
+#include "sock.h"
 #include "isllist.h"
 
-#if (defined(__APPLE__) && !defined(__MACH__))
-#include "GUSI.h"
-#else
-#include <netdb.h>
-#include <netinet/in.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/time.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#ifdef HAVE_BSTRING_H
-#include <bstring.h>
-#else
-#include <sys/select.h>
-#endif
-#endif
-
-extern fd_set master_set,master_write_set,read_set,exception_set,write_set;
+extern fd_set master_set, master_write_set, read_set, exception_set, write_set;
 
 class ip_address : public net_address
 {

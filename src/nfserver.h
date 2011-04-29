@@ -4,12 +4,14 @@
  *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
- *  domain software, no warranty is made or implied by Crack dot Com or
- *  Jonathan Clark.
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
  */
 
 #ifndef __NFSERVER_HPP_
 #define __NFSERVER_HPP_
+
+#if !defined __CELLOS_LV2__
 
 #include "specs.h"
 #include "netface.h"
@@ -53,4 +55,5 @@ int client_number();
 extern net_address *net_server;
 extern base_memory_struct *base;   // points to shm_addr
 
+#endif
 #endif

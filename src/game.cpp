@@ -4,14 +4,17 @@
  *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
- *  domain software, no warranty is made or implied by Crack dot Com or
- *  Jonathan Clark.
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
  */
 
-#include "config.h"
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
 #include <ctype.h>
 #include <setjmp.h>
+#include <unistd.h>
 
 #ifdef __APPLE__
 // SDL for OSX needs to override main()
@@ -81,8 +84,10 @@ char req_name[100];
 extern uint8_t chatting_enabled;
 
 // Enabled TCPIP driver
+#if !defined __CELLOS_LV2__
 #include "tcpip.h"
 tcpip_protocol tcpip;
+#endif
 
 FILE *open_FILE(char const *filename, char const *mode)
 {
@@ -542,7 +547,9 @@ void Game::load_level(char const *name)
         delete fp;
     }
 
+#if !defined __CELLOS_LV2__
     base->current_tick=(current_level->tick_counter()&0xff);
+#endif
 
     current_level->level_loaded_notify();
     the_game->help_text_frames = 0;
@@ -1396,6 +1403,7 @@ Game::Game(int argc, char **argv)
 
   calc_light_table(pal);
 
+#if !defined __CELLOS_LV2__
   if(current_level == NULL && net_start())  // if we joined a net game get level from server
   {
     if(!request_server_entry())
@@ -1405,7 +1413,7 @@ Game::Game(int argc, char **argv)
     net_reload();
 //    load_level(NET_STARTFILE);
   }
-
+#endif
 
   set_mode(19, argc, argv);
   if(get_option("-2") && (xres < 639 || yres < 399))
@@ -1473,6 +1481,10 @@ Game::Game(int argc, char **argv)
 
   gamma_correct(pal);
 
+#if defined __CELLOS_LV2__
+  if(!start_edit)
+    do_title();
+#else
   if(main_net_cfg == NULL || (main_net_cfg->state != net_configuration::SERVER &&
                  main_net_cfg->state != net_configuration::CLIENT))
   {
@@ -1483,6 +1495,7 @@ Game::Game(int argc, char **argv)
     the_game->load_level(level_file);
     start_running = 1;
   }
+#endif
 
 
   dev|= DRAW_FG_LAYER | DRAW_BG_LAYER | DRAW_PEOPLE_LAYER | DRAW_HELP_LAYER | DRAW_LIGHTS | DRAW_LINKS;
@@ -1678,6 +1691,7 @@ void Game::get_input()
         // where you want to repeatedly scroll down...
         if(ev.type != EV_KEY || !key_down(ev.key) || ev.window || (dev & EDIT_MODE))
         {
+#if !defined __CELLOS_LV2__
             if(ev.type == EV_KEY)
             {
                 set_key_down(ev.key, 1);
@@ -1715,6 +1729,7 @@ void Game::get_input()
                         base->packet.write_uint8(ev.key);
                 }
             }
+#endif
 
             if((dev & EDIT_MODE) || start_edit || ev.type == EV_MESSAGE)
             {
@@ -1929,6 +1944,7 @@ void Game::get_input()
 
 void net_send(int force = 0)
 {
+#if !defined __CELLOS_LV2__
   if((!(dev & EDIT_MODE)) || force)
   {
     if(demo_man.state == demo_manager::PLAYING)
@@ -1963,10 +1979,12 @@ void net_send(int force = 0)
       send_local_request();
     }
   }
+#endif
 }
 
 void net_receive()
 {
+#if !defined __CELLOS_LV2__
   if(!(dev & EDIT_MODE) && current_level)
   {
     uint8_t buf[PACKET_MAX_SIZE + 1];
@@ -1987,6 +2005,7 @@ void net_receive()
 
     process_packet_commands(buf, size);
   }
+#endif
 }
 
 void Game::step()
@@ -2355,6 +2374,7 @@ extern pmenu *dev_menu;
 
 void game_net_init(int argc, char **argv)
 {
+#if !defined __CELLOS_LV2__
   int nonet=!net_init(argc, argv);
   if(nonet)
     dprintf("No network driver, or network driver returned failure\n");
@@ -2379,7 +2399,7 @@ void game_net_init(int argc, char **argv)
       dprintf("could not set default file server to %s\n", argv[i + 1]);
     }
   }
-
+#endif
 }
 
 int main(int argc, char *argv[])
@@ -2442,6 +2462,7 @@ int main(int argc, char *argv[])
     if (!get_option("-no_timer"))
         timer_init();
 
+#if !defined __CELLOS_LV2__
     // look to see if we are supposed to fetch the data elsewhere
     if (getenv("ABUSE_PATH"))
         set_filename_prefix(getenv("ABUSE_PATH"));
@@ -2449,6 +2470,7 @@ int main(int argc, char *argv[])
     // look to see if we are supposed to save the data elsewhere
     if (getenv("ABUSE_SAVE_PATH"))
         set_save_filename_prefix(getenv("ABUSE_SAVE_PATH"));
+#endif
 
     jrand_init();
     jrand(); // so compiler doesn't complain
@@ -2478,6 +2500,7 @@ int main(int argc, char *argv[])
 
         g->get_input(); // prime the net
 
+#if !defined __CELLOS_LV2__
         for (int i = 1; i + 1 < argc; i++)
         {
             if (!strcmp(argv[i], "-server"))
@@ -2501,6 +2524,7 @@ int main(int argc, char *argv[])
             g->calc_speed();
             g->update_screen(); // redraw the screen with any changes
         }
+#endif
 
         while (!g->done())
         {
@@ -2535,11 +2559,15 @@ int main(int argc, char *argv[])
             else
                 demo_man.do_inputs();
 
+#if !defined __CELLOS_LV2__
             service_net_request();
+#endif
 
             // process all the objects in the world
             g->step();
+#if !defined __CELLOS_LV2__
             server_check();
+#endif
             g->calc_speed();
 
             // see if a request for a level load was made during the last tick
@@ -2547,11 +2575,13 @@ int main(int argc, char *argv[])
                 g->update_screen(); // redraw the screen with any changes
         }
 
+#if !defined __CELLOS_LV2__
         net_uninit();
 
         if (net_crcs)
             net_crcs->clean_up();
         delete net_crcs; net_crcs = NULL;
+#endif
 
         delete chat;
 
@@ -2590,7 +2620,9 @@ int main(int argc, char *argv[])
 
         lisp_uninit();
 
+#if !defined __CELLOS_LV2__
         base->packet.packet_reset();
+#endif
     }
     while (main_net_cfg && main_net_cfg->restart_state());
 

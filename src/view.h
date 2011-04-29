@@ -4,8 +4,8 @@
  *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
- *  domain software, no warranty is made or implied by Crack dot Com or
- *  Jonathan Clark.
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
  */
 
 #ifndef _VIEW_HPP_
@@ -137,7 +137,7 @@ void process_packet_commands(uint8_t *pk, int size);
 object_node *make_player_onodes(int player_num=-1);
 int total_view_vars();
 char const *get_view_var_name(int num);
-ushort make_sync();
+uint16_t make_sync();
 
 #endif
 

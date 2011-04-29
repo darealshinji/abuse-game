@@ -4,11 +4,13 @@
  *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
- *  domain software, no warranty is made or implied by Crack dot Com or
- *  Jonathan Clark.
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
  */
 
-#include "config.h"
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
 #if (defined(__MACH__) || !defined(__APPLE__))
 #   include <sys/types.h>
@@ -28,6 +30,8 @@
 #include "cache.h"
 
 #include "gserver.h"
+
+#if !defined __CELLOS_LV2__
 
 void remove_client(int client_number) { ; }
 
@@ -241,4 +245,6 @@ int set_file_server(char const *name)
     } else return 1;
   } else return 0;
 }
+
+#endif
 

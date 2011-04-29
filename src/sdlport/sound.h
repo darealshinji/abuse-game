@@ -4,14 +4,16 @@
  *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
- *  domain software, no warranty is made or implied by Crack dot Com or
- *  Jonathan Clark.
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
  */
 
 #ifndef __SOUND_H__
 #define __SOUND_H__
 
-#include <SDL/SDL_mixer.h>
+#if !defined __CELLOS_LV2__
+#   include <SDL/SDL_mixer.h>
+#endif
 
 /* options are passed via command line */
 
@@ -31,13 +33,17 @@ public:
     void play(int volume = 127, int pitch = 128, int panpot = 128);
 
 private:
+#if !defined __CELLOS_LV2__
     Mix_Chunk* m_chunk;
+#endif
 };
 
 class song
 {
 public:
+#if !defined __CELLOS_LV2__
     char const *name() { return Name; }
+#endif
     song(char const *filename);
     void play(unsigned char volume=127);
     void stop(long fadeout_time=0); // time in ms
@@ -46,11 +52,13 @@ public:
     ~song();
 
 private:
+#if !defined __CELLOS_LV2__
     char *Name;
     unsigned char *data;
     unsigned long song_id;
     Mix_Music* music;
     SDL_RWops* rw;
+#endif
 };
 
 #endif

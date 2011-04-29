@@ -4,11 +4,13 @@
  *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
- *  domain software, no warranty is made or implied by Crack dot Com or
- *  Jonathan Clark.
+ *  domain software, no warranty is made or implied by Crack dot Com, by
+ *  Jonathan Clark, or by Sam Hocevar.
  */
 
-#include "config.h"
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
 #include "common.h"
 
@@ -17,16 +19,20 @@
 #include "netcfg.h"
 #include "input.h"
 #include "cache.h"
-#include "sock.h"
 #include "timing.h"
 #include "light.h"
 
 #include "dev.h"
 
+#if !defined __CELLOS_LV2__
+#   include "net/sock.h"
+#endif
+
 extern char *get_login();
-net_configuration *main_net_cfg=NULL;
+net_configuration *main_net_cfg = NULL;
 extern char lsf[256];
 
+#if !defined __CELLOS_LV2__
 extern net_protocol *prot;
 
 net_configuration::net_configuration()
@@ -590,4 +596,5 @@ int net_configuration::input()   // pulls up dialog box and input fileds
   return ret;
 }
 
+#endif // __CELLOS_LV2__
 
