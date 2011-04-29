@@ -2635,10 +2635,6 @@ int main(int argc, char *argv[])
     if (!get_option("-no_timer"))
         timer_uninit();
 
-    l_user_stack.clean_up();
-    // FIXME: this is now private in PtrRef::stack
-    //l_ptr_stack.clean_up();
-
     sound_uninit();
 
     return 0;

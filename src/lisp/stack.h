@@ -15,53 +15,53 @@
 #include <stdlib.h>
 
 // A fixed-size stack class
-template<class T> class grow_stack
+template<class T> class GrowStack
 {
 public:
-    T **sdata;
-    long son;
-
-private:
-    long smax;
-
-public:
-    grow_stack(int max_size)
+    GrowStack(int max_size)
     {
-        smax = max_size;
-        son = 0;
-        sdata = (T **)malloc(sizeof(T *) * smax);
+        m_max_size = max_size;
+        m_size = 0;
+        sdata = (T **)malloc(sizeof(T *) * m_max_size);
+    }
+
+    ~GrowStack()
+    {
+        if (m_size != 0)
+            fprintf(stderr, "warning: cleaning up nonempty stack\n");
+        free(sdata);
     }
 
     void push(T *data)
     {
-        if(son >= smax)
+        if (m_size >= m_max_size)
         {
-            lbreak("error: stack overflow (%ld >= %ld)\n", son, smax);
+            lbreak("error: stack overflow (%d >= %d)\n",
+                   (int)m_size, (int)m_max_size);
             exit(1);
         }
-        sdata[son] = data;
-        son++;
+        sdata[m_size] = data;
+        m_size++;
     }
 
-    T *pop(long total)
+    T *pop(size_t total)
     {
-        if (total > son)
+        if (total > m_size)
         {
             lbreak("error: stack underflow\n");
             exit(1);
         }
-        son -= total;
-        return sdata[son];
+        m_size -= total;
+        return sdata[m_size];
     }
 
-    void clean_up()
-    {
-        if(son != 0)
-            fprintf(stderr, "warning: cleaning up stack and not empty\n");
-        free(sdata);
-        sdata = NULL;
-        son = 0;
-    }
+public:
+    T **sdata;
+    size_t m_size;
+
+private:
+    size_t m_max_size;
 };
 
 #endif
+

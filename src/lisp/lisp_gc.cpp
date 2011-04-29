@@ -30,10 +30,10 @@
 */
 
 // Stack where user programs can push data and have it GCed
-grow_stack<void> l_user_stack(150);
+GrowStack<void> l_user_stack(150);
 
 // Stack of user pointers
-grow_stack<void *> PtrRef::stack(1500);
+GrowStack<void *> PtrRef::stack(1500);
 
 static size_t reg_ptr_total = 0;
 static void ***reg_ptr_list = NULL;
@@ -186,24 +186,21 @@ void LispGC::CollectSymbols(LSymbol *root)
 
 void LispGC::CollectStacks()
 {
-    size_t t = l_user_stack.son;
-
     void **d = l_user_stack.sdata;
-    for (size_t i = 0; i < t; i++, d++)
+    for (size_t i = 0; i < l_user_stack.m_size; i++, d++)
         *d = CollectObject((LObject *)*d);
 
-    t = PtrRef::stack.son;
     void ***d2 = PtrRef::stack.sdata;
-    for (size_t i = 0; i < t; i++, d2++)
+    for (size_t i = 0; i < PtrRef::stack.m_size; i++, d2++)
     {
         void **ptr = *d2;
         *ptr = CollectObject((LObject *)*ptr);
     }
 
-    d2 = reg_ptr_list;
-    for (size_t i = 0; i < reg_ptr_total; i++, d2++)
+    void ***d3 = reg_ptr_list;
+    for (size_t i = 0; i < reg_ptr_total; i++, d3++)
     {
-        void **ptr = *d2;
+        void **ptr = *d3;
         *ptr = CollectObject((LObject *)*ptr);
     }
 }

@@ -13,7 +13,7 @@
 #define __LISP_GC_HPP_
 
 // Stack user progs can push data and have it GCed
-extern grow_stack<void> l_user_stack;
+extern GrowStack<void> l_user_stack;
 
 class LispGC
 {
@@ -51,7 +51,7 @@ public:
     }
 
     // Stack of user pointers, user pointers get remapped on GC
-    static grow_stack<void *> stack;
+    static GrowStack<void *> stack;
 };
 
 #endif
