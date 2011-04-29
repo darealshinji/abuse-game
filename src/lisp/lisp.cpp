@@ -2466,10 +2466,10 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
         break;
     }
     case SYS_FUNC_RESIZE_TMP:
-        resize_tmp(lnumber_value(CAR(arg_list)->Eval()));
+        // Deprecated and useless
         break;
     case SYS_FUNC_RESIZE_PERM:
-        resize_perm(lnumber_value(CAR(arg_list)->Eval()));
+        // Deprecated and useless
         break;
     case SYS_FUNC_COS:
         ret = LFixedPoint::Create(lisp_cos(lnumber_value(CAR(arg_list)->Eval())));
@@ -3146,38 +3146,6 @@ LObject *LObject::Eval()
   ret=l_user_stack.pop(1);  */
 
     return ret;
-}
-
-void resize_perm(size_t new_size)
-{
-  if (new_size<((char *)free_space[PERM_SPACE]-(char *)space[PERM_SPACE]))
-  {
-    lbreak("resize perm : %d is to small to hold current heap\n", new_size);
-    exit(0);
-  } else if (new_size>space_size[PERM_SPACE])
-  {
-    lbreak("Only smaller resizes allowed for now.\n");
-    exit(0);
-  } else
-    dprintf("doesn't work yet!\n");
-}
-
-void resize_tmp(size_t new_size)
-{
-  if (new_size<((char *)free_space[TMP_SPACE]-(char *)space[TMP_SPACE]))
-  {
-    lbreak("resize perm : %d is to small to hold current heap\n", new_size);
-    exit(0);
-  } else if (new_size>space_size[TMP_SPACE])
-  {
-    printf("Only smaller resizes allowed for now.\n");
-    exit(0);
-  } else if (free_space[TMP_SPACE]==space[TMP_SPACE])
-  {
-    free_space[TMP_SPACE] = space[TMP_SPACE] = (uint8_t *)realloc(space[TMP_SPACE], new_size);
-    space_size[TMP_SPACE] = new_size;
-    dprintf("Lisp : tmp space resized to %d\n", new_size);
-  } else dprintf("Lisp :tmp not empty, cannot resize\n");
 }
 
 void l_comp_init();

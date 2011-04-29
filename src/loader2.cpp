@@ -361,7 +361,6 @@ void load_data(int argc, char **argv)
   }
   compiled_init();
   clear_tmp();
-  resize_tmp(0x4000);
 
   dprintf("Engine : Registering base graphics\n");
   for (int z=0; z<=11; z++)
