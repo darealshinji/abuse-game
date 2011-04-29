@@ -2343,7 +2343,7 @@ void music_check()
   {
     if(current_song && !current_song->playing())
     {
-      current_song->play();
+      current_song->play(music_volume);
       dprintf("song finished\n");
     }
     if(!current_song)
