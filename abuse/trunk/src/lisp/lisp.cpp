@@ -85,10 +85,12 @@ void l1print(void *block)
 void where_print(int max_lev = -1)
 {
     dprintf("Main program\n");
-    if (max_lev==-1) max_lev=PtrRef::stack.son;
-    else if (max_lev>=PtrRef::stack.son) max_lev=PtrRef::stack.son-1;
+    if (max_lev == -1)
+        max_lev = PtrRef::stack.m_size;
+    else if (max_lev >= (int)PtrRef::stack.m_size)
+        max_lev = PtrRef::stack.m_size - 1;
 
-    for (int i=0; i<max_lev; i++)
+    for (int i = 0; i < max_lev; i++)
     {
         dprintf("%d> ", i);
         ((LObject *)*PtrRef::stack.sdata[i])->Print();
@@ -1564,7 +1566,7 @@ void *mapcar(void *arg_list)
 
   void **arg_on=(void **)malloc(sizeof(void *)*num_args);
   LList *list_on=(LList *)CDR(arg_list);
-  long old_ptr_son=PtrRef::stack.son;
+  long old_ptr_son=PtrRef::stack.m_size;
 
   for (i=0; i<num_args; i++)
   {
@@ -1618,7 +1620,7 @@ void *mapcar(void *arg_list)
     }
   }
   while (!stop);
-  PtrRef::stack.son=old_ptr_son;
+  PtrRef::stack.m_size=old_ptr_son;
 
   free(arg_on);
   return return_list;
@@ -1639,7 +1641,7 @@ void *concatenate(void *prog_list)
     else
     {
       void **str_eval=(void **)malloc(elements*sizeof(void *));
-      int i, old_ptr_stack_start=PtrRef::stack.son;
+      int i, old_ptr_stack_start=PtrRef::stack.m_size;
 
       // evalaute all the strings and count their lengths
       for (i=0; i<elements; i++, el_list=CDR(el_list))
@@ -1701,7 +1703,7 @@ void *concatenate(void *prog_list)
     }
       }
       free(str_eval);
-      PtrRef::stack.son=old_ptr_stack_start;   // restore pointer GC stack
+      PtrRef::stack.m_size=old_ptr_stack_start;   // restore pointer GC stack
       *s=0;
       ret=st;
     }
@@ -2080,7 +2082,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
         LObject *var_list = CAR(arg_list);
         LObject *block_list = CDR(arg_list);
         PtrRef r1(block_list), r2(var_list);
-        long stack_start = l_user_stack.son;
+        long stack_start = l_user_stack.m_size;
 
         while (var_list)
         {
@@ -2116,7 +2118,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
             ((LSymbol *)var_name)->SetValue((LObject *)l_user_stack.sdata[cur_stack++]);
             var_list = CDR(var_list);
         }
-        l_user_stack.son = stack_start; // restore the stack
+        l_user_stack.m_size = stack_start; // restore the stack
         break;
     }
     case SYS_FUNC_DEFUN:
@@ -2767,7 +2769,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
     {
         LObject *init_var = CAR(arg_list);
         PtrRef r1(init_var);
-        int ustack_start = l_user_stack.son; // restore stack at end
+        int ustack_start = l_user_stack.m_size; // restore stack at end
         LSymbol *sym = NULL;
         PtrRef r2(sym);
 
@@ -2783,7 +2785,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
             l_user_stack.push(sym->GetValue());
         }
 
-        void **do_evaled = l_user_stack.sdata + l_user_stack.son;
+        void **do_evaled = l_user_stack.sdata + l_user_stack.m_size;
         // push all of the init forms, so we can set the symbol
         for (init_var = CAR(arg_list); init_var; init_var = CDR(init_var))
             l_user_stack.push(CAR(CDR(CAR((init_var))))->Eval());
@@ -2818,7 +2820,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
             do_evaled++;
         }
 
-        l_user_stack.son = ustack_start;
+        l_user_stack.m_size = ustack_start;
         break;
     }
     case SYS_FUNC_GC:
@@ -3009,7 +3011,7 @@ LObject *LSymbol::EvalUserFunction(LList *arg_list)
     PtrRef r9(block_list), r10(fun_arg_list);
 
     // mark the start start, so we can restore when done
-    long stack_start = l_user_stack.son;
+    long stack_start = l_user_stack.m_size;
 
     // first push all of the old symbol values
     LObject *f_arg = NULL;
@@ -3024,7 +3026,7 @@ LObject *LSymbol::EvalUserFunction(LList *arg_list)
 
     // open block so that local vars aren't saved on the stack
     {
-        int new_start = l_user_stack.son;
+        int new_start = l_user_stack.m_size;
         int i = new_start;
         // now push all the values we wish to gather
         for (f_arg = fun_arg_list; f_arg; f_arg = CDR(f_arg))
@@ -3043,7 +3045,7 @@ LObject *LSymbol::EvalUserFunction(LList *arg_list)
         for (f_arg = fun_arg_list; f_arg; f_arg = CDR(f_arg))
             ((LSymbol *)CAR(f_arg))->SetValue((LObject *)l_user_stack.sdata[i++]);
 
-        l_user_stack.son = new_start;
+        l_user_stack.m_size = new_start;
     }
 
     if (f_arg)
@@ -3064,7 +3066,7 @@ LObject *LSymbol::EvalUserFunction(LList *arg_list)
     for (f_arg = fun_arg_list; f_arg; f_arg = CDR(f_arg))
         ((LSymbol *)CAR(f_arg))->SetValue((LObject *)l_user_stack.sdata[cur_stack++]);
 
-    l_user_stack.son = stack_start;
+    l_user_stack.m_size = stack_start;
 
 #ifdef L_PROFILE
     time_marker end;
@@ -3087,7 +3089,7 @@ LObject *LObject::Eval()
         {
             dprintf("%d (%d, %d, %d) TRACE : ", trace_level,
                     get_free_size(PERM_SPACE), get_free_size(TMP_SPACE),
-                    PtrRef::stack.son);
+                    PtrRef::stack.m_size);
             Print();
             dprintf("\n");
         }
@@ -3136,7 +3138,7 @@ LObject *LObject::Eval()
         if (trace_level <= trace_print_level)
             dprintf("%d (%d, %d, %d) TRACE ==> ", trace_level,
                     get_free_size(PERM_SPACE), get_free_size(TMP_SPACE),
-                    PtrRef::stack.son);
+                    PtrRef::stack.m_size);
         ret->Print();
         dprintf("\n");
     }
