@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
         for (size_t todo = se->size; todo > 0; )
         {
             uint8_t buf[1024];
-            int step = Min(todo, 1024);
+            int step = Min((int)todo, 1024);
             fp.read(buf, step);
             fwrite(buf, step, 1, stdout);
             todo -= step;
@@ -274,8 +274,8 @@ int main(int argc, char *argv[])
         dir.total++;
         dir.entries = (spec_entry **)realloc(dir.entries,
                                              dir.total * sizeof(spec_entry *));
-        for (int i = id + 1; i < dir.total; i++)
-            dir.entries[i] = dir.entries[i - 1];
+        for (int i = dir.total - 1; i-- > id; )
+            dir.entries[i + 1] = dir.entries[i];
 
         char *name = strrchr(argv[5], '/');
         if (!name)
