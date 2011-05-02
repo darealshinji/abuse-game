@@ -1161,8 +1161,11 @@ void Game::request_level_load(char *name)
 
 extern int start_doubled;
 
-static template<int N> Fade(image *im, int steps)
+template<int N> static void Fade(image *im, int steps)
 {
+    /* 25ms per step */
+    float const duration = 25.f;
+
     palette *old_pal = pal->copy();
 
     if (im)
@@ -1172,20 +1175,20 @@ static template<int N> Fade(image *im, int steps)
                               (yres + 1) / 2 - im->Size().y / 2);
     }
 
-    for (int i = 0; i < steps; i++)
+    for (Timer total; total.PollMs() < duration * steps; )
     {
+        Timer frame;
         uint8_t *sl1 = (uint8_t *)pal->addr();
         uint8_t *sl2 = (uint8_t *)old_pal->addr();
+        int i = (int)(total.PollMs() / duration);
         int v = (N ? i + 1 : steps - i) * 256 / steps;
-        for (int j = 0; j < 256; j++)
-        {
-            *sl1 = (int)*sl2++ * v / 256;
-            *sl1 = (int)*sl2++ * v / 256;
-            *sl1 = (int)*sl2++ * v / 256;
-        }
+
+        for (int j = 0; j < 3 * 256; j++)
+            *sl1++ = (int)*sl2++ * v / 256;
+
         pal->load();
         wm->flush_screen();
-        milli_wait(25);
+        frame.WaitMs(duration);
     }
 
     if (N == 0)
@@ -1200,7 +1203,7 @@ static template<int N> Fade(image *im, int steps)
 
 void fade_in(image *im, int steps)
 {
-    Fade<1>(NULL, steps);
+    Fade<1>(im, steps);
 }
 
 void fade_out(int steps)
@@ -1248,7 +1251,6 @@ void do_title()
     fade_out(32);
     milli_wait(100);
 
-    int i;
     char *str = lstring_value(LSymbol::FindOrCreate("plot_start")->Eval());
 
     bFILE *fp = open_file("art/smoke.spe", "rb");
@@ -1263,7 +1265,7 @@ void do_title()
         image *smoke[5];
 
         char nm[20];
-        for(i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
         {
             sprintf(nm, "smoke%04d.pcx", i + 1);
             smoke[i] = new image(fp, sd.find(nm));
@@ -1278,44 +1280,42 @@ void do_title()
 
         fade_in(NULL, 16);
         uint8_t cmap[32];
-        for(i = 0; i < 32; i++)
+        for(int i = 0; i < 32; i++)
         cmap[i] = pal->find_closest(i * 256 / 32, i * 256 / 32, i * 256 / 32);
 
         event ev;
         ev.type = EV_SPURIOUS;
-        time_marker start;
+        Timer total;
 
-        for(i = 0; i < 320 && (ev.type != EV_KEY && ev.type != EV_MOUSE_BUTTON); i++)
+        while (ev.type != EV_KEY && ev.type != EV_MOUSE_BUTTON)
         {
+            Timer frame;
+
+            // 100 ms per step
+            int i = (int)(total.PollMs() / 100.f);
+            if (i >= 320)
+                break;
+
             gray->put_image(screen, dx, dy);
             smoke[i % 5]->put_image(screen, dx + 24, dy + 5);
             text_draw(205 - i, dx + 15, dy, dx + 320 - 15, dy + 199, str, wm->font(), cmap, wm->bright_color());
             wm->flush_screen();
             time_marker now;
 
-            while(now.diff_time(&start) < 0.18)
-            {
-                milli_wait(20); // ECS - Added the wait, so CPU utilization stays low during the story
-                now.get_time();
-            }
-
-            start.get_time();
-
             while(wm->event_waiting() && ev.type != EV_KEY)
-            {
                 wm->get_event(ev);
-            }
+
             if((i % 5) == 0 && DEFINEDP(space_snd) && (sound_avail & SFX_INITIALIZED))
-            {
                 cache.sfx(lnumber_value(space_snd))->play(sfx_volume * 90 / 127);
-            }
+
+            frame.WaitMs(25.f);
         }
 
         the_game->reset_keymap();
 
         fade_out(16);
 
-        for(i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
             delete smoke[i];
         delete gray;
         delete pal;
