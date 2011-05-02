@@ -1161,62 +1161,51 @@ void Game::request_level_load(char *name)
 
 extern int start_doubled;
 
+static template<int N> Fade(image *im, int steps)
+{
+    palette *old_pal = pal->copy();
+
+    if (im)
+    {
+        screen->clear();
+        im->put_image(screen, (xres + 1) / 2 - im->Size().x / 2,
+                              (yres + 1) / 2 - im->Size().y / 2);
+    }
+
+    for (int i = 0; i < steps; i++)
+    {
+        uint8_t *sl1 = (uint8_t *)pal->addr();
+        uint8_t *sl2 = (uint8_t *)old_pal->addr();
+        int v = (N ? i + 1 : steps - i) * 256 / steps;
+        for (int j = 0; j < 256; j++)
+        {
+            *sl1 = (int)*sl2++ * v / 256;
+            *sl1 = (int)*sl2++ * v / 256;
+            *sl1 = (int)*sl2++ * v / 256;
+        }
+        pal->load();
+        wm->flush_screen();
+        milli_wait(25);
+    }
+
+    if (N == 0)
+    {
+        screen->clear();
+        wm->flush_screen();
+        old_pal->load();
+    }
+    delete pal;
+    pal = old_pal;
+}
+
 void fade_in(image *im, int steps)
 {
-  palette *old_pal = pal->copy();
-  int i;
-  if(im)
-  {
-    screen->clear();
-    im->put_image(screen, (xres + 1)/2 - im->Size().x/2, (yres + 1)/2 - im->Size().y/2);
-  }
-
-  for(i = 0; i < steps; i++)
-  {
-    uint8_t *sl1=(uint8_t *)pal->addr();
-    uint8_t *sl2=(uint8_t *)old_pal->addr();
-    int j;
-    int v=(i + 1)*256 / steps;
-    for(j = 0; j < 256; j++)
-    {
-      *(sl1)=((int)*(sl2))*v / 256;  sl1++; sl2++;
-      *(sl1)=((int)*(sl2))*v / 256;  sl1++; sl2++;
-      *(sl1)=((int)*(sl2))*v / 256;  sl1++; sl2++;
-    }
-    pal->load();
-    wm->flush_screen();
-    milli_wait(25);
-  }
-  delete pal;
-  pal = old_pal;
+    Fade<1>(NULL, steps);
 }
 
 void fade_out(int steps)
 {
-  palette *old_pal = pal->copy();
-  int i;
-  for(i = 0; i < steps; i++)
-  {
-    uint8_t *sl1=(uint8_t *)pal->addr();
-    uint8_t *sl2=(uint8_t *)old_pal->addr();
-    int j;
-    int v=(steps - i)*256 / steps;
-    for(j = 0; j < 256; j++)
-    {
-      *(sl1)=((int)*(sl2))*v / 256;  sl1++; sl2++;
-      *(sl1)=((int)*(sl2))*v / 256;  sl1++; sl2++;
-      *(sl1)=((int)*(sl2))*v / 256;  sl1++; sl2++;
-    }
-    pal->load();
-    wm->flush_screen();
-    milli_wait(25);
-  }
-  screen->clear();
-  wm->flush_screen();
-  delete pal;
-  pal = old_pal;
-
-  pal->load();
+    Fade<0>(NULL, steps);
 }
 
 int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *font, uint8_t *cmap, char color);
