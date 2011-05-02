@@ -21,6 +21,7 @@
 // Lol Engine
 //
 #include "lol/matrix.h"
+#include "lol/timer.h"
 using namespace lol;
 
 //
@@ -28,6 +29,8 @@ using namespace lol;
 //
 static inline int Min(int a, int b) { return a < b ? a : b; }
 static inline int Max(int a, int b) { return a > b ? a : b; }
+static inline unsigned int Min(unsigned int a, unsigned int b) { return a < b ? a : b; }
+static inline unsigned int Max(unsigned int a, unsigned int b) { return a > b ? a : b; }
 static inline long Min(long a, long b) { return a < b ? a : b; }
 static inline long Max(long a, long b) { return a > b ? a : b; }
 static inline unsigned long Min(unsigned long a, unsigned long b) { return a < b ? a : b; }
