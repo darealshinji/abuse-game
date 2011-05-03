@@ -1287,9 +1287,9 @@ void do_title()
         {
             Timer frame;
 
-            // 100 ms per step
-            int i = (int)(total.PollMs() / 100.f);
-            if (i >= 320)
+            // 120 ms per step
+            int i = (int)(total.PollMs() / 120.f);
+            if (i >= 400)
                 break;
 
             gray->put_image(screen, dx, dy);
@@ -1305,6 +1305,7 @@ void do_title()
                 cache.sfx(lnumber_value(space_snd))->play(sfx_volume * 90 / 127);
 
             frame.WaitMs(25.f);
+            frame.GetMs();
         }
 
         the_game->reset_keymap();
