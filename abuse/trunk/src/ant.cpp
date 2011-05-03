@@ -480,7 +480,7 @@ void show_stats()
     wm->font()->put_string(screen,x+1,y+1,msg,wm->dark_color());
     wm->font()->put_string(screen,x,y,msg,wm->bright_color());
     wm->flush_screen();
-    milli_wait(500);
+    Timer now; now.WaitMs(500);
   }
-
 }
+

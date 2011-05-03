@@ -25,9 +25,5 @@ public:
     double diff_time(time_marker *other); // return time diff in seconds
 };
 
-void milli_wait(unsigned int wait_time); // sleep for a millisecond
-void timer_init();
-void timer_uninit();
-
 #endif
 

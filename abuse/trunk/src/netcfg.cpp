@@ -511,8 +511,10 @@ int net_configuration::input()   // pulls up dialog box and input fileds
         }
         else
         {
-            // No event waiting...  We can't wait for long, because we are pretending to broadcast.
-            milli_wait(5); // ECS - Added so waiting in dialog doesn't use 100% of CPU
+            // No event waiting...  We can't wait for long, because we are
+            // pretending to broadcast.
+            // ECS - Added so waiting in dialog doesn't use 100% of CPU
+            Timer tmp; tmp.WaitMs(5);
         }
     }
 

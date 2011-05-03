@@ -256,7 +256,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       }
       wm->flush_screen();
       save->put_image(screen,mx+1,by1);
-    } else milli_wait(10);
+    } else { Timer tmp; tmp.WaitMs(10); }
 
   } while (!done);
   if (last_color_time)
@@ -693,7 +693,7 @@ void main_menu()
         else
         {
             // ECS - Added so that main menu doesn't grab 100% of CPU
-            milli_wait(30);
+            Timer tmp; tmp.WaitMs(30);
         }
 
         if (new_time.diff_time(&start)>10)
