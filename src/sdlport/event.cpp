@@ -135,7 +135,10 @@ void event_handler::get_event( event &ev )
         event_waiting();
 
         if (!ewaiting)
-            milli_wait( 1 );    // Sleep for 1 millisecond if there are no events
+        {
+            // Sleep for 1 millisecond if there are no events
+            Timer tmp; tmp.WaitMs(1);
+        }
     }
 
     ep = (event *)events.first();

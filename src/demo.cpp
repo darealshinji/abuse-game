@@ -202,7 +202,7 @@ int demo_manager::set_state(demo_state new_state, char *filename)
     {
 /*
       fade_in(cache.img(cache.reg("art/help.spe","sell6",SPEC_IMAGE,1)),8);
-      milli_wait(2000);
+      Timer now; now.WaitMs(2000);
       fade_out(8);
 */
       delete record_file;

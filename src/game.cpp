@@ -1243,14 +1243,10 @@ void do_title()
     wm->set_mouse_shape(blank->copy(), 0, 0); // hide mouse
     delete blank;
     fade_in(cache.img(cdc_logo), 32);
-
-    milli_wait(400);
+    Timer tmp; tmp.WaitMs(400);
+    fade_out(32);
 
     void *space_snd = LSymbol::FindOrCreate("SPACE_SND")->GetValue();
-
-    fade_out(32);
-    milli_wait(100);
-
     char *str = lstring_value(LSymbol::FindOrCreate("plot_start")->Eval());
 
     bFILE *fp = open_file("art/smoke.spe", "rb");
@@ -1510,31 +1506,27 @@ Game::Game(int argc, char **argv)
   }
 }
 
-
-
-time_marker *led_last_time = NULL, *fps_mark_start = NULL;
-double avg_fps = 15.0, possible_fps = 15.0;
+time_marker *led_last_time = NULL;
+static float avg_fps = 15.0f, possible_fps = 15.0f;
 
 void Game::toggle_delay()
 {
-  no_delay=!no_delay;
-  if(no_delay)
-    show_help(symbol_str("delay_off"));
-  else show_help(symbol_str("delay_on"));
-  avg_fps = possible_fps = 15.0;
+    no_delay = !no_delay;
+    show_help(symbol_str(no_delay ? "delay_off" : "delay_on"));
+    avg_fps = possible_fps = 15.0f;
 }
 
 void Game::show_time()
 {
-  if(first_view && fps_on)
-  {
-    char str[10];
+    if (!first_view || !fps_on)
+        return;
+
+    char str[16];
     sprintf(str, "%ld", (long)(avg_fps * 10.0));
     console_font->put_string(screen, first_view->cx1, first_view->cy1, str);
 
     sprintf(str, "%d", total_active);
     console_font->put_string(screen, first_view->cx1, first_view->cy1 + 10, str);
-  }
 }
 
 void Game::update_screen()
@@ -1599,65 +1591,56 @@ void Game::do_intro()
 
 }
 
+// FIXME: refactor this to use the Lol Engine main fixed-framerate loop?
 int Game::calc_speed()
 {
-    int ret = 0;
-    if(fps_mark_start)
+    static Timer frame_timer;
+    static int first = 1;
+
+    if (first)
     {
-        time_marker t;
-
-        // find average fps for last 10 frames
-        double td = t.diff_time(fps_mark_start);
-        if(td < 0.001)     // something is rotten in the state of demark
-            td = 0.001;
-
-        avg_fps = avg_fps * 9.0 / 10.0 + 1.0/(td * 10.0);
-        possible_fps = possible_fps * 9.0 / 10.0 + 1.0/(td * 10.0);
-
-        if(avg_fps > 14)
-        {
-            if(massive_frame_panic > 20)
-                massive_frame_panic = 20;
-            else if(massive_frame_panic)
-                massive_frame_panic--;
-        }
-
-        if(avg_fps > 15 && ((dev & EDIT_MODE)==0 || need_delay))
-        {
-            frame_panic = 0;
-            int32_t stime=(int32_t)((1 / 15.0 - 1.0 / possible_fps)*1000.0);
-            if(stime > 0 && !no_delay)
-            {
-                milli_wait(stime);
-                avg_fps -= 1.0/(td * 10.0);   // subtract out old estimate
-
-                time_marker t;
-
-                // find average fps for last 10 frames
-                double td = t.diff_time(fps_mark_start);
-                if(td < 0.00001)     // something is rotten in the state of demark
-                    td = 0.00001;
-
-                avg_fps += 1.0/(td * 10.0);       // add in new estimate
-            }
-        }
-        else if(avg_fps < 14)
-        {
-            if(avg_fps < 10)
-                massive_frame_panic++;
-            frame_panic++;
-            ret = 1;
-        }
-        else if(dev & EDIT_MODE)
-        {
-            // ECS - Added this case and the wait.  It's a cheap hack to assure that
-            // we don't exceed 30FPS in edit mode and hog the CPU.
-            milli_wait(33);
-        }
-
-        delete fps_mark_start;
+        first = 0;
+        return 0;
     }
-    fps_mark_start = new time_marker;
+
+    // Find average fps for last 10 frames
+    float fps = 1000.0f / Max(1.0f, frame_timer.PollMs());
+
+    avg_fps = 0.9f * avg_fps + 0.1f * fps;
+    possible_fps = 0.9f * possible_fps + 0.1f * fps;
+
+    if (avg_fps > 14)
+        massive_frame_panic = Max(0, Min(20, massive_frame_panic - 1));
+
+    int ret = 0;
+
+    if (dev & EDIT_MODE)
+    {
+        // ECS - Added this case and the wait.  It's a cheap hack to ensure
+        // that we don't exceed 30FPS in edit mode and hog the CPU.
+        frame_timer.WaitMs(33);
+    }
+    else if (avg_fps > 15 && need_delay)
+    {
+        frame_panic = 0;
+        if (!no_delay)
+        {
+            frame_timer.WaitMs(1000.0f / 15);
+            avg_fps -= 0.1f * fps;
+            avg_fps += 0.1f * 15.0f;
+        }
+    }
+    else if (avg_fps < 14)
+    {
+        if(avg_fps < 10)
+            massive_frame_panic++;
+        frame_panic++;
+        // All is lost, don't sleep during this frame
+        ret = 1;
+    }
+
+    // Ignore our wait time, we're more interested in the frame time
+    frame_timer.GetMs();
     return ret;
 }
 
@@ -2118,7 +2101,6 @@ Game::~Game()
     delete figures[i];
   }
   free_pframes();
-  if(fps_mark_start) delete fps_mark_start; fps_mark_start = NULL;
   delete pal;
   free(object_names);
   free(figures);
@@ -2448,8 +2430,6 @@ int main(int argc, char *argv[])
     start_sound(argc, argv);
 
     stat_man = new text_status_manager();
-    if (!get_option("-no_timer"))
-        timer_init();
 
 #if !defined __CELLOS_LV2__
     // look to see if we are supposed to fetch the data elsewhere
@@ -2471,8 +2451,6 @@ int main(int argc, char *argv[])
     {
         if (main_net_cfg && !main_net_cfg->notify_reset())
         {
-            if (!get_option("-no_timer"))
-                timer_uninit();
             sound_uninit();
             exit(0);
         }
@@ -2574,7 +2552,7 @@ int main(int argc, char *argv[])
 
         delete chat;
 
-        milli_wait(500);
+        Timer tmp; tmp.WaitMs(500);
 
         delete small_render; small_render = NULL;
 
@@ -2620,9 +2598,6 @@ int main(int argc, char *argv[])
 
     set_filename_prefix(NULL);  // dealloc this mem if there was any
     set_save_filename_prefix(NULL);
-
-    if (!get_option("-no_timer"))
-        timer_uninit();
 
     sound_uninit();
 

@@ -1081,7 +1081,7 @@ void *show_kills()
   }
 
   wm->flush_screen();
-  milli_wait(4000);   // wait 4 seconds
+  Timer now; now.WaitMs(4000);   // wait 4 seconds
 
   return NULL;
 }

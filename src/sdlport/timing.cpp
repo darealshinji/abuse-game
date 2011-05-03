@@ -64,19 +64,3 @@ double time_marker::diff_time( time_marker *other )
     return (double)(seconds - other->seconds) + (double)(micro_seconds - other->micro_seconds) / 1000000;
 }
 
-void timer_init()
-{
-    /* Do Nothing */
-}
-
-void timer_uninit()
-{
-    /* Do Nothing */
-}
-
-void milli_wait( unsigned wait_time )
-{
-    struct timespec ts = { 0, wait_time * 1000000 };
-    nanosleep( &ts, NULL );
-}
-
