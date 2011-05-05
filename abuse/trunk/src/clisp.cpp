@@ -1591,7 +1591,7 @@ long c_caller(long number, void *args)
     lbreak("color out of range (0..255) in color lookup\n");
     exit(0);
       }
-      return color_table->lookup_color(r>>3,g>>3,b>>3);
+      return color_table->Lookup(r >> 3, g >> 3, b >> 3);
     } break;
     case 173 :
     {
@@ -1734,8 +1734,8 @@ long c_caller(long number, void *args)
     if (!se) lbreak("File %s has no color filter!",lstring_value(CAR(args)));
     else
     {
-      if (color_table) delete color_table;
-      color_table=new color_filter(se,fp);
+      delete color_table;
+      color_table = new ColorFilter(se, fp);
     }
     delete fp;
       }

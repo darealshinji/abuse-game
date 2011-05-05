@@ -31,7 +31,7 @@ public :
   virtual void draw(int active, image *screen);
   virtual void handle_event(event &ev, image *screen, InputManager *im);
   void change_visual(image *new_visual);
-  virtual void remap(filter *f);
+  virtual void remap(Filter *f);
   virtual ~button() { if (text) free(text); }
   void push();
   virtual char *read() { return (char *)&up; }
@@ -47,7 +47,7 @@ public :
   button_box(int X, int Y, int ID, int MaxDown, button *Buttons, ifield *Next);
   void add_button(button *b);
   void press_button(int id);      // if button box doesn't contain id, nothing happens
-  virtual void remap(filter *f);
+  virtual void remap(Filter *f);
   virtual void move(int newx, int newy);
   virtual void area(int &x1, int &y1, int &x2, int &y2);
   virtual void draw_first(image *screen);

@@ -56,7 +56,7 @@ int big_font_pict=-1,small_font_pict=-1,console_font_pict=-1,cdc_logo;
 
 int title_screen;
 
-color_filter *color_table;
+ColorFilter *color_table;
 
 
 int border_tile,window_texture,

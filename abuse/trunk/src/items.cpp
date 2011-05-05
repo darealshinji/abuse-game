@@ -257,7 +257,7 @@ foretile::foretile(bFILE *fp)
 
   for (l=0; l<AUTOTILE_WIDTH*AUTOTILE_HEIGHT; l++)
     micro_image->PutPixel(vec2i(l % AUTOTILE_WIDTH, l / AUTOTILE_WIDTH),
-       color_table->lookup_color((r[l]/(t[l]*4/5))>>3,
+       color_table->Lookup((r[l]/(t[l]*4/5))>>3,
                  (g[l]/(t[l]*4/5))>>3,
                  (b[l]/(t[l]*4/5))>>3));
 

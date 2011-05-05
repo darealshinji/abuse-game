@@ -724,7 +724,7 @@ void InputManager::release_focus()
     wm->release_focus();
 }
 
-void InputManager::remap(filter *f)
+void InputManager::remap(Filter *f)
 {
   for (ifield *i=first; i; i=i->next)
    i->remap(f);

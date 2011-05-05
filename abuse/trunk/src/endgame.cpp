@@ -120,7 +120,7 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
           g3=g1+(g2-g1)*fade256/256,
           b3=b1+(b2-b1)*fade256/256;
 
-      uint8_t c=color_table->lookup_color(r3>>3,g3>>3,b3>>3);
+      uint8_t c=color_table->Lookup(r3>>3,g3>>3,b3>>3);
 
       *sl=*(white_light+((*l)/2+28+jrand()%4)*256+c);
 
