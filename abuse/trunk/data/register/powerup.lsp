@@ -1,28 +1,28 @@
 ;; Copyright 1995 Crack dot Com,  All Rights reserved
 ;; See licencing information for more details on usage rights
 
-(defun sneaky_power_ai () 
+(defun sneaky_power_ai ()
   (next_picture)
-  (if (touching_bg) 
-      (progn 
+  (if (touching_bg)
+      (progn
 	(with_object (bg) (setq special_power SNEAKY_POWER))
 	nil)
     T))
 
-(defun fly_power_ai () 
+(defun fly_power_ai ()
   (next_picture)
   (if (touching_bg)
-      (progn 
+      (progn
 	(with_object (bg) (setq special_power FLY_POWER))
 	nil)
     T))
 
 
-(defun health_power_ai () 
+(defun health_power_ai ()
   (next_picture)
-  (if (touching_bg) 
-      (progn 
-	(with_object (bg) 
+  (if (touching_bg)
+      (progn
+	(with_object (bg)
 		     (progn
 		       (setq special_power HEALTH_POWER)
 		       (give_player_health 100)))

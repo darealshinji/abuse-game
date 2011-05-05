@@ -13,15 +13,15 @@
 (if (not (load "lisp/english.lsp"))             ;; load language specific stuff
     (progn
       (print "Please make sure you unzipped the game with the -d option")
-      (print "so that all directories get created properly.")      
-      (print "example : pkunzip -d abusXXXX.zip")      
+      (print "so that all directories get created properly.")
+      (print "example : pkunzip -d abusXXXX.zip")
       (quit)))
 (setq load_warn T)
 
 
 (load "lisp/common.lsp")
 (load "lisp/userfuns.lsp")
-(load "lisp/options.lsp")     
+(load "lisp/options.lsp")
 (load "lisp/startup.lsp")
 (if (not (local_load "lisp/input.lsp"))   ; get local copy first
     (load "lisp/input.lsp"))
@@ -63,7 +63,7 @@
 (set_first_level "addon/leon/level00.spe")
 
 
-(setq bad_guy_list (list DARNEL ANT_ROOF TRACK_GUN SPRAY_GUN JUGGER ROB1 WHO ROCKET FLYER GREEN_FLYER BOSS_ANT 
+(setq bad_guy_list (list DARNEL ANT_ROOF TRACK_GUN SPRAY_GUN JUGGER ROB1 WHO ROCKET FLYER GREEN_FLYER BOSS_ANT
 ANT ANT_JUMPER ANT_PRED ANT_GREATER2 NJUGGER))
 
 

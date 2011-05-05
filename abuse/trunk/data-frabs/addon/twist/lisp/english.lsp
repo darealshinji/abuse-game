@@ -12,7 +12,7 @@
 	 (setq ic_extreme      "Difficulty : Insanity!")
 
 	 (defun get_train_msg (message_num)
-	   (select message_num	  
+	   (select message_num
                    ;   0123456789012345678901234567890123456789012345678901234567890123456789
 		   ;  "--------------------------------------------------------------------"  ; V-A
 		   ; Please keep all strings below shorter than the above line.               ; V-A
@@ -31,10 +31,10 @@
 		   ))
 
          (setq plot_start
-               (concatenate 'string 
+               (concatenate 'string
                             " Nick Vrenna has pulled the switch and diverted the water supply. The spread "
                             "of Abuse may be over. He has gotten himself into the deepest underground prision "
-                            "levels and battled against the mutants to save the outside world.\\n"                          
+                            "levels and battled against the mutants to save the outside world.\\n"
                             " As he leaves the Control Room, a mutant leaped onto him and slashed his wrist. "
                             "He gave the mutant a lethal blow in the head. He took a look at his wrist. There was "
                             "blood all over and he knew that he himself was infected with Abuse. Only time could tell "
@@ -45,12 +45,12 @@
                             "Munir Hussin\\n"
                             "Profound Corp "))
          (setq plot_middle
-               (concatenate 'string 
+               (concatenate 'string
                             "You have survived the initial outbreak, but you are still lost deep "
-                            "within the prison. So far it's been suspiciously easy. \\n"       
+                            "within the prison. So far it's been suspiciously easy. \\n"
 			    "If you want to break out - the real ABUSE lies ahead. "))
          (setq plot_end
-               (concatenate 'string 
+               (concatenate 'string
                             "You've survived impossible odds and made it to the Control Room.  "
                             "By pulling the switch, you have diverted the water supply and stopped the spread of Abuse!\\n "
                             "CONGRATULATIONS!  YOU'RE HOWLING!!!"))

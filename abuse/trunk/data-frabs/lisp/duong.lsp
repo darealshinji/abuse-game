@@ -1,6 +1,6 @@
 ;; Copyright 1995 Crack dot Com,  All Rights reserved
 ;; See licensing information for more details on usage rights
-	   
+
 
 (defun mine_ai ()
   (if (or (eq (total_objects) 0) (not (eq (with_object (get_object 0) (aistate)) 0)))
@@ -88,9 +88,9 @@
 		 (add_object EXPLODE1 (+ (x) (random 10)) (+ (+ (random 10) (y)) -20)     0))
 	     (set_y oldy))
 	   nil)))
-  
-	  
-	   		  
+
+
+
 (def_char BOMB
   (funs (ai_fun      bomb_ai)
 	(constructor bomb_cons))
@@ -110,7 +110,7 @@
   (fields ("blink_time" bomb_blink))
   (states "art/chars/mine.spe"
 	  (stopped '("abomb0001.pcx+" "abomb0002.pcx+"))))
-	  
+
 
 
 
@@ -140,7 +140,7 @@
       (select (aistate)
 	      (0 ;; wait for switch to go off
 	       (if (not (eq (with_object (get_object 0) (aistate)) 0))
-		   (progn 
+		   (progn
 		     (set_state running)
 		     (go_state 1))))
 	      (1 ;; wait for animation
@@ -148,10 +148,10 @@
 		 (progn
 		   (set_state blocking)
 		   (set_aistate 2))))
-	      (2 ;; just stay here 
+	      (2 ;; just stay here
 	       T)))
 T)
-      
+
 
 (defun strap_door_ai ()
   (general_sdoor_ai nil))
@@ -200,7 +200,7 @@ T)
   (states "art/chars/lightin.spe"
 	  (running   (seq "lite" 1 9))
 	  (stopped    "lite0001.pcx")))
-	  
+
 
 
 (defun lava_ai ()
@@ -244,18 +244,18 @@ T)
 		   (let ((x (x))
 			 (y (- (y) 16))
 			 (fade (if (< (current_frame) 16) (current_frame) 15)))
-		     (with_object (get_object 1) 
+		     (with_object (get_object 1)
 				  (progn
-				    (set_x x) 
-				    (set_y y) 
+				    (set_x x)
+				    (set_y y)
 				    (user_fun SET_FADE_COUNT fade)
 				    (setq is_teleporting 1)
 				    )))
-				  
+
 		 (let ((x (with_object (get_object 0) (x)))
-		       (y (with_object (get_object 0) (- (y) 16))))		   
+		       (y (with_object (get_object 0) (- (y) 16))))
 		   (with_object (get_object 1)
-				(progn 
+				(progn
 				  (set_x x)
 				  (set_y y)
 				  (setq is_teleporting 0)
@@ -264,8 +264,8 @@ T)
 		   (remove_object (get_object 1))
 		   (set_aistate 0))))))
   T)
-		 
-		 	  
+
+
 
 (def_char TELE2
   (funs  (ai_fun tp2_ai))
@@ -273,7 +273,7 @@ T)
   (states "art/chars/teleport.spe"
 	  (stopped "close")
 	  (running (seq "elec" 1 15))))
-	 
+
 
 (defun bolder_ai ()
   (if (or (eq (total_objects) 0) (not (eq (with_object (get_object 0) (aistate)) 0)))
@@ -293,7 +293,7 @@ T)
 	    nil)
 	(progn
 	  (next_picture)
-	  (set_yvel (+ (yvel) 1))	  
+	  (set_yvel (+ (yvel) 1))
 	  (let ((old_yv  (yvel))
 		(old_xv  (xvel))
 		(old_x   (x))
@@ -308,7 +308,7 @@ T)
 	      (set_x new_x)
 	      (set_y new_y))
 	    (hurt_radius (x) (y) 19 30 (me) 15)
-	    (if (not (eq status T));; T means we did not hit anything	
+	    (if (not (eq status T));; T means we did not hit anything
 		(let ((block_flags (car status)))
 		  (if (or (blocked_up block_flags) (blocked_down block_flags));; bounce up/down
 		      (progn
@@ -324,14 +324,14 @@ T)
 			  (set_xvel (- 0 old_xv))))))))
 	  T))
     T))
-  
+
 
 (defun bolder_cons ()
   (set_xvel -4)
   (set_yvel 0))
 
 
-(defun bold_dam (amount from hitx hity push_xvel push_yvel) 
+(defun bold_dam (amount from hitx hity push_xvel push_yvel)
   (add_object EXPLODE3 (+ (x) (- 10 (random 20))) (- (y) (random 30)) 0)
   (damage_fun amount from hitx hity (/ push_xvel 10) (/ push_yvel 2)))
 
@@ -344,12 +344,12 @@ T)
 	 (hurtable   T))
   (range 200 200)
   (abilities (start_hp 40))
-  (fields ("xvel" ai_xvel)	  
+  (fields ("xvel" ai_xvel)
 	  ("yvel" ai_yvel)
 	  ("hp"   ai_health)
 	  )
   (states "art/bold.spe"
-	  (stopped '("bold0001.pcx" "bold0001.pcx" "bold0001.pcx" 
+	  (stopped '("bold0001.pcx" "bold0001.pcx" "bold0001.pcx"
 		    "bold0002.pcx" "bold0002.pcx" "bold0002.pcx"
 		    "bold0003.pcx" "bold0003.pcx" "bold0003.pcx"
 		    "bold0004.pcx" "bold0004.pcx" "bold0004.pcx"))))
@@ -358,8 +358,8 @@ T)
   (let ((old_yv  (yvel))
 	(old_xv  (xvel))
 	(status (float_tick)))
-    (if (not (eq status T)) ;; T means we did not hit anything	
-	(let ((block_flags (car status)))		    
+    (if (not (eq status T)) ;; T means we did not hit anything
+	(let ((block_flags (car status)))
 	  (if (blocked_up block_flags) ;; bounce up/down
 	      (progn
 		(set_xvel old_xv)
@@ -385,28 +385,28 @@ T)
 		      (set_xvel (- 0 old_xv))
 		      (eval right_stub)))))))
       (eval nothing_stub))))
-	      
+
 
 
 (defun small_rock_ai ()
   (next_picture)
   (set_yvel (+ (yvel) 1))
-  (bounce_move T T T 	       
-	       '(progn (add_object EXPLODE1 (+ (x) (random 10)) (- (+ (random 5) (y)) 10)     0)		       
+  (bounce_move T T T
+	       '(progn (add_object EXPLODE1 (+ (x) (random 10)) (- (+ (random 5) (y)) 10)     0)
 		 (add_object EXPLODE1 (- (x) (random 10)) (- (- (y) (random 5)) 10) 2)
 		 (play_sound P_EXPLODE_SND 127 (x) (y))
 		 (hurt_radius (x) (y) 40 15 (if (> (total_objects) 0)
 						(get_object 0)
 					      nil) 20)
 		 nil) T))
-  
+
 
 (def_char SMALL_BOLDER
   (funs  (ai_fun small_rock_ai))
 
   (flags (add_front  T)
 	 (unlistable T))
-	
+
   (states "art/bold.spe"
 	  (stopped "bsmall")))
 

@@ -6,7 +6,7 @@
       nil
     (with_object (get_object 0)
 		 (if (eq (otype) TP_DOOR)
-		     (if (eq is_opening 0)			 
+		     (if (eq is_opening 0)
 			 (if (and (< (distx) 100) (< (disty) 80))
 			     T
 			   nil)
@@ -31,7 +31,7 @@
       (if (eq (current_frame) 4)
 	  (play_sound DOOR_DOWN 127 (x) (y)))
       (set_current_frame (- (current_frame) 1)))))
-  
+
 
 (defun tpd_ai ()     ;; teleporting door ai
   (if (or (and (< (distx) 100) (< (disty) 80))
@@ -48,14 +48,14 @@
 	  (let ((otherx (with_object (get_object 0) (x)))
 		(othery (with_object (get_object 0) (y))))
 	    (with_object (get_object 0) (link_object player))
-	    (with_object player (progn 
-				  (set_x otherx) 
+	    (with_object player (progn
+				  (set_x otherx)
 				  (set_y othery)))))))
 T)
 
 
 (defun tp_door_cons () (set_xvel -1))
-(defun tp_door_draw () (set_ambient_light (bg) (xvel)) (draw))   
+(defun tp_door_draw () (set_ambient_light (bg) (xvel)) (draw))
 
 (def_char TP_DOOR
   (range 0 0)
@@ -77,9 +77,9 @@ T)
       (if (and (< (distx) 15) (< (disty) 20) (with_object player (pressing_action_key) ) (> (total_objects) 0))
         (let ((otherx (with_object (get_object 0) (x))) (othery (with_object (get_object 0) (y))))
           (with_object (get_object 0) (link_object player))
-          (with_object player 
-            (progn 
-              (set_x otherx) 
+          (with_object player
+            (progn
+              (set_x otherx)
               (set_y othery)
             )
           )

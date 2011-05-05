@@ -5,10 +5,10 @@
 
 (setq load_warn nil)
 
-(if (local_load "addon/deathmat/username.lsp")  
+(if (local_load "addon/deathmat/username.lsp")
   (set_login username))
 
-(if (local_load "addon/deathmat/gamename.lsp")  
+(if (local_load "addon/deathmat/gamename.lsp")
   (set_game_name gamename)
   (set_game_name "Joe's Game"))
 

@@ -1,16 +1,16 @@
 ;; Copyright 1995 Crack dot Com,  All Rights reserved
 ;; See licensing information for more details on usage rights
 
-(defun switcher_ai () 
+(defun switcher_ai ()
   (next_picture)
   (select (aistate)
 	  (0      ; waiting for player to press, then turn to on
 	   (if (and (< (distx) 20) (< (disty) 30) (with_object (bg) (pressing_action_key)))
 	       (progn
 		 (play_sound SWITCH_SND 127 (x) (y))
-		 (set_state running)		 
+		 (set_state running)
 		 (set_aistate 1))))
-	  (1     ; wait for player to let go of button	  
+	  (1     ; wait for player to let go of button
 	   (if (not (with_object (bg) (pressing_action_key)))
 	       (set_aistate 2)))
 	  (2     ; wait for player to press, then turn to off
@@ -18,15 +18,15 @@
 	       (progn
 		 (play_sound SWITCH_SND 127 (x) (y))
 		 (set_state stopped)
-		 (set_aistate 4))))     
+		 (set_aistate 4))))
 	   (4     ; wait for player to let go of button
 	    (if (not (with_object (bg) (pressing_action_key)))
 		(set_aistate 0)))
 	   )
 T)
-	      
 
-(defun switch_once_ai () 
+
+(defun switch_once_ai ()
   (select (aistate)
 	  (0      ; waiting for player to press, then turn to on
 	   (next_picture)
@@ -37,13 +37,13 @@ T)
 		 (set_state running)
 		 (set_aistate 1)))))
   T)
-	 
+
 (defun lower_reload () (lower))   ;; move object below all other objects
-     
+
 (def_char SWITCH
   (funs (ai_fun switcher_ai)
 	(reload_fun lower_reload))
-  (range 0 0)  
+  (range 0 0)
   (states "art/misc.spe"
 	  (stopped '("switch_off1" "switch_off2"))
 	  (running '("switch_on1"  "switch_on2"))))
@@ -51,7 +51,7 @@ T)
 (def_char SWITCH_ONCE
   (funs (ai_fun switch_once_ai)
 	(reload_fun lower_reload))
-  (range 0 0)  
+  (range 0 0)
   (states "art/misc.spe"
 	  (stopped '("switch_off1" "switch_off2"))
 	  (running '("switch_on1"  "switch_on2"))))
@@ -66,7 +66,7 @@ T)
 	(constructor switch_delay_cons))
   (vars reset_time)
   (fields ("reset_time" switch_reset))
-  (range 0 0)  
+  (range 0 0)
   (states "art/misc.spe"
 	  (stopped '("switch_off1" "switch_off2"))
 	  (running '("switch_on1"  "switch_on2"))))
@@ -98,7 +98,7 @@ T)
 (defun switch_mover_ai ()
   (if (> (total_objects) 1)
       (select (aistate)
-	      (0 (if (not (eq (with_object (get_object 0) (aistate)) 0))		     
+	      (0 (if (not (eq (with_object (get_object 0) (aistate)) 0))
 		     (let ((mex (x))
 			   (mey (y)))
 		       (if (eq (xvel) 0)
@@ -123,7 +123,7 @@ T)
 		     (progn
 		       (with_object (get_object 1) (set_fade_count (- count 1)))
 		       T)))))
-			      
+
     nil))
 
 (def_char SWITCH_MOVER
@@ -137,13 +137,13 @@ T)
 (defun sensor_cons ()
   (set_aitype 1)
   (add_hp -10))
-  
+
 
 /* -- compiled code
 (defun sensor_ai ()
   (if (eq (aistate) 0)
       (if (and (< (distx) (xvel)) (< (disty) (yvel)))
-	  (progn 
+	  (progn
 	    (if (eq (hp) 0)  ;; don't time out
 		(set_aistate 1)
 	      (set_aistate (hp)))
@@ -151,13 +151,13 @@ T)
 	(set_state stopped))
 
 	(if (eq (hp) 0)
-	    (if (or (> (distx) (xacel)) (> (disty) (yacel)))	    
+	    (if (or (> (distx) (xacel)) (> (disty) (yacel)))
 		(set_aistate 0))
 	  (set_aistate (- (aistate) 1))))
 T) */
 
 (defun sensor_draw ()
-  (if (edit_mode) 
+  (if (edit_mode)
       (progn
 	(draw)
 	(let ((x1 (- (x) (xvel)))
@@ -215,12 +215,12 @@ T) */
   (states "art/misc.spe"
 	  (stopped "off")
 	  (blocking "on")))
-		    
+
 /*
 (defun sensor_linker_ai ()
   (if (eq (aistate) 0)
       (if (and (< (distx) (xvel)) (< (disty) (yvel)))
-	  (progn 
+	  (progn
 	    (if (eq (hp) 0)  ;; don't time out
 		(set_aistate 1)
 	      (set_aistate (hp)))
@@ -228,7 +228,7 @@ T) */
 	(set_state stopped))
 
     (if (eq (hp) 0)
-	(if (or (> (distx) (xacel)) (> (disty) (yacel)))	    
+	(if (or (> (distx) (xacel)) (> (disty) (yacel)))
 	    (set_aistate 0))
       (set_aistate (- (aistate) 1)))))
 
@@ -250,14 +250,14 @@ T) */
   (states "art/misc.spe"
 	  (stopped "off")
 	  (blocking "on")))
- 
+
 */
 
 (defun dead_object (current)
   (if (>= current 0)
       (let ((st (with_object (get_object current) (state))))
 	(if (or (eq st dead) (eq st blown_back_dead))
-	    (let ((dead_guy (get_object current)))	      
+	    (let ((dead_guy (get_object current)))
 	      (remove_object (get_object current))
 	      dead_guy)
 	  (dead_object (- current 1))))
@@ -267,10 +267,10 @@ T) */
   (if (> (total_objects) 1)
       (let ((find (dead_object (- (total_objects) 1))))
 	(if find
-	    (add_object (with_object (get_object 0) (otype)) 
+	    (add_object (with_object (get_object 0) (otype))
 			(with_object find (x))
 			(with_object find (y))))))
-			 
+
   T)
 
 (def_char  DEATH_RESPAWNER
@@ -281,7 +281,7 @@ T) */
 	  (stopped "death_respawn")))
 
 
-(defun death_sen_ai () 
+(defun death_sen_ai ()
   (if (eq (total_objects) 0)
       (progn
 	(set_state running)

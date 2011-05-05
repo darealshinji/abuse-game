@@ -4,7 +4,7 @@
 ;; all messages that need translation here
 ;; Latest version of this file is "V-E"  (version E=1.47)
 
-(select section	
+(select section
 	('game_section
 
 	 /********** New for Version E (1.51)   **************/
@@ -30,7 +30,7 @@
 	 (setq l_bg               "bg")
 	 (setq New?               "New?")
 	 (setq l_EDIT             "EDIT")
- 
+
 
 	 /********** New for Version D (1.46)   **************/
 
@@ -103,9 +103,9 @@
 	 (setq sens_unoff         "unoffable (1=yes)")
 	 (setq sens_cs            "current state")
 	 (setq tp_amb             "ambient setting")
-	 
 
-	       
+
+
 	 (setq ai_xvel            "Xvel    ")
 	 (setq ai_yvel            "Yvel    ")
 	 (setq ai_xacel           "Xacel   ")
@@ -117,7 +117,7 @@
 	 (setq ai_type            "ai type ")
 	 (setq ai_state           "ai state")
 	 (setq ai_fade            "fade 0-15")
-	 
+
 	 (setq a_ambient          "Ambient      ")
 	 (setq a_aspeed           "Ambient speed")
 	 (setq a_view_xoff        "View xoff    ")
@@ -132,7 +132,7 @@
 	 (setq ap_name            "name")
 	 (setq ap_pal             "Add palette")
 	 (setq mouse_at           "Mouse at location %d, %d\n")
-	 
+
 
 	 (setq l_links            "Links")
 	 (setq l_light            "Light")
@@ -155,7 +155,7 @@
 	 (setq file_top           "File")
 	 (setq edit_top           "Edit")
 	 (setq window_top         "Windows")
-	 (setq menu1_load         "Load Level")	 
+	 (setq menu1_load         "Load Level")
 	 (setq menu1_save         "Save Level (S)")
 	 (setq menu1_saveas       "Save level as")
 	 (setq menu1_savegame     "Save game")
@@ -200,7 +200,7 @@
 
 	 (setq level_size "Level size")
                            ; 012345678901234567 (please keep same allignment of Name level & total)
-	 (setq score_header "Name              Level Total")   ; V-E 
+	 (setq score_header "Name              Level Total")   ; V-E
 	 (setq space_cont "Press SPACEBAR to continue")        ; V-E
 	 (setq no_saved "No saved game")
 
@@ -217,7 +217,7 @@
 	 (setq telep_msg "Press down to teleport")
 
 	 (defun get_train_msg (message_num)
-	   (select message_num	  
+	   (select message_num
                    ;   0123456789012345678901234567890123456789012345678901234567890123456789
 		   ;  "--------------------------------------------------------------------"  ; V-A
 		   ; Please keep all strings below shorter than the above line.               ; V-A
@@ -293,7 +293,7 @@
 
 	 (setq to_be_continued "To be continued.....")
          (setq no_edit         "This version of ABUSE does not have editing features")
-         (setq no_hirez        "Hi-rez is only available for edit mode (-edit)") 
+         (setq no_hirez        "Hi-rez is only available for edit mode (-edit)")
 	 (setq no2             "Cannot use -2 with -edit")
 	 (setq no_pals         "No palettes defined")
          (setq unchop1         "usage : unchop xsize ysize\n")
@@ -303,7 +303,7 @@
 	 (setq nd_player       "Cannot delete player!\n")
 	 (setq d_nosel         "No selected object or light to delete.")
 	 (setq forward?        "Forward which object?")
-	 (setq back?           "Back which object?") 
+	 (setq back?           "Back which object?")
          (setq aitype?         "Ai type for who?")
 	 (setq prof_off        "Cache profiling is now off.")
 	 (setq prof?           "Cache profiling isn't on!")
@@ -314,7 +314,7 @@
 	 (setq suspend_off     "Suspend mode off")
 	 (setq quit_title      "Quit?")
 	 (setq YES             "YES")
-	 (setq NO              "NO")	 
+	 (setq NO              "NO")
 	 (setq seqs_off        "Sequential screen shots off\n")
 	 (setq seqs_on         "Sequential screen shots on (1 per 5 sec)\n")
 	 (setq ms_on           "Mouse scrolling enabled\n")
@@ -335,7 +335,7 @@
 	 (setq SAVE            "SAVE")   ; don't let this get too long
 
 
-	 (setq net_not_reg  
+	 (setq net_not_reg
 	       (concatenate 'string "Sorry, this server is running REGISTERED ABUSE and you are not.\n"
 			    "Ask the server operator to run with -share option or better yet,\n"
                             "buy ABUSE. Registered net games are more fun because you can fly,\n"
@@ -358,10 +358,10 @@
          (setq load_warn T)
 
          (setq plot_start
-               (concatenate 'string 
+               (concatenate 'string
                             "You are Nick Vrenna. It is the year 2009.  You have been falsely incarcerated "
                             "inside a high security underground prison where illegal genetic experiments "
-                            "are taking place.\\n"                          
+                            "are taking place.\\n"
                             "Alan Blake, the head research scientist, has isolated the specific gene which "
                             "causes violence and aggression in humans.  This genetic sequence, called "
                             '(#\") "Abuse" '(#\") ", is highly infectious, causing horrific transformations and grotesque "
@@ -377,15 +377,15 @@
 
 
          (setq plot_middle
-               (concatenate 'string 
+               (concatenate 'string
                             "You have survived the initial outbreak, but you are still lost deep "
-                            "within the prison. So far it's been suspiciously easy. \\n"       
+                            "within the prison. So far it's been suspiciously easy. \\n"
 			    "If you want to break out - the real ABUSE lies ahead. "))
 
 
          (setq plot_end
-               (concatenate 'string 
+               (concatenate 'string
                             "You've survived impossible odds and made it to the Control Room.  "
                             "By pulling the switch, you have diverted the water supply and stopped the spread of Abuse!\\n "
-                            "CONGRATULATIONS!  YOU'RE HOWLING!!!"))) 
+                            "CONGRATULATIONS!  YOU'RE HOWLING!!!")))
 )

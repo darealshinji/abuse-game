@@ -7,7 +7,7 @@
 				   (progn (set_player_name (substr 6 (- (length str) 1) str))
 					  (player_name))))
 	(if (search "/help" str)
-	    (if (local_player) 
+	    (if (local_player)
 		(chat_print "Commands : /nick name, /help"))
 	(if (local_player)
 	    (chat_print (concatenate 'string "unknown command " str)))))

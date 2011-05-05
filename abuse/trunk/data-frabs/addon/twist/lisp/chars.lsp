@@ -14,7 +14,7 @@
 	  ("aistate"      ai_state))
   (range 250 20)
   (draw_range 40 40)
-  (funs (ai_fun     ant_ai)	
+  (funs (ai_fun     ant_ai)
 	(draw_fun   man_draw)
 	(constructor ant_cons)
 	(type_change_fun ant_ct)
@@ -29,16 +29,16 @@
 	     (jump_xvel      20)
 	     (push_xrange     1)
 	     (jump_top_speed 20))
-  
+
   (flags (hurtable  T)
 	 (force_health T))
 
-  (states "art/cop.spe" 
+  (states "art/cop.spe"
 	  (hanging	(seq "stopped" 1 6))
 
 	  (fall_start	"jump_down")
 	  (falling	"jump_down")
-	  
+
 	  (stopped	(seq "stopped" 1 6))
 	  (running	(seq "4wlk" 1 10))
 	  (landing	(seq "4jmp" 3 5))
@@ -79,7 +79,7 @@
 	  ("stationary"    jug_stat)
 	  ("aistate"       ai_state))
 
-  (states "addon/twist/art/legs.spe" 
+  (states "addon/twist/art/legs.spe"
 	  (stopped	(seq "stopped" 1 6))
 	  (running	(seq "4wlk" 1 10))
 	  (weapon_fire	(seq "stopped" 1 6))
@@ -94,7 +94,7 @@
 
   (flags (hurtable T))
   (abilities (start_hp 100))
-  (vars fire_delay burst_delay burst_total burst_wait burst_left 
+  (vars fire_delay burst_delay burst_total burst_wait burst_left
 	max_xvel   max_yvel    smoke_time fire_time)
   (fields ("fire_delay"  who_fdelay)
 	  ("burst_delay" who_bdelay)
@@ -104,7 +104,7 @@
 	  ("hp"          ai_health)
 	  ("aitype"      ai_type)
 	  ("aistate"     ai_state))
-  
+
   (range 200 200)
   (states "art/cop.spe"
 	  (running	"4flj0002.pcx")
@@ -114,7 +114,7 @@
 
 
 (def_char MAN_BODYTRACK
-  (vars 
+  (vars
 	fire_delay
 	fire_delay_left
         track_speed
@@ -129,7 +129,7 @@
   (funs (ai_fun      mantrack_ai)
 	(constructor track_cons)
 	(draw_fun    man_draw)
-	(damage_fun   guner_damage))	
+	(damage_fun   guner_damage))
 
   (flags (can_block  T)
 	 (hurtable   T))
@@ -169,7 +169,7 @@
 	spray.start_angle
 	spray.end_angle
 	spray.angle_speed
-	spray.angle)	 
+	spray.angle)
 
   (fields ("hp"                 ai_health)
 	  ("aitype"             ai_type)
@@ -306,7 +306,7 @@
 
   (flags (hurtable T))
   (abilities (start_hp 40))
-  (vars fire_delay burst_delay burst_total burst_wait burst_left 
+  (vars fire_delay burst_delay burst_total burst_wait burst_left
 	max_xvel   max_yvel    smoke_time fire_time)
   (fields ("fire_delay"  who_fdelay)
 	  ("burst_delay" who_bdelay)
@@ -316,7 +316,7 @@
 	  ("hp"          ai_health)
 	  ("aitype"      ai_type)
 	  ("aistate"     ai_state))
-  
+
   (range 200 200)
   (states "addon/twist/art/robs.spe"
 	  (running	"wflyer")
@@ -327,13 +327,13 @@
 
 (def_char WALK_ROB
   (funs (ai_fun wrob_ai)
-	(constructor wrob_cons)	
+	(constructor wrob_cons)
 	(damage_fun  guner_damage))
   (abilities (run_top_speed 12)
 	     (start_hp 60))
   (flags (hurtable T) (can_block (not T)))
   (range 300 100)
-  (vars fire_delay burst_delay burst_total burst_wait burst_left 
+  (vars fire_delay burst_delay burst_total burst_wait burst_left
 	max_xvel   max_yvel    smoke_time fire_time)
   (fields ("fire_delay"   wrob_fdelay)
 	  ("burst_delay"  wrob_bdelay)
@@ -343,7 +343,7 @@
 	  ("hp"           ai_health)
 	  ("aistate"      ai_state))
 
-  (states "art/rob2.spe" 
+  (states "art/rob2.spe"
 	  (stopped "wwlk0001.pcx")
 	  (running (seq "wwlk" 1 10))
 	  (start_run_jump "wstart_jump")

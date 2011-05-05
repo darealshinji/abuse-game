@@ -68,7 +68,7 @@
 
 
 (defun music_sensor_draw ()
-  (if (edit_mode) 
+  (if (edit_mode)
       (progn
 	(draw)
 	(let ((x1 (- (x) (xvel)))
@@ -101,7 +101,7 @@
 
 
 (defun gravity_sensor_draw ()
-  (if (edit_mode) 
+  (if (edit_mode)
       (progn
 	(draw)
 	(let ((x1 (- (x) (xvel)))
@@ -138,7 +138,7 @@
 
 
 (defun health_sensor_draw ()
-  (if (edit_mode) 
+  (if (edit_mode)
       (progn
 	(draw)
 	(let ((x1 (- (x) (xvel)))
@@ -174,7 +174,7 @@
 
 
 (defun level_sensor_draw ()
-  (if (edit_mode) 
+  (if (edit_mode)
       (progn
 	(draw)
 	(let ((x1 (- (x) (xvel)))
@@ -306,7 +306,7 @@
       (progn
 	(setq fire_time (- fire_time 1))
 	(if (eq fire_time 0)
-	    (progn 
+	    (progn
 	      (setq burst_left burst_total)
 	      (setq burst_wait 0))))
     (if (eq burst_wait 0)
@@ -319,7 +319,7 @@
       (setq burst_wait (- burst_wait 1)))))
 
 
-(defun wrob_cons ()	  
+(defun wrob_cons ()
   (setq fire_delay 4)
   (setq burst_delay 1)
   (setq max_xvel 10)
@@ -344,7 +344,7 @@
 		   (set_state stopped)
 		   (set_aistate 1))))
 	      (1;; stop and fire
-	       (burst_fire  (+ (x) (* (direction) 28)) (- (y) 35)		      
+	       (burst_fire  (+ (x) (* (direction) 28)) (- (y) 35)
 			    (if (> (direction) 0)
 				(mod (- 375 (/ (* burst_left 30) burst_total)) 360)
 			      (+ 165 (/ (* burst_left 30) burst_total))))
@@ -364,7 +364,7 @@
 			   (link_object (bg))
 			   (set_state running)
 			   (set_aistate 1))
-		
+
 		     (if (with_object (bg) (pressing_action_key))
 			 (progn
 			   (link_object (bg))
@@ -376,18 +376,18 @@
 		   (let ((x (x))
 			 (y (- (y) 16))
 			 (fade (if (< (current_frame) 16) (current_frame) 15)))
-		     (with_object (get_object 1) 
+		     (with_object (get_object 1)
 				  (progn
-				    (set_x x) 
-				    (set_y y) 
+				    (set_x x)
+				    (set_y y)
 				    (user_fun SET_FADE_COUNT fade)
 				    (setq is_teleporting 1)
 				    )))
-				  
+
 		 (let ((x (with_object (get_object 0) (x)))
-		       (y (with_object (get_object 0) (- (y) 16))))		   
+		       (y (with_object (get_object 0) (- (y) 16))))
 		   (with_object (get_object 1)
-				(progn 
+				(progn
 				  (set_x x)
 				  (set_y y)
 				  (setq is_teleporting 0)
@@ -404,7 +404,7 @@
 
 
 (defun teleport_sensor_draw ()
-  (if (edit_mode) 
+  (if (edit_mode)
       (progn
 	(draw)
 	(let ((x1 (- (x) (xvel)))

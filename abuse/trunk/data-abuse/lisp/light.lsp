@@ -8,7 +8,7 @@
 		  '(if (> (total_objects) 0)
 		       (eq (with_object (get_object 0) (aistate)) 0)
 		     nil)))
-		    
+
 
 (defun dim_ai ()
   (general_dim_ai '(and (< (distx) (aitype)) (< (disty) 50)) '(> (distx) (xacel))))
@@ -69,8 +69,8 @@
 	(constructor dim_cons))
   (flags (unlistable T))
   (fields  ("aistate"    ai_state)
-           ("xvel"       dimmer_step_amount) 
-	   ("yvel"       dimmer_steps) 
+           ("xvel"       dimmer_step_amount)
+	   ("yvel"       dimmer_steps)
 	   ("aitype"     dimmer_dist)
 	   ("xacel"      dimmer_dedist)
 	   ("yacel"      dimmer_silent))
@@ -84,7 +84,7 @@
 	(draw_fun    dev_draw)
 	(constructor dim_cons))
   (fields  ("aistate"   ai_state)
-           ("xvel"      dimmer_step_amount) 
+           ("xvel"      dimmer_step_amount)
 	   ("yvel"      dimmer_steps)
 	   ("yacel"     dimmer_silent))
   (states "art/misc.spe"  (stopped "dim")))

@@ -39,6 +39,5 @@
   (states "art/chars/step.spe"
 	  (stopped "step")
 	  (running "step_gone")))
-  
-	
-	
+
+

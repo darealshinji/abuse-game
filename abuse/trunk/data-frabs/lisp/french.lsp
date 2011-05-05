@@ -5,7 +5,7 @@
 ;; Latest version of this file is "V-E"  (version E=1.46)
 
 
-(select section	
+(select section
 	('game_section
 
 	 /********** New for Version E (1.51)   **************/
@@ -103,9 +103,9 @@
 	 (setq sens_unoff         "Ind‚sactivable (1=oui)")
 	 (setq sens_cs            "Etat actuel")
 	 (setq tp_amb             "R‚glage ambiance")
-	 
 
-	       
+
+
 	 (setq ai_xvel            "Xvel      ")
 	 (setq ai_yvel            "Yvel      ")
 	 (setq ai_xacel           "Xacel     ")
@@ -117,7 +117,7 @@
 	 (setq ai_type            "Type IA   ")
 	 (setq ai_state           "Etat IA   ")
 	 (setq ai_fade            "Fondu 0-15")
-	 
+
 	 (setq a_ambient          "Ambiant     ")
 	 (setq a_aspeed           "Vitesse ambiante")
 	 (setq a_view_xoff        "Vue xoff    ")
@@ -132,7 +132,7 @@
 	 (setq ap_name            "Nom")
 	 (setq ap_pal             "Ajouter palette")
 	 (setq mouse_at           "Position la souris %d, %d\n")
-	 
+
 
 	 (setq l_links            "Liens")
 	 (setq l_light            "LumiŠre")
@@ -143,7 +143,7 @@
 
 
 	 (setq SHOW?              "AFFICHER ?")
-	 (setq back_loss (concatenate 'string "Ce taux de d‚filement diminue la taille de la care d'arriŠre 
+	 (setq back_loss (concatenate 'string "Ce taux de d‚filement diminue la taille de la care d'arriŠre
 plan \n"
 				      "Des dalles risquent d'ˆtre perdues, ˆtes-vous s–r(e) de vouloir le faire ?\n"))
 	 (setq WARNING            "AVERTISSEMENT")
@@ -159,7 +159,7 @@ plan \n"
 	 (setq file_top           "Fichier")
 	 (setq edit_top           "Editer")
 	 (setq window_top         "Fenˆtres")
-	 (setq menu1_load         "Lancer niveau")	 
+	 (setq menu1_load         "Lancer niveau")
 	 (setq menu1_save         "Sauvegarder niveau (S)")
 	 (setq menu1_saveas       "Enregistrer sous")
 	 (setq menu1_savegame     "Sauvegarder jeu")
@@ -204,7 +204,7 @@ plan \n"
 
 	 (setq level_size "Taille du niveau")
                            ; 012345678901234567 (please keep same allignment of Name level & total)
-	 (setq score_header "Nom          Total du niveau")   ; V-E 
+	 (setq score_header "Nom          Total du niveau")   ; V-E
 	 (setq space_cont "Appuyez sur la BARRE D'ESPACE pour continuer")        ; V-E
 	 (setq no_saved "Pas de jeu sauvegard‚")
 
@@ -223,7 +223,7 @@ plan \n"
 (setq telep_msg "Appuyez sur la flŠche bas pour vous t‚l‚porter")
 
          (defun get_train_msg (message_num)
-           (select message_num    
+           (select message_num
                    (0 "Pointez le canon avec la souris, tirez avec le bouton gauche")
                    (1 "R‚cup‚rez des munitions pour augmenter votre cadence de tir")
                    (2 "Appuyez sur la flŠche bas pour activer l'interrupteur")
@@ -281,7 +281,7 @@ plan \n"
          (setq server          "Commencer nouveau jeu")
          (setq client          "Participer au jeu en cours ?")
          (setq single_play     " Un seul joueur ")
-(setq single_play     "    Sortir du jeu sur r‚seau    ")  ; V-A 
+(setq single_play     "    Sortir du jeu sur r‚seau    ")  ; V-A
          (setq cancel_net      "      Annuler        ")
 
          (setq ic_return       "Retourner au jeu")
@@ -302,7 +302,7 @@ plan \n"
 
          (setq to_be_continued "A suivre.....")
          (setq no_edit         "Cette version du jeu est d‚pourvue de l'‚diteur")
-         (setq no_hirez        "La haute r‚solution n'est disponible qu'avec le mode ‚diter (-edit)") 
+         (setq no_hirez        "La haute r‚solution n'est disponible qu'avec le mode ‚diter (-edit)")
          (setq no2             "Ne peut pas utiliser -2 avec -edit")
          (setq no_pals         "Aucune palette d‚finie")
          (setq unchop1         "ussage : unchop xsize ysize\n")
@@ -312,7 +312,7 @@ plan \n"
          (setq nd_player       "Impossible d'effacer joueur !\n")
          (setq d_nosel         "Pas d'objet ou de lumiŠre s‚lectionn‚s … effacer.")
          (setq forward?        "Avancer quel objet ?")
-         (setq back?           "Reculer quel objet ?") 
+         (setq back?           "Reculer quel objet ?")
          (setq aitype?         "Type IA pour qui ?")
          (setq prof_off        "Cache d‚sactiv‚")
          (setq prof?           "Cache n'est pas actif !")
@@ -323,7 +323,7 @@ plan \n"
          (setq suspend_off     "Interrompre mode off")
          (setq quit_title      "Sortir ?")
          (setq YES             "OUI")
-         (setq NO              "NON")     
+         (setq NO              "NON")
          (setq seqs_off        "S‚quences photos off\n")
          (setq seqs_on         "S‚quences photos on (1 toutes les 5 sec)\n")
          (setq ms_on           "D‚filement permis\n")
@@ -362,10 +362,10 @@ plan \n"
 
          (setq load_warn nil)
          (if (not (load "register/english.lsp"))
-             (setq end_msg 
-                   (concatenate 'string 
+             (setq end_msg
+                   (concatenate 'string
                                 "* Editer LISP/OPTIONS.LSP pour configurer quelques options pour ABUSE.\n\n"
-                                "* Procurez-vous la version commerciale d'ABUSE qui sera en vente fin mars 96, et\n" 			    
+                                "* Procurez-vous la version commerciale d'ABUSE qui sera en vente fin mars 96, et\n"
 				"  sera jouable sur r‚seau IPX supportant huit joueurs. Elle comportera un ‚diteur\n"
 				"  de niveau int‚gr‚, 17 niveaux un seul joueur (plus 12 niveaux sur le\n"
 				"  r‚seau), des armes plus mortelles, \n"
@@ -377,41 +377,41 @@ plan \n"
                                 "  FRANCE    72 17 07 83\n"
                                 "  ALLEMAGNE   05241 / 24307\n"
                                 "  AUSTRALIE +61(75)911 388\n"
-                                "  JAPON     03-5410-3100\n\n")))  
+                                "  JAPON     03-5410-3100\n\n")))
 
          (setq load_warn T)
 
          (setq plot_start
-               (concatenate 'string 
+               (concatenate 'string
                             "Vous ˆtes Nick Vrenna. C'est l'ann‚e 2009.  A tort, vous avez ‚t‚ incarc‚r‚ "
                             "dans une prison souterraine de haute surveillance o— ont lieu des exp‚riences g‚n‚tiques "
-			    " ill‚gales.\\n"                          
-                            "Alan Blake, … la tˆte de la recherche scientifique, a isol‚ le gˆne qui provoque " 			
+			    " ill‚gales.\\n"
+                            "Alan Blake, … la tˆte de la recherche scientifique, a isol‚ le gˆne qui provoque "
 			    "violence et agression chez les humains. Cette s‚quence g‚n‚tique appel‚e "
-                            '(#\") "Abuse" '(#\") " est extrˆmement infectieuse, elle engendre des transformations " 			
+                            '(#\") "Abuse" '(#\") " est extrˆmement infectieuse, elle engendre des transformations "
 			    "horribles et provoque de monstrueux effets secondaires.  "
                             "Vous ˆtes la seule personne immunis‚e contre ces effets. \\n"
                             "Une ‚meute commence et dans ce d‚sordre, toutes les portes de "
-			    "prison s'ouvrent. TrŠs vite, les gardes, ainsi que les d‚tenus " 
+			    "prison s'ouvrent. TrŠs vite, les gardes, ainsi que les d‚tenus "
                             "sont contamin‚s et transform‚s en une horde de mutants qui envahissent le "
                             "bƒtiment.\\n"
-                            "Votre seule chance pour vous enfuir est de vous revˆtir d'une armure "					
+                            "Votre seule chance pour vous enfuir est de vous revˆtir d'une armure "
 			    "de combat et d'aller … la Salle des commandes "
-                            "qui se trouve au niveau le plus ‚loign‚ de la structure. Mais d'abord, vous devez " 
+                            "qui se trouve au niveau le plus ‚loign‚ de la structure. Mais d'abord, vous devez "
 			    "empˆcher l'approvisionnement d'eau qui a ‚t‚ infect‚ par Abuse de contaminer "
                             "le monde ext‚rieur. La libert‚ et le sort de l'humanit‚ sont maintenant entre vos mains. " ))
-	 
+
 	 (setq plot_middle
-               (concatenate 'string 
+               (concatenate 'string
                             "Vous avez surv‚cu la vague initiale de contamination, mais vous ˆtes "
 			    "encore perdu au fin fond de la prison "
-			    "Jusqu'ici, c'‚tait d'une facilit‚ suspecte. \\n"      
+			    "Jusqu'ici, c'‚tait d'une facilit‚ suspecte. \\n"
 			    "Si vous voulez vous ‚chapper, ne manquez pas de jouer … Abuse dans son int‚gralit‚. "))
 
 
          (setq plot_end
-               (concatenate 'string 
-                            "F‚licitations ! Vous avez r‚ussi … survivre dans une situation incroyable et " 
+               (concatenate 'string
+                            "F‚licitations ! Vous avez r‚ussi … survivre dans une situation incroyable et "
 			    "vous ˆtes … la Salle de commandes.  "
                             "En appuyant sur l'interrupteur, vous avez d‚tourn‚ l'arriv‚e d'eau "
 			    "et mis fin … la propagation d'Abuse ! "

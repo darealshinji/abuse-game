@@ -1,7 +1,7 @@
 (defun lava2_ai ()
   (if (eq (random 75) 0) (play_sound LAVA_SND 24 (x) (y)) )
   (select (aistate)
-	  (0 
+	  (0
              (if (eq (state_time) dam_spd)
 		 (progn
 		   (set_aistate 1)))
@@ -35,10 +35,10 @@
 	      (1 (next_picture);; wait for save (actived state)
 		 (if (and (touching_bg) (with_object (bg) (pressing_action_key)))
 		     (set_aistate 2)))
-	      (2 (set_state running)	   
+	      (2 (set_state running)
 		 (set_aistate 3))
-	      (3 (set_aistate 4))	    
-	      (4 
+	      (3 (set_aistate 4))
+	      (4
 	       (let ((spot (get_save_slot)))
 		 (set_state stopped)
 		 (set_aistate 1)
@@ -58,7 +58,7 @@
 
 	       )))
   T)
-	  
+
 
 (def_char LRESTART_POSITION
   (funs (ai_fun Lrestart_ai)
@@ -93,7 +93,7 @@
 		   (stopped "Metalbig.pcx")))
 
 
-(defun Med_ai () 
+(defun Med_ai ()
   (if (eq0 (aistate)) 	  (progn
 	    (try_move 0 10)
 	    (if (eq (second (see_dist (x) (y) (x) (+ (y) 1))) (y))
@@ -110,10 +110,10 @@
   (range 0 0)
   (states "addon/leon/lmisc.spe" (stopped "medkit.pcx" )))
 
-(defun none_ai () 
+(defun none_ai ()
   (next_picture)
-  (if (touching_bg) 
-      (progn (with_object (bg) 
+  (if (touching_bg)
+      (progn (with_object (bg)
 			  (progn
 			    (setq special_power NO_POWER)
 			    (make_view_solid (find_rgb 0 0 0))))
@@ -141,7 +141,7 @@
 	(set_x nowx)
 	(set_y nowy)))
   T)
-	
+
 
 (defun sensbeam_draw ()
   (if (edit_mode) (draw))
@@ -157,7 +157,7 @@
   (vars end_y)
   (states "art/misc.spe"
 	  (stopped "force_field")))
-	
+
 
 (defun swtele_ai ()     ;; teleporting door ai
   (if (activated)
@@ -166,13 +166,13 @@
       (if (> (total_objects) 1)
 	  (let ((otherx (+ (with_object (get_object 1) (x)) (- (with_object player (x) ) (x) ) ) )
 		(othery (+ (with_object (get_object 1) (y)) (- (with_object player (y) ) (y) ) ) ))
-	    (with_object player (progn 
-				  (set_x otherx) 
+	    (with_object player (progn
+				  (set_x otherx)
 				  (set_y othery)
                                   (bottom_draw)
 ;;				  (with_object (get_object 0)
 ;;                                    (progn
-;;                                      (set_x otherx) 
+;;                                      (set_x otherx)
 ;;				      (set_y othery)
 ;;                                      (top_ai)
 ;;				      (top_draw)
@@ -190,7 +190,7 @@ T)
   (states "art/misc.spe"
 	  (stopped "switch_mover")))
 
-(setq AMB_SOUNDS2 (make-array 3 :initial-contents (list 
+(setq AMB_SOUNDS2 (make-array 3 :initial-contents (list
 			       (def_sound "addon/leon/sfx/ambship1.wav")   ;; 0
 			       (def_sound "addon/leon/sfx/ambship2.wav")   ;; 1
                                (def_sound "addon/leon/sfx/thunder.wav")   ;; 4
@@ -215,8 +215,8 @@ T)
       (set_aistate 0)
       T)))
 
-	
-(defun ambs_cons2 () 
+
+(defun ambs_cons2 ()
   (set_xvel 10)  ;; delay time to 10
   (set_yvel 127)) ;; set volume default to 127
 
@@ -227,7 +227,7 @@ T)
 	(type_change_fun amb_sound_ct2))
   (range 500 500)
   (fields ("aitype" amb_num)
-	  ("yvel"   amb_vol)     
+	  ("yvel"   amb_vol)
 	  ("xvel"   amb_rep)
 	  ("xacel"  amb_rand))
   (states "art/misc.spe"

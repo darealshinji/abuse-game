@@ -55,7 +55,7 @@
 	       (set_targetable T)
 	       (push_char 35 40)
 	       (select (aistate)
- 
+
 		    (0 ;; prepare to walk toward player
 		       (if (eq stationary 0)
 		         (progn
@@ -78,8 +78,8 @@
 		       (let (
                          (curx (x));; save position in case we fall off a cliff
 			       (cury (y))
-                        )		     
-		       (if (next_picture) 
+                        )
+		       (if (next_picture)
 			    (if (eq (current_frame) 8)
 				  (play_sound DROIDMOV_SND 127 (x) (y))
                       )
@@ -114,8 +114,8 @@
 			      (xspeed (* throw_xvel (direction)))
 			      (yspeed throw_yvel)
                          )
-			 (with_object 
-                        (add_object GRENADE (+ (x) (* (direction) 16)) (- (y) 24) 1) 
+			 (with_object
+                        (add_object GRENADE (+ (x) (* (direction) 16)) (- (y) 24) 1)
 				(progn
 			        (user_fun myself)
 				  (set_xvel xspeed)
@@ -138,7 +138,7 @@
 );; end ** if
 );; end * if
 );; end droidjug_ai ()
-	   
+
 (defun jug_cons ()
   (setq throw_xvel 13)
   (setq throw_yvel -10)
@@ -164,7 +164,7 @@
 	  ("stationary"    jug_stat)
 	  ("aistate"       ai_state))
 
-  (states "addon/claudio/droid.spe" 
+  (states "addon/claudio/droid.spe"
 	  (stopped "ds0002.pcx")
 	  (running (seq "d" 1 4))
 	  (weapon_fire (seq "df" 1 10))
@@ -182,7 +182,7 @@
       (progn
 	(setq fire_time (- fire_time 1))
 	(if (eq fire_time 0)
-	    (progn 
+	    (progn
 	      (setq burst_left burst_total)
 	      (setq burst_wait 0))))
     (if (eq burst_wait 0)
@@ -194,7 +194,7 @@
 	  (fire_object (me) (aitype) firex firey angle (bg)))
       (setq burst_wait (- burst_wait 1)))))
 
-(defun wrob_cons ()	  
+(defun wrob_cons ()
   (setq fire_delay 4)
   (setq burst_delay 1)
   (setq max_xvel 10)
@@ -212,7 +212,7 @@
 	  (set_state dieing)
        )
 
-       (if (activated)         ;; ** 
+       (if (activated)         ;; **
           (progn                  ;;***
 	       (set_targetable T)
 	       (push_char 35 40)
@@ -232,9 +232,9 @@
                      )
                   )
                  );; end aistate 0
- 
+
 	          (1;; stop and fire
-	             (burst_fire  (+ (x) (* (direction) 16)) (- (y) 22)		      
+	             (burst_fire  (+ (x) (* (direction) 16)) (- (y) 22)
 			    (if (> (direction) 0)
 				(mod (- 375 (/ (* burst_left 30) burst_total)) 360)
 			      (+ 165 (/ (* burst_left 30) burst_total))
@@ -247,8 +247,8 @@
              );; end select
 
 	       (if (<= (hp) 0)                        ;; are we dead, if so blow up
-	           (progn	
-		        (add_object EXPLODE6 (+ (x) 5) (- (y) 10)     0)  
+	           (progn
+		        (add_object EXPLODE6 (+ (x) 5) (- (y) 10)     0)
 		        (add_object EXPLODE6 (+ (x) -5) (- (y) 15)    2)  ;; wait 2 frames before appearing
 		        (add_object EXPLODE6 (+ (x) 10) (- (y) 2)     1)
 		        (add_object EXPLODE6 (+ (x) -10) (- (y) 20)   3)
@@ -259,17 +259,17 @@
 		        (set_aistate 0)
                   )
              )
-               
+
       T);; end of *** progn
     T);; end of ** if activated
   );; end of * if
-);; end of ai 
-   
+);; end of ai
+
 (def_char DROID
 
   (funs (ai_fun droid_ai)
 	  (constructor wrob_cons)
-	  (get_cache_list_fun explo_damage_cache)	
+	  (get_cache_list_fun explo_damage_cache)
         (damage_fun explo_damage)
   );; end funs
 
@@ -277,21 +277,21 @@
              (start_hp 70)
   );; end abilities
 
-  (flags (hurtable T) 
+  (flags (hurtable T)
          (can_block T)
          (unactive_shield T)
   );; end flags
 
   (range 300 100)
 
-  (vars fire_delay 
-        burst_delay 
-        burst_total 
-        burst_wait 
-        burst_left 
-	  max_xvel   
-        max_yvel    
-        smoke_time 
+  (vars fire_delay
+        burst_delay
+        burst_total
+        burst_wait
+        burst_left
+	  max_xvel
+        max_yvel
+        smoke_time
         fire_time
   );; end vars
 
@@ -305,7 +305,7 @@
 	  ("aistate"      ai_state)
   );; end fields
 
-  (states "addon/claudio/droid.spe" 
+  (states "addon/claudio/droid.spe"
 	  (stopped "ds0001.pcx")
 	  (running (seq "d" 1 10))
 	  (start_run_jump "d0001.pcx")
@@ -334,14 +334,14 @@
 
        )
 
-       (if (activated)         ;; ** 
+       (if (activated)         ;; **
           (progn                  ;;***
 	       (set_targetable T)
              (if (and (touching_bg) (eq (mod (state_time) 20) 0))
                 (do_damage 10 (bg)))
              (select (aistate)
 	          (0;; walk toward player
-                     (if  (or (< (disty) -5) (> (disty) 5) (< (distx) -10) (> (distx) 10) (not (eq (direction) (toward))) )   
+                     (if  (or (< (disty) -5) (> (disty) 5) (< (distx) -10) (> (distx) 10) (not (eq (direction) (toward))) )
                        (progn
 	                  (if (eq (mod (state_time) 6) 0) ;; play sound every 6 ticks
 	                    (play_sound JSTOMP_SND 60 (x) (y))
@@ -357,9 +357,9 @@
                    ;;   )
                      )
                  );; end aistate 0
- 
+
 	          (1;; stop and eat
-                    (if  (or (< (disty) -5) (> (disty) 5) (< (distx) -10) (> (distx) 10) (not (eq (direction) (toward))) )   
+                    (if  (or (< (disty) -5) (> (disty) 5) (< (distx) -10) (> (distx) 10) (not (eq (direction) (toward))) )
                        (set_aistate 0)
                        (progn
                           (set_state eating)
@@ -369,22 +369,22 @@
                         )
                       )
                     (with_object (bg)
-                      (if (< (hp)0)   
+                      (if (< (hp)0)
 	                    (set_state stopped)
                       )
                      )
                 );; end aistate 1
-             );; end select               
+             );; end select
       T);; end of *** progn
     T);; end of ** if activated
   );; end of * if
-);; end of ai     
+);; end of ai
 
 (def_char T_REX
 
   (funs (ai_fun trex_ai)
 	;;  (constructor wrob_cons)
-	;;  (get_cache_list_fun explo_damage_cache)	
+	;;  (get_cache_list_fun explo_damage_cache)
       ;;  (damage_fun explo_damage)
   );; end funs
 
@@ -392,30 +392,30 @@
              (start_hp 70)
   );; end abilities
 
-  (flags (hurtable T) 
+  (flags (hurtable T)
          (can_block T)
          (unactive_shield T)
   );; end flags
 
   (range 300 100)
 
-  (vars fire_delay 
-        burst_delay 
-        burst_total 
-        burst_wait 
-        burst_left 
-	  max_xvel   
-        max_yvel    
-        smoke_time 
+  (vars fire_delay
+        burst_delay
+        burst_total
+        burst_wait
+        burst_left
+	  max_xvel
+        max_yvel
+        smoke_time
         fire_time
   );; end vars
 
-  (fields 
+  (fields
 	  ("hp"           ai_health)
 	  ("aistate"      ai_state)
   );; end fields
 
-  (states "addon/claudio/trex1.spe" 
+  (states "addon/claudio/trex1.spe"
 	  (stopped "stand")
 	  (running (seq "w" 1 10))
 	  (start_run_jump "jumpflitch")
@@ -443,7 +443,7 @@
 
 (defun wrob_ai ()
   (if (<= (hp) 0) ;; *
-      
+
        nil   ;; inactivate this "nil" and activate the following if-section when using versions 2 and 3
 
     ;; if (eq (state) dieing)
@@ -451,7 +451,7 @@
     ;;   (set_aistate 0)
     ;; )
 
-       (if (activated)         ;; ** 
+       (if (activated)         ;; **
           (progn                  ;;***
 	       (set_targetable T)
 	       (push_char 35 40)
@@ -471,9 +471,9 @@
                      )
                   )
                  );; end aistate 0
- 
+
 	          (1;; stop and fire
-	             (burst_fire  (+ (x) (* (direction) 16)) (- (y) 22)		      
+	             (burst_fire  (+ (x) (* (direction) 16)) (- (y) 22)
 			    (if (> (direction) 0)
 				(mod (- 375 (/ (* burst_left 30) burst_total)) 360)
 			      (+ 165 (/ (* burst_left 30) burst_total))
@@ -490,8 +490,8 @@
              );; end select
 
 	       (if (<= (hp) 0)                        ;; are we dead, if so blow up
-	           (progn	
-		        (add_object EXPLODE6 (+ (x) 5) (- (y) 10)     0)  
+	           (progn
+		        (add_object EXPLODE6 (+ (x) 5) (- (y) 10)     0)
 		        (add_object EXPLODE6 (+ (x) -5) (- (y) 15)    2)  ;; wait 2 frames before appearing
 		        (add_object EXPLODE6 (+ (x) 10) (- (y) 2)     1)
 		        (add_object EXPLODE6 (+ (x) -10) (- (y) 20)   3)
@@ -502,39 +502,39 @@
 		        (set_aistate 0)
                   )
              )
-               
+
       T);; end of *** progn
     T);; end of ** if activated
   );; end of * if
-);; end of ai 
+);; end of ai
 
 (def_char WALK_ROB
 
   (funs (ai_fun wrob_ai)
 	  (constructor wrob_cons)
-	  (get_cache_list_fun explo_damage_cache)	
+	  (get_cache_list_fun explo_damage_cache)
         (damage_fun explo_damage)
   );; end funs
 
   (abilities (run_top_speed 6)
-             (start_hp 70) 
+             (start_hp 70)
   );; end abilities
 
-  (flags (hurtable T) 
+  (flags (hurtable T)
          (can_block T)
          (unactive_shield T)
   );; end flags
 
   (range 300 100)
 
-  (vars fire_delay 
-        burst_delay 
-        burst_total 
-        burst_wait 
-        burst_left 
-	  max_xvel   
-        max_yvel    
-        smoke_time 
+  (vars fire_delay
+        burst_delay
+        burst_total
+        burst_wait
+        burst_left
+	  max_xvel
+        max_yvel
+        smoke_time
         fire_time
    );; end vars
 
@@ -549,7 +549,7 @@
 
   );; end fields
 
-  (states "addon/claudio/rob2.spe" 
+  (states "addon/claudio/rob2.spe"
 	  (stopped "wwlk0001.pcx")
 	  (running (seq "wwlk" 1 10))
 	  (start_run_jump "wstart_jump")
@@ -560,8 +560,8 @@
         ;;(dieing      "wwflinch")  ;;<--- use this line instead of the one above when using version 2
   );; end states
 
-);; end def_char WALK_ROB	      
-    
+);; end def_char WALK_ROB
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                                                                       ;;
 ;; CHAR 5 and 6: Space doors                                                                   ;;
@@ -573,7 +573,7 @@
       nil
     (with_object (get_object 0)
 		 (if (eq (otype) SPACE_DOOR)
-		     (if (eq is_opening 0)			 
+		     (if (eq is_opening 0)
 			 (if (and (< (distx) 50) (< (disty) 40))
 			     T
 			   nil)
@@ -598,7 +598,7 @@
       (if (eq (current_frame) 4)
 	  (play_sound SWISH 70 (x) (y)))
       (set_current_frame (- (current_frame) 1)))))
-  
+
 (defun tpdspace_ai ()     ;; teleporting door ai
   (if (or (and (< (distx) 50) (< (disty) 40))
 	  (other_sdoor_opening))
@@ -614,8 +614,8 @@
 	  (let ((otherx (with_object (get_object 0) (x)))
 		(othery (with_object (get_object 0) (y))))
 	    (with_object (get_object 0) (link_object player))
-	    (with_object player (progn 
-				  (set_x otherx) 
+	    (with_object player (progn
+				  (set_x otherx)
 				  (set_y othery)))))))
 T)
 
@@ -678,14 +678,14 @@ T)
   (if (and (touching_bg) (eq (mod (state_time) 20) 0))
       (do_damage 20 (bg)))
   (select (aistate)
-	  (0 
+	  (0
 
             (if (eq (random 100) 0)
 		 (progn
 		   (play_sound FIRE_SND 127 (x) (y))
 		   (set_aistate 1)))
 	     (next_picture))
-	  (1 
+	  (1
 
            (next_picture)
 	     (if (eq (state_time) 5)
@@ -734,16 +734,16 @@ T)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun sewer_ai ()
-  
+
   (select (aistate)
-	  (0 
+	  (0
 
             (if (eq (random 100) 0)
 		 (progn
 		   (play_sound SEWER1_SND 127 (x) (y))
 		   (set_aistate 1)))
 	     (next_picture))
-	  (1 
+	  (1
 
            (next_picture)
 	     (if (eq (state_time) 5)
@@ -758,14 +758,14 @@ T)
   (if (and (touching_bg) (eq (mod (state_time) 20) 0))
       (do_damage 2 (bg)))
   (select (aistate)
-	  (0 
+	  (0
 
             (if (eq (random 100) 0)
 		 (progn
 		   (play_sound SEWER1_SND 127 (x) (y))
 		   (set_aistate 1)))
 	     (next_picture))
-	  (1 
+	  (1
 
            (next_picture)
 	     (if (eq (state_time) 5)
@@ -776,14 +776,14 @@ T)
 
 (defun wfall_ai ()
   (select (aistate)
-	  (0 
+	  (0
 
             (if (eq (random 100) 0)
 		 (progn
 		   (play_sound WFALL_SND 127 (x) (y))
 		   (set_aistate 1)))
 	     (next_picture))
-	  (1 
+	  (1
 
            (next_picture)
 	     (if (eq (state_time) 5)
@@ -848,7 +848,7 @@ T)
 
 
 (def_char LAMP_EX1
-				
+
   (funs (ai_fun  exlamp_ai))
   (flags (can_block T)
 	 (hurtable  T))
@@ -858,7 +858,7 @@ T)
 	  (dieing        (seq "l" 1 10))))
 
 
-(defun slamp_ai () 
+(defun slamp_ai ()
 (if (activated)
  (set_state running)
  (set_state stopped)
@@ -868,7 +868,7 @@ T)
 
 (def_char LAMP_BIG
   (funs (ai_fun   slamp_ai))
-  (states "addon/claudio/lamp.spe" 
+  (states "addon/claudio/lamp.spe"
      (stopped "l0002.pcx")
      (running "l0001.pcx")
   )
@@ -877,7 +877,7 @@ T)
 
 (def_char LAMP_SMALL ;; original art by Craig Redinger
   (funs (ai_fun   slamp_ai))
-  (states "addon/craig/craig.spe" 
+  (states "addon/craig/craig.spe"
      (stopped "lamp_off")
      (running "lamp_on")
    )
@@ -889,7 +889,7 @@ T)
 ;;                                                                                       ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun antihp_up () 
+(defun antihp_up ()
 	(next_picture)
 
 	(if (and (touching_bg) (with_object (bg) (give_player_health -20)))
@@ -920,7 +920,7 @@ T)
 (def_char SPACE_SWITCH
   (funs (ai_fun switcher_ai)
 	(reload_fun lower_reload))
-  (range 0 0)  
+  (range 0 0)
   (states "addon/claudio/sswitch.spe"
 	  (stopped '("ssw0001" "ssw0002"))
 	  (running '("ssw0003"  "ssw0004"))))
@@ -945,14 +945,14 @@ T)
 
 
 (defun dumbrel_ai ()
- 
-  (if (not (eq smoke_time 0))                 
+
+  (if (not (eq smoke_time 0))
       (progn
 	(setq smoke_time (- smoke_time 1))
 	(if (eq (mod smoke_time 2) 0)
 	    (add_object SMALL_DARK_CLOUD (x) (y)))))
 
-  (if (eq (aistate) 0)                        
+  (if (eq (aistate) 0)
       (if (or (eq (total_objects) 0) (not (eq (with_object (get_object 0) (aistate)) 0)))
 	  (if (next_picture) T
 	    (progn
@@ -963,17 +963,17 @@ T)
 	  (set_targetable nil)
 	  (set_state stopped)
 	  T))
-    (if (eq (hp) 0)                          
+    (if (eq (hp) 0)
 	(progn
         (play_sound GRENADE_SND 127 (x) (y))
 	  (add_object EXPLODE1 (+ (x) (random 10)) (+ (+ (random 10) (y)) -20)     0)
 	  (add_object EXPLODE1 (- (x) (random 10)) (+ (- (y) (random 10)) -20)     2)
 	  (add_object EXPLODE1 (x) (+ (- (y) (random 20)) -20)                     4)
 	  nil)
-      (progn      
-	(if (eq (mod (state_time) 5) 0)      
+      (progn
+	(if (eq (mod (state_time) 5) 0)
 	    (play_sound DRILL_SND 127 (x) (y)))
-	(if (> (with_object (bg) (x)) (x))   
+	(if (> (with_object (bg) (x)) (x))
 	    (progn
 	      (set_xvel (+ (xvel) 1))
 	      (if (> (xvel) max_xvel) (set_xvel max_xvel))
@@ -981,7 +981,7 @@ T)
 		  (progn
 		    (set_direction 1)
 		    (set_state turn_around))))
-	  (if (< (with_object (bg) (x)) (x))  
+	  (if (< (with_object (bg) (x)) (x))
 	      (progn
 		(set_xvel (- (xvel) 1))
 		(if (< (xvel) (- 0 max_xvel)) (set_xvel (- 0 max_xvel)))
@@ -999,7 +999,7 @@ T)
 		  (set_yvel (+ (yvel) 1))
 		(set_yvel (- (yvel) 1)))))
 
-	(if (eq (random 5) 0)                
+	(if (eq (random 5) 0)
 	    (set_xvel (+ (xvel) 1))
 	  (if (eq (random 5) 0)
 	      (set_xvel (- (xvel) 1))))
@@ -1008,16 +1008,16 @@ T)
 	  (if (eq (random 5) 0)
 	      (set_yvel (- (yvel) 1))))
 
-	(if (next_picture) T (set_state running))  
-	    
+	(if (next_picture) T (set_state running))
+
 	(bounce_move '(set_xvel (/ (xvel) 2)) '(set_xvel (/ (xvel) 2))
 		     '(set_yvel (/ (yvel) 2)) '(set_yvel (/ (yvel) 2)) nil)
-      
+
 	(if (> fire_time 0)              ;; if we need to wait till next burst
 	    (progn
 	      (setq fire_time (- fire_time 1))
 	      (if (eq fire_time 0)
-		  (progn 
+		  (progn
 		    (setq burst_left burst_total)
 		    (setq burst_wait 0))))
 	  (if (eq burst_wait 0)
@@ -1034,14 +1034,14 @@ T)
 				(setq fire_time fire_delay)
 			      (setq burst_left (- burst_left 1)))
 			    (setq burst_wait burst_delay)
-			    (fire_object (me) (aitype) firex firey angle (bg)) 
+			    (fire_object (me) (aitype) firex firey angle (bg))
 			    )))))
-	    (setq burst_wait (- burst_wait 1))))		
+	    (setq burst_wait (- burst_wait 1))))
 	T))))
 
 (defun dumbrel_damage (amount from hitx hity push_xvel push_yvel)
-  (if (and from (with_object from (and (> (total_objects) 0) 
-				       (with_object (get_object 0) 
+  (if (and from (with_object from (and (> (total_objects) 0)
+				       (with_object (get_object 0)
 						    (or (eq (otype) FLYER)
 							(eq (otype) GREEN_FLYER))
 							))))
@@ -1069,7 +1069,7 @@ T)
       )
 ))))
 
-(defun dumbrel_cons ()	  
+(defun dumbrel_cons ()
   (setq fire_delay 20)
   (setq burst_delay 5)
   (setq max_xvel 2)
@@ -1081,38 +1081,38 @@ T)
 
   (funs (ai_fun dumbrel_ai)
 	  (constructor dumbrel_cons)
-	  (get_cache_list_fun explo_damage_cache)	
+	  (get_cache_list_fun explo_damage_cache)
         (damage_fun dumbrel_damage)
   );; end funs
 
-  (abilities (start_hp 100) 
+  (abilities (start_hp 100)
   );; end abilities
 
-  (flags (hurtable T) 
+  (flags (hurtable T)
          (can_block T)
          (unactive_shield T)
   );; end flags
 
   (range 300 100)
 
-  (vars fire_delay 
-        burst_delay 
-        burst_total 
-        burst_wait 
-        burst_left 
-	  max_xvel   
-        max_yvel    
-        smoke_time 
+  (vars fire_delay
+        burst_delay
+        burst_total
+        burst_wait
+        burst_left
+	  max_xvel
+        max_yvel
+        smoke_time
         fire_time
    );; end vars
 
-  (states "addon/claudio/umbrel3.spe" 
+  (states "addon/claudio/umbrel3.spe"
 	  (stopped "u0001.pcx")
 	  (running (seq "u" 1 4))
         ;;(dieing  (seq "u" 7 12))
   );; end states
 
-);; end def_char 
+);; end def_char
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1123,7 +1123,7 @@ T)
 
 (defun antship_ai ()
 
-  (if (not (eq smoke_time 0))                 
+  (if (not (eq smoke_time 0))
       (progn
 	  (setq smoke_time (- smoke_time 1))
 	  (if (eq (mod smoke_time 2) 0)
@@ -1147,15 +1147,15 @@ T)
 	    (set_state stopped)
 	  T)
       )
-   
+
       (if (<= (hp) 0)
-         
+
          (progn
 
           (if (eq (state) dieing)
 	      (next_picture)
 
-              (progn	      
+              (progn
                 (set_state dieing)
                 (play_sound GRENADE_SND 127 (x) (y))
 	          (add_object EXPLODE1 (+ (x) (random 10)) (+ (+ (random 10) (y)) -20)     0)
@@ -1163,16 +1163,16 @@ T)
 	          (add_object EXPLODE0 (x) (+ (- (y) (random 20)) -20)                     6)
               )
 
-          )       
+          )
         )
-        (progn      
+        (progn
 	    (if (eq (mod (state_time) 5) 0)
 	      (play_sound ASHIP_SND 127 (x) (y))
           )
 	    (if (> (with_object (bg) (x)) (x))
 	    (progn
 	      (set_xvel (+ (xvel) 1))
-	      (if (> (xvel) max_xvel) 
+	      (if (> (xvel) max_xvel)
                (set_xvel max_xvel)
             )
 	      (if (eq (direction) -1)
@@ -1182,10 +1182,10 @@ T)
                )
              )
            )
-	     (if (< (with_object (bg) (x)) (x))  
+	     (if (< (with_object (bg) (x)) (x))
 	        (progn
 	      	(set_xvel (- (xvel) 1))
-	      	(if (< (xvel) (- 0 max_xvel)) 
+	      	(if (< (xvel) (- 0 max_xvel))
                    (set_xvel (- 0 max_xvel))
                   )
 	      	(if (eq (direction) 1)
@@ -1211,7 +1211,7 @@ T)
           )
        )
 
-	(if (eq (random 5) 0)                
+	(if (eq (random 5) 0)
 	    (set_xvel (+ (xvel) 1))
 	    (if (eq (random 5) 0)
 	      (set_xvel (- (xvel) 1))))
@@ -1220,16 +1220,16 @@ T)
 	  (if (eq (random 5) 0)
 	      (set_yvel (- (yvel) 1))))
 
-	(if (next_picture) T (set_state running))  
-	    
+	(if (next_picture) T (set_state running))
+
 	(bounce_move '(set_xvel (/ (xvel) 8)) '(set_xvel (/ (xvel) 8))
 		     '(set_yvel (/ (yvel) 8)) '(set_yvel (/ (yvel) 8)) nil)
-      
-	(if (> fire_time 0)              
+
+	(if (> fire_time 0)
 	    (progn
 	      (setq fire_time (- fire_time 1))
 	      (if (eq fire_time 0)
-		  (progn 
+		  (progn
 		    (setq burst_left burst_total)
 		    (setq burst_wait 0))))
 	  (if (eq burst_wait 0)
@@ -1246,16 +1246,16 @@ T)
 				(setq fire_time fire_delay)
 			      (setq burst_left (- burst_left 1)))
 			    (setq burst_wait burst_delay)
-			    (fire_object (me) (aitype) firex firey angle (bg)) 
+			    (fire_object (me) (aitype) firex firey angle (bg))
 			    )))))
-	    (setq burst_wait (- burst_wait 1))))		
+	    (setq burst_wait (- burst_wait 1))))
 	T)))
 
 );; end ai
 
 (defun antship_damage (amount from hitx hity push_xvel push_yvel)
-  (if (and from (with_object from (and (> (total_objects) 0) 
-				       (with_object (get_object 0) 
+  (if (and from (with_object from (and (> (total_objects) 0)
+				       (with_object (get_object 0)
 						    (or (eq (otype) FLYER)
 							(eq (otype) GREEN_FLYER))
 							))))
@@ -1286,7 +1286,7 @@ T)
       )
 ))))
 
-(defun antship_cons ()	  
+(defun antship_cons ()
   (setq fire_delay 30)
   (setq burst_delay 8)
   (setq max_xvel 2)
@@ -1300,39 +1300,39 @@ T)
 
   (funs (ai_fun antship_ai)
 	  (constructor antship_cons)
-	  (get_cache_list_fun explo_damage_cache)	
+	  (get_cache_list_fun explo_damage_cache)
         (damage_fun antship_damage)
   );; end funs
 
-  (abilities (start_hp 300) 
+  (abilities (start_hp 300)
   );; end abilities
 
-  (flags (hurtable T) 
+  (flags (hurtable T)
          (can_block T)
          (unactive_shield T)
   );; end flags
 
   (range 400 200)
 
-  (vars fire_delay 
-        burst_delay 
-        burst_total 
-        burst_wait 
-        burst_left 
-	  max_xvel   
-        max_yvel    
-        smoke_time 
+  (vars fire_delay
+        burst_delay
+        burst_total
+        burst_wait
+        burst_left
+	  max_xvel
+        max_yvel
+        smoke_time
         fire_time
    );; end vars
 
-  (states "addon/claudio/antship.spe" 
+  (states "addon/claudio/antship.spe"
 	  (stopped "s0001.pcx")
 	  (running (seq "s" 2 6))
         (flinch_up (seq "s" 1 6))
         (dieing  (seq "s" 7 12))
   );; end states
 
-);; end def_char 
+);; end def_char
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1342,7 +1342,7 @@ T)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun dskull_ai ()
-  (if (not (eq smoke_time 0))                 
+  (if (not (eq smoke_time 0))
       (progn
 	(setq smoke_time (- smoke_time 1))
 	(if (eq (mod smoke_time 2) 0)
@@ -1351,7 +1351,7 @@ T)
        )
  )
 
-  (if (eq (aistate) 0)                        
+  (if (eq (aistate) 0)
       (if (or (eq (total_objects) 0) (not (eq (with_object (get_object 0) (aistate)) 0)))
 	  (if (next_picture) T
 	    (progn
@@ -1362,17 +1362,17 @@ T)
 	  (set_targetable nil)
 	  (set_state stopped)
 	  T))
-    (if (eq (hp) 0)                          
+    (if (eq (hp) 0)
 	(progn
         (play_sound GRENADE_SND 127 (x) (y))
 	  (add_object EXPLODE1 (+ (x) (random 10)) (+ (+ (random 10) (y)) -20)     0)
 	  (add_object EXPLODE1 (- (x) (random 10)) (+ (- (y) (random 10)) -20)     2)
 	  (add_object EXPLODE1 (x) (+ (- (y) (random 20)) -20)                     4)
 	  nil)
-      (progn      
-	(if (eq (mod (state_time) 10) 0)      
+      (progn
+	(if (eq (mod (state_time) 10) 0)
 	    (play_sound SKULL_SND 127 (x) (y)))
-	(if (> (with_object (bg) (x)) (x))   
+	(if (> (with_object (bg) (x)) (x))
 	    (progn
 	      (set_xvel (+ (xvel) 1))
 	      (if (> (xvel) max_xvel) (set_xvel max_xvel))
@@ -1380,7 +1380,7 @@ T)
 		  (progn
 		    (set_direction 1)
 		    (set_state turn_around))))
-	  (if (< (with_object (bg) (x)) (x))  
+	  (if (< (with_object (bg) (x)) (x))
 	      (progn
 		(set_xvel (- (xvel) 1))
 		(if (< (xvel) (- 0 max_xvel)) (set_xvel (- 0 max_xvel)))
@@ -1398,7 +1398,7 @@ T)
 		  (set_yvel (+ (yvel) 1))
 		(set_yvel (- (yvel) 1)))))
 
-	(if (eq (random 5) 0)                
+	(if (eq (random 5) 0)
 	    (set_xvel (+ (xvel) 1))
 	  (if (eq (random 5) 0)
 	      (set_xvel (- (xvel) 1))))
@@ -1407,16 +1407,16 @@ T)
 	  (if (eq (random 5) 0)
 	      (set_yvel (- (yvel) 1))))
 
-	(if (next_picture) T (set_state running))  
-	    
+	(if (next_picture) T (set_state running))
+
 	(bounce_move '(set_xvel (/ (xvel) 2)) '(set_xvel (/ (xvel) 2))
 		     '(set_yvel (/ (yvel) 2)) '(set_yvel (/ (yvel) 2)) nil)
-      
-	(if (> fire_time 0)              
+
+	(if (> fire_time 0)
 	    (progn
 	      (setq fire_time (- fire_time 1))
 	      (if (eq fire_time 0)
-		  (progn 
+		  (progn
 		    (setq burst_left burst_total)
 		    (setq burst_wait 0))))
 	  (if (eq burst_wait 0)
@@ -1433,15 +1433,15 @@ T)
 				(setq fire_time fire_delay)
 			      (setq burst_left (- burst_left 1)))
 			    (setq burst_wait burst_delay)
-			    (fire_object (me) (aitype) firex firey angle (bg)) 
+			    (fire_object (me) (aitype) firex firey angle (bg))
 			    )))))
-	    (setq burst_wait (- burst_wait 1))))		
+	    (setq burst_wait (- burst_wait 1))))
 	T))))
 
 
 (defun dskull_damage (amount from hitx hity push_xvel push_yvel)
-  (if (and from (with_object from (and (> (total_objects) 0) 
-				       (with_object (get_object 0) 
+  (if (and from (with_object from (and (> (total_objects) 0)
+				       (with_object (get_object 0)
 						    (or (eq (otype) FLYER)
 							(eq (otype) GREEN_FLYER))
 							))))
@@ -1461,7 +1461,7 @@ T)
 
 ))))
 
-(defun dskull_cons ()	  
+(defun dskull_cons ()
   (setq fire_delay 20)
   (setq burst_delay 5)
   (setq max_xvel 2)
@@ -1473,43 +1473,43 @@ T)
 (def_char DEATH_SKULL
   (funs (ai_fun dskull_ai)
 	  (constructor dskull_cons)
-	  (get_cache_list_fun explo_damage_cache)	
+	  (get_cache_list_fun explo_damage_cache)
         (damage_fun dskull_damage)
   );; end funs
 
-  (abilities (start_hp 100) 
+  (abilities (start_hp 100)
   );; end abilities
 
-  (flags (hurtable T) 
+  (flags (hurtable T)
          (can_block T)
          (unactive_shield T)
   );; end flags
 
   (range 300 100)
 
-  (vars fire_delay 
-        burst_delay 
-        burst_total 
-        burst_wait 
-        burst_left 
-	  max_xvel   
-        max_yvel    
-        smoke_time 
+  (vars fire_delay
+        burst_delay
+        burst_total
+        burst_wait
+        burst_left
+	  max_xvel
+        max_yvel
+        smoke_time
         fire_time
    );; end vars
 
-  (states "addon/claudio/skull.spe" 
+  (states "addon/claudio/skull.spe"
 	  (stopped "s0001.pcx")
-	  (running '("s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx"  
-                   "s0002.pcx" "s0002.pcx" "s0002.pcx" "s0002.pcx" "s0002.pcx" "s0002.pcx" "s0002.pcx" "s0002.pcx" 
-                   "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" 
+	  (running '("s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx"
+                   "s0002.pcx" "s0002.pcx" "s0002.pcx" "s0002.pcx" "s0002.pcx" "s0002.pcx" "s0002.pcx" "s0002.pcx"
+                   "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx" "s0001.pcx"
                    "s0024.pcx" "s0024.pcx" "s0024.pcx" "s0024.pcx" "s0024.pcx" "s0024.pcx" "s0024.pcx" "s0024.pcx"))
         (flinch_up  (seq "s" 2 18))
         (turn_around (seq "s" 1 24))
 
   );; end states
 
-);; end def_char 
+);; end def_char
 
 (def_explo 'EXPLODE0 "addon/claudio/bigexp.spe" "fire"           7)
 
@@ -1522,12 +1522,12 @@ T)
 
 (load_tiles
           "addon/claudio/pal81.spe"    ;; space foretiles 1, numbered from 8100,  palette space1
-	    "addon/claudio/pal82.spe"    ;; space foretiles 2, numbered from 8200,  palette space2 
-	    ;; "addon/claudio/pal83.spe" ;; space foretiles 3, numbered from 8300,  palette space3     
+	    "addon/claudio/pal82.spe"    ;; space foretiles 2, numbered from 8200,  palette space2
+	    ;; "addon/claudio/pal83.spe" ;; space foretiles 3, numbered from 8300,  palette space3
 	    "addon/claudio/pal90.spe"    ;; stars backtiles 1, numbered from 9000,
 	    "addon/claudio/pal2.spe"     ;; sewers backtiles,  numbered from 2000,
-	    "addon/claudio/pal21.spe"    ;; stars backtiles 2, numbered from 2100, 
-	    "addon/claudio/pal5.spe"     ;; corallo backtiles, numbered from 5000, 
+	    "addon/claudio/pal21.spe"    ;; stars backtiles 2, numbered from 2100,
+	    "addon/claudio/pal5.spe"     ;; corallo backtiles, numbered from 5000,
 	    "addon/claudio/extiles.spe"  ;; extra foretiles,   numbered from 10000, palette extra1
 )
 
@@ -1544,7 +1544,7 @@ T)
 ;;                                                                                       ;;
 ;; Contact these authors if you want to get more infor about their work.                 ;;
 ;; Otherwise, deactivate                                                                 ;;
-;; the following section as indicated below in order to use the characters               ;; 
+;; the following section as indicated below in order to use the characters               ;;
 ;; and tiles by Claudio Bolzoni only.                                                    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

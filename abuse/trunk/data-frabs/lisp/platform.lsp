@@ -47,7 +47,7 @@
 	  (set_aistate 0))  ;; stop
       (let ((speed (plat_speed)))
 	(let ((newx (- destx (/ (* (- destx sourcex) (xvel)) speed)))
-	      (newy (- desty (/ (* (- desty sourcey) (xvel)) speed))))	
+	      (newy (- desty (/ (* (- desty sourcey) (xvel)) speed))))
 	  (progn
 	    (platform_push (- newx (x)) (- newy (y)))
 	    (set_xvel (- (xvel) 1))
@@ -56,7 +56,7 @@
 
 (defun platform_ai ()
   (if (or (eq (total_objects) 2)                     ;; no switch to listen to processed as normal
-	  (and (eq (total_objects) 3) 
+	  (and (eq (total_objects) 3)
 	       (not (eq (with_object (get_object 2) (aistate)) 0))))  ;; see if switch is active
       (progn
 	(if (eq (state) stopped)
@@ -77,17 +77,17 @@
 		(2 ;; swap dest and source and go to new dest
 		 (play_sound PLAT_A_SND 127 (x) (y))
 		 (set_aitype (- 1 (aitype)))
-		 (set_xvel (plat_speed));; steps to go		 
+		 (set_xvel (plat_speed));; steps to go
 		 (go_state 3))
-		
+
 		(3 ;; go to dest
-		 (if (eq (xvel) 6) 
+		 (if (eq (xvel) 6)
 		     (play_sound PLAT_D_SND 127 (x) (y)))
 		 (platform_move (get_object (aitype)) (get_object (- 1 (aitype)))))
 		))
     (set_state stopped))
   T)
-		 
+
 
 
 

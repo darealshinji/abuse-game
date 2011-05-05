@@ -6,10 +6,10 @@
 	  (show_stats)
 	  (request_level_load (concatenate 'string "addon/leon/level" (digstr (aistate) 2) ".spe")))))
   T)
-	
+
 
 (def_char NEXT_LEVEL3
-  (funs (ai_fun next_level3_ai)) 
+  (funs (ai_fun next_level3_ai))
   (flags (can_block T))
   (fields ("aistate" next_level))
   (states "art/misc.spe"
@@ -28,7 +28,7 @@
 
 (def_char SW_ENDLEV
   (funs (ai_fun sw_endlev_ai)
-        (draw_fun dev_draw)) 
+        (draw_fun dev_draw))
   (fields ("aistate" next_level))
   (states "art/misc.spe"
 	  (stopped "end_port2")))

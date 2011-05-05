@@ -5,7 +5,7 @@
 ;; Latest version of this file is "V-E"  (version E=1.46)
 
 
-(select section	
+(select section
 	('game_section
 
 /********** New for Version E (1.51)   **************/
@@ -103,9 +103,9 @@
          (setq sens_unoff         "unausschaltbar (1=ja)")
          (setq sens_cs            "Jetztstatus")
          (setq tp_amb             "Umgebung")
-	 
 
-	       
+
+
 	 (setq ai_xvel            "Xvel    ")
 	 (setq ai_yvel            "Yvel    ")
 	 (setq ai_xacel           "Xacel   ")
@@ -117,7 +117,7 @@
          (setq ai_type            "AI-Typ ")
          (setq ai_state           "AI-Status")
          (setq ai_fade            "Transparenz 0-15")
-	 
+
          (setq a_ambient          "Umgebung      ")
          (setq a_aspeed           "Umgeb.-Tempo")
          (setq a_view_xoff        "Sicht xaus    ")
@@ -132,7 +132,7 @@
          (setq ap_name            "Name")
          (setq ap_pal             "Palette hinzu")
          (setq mouse_at           "Maus an Punkt %d, %d\n")
-	 
+
 
          (setq l_links            "Link")
          (setq l_light            "Licht")
@@ -151,16 +151,16 @@
 	 (setq x_div              "X div")    ; X divisor
 	 (setq y_div              "Y div")
 
-	 /*********** New for Version 1.45 ***********************/ 
+	 /*********** New for Version 1.45 ***********************/
 
 
-;; Weitere Einzelheiten zu den Benutzerrechten unter Lizenzrechte. 
+;; Weitere Einzelheiten zu den Benutzerrechten unter Lizenzrechte.
 
 
 	 (setq file_top           "Datei")
 	 (setq edit_top           "Bearbeiten")
 	 (setq window_top         "Fenster")
-	 (setq menu1_load         "Level laden")	 
+	 (setq menu1_load         "Level laden")
 	 (setq menu1_save         "Level speichern (S)")
 	 (setq menu1_saveas       "Level speichern als")
 	 (setq menu1_savegame     "Spiel speichern")
@@ -205,7 +205,7 @@
 
 	 (setq level_size "Levelgrî·e")
                            ; 012345678901234567 (please keep same allignment of Name level & total)
-	 (setq score_header "Name              Level gesamt")   ; V-E 
+	 (setq score_header "Name              Level gesamt")   ; V-E
 	 (setq space_cont "LEERTASTE, um fortzufahren ")        ; V-E
 	 (setq no_saved "Kein gespeichertes Spiel")
 
@@ -219,10 +219,10 @@
 	 (setq loading "LÑdt %s")  ; V-A added
 
          (setq gamma_msg "Klicken Sie die dunkelste Farbe \nauf Ihrem Monitor an, und klicken Sie OK.")
-         (setq telep_msg "Pfeiltaste  (unten) drÅcken, um zu teleportieren.") 
+         (setq telep_msg "Pfeiltaste  (unten) drÅcken, um zu teleportieren.")
 
          (defun get_train_msg (message_num)
-           (select message_num    
+           (select message_num
                    (0 "Mit der Maus zielen und mit Linksklick feuern.")
                    (1 "Munition sammeln, um Schu·rate zu erhîhen.")
                    (2 "Mit Pfeiltaste (unten) aktivieren - hier ist ein Schalter.")
@@ -235,7 +235,7 @@
                    (9 "Auf versteckte WÑnde schie·en, um sie zu zerstîren.")
                    (10 "Kugel anschie·en, um zu aktivieren.")
                    (11 "Pfeiltaste (unten) drÅcken, um zu teleportieren.")))
-	
+
  (setq not_there       "Spiel lÑuft nicht mehr ")
  (setq max_error       "Max Spielerzahl sollte gleich oder mehr als Min Spielerzahl sein ") ; V-C changed
 
@@ -268,11 +268,11 @@
                                            "    - Startdiskette erstellen (Info im Handbuch)\n"
                                            "    - TSR's u. fÅr ABUSE nicht benîtigte Treiber beseitigen\n"
                                            "    - Machen Sie mehr Speicher frei\n"))
-	 
+
          (setq no_mem    (concatenate 'string "Nicht genÅgend Speicher verfÅgbar\n"
                                            "  VorschlÑge...\n"
 					   "    - Startdiskette erstellen (Info im Handbuch)\n"
-                                           "    - TSR's u. fÅr ABUSE nicht benîtigte Treiber beseitigen\n" 
+                                           "    - TSR's u. fÅr ABUSE nicht benîtigte Treiber beseitigen\n"
                                            "    - Machen Sie mehr Speicher frei\n"))
 
 
@@ -308,7 +308,7 @@
 
          (setq to_be_continued "Fortsetzung folgt.....")
          (setq no_edit         "Diese Abuse-Version hat keine Edit-Funktionen")
-         (setq no_hirez        "High-Res. gibt es nur im Edit-Modus (-edit)") 
+         (setq no_hirez        "High-Res. gibt es nur im Edit-Modus (-edit)")
          (setq no2             "-2 kann nicht mit -edit zusammen benutzt werden")
          (setq no_pals         "Paletten sind nicht definiert")
          (setq unchop1         "ussage : unchop xsize ysize\n")
@@ -318,7 +318,7 @@
          (setq nd_player       "Spieler kann nicht gelîscht werden!\n")
          (setq d_nosel         "Kein Objekt oder Licht zum Lîschen ausgewÑhlt.")
          (setq forward?        "Welches Objekt mitnehmen?")
-         (setq back?           "Welches Objekt zurÅcklegen?") 
+         (setq back?           "Welches Objekt zurÅcklegen?")
          (setq aitype?         "AI Ñndern wofÅr?")
          (setq prof_off        "Cache-Profiling ist jetzt aus.")
          (setq prof?           "Cache-Profiling ist nicht an!")
@@ -329,7 +329,7 @@
          (setq suspend_off     "LÑhmungs-Modus deaktiviert. Objekte werden reagieren.")
          (setq quit_title      "Abbrechen")
          (setq YES             "JA")
-         (setq NO              "NEIN")     
+         (setq NO              "NEIN")
          (setq seqs_off        "Kontinuierliche Bildsequenzen aus\n")
          (setq seqs_on         " Kontinuierliche Bildsequenzen an (1 Bild alle 5 Sek)\n")
          (setq ms_on           "Maus-Scrolling eingeschaltet\n")
@@ -349,7 +349,7 @@
          (setq LOAD            "LADEN")   ; don't let this get too long
          (setq SAVE            "SPEICHERN")   ; don't let this get too long
 
-	 (setq net_not_reg  
+	 (setq net_not_reg
                (concatenate 'string "Dieser Server betreibt die REGISTRIERTE ABUSE Version, Sie aber nicht.\n"
                             "Bitten Sie den Betreiber des Servers, mit der Shareware-Version zu spielen,\n"
                             "oder kaufen Sie Abuse. Im registrierten Netzwerk-Spiel kînnen Sie fliegen,\n"
@@ -364,15 +364,15 @@
 	 (setq thank_you "Danke, da· Sie Abuse spielten!\n\n")     ; V-A
          (setq load_warn nil)
          (if (not (load "register/english.lsp"))
-             (setq end_msg 
-                   (concatenate 'string 
-                                "* éndern Sie LISP/OPTIONS.LSP, um einige Optionen fÅr ABUSE zu"
+             (setq end_msg
+                   (concatenate 'string
+                                "* éndern Sie LISP/OPTIONS.LSP, um einige Optionen fÅr ABUSE zu\n"
                                 "    konfigurieren.\n\n"
-                                "* Halten Sie beim Einkaufsbummel die Augen auf, denn Ende MÑrz '96 erscheint die " 		                
+                                "* Halten Sie beim Einkaufsbummel die Augen auf, denn Ende MÑrz '96 erscheint die "
 				"  kommerzielle Version von ABUSE fÅr acht Spieler, IPX-Netzwerk unterstÅtzt, \n"
-                                "  mit einem eingebauten Level-Editor, 17 Einzelspieler-Level plus 12 Exklusiv-"
+                                "  mit einem eingebauten Level-Editor, 17 Einzelspieler-Level plus 12 Exklusiv-\n"
                                 "  Netzwerk- \n Level, todbringenderen Waffen, extra Powerups, \n"
-                                "  stÑrkeren Feinden, besseren Soundeffekten und noch mehr kÅnstlerischen"
+                                "  stÑrkeren Feinden, besseren Soundeffekten und noch mehr kÅnstlerischen\n"
                                 "  Effekten.\n\n"
 
 
@@ -388,21 +388,21 @@
          (setq load_warn T)
 
          (setq plot_start
-               (concatenate 'string 
-                            "Ihr Name ist Nick Vrenna. Wir schreiben das Jahr 2009. Sie werden zu Unrecht in "
+               (concatenate 'string
+                            "Ihr Name ist Nick Vrenna. Wir schreiben das Jahr 2009. Sie werden zu Unrecht in \n"
 			    "einem streng bewachten unterirdischen GefÑngnis festgehalten, "
                             "wo illegale genetische Experimente durchgefÅhrt werden.\\n"
                             "Alan Blake, der leitende Wissenschaftler der Forschungsabteilung, hat das Gen isoliert, "
                             "das in Menschen Gewalt und Aggressionen hervorruft. Diese genetische Sequenz, die "
-                            '(#\") "Abuse" '(#\") " hei·t, ist hochansteckend und verursacht schreckliche "                               	            
+                            '(#\") "Abuse" '(#\") " hei·t, ist hochansteckend und verursacht schreckliche "
 			    "Transformationen und groteske Nebenwirkungen. "
                             "Sie sind die einzige Person, die dagegen immun ist. \\n"
-                            "Im GefÑngnis bricht ein Aufstand aus, und wÑhrend dieses wilden Durcheinanders werden " 	            
+                            "Im GefÑngnis bricht ein Aufstand aus, und wÑhrend dieses wilden Durcheinanders werden "
 			    "alle ZellentÅren geîffnet. Bald sind alle, sowohl WÑrter als auch StrÑflinge, infiziert "
                             "und werden in Mutanten transformiert, "
                             "die das GebÑude in ihre Gewalt bringen.\\n"
                             "Ihre einzige Chance zu entkommen ist es, den Kampfanzug anzuziehen und mîglichst "
-                            "schnell zum Kontroll-Raum zu gelangen, der im untersten Gescho· des GebÑudes liegt. "		            
+                            "schnell zum Kontroll-Raum zu gelangen, der im untersten Gescho· des GebÑudes liegt. "
 			    "Erst mÅssen Sie jedoch die Wasserversorgung des GefÑngnisses unterbrechen, damit "
                             "das Abuse-infizierte Wasser nicht auch noch die Au·enwelt vergiften kann. Freiheit und "
                             "das Schicksal der Welt liegen nun in Ihren HÑnden. "))
@@ -410,16 +410,16 @@
 
 
          (setq plot_middle
-               (concatenate 'string 
+               (concatenate 'string
                             "Sie haben den anfÑnglichen Aufstand Åberlebt, haben sich aber im GefÑngnis komplett "
-			    "verirrt. Bis jetzt war es verdÑchtig einfach. \\n"       
-			    "Wenn Sie ausbrechen wollen - liegt das wirkliche ABUSE noch vor Ihnen. "))	
+			    "verirrt. Bis jetzt war es verdÑchtig einfach. \\n"
+			    "Wenn Sie ausbrechen wollen - liegt das wirkliche ABUSE noch vor Ihnen. "))
 
 
          (setq plot_end
-               (concatenate 'string 
+               (concatenate 'string
                             "GlÅckwunsch! Sie haben das Undenkbare Åberlebt  und sind bis in den Kontroll-Raum "
                             "vorgedrungen. Sie haben den Schalter umgelegt, somit die Wasserversorgung "
-			    "umgeleitet und der Verbreitung von Abuse Einhalt geboten! "))) 
+			    "umgeleitet und der Verbreitung von Abuse Einhalt geboten! ")))
 )
 

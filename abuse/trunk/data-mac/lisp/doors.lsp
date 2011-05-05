@@ -1,7 +1,7 @@
 ;; Copyright 1995 Crack dot Com,  All Rights reserved
 ;; See licensing information for more details on usage rights
 
-(defun general_door_ai (push?) 
+(defun general_door_ai (push?)
   (select (aistate)
 	  (0 (if (> (total_objects) 0)             ; are we linked to a key?
 		 (progn
@@ -15,12 +15,12 @@
 			  (go_state 1))
 		 nil)))
 	  (1 (if (not (next_picture))              ; wait till open animation finishes
-		 (progn 
+		 (progn
 		   (set_state stopped)             ; set opened animation
-		   (go_state 2))))		
+		   (go_state 2))))
 
 	  (2 (if (> (total_objects) 0)             ; wait till level editor links us to a key
-		 (progn 
+		 (progn
 		   (set_state blocking)
 		   (go_state 0))
 	       (next_picture))))
@@ -44,7 +44,7 @@
 
 	  (1 ;          opening
 	   (if (next_picture) nil
-	     (progn 
+	     (progn
 	       (set_state blocking)
 	       (set_aistate 2))))
 	  (2 (if (> (total_objects) 0)
@@ -58,7 +58,7 @@
 	       (set_state stopped)
 	       (set_aistate 0))))
 	  )
-  
+
 
 T)
 
@@ -82,7 +82,7 @@ T)
 	(let ((bgx (with_object who (x)) (x))
 	      (bgy (with_object who (y)) (y)))
 	  (if (and (>= bgy (y)) (<= bgy (+ end_y 20))
-		   (< (abs (- bgx (x))) xamount))	     
+		   (< (abs (- bgx (x))) xamount))
 	      (let ((amount (if (> bgx (x))
 				(- xamount (- bgx (x)))
 			      (- (- (x) bgx) xamount))))
@@ -105,7 +105,7 @@ T)
 	(set_y nowy)
 	(ff_push (first_focus) 35)))
   T)
-	
+
 
 (defun ff_draw ()
   (if (edit_mode) (draw))
@@ -125,10 +125,10 @@ T)
   (vars end_y)
   (states "art/misc.spe"
 	  (stopped "force_field")))
-	
+
 
 (defun hwall_ai ()
-  (if (or (eq (hp) 0) 
+  (if (or (eq (hp) 0)
 	  (and (eq (total_objects) 1)
 	       (with_object (get_object 0) (not (eq (aistate) 0)))))
       (progn
@@ -139,7 +139,7 @@ T)
     T))
 
 (defun big_wall_ai ()
-  (if (or (eq (hp) 0) 
+  (if (or (eq (hp) 0)
 	  (and (eq (total_objects) 1)
 	       (with_object (get_object 0) (not (eq (aistate) 0)))))
       (progn
@@ -164,7 +164,7 @@ T)
   (if (eq (hp) 60)
       (set_hp 25)))
 
-      
+
 (defun make_hidden_wall_char (name start end ai)
   (eval `(def_char ,name
 	   (funs (ai_fun ,ai)

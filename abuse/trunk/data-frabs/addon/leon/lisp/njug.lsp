@@ -10,7 +10,7 @@
 	(firey (- (y) 24) )
 	(playerx (+ (with_object (bg) (x)) (with_object (bg) (* (xvel) 1))))
 	(playery (+ (- (with_object (bg) (y)) 15) (with_object (bg) (* (yvel) 1)))))
-    
+
     (if (and (can_see (x) (y) firex firey nil) (can_see firex firey playerx playery nil))
 	(progn
 	  (let ((angle (atan2 (- firey playery)
@@ -26,10 +26,10 @@
 	  (next_picture)
 	(set_state dieing))
     (if (activated)
-	(progn       
+	(progn
 	  (set_targetable T)
 	  (push_char 35 40)
-	  (select (aistate) 
+	  (select (aistate)
 		  (0 ;; prepare to walk toward player
 		   (if (eq stationary 0)
 		       (progn
@@ -45,8 +45,8 @@
 		       (progn
 			 (set_direction (toward))
 			 (let ((curx (x));; save position in case we fall off a cliff
-			       (cury (y)))		     
-			   (if (next_picture) 
+			       (cury (y)))
+			   (if (next_picture)
 			       (if (eq (current_frame) 8)
 				   (play_sound JSTOMP_SND 127 (x) (y)))
 			     (progn
@@ -73,14 +73,14 @@
 		     (next_picture)))
 		  (3 ;; wait for fire animation
 		   (if (next_picture) nil (set_aistate 0))))
-	  T) 
+	  T)
       (progn (set_targetable nil)
 	     T))))
 
 (defun Njug_cons ()
   (setq throw_xvel 3)
   (setq throw_yvel -10)
-  (set_aitype 1))	   
+  (set_aitype 1))
 
 (def_char NJUGGER
   (range 200 0)
@@ -100,7 +100,7 @@
 	  ("stationary"    jug_stat)
 	  ("aistate"       ai_state))
 
-  (states "art/jug.spe" 
+  (states "art/jug.spe"
 	  (stopped "robo0001.pcx")
 	  (running (seq "rwlk" 1 13))
 	  (weapon_fire (seq "robo" 1 10))

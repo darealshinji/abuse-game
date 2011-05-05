@@ -2,10 +2,10 @@
    ;  "--------------------------------------------------------------------"
    ; Please keep all strings below shorter than the above line.
    ; Add as many strings as you like.
-      
-      
+
+
 (defun get_message (message_num)
-  (select message_num	  
+  (select message_num
    (0 "Dammit! I gotta get out of here!")
    (1 "What the...")
    (2 "Damn!")
@@ -23,7 +23,7 @@
 			 (progn nil
 ;			   (if (local_player) ;; Doesnt work for some reason
 ;			       (show_help (get_message (aitype))))
-			   ))		  	    
+			   ))
 	    (set_aistate 1)
 	    T)
 	T)

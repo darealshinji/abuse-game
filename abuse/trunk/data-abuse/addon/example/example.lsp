@@ -10,7 +10,7 @@
 ;;;; user can easily find/install/remove various addons.
 ;;;; if you do not already have the directory c:\abuse\addon, make it now.
 
-;;;; If you created foretiles for abuse (using Satan Paint) you should 
+;;;; If you created foretiles for abuse (using Satan Paint) you should
 ;;;; start numbering them at 1200 because the last of the registered
 ;;;; tiles end at 1100 something.  Backtiles should start numbering at 350.
 ;;;; The command to renumber in Satan Paint is
@@ -35,7 +35,7 @@
 
 ;;;; ****************** CREATING PACKAGES *******************
 ;;;; to archive this package you should do the following
-;;;;   DOS : 
+;;;;   DOS :
 ;;;;     cd c:\abuse\addon
 ;;;;     pkzip -rp example.zip example\*.*
 ;;;;   UNIX :
@@ -56,18 +56,18 @@
 
 
 ;;;; Now the meat of this package :
-;;;; Note that slashes should be FORWARD slashes even if 
+;;;; Note that slashes should be FORWARD slashes even if
 ;;;; you are using DOS
 
 ;; load up some tiles I made.  You can add more filenames
 ;; if you wish, but they should all be loaded from 'your' dir.
-(load_tiles "addon/example/example.spe")   
+(load_tiles "addon/example/example.spe")
 
 ;; set the first level to the one I made
-(set_first_level "addon/example/example.lvl")  
+(set_first_level "addon/example/example.lvl")
 
 ;; load up the normal abuse startup file
-(load "abuse.lsp")                       
+(load "abuse.lsp")
 
 
 

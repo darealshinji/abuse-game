@@ -5,7 +5,7 @@
 (setq net_dir "addon/deathmat/")
 (defun net_file (x) (concatenate 'string net_dir x))
 (load (net_file "dstartup.lsp"))
-(load "lisp/options.lsp")     
+(load "lisp/options.lsp")
 
 (load "lisp/input.lsp")
 (load "lisp/sfx.lsp")

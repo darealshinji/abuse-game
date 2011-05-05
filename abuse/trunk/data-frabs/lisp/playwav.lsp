@@ -8,7 +8,7 @@
   (if (>= arg_on (argc))
       nil
     (progn
-      (print (concatenate 'string "Playing " (argv arg_on) 
+      (print (concatenate 'string "Playing " (argv arg_on)
 	                          ", type c <ENTER> to continue"))
       (play_sound (def_sound (argv arg_on)))
       (break)

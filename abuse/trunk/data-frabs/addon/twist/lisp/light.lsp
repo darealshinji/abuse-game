@@ -13,7 +13,7 @@
 	       T))))
 
 (def_char QUICK_EXP_LIGHT
-  (funs (ai_fun   quick_explo_light)  
+  (funs (ai_fun   quick_explo_light)
 	(draw_fun dev_draw))
   (flags (unlistable T))
   (range 10000 10000)

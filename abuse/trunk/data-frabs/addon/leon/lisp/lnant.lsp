@@ -1,6 +1,6 @@
-(setq ant_tints (make-array 14 :initial-contents (list 
+(setq ant_tints (make-array 14 :initial-contents (list
 						(def_tint "art/tints/ant/green.spe")
-						(def_tint "art/tints/ant/blue.spe") 
+						(def_tint "art/tints/ant/blue.spe")
 						(def_tint "art/tints/ant/brown.spe")
 						(def_tint "art/tints/ant/egg.spe")
 						(def_tint "art/tints/ant/yellow.spe")
@@ -26,7 +26,7 @@
 	    (3
 	     (let ((d (direction))
 		   (type (aitype)))
-	       (if (or (eq create_total 0) (eq create_total 1))		  
+	       (if (or (eq create_total 0) (eq create_total 1))
 		   (set_current_frame 4)
 		 (progn
 		   (setq create_total (- create_total 1))
@@ -43,7 +43,7 @@
 	    (1 (next_picture))
 	    (2 (next_picture))))
   T)
-	    
+
 
 
 (def_char ANT_CRACK_HIDDEN
@@ -75,14 +75,14 @@
 
 (defun anthole_ai ()
   (select (aistate)
-    (0 
+    (0
       (if (and (activated) (< (total_objects) (+ (xvel) 1) ) )
         (go_state 2)
       )
     )
-    (3 
+    (3
       (if (and (activated) (< (total_objects) (+ (xvel) 1) ) )
-        (progn          
+        (progn
           (if (eq (current_frame) 4)
             (set_current_frame 1)
           )
@@ -100,7 +100,7 @@
       )
     )
 
-    (1 
+    (1
       (if (eq (state_time) (yvel))
         (select (otype) (ANTHOLE (go_state 0))
                         (ANTCRACK2 (go_state 3))
@@ -188,7 +188,7 @@
 	  ("aistate"      ai_state))
   (range 250 20)
   (draw_range 40 40)
-  (funs (ai_fun     ,aifun)	
+  (funs (ai_fun     ,aifun)
 	(draw_fun   ,drawfun)
 	(constructor ant_cons)
 	(type_change_fun ant_ct)
@@ -203,17 +203,17 @@
 	     (jump_xvel      jumpxvel)
 	     (push_xrange     1)
 	     (jump_top_speed (+ jumpyvel jumpxvel) ))
-  
-  (flags 
+
+  (flags
 	 (hurtable  T)
 	 (force_health T))
 
-  (states "art/ant.spe" 
+  (states "art/ant.spe"
 	  (hanging (rep "ant" 2))
 
 	  (fall_start "affc0001.pcx")
 	  (falling    "affc0002.pcx")
-	  
+
 	  (stopped "awlk0001.pcx")
 	  (running (seq "awlk" 1 10))
 	  (landing (seq "acff" 1 4))
@@ -239,14 +239,14 @@
 
 
 
-(setq ai_ammo (make-array 15 :initial-contents (list MBULLET_ICON5 
-						MBULLET_ICON5 
+(setq ai_ammo (make-array 15 :initial-contents (list MBULLET_ICON5
+						MBULLET_ICON5
 						GRENADE_ICON2
-						ROCKET_ICON2 
+						ROCKET_ICON2
 						PLASMA_ICON20
-						MBULLET_ICON5 
-						MBULLET_ICON5 
-						MBULLET_ICON5 
+						MBULLET_ICON5
+						MBULLET_ICON5
+						MBULLET_ICON5
 						MBULLET_ICON5
 						MBULLET_ICON20
 						MBULLET_ICON20
@@ -258,8 +258,8 @@
 (defun ant_Ndamage (amount from hitx hity push_xvel push_yvel)  ; Some piece of really ugly looking code
 
   (if (and (not (eq (state) dead))
-	   (or (not from) 
-	       (with_object from (if (eq (total_objects) 0) 
+	   (or (not from)
+	       (with_object from (if (eq (total_objects) 0)
 				     (not (eq (otype) ANT_ROOF))
 				   (with_object (get_object 0) (not (eq (otype) ANT_ROOF)))))))
       (if (not (eq (aistate) 15))
@@ -269,7 +269,7 @@
 	      (set_state flinch_down))
 	    (damage_fun amount from hitx hity push_xvel push_yvel)
 	    (play_sound APAIN_SND 127 (x) (y))
-	    (setq need_to_dodge 1)	    
+	    (setq need_to_dodge 1)
 	    (if (<= (hp) 0)
 		(progn
 		  (if (eq (aitype) 0)
@@ -292,7 +292,7 @@
 	  (if (eq (random 2) 0) (create_dead_parts ant_dead_parts (* (get_dead_part from) 3) (aitype))
 	     (let ((d (direction))
 		   (type (aitype)))
-                  (with_object (add_object ANTBODY (x) (y)) 
+                  (with_object (add_object ANTBODY (x) (y))
                     (progn
 			      (set_aitype type)
 			      (set_direction d)
@@ -302,7 +302,7 @@
 	  (if (eq (random 5) 0) (create_dead_parts ant_dead_parts (* (get_dead_part from) 3) (aitype))
 	     (let ((d (direction))
 		   (type (aitype)))
-                  (with_object (add_object DECO_ANTBODY (x) (y)) 
+                  (with_object (add_object DECO_ANTBODY (x) (y))
                     (progn
 			      (set_aitype type)
 			      (set_direction d)
@@ -320,8 +320,8 @@
 
 
 (defun pred_draw ()
-  (if (edit_mode) 
-    (ant_draw) 
+  (if (edit_mode)
+    (ant_draw)
   (draw_predator)))
 
 (defun great_damage (amount from hitx hity push_xvel push_yvel)
@@ -338,7 +338,7 @@
 	  (if (eq xvar1 -1)         ;; substract 1 life
 		  	     (let ((d (direction))
 		   (type (aitype)))
-                  (with_object (add_object GRANTBODY (x) (y)) 
+                  (with_object (add_object GRANTBODY (x) (y))
                     (progn
 			      (set_aitype type)
 			      (set_direction d)
@@ -358,8 +358,8 @@
 		(set_aistate 1))))
   T
 )
-    
-		     
+
+
 (def_char GRANTBODY
   (funs (ai_fun grantbody_ai)
         (draw_fun   ant_draw))
@@ -409,7 +409,7 @@
       (if (<= (hp) 0)
         (let ((d (direction))
 	  (type (aitype)))
-            (with_object (add_object ANTBODY (x) (y)) 
+            (with_object (add_object ANTBODY (x) (y))
               (progn
 		(set_aitype type)
 		(set_direction d)

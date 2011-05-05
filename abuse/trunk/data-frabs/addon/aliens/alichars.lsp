@@ -44,7 +44,7 @@
 
 
 (defun alien_wait_time ()
-  (select difficulty 
+  (select difficulty
 	  ('easy    6)
 	  ('medium  4)
 	  ('hard    2)
@@ -58,13 +58,13 @@
     (if (find_object_in_area (- (x) 30) (+ (y) 20) (- (x) 23) (+ (y) 20) (list ALIEN_DRONE ALIEN_WARRIOR FACE_HUGGER))
 	nil
       T)))
-      
-      
+
+
 (defun roof_above () (not (can_see (x) (y) (x) (- (y) 120) nil)))
 
 (defun ali_dodge ()
   (if (eq need_to_dodge 1)
-      (progn 
+      (progn
 	(setq need_to_dodge 0)
 	(if (eq (random 2) 1)
 	    (progn
@@ -112,7 +112,7 @@
 		   (if (if (eq (total_objects) 0);; no sensor, wait for guy
 			   (and (< (distx) 130) (< (y) (with_object (bg) (y))))
 			 (not (eq (with_object (get_object 0) (aistate)) 0)))
-		       (progn 
+		       (progn
 			 (set_state fall_start)			 (set_direction (toward))
 			 (set_aistate 1))))
 
@@ -127,11 +127,11 @@
 
 		  (9 ;; landing / turn around (general finish animation state)
 		   (if (next_picture) T
-		     (if (try_move 0 2)	
+		     (if (try_move 0 2)
 			 (progn
 			   (set_gravity 1)
 			   (set_aistate 1))
-		       (progn (set_state stopped)			  
+		       (progn (set_state stopped)
 			      (go_state 2)))))  ;; running
 
 		  (2 ;; running
@@ -158,7 +158,7 @@
 			     (set_direction (toward))
 			     (set_state turn_around)
 			     (set_aistate 9)))))
-	      
+
 		  (4 ;; wait for pounce
 		   (if (ali_dodge) T
 		     (progn
@@ -170,7 +170,7 @@
 			     (set_state stopped)
 			     (go_state 6))))))
 
-		  (6 ;; jump		  
+		  (6 ;; jump
 		   (setq need_to_dodge 0)
 		   (if (blocked_down (move (direction) -1 0))
 		       (progn
@@ -191,7 +191,7 @@
 	      (set_state flinch_down))
 	    (damage_fun amount from hitx hity push_xvel push_yvel)
 	    (play_sound ALPAIN_SND 127 (x) (y))
-	    (setq need_to_dodge 1)	    
+	    (setq need_to_dodge 1)
 	    (if (<= (hp) 0)
 		(progn
 		  (play_sound (aref AL_DEATH (random 4)) 127 (x) (y))
@@ -237,12 +237,12 @@
 	     (jump_xvel      14)
 	     (push_xrange     1)
 	     (jump_top_speed 15))
-  
+
   (flags (hurtable  T)
 	 (force_health T))
 
   (states "addon/aliens/aliens.spe"
-	  (stopped		"fhwk0001.pcx") 
+	  (stopped		"fhwk0001.pcx")
 	  (fall_start	"fhattack.pcx")
 	  (falling		"fhattack.pcx")
 	  (running		(seq "fhwk" 1 4))
@@ -265,7 +265,7 @@
 	      (and (< (distx) 70) (< (disty) 70))
 	      (with_object (get_object 0) (not (eq (aistate) 0))))
 	      (set_aistate 1))
-	(select (current_frame) 
+	(select (current_frame)
 	    (12 (set_current_frame 13)
 	        (with_object (add_object_after FACE_HUGGER (+ (x) (* (toward) 20)) (y))
 			    (progn
@@ -289,7 +289,7 @@
 	    (11 (next_picture))
 	)))
   T)
-	    
+
 
 (def_char FACE_HUGGER_EGG
   (funs (ai_fun fh_egg_ai))
@@ -317,7 +317,7 @@
 	(states "addon/aliens/aliens.spe"
 	 (stopped "eggunh.pcx")))
 
-(defun fh_d_egg_ai () 
+(defun fh_d_egg_ai ()
 	(progn
 	(try_move 0 10)
 	(lower)))
@@ -327,13 +327,13 @@
 	(states "addon/aliens/aliens.spe"
 	 (stopped "afhj0001.pcx")))
 
-(defun d_fh_jar_ai () 
+(defun d_fh_jar_ai ()
 	(progn
 	(lower)))
 
 (def_char FACE_HUGGER_JAR_ALIVE
    (funs (ai_fun a_fh_jar_ai)
-	(damage_fun		jar_damage))  
+	(damage_fun		jar_damage))
    (flags (hurtable  T))
    (states "addon/aliens/aliens.spe"
 	 (stopped (seq "afhj" 1 2))
@@ -347,7 +347,7 @@
 	   (set_state escaped)
 		)))
 
-(defun a_fh_jar_ai () 
+(defun a_fh_jar_ai ()
   (if (eq (aistate) 0)
 	(progn
 	   (lower)
@@ -375,15 +375,15 @@
 
 (defun ad_dodge ()
   (if (eq need_to_dodge 1)
-      (progn 
+      (progn
 	(setq need_to_dodge 0)
 	(if (eq (random 2) 1)
 	    (progn
 	      (set_state stopped)
 	      (go_state 6))         ;; jump at player
 	  (if (roof_above)
-	      (progn			
-		(set_yvel -17)  ;; jump up  
+	      (progn
+		(set_yvel -17)  ;; jump up
 		(set_xvel 0)
 		(go_state 12))
 	    (progn
@@ -405,7 +405,7 @@
 	(firey (- (y) 15))
 	(playerx (+ (with_object (bg) (x)) (with_object (bg) (* (xvel) 8))))
 	(playery (+ (- (with_object (bg) (y)) 15) (with_object (bg) (* (yvel) 2)))))
-    
+
     (if (and (can_see (x) (y) firex firey nil) (can_see firex firey playerx playery nil))
 	(progn
 	  (let ((angle (atan2 (- firey playery)
@@ -427,7 +427,7 @@
 					(setq sgb_angle angle)
 					(setq sgb_bright_color (find_rgb 255 255 200))
 					(setq sgb_medium_color (find_rgb 150 150 0))
-					(if creator 
+					(if creator
 					    (progn
 					      (setq sgb_speed (+ sgb_speed (/ (xvel) 2)))
 					      (link_object creator)))
@@ -441,10 +441,10 @@
 					(setq sgb_lastx (x))
 					(setq sgb_lasty (y))
 					(setq sgb_angle angle)
-					
+
 					(setq sgb_bright_color (find_rgb 255 128 64))
 					(setq sgb_medium_color (find_rgb 255 0 0))
-					(if creator 
+					(if creator
 					    (progn
 					      (setq sgb_speed (+ sgb_speed (/ (xvel) 2)))
 					      (link_object creator)))
@@ -454,13 +454,13 @@
 			  (progn
 			    (play_sound GRENADE_THROW 127 x y)
 			    (set_course angle 20)
-			    (if creator	
+			    (if creator
 				(progn
 				  (link_object creator)
 				  (set_xvel (+ (xvel) (with_object creator (xvel))))
 				  (set_yvel (+ (yvel) (with_object creator (yvel))))
 				  ))
-			    
+
 			    (set_frame_angle 0 359 angle)
 			    )))
 	  (3 (with_object (add_object ROCKET x y)
@@ -470,7 +470,7 @@
 			    (if creator	(link_object creator))
 
 			    (if (and target   ;; don't link if not in line of site
-				     (can_see (x) (y) 
+				     (can_see (x) (y)
 					      (with_object target (x))
 					      (with_object target (y)) nil))
 					      (link_object target))
@@ -488,7 +488,7 @@
 					(play_sound PLASMA_SND 127 (x) (y))
 					(setq sgb_lastx (x))
 					(setq sgb_lasty (y))
-					(if creator 
+					(if creator
 					      (link_object creator))
 					(set_course angle 200)
 					(let ((old_x (x))
@@ -496,12 +496,12 @@
 					      (bx (bmove (if (> (total_objects) 0) (get_object 0) nil))))
 					  (if (not (eq bx T))
 					      (if (eq bx nil)
-						  (add_object EXPLODE5 (- (x) (random 5)) 
+						  (add_object EXPLODE5 (- (x) (random 5))
 							      (- (y) (random 5)) 0)
 						(progn
-						  (add_object EXPLODE3 (- (x) (random 5)) 
+						  (add_object EXPLODE3 (- (x) (random 5))
 							      (- (y) (random 5)) 0)
-						  (do_damage 10 bx (* (cos sgb_angle) 20) 
+						  (do_damage 10 bx (* (cos sgb_angle) 20)
 							     (* (sin sgb_angle) 10)))))
 					  (setq sgb_lastx (x))
 					  (setq sgb_lasty (y))
@@ -514,7 +514,7 @@
 			  (progn
 			    (play_sound FIREBOMB_SND 127 (x) (y))
 			    (set_course angle 20)
-			    (if creator	
+			    (if creator
 				(progn
 				  (link_object creator)
 				  (set_yvel (+ (yvel) (with_object creator (yvel))))
@@ -525,7 +525,7 @@
 					(play_sound ROCKET_LAUNCH_SND 127 x y)
 					(set_course angle 25)
 					(set_aistate angle)
-					(if creator 
+					(if creator
 					      (link_object creator))
 					(dfris_ai)
 					)))
@@ -535,21 +535,21 @@
 					(play_sound LSABER_SND 127 (x) (y))
 					(setq sgb_lastx (x))
 					(setq sgb_lasty (y))
-					(if creator 
+					(if creator
 					      (link_object creator))
 					(set_course angle 45)
 					(let ((bx (bmove (if (> (total_objects) 0) (get_object 0) nil))))
 					  (if (not (eq bx T))
 					      (if (not (eq bx nil))
-						  (do_damage 30 bx (* (cos sgb_angle) 20) 
+						  (do_damage 30 bx (* (cos sgb_angle) 20)
 							     (* (sin sgb_angle) 10)))))
 					)))
-			   
+
 
 	  (9 (with_object (add_object STRAIT_ROCKET x y)
 				      (progn
 					(play_sound MGUN_SND 127 (x) (y))
-					(if creator 
+					(if creator
 					      (link_object creator))
 					(set_aistate angle)
 					(set_frame_angle 0 359 angle)
@@ -565,7 +565,7 @@
 					(setq sgb_angle angle)
 					(setq sgb_bright_color (find_rgb 255 0 0))
 					(setq sgb_medium_color (find_rgb 150 0 0))
-					(if creator 
+					(if creator
 					    (progn
 					      (setq sgb_speed (+ sgb_speed (/ (xvel) 2)))
 					      (link_object creator)))
@@ -582,7 +582,7 @@
 					(setq sgb_angle angle)
 					(setq sgb_bright_color (find_rgb 170 210 50))
 					(setq sgb_medium_color (find_rgb 120 180 70))
-					(if creator 
+					(if creator
 					    (progn
 					      (setq sgb_speed (+ sgb_speed (/ (xvel) 2)))
 					      (link_object creator)))
@@ -610,7 +610,7 @@
 		   (if (if (eq (total_objects) 0);; no sensor, wait for guy
 			   (and (< (distx) 130) (< (y) (with_object (bg) (y))))
 			 (not (eq (with_object (get_object 0) (aistate)) 0)))
-		       (progn 
+		       (progn
 			 (set_state fall_start)			 (set_direction (toward))
 			 (set_aistate 1))))
 
@@ -625,11 +625,11 @@
 
 		  (9 ;; landing / turn around (general finish animation state)
 		   (if (next_picture) T
-		     (if (try_move 0 2)	
+		     (if (try_move 0 2)
 			 (progn
 			   (set_gravity 1)
 			   (set_aistate 1))
-		       (progn (set_state stopped)			  
+		       (progn (set_state stopped)
 			      (go_state 2)))))  ;; running
 
 		  (2 ;; running
@@ -660,7 +660,7 @@
 			     (set_direction (toward))
 			     (set_state turn_around)
 			     (set_aistate 9)))))
-	      
+
 		  (4 ;; wait for pounce
 		   (if (ad_dodge) T
 		     (progn
@@ -672,14 +672,14 @@
 			     (set_state stopped)
 			     (go_state 6))))))
 
-		  (6 ;; jump		  
+		  (6 ;; jump
 		   (setq need_to_dodge 0)
 		   (if (blocked_down (move (direction) -1 0))
 		       (progn
 			 (set_aistate 2))))
 
 		  (8 ;; fire at player
-		   (if (ad_dodge) T		     
+		   (if (ad_dodge) T
 		     (if (eq (state) fire_wait)
 			 (if (next_picture)
 			     T
@@ -710,8 +710,8 @@
 
 		  (13 ;; roof walking
 		   (alscream_check)
-		   (if (or (and (< (y) (with_object (bg) (y))) 
-				(< (distx) 10) (eq (random 8) 0)) 
+		   (if (or (and (< (y) (with_object (bg) (y)))
+				(< (distx) 10) (eq (random 8) 0))
 			   (eq need_to_dodge 1))  ;; shooting at us, fall down
 		       (progn
 			 (set_gravity 1)
@@ -727,14 +727,14 @@
 			 (let ((xspeed (if (> (direction) 0) (get_ability run_top_speed)
 					 (- 0 (get_ability run_top_speed)))))
 			   (if (and (can_see (x) (- (y) 21) (+ (x) xspeed) (- (y) 21) nil)
-				    (not (can_see (+ (x) xspeed) (- (y) 21) 
+				    (not (can_see (+ (x) xspeed) (- (y) 21)
 						  (+ (x) xspeed) (- (y) 22) nil)))
 			       (progn
 				 (set_x (+ (x) xspeed))
-				 (if (not (next_picture)) 
+				 (if (not (next_picture))
 				     (set_state top_walk)))
 			     (set_aistate 1)))))))
-	
+
 		  (14 ;; cieling shoot
 		   (if (next_picture)
 		       T
@@ -777,7 +777,7 @@
 	     (jump_xvel      16)
 	     (push_xrange     2)
 	     (jump_top_speed 16))
-  
+
   (flags (hurtable  T)
 	 (force_health T))
 
@@ -832,7 +832,7 @@
 		   (if (if (eq (total_objects) 0);; no sensor, wait for guy
 			   (and (< (distx) 130) (< (y) (with_object (bg) (y))))
 			 (not (eq (with_object (get_object 0) (aistate)) 0)))
-		       (progn 
+		       (progn
 			 (set_state fall_start)			 (set_direction (toward))
 			 (set_aistate 1))))
 
@@ -847,11 +847,11 @@
 
 		  (9 ;; landing / turn around (general finish animation state)
 		   (if (next_picture) T
-		     (if (try_move 0 2)	
+		     (if (try_move 0 2)
 			 (progn
 			   (set_gravity 1)
 			   (set_aistate 1))
-		       (progn (set_state stopped)			  
+		       (progn (set_state stopped)
 			      (go_state 2)))))  ;; running
 
 		  (2 ;; running
@@ -882,7 +882,7 @@
 			     (set_direction (toward))
 			     (set_state turn_around)
 			     (set_aistate 9)))))
-	      
+
 		  (4 ;; wait for pounce
 		   (if (ali_dodge) T
 		     (progn
@@ -894,14 +894,14 @@
 			     (set_state stopped)
 			     (go_state 6))))))
 
-		  (6 ;; jump		  
+		  (6 ;; jump
 		   (setq need_to_dodge 0)
 		   (if (blocked_down (move (direction) -1 0))
 		       (progn
 			 (set_aistate 2))))
 
 		  (8 ;; fire at player
-		   (if (ad_dodge) T		     
+		   (if (ad_dodge) T
 		     (if (eq (state) fire_wait)
 			 (if (next_picture)
 			     T
@@ -945,7 +945,7 @@
 	     (jump_xvel      8)
 	     (push_xrange     2)
 	     (jump_top_speed 12))
-  
+
   (flags (hurtable  T)
 	 (force_health T))
 

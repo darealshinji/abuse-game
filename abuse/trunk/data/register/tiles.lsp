@@ -1,5 +1,5 @@
 
-(load_tiles 
+(load_tiles
 	    "register/alien.spe"    ;; 700-774
 	    "register/trees.spe"    ;; 800-931
 	    "art/endgame.spe"       ;; 950-1014
@@ -17,12 +17,12 @@
 	      (request_end_game))
 	(set_aistate (+ (aistate) 1))))
   T)
-      
+
 
 
 (def_char END_GAME
   (funs (ai_fun end_game_ai))
-  (range 0 0)  
+  (range 0 0)
   (states "art/endgame.spe"
 	  (stopped (app (seq "pipe" 1 9)
 			(seq "pipe" 1 9)

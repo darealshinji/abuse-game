@@ -46,7 +46,7 @@
 ;; bomb count-down tick
 (def_sound 'TICK_SND       (sfxdir "timerfst.wav"))
 
-(setq PLAYER_PAIN (make-array 4 :initial-contents 
+(setq PLAYER_PAIN (make-array 4 :initial-contents
 			      (list (def_sound (sfxdir "plpain01.wav"))
 				    (def_sound (sfxdir "plpain02.wav"))
 				    (def_sound (sfxdir "plpain04.wav"))
@@ -57,7 +57,7 @@
 				   (def_sound (sfxdir "pldeth04.wav"))
 				   (def_sound (sfxdir "pldeth05.wav"))
 				   (def_sound (sfxdir "pldeth07.wav")))))
-				   
+
 
 ;; jugger stomp
 (def_sound 'JSTOMP_SND    (sfxdir "blkfoot4.wav"))
@@ -79,7 +79,7 @@
 (def_sound 'CLEANER_SND   (sfxdir "cleaner.wav"))
 
 ;; shotgun/laser taking from the lava sample
-(def_sound 'ZAP_SND       (sfxdir "zap2.wav")) 
+(def_sound 'ZAP_SND       (sfxdir "zap2.wav"))
 
 ;; rocket launch sound
 (def_sound 'ROCKET_LAUNCH_SND (sfxdir "rocket02.wav"))
@@ -92,7 +92,7 @@
 
 
 ;; machine gun hitting the floor, sounds 1 & 2, played randomly
-(def_sound    'MG_HIT_SND1 (sfxdir "mghit01.wav"))   
+(def_sound    'MG_HIT_SND1 (sfxdir "mghit01.wav"))
 (def_sound    'MG_HIT_SND2 (sfxdir "mghit02.wav"))
 
 ;; enemy mounted gun firing
@@ -130,7 +130,7 @@
 
 ;; electricity shooting up from the ground
 (def_sound 'ELECTRIC_SND   (sfxdir "elect02.wav"))
- 
+
 ;; rocket being fired
 (def_sound 'ROCKET_SND     (sfxdir "rocket02.wav"))
 
@@ -184,7 +184,7 @@
 (setq LINK_OBJECT_SND (def_sound (sfxdir "link01.wav")))
 
 
-(setq AMB_SOUNDS (make-array 17 :initial-contents (list 
+(setq AMB_SOUNDS (make-array 17 :initial-contents (list
 			       (def_sound (sfxdir "ambtech1.wav"))   ;; 0
 			       (def_sound (sfxdir "ambtech2.wav"))  ;; 1
 			       (def_sound (sfxdir "ambtech3.wav"))  ;; 2
@@ -204,7 +204,7 @@
 			       SCARE_SND                            ;; 16
 			       )))
 
-(setq voice_hints (make-array 12 :initial-contents (list 
+(setq voice_hints (make-array 12 :initial-contents (list
                                                     (def_sound "sfx/voice/aimsave.wav")
                                                     (def_sound "sfx/voice/ammosave.wav")
                                                     (def_sound "sfx/voice/switch_1.wav")
@@ -237,24 +237,24 @@
       (set_aistate 0)
       T)))
 
-	
-(defun ambs_cons () 
+
+(defun ambs_cons ()
   (set_xvel 100)  ;; delay time to 100
   (set_yvel 127)) ;; set volume default to 127
 
-(def_char AMBIENT_SOUND 
+(def_char AMBIENT_SOUND
   (funs (ai_fun          amb_sound_ai)
 	(draw_fun        dev_draw)
 	(constructor     ambs_cons)
 	(type_change_fun amb_sound_ct))
   (range 500 500)
   (fields ("aitype" amb_num)
-	  ("yvel"   amb_vol)     
+	  ("yvel"   amb_vol)
 	  ("xvel"   amb_rep)
 	  ("xacel"  amb_rand))
   (states "art/misc.spe"
 	  (stopped "sfx_player")))
-	
+
 (setq song_list '("music/abuse01.hmi" "music/abuse02.hmi"))
 (setq current_song song_list)
 
@@ -264,12 +264,12 @@
 	(play_song (car current_song))
 	(break)
 	(setq current_song (cdr current_song))
-	(if (not current_song) 
+	(if (not current_song)
 	    (setq current_song song_list))
 	(break)
 	)))
 
-				    
+
 (defun level_loaded (name)
   (trace)
   (if (search "levels/level" name)  ; is this one of the regular levels?

@@ -13,8 +13,8 @@
 	      (if (eq (aitype) 6)         ;; go to next alien type
 		  (set_aistate 10)        ;; end game
 		(set_aistate 5)))))))         ;; fade out
-    
-(defun boss_cons () 
+
+(defun boss_cons ()
   (set_hp 1)
   (setq taunt_time 20))
 
@@ -23,7 +23,7 @@
 	(firey (- (y) 25))
 	(playerx (+ (with_object (bg) (x)) (with_object (bg) (* (xvel) 8))))
 	(playery (+ (- (with_object (bg) (y)) 15) (with_object (bg) (* (yvel) 2)))))
-    
+
     (if (and (can_see (x) (y) firex firey nil) (can_see firex firey playerx playery nil))
 	(progn
 	  (let ((angle (atan2 (- firey playery)
@@ -89,7 +89,7 @@
 
 		  (7;; fade out
 		   (set_targetable nil)
-		   (set_fade_count (+ (fade_count) 2))	   
+		   (set_fade_count (+ (fade_count) 2))
 		   (if (eq (fade_count) 14)
 		       (progn
 			 (set_state hiding)
@@ -98,8 +98,8 @@
 			   (set_y (with_object to_object (y))))
 			 (setq taunt_time (- 30 (* (aitype) 2)))
 			 (go_state 0))))
-	  
-		  (10;; game over	  
+
+		  (10;; game over
 		   (set_state hiding)
 		   (set_targetable nil)
 		   (if (eq (state_time) 60)
@@ -113,10 +113,10 @@
 		  )
 
 	  T))))
-	   
 
-	   
-	     
+
+
+
 (def_char BOSS_ANT
   (funs (ai_fun boss_ai)
 	(draw_fun ant_draw)
@@ -126,7 +126,7 @@
 	 (unlistable T))
   (fields ("taunt_time" "taunt_tint")
 	 ("aistate" "aistate"))
-  (states  "register/boss.spe" 
+  (states  "register/boss.spe"
    (stopped "awlk0001.pcx")
    (hiding  "hidden")
    (weapon_fire  (seq "asht" 2 5))))

@@ -27,7 +27,7 @@
 ;;   "Left_Shift","Right_Shift","Caps_Lock","Num_Lock",
 ;;   "Home","End","Del","F1","F2","F3","F4","F5","F6",
 ;;   "F7","F8","F9","F10","Insert"
-;;   "a", "b", "c", ... 
+;;   "a", "b", "c", ...
 ;; though not all of these keys will work on all operating systems
 
 
@@ -45,12 +45,12 @@
 
 (defun get_local_input ()
   (let ((mstat (mouse_stat)))
-    (list (if (local_key_pressed left-key) -1 (if (local_key_pressed right-key) 1 0))  ;; xv 
+    (list (if (local_key_pressed left-key) -1 (if (local_key_pressed right-key) 1 0))  ;; xv
 	  (if (local_key_pressed up-key) -1   (if (local_key_pressed down-key)  1 0))  ;; yv
 	  (eq (fourth mstat) 1)                                            ;; special button
 	  (eq (third mstat) 1)                                             ;; fire button
-	  
-	  (if (or (eq (fifth mstat) 1) 
+
+	  (if (or (eq (fifth mstat) 1)
 		  (local_key_pressed weapon-left-key)) -1                             ;; weapon toggle
               (if (local_key_pressed weapon-right-key)  1 0))
 	  (first mstat)                                                    ;; mx
@@ -58,9 +58,9 @@
 	  )))
 
 
-	
 
-	
+
+
 
 
 
