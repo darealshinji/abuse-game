@@ -105,10 +105,10 @@ class cached_image : public visual_object
   int id;
   public :
   cached_image(int Id) { id=Id; }
-  virtual void draw(image *screen, int x, int y, filter *f)
+  virtual void draw(image *screen, int x, int y, Filter *f)
   {
     if (f)
-      f->put_image(screen,cache.img(id),x,y,1);
+      f->PutImage(screen, cache.img(id), vec2i(x, y));
     else
       cache.img(id)->put_image(screen,x,y);
   }

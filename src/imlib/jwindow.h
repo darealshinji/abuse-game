@@ -45,7 +45,7 @@ public:
   ifield *get(int id);
   void redraw();
   void add(ifield *i);
-  void remap(filter *f);
+  void remap(Filter *f);
   ifield *unlink(int id);     // unlinks ID from fields list and return the pointer to it
   void clear_current();
   void grab_focus(ifield *i);
@@ -75,7 +75,7 @@ public :
     virtual void draw(int active, image *screen) = 0;
     virtual void handle_event(event &ev, image *screen, InputManager *im) = 0;
     virtual int selectable() { return 1; }
-    virtual void remap(filter *f) { ; }
+    virtual void remap(Filter *f) { ; }
     virtual char *read() = 0;
     virtual ifield *find(int search_id) { if (id==search_id) return this; else return NULL; }
     virtual ifield *unlink(int id) { return NULL; }

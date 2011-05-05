@@ -64,7 +64,7 @@ extern int nforetiles,nbacktiles,       // total foreground tiles & background t
 
 /******************************** COLOR *****************************************/
 extern palette *pal;
-extern color_filter *color_table;
+extern ColorFilter *color_table;
 extern int light_connection_color;
 
 

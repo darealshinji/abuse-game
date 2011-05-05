@@ -18,13 +18,13 @@
 
 #include "input.h"
 
-void button::remap(filter *f)
+void button::remap(Filter *f)
 {
   if (visual)
   {
-    f->apply(visual);
+    f->Apply(visual);
     if (pressed)
-      f->apply(pressed);
+      f->Apply(pressed);
   }
 }
 
@@ -32,7 +32,7 @@ void button_box::press_button(int id)      // if button box doesn't contain id, 
 {
 }
 
-void button_box::remap(filter *f)
+void button_box::remap(Filter *f)
 {
   for (button *b=buttons; b; b=(button *)b->next)
     b->remap(f);

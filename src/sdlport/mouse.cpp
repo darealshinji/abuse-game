@@ -53,7 +53,7 @@ JCMouse::JCMouse( image *Screen, palette *pal )
 {
     image *im;
     int br, dr;
-    filter f;
+    Filter f;
     but = 0;
     cx = cy = 0;
     here = 1;
@@ -62,10 +62,10 @@ JCMouse::JCMouse( image *Screen, palette *pal )
     screen = Screen;
     br = pal->brightest( 1 );
     dr = pal->darkest( 1 );
-    f.set( 1, br );
-    f.set( 2, dr );
+    f.Set( 1, br );
+    f.Set( 2, dr );
     im = new image(vec2i(8, 10), def_mouse);
-    f.apply( im );
+    f.Apply( im );
     sp = new sprite(Screen, im, 100, 100);
     mx = Screen->Size().x / 2;
     my = Screen->Size().y / 2;

@@ -28,7 +28,7 @@ tool_picker::~tool_picker()
 void tool_picker::remap(palette *pal, image *screen)
 {
   delete map;
-  map=new filter(old_pal,pal);
+  map=new Filter(old_pal,pal);
   draw_first(screen);
 }
 
@@ -46,7 +46,7 @@ tool_picker::tool_picker(int X, int Y, int ID,
     if (icons[i]->width()>iw) iw=icons[i]->width();
     if (icons[i]->height()>ih) ih=icons[i]->height();
   }
-  map=new filter(icon_palette,pal);
+  map=new Filter(icon_palette,pal);
   old_pal=icon_palette->copy();
   reconfigure();
 }

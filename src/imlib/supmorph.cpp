@@ -258,7 +258,7 @@ smorph_player::smorph_player(super_morph *m, palette *pal, image *i1, image *i2,
 
 
 
-int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette *pal,
+int smorph_player::show(image *screen, int x, int y, ColorFilter *fil, palette *pal,
             int blur_threshold)
 {
   if (f_left)
@@ -278,7 +278,7 @@ int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette 
       py=iy+y;
       if (px>=x1 && px < x2 && py>=y1 && py < y2)
       {
-        hole[ix+iy*w]=*(screen->scan_line(py)+px)=fil->lookup_color(ss->r>>(19),
+        hole[ix+iy*w]=*(screen->scan_line(py)+px)=fil->Lookup(ss->r>>(19),
                                     ss->g>>(19),
                                     ss->b>>(19));
       }
@@ -322,11 +322,11 @@ int smorph_player::show(image *screen, int x, int y, color_filter *fil, palette 
           dist+=((int)(*pa)-g)*((int)(*pa)-g); pa++;
           dist+=((int)(*pa)-b)*((int)(*pa)-b);
           if (dist>blur_threshold)
-            *(tl)=*(screen->scan_line(y+iy)+x+ix)=fil->lookup_color(r>>3,g>>3,b>>3);
+            *(tl)=*(screen->scan_line(y+iy)+x+ix)=fil->Lookup(r>>3,g>>3,b>>3);
         } else *(tl)=*(screen->scan_line(y+iy)+x+ix)=0; // kill single pixels
       }
       else if (t>=3)
-        *(tl)=*(screen->scan_line(y+iy)+x+ix)=fil->lookup_color((r/t)>>3,(g/t)>>3,(b/t)>>3);
+        *(tl)=*(screen->scan_line(y+iy)+x+ix)=fil->Lookup((r/t)>>3,(g/t)>>3,(b/t)>>3);
     }
       }
       ll+=2;

@@ -70,7 +70,7 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
       uint8_t r=((*(paddr++))-r_to)*percent/256+r_to;
       uint8_t g=((*(paddr++))-g_to)*percent/256+g_to;
       uint8_t b=((*(paddr++))-b_to)*percent/256+b_to;
-      *sl=color_table->lookup_color((r)>>3,(g)>>3,(b)>>3);
+      *sl=color_table->Lookup((r)>>3,(g)>>3,(b)>>3);
     }
   }
   screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
@@ -98,7 +98,7 @@ void darken_area(int x1, int y1, int x2, int y2, int amount)
       uint8_t r=(*(paddr++))*amount/256;
       uint8_t g=(*(paddr++))*amount/256;
       uint8_t b=(*(paddr++))*amount/256;
-      *sl=color_table->lookup_color((r)>>3,(g)>>3,(b)>>3);
+      *sl=color_table->Lookup((r)>>3,(g)>>3,(b)>>3);
     }
   }
   screen->AddDirty(x1, y1, x2 + 1, y2 + 1);

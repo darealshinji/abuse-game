@@ -17,190 +17,84 @@
 #include "image.h"
 #include "filter.h"
 
-filter::filter(palette *from, palette *to)   // creates a conversion filter from one palette to another
+Filter::Filter(int colors)
 {
-  nc=from->pal_size() > to->pal_size() ? from->pal_size() : to->pal_size();
-  unsigned char *p=fdat=(unsigned char *)malloc(nc);
-  unsigned char *r,*g,*b;
-  r=g=b=(unsigned char *)from->addr();
-  g++;
-  b+=2;
-
-  int dk=to->darkest(1);
-  for (int i=0; i<nc; i++,p++,r+=3,g+=3,b+=3)
-  {
-    *p=to->find_closest(*r,*g,*b);
-
-    // make sure non-blacks don't get remapped to the transparency
-    if ((*r!=0 || *g!=0 || *b!=0) && (to->red(*p)==0 && to->green(*p)==0 && to->blue(*p)==0))
-      *p=dk;
-  }
-
+    CONDITION(colors >= 0 && colors <= 256, "bad colors value");
+    m_size = colors;
+    m_table = (uint8_t *)malloc(m_size);
+    memset(m_table, 0, m_size * sizeof(*m_table));
 }
 
-void filter::clear()
+// Creates a conversion filter from one palette to another
+Filter::Filter(palette *from, palette *to)
 {
-  int i;
-  for (i=0; i<nc; i++)
-    fdat[i]=i;
-}
+    m_size = Max(from->pal_size(), to->pal_size());
+    m_table = (uint8_t *)malloc(m_size);
 
-void filter::max_threshold(int minv, char blank)
-{
-  int i;
-  CONDITION(minv>=0 && minv<nc,"Bad minv");
-  for (i=0; i<minv; i++)
-    fdat[i]=blank;
-}
+    uint8_t *dst = m_table;
+    uint8_t *src = (uint8_t *)from->addr();
+    int dk = to->darkest(1);
 
-void filter::min_threshold(int maxv, char blank)
-{
-  int i;
-  CONDITION(maxv>=0 && maxv<nc,"bad maxv value in filter::max_thresh");
-  for (i=nc-1; i>=maxv; i--)
-    fdat[i]=(unsigned) blank;
-}
-
-
-void filter::set(int color_num, char change_to)
-{
-  CONDITION(color_num>=0 && color_num<nc,"Bad colors_num");
-  fdat[color_num]=(unsigned) change_to;
-}
-
-
-filter::filter(int colors)
-{
-  CONDITION(colors>=0 && colors<=256,"bad colors value");
-  nc=colors;
-  fdat=(unsigned char *)malloc(nc);
-  clear();
-}
-
-void filter::apply(image *im)
-{
-  int x,y;
-  unsigned char *c;
-  CONDITION(im,"null image passed in filter::apply\n");
-  im->Lock();
-  for (y=im->Size().y-1; y>=0; y--)
-  {
-    c=im->scan_line(y);
-    for (x=im->Size().x-1; x>=0; x--)
+    for (int i = 0; i < m_size; i++)
     {
-      CONDITION((unsigned) c[x]<nc,"not enough filter colors");
-      c[x]=fdat[(unsigned) c[x]];
+       int r = *src++;
+       int g = *src++;
+       int b = *src++;
+       int color = to->find_closest(r, g, b);
+
+       // Make sure non-blacks don't get remapped to the transparency
+       if ((r || g || b) && to->red(color) == 0
+            && to->green(color) == 0 && to->blue(color) == 0)
+           color = dk;
+
+       *dst++ = color;
     }
-  }
-  im->Unlock();
 }
 
-
-palette *compare_pal;
-
-int color_compare(void *c1, void *c2)
+Filter::~Filter()
 {
-  long v1,v2;
-  unsigned char r1,g1,b1,r2,g2,b2;
-  compare_pal->get(  *((unsigned char *)c1),r1,g1,b1);
-  compare_pal->get(  *((unsigned char *)c2),r2,g2,b2);
-  v1=(int)r1*(int)r1+(int)g1*(int)g1+(int)b1*(int)b1;
-  v2=(int)r2*(int)r2+(int)g2*(int)g2+(int)b2*(int)b2;
-  if (v1<v2) return -1;
-  else if (v1>v2) return 1;
-  else return 0;
+    free(m_table);
 }
 
-color_filter::color_filter(palette *pal, int color_bits, void (*stat_fun)(int))
+void Filter::Set(int color_num, int change_to)
 {
-  color_bits=5;      // hard code 5 for now
-  int r,g,b,rv,gv,bv,
-      c=0,i,max=pal->pal_size(),
-      lshift=8-color_bits;
-  unsigned char *pp;
+    CONDITION(color_num >= 0 && color_num < m_size, "Bad colors_num");
+    m_table[color_num] = change_to;
+}
 
-  long dist_sqr,best;
-  int colors=1<<color_bits;
-  color_table=(unsigned char *)malloc(colors*colors*colors);
-  for (r=0; r<colors; r++)
-  {
-    if (stat_fun) stat_fun(r);
-    rv=r<<lshift;
-    for (g=0; g<colors; g++)
+void Filter::Apply(image *im)
+{
+    im->Lock();
+    uint8_t *dst = im->scan_line(0);
+    int npixels = im->Size().x * im->Size().y;
+    while (npixels--)
     {
-      gv=g<<lshift;
-      for (b=0; b<colors; b++)
-      {
-    bv=b<<lshift;
-        best=0x7fffffff;
-        for (i=0,pp=(unsigned char *)pal->addr(); i<max; i++)
-        {
-          register long rd=*(pp++)-rv,
-                        gd=*(pp++)-gv,
-                        bd=*(pp++)-bv;
-
-          dist_sqr=(long)rd*rd+(long)bd*bd+(long)gd*gd;
-          if (dist_sqr<best)
-          { best=dist_sqr;
-            c=i;
-          }
-        }
-        color_table[r*colors*colors+g*colors+b]=c;
-      }
+        CONDITION(*dst < m_size, "not enough filter colors");
+        *dst = m_table[*dst];
+        dst++;
     }
-  }
+    im->Unlock();
 }
 
-color_filter::color_filter(spec_entry *e, bFILE *fp)
-{
-  fp->seek(e->offset,0);
-  fp->read_uint16();
-  int colors=32;
-  color_table=(unsigned char *)malloc(colors*colors*colors);
-  fp->read(color_table,colors*colors*colors);
-}
-
-int color_filter::size()
-{
-  int colors=32;
-  return 2+colors*colors*colors;
-}
-
-int color_filter::write(bFILE *fp)
-{
-  int colors=32;
-  fp->write_uint16(colors);
-  return fp->write(color_table,colors*colors*colors)==colors*colors*colors;
-}
-
-
-void filter::put_image(image *screen, image *im, short x, short y,
-                       char transparent)
+/* This is only ever used in the editor, when showing the toolbar. It
+ * does not look like it's very useful. */
+void Filter::PutImage(image *screen, image *im, vec2i pos)
 {
     int cx1, cy1, cx2, cy2, x1 = 0, y1 = 0,
-          x2 = im->Size().x, y2 = im->Size().y;
+        x2 = im->Size().x, y2 = im->Size().y;
     screen->GetClip(cx1, cy1, cx2, cy2);
 
-    // see if the image gets clipped off the screen
-    if(x >= cx2 || y >= cy2 || x + (x2 - x1) <= cx1 || y + (y2 - y1) <= cy1)
+    // See if the image gets clipped off the screen
+    if(pos.x >= cx2 || pos.y >= cy2 ||
+       pos.x + (x2 - x1) <= cx1 || pos.y + (y2 - y1) <= cy1)
         return;
 
-    if(x < cx1)
-    {
-        x1 += (cx1 - x);
-        x = cx1;
-    }
-    if(y < cy1)
-    {
-        y1 += (cy1 - y);
-         y = cy1;
-    }
-
-    if(x + x2 - x1 >= cx2)
-        x2 = cx2 - x + x1;
-
-    if(y + y2 - y1 >= cy2)
-        y2 = cy2 - y + y1;
+    x1 += Max(cx1 - pos.x, 0);
+    y1 += Max(cy1 - pos.y, 0);
+    pos.x = Max(pos.x, cx1);
+    pos.y = Max(pos.y, cy1);
+    x2 = Min(x2, cx2 - pos.x + x1);
+    y2 = Min(y2, cy2 - pos.y + y1);
 
     if(x1 >= x2 || y1 >= y2)
         return;
@@ -208,28 +102,80 @@ void filter::put_image(image *screen, image *im, short x, short y,
     int xl = x2 - x1;
     int yl = y2 - y1;
 
-    screen->AddDirty(x, y, x + xl, y + yl);
+    screen->AddDirty(pos.x, pos.y, pos.x + xl, pos.y + yl);
 
     screen->Lock();
     im->Lock();
 
-    uint8_t *pg1 = screen->scan_line(y), *source, *dest;
-    uint8_t *pg2 = im->scan_line(y1);
-    int i;
     for(int j = 0; j < yl; j++)
     {
-        for(i = 0, source = &pg2[x1], dest = &pg1[x];
-            i < xl;
-            i++, source++, dest++)
-        {
-            if (!transparent || *source)
-                *dest=fdat[*source];
-        }
-        pg1 = screen->next_line(y + j, pg1);
-        pg2 = im->next_line(y1 + j, pg2);
+        uint8_t *source = im->scan_line(y1 + j) + x1;
+        uint8_t *dest = screen->scan_line(pos.y + j) + pos.x;
+
+        for(int i = 0; i < xl; i++, source++, dest++)
+            if (*source)
+                *dest = m_table[*source];
     }
 
     im->Unlock();
     screen->Unlock();
+}
+
+ColorFilter::ColorFilter(palette *pal, int color_bits)
+{
+    int max = pal->pal_size();
+    int mul = 1 << (8 - color_bits);
+    m_size = 1 << color_bits;
+    m_table = (uint8_t *)malloc(m_size * m_size * m_size);
+
+    /* For each colour in the RGB cube, find the nearest palette element. */
+    for (int r = 0; r < m_size; r++)
+    for (int g = 0; g < m_size; g++)
+    for (int b = 0; b < m_size; b++)
+    {
+        int best = 256 * 256 * 3;
+        int color = 0;
+        uint8_t *pp = (uint8_t *)pal->addr();
+
+        for (int i = 0; i < max; i++)
+        {
+            int rd = *pp++ - r * mul,
+                gd = *pp++ - g * mul,
+                bd = *pp++ - b * mul;
+
+            int dist = rd * rd + bd * bd + gd * gd;
+            if (dist < best)
+            {
+                best = dist;
+                color = i;
+            }
+        }
+        m_table[(r * m_size + g) * m_size + b] = color;
+    }
+}
+
+ColorFilter::ColorFilter(spec_entry *e, bFILE *fp)
+{
+    fp->seek(e->offset, 0);
+    m_size = fp->read_uint16();
+    m_table = (uint8_t *)malloc(m_size * m_size * m_size);
+    fp->read(m_table, m_size * m_size * m_size);
+}
+
+ColorFilter::~ColorFilter()
+{
+    free(m_table);
+}
+
+size_t ColorFilter::DiskUsage()
+{
+    return sizeof(uint16_t) + m_size * m_size * m_size;
+}
+
+int ColorFilter::Write(bFILE *fp)
+{
+    fp->write_uint16(m_size);
+    int bytes = m_size * m_size * m_size;
+    return fp->write(m_table, bytes) == bytes;
 }
 

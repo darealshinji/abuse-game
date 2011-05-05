@@ -19,7 +19,7 @@
 
 class tool_picker : public spicker
 {
-  filter *map;
+  Filter *map;
   visual_object **icons;
   int *ids;
   int total_icons;

@@ -148,7 +148,7 @@ template<int N>
 void TransImage::PutImageGeneric(image *screen, vec2i pos, uint8_t color,
                                  image *blend, vec2i bpos, uint8_t *map,
                                  uint8_t *map2, int amount, int nframes,
-                                 uint8_t *tint, color_filter *f, palette *pal)
+                                 uint8_t *tint, ColorFilter *f, palette *pal)
 {
     vec2i pos1, pos2;
     int ysteps, mul = 0;
@@ -261,7 +261,7 @@ void TransImage::PutImageGeneric(image *screen, vec2i pos, uint8_t color,
                     uint8_t g = ((((int)p1[1] - p2[1]) * mul) >> 16) + p2[1];
                     uint8_t b = ((((int)p1[2] - p2[2]) * mul) >> 16) + p2[2];
 
-                    *sl++ = f->lookup_color(r >> 3, g >> 3, b >> 3);
+                    *sl++ = f->Lookup(r >> 3, g >> 3, b >> 3);
                 }
             }
 
@@ -295,14 +295,14 @@ void TransImage::PutDoubleRemap(image *screen, vec2i pos,
 
 // Used when eg. the player teleports, or in rocket trails
 void TransImage::PutFade(image *screen, vec2i pos, int amount, int nframes,
-                         color_filter *f, palette *pal)
+                         ColorFilter *f, palette *pal)
 {
     PutImageGeneric<FADE>(screen, pos, 0, NULL, 0, NULL, NULL,
                           amount, nframes, NULL, f, pal);
 }
 
 void TransImage::PutFadeTint(image *screen, vec2i pos, int amount, int nframes,
-                             uint8_t *tint, color_filter *f, palette *pal)
+                             uint8_t *tint, ColorFilter *f, palette *pal)
 {
     PutImageGeneric<FADE_TINT>(screen, pos, 0, NULL, 0, NULL, NULL,
                                amount, nframes, tint, f, pal);
@@ -317,7 +317,7 @@ void TransImage::PutColor(image *screen, vec2i pos, uint8_t color)
 // This method is unused but is believed to work.
 // Assumes that the blend image completely covers the transparent image.
 void TransImage::PutBlend(image *screen, vec2i pos, image *blend, vec2i bpos,
-                          int amount, color_filter *f, palette *pal)
+                          int amount, ColorFilter *f, palette *pal)
 {
     PutImageGeneric<BLEND>(screen, pos, 0, blend, bpos, NULL, NULL,
                            amount, 1, NULL, f, pal);

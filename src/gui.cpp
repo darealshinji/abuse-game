@@ -109,7 +109,7 @@ void ico_button::draw(int active, image *screen)
   {
     int g=80;
     screen->bar(0,0,144,20,0);
-    wm->font()->put_string(screen,0,0,symbol_str(key),color_table->lookup_color(g>>3,g>>3,g>>3));
+    wm->font()->put_string(screen,0,0,symbol_str(key),color_table->Lookup(g>>3,g>>3,g>>3));
   } else if (!active && key[0])
   {
     screen->bar(0,0,144,20,0);
