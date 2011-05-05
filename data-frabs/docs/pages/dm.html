@@ -1,0 +1,267 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Justin Cassidy">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>The Free Abuse Project</title>
+</head>
+<body text="#FFFFFF" bgcolor="#000000" link="#C0C0C0" vlink="#666666" alink="#C0C0C0" background="../images/jmc.jpg" nosave>
+<font color="#FFFFFF"><u><font size=+4>fRaBs</font></u><i>&nbsp;
+deathmatch</i></font>
+<br><a href="../index.html">Main</a><i><font color="#FFFFFF"> - </font></i><a href="updates.html">Updates</a><i><font color="#FFFFFF">
+- </font></i><a href="single.html">Single Player</a><i><font color="#FFFFFF">
+- </font></i><a href="dm.html">Deathmatch</a><i><font color="#FFFFFF">
+- </font></i><a href="editor.html">Level Editing</a><i><font color="#FFFFFF">
+- </font></i><a href="faq.html">FAQ</a><i><font color="#FFFFFF"> - </font></i><a href="credits.html">Credits</a><i><font color="#FFFFFF">
+- </font></i><a href="links.html">Links</a>
+<p><b><tt>I. <a href="#Info">General Information</a></tt></b>
+<br><b><tt>II. <a href="#Modem">Modem-to-Modem Play</a></tt></b>
+<br><b><tt>III. <a href="#Internet">Internet Play Using TCP/IP</a></tt></b>
+<br><b><tt>IV. <a href="#Levels">Deathmatch Levels</a></tt></b>
+<br><b><tt>V. <a href="../images/netlevel.html">Maps</a></tt></b>
+<p><a NAME="Info" href="#Info"></a><a NAME="Info" href="#Info"></a><a NAME="Info" href="#Info"></a><a NAME="Info" href="#Info"></a><a NAME="Info" href="#Info"></a><a NAME="Info" href="#Info"></a><b><tt><a href="#Info" NAME="Info">General
+Information</a></tt></b>
+<p><tt>The current incarnation of Abuse supports the IPX</tt>
+<br><tt>protocol, which is normally used for Local Area</tt>
+<br><tt>Network (LAN) play. However, there are ways to use</tt>
+<br><tt>the IPX multiplayer feature of Abuse under other</tt>
+<br><tt>conditions as well.</tt>
+<p><tt>Basically, if you have a LAN, then the way you</tt>
+<br><tt>begin a network game is by having one person start</tt>
+<br><tt>a game and having the other people on the LAN join</tt>
+<br><tt>that game. Firstly, make sure you install the IPX</tt>
+<br><tt>protocol for Windows 95/98 on your computer. If,</tt>
+<br><tt>upon loading, Abuse detects your IPX drivers, then</tt>
+<br><tt>you can skip this step. A correctly-configured</tt>
+<br><tt>situation should have the game loading up and at</tt>
+<br><tt>the title screen, you should see a 'Networking'</tt>
+<br><tt>button with two computers and a cord connecting them.</tt>
+<p><tt>If you don't see the Networking button, then go to</tt>
+<br><tt>the Windows Control Panel, and select the 'Network'</tt>
+<br><tt>icon. It will give you a list of networking protocols</tt>
+<br><tt>that are set up in Windows on your computer. If you</tt>
+<br><tt>don't see the IPX protocol listed with those options,</tt>
+<br><tt>then click the 'Add' button. Select the 'Protocol'</tt>
+<br><tt>option from the menu and click the new 'Add' button.</tt>
+<br><tt>There will be a list of 'vendors' that pop up, after</tt>
+<br><tt>Windows builds a driver information database. Select</tt>
+<br><tt>'Microsoft' and then click the IPX/SPX protocol option</tt>
+<br><tt>and add it to your computer. Make sure you have your</tt>
+<br><tt>Windows CD with you, as the driver installation will</tt>
+<br><tt>require it. You may need to restart your computer</tt>
+<br><tt>upon completion of the drivers' installation.</tt>
+<p><tt>Alternatively, you may be able to find an archive with</tt>
+<br><tt>the IPX/SPX drivers for Windows at Microsoft's web site,</tt>
+<br><tt>or somewhere else on the Net. If you already have the</tt>
+<br><tt>IPX protocol installed and Abuse isn't detecting it, the</tt>
+<br><tt>first thing to do is to try reinstalling the drivers.</tt>
+<br><tt>If that doesn't work then I don't know what to tell you.</tt>
+<br><tt>Also, please note that Abuse multiplayer does not work</tt>
+<br><tt>in Windows NT.</tt>
+<p><tt>The 'Start a New Game' button at the 'Networking' screen</tt>
+<br><tt>in Abuse will bring up an options menu for how many</tt>
+<br><tt>players can join the game (up to a maximum of 8), and</tt>
+<br><tt>a choice of small, medium, or large deathmatch levels.</tt>
+<br><tt>These levels (S,M,L) are played in a rotation, whose data</tt>
+<br><tt>is stored in small.lsp, medium.lsp, and large.lsp, in the</tt>
+<br><tt>addon/deathmat directory. Both the Options and the LISP</tt>
+<br><tt>files for the level rotations are pretty self-explanatory.</tt>
+<p><tt>If you are joining a game, and someone has already started</tt>
+<br><tt>a new game on the LAN, you should see a button on the first</tt>
+<br><tt>'Networking' screen in Abuse that shares the 'name' of the</tt>
+<br><tt>game that the Server started (by default in fRaBs, this</tt>
+<br><tt>name is 'EvilWumpus').</tt>
+<p><a NAME="Modem" href="#Modem"></a><a NAME="Modem" href="#Modem"></a><a NAME="Modem" href="#Modem"></a><a NAME="Modem" href="#Modem"></a><a NAME="Modem" href="#Modem"></a><a NAME="Modem" href="#Modem"></a><b><tt><a href="#Modem" Name="Modem">Modem-to-Modem
+Play</a></tt></b>
+<p><tt>A modem-to-modem game is not natively supported by the</tt>
+<br><tt>current Abuse engine. There is a workaround, however.</tt>
+<br><tt>Firstly, as with any of these other multiplayer options,</tt>
+<br><tt>you will need the Windows IPX drivers installed on your</tt>
+<br><tt>machine. Secondly, you will need your computer configured</tt>
+<br><tt>as a Dial-Up Server (DUS). I believe Windows 98 has DUS</tt>
+<br><tt>materials included with it, but if you're using Win95 or</tt>
+<br><tt>if these instructions don't apply to Win98 as well, then</tt>
+<br><tt>you will have to download the Win95 DUS addon. You can</tt>
+<br><tt>find it on the Net in more than one place.</tt>
+<p><tt>You and the person you are playing will need to decide</tt>
+<br><tt>who wants to be the DUS and who wants to dial in to the</tt>
+<br><tt>server. Whichever computer has more bandwidth should be</tt>
+<br><tt>the DUS, but if you encounter any problems then you can</tt>
+<br><tt>always switch roles. For this reason it is a good idea</tt>
+<br><tt>to set up both computers as a DUS and also set up short-</tt>
+<br><tt>cuts to dial up the other computer.</tt>
+<p><tt>The DUS archive will warn Win98 that it will not work if</tt>
+<br><tt>you try to install it in Win98, but you can ignore this</tt>
+<br><tt>warning... in my experience it has worked anyways. Upon</tt>
+<br><tt>installation there will be an option in your 'Dial-Up</tt>
+<br><tt>Networking' folder, under the 'Connections' menu, called</tt>
+<br><tt>'Dial-Up Server'. It will open a little window with an</tt>
+<br><tt>option to allow caller access, among other things. By</tt>
+<br><tt>'allowing caller access', you are allowing anyone that</tt>
+<br><tt>knows the password to dial into your computer. Enabling</tt>
+<br><tt>this option also puts a new icon in your taskbar that</tt>
+<br><tt>will stay there forever until you revert to 'no caller</tt>
+<br><tt>access'. Once you allow caller access, you can modify</tt>
+<br><tt>the password with the 'password' button. The 'server</tt>
+<br><tt>type' button will automatically put the server mode to</tt>
+<br><tt>'default' which should work for you.</tt>
+<p><tt>Now, have the person dialing into your DUS to go to the</tt>
+<br><tt>'Dial-Up Networking' window on his computer and make a</tt>
+<br><tt>new connection in which they dial up your home phone number</tt>
+<br><tt>and put in your DUS password. When he/she connects to the</tt>
+<br><tt>appointed DUS, you will hear your modem make some noise.</tt>
+<br><tt>Remember that nobody can dial your server when you are</tt>
+<br><tt>online or on the phone. Alternatively, unless you 'disable</tt>
+<br><tt>caller access' after playing, the computer may 'intercept'</tt>
+<br><tt>incoming phone calls and think they are attempts to log</tt>
+<br><tt>into your DUS. Be careful.</tt>
+<p><tt>Once the DUS is working and a player dials in to you,</tt>
+<br><tt>things work as they normally would... one person runs</tt>
+<br><tt>Abuse and sets up the game (the DUS) and the other person</tt>
+<br><tt>joins this game. Generally the gameplay is decent if</tt>
+<br><tt>the two modems are physically in the same city/area,</tt>
+<br><tt>comparable to Abuse's single player speed on a 486/33.</tt>
+<br><tt>Note that any IPX games (such as Quake) will work with</tt>
+<br><tt>this DUS 'workaround'.</tt>
+<p><a NAME="Internet" href="#Internet"></a><a NAME="Internet" href="#Internet"></a><a NAME="Internet" href="#Internet"></a><a NAME="Internet" href="#Internet"></a><a NAME="Internet" href="#Internet"></a><a NAME="Internet" href="#Internet"></a><a NAME="Internet" href="#Internet"></a><b><tt><a href="#Internet" NAME="Internet">Internet
+Play Using TCP/IP</a></tt></b>
+<p><tt>Abuse was planned to have native TCP/IP support, and this</tt>
+<br><tt>would have been impressive back in 1995 (before Quake</tt>
+<br><tt>even!). It would have been as revolutionary as the</tt>
+<br><tt>developer's name, Crack dot Com... now there is about a</tt>
+<br><tt>hundred million companies with a dot Com in their names, but</tt>
+<br><tt>Crack dot Com was one of the first. But as it stands, only</tt>
+<br><tt>the Linux versions of Abuse and fRaBs have TCP/IP support.</tt>
+<p><tt>Once again, there is a workaround to this. You may have</tt>
+<br><tt>heard of various programs such as Kali which let you play</tt>
+<br><tt>lots of old IPX games over the Internet using TCP/IP. Now</tt>
+<br><tt>there is a free IPX -> TCP/IP program called Kahn, and it</tt>
+<br><tt>even supports Abuse/fRaBs. The Kahn <a href="http://kahn.descent4.org">homepage</a>
+will help you</tt>
+<br><tt>learn the ins and outs of this fine piece of software, as</tt>
+<br><tt>well as provide you a copy of the latest version.</tt>
+<p><tt>Kahn works with a IRC-type client and a little launchbar.</tt>
+<br><tt>You basically add an icon for the fRaBs executable to the</tt>
+<br><tt>launchbar and use the button to run the game. There are</tt>
+<br><tt>some cool icons to use for the fRaBs launchbar in /icons,</tt>
+<br><tt>although it is my experience that Kahn doesn't detect the</tt>
+<br><tt>.ico files here automatically. Thus, in the input box,</tt>
+<br><tt>once you try and go to the /icons directory to select an</tt>
+<br><tt>icon, you need to use the file name of the icon itself.</tt>
+<br><tt>I use frabs2.ico, but there is also a frabs1.ico... what-</tt>
+<br><tt>ever one you like best.</tt>
+<p><tt>Note that this launchbar icon is essential to gameplay</tt>
+<br><tt>over Kahn. You cannot just run Abuse with the Kahn program</tt>
+<br><tt>running; you must click the launchbar icon. If things work</tt>
+<br><tt>out you should be able to set up a multiplayer game and</tt>
+<br><tt>have the other person detect your game as described</tt>
+<br><tt>previously. For me, gameplay has been very slow (about half</tt>
+<br><tt>a frame/sec). I get better performance out of most other</tt>
+<br><tt>Kahn-supported games, for some reason. However, if you know</tt>
+<br><tt>someone close to you that cannot connect to your computer</tt>
+<br><tt>with a local phone call, this option may be best for you.</tt>
+<p><tt>I'm sure Kahn is not the only type of software that does</tt>
+<br><tt>IPX support over TCP/IP, so be sure to try out others.</tt>
+<p><a NAME="Levels" href="#Levels"></a><a NAME="Levels" href="#Levels"></a><a NAME="Levels" href="#Levels"></a><a NAME="Levels" href="#Levels"></a><a NAME="Levels" href="#Levels"></a><a NAME="Levels" href="#Levels"></a><b><tt><a href="#Levels" NAME="Levels">Deathmatch
+Levels</a></tt></b>
+<p><tt>All of the deathmatch levels in fRaBs are crafted by</tt>
+<br><tt>people in the Abuse community, for free. It's a labor</tt>
+<br><tt>of love. :)</tt>
+<p><tt>The levels are listed in the order in which they were</tt>
+<br><tt>added to fRaBs.</tt>
+<p><b><tt>Small Levels</tt></b>
+<p><tt>1. A Little Hot! (alitlhot.spe) by /Messiah\</tt>
+<p><tt>A LSABER_100 ammo is in the center of the level, and</tt>
+<br><tt>is surrounded by switch-activated firebomb turrets</tt>
+<br><tt>which other players can use to kill you.</tt>
+<p><tt>2. Get Cross! (getcross.spe) by /Messiah\</tt>
+<p><tt>An upside down cross with napalm ammo is in the center</tt>
+<br><tt>of a small cave. It's surrounded by lava, and accessible</tt>
+<br><tt>by an automatically-moving platform.</tt>
+<p><tt>3. Spacy Tiny DM (spacytdm.spe) by /Messiah\</tt>
+<p><tt>This one is similar to Get Cross, only there's no lava</tt>
+<br><tt>traps and more firepower. The Firebombs are at the</tt>
+<br><tt>highest precipice.</tt>
+<p><tt>4. Red-Green DM (redgrndm.spe) by /Messiah\</tt>
+<p><tt>Small level with red foreground and background, and green</tt>
+<br><tt>flyers that respawn and wreak havoc.</tt>
+<p><tt>5. Tree-Small (treesmal.spe) by /Messiah\</tt>
+<p><tt>Trees and caves and a little pocket full of ammo and goodies.</tt>
+<p><tt>6. Small Bugs (bugssml.spe) by /Messiah\</tt>
+<p><tt>Small portion of the Bugs level, with rearranged ammunition.</tt>
+<p><tt>7. King of the Cross (kotcross.spe) by /Messiah\</tt>
+<p><tt>Fly powerups abound in this battle of flying grenades vs.</tt>
+<br><tt>firebomb and lightsaber.</tt>
+<p><tt>8. Ruins (ruins.spe) by Leon</tt>
+<p><tt>Well-balanced DM level with lots of ammunition. Leon did an</tt>
+<br><tt>awesome job with the artwork.</tt><tt></tt>
+<p><tt>9. Occult (occult.spe) by Leon</tt>
+<p><tt>Another instance of Leon's new artwork. Don't fall too far or</tt>
+<br><tt>the firebomb turrets will get you. Although sparsely decorated,</tt>
+<br><tt>there is lots of ammo and it looks like a fun, balanced level.</tt>
+<br><tt>Way to go Leon!</tt>
+<p><tt>10. Cistern (cistern.spe) by Leon</tt>
+<p><tt>A sewer occupies the bottom portion of this level, while the</tt>
+<br><tt>midsection has respawning POWER_FLY items that make getting</tt>
+<br><tt>around a breeze. Like Leon's other levels, he has a gratuitous</tt>
+<br><tt>amount of frisbees, rockets, and grenades. Especially here,</tt>
+<br><tt>the grenades are a handy weapon for drop-in attacks.</tt>
+<p><b><tt>Medium Levels</tt></b>
+<p><tt>1. Spacy Medium DM (spacymed.spe) by /Messiah\</tt>
+<p><tt>This is not a larger version of Spacy Tiny DM. Vertically-</tt>
+<br><tt>oriented level with invisibility. The emphasis is on sneaking</tt>
+<br><tt>around. This one took a while... lots of attention to the</tt>
+<br><tt>little details and sound effects.</tt>
+<p><tt>2. Teardrop (teardrop.spe) by /Messiah\</tt>
+<p><tt>Circle-shaped level with a smaller circle inside the bigger</tt>
+<br><tt>one. At the bottom of each circle is flowing water that can</tt>
+<br><tt>cause damage. Like the level before it, the POWER_SNEAKY can</tt>
+<br><tt>come in handy. Plenty of room for strategic attacks here.</tt>
+<p><tt>3. Aquarius (aquarius.spe) by /Messiah\</tt>
+<p><tt>A blueish level with some more water. This is a level for</tt>
+<br><tt>people who like to fly, and for people who don't mind having</tt>
+<br><tt>a bunch of PUSHER arrows push them everywhere. There's one</tt>
+<br><tt>single switch near the top of the level that affects access</tt>
+<br><tt>all over the map, as well as switching on and off a pair of</tt>
+<br><tt>gun turrets. Designed by my roommate, created by me. :)</tt>
+<p><tt>4. Mad Race (madrace.spe) by /Messiah\</tt>
+<p><tt>You'll want to try this level! It's centered around three</tt>
+<br><tt>POWER_FAST items, and the only other objects are Hearts and</tt>
+<br><tt>Napalm. :) Run fast, torch your opponents, and watch out for</tt>
+<br><tt>the lightning. Way different from the other levels in fRaBs.</tt>
+<p><tt>5. Laaz Rockit (laazrckt.spe) by /Messiah\</tt>
+<p><tt>Named after an old metal band, this level has rockets and</tt>
+<br><tt>frisbee ammo everywhere, and only a pinch of lightsaber. Tip:</tt>
+<br><tt>If someone camps near the lightsaber ammo, remember that the</tt>
+<br><tt>rockets have longer range than any other weapon.</tt>
+<p><tt>6. Medium Bugs (bugsmed.spe) by /Messiah\</tt>
+<p><tt>This is about half of the original Bugs level, with rearranged</tt>
+<br><tt>ammunition. A bit smaller than the other medium levels.</tt>
+<p><tt>7. 00DM (00dm.spe) by /Messiah\</tt>
+<p><tt>Ever played a Quake deathmatch at the 'difficulty select'</tt>
+<br><tt>level? You've got the idea here then. :)</tt>
+<p><b><tt>Large Levels</tt></b>
+<p><tt>1. Bugs (bugs.spe) by /Messiah\</tt>
+<p><tt>This is THE deathmatch level. Every power item is included.</tt>
+<br><tt>There's a few secrets, and lots of space (most of it vertical)</tt>
+<br><tt>to cover. Features respawning ROB1s... make sure you kill them,</tt>
+<br><tt>because you'll like what you find if you get to their source. :)</tt>
+<br><tt>Also, there's some secrets on the highest ceiling... keep shooting</tt>
+<br><tt>the ceiling, and wait at the very bottom of the level for that</tt>
+<br><tt>slowly-respawning POWER_FLY.</tt>
+<p><tt>2. Limestone (limeston.spe) by /Messiah\</tt>
+<p><tt>A maze of caves. The POWER_FAST will do you well to get the other</tt>
+<br><tt>power items. Keep in mind that the further in the mine you go down,</tt>
+<br><tt>the easier it will be to get back up to the top... it's a bit of</tt>
+<br><tt>a paradox. :)</tt>
+<p><tt>3. JDM3 (jdm3.spe) by /Messiah\</tt>
+<p><tt>My first shot at a deathmatch level. It centers around the</tt>
+<br><tt>POWER_FLY object, but there is also a POWER_HEALTH and a</tt>
+<br><tt>POWER_SNEAKY. The POWER_FLY is the key to controlling the</tt>
+<br><tt>level, so be quick.</tt>
+<p><font color="#FFFFFF">Justin Cassidy</font>
+<br><a href="mailto: messiah15@*spam-me-and-die*dog.com">messiah15@dog.com</a>
+<p><img SRC="../images/ssig.GIF" NOSAVE height=17 width=20>
+</body>
+</html>

@@ -1,0 +1,1702 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Justin Cassidy">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>The Free Abuse Project</title>
+</head>
+<body text="#FFFFFF" bgcolor="#000000" link="#C0C0C0" vlink="#666666" alink="#C0C0C0" background="../images/jmc.jpg" nosave>
+<font color="#FFFFFF"><u><font size=+4>fRaBs</font></u><i>&nbsp;
+objects</i></font>
+<br><a href="../index.html">Main</a><i><font color="#FFFFFF"> - </font></i><a href="updates.html">Updates</a><i><font color="#FFFFFF">
+- </font></i><a href="single.html">Single Player</a><i><font color="#FFFFFF">
+- </font></i><a href="dm.html">Deathmatch</a><i><font color="#FFFFFF">
+- </font></i><a href="editor.html">Level Editing</a><i><font color="#FFFFFF">
+- </font></i><a href="faq.html">FAQ</a><i><font color="#FFFFFF"> - </font></i><a href="credits.html">Credits</a><i><font color="#FFFFFF">
+- </font></i><a href="links.html">Links</a>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[2.d] Object List</tt>
+<br><tt>------------------------------------------------------------------------</tt>
+<p><tt>Some objects which have on/off states will change their color to
+reflect</tt>
+<br><tt>these states. Green, of course, means on, while red means off.
+The</tt>
+<br><tt>following objects do this :</tt>
+<br><tt>&nbsp; <a href="#Sensor">Sensor</a></tt>
+<br><tt>&nbsp; <a href="#D">Death_respawner</a></tt>
+<br><tt>&nbsp; <a href="#D">Death_sensor</a></tt>
+<br><tt>&nbsp; <a href="#G">All of the logic gates</a></tt>
+<br><tt>&nbsp; <a href="#I">Indicator</a></tt>
+<br><tt>&nbsp; <a href="#Switch">Switch</a></tt>
+<p><tt>There are a few objects that can be confusingly named in fRaBs,
+such as</tt>
+<br><tt>ANTCRACK2 and ANT_CRACK_NEW, and other variations. These variations
+will</tt>
+<br><tt>be described under one listing, such as <a href="#ANT_CRACK">ANT_CRACK</a>.
+The new ants such as</tt>
+<br><tt>the ANT_JUMP and the ANT will all be listed under <a href="#ANT_ROOF">ANT_ROOF</a>,
+the original</tt>
+<br><tt>object in which these slightly different objects are derived from.</tt>
+<p><tt>Another important note to remember with lots of these enemies is
+that you</tt>
+<br><tt>can modify their AI to have them shoot a variation of weapon types,
+which</tt>
+<br><tt>are often referred to as ai_types. A list of the various ai_types
+can be</tt>
+<br><tt>found with the description of the ANT_CRACK objects.</tt>
+<p><tt>Now let's take a look at the objects.</tt>
+<p><tt><font size=+2><a href="#A">A</a> - <a href="#B">B</a> - <a href="#C">C</a>
+- <a href="#D">D</a> - <a href="#E">E</a> - <a href="#F">F</a> - <a href="#G">G</a>
+- <a href="#H">H</a> - <a href="#I">I</a> - <a href="#J">J</a> - K - <a href="#L">L</a>
+- <a href="#M">M</a></font></tt>
+<br><tt><font size=+2><a href="#N">N</a> - <a href="#O">O</a> - <a href="#P">P</a>
+- Q - <a href="#R">R</a> - <a href="#S">S</a> - <a href="#T">T</a> - U
+- V - <a href="#W">W</a> - X - Y - Z</font></tt>
+<p><a NAME="A"></a><tt>ALIEN_DRONE (variations)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is an alien drone
+taken from the Aliens movies, for the Aliens</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Abuse addon. It acts
+similar to the ant objects, although this one has</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the ability to push
+the player around upon contact and it does not fire</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a weapon, although in
+the future it may.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The ALIEN_WARRIOR is
+a larger version of the alien drone.</tt>
+<p><tt>AMBIENT_SOUND (variations)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AMBIENT_SOUNDs are played
+continuously with a user definable delay</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and volume. They have
+a range of 500 pixels. Volume is highest at the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; point of origin, and
+diminishes with distance.&nbsp; You can use the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; number keys to change
+the sound type quickly.&nbsp; Use SHIFT-number key</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to get more of the sound
+effects.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to a
+sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AMBIENT_SOUND2 uses different
+sound effects than AMBIENT_SOUND. These</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sounds are located in
+addon/leon.</tt>
+<p><a NAME="ANT_CRACK"></a><tt>ANT_CRACK (variations)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An ANT_CRACK is an irregular
+object from which any number and type of</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; aliens can come bursting
+forth. The user can set the number and type</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of aliens by accessing
+the extended AI options. The alien types</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (ai_types) are as follows
+:</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 = yellow-white fast
+Laser shot</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 = golden-orange slow
+Laser shot</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 = Grenade</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 = Rocket</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4 = Plasma</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5 = Fire Bomb</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 = Death Frizbee (may
+cause errors)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7 = Laser Saber</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8 = Nothing</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 = Pulse shot (Flyers
+shoot these... with ants the game may crash)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10 = Nothing</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11 = quick white Laser shot</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12 = three white Laser shots</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13 = five white Laser shots</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 50 = green 'acid' laser (may/may
+not work)</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; You can also press a
+number key while the cursor is on the ant to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; quickly change the type
+of weapon it fires.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will NOT be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (Leon's variations)</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A couple of interesting
+takes on the ANT_CRACK idea are the 'anthole'</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objects. The ANTHOLE
+and the ANTCRACK2 are objects that will create a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; new ant for every ant
+you kill, allowing for a max ants variable that</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tells the ANTHOLE that
+if there are less than N objects on screen, it</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; needs to spawn another
+ant. There is also a delay variable that will</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; make the ANTHOLE wait
+for a certain period of time before the next ant</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is created. Like the
+ANT_CRACK, the ants these 'anthole' objects spawn</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; have a user-definable
+ai_type. The ANTCRACK2 looks like a regular</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ANT_CRACK and has the
+ants jumping out of a crack, while the ANTHOLE</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; spawns falling ants,
+similar to an ANT_ROOF with the hiden variable</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; set to 1.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It is important to distinguish
+the ANTCRACK2 from the ANT_CRACK_NEW</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; object, which acts exactly
+like a normal ANT_CRACK except that the ants</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; it spews leave corpses
+behind when they die. Finally, there is one last</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; object, the ANT_CRACK_HIDDEN,
+which is an invisible version of the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; normal ANT_CRACK. During
+edit mode, both of these are indistinguishable</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; from regular ANT_CRACKs,
+but in the case of the ANT_CRACK_HIDDEN, it</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is invisible during
+actual gameplay.</tt>
+<p><a NAME="ANT_ROOF"></a><tt>ANT_ROOF (variations)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An ANT_ROOF is an alien
+whose normal state is a invulnerable coccon.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Usually placed on the
+roof, hence its name. It will activate when</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the player comes within
+range when UNDERNEATH it. It will not activate</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if the player is above
+it, even when in range. An ANT_ROOF can be of</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; any type of alien. To
+change its type, place the mouse cursor over the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; alien of your choice,
+watching for a grey bounding box to be drawn.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Once you are over the
+alien press any of the number keys from 1-7 to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; change the alien type,
+refer above to alien type and number. For the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; newer alien types, go
+to the AI menu and change the ai_type field</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; manually. The hiden
+variable can be used to make the ant cocoon</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; invisible until activated;
+this function replaces the older object, the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; HIDDEN_ANT, that was
+found in previous versions of Abuse.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (Leon's variations)</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are many new variations
+on the ANT_ROOF concept, designed for ants</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; that have different
+patterns of behavior. There is an object called ANT</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; that acts the same as
+an ANT_ROOF, and even behaves the same, but it has</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the probability of leaving
+a bloody corpse when it dies, rather than just</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exploding like your
+run-of-the-mill ANT_ROOF. If you like the corpses that</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ants leave behind, you
+may want to start using the ANT object rather than</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the ANT_ROOF for your
+levels. Keep in mind, however, that these new</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; variations and other
+objects will only work when you play your level in</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fRaBs (or a version
+of Abuse that has the new LISP integrated correctly).</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Some of the new ants,
+such as the ANT_JUMPER, actually act differently. As</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the name would suggest,
+these ones like to hop around. Some names aren't</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; as obvious, however.
+The ANT_TOUGH is an ant that does not 'fall back'</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when it is shot, and
+it fires in quick, unpredictable bursts. In addition,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this one doesn't climb
+on walls and it has a tougher skin. An ANT_TOUGH</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with 20 health will
+be much harder to kill than an ANT_ROOF with similar</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; attributes. Look in
+/addon/leon/ and run leon.bat to see some levels that</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; use grey ANT_TOUGH objects
+as end-of-level bosses.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The ANT_GREATER2 is a
+faster version of the ANT_ROOF that does not get</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; immobilized when shot
+and doesn't climb on walls, similar to the ANT_TOUGH.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; However, it doesn't
+shoot as much as the ANT_TOUGH. They're a suprise pest</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; though, because the
+player will be wondering why the ants are moving so</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; quickly all of a sudden.
+:)</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The ANT_PRED is an ant
+that is invisible to the player. Think of an</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ANT_ROOF that got the
+POWER_SNEAKY item and you have an ANT_PRED. You can</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; get a similar effect
+from the ANT_ROOF by setting the fade variable to 15</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in it's AI.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; One interesting characteristic
+of these new ANT_ROOF variations is the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; new variables in their
+AI, called 'class specific var1'(2)(3). The effects</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of these variables are
+not fully known/documented. The first class specific</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; variable is interesting,
+though. By setting the ant's health to X and the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'class specific var1'
+to 20, the ant's health actually becomes 20X. This is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; useful, because previously
+the ants had a max health of something in the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12,000 range, but by
+using a large 'class specific var1' there is no real</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; limit to how much life
+you can give an ant. This is one way to offset the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; strength of the BFG
+in a level - simply give the ants a whole lot of health</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; by using the different
+variations and their class var.</tt>
+<p><tt>ANT_SHIP</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The ANT_SHIP is a flying
+behemoth, driven by a single tiny ant. It has a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; customizable ai_type,
+but once it is shot it will cycle through a few</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; different ai_types until
+it dies. Watch out, because before it dies</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the player is subject
+to be shot with firebomb. It can be a formidable</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; opponent.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><a NAME="B"></a><tt>BIG_BOMB</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A really big bomb which
+is triggered by a sensor or switch.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It has a user definable
+delay which can be set in its AI.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can kill the player
+if they are in range of its blast, which is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; not very large. They
+can be chained together by linking them</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sequentially. If placed
+with no links, the bomb will explode on its</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; own.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>BLOCK</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A BLOCK is just an object
+which can be hurt, but otherwise</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; only blocks the player.
+The player can walk on BLOCKs. BLOCKs have a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; health of 30.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It ignores all links.</tt>
+<p><tt>BOULDER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A BOULDER is a huge,
+spiked ball. If dropped from a height, it</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; will bounce on the floor
+doing damage to anything beneath it,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; including aliens, HIDDEN
+tiles, players, and anything else</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; capable of being hurt.
+Its x and y velocity can be modified in</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; its AI. It can be killed.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>BOMB</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a smaller version
+of the BIG_BOMB and does the same thing,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; but has a weaker and
+smaller explosion. See BIG_BOMB above.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><a NAME="C"></a><tt>CONC</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a mine. When
+touched by the player, it explodes, causing</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; damage. Otherwise it
+will just sit there waiting for the player.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Typically placed on
+the floor.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<br>&nbsp;
+<p><tt>CONC_AIR</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a air mine.
+Essentially the same as the CONC mine, except</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; it looks different.
+Typically placed in the air.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><a NAME="D"></a><tt>DEATH_RESPAWNER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The DEATH_RESPAWNER
+will spawn a new object at the location of another</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; object, when that object
+dies. For example, if linked to an alien, a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user chosen object will
+appear where that alien died. This can be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; useful for creating
+types of puzzles where the player must kill a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; certain alien. This
+object can only be used on the alien objects.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The linking order is
+as follows:</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+First, link the DEATH_RESPAWNER to the object you want to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+be respawned.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next, link the DEATH_RESPAWNER to any number of aliens (ANTs).</tt>
+<p><tt>DEATH_SENSOR</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object, like all
+other sensors, has two states : on and off.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Whenever the object
+this sensor is linked to dies, or is deleted</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (which is the case with
+ammo and health), the sensor will switch to an</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; on state. It can have
+multiple links. If it does, the sensor will</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; switch to the on state
+only when all of the objects it has been linked</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to are dead or deleted.</tt>
+<p><tt>DEATH_SKULL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; These rotating skulls
+fly around, occupied by an odd whirring sound.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An example of how they
+work can be found by loading the level t_skull.spe</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in addon/claudio. They
+act similar to the ANT_SHIP and the DEATH_UMBRELLA</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; but there are a few
+important differences. Firstly, they only shoot the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pulse Shot and when
+weakened, they resort to the Firebomb. Upon being shot</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or damaged, they are
+enveloped in fire, but they are not dead yet. Keep</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shooting at the flames
+before they get a chance to pound you with the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Firebomb.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>DEATH_UMBRELLA</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (Ed. Note: Out of all
+the new addons and enemies, this one is probably</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; my favorite... it's
+just cool looking, and it hovers perfectly!)</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a classic enemy
+- a 3d-ish UFO flies around and shoots you</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with varying weaponry.
+In fRaBs, the new Level00 starts you in the midst</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of a forest (Justin's
+favorite foreground/background art) and you're</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; being approached by
+the DEATH_UMBRELLA, with it's distinct metal rattling</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (Justin's favorite enemy).
+It acts very similar to the ANT_SHIP in that</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; it has an ai_type option,
+but it shoots varying weapons. However, the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; varying weapons it shoots
+are different than the ANT_SHIP... it cycles</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; through the weapons
+in a different order, although it ends on a hot note:</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the firebomb. Therefore,
+caution is advised.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>DECO_ANTBODY (variations)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In the event that you
+wish to decorate your levels with ant corpses,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fRaBs has a wide variety
+of objects that will suit your needs. Use the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ai_type variable to
+change their color.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DECO_ANTBODY - Some guts
+and a leg.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DECO_ANTBODY2 - A sitting
+ant (presumably dead).</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DECO_ANTBODY3 - The
+pulsating corpse of a slain ant.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DECO_ANTHANG - A tattered
+ant hanging from above.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DECO_ANTSIT - This sitting
+ant nods it's head every now and again.</tt>
+<p><tt>DFRIS_ICON10</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the large ammo
+unit for the Death Frizbee. It gives the player</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10 additional units
+of ammo. Like all ammo, if it is connected to a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sensor or switch which
+is off, the ammo will be invisible, untouchable,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and unaffected by gravity,
+until the sensor or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>DFRIS_ICON4</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the small ammo
+unit for the Death Frizbee. It gives the player</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4 additional units of
+ammo. Like all ammo, if it is connected to a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sensor or switch which
+is off, the ammo will be invisible, untouchable,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and unaffected by gravity,
+until the sensor or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>DRAY_ICON4</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the small ammo
+unit for the Death Ray. It gives the player</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4 additional units of
+ammo. Like all ammo, if it is connected to a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sensor or switch which
+is off, the ammo will be invisible, untouchable,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and unaffected by gravity,
+until the sensor or switch turns on. Note</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; that putting this weapon
+in a level may severely change the gameplay</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; balance of the level.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>DRAY_ICON8</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the large ammo
+unit for the Death Ray. It gives the player</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8 additional units of
+ammo. Like all ammo, if it is connected to a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sensor or switch which
+is off, the ammo will be invisible, untouchable,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and unaffected by gravity,
+until the sensor or switch turns on. Note</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; that putting this weapon
+in a level may severely change the gameplay</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; balance of the level.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>DROID</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The DROID is a robot
+that looks somewhat like the player. When activated</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; it walks towards the
+player and fires a volley of shots. The weapon it</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shoots is customizable
+in the AI, as well as the speed that it walks.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><a NAME="E"></a><tt>END_GAME</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When activated by a
+sensor or switch, this object will make the current</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; game quit to the original
+Abuse ending screen. fRaBs has no ending, so</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this object is farely
+useless. If you want to use it in a level, though,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; it looks best in conjunction
+with the palrotore palette.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active (generally not a good thing).</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>END_OF_S</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A pointless graphic
+that says 'End of Shareware'. I might remove</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; it someday.</tt>
+<p><a NAME="F"></a><tt>FACE_HUGGER (variations)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a little spider-like
+creature taken from the Aliens movies, for</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the Aliens Abuse addon.
+It acts similar to the ant objects, although</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this one has the ability
+to push the player around upon contact and it</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; does not fire a weapon.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Some related objects
+are the FACE_HUGGER_EGG, which will hatch from an</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; egg when a player approaches,
+and the FACE_HUGGER_JAR_ALIVE, which will</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; release a face hugger
+when shot. Please note that the other face hugger</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objects, the FACE_HUGGER_EGG_HATCHED,
+FACE_HUGGER_EGG_UNHATCHED, and the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FACE_HUGGER_JAR_DEAD
+are only decorative objects, and do not spawn actual</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; face huggers, although
+they look exactly the same as the objects that do</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when placed in a level.</tt>
+<p><tt>FBOMB_ICON1</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the small ammo
+unit for the Fire Bomb. It gives the player 1</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; additional unit of ammo.
+Like all ammo, if it is connected to a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sensor or switch which
+is off, the ammo will be invisible, untouchable,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and unaffected by gravity,
+until the sensor or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>FBOMB_ICON5</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the large ammo
+unit for the Fire Bomb. It gives the player 5</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; additional units of
+ammo. Like all ammo, if it is connected to a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sensor or switch which
+is off, the ammo will be invisible, untouchable,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and unaffected by gravity,
+until the sensor or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>FIRE_C</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a wall of fire
+that damages the player when touched. It acts</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; similar to LAVA only
+with more range.</tt>
+<p><tt>FLYER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a flying robot,
+which can fire any of the 7 weapon types.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To change the weapon
+type, use the same method used for the ANT_ROOF.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>FORCE_FIELD</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object is a wall
+of energy which blocks the character from</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; crossing. This wall
+can be up to one screen in height. Position the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; object at the top of
+where you want the wall.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active (on or off depending).</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><a NAME="G"></a><tt>GATE_AND</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Logic gates modify their
+state depending upon the states of their</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; links. A GATE_AND will
+turn on only when all of its links are in</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the on state. This logic
+gate can have multiple links.</tt>
+<p><tt>GATE_DELAY</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Logic gates modify their
+state depending upon the states of their</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; links. A GATE_DELAY
+reflects the state of its link, however, it has</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a user definable delay
+before it switches states. This logic gate</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; can have only one link.</tt>
+<p><tt>GATE_NOT</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Logic gates modify their
+state depending upon the states of their</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; links. The state of
+a GATE_NOT will always be the opposite of the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; state of its link. A
+GATE_NOT only supports one link.</tt>
+<p><tt>GATE_OR</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Logic gates modify their
+state depending upon the states of their</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; links. A GATE_OR will
+be in the on state whenever any one of its</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; links are on, and is
+off only when all of its links are off. This</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; logic gate supports
+multiple links.</tt>
+<p><tt>GATE_PULSE</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Logic gates modify their
+state depending upon the states of their</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; links. A GATE_PULSE
+will, when switched on by its link, pulsate</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; between on and off states,
+with a user definable delay between</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; off states. This gate
+only supports one link.</tt>
+<p><tt>GATE_XOR</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Logic gates modify their
+state depending upon the states of their</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; links. A GATE_XOR switches
+on if and only if an odd number of its</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; links are on. That is,
+if there are two links, and one is on while</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the other is off, the
+GATE_XOR will be on. If they were both off or</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; both on, then the GATE_XOR
+would be off. This gate supports multiple</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; links.</tt>
+<p><tt>GREEN_FLYER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a green flying
+robot, which can fire any of the 7 weapon</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; types. See ANT_ROOF
+for a description of how to change the weapon</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; type.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>GRENADE_ICON10</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the large ammo
+unit for the Grenade. It gives the player 10</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; additional units of
+ammo. Like all ammo, if is connected to a sensor</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or switch which is off,
+the ammo will be invisible, untouchable, and</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unaffected by gravity,
+until the sensor or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>GRENADE_ICON2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the small ammo
+unit for the Grenade. It gives the player 5</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; additional units of
+ammo. Like all ammo, if is connected to a sensor</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or switch which is off,
+the ammo will be invisible, untouchable, and</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unaffected by gravity,
+until the sensor or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><a NAME="H"></a><tt>HEALTH</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a heart icon.
+It increases your health by 5-20 points,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; depending on difficulty
+level.</tt>
+<p><tt>HIDDEN_BACK_METAL, HIDDEN_BACK_METAL_BIG</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; These objects can work
+as decor to hide other foreground objects from</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the player's sight.
+Other than that, they do nothing.</tt>
+<p><tt>HIDDEN_WALL1</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Hidden objects are used
+to hide secrets. They can be destroyed using</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; any of your weapons.
+Hidden walls can be made indestructible by</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; linking them up to sensors
+or switchs. When the switch or sensor</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; turns on, the hidden
+wall will self destruct, causing a lot</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of damage to any aliens,
+and/or other hidden walls surrounding</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; it, but no damage to
+the player. This hidden wall looks like</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a single wall tile.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>HIDDEN_WALL2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This hidden wall looks
+like a roof tile.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>HIDDEN_WALL3</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This hidden wall looks
+like a gray block.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>HIDDEN_WALL4</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This hidden wall looks
+like a floor tile.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>HIDDEN_WALL5</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This hidden wall looks
+like a floor-to-wall connector.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>HIDDEN_WALL_2x2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This hidden wall looks
+like a 2x2 gray block.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>HIDDEN_WALL_3FLR</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This hidden wall looks
+like a 3 tile wide floor tile.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>HIDDEN_WALL_3TOP</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This hidden wall looks
+like a 3 tile wide roof tile.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>HIDDEN_WALL_3WALL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This hidden wall looks
+like a 3 tile wide wall tile.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>HIDDEN_WALL_AFLR</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This hidden wall looks
+like an alien floor tile.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><a NAME="I"></a><tt>INDICATOR</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object switches
+its color between red and green when it turns off</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and on. It's useful
+for showing the player info about sensor states</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or switch states.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to a
+sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><a NAME="J"></a><tt>JUGGER (variations)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a walking or
+stationary robot which tosses grenades.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Its AI modifies whether
+is walks or is stationary, and the angle</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at which it throws the
+grenades.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The DROID_JUGGER looks
+like a DROID but acts like a JUGGER. Hmmm...</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a robot with an identity
+crisis?</tt>
+<p><a NAME="L"></a><tt>LADDER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LADDERs allow the player
+to climb up and down. The LADDER must be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; linked to another object
+to work. The LADDER marks the upper left</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; corner of the box the
+player can climb up in, and the other object</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; marks the lower right
+corner. When a player enters this box, they</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; can climb the ladder
+by pressing up. Note that a player is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; considered to be in
+this box if his feet are.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object requies one
+and only 1 link to another object</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (usually a marker) to
+function.</tt>
+<p><tt>LAMP_BIG, LAMP_EX1</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The LAMP_BIG is a decorative
+lamp, while the LAMP_EX1 is a lamp that</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; can be shot/destroyed.
+A sample level that uses both objects is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; included in addon/claudio/t_lamp.spe,
+illustrating the lighting and</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; other possibilities
+that can be used for these objects.</tt>
+<p><tt>LAVA</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LAVA constantly does
+damage to the player, for as long as they are</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; touching.</tt>
+<p><tt>LAVA2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LAVA2 damages quicker
+than the regular LAVA, and can actually</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; keep the player locked
+down.</tt>
+<p><tt>LIGHTHOLD</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A LIGHTHOLD allows other
+objects to have lights attached to them.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Simply link the LIGHTHOLD
+to the light and to the object you wish to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hold the light. The
+order in which these links are created does not</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; make a difference. The
+light will now follow the other object wherever</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; it goes. Remember to
+use the second method of linking for lights.</tt>
+<p><tt>LIGHTIN</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object hurts the
+player when the lighting flashes. The speed is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user definable.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>LRESTART_POSITION</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'Leon's Restart Position'
+is similar to the normal one, except that</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; you cannot use them
+to refill your health unless you play on the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; easiest difficulty level.
+It is a well-known trick that a normal</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RESTART_POSITION does
+not save your health information, and upon</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dying and returning
+to the save point, your health is restored. It</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; looks identical to the
+normal RESTART_POSITION.</tt>
+<p><tt>LSABER_ICON50</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the small ammo
+unit for the Laser Saber. It gives</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the player 50 additional
+units of ammo. Like all ammo, if it is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connected to a sensor
+or switch which is off, the ammo will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; invisible, untouchable,
+and unaffected by gravity, until the sensor</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>LSABER_ICON100</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the large ammo
+unit for the Laser Saber. It gives</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the player 100 additional
+units of ammo. Like all ammo, if it is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connected to a sensor
+or switch which is off, the ammo will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; invisible, untouchable,
+and unaffected by gravity, until the sensor</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt><a href="mario.html">MARIO_OBJECTS</a></tt>
+<p><a NAME="M"></a><tt>MARKER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An object which does
+nothing, but can hold links for objects</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; which need to be linked
+to other objects such as the LADDER.</tt>
+<p><tt>MBULLET_ICON20</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the large ammo
+unit for the Laser Rifle. It gives</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the player 20 additional
+units of ammo. Like all ammo, if it is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connected to a sensor
+or switch which is off, the ammo will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; invisible, untouchable,
+and unaffected by gravity, until the sensor</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>MBULLET_ICON5</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the small ammo
+unit for the Laser Rifle. It gives</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the player 5 additional
+units of ammo. Like all ammo, if it is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connected to a sensor
+or switch which is off, the ammo will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; invisible, untouchable,
+and unaffected by gravity, until the sensor</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>MEDKIT</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a little medkit.
+It increases your health by 5-20 points,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; depending on difficulty
+level.</tt>
+<p><a NAME="N"></a><tt>NEXT_LEVEL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When the player activates
+the NEXT_LEVEL object (by pressing the down</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; arrow while touching
+it), it will take the player to a level listed as</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a number in its AI.
+To use the NEXT_LEVEL object it is necessary for</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the level to be in the
+levels directory and use the naming convention</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "levelXX.spe", where
+XX is any number from 0 to 99.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It is recommended that
+you double link the NEXT_LEVEL to its top,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NEXT_LEVEL_TOP. To double
+link something means to link one object to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; another and that second
+object back to the first.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (Ed Note. I assume that
+Crack Dot Com was going to add in a special</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; animation for when the
+player exited, but they never got around to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; making it... so this
+last note can be disregarded, as can the note</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; found below)</tt>
+<p><tt>NEXT_LEVEL_TOP</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The top part to the
+NEXT_LEVEL. Should be linked to a NEXT_LEVEL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; object.</tt>
+<p><a NAME="O"></a><tt>OBJ_HOLDER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object is similar
+to the LIGHTHOLD, but instead of attaching</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a light to an object,
+it glues together two objects. This object is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sensitive to the ordering
+of the links. The first link is the object</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to be held. The second
+link is the object which is holding the first.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There is an optional
+third link which, if it exists, will act as a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; trigger for the OBJ_HOLDER.
+The object will be held only if this link</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is on.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Note that if the first
+or second link is broken (which will happen if</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the object dies or is
+deleted), the links will reorder themselves.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The OBJ_HOLDER has modifiable
+AI for the displacement of the first</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; object with respect
+to the second object.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An OBJ_HOLDER with no
+links or one link will be deleted by the engine.</tt>
+<p><tt>OBJ_MOVER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object allows the
+level designer create paths for objects to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; move on. It accepts
+two links. The first link marks the endpoint</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for the path, and the
+second is the object which is to be moved.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; By linking OBJ_MOVERs
+in a circle, the object can be kept moving</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; indefinitely. When the
+OBJ_MOVER moves the object to its</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; destination, the link
+is then transfered to the end object, which</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in a chain of OBJ_MOVER
+will then move the target object to the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; next link in the chain.
+A chain composed of multiple OBJ_MOVERS</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; can hold multiple target
+objects, one for each pair of OBJ_MOVERS.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; You can modify the speed
+at which it will move in its AI.</tt>
+<p><a NAME="P"></a><tt>PLASMA_ICON20</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the small ammo
+unit for the Plasma Beam. It gives</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the player 20 additional
+units of ammo. Like all ammo, if it is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connected to a sensor
+or switch which is off, the ammo will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; invisible, untouchable,
+and unaffected by gravity, until the sensor</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>PLASMA_ICON50</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the large ammo
+unit for the Plasma Beam. It gives</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the player 50 additional
+units of ammo. Like all ammo, if it is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connected to a sensor
+or switch which is off, the ammo will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; invisible, untouchable,
+and unaffected by gravity, until the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sensor or switch turns
+on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>POINTER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An object which does
+nothing, but can be used to draw the players</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; attention to certain
+points in the level. It looks like a golden</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; arrow.</tt>
+<p><tt>POWER_FAST</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Power icons, when collected,
+augment the player's abilities. The</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; player can only have
+one power icon at a time. All power icons</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; are activated by pressing
+the right mouse button.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This power icon will
+allow the player to move twice as fast as</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; normal and jump higher.</tt>
+<p><tt>POWER_FLY</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Power icons, when collected,
+augment the player's abilities. The</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; player can only have
+one power icon at a time. All power icons</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; are activated by pressing
+the right mouse button.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This power icon will
+allow the player to fly.</tt>
+<p><tt>POWER_HEALTH</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Power icons, when collected,
+augment the player's abilities. The</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; player can only have
+one power icon at a time. All power icons</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; are activated by pressing
+the right mouse button.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This power icon will
+allow the player to have 200 health points.</tt>
+<p><tt>POWER_NONE</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Most power icons, when
+collected, augment the player's abilities.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This one is an exception.
+It is invisible during gameplay, but when</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; walked across, the screen
+flashes black momentarily. This can be a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; useful tool if your
+level's gameplay can be augmented by having the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; player lose a power
+item without gaining another one... i.e. after a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flying section, you
+use a POWER_NONE to make the player lose the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flying ability so movement
+through the corridors is easier.</tt>
+<p><tt>POWER_SNEAKY</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Power icons, when collected,
+augment the player's abilities. The</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; player can only have
+one power icon at a time. All power icons</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; are activated by pressing
+the right mouse button.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This power icon will
+allow the player to become paritally invisible.</tt>
+<p><tt>PUSHER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object will push
+the player in the direction of the arrows.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The level designer can
+change the strength at which it pushes the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; player in its AI.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><a NAME="R"></a><tt>RESPAWNER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object, like the
+DEATH_RESPAWNER, spawns new objects. It has but</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; one link, the object
+it will respawn. There is a user definable delay</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; between respawns in
+its AI. An object is respawned only if it is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; deleted once spawned.
+The object will be spawned at the location of</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the RESPAWNER. One use
+of this object is to have infinite sources of</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ammo and health in network
+games.</tt>
+<p><tt>RESTART_POSITION</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object functions
+as a user activated save position in the game.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When the levels tend
+to be very large, it is necessary to put in</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RESTART_POSITIONs, so
+that if the player dies, they do not have to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; start from the very
+beginning again. In general, the more</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RESTART_POSITIONs a
+level has the easier it is.</tt>
+<p><tt>ROB1</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A large robot which
+can chase you down halls. It has large spinning</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; blades which are situated
+in front of it, that do a decent amount of</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; damage. It has user
+definable speed and health settings in its AI.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>ROCKET_ICON2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the small ammo
+unit for the Rocket Launcher. It gives</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the player 2 additional
+units of ammo. Like all ammo, if it is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connected to a sensor
+or switch which is off, the ammo will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; invisible, untouchable,
+and unaffected by gravity, until the sensor</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>ROCKET_ICON5</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the large ammo
+unit for the Rocket Launcher. It gives</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the player 5 additional
+units of ammo. Like all ammo, if it is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connected to a sensor
+or switch which is off, the ammo will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; invisible, untouchable,
+and unaffected by gravity, until the sensor</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or switch turns on.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>RUNG_B, RUNG_F</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A decorative black and
+yellow set of bars that appears behind the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; player. The RUNG_F looks
+the same, but it is drawn in front of the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; player, so the player
+moves behind it.</tt>
+<p><a NAME="S"></a><a NAME="Sensor"></a><tt>SENSOR</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The sensor is the basic
+triggering device. In addition to responding</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to the player's position,
+a sensor can also be used to extend the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; range of other objects,
+since sensors have the longest range. A sensor</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; has on and off area
+boxes. When the player enters the on area (green</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; box) the sensor will
+turn on and stay on until the player leaves the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; off area (red box).</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Note that a player is
+only in the box if his feet are.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The off area typically
+encloses the on area, but this does not have</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to be the case. Each
+of the areas is user definable in the sensor's</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AI.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sensors do not processs
+their links.</tt>
+<p><tt>SENSOR_GRAVITY</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *Info on this object
+coming soon!*</tt>
+<p><tt>SENSOR_HEALTH</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a sensor that
+can be used to give or take away health when the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; player's feet come in
+contact with the sensor. It's very useful for</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; making 'bottomless pits'
+or for refilling the player's health at the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; beginning of a level/section.</tt>
+<p><tt>SENSOR_LEVEL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Another handy new sensor,
+this can be used to transport the player to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a different level without
+the use of a big burly NEXT_LEVEL structure.</tt>
+<p><tt>SENSOR_TELEPORT</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This sensor will teleport
+the player to a different spot on the map.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Useful for making 'infinite
+loops'. There is also an option in the AI</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for an 'Action Key'
+meaning that if you toggle this option, the player</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; will have to use the
+SENSOR_TELEPORT by pressing the down arrow, just</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; like with a TELE2 or
+a TP_DOOR.</tt>
+<p><tt>SENSORBEAM</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a decorative
+red beam that looks like a smaller version of the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FORCE_FIELD. When coupled
+with a sensor (ideally of length = 7), it can</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; be made to look like
+it's triggering an object.</tt>
+<p><tt>SHOULDER_LAMP</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This looks like a small
+little scope. When obtained, it acts like the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; POWER icons. It attaches
+a light to the player. Perfect for those deep</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dark trench-type levels
+or for those too lazy to add lots of lighting to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; their levels. You do
+not have to use the right mouse button with</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this powerup.</tt>
+<p><tt>SMART_PLAT_BIG</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The smart platforms
+are objects which require two links, typically</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (but not always) a pair
+of sensors. If a link is on, it will travel to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; that linked object's
+location. A third optional link will, if it</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exists, direct the platform
+to be active or inactive, depending on the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; link's state (on will
+activate, and off will deactivate). The speed of</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the platform can be
+changed in its AI.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This platform is a big
+techno looking platform.</tt>
+<p><tt>SMART_PLAT_ELEV, SMART_PLAT_ELEV_SPACE</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Try these objects with
+the new space palette.</tt>
+<p><tt>SMART_PLAT_MEDIUM</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This platform is a medium-sized
+techno looking platform.</tt>
+<p><tt>SMART_PLAT_RED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This platform is a big
+alien looking platform.</tt>
+<p><tt>SMART_PLAT_SMALL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This platform is a small
+techno looking platform.</tt>
+<p><tt>SPACE_DOOR</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This door acts just
+like the SWITCH_DOOR, only it is made to fit in</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with the foreground
+from the space palettes. Try out the sample</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; level t_space.spe in
+addon/claudio for examples of how this and other</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; new objects and art
+are used.</tt>
+<p><tt>SPACE_DOOR_WIDE</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This door acts just
+like the TP_DOOR, only it is made to fit in</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with the foreground
+from the space palettes. Try out the sample</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; level t_space.spe in
+addon/claudio for examples of how this and other</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; new objects are used.
+When this door opens, you can see the foreground</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tiles that lie behind
+it... this can be used for artistic effect.</tt>
+<p><tt>SPACE_SWITCH</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This switch acts just
+like the normal SWITCH, only it is made to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fit in with the foreground
+from the space palettes. Try out the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sample level t_space.spe
+in addon/claudio for examples of how this</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and other new objects
+are used.</tt>
+<p><tt>SPRAY_GUN</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a gun object
+which, when active, will shoot out sprays of</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fire. It is capable
+of shooting any of the weapon types. You can use</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the ANT_ROOF method
+for altering the weapon type, or change it in the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AI. The arc range and
+firing speed are also user configurable.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; You can use the number
+keys to change the weapon type quickly.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will NOT be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>SPRING</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object will allow
+the player to jump higher than normal.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The longer the player
+is in contact with the SPRING object</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the further it will
+push them. The strength of the push is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user definable.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>START</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object sets the
+starting point for the player when the game</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is begun anew. If the
+player is set behind objects when the game</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; starts, then is nessecary
+to raise this object and save the level</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; again with the raised
+START object.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To raise objects, position
+the mouse cursor over the object, and</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; press &lt;>> (&lt;SHIFT>-&lt;.>).</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It is possible to have
+multiple starting points in a level. The</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; game will start where
+the last one was placed.</tt>
+<p><tt>STEP</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A simple step that the
+player can walk on.</tt>
+<p><a NAME="Switch"></a><tt>SWITCH</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a user activated
+object. It has two states, on and off.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Other objects reference
+this object often, as it is a versatile tool.</tt>
+<p><tt>SWITCH_BALL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a user activated
+object. It has two states, on and off.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It is similar to the
+regular switch, but is activated when it is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shot. It cannot be deactivated.</tt>
+<p><tt>SWITCH_DELAY</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This switch, once activated,
+will revert back to its default state</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; after a user definable
+time delay. Its default state is off.</tt>
+<p><tt>SWITCH_DIMMER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the only object
+that can modify lights. It requires two</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; links, one to a switch
+or any object which can change states</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (on or off), and the
+other to a light which it modifies. Since</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; light and object links
+are different, you can link them in any</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; order. The amount of
+decrease in light can be set in the AI.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If you flip a SWITCH_DIMMER
+around (press the &lt;x> key with your</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cursor over the SWITCH_DIMMER),
+the light will grow instead of</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shrink. The SWITCH_DIMMER
+will only activate when the object it is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; linked to is in the
+on state.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will NOT be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>SWITCH_DOOR</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A SWITCH_DOOR requires
+one link. When this link is off, the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SWITCH_DOOR will be
+in a blocking state, but when on, the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SWITCH_DOOR will be
+in a non-blocking state.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to a
+sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>SWITCH_MOVER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object requires
+two links, the first to the object which is</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to be moved and the
+second to any object which can change states (on</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or off). When the second
+object's state is on, the switch mover will</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; move the first object
+to the SWITCH_MOVER's current position. The</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; engine will then delete
+the SWITCH_MOVER.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A SWITCH_MOVER with no
+links will be deleted by the engine.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>SWITCH_ONCE</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a user activated
+object. It has two states, on and off.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Other objects reference
+this object often as it is a versatile</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tool. It can only be
+switched ONCE.</tt>
+<p><tt>SWITCH_TELEPORTER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *Info on this object
+coming soon!*</tt>
+<p><a NAME="T"></a><tt>TELE2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is an object which
+requires one link. When activated, it will</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; teleport the player
+to the postion of the object it is linked to.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TELE2s can be linked
+to each other, thus creating connections within</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; levels which have no
+direct connections.</tt>
+<p><tt>TP_DOOR</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A TP_DOOR requires one
+link. This link should be to another TP_DOOR.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When the TP_DOOR is
+activated, it will teleport the player to the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TP_DOOR it is linked
+to.</tt><tt></tt>
+<p><tt>TP_DOOR_INVIS</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; These work much like
+the SENSOR_TELEPORTERs with their action key set</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to '1'. Just think of
+it as an invisible teleporter. As with other</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objects of this type,
+use foreground cues to give the impression of a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; door. Or, don't give
+any cues and make some super fancy secret area.</tt>
+<br><tt>&nbsp;</tt>
+<br><tt>TRACK_GUN</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object, when active,
+will track and shoot the player.&nbsp; Rate of</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fire and weapon type
+are modifiable via its AI.&nbsp; You can use the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; number keys to change
+the weapon type quickly.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>TRAIN_MSG</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When a player is near
+this object, a preset message will be printed.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; These messages are defined
+externally.</tt>
+<p><tt>TRAP_DOOR2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A door similar to the
+SWITCH_DOOR, but this is used on the floor.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (see SWITCH DOOR)</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to a
+sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>TRAP_DOOR3</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A door similar to the
+SWITCH_DOOR, but this is used on the floor.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (see SWITCH DOOR)</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to a
+sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>T_REX</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A fairly large dinosaur
+creature that is like a quick, scary, pre-</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; historic version of
+the ROB1.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><a NAME="W"></a><tt>WALK_ROB</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Not to be mistaken with
+the ROB1, this is a walking robot that acts</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; like the DROID objects.
+The Twisted Minds addon included with fRaBs</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; has a variation on this
+object that has a shield when it is not</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; moving. In the future
+I would like to make additional behaivoral</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; changes to this object.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>WALK_ROB2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A variant on the first
+WALK_ROB, this fires quicker and walks faster.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; You can't stand on it's
+head like you can with the other WALK_ROB.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; However, when you kill
+it, a little WALK_ROBHEAD will appear and fly</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; around and shoot at
+you.</tt>
+<p><tt>WALK_ROBHEAD</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is yet another
+flying robot. I typically make them stronger than</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; other small flying robots
+by giving them rockets and a quicker firing</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rate. When you kill
+a WALK_ROB2, these will just shoot the little</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pulse Shot (ai_type
+9).</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><tt>WATER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This decorative green
+water does no damage to the player.</tt>
+<p><tt>WATER_DEEP1, WATER_DEEP2, WATER_SURF1, WATER_SURF2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The WATER_DEEP and WATER_SURF
+objects are gray, transparent running water</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objects that can be
+lined up to make streams, lakes, and whatnot. The</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DEEP2/SURF2 objects
+have a 3D-ish aspect that allows them to be lined up</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with the wall foreground
+tiles, while the DEEP1/SURF1 objects are perfect</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rectangles. The SURF
+objects have wavy tops, while the DEEP objects do not.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; These objects will damage
+the player slightly upon contact.</tt>
+<p><tt>WATER_FALL1</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A waterfall object that
+is completely different from the WFALL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and the WFALL2. It is
+meant to be used with blue tiles, but even then it</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; still looks pretty ugly.
+The test level included in addon/claudio is not</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; set up correctly with
+the right foreground tiles. Basically, this is a</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; useless object overall.</tt>
+<p><tt>WEAP_DFRIS (variations)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; These act like the weapon
+ammo objects in fRaBs. However, in the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Twisted Minds addon
+you are required to find the weapons and then</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; find the ammo for them.
+See any of the ammo objects for details on</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; how these work. (Ed.
+note: As a rule, for normal levels I use the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; regular ammo objects.)</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There is a WEAP_OBJECT
+for each of the 8 weapons in fRaBs.</tt>
+<p><tt>WFALL, WGRILL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The WFALL is a medium-sized
+green decorative waterfall. It looks best</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when used in conjunction
+with the WGRILL.</tt>
+<p><tt>WFALL2 (variations)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a slender, green
+waterfall. Both this and the SEWER_FALL_THIN</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; are identical, but are
+both included for the sake of compatibility with</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; older Abuse levels.</tt>
+<p><tt>WHO</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Another type of flying
+robot, with the same attributes as the FLYER.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (see FLYER) However,
+these do not have the ai_type variable, so they</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; end up only shooting
+the pulse shot (ai_type 9).</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it has no links it
+will be active.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It can be linked to
+a sensor or switch and will be</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; activated when the sensor
+or switch is in an on state.</tt>
+<p><a href="editor.html">Back to the Level Editing tutorial --></a>
+<p><font color="#FFFFFF">Justin Cassidy</font>
+<br><a href="mailto: messiah15@*spam-me-and-die*dog.com">messiah15@dog.com</a>
+<p><img SRC="../images/ssig.GIF" NOSAVE height=17 width=20>
+</body>
+</html>

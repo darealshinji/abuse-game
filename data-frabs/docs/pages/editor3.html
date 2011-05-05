@@ -1,0 +1,416 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Justin Cassidy">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>The Free Abuse Project</title>
+</head>
+<body text="#FFFFFF" bgcolor="#000000" link="#C0C0C0" vlink="#666666" alink="#C0C0C0" background="../images/jmc.jpg" nosave>
+<font color="#FFFFFF"><u><font size=+4>fRaBs</font></u><i>&nbsp;
+special levels</i></font>
+<br><a href="../readme.html">Main</a><i><font color="#FFFFFF"> - </font></i><a href="updates.html">Updates</a><i><font color="#FFFFFF">
+- </font></i><a href="single.html">Single Player</a><i><font color="#FFFFFF">
+- </font></i><a href="dm.html">Deathmatch</a><i><font color="#FFFFFF">
+- </font></i><a href="editor.html">Level Editing</a><i><font color="#FFFFFF">
+- </font></i><a href="faq.html">FAQ</a><i><font color="#FFFFFF"> - </font></i><a href="credits.html">Credits</a><i><font color="#FFFFFF">
+- </font></i><a href="links.html">Links</a>
+<p><tt>&nbsp;&nbsp;&nbsp; [1-4] <a href="editor.html">Level Editing Basics</a></tt>
+<br><tt>&nbsp;&nbsp; ---------------------------</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [5-7] <a href="editor2.html">Advanced Level
+Editing Topics</a></tt>
+<br><tt>&nbsp;&nbsp; ------------------------------------</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [8] <a href="#Pong">Making Pong
+Levels</a></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [8.a] About the Pong Addon</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [8.b] Creating a Pong Level</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [8.c] Object List</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [8.d] Tips and Tricks</tt>
+<br><tt>&nbsp;&nbsp; ----------------------------</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [9] <a href="#Dm">Creating Deathmatch
+Levels</a></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [9.a] How the Abuse Engine Handles Deathmatch</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [9.b] A Word on the Respawner</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [9.c] Making Fun Deathmatch Levels</tt>
+<br><tt>&nbsp;&nbsp; ----------------------------------------------</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; [10] <a href="#Other">Other fRaBs Addons</a></tt>
+<br>&nbsp;
+<p><tt>[8]</tt>
+<br><a NAME="Pong" href="#Tips"></a><tt><a href="#Pong">Making Pong Levels</a></tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[8.a] About the Pong Addon</tt>
+<br><tt>------------------------------------------------------------------------</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Pong addon was created
+by Jonathan Clark, the original lead</tt>
+<br><tt>programmer for Abuse, as an example of what bizarre things can
+be done</tt>
+<br><tt>with his Abuse engine. At the moment the addon is rather simple,
+but</tt>
+<br><tt>with the aid of a couple ace LISP programmers, the Pong addon could
+load</tt>
+<br><tt>multiple levels in order... at the moment it can only load one.
+The good</tt>
+<br><tt>thing is that it comes with many other levels that you can load
+separately,</tt>
+<br><tt>created by me in my spare time. Another good thing about this addon
+is that</tt>
+<br><tt>it is extremely easy to create levels for it. To play the game
+itself,</tt>
+<br><tt>run pong.bat in /addon/pong. To run the Pong level editor, run
+pongedit.bat</tt>
+<br><tt>in the same dir. Finally, some of my sample levels are in /pong/levels.</tt>
+<br><tt>These can only be played in the editor.</tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[8.b] Creating a Pong Level</tt>
+<br><tt>------------------------------------------------------------------------</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is so easy, I guarantee
+you'll be making playable levels in</tt>
+<br><tt>mere minutes! Open the Pong editor and press 'f' to look at the
+foreground</tt>
+<br><tt>tiles. These are the tiles that you hit with your ball. There are
+3 main</tt>
+<br><tt>types: A gray tile which cannot be destroyed by anything other
+than a block</tt>
+<br><tt>of dynamite adjacent to it; a set of colored tiles that are destroyed
+upon</tt>
+<br><tt>contact with the ball or a laser; and dynamite tiles which can
+destroy all</tt>
+<br><tt>the blocks in their blast radius. There is a small set of background
+tiles</tt>
+<br><tt>for the Pong addon as well.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Next you add a Start
+position and your paddle... both are found in</tt>
+<br><tt>the Objects menu. Then you can add a ball, a ball powerup, or anything</tt>
+<br><tt>else that you want your level to have at the outset. Ball powerups
+are gray</tt>
+<br><tt>while laser powerups are red. The colored blocks and the dynamite
+blocks</tt>
+<br><tt>can give you either of these powerups at random. When the blocks
+are hit</tt>
+<br><tt>the powerup items fall slowly towards the bottom of the screen.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When you lose all the
+balls on the screen, a new ball is respawned</tt>
+<br><tt>on your paddle. At the moment the addon gives you infinite lives,
+but this</tt>
+<br><tt>'feature' will be changed in the future.</tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[8.c] Object List</tt>
+<br><tt>------------------------------------------------------------------------</tt>
+<p><tt>BALL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Adds a Ball to the screen.
+You can have as many balls on screen as</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; you like, as long as
+your CPU can handle them all. Chances are, if</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; you have a Pentium or
+something, you'll be able to add more balls</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; than you would ever
+need. You gain a new ball on screen when</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; obtaining the gray pills.</tt>
+<p><tt>EXPLOSION</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When the Dynamite tiles
+blow up, they leave an EXPLOSION. You can</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; also add these to your
+levels from the outset, for graphic effect.</tt>
+<p><tt>LIGHTHOLD</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A LIGHTHOLD allows other
+objects to have lights attached to them.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Simply link the LIGHTHOLD
+to the light and to the object you wish to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hold the light. The
+order in which these links are created does not</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; make a difference. The
+light will now follow the other object wherever</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; it goes. Attach a LIGHT
+to a MARKER using a LIGHTHOLD tool, and then</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; attach the marker to
+an OBJ_MOVER and you have moving lights. :)</tt>
+<p><tt>MARKER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An object which does
+nothing, but can hold links for objects</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; which need to be linked
+to other objects.</tt>
+<p><tt>MISSILE</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Your paddle can shoot
+these when you obtain the red pills. They can</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; also be added to the
+screen on the start of your level.</tt>
+<p><tt>OBJ_MOVER</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This object allows the
+level designer create paths for objects to</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; move on. It accepts
+two links. The first link marks the endpoint</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for the path, and the
+second is the object which is to be moved.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; By linking OBJ_MOVERs
+in a circle, the object can be kept moving</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; indefinitely. When the
+OBJ_MOVER moves the object to its</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; destination, the link
+is then transfered to the end object, which</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in a chain of OBJ_MOVER
+will then move the target object to the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; next link in the chain.
+A chain composed of multiple OBJ_MOVERS</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; can hold multiple target
+objects, one for each pair of OBJ_MOVERS.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; You can modify the speed
+at which it will move in its AI.</tt>
+<p><tt>PADDLE</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Adding this object to
+your level will make the engine crash, so don't</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; do it! When in the Pong
+editor you automatically have a paddle placed</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; on screen.</tt>
+<p><tt>PILL1</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the gray pill
+that gives you another ball on-screen.</tt>
+<p><tt>PILL2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This pill will give
+your paddle the ability to shoot little red</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; missiles straight upward.
+The missiles can shoot any bricks except</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for the indestructable
+gray ones.</tt>
+<p><tt>START</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is where your paddle
+will default to at the beginning of your</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; level. From this point
+your paddle can move left and right until it</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; runs into a brick or
+obstacle.</tt>
+<p><tt>TILE_BLOW_UP</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When you hit a normal
+tile, it plays this little disintegrating</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; animation. If, for some
+reason, you want one of these animations in</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; your levels from the
+get-go, then you can add one of these.</tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[8.d] Tips and Tricks</tt>
+<br><tt>------------------------------------------------------------------------</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Remember to make your
+levels at the upper left-hand corner of the</tt>
+<br><tt>screen and wall off the left, right, and upper borders with gray
+tiles.</tt>
+<br><tt>Otherwise the ball will fly off the screen, which does not scroll
+in this</tt>
+<br><tt>addon. Additionally, do not put dynamite tiles near these 'border
+tiles'</tt>
+<br><tt>because the dynamite will destroy them when hit and your ball will
+have a</tt>
+<br><tt>little hole in which it can escape your level. :)</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Lighting cues can be
+used to good effect in this addon. There is</tt>
+<br><tt>no SWITCH_DIMMER but you can use LIGHT_HOLDs and OBJECT_MOVERs
+to make</tt>
+<br><tt>moving light sources.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; As you'll quickly find
+out, dynamite tiles can be linked together</tt>
+<br><tt>for chain explosions. These rock, but don't put too many in your
+level or</tt>
+<br><tt>or it will be much too easy. Look at the other levels in the Pong
+directory</tt>
+<br><tt>for level design ideas. Also, play classic breakout clones such
+as Arkanoid</tt>
+<br><tt>in your favorite <a href="http://www.zophar.net">emulators</a>...
+these always provide inspiration for levels.</tt>
+<p><tt>[9]</tt>
+<br><a NAME="Dm" href="#Tips"></a><tt><a href="#Dm">Creating Deathmatch
+Levels</a></tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[9.a] How the Abuse Engine Handles Deathmatch</tt>
+<br><tt>------------------------------------------------------------------------</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Making a Deathmatch Level
+in Abuse is not too much different from</tt>
+<br><tt>creating a typical single-player level, but there are a few differences
+that</tt>
+<br><tt>a level editor should take into account. For basic information
+on how Abuse</tt>
+<br><tt>Deathmatch works, visit the <a href="dm.html">Deathmatch</a> page.</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Firstly, when you start
+an IPX Deathmatch game, it makes the current</tt>
+<br><tt>session of Abuse quit out, and it actually starts up Abuse again.
+Instead of</tt>
+<br><tt>loading abuse.lsp though, like the game normally does when you
+start it up,</tt>
+<br><tt>it loads /addon/deathmat/deathmat.lsp. This is important for a
+number of</tt>
+<br><tt>reasons. It means that many of the addon LISP files referenced
+in abuse.lsp</tt>
+<br><tt>are not loaded, and thus in Deathmatch mode you do not have access
+to many</tt>
+<br><tt>objects. This is OK for the most part... you typically don't need
+to have</tt>
+<br><tt>any of the exotic enemies that the fRaBs addons provide in your
+deathmatch</tt>
+<br><tt>levels. However, there are other objects that deathmat.lsp doesn't
+load. If</tt>
+<br><tt>you want to be really safe, you can run Abuse in edit mode and
+start up a</tt>
+<br><tt>mock deathmatch with just yourself by going back to the title screen
+and</tt>
+<br><tt>starting a 1-player deathmatch. Then, when you press TAB and go
+back into</tt>
+<br><tt>edit mode, you'll be left with all of the objects and foreground
+that is</tt>
+<br><tt>normally accessible in a fRaBs deathmatch game.</tt>
+<br><tt>&nbsp;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This isn't really necessary
+though. Just remember that if you're</tt>
+<br><tt>using things other than doors, weapon ammo, health, and gun turrets,
+then</tt>
+<br><tt>these objects might not appear when you play the level in deathmatch.
+Try</tt>
+<br><tt>comparing abuse.lsp to deathmat.lsp if you want to compare which
+files are</tt>
+<br><tt>loaded. One important thing to remember is that the Death Ray IS
+NOT LOADED</tt>
+<br><tt>when you play fRaBs deathmatches, for gameplay balance reasons.</tt><tt></tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[9.b] A Word on the Respawner</tt>
+<br><tt>------------------------------------------------------------------------</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In basically any Deathmatch
+game you ever play, there is a constant</tt>
+<br><tt>supply of incoming weapons and health that, upon being picked up,
+respawns</tt>
+<br><tt>after an set period of time. The way you accomplish this effect
+in the Abuse</tt>
+<br><tt>engine is with the RESPAWNER. This object has a few quirks that
+you should</tt>
+<br><tt>take note of, that weren't noted in the original Abuse object list.</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Some powerup items, such
+as the POWER_ITEMS and the HEALTH items, can</tt>
+<br><tt>just stay suspended in the air, while the ammo objects fall to
+the ground.</tt>
+<br><tt>Depending on which object you link the RESPAWNER to, you need to
+make sure to</tt>
+<br><tt>position the RESPAWNER differently. For the items that stay suspended
+in the</tt>
+<br><tt>air, you can put the respawner wherever you want. However, with
+falling objects</tt>
+<br><tt>such as ammo, you need to position the RESPAWNER on the ground
+just right, or</tt>
+<br><tt>else the ammo that respawns will be 'faded' - you can still pick
+it up, but the</tt>
+<br><tt>ammo object itself is difficult to see.</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The RESPAWNER has a little
+yellow line beneath it. The yellow line</tt>
+<br><tt>underlines the word 'Respawn' and then it has a little tail that
+goes down</tt>
+<br><tt>approximately three pixels. The bottom of this tail should be lined
+up just</tt>
+<br><tt>above the floor's 'Bounding Box' (press Shift+L and click 'Bound'
+to see the</tt>
+<br><tt>floor's Bounding Box). If it isn't, then your ammo objects will
+fade when they</tt>
+<br><tt>respawn.</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; With any object that
+you link the RESPAWNER to, the original object</tt>
+<br><tt>should be out of sight and access from the player. If you pick
+up an object</tt>
+<br><tt>which a RESPAWNER is linked to, the RESPAWNER cannot respawn that
+object again.</tt>
+<br><tt>If you look at the Deathmatch levels that come with fRaBs, you'll
+notice that</tt>
+<br><tt>all the objects which the RESPAWNERs link to are somewhere off
+the screen,</tt>
+<br><tt>hidden behind a foreground tile (press 'r' on a tile to raise it
+and hide an</tt>
+<br><tt>object behind it). This is the convention you want to follow when
+making your</tt>
+<br><tt>own deathmatch levels.</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A note about using the
+respawner to respawn gun turrets and ROB1s...</tt>
+<br><tt>it is not possible at the moment in Abuse to respawn a turret that
+has</tt>
+<br><tt>properties other than the default... i.e. if you make a Lightsaber
+turret and</tt>
+<br><tt>place it off screen, and have a RESPAWNER respawn that turret,
+the turret that</tt>
+<br><tt>respawns at the location of the RESPAWNER will not have the same
+attributes.</tt>
+<br><tt>If you notice the respawning ROB1s in /netlevel/bugs.spe you'll
+find that they</tt>
+<br><tt>all move towards the right. You cannot make a ROB1 that respawns
+and moves to</tt>
+<br><tt>the left. Yeah, it sucks, but that's the way it is until someone
+programs a</tt>
+<br><tt>better RESPAWNER.</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Finally, remember that
+you have to link the RESPAWNER to the ammo or</tt>
+<br><tt>health objects, and NOT THE OTHER WAY around. :)</tt><tt></tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[9.c] Making Fun Deathmatch Levels</tt>
+<br><tt>------------------------------------------------------------------------</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There is really no guideline
+to making a fun deathmatch level, but</tt>
+<br><tt>there are ways to make a really lame one. First of all, dead ends
+just suck.</tt>
+<br><tt>You want every little section of your deathmatch level to be fairly
+easy to</tt>
+<br><tt>access from any point on the map. This may involve using well-placed
+objects</tt>
+<br><tt>such as TELE2s or TP_DOORs, and multiple START points.</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Secondly, you want fairly
+good ammo such as rockets or grenades</tt>
+<br><tt>available near any starting location. You don't want to make it
+so someone</tt>
+<br><tt>can just sit near a start point and rack up on lightsaber or firebomb
+ammo</tt>
+<br><tt>and just shoot whoever respawns at the start point, however. It's
+not a good</tt>
+<br><tt>idea to have too much powerful ammo anywhere in a level, because
+usually it</tt>
+<br><tt>disrupts the balance of play.</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Teleportation items are
+good when used in moderation, but if you make</tt>
+<br><tt>a level where someone can just keep going through teleporters to
+evade attack,</tt>
+<br><tt>the game becomes cheap. TELE2s take a second before transporting
+you to your</tt>
+<br><tt>destination, but when you go through a TP_DOOR you arrive at your
+destination</tt>
+<br><tt>instantaneously. Looping teleporters can create gameplay problems
+in smaller</tt>
+<br><tt>levels.</tt>
+<br><tt>&nbsp;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Well placed sound and
+lighting cues can give your levels character.</tt>
+<br><tt>It may also be good to use INDICATORs to inform the player of the
+state of</tt>
+<br><tt>a certain recurring event in the level.</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are some engine
+limitations to take note of when making your</tt>
+<br><tt>deathmatch level. When two players are being affected by one object,
+such as</tt>
+<br><tt>a PUSHER, then strange things can happen. One player may be affected
+by</tt>
+<br><tt>the PUSHER while the other can walk freely against it. Make sure
+you do lots</tt>
+<br><tt>of playtesting to iron out problems like these.</tt><tt></tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Finally, to make a really
+fun deathmatch level, you should have at</tt>
+<br><tt>least one 'gimmick'. :) Take 'A Little Hot' (alitlhot.spe) for
+example. The</tt>
+<br><tt>best ammo is in a precarious spot where the player can be gunned
+down very</tt>
+<br><tt>easily if they don't watch it. Be creative, and add a unique touch
+that maybe</tt>
+<br><tt>hasn't been tried with any deathmatch levels you've seen, and make
+sure you</tt>
+<br><tt>test your gimmicks until you know they work the way you want them
+to.</tt>
+<p><tt>[10]</tt>
+<br><a NAME="Other" href="#Tips"></a><tt><a href="#Other">Other fRaBs Addons</a></tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[10.a] Other fRaBs Addons</tt>
+<br><tt>------------------------------------------------------------------------</tt>
+<br><tt>** Work in Progress **</tt>
+<br>&nbsp;
+<p><font color="#FFFFFF"><a href="editor.html">&lt;-- Back to Level Editing
+Basics</a></font>
+<p><font color="#FFFFFF">Justin Cassidy</font>
+<br><a href="mailto: messiah15@*spam-me-and-die*dog.com">messiah15@dog.com</a>
+<p><img SRC="../images/ssig.GIF" NOSAVE height=17 width=20>
+</body>
+</html>

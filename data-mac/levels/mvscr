@@ -1,0 +1,22 @@
+
+
+mv level18.spe level21.spe
+mv level17.spe level20.spe
+mv level16.spe level19.spe
+mv level15.spe level18.spe
+mv level14.spe level17.spe
+mv level13.spe level16.spe
+
+# 15 from 19
+
+mv level12.spe level14.spe
+
+# 13 from 20
+
+mv level11.spe level12.spe
+mv level10.spe level11.spe
+
+# 10 from 22
+
+
+
