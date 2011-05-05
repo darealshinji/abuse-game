@@ -8,7 +8,7 @@
 
   (flags (hurtable T))
   (abilities (start_hp 20))
-  (vars fire_delay burst_delay burst_total burst_wait burst_left 
+  (vars fire_delay burst_delay burst_total burst_wait burst_left
 	max_xvel   max_yvel    smoke_time fire_time)
   (fields ("fire_delay"  who_fdelay)
 	  ("burst_delay" who_bdelay)
@@ -18,7 +18,7 @@
 	  ("hp"          ai_health)
 	  ("aitype"      ai_type)
 	  ("aistate"     ai_state))
-  
+
   (range 200 200)
   (states "art/flyer.spe"
 	  (running (seq "ffly" 1 12))
@@ -36,7 +36,7 @@
 
   (flags (hurtable T))
   (abilities (start_hp 20))
-  (vars fire_delay burst_delay burst_total burst_wait burst_left 
+  (vars fire_delay burst_delay burst_total burst_wait burst_left
 	max_xvel   max_yvel    smoke_time fire_time)
   (fields ("fire_delay"   who_fdelay)
 	  ("burst_delay"  who_bdelay)
@@ -46,7 +46,7 @@
 	  ("hp"           ai_health)
 	  ("aitype"       ai_type)
 	  ("aistate"      ai_state))
-  
+
   (range 200 200)
   (states "art/flyer.spe"
 	  (running (seq "gspe" 1 7))

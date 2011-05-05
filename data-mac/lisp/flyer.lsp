@@ -27,7 +27,7 @@
 	  (add_object EXPLODE1 (x) (+ (- (y) (random 20)) -20)                     4)
           (with_object (bg) (set_kills (+ (kills) 1)))
 	  nil)
-      (progn      
+      (progn
 	(if (eq (mod (state_time) 5) 0)      ;; make flyer noise every 5 ticks
 	    (play_sound FLYER_SND 127 (x) (y)))
 	(if (> (with_object (bg) (x)) (x))   ;; start going right if player is to the right
@@ -66,15 +66,15 @@
 	      (set_yvel (- (yvel) 1))))
 
 	(if (next_picture) T (set_state running))  ;; reset animation when done
-	    
+
 	(bounce_move '(set_xvel (/ (xvel) 2)) '(set_xvel (/ (xvel) 2))
 		     '(set_yvel (/ (yvel) 2)) '(set_yvel (/ (yvel) 2)) nil)
-      
+
 	(if (> fire_time 0)              ;; if we need to wait till next burst
 	    (progn
 	      (setq fire_time (- fire_time 1))
 	      (if (eq fire_time 0)
-		  (progn 
+		  (progn
 		    (setq burst_left burst_total)
 		    (setq burst_wait 0))))
 	  (if (eq burst_wait 0)
@@ -91,14 +91,14 @@
 				(setq fire_time fire_delay)
 			      (setq burst_left (- burst_left 1)))
 			    (setq burst_wait burst_delay)
-			    (fire_object (me) (aitype) firex firey angle (bg)) 
+			    (fire_object (me) (aitype) firex firey angle (bg))
 			    )))))
-	    (setq burst_wait (- burst_wait 1))))		
+	    (setq burst_wait (- burst_wait 1))))
 	T))))
 
 
 
-(defun flyer_cons ()	  
+(defun flyer_cons ()
   (setq fire_delay 20)
   (setq burst_delay 3)
   (setq max_xvel 10)
@@ -108,8 +108,8 @@
 
 
 (defun flyer_damage (amount from hitx hity push_xvel push_yvel)
-  (if (and from (with_object from (and (> (total_objects) 0) 
-				       (with_object (get_object 0) 
+  (if (and from (with_object from (and (> (total_objects) 0)
+				       (with_object (get_object 0)
 						    (or (eq (otype) FLYER)
 							(eq (otype) GREEN_FLYER))
 							))))

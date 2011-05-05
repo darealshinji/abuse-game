@@ -49,7 +49,7 @@
 
 
 ; this option allows the game to exit a idle game after 1 minute
-; and go into a demo 
+; and go into a demo
 
 ; (demo_break_enable)
 

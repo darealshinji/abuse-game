@@ -2,7 +2,7 @@
 ;; See licensing information for more details on usage rights
 
 (setq bright_tint (def_tint "art/tints/cop/bright.spe"))  ;; used when the player fires a weapon
-(setq player_tints (make-array 8 :initial-contents (list 
+(setq player_tints (make-array 8 :initial-contents (list
 						    0                                      ; 0 this is not used
 						    (def_tint "art/tints/cop/blue.spe")    ; 1 bright blue
 						    (def_tint "art/tints/cop/yellow.spe")  ; 2 yellow
@@ -14,7 +14,7 @@
 
 )))
 
-(setq player_text_color (make-array 8 :initial-contents (list 
+(setq player_text_color (make-array 8 :initial-contents (list
 							 43       ; 0 brown
 							 216      ; 1 blue
 							 76       ; 2 yellow
@@ -24,7 +24,7 @@
 							 231      ; 6 darkblue
 							 192)))   ; 7 purple
 
-(setq cop_dead_parts (make-array (* 4 3) :initial-contents 
+(setq cop_dead_parts (make-array (* 4 3) :initial-contents
 			       ;       head           arm            leg
 			     '((CP_1  "4dha") (CP_2  "4daa") (CP_3  "4dba")     ; disapear
 			       (CP_4  "4dhf") (CP_5  "4daf") (CP_6  "4dbf")     ; flaming
@@ -34,8 +34,8 @@
 
 (do ((i 0 (setq i (+ i 1))))
 	   ((>= i 12) nil)
-	   (setq (aref cop_dead_parts i) 
-		 (make_dead_part (car (aref cop_dead_parts i))		  
+	   (setq (aref cop_dead_parts i)
+		 (make_dead_part (car (aref cop_dead_parts i))
 				 (car (cdr (aref cop_dead_parts i))) 4 "art/cop.spe" 'dead_cop_part_draw)))
 
 
@@ -48,7 +48,7 @@
 (setf health_image (def_image "art/misc.spe" "b_check_image"))
 
 
-                                  
+
 
 (defun give_player_health (amount)
   (let ((h_amount  (select difficulty
@@ -69,7 +69,7 @@
 
 	T)))
 )
-    
+
 
 
 (defun pressing_action_key ()
@@ -121,20 +121,20 @@
   (if (< (total_objects) 1)    ; make sure upper body is there
       nil
     (select signal
-	    (SET_SNEAKY_TIME 
-	     (progn 
+	    (SET_SNEAKY_TIME
+	     (progn
 	       (set_sneaky_time value)
 	       (with_obj0 (set_sneaky_time value))))
 	    (SET_VISOR_TIME (set_visor_time value))
-	    (SET_FAST_TIME 
-	     (progn 
+	    (SET_FAST_TIME
+	     (progn
 	       (set_fast_time value)
 	       (with_obj0 (set_fast_time value))))
-	    (SET_FADE_COUNT (set_fade_count value) 
+	    (SET_FADE_COUNT (set_fade_count value)
 			    (with_obj0 (set_fade_count value)))
-	     
+
 	    )))
-		    
+
 
 (defun cop_adjust_top (return)
   (if (< (total_objects) 1)        ;; should be here
@@ -164,7 +164,7 @@
 	  (progn
 	    (if (> ym 0)
 		(progn
-		  (if (eq (current_frame) 0) (set_current_frame 9) 
+		  (if (eq (current_frame) 0) (set_current_frame 9)
 		    (set_current_frame (- (current_frame) 1)))
 		  (set_y (+ (y) 3)))
 	      (if (< ym 0)
@@ -187,7 +187,7 @@
 			))))
 
 	    0)
-	(if (and (>= (yvel) 0) (or (> ym 0) 
+	(if (and (>= (yvel) 0) (or (> ym 0)
 				   (and (< ym 0) (> yd 8))))
 	    (progn
 	      (set_state climbing)
@@ -201,8 +201,8 @@
 	    (next_picture)
 	    (cop_adjust_top (mover xm ym but))))
 	))))
-      
-      
+
+
 (defun undo_special_power (xm ym but)
   (select special_power
 	  (FAST_POWER   (setq used_special_power 0))
@@ -221,31 +221,31 @@
 	   (if (< ym 0)
 	       (set_yvel (- (yvel) 1)))
 	   )
-	  
 
-	  (FAST_POWER 
+
+	  (FAST_POWER
 	   (setq used_special_power 1)
 	   (setq last1_x (x))
 	   (setq last1_y (y))
 	   (if (> (total_objects) 0)
 	       (with_obj0
-			    (if (> fire_delay1 0) 
+			    (if (> fire_delay1 0)
 				(setq fire_delay1 (- fire_delay1 1)))))
 
-	   
+
 	   (let ((in_area in_climbing_area)
 		 (old_yvel (yvel)))
 	     (player_move xm ym but)
 	     (setq in_climbing_area in_area)
 	     (if (and (< ym 0) (eq old_yvel 0) (< (yvel) 0))
 		 (set_yvel (+ (yvel) (/ (yvel) 3))))
-		 
+
 	     )
 
 	   (setq last2_x (x))
 	   (setq last2_y (y)))
 
-	  (SNEAKY_POWER (if (<= used_special_power 15)			   
+	  (SNEAKY_POWER (if (<= used_special_power 15)
 			    (setq used_special_power (+ used_special_power 1))))
 	  ))
 
@@ -260,14 +260,14 @@
 	(cop_adjust_top (mover xm ym but)))
     (climb_handler xm ym but)))
 
-/*(defun cop_mover (xm ym but) 
-  (if (> (yvel) 10) 
-      (progn 
+/*(defun cop_mover (xm ym but)
+  (if (> (yvel) 10)
+      (progn
 	(set_yacel 0)
 	(set_yvel (- (yvel) 1))))  ;; terminal velocity
   (select (aistate)
-	  (JUST_START 
-	   (if (eq but 0)              ; wait till user lets go of button before moving	       
+	  (JUST_START
+	   (if (eq but 0)              ; wait till user lets go of button before moving
 	       (progn
 		 (set_aistate NORMAL_PLAY)
 		 (mover xm ym but))
@@ -298,19 +298,19 @@
 	       (if (equal (bit-and but 1) 1)
 		   (do_special_power xm ym but)
 		 (undo_special_power xm ym but))
-	       
+
 	       (let ((ret (player_move xm ym but))
 		     (other (me)))
-		 (with_obj0 
+		 (with_obj0
 			      (progn
 				(set_x (with_object other (x)))
-				(set_y (- (- (with_object other (y)) -29) 
+				(set_y (- (- (with_object other (y)) -29)
 					  (with_object other (picture_height))))
 				))
 		 (if (and (equal (bit-and but 2) 2)
 			  (not (eq (state) dead)) (not (eq (state) dieing)))
 		     (let ((ammo (ammo_total (current_weapon_type))))
-		       (add_ammo (current_weapon_type) (with_obj0 
+		       (add_ammo (current_weapon_type) (with_obj0
 								    (user_fun 'FIRE ammo)))
 		       nil))
 		 ret)
@@ -364,7 +364,7 @@
 
 					     ;; save the level we are so joining clients know which one to load
 					     (if (not (am_a_client))
-						 (open_file "addon/deathmat/cur_lev.lsp" "wb" 
+						 (open_file "addon/deathmat/cur_lev.lsp" "wb"
 							    (print `(setq current_net_level ,current_net_level))))
 
 					     (request_level_load (nth current_net_level net_levels))))
@@ -375,14 +375,14 @@
 				       (play_sound (aref PLAYER_PAIN (random 4)) 127 (x) (y)))))))
 
 
-	      ))) 
+	      )))
   )
 
 (defun should_draw_top? (mode)
   (select mode
 	  (JUST_START T)
 	  (NORMAL_PLAY T)))
-	     
+
 (defun change_mode (new_mode)
   (setq disable_top_draw (if (should_draw_top? new_mode) 0 1))
   (set_aistate new_mode))
@@ -391,7 +391,7 @@
   (if  (local_player)
       (put_image (- (view_x2) 20) (+ (view_y1) 5) fast_image))
 		       (if (eq used_special_power 1)
-			   (if (> (total_objects) 0)			
+			   (if (> (total_objects) 0)
 			       (let ((nowx (x))
 				     (nowy (y))
 				     (l2x last2_x)
@@ -430,7 +430,7 @@
       (draw_transparent count 16))))
 
 (defun player_draw (num)
-  (if (eq num 0) 
+  (if (eq num 0)
       (if (eq just_fired 1)           ;; if they just fired a weapon, draw them lite up.. use the bright tint
 	  (progn
 	    (draw_tint bright_tint)
@@ -438,10 +438,10 @@
 	(draw)
 ;	(draw_tint (aref player_tints (aitype)))
 	)
-    (if (eq just_fired 1)    
+    (if (eq just_fired 1)
 	(progn
 	  (draw_double_tint (aref player_tints num) bright_tint)
-	  (setq just_fired 0))      ;; ok to change this in the draw function only if it is not accessed anywhere else!      
+	  (setq just_fired 0))      ;; ok to change this in the draw function only if it is not accessed anywhere else!
       (draw_tint (aref player_tints num)))))
 
 /*(defun bottom_draw ()
@@ -467,23 +467,23 @@
 	      (setq b_ramp (+ b_ramp 7))
 	    (setq b_ramp 0)))
 
-	(if (local_player)	
+	(if (local_player)
 	    (tint_palette r_ramp g_ramp b_ramp))))
 
 
   (select (aistate)
 	  (JUST_START (player_draw (player_number)))
-	  (NORMAL_PLAY 
+	  (NORMAL_PLAY
 	   (select special_power
 		   (NO_POWER (player_draw (player_number)))
 		   (HEALTH_POWER (player_draw (player_number))
 				 (if (local_player)
 				     (put_image (- (view_x2) 20) (+ (view_y1) 5) health_image)))
 		   (FAST_POWER (draw_fast) (player_draw (player_number)))
-		   (FLY_POWER   (player_draw (player_number)) 
+		   (FLY_POWER   (player_draw (player_number))
 				(if (local_player)
 				    (put_image (- (view_x2) 20) (+ (view_y1) 5) fly_image)))
-		   (SNEAKY_POWER 
+		   (SNEAKY_POWER
 		    (if (local_player)
 			(put_image (- (view_x2) 20) (+ (view_y1) 5) sneaky_image))
 				 (sneaky_draw used_special_power (player_number)))
@@ -502,7 +502,7 @@
 	(tint_palette 0 0 0)))
 
   (if (eq (total_players) 1)     ;; is this a single player game?
-      (request_level_load  (if (eq has_saved_this_level 0) 
+      (request_level_load  (if (eq has_saved_this_level 0)
 			       (progn
 				 (set_hp 100)
 				 (level_name))
@@ -513,7 +513,7 @@
 
 
 
-(defun start_cache (type) 
+(defun start_cache (type)
   `((,DARNEL) nil))
 
 (def_char START
@@ -538,7 +538,7 @@
 				    (+ (second spot) 1)
 				    (aref player_text_color (player_number)))))
 		   (p_compass_draw (next_focus player)))))
-  
+
 
 (defun compass_draw ()
   (if (and (local_player) (eq (mod (game_tick) 2) 0))
@@ -625,7 +625,7 @@
 	  (climb_on            (seq "4off" 8 1))
 	  ))
 
-  
+
 (defun clone_ai ()
   (if (and (< (state_time) 200) (not (eq (state) dead)))
       (progn
@@ -635,10 +635,10 @@
 		     nil))
 		(-1 (if (blocked_left (move -1 0 0))
 			(set_direction 1)
-		      nil)))	    
+		      nil)))
 	    (if (or (> (state_time) 185) (eq (state) dieing))
 		(set_fade_count (+ (fade_count) 1))
-	      nil)	    
+	      nil)
 	    T)
 	nil))
 
@@ -648,13 +648,13 @@
 (defun top_draw_state (state)
 
   (or (eq state stopped) (eq state running)
-			(eq state run_jump) (eq state run_jump_fall) 
+			(eq state run_jump) (eq state run_jump_fall)
 			(eq state end_run_jump)))
 
 /*(defun top_draw ()
   (if (> (total_objects) 0)
       (let ((other  (get_object 0)))
-	(if (or (with_object other (morphing)) 
+	(if (or (with_object other (morphing))
 		(eq (with_object other disable_top_draw) 1)
 		(not (top_draw_state (with_object other (state)))))
 	    nil
@@ -663,7 +663,7 @@
 		(sneaky_draw (with_object other used_special_power)
 			     (with_object other (player_number)))
 	      (let ((nowx (x))
-		    (nowy (y)))				
+		    (nowy (y)))
 		(set_x (with_object other (if (> (direction) 0) (x) (+ (x) 2))))
 		(set_y (- (- (with_object other (y)) -29) (with_object other (picture_height))))
 		(player_draw  (with_object other (player_number)))
@@ -694,21 +694,21 @@
 
 (defun player_fire_weapon (type target)
   (let ((angle (with_obj0 (player_angle_suggestion))))
-			    
+
     (let ((firex (+ (x) (* (cos angle) 17) (xvel)))
 	  (firey (+ (- (y) (* (sin angle) 16) 20) (yvel))))
-      (if (can_see (x) (- (y) 16) firex firey nil)	
+      (if (can_see (x) (- (y) 16) firex firey nil)
 	  (progn
 	    (fire_object  (get_object 0) type firex firey angle target)
 	    T)
 	nil))))
 
-/* (defun top_ai () 
+/* (defun top_ai ()
   (if (> (total_objects) 0)
       (let ((myself (get_object 0)))
-      
+
 	(set_state rotate)
-	(let ((angle (with_object myself 
+	(let ((angle (with_object myself
 					    (if (> (direction) 0)
 						(player_angle_suggestion)
 					      (if (> (player_angle_suggestion) 180)
@@ -721,9 +721,9 @@
 	(if (eq (with_object myself (weapon_to_type (current_weapon_type))) (otype))
 	    (select (aistate)
 		    (2			; start fire up
-		     (progn 
+		     (progn
 		       (set_state rotate_fire)
-		       (set_frame_angle 0 359 (with_object myself 
+		       (set_frame_angle 0 359 (with_object myself
 					    (if (> (direction) 0)
 						(player_angle_suggestion)
 					      (if (> (player_angle_suggestion) 180)
@@ -734,7 +734,7 @@
 
 ;;			    (let ((otype (otype)))
 ;;			      (with_object myself (add_ammo otype -1)))
-;;			    (with_object (add_object (ammo_type) (x) (- (y) 16) 1) 
+;;			    (with_object (add_object (ammo_type) (x) (- (y) 16) 1)
 ;;					 (user_fun myself))
 			  (set_aistate 3)))
 		    (1			; special power
@@ -751,7 +751,7 @@
 			   (setq fire_delay1 (- fire_delay1 1)))
 			 )))
 	  (set_otype (with_object myself (weapon_to_type (current_weapon_type)))))))
-  (move 0 0 0) 
+  (move 0 0 0)
   T)
 
 ;(defun top_damage (amount from hitx hity push_xvel push_yvel)  ; transfer damage to lower half
@@ -761,20 +761,20 @@
 (defun laser_ufun (signal value)
   (select signal
 	  ('FIRE (if (eq (aistate) 0)  ;;  not already firing
-		     (if (> value 0)   ;; have ammo		 
-			 (progn		       
+		     (if (> value 0)   ;; have ammo
+			 (progn
 			   (setq fire_delay1 3)
 			   (set_aistate 2)
 			   (if (player_fire_weapon (ammo_type) nil)
 			       -1
 			     0))
-		       (progn		       
+		       (progn
 			 (setq fire_delay1 7)
 			 (set_aistate 2)
 			 (player_fire_weapon (ammo_type) nil)
 
 			 0))
-		   0))	  
+		   0))
 	  ('RESET_FIRE_OK (>= (state_time) fire_delay1))))
 
 (defun top_ufun (signal value)
@@ -811,10 +811,10 @@
 		     (progn
 		       (setq fire_delay1 12)
 		       (set_aistate 2)
-		       (if (player_fire_weapon (ammo_type) 
-					   (with_obj0 (find_object_in_area 
+		       (if (player_fire_weapon (ammo_type)
+					   (with_obj0 (find_object_in_area
 									(- (x) 160) (- (y) 160)
-									(+ (x) 160) (+ (y) 160) 
+									(+ (x) 160) (+ (y) 160)
 									bad_guy_list)))
 			   -1 0))
 		   0))
@@ -834,7 +834,7 @@
 	   (LIGHT_SABER   (list LSABER_BULLET))
 	   (DFRIS_TOP     (list DFRIS_BULLET))
    nil)))
-	    
+
 
 (defun make_top_char (symbol base ufun dfun)
   (eval (list 'def_char symbol
@@ -849,7 +849,7 @@
 	      `(states "art/coptop.spe"
 		       (stopped        (seq ,base 1 24))))))
 
-	      
+
 
 (make_top_char 'MGUN_TOP     "4gma" 'laser_ufun         'top_draw)
 (make_top_char 'GRENADE_TOP  "4gre" 'top_ufun           'top_draw)
@@ -868,10 +868,10 @@
 	      (1 (next_picture);; wait for save (actived state)
 		 (if (and (touching_bg) (with_object (bg) (pressing_action_key)))
 		     (set_aistate 2)))
-	      (2 (set_state running)	   
+	      (2 (set_state running)
 		 (set_aistate 3))
-	      (3 (set_aistate 4))	    
-	      (4 
+	      (3 (set_aistate 4))
+	      (4
 	       (let ((spot (get_save_slot)))
 		 (set_state stopped)
 		 (set_aistate 1)
@@ -891,7 +891,7 @@
 
 	       )))
   T)
-	  
+
 
 (def_char RESTART_POSITION
   (funs (ai_fun restart_ai)
@@ -909,10 +909,10 @@
 	  (show_stats)
 	  (request_level_load (concatenate 'string "levels/level" (digstr (aistate) 2) ".spe")))))
   T)
-	
+
 
 (def_char NEXT_LEVEL
-  (funs (ai_fun next_level_ai)) 
+  (funs (ai_fun next_level_ai))
   (flags (can_block T))
   (fields ("aistate" next_level))
   (states "art/misc.spe"
@@ -947,8 +947,8 @@
 	  (play_sound APPEAR_SND 100 (x) (y))
 	  (set_direction 1))
       (set_fade_count (- (fade_count) 1)))))
-    
-		     
+
+
 (def_char TELE_BEAM
   (funs (ai_fun tele_beam_ai))
   (states "art/chars/teleport.spe" (stopped (seq "beam" 1 5))))

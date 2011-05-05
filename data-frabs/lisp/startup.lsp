@@ -5,10 +5,10 @@
 
 (setq load_warn nil)
 
-(if (local_load "addon/deathmat/username.lsp")  
+(if (local_load "addon/deathmat/username.lsp")
   (set_login username))
 
-(if (local_load "addon/deathmat/gamename.lsp")  
+(if (local_load "addon/deathmat/gamename.lsp")
   (set_game_name gamename)
   (set_game_name "Joe's Game"))
 
@@ -51,13 +51,13 @@
 (load "register/tiles.lsp")       ;; load up registered artwork if it's there
 (setq load_warn T)
 
-(select (random 6) 
+(select (random 6)
   (0 (setf title_screen '("art/title.spe" . "title_screen1")))
   (1 (setf title_screen '("art/title.spe" . "title_screen2")))
   (2 (setf title_screen '("art/title.spe" . "title_screen3")))
   (3 (setf title_screen '("art/title.spe" . "title_screen4")))
   (4 (setf title_screen '("art/title.spe" . "title_screen5")))
-  (5 (setf title_screen '("art/title.spe" . "title_screen6"))) 
+  (5 (setf title_screen '("art/title.spe" . "title_screen6")))
 )
 
 (setf logo              '("art/title.spe" . "cdc_logo"))

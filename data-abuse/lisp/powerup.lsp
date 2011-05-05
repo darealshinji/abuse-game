@@ -1,12 +1,12 @@
 ;; Copyright 1995 Crack dot Com,  All Rights reserved
 ;; See licensing information for more details on usage rights
 
-(defun key_ai () (if (touching_bg) 
-		     (progn 
+(defun key_ai () (if (touching_bg)
+		     (progn
 		       (play_sound YEAH_SOUND 127 (x) (y))
 		       nil) T))
 
-(defun hp_up () 
+(defun hp_up ()
 	(next_picture)
 
 	(if (and (touching_bg) (with_object (bg) (give_player_health 20)))
@@ -36,10 +36,10 @@
   (range 0 0)
   (states "art/compass.spe" (stopped "compass" )))
 
-(defun fast_ai () 
+(defun fast_ai ()
   (next_picture)
-  (if (touching_bg) 
-      (progn (with_object (bg) 
+  (if (touching_bg)
+      (progn (with_object (bg)
 			  (progn
 			    (setq special_power FAST_POWER)
 ;			    (user_fun SET_FAST_TIME 360)

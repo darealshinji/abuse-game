@@ -30,10 +30,10 @@
 	  (next_picture)
 	(set_state dieing))
     (if (activated)
-	(progn       
+	(progn
 	  (set_targetable T)
 	  (push_char 35 40)
-	  (select (aistate) 
+	  (select (aistate)
 		  (0 ;; prepare to walk toward player
 		   (if (eq stationary 0)
 		       (progn
@@ -49,8 +49,8 @@
 		       (progn
 			 (set_direction (toward))
 			 (let ((curx (x));; save position in case we fall off a cliff
-			       (cury (y)))		     
-			   (if (next_picture) 
+			       (cury (y)))
+			   (if (next_picture)
 			       (if (eq (current_frame) 99) ;; The sound wont play anyway
 				   (play_sound JSTOMP_SND 127 (x) (y)));; bc there's 9 frames
 			     (progn					;; only!
@@ -72,7 +72,7 @@
 		       (let ((myself (me))
 			     (xspeed (* throw_xvel (direction)))
 			     (yspeed throw_yvel))
-			 (with_object (add_object MARIO_FIREBALL (+ (x) (* (direction) 20)) (- (y) 5) 1) 
+			 (with_object (add_object MARIO_FIREBALL (+ (x) (* (direction) 20)) (- (y) 5) 1)
 				      (progn
 					(user_fun myself)
 					(set_xvel xspeed)
@@ -81,7 +81,7 @@
 		     (next_picture)))
 		  (3 ;; wait for fire animation
 		   (if (next_picture) nil (set_aistate 0))))
-	  T) 
+	  T)
       (progn (set_targetable nil)
 	     T))))
 
@@ -104,7 +104,7 @@
 	    nil)
 	(progn
 	  (next_picture)
-	  (set_yvel (+ (yvel) 1))	  
+	  (set_yvel (+ (yvel) 1))
 	  (let ((old_yv  (yvel))
 		(old_xv  (xvel))
 		(old_x   (x))
@@ -119,7 +119,7 @@
 	      (set_x new_x)
 	      (set_y new_y))
 	    (hurt_radius (x) (y) 20 10 (me) 15)
-	    (if (not (eq status T));; T means we did not hit anything	
+	    (if (not (eq status T));; T means we did not hit anything
 		(let ((block_flags (car status)))
 		  (if (or (blocked_up block_flags) (blocked_down block_flags));; bounce up/down
 		      (progn
@@ -202,7 +202,7 @@
 	(try_move 0 10)
 	(next_picture)
 	(if (and (eq (direction) 1) (blocked_right (move 1 0 0))) (set_direction -1))
-	(if (and (eq (direction) -1) (blocked_left (move -1 0 0))) (set_direction 1))    
+	(if (and (eq (direction) -1) (blocked_left (move -1 0 0))) (set_direction 1))
 	T) ))
 
 (defun mbill_ai ()
@@ -293,7 +293,7 @@
 	  ("stationary"    jug_stat)
 	  ("aistate"       ai_state))
 
-  (states "addon/twist/art/mario.spe" 
+  (states "addon/twist/art/mario.spe"
 	  (stopped "ms.bmp")
 	  (running '("mr0001.bmp" "mr0002.bmp" "mr0003.bmp"
 		     "mr0001.bmp" "mr0002.bmp" "mr0003.bmp"
@@ -319,7 +319,7 @@
 	  ("stationary"    jug_stat)
 	  ("aistate"       ai_state))
 
-  (states "addon/twist/art/mario.spe" 
+  (states "addon/twist/art/mario.spe"
 	  (stopped "ls.bmp")
 	  (running '("lr0001.bmp" "lr0002.bmp" "lr0003.bmp"
 		     "lr0001.bmp" "lr0002.bmp" "lr0003.bmp"
@@ -338,7 +338,7 @@
 	 (unlistable T))
   (range 200 200)
   (abilities (start_hp 1))
-  (fields ("xvel" ai_xvel)	  
+  (fields ("xvel" ai_xvel)
 	  ("yvel" ai_yvel)
 	  ("hp"   ai_health)
 	  )
@@ -351,7 +351,7 @@
   (flags (can_block T)
 	 (hurtable  T))
   (abilities (start_hp 2))
-  (fields ("aitype" "Power 0=nil,1=cn,2=fl,3=td,4=st")	  
+  (fields ("aitype" "Power 0=nil,1=cn,2=fl,3=td,4=st")
 	  ("yacel" "Fade Count"))
   (states "addon/twist/art/mario.spe"
 	  (stopped       "b0012.bmp")
@@ -372,7 +372,7 @@
   (flags (can_block T)
 	 (hurtable  T))
   (abilities (start_hp 2))
-  (fields ("aitype" "Power 0=nil,1=cn,2=fl,3=td,4=st")	  
+  (fields ("aitype" "Power 0=nil,1=cn,2=fl,3=td,4=st")
 	  ("yacel" "Fade Count"))
   (states "addon/twist/art/mario.spe"
 	  (stopped       "b20001.bmp")

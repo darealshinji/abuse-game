@@ -73,7 +73,7 @@
 
   (flags (hurtable T))
   (abilities (start_hp 40))
-  (vars fire_delay burst_delay burst_total burst_wait burst_left 
+  (vars fire_delay burst_delay burst_total burst_wait burst_left
 	max_xvel   max_yvel    smoke_time fire_time)
   (fields ("fire_delay"  who_fdelay)
 	  ("burst_delay" who_bdelay)
@@ -83,7 +83,7 @@
 	  ("hp"          ai_health)
 	  ("aitype"      ai_type)
 	  ("aistate"     ai_state))
-  
+
   (range 200 200)
   (states "addon/twist/art/robs.spe"
 	  (running	"wflyer")
@@ -94,13 +94,13 @@
 
 (def_char WALK_ROB2
   (funs (ai_fun wrob2_ai)
-	(constructor wrob2_cons)	
+	(constructor wrob2_cons)
 	(damage_fun  guner_damage))
   (abilities (run_top_speed 12)
 	     (start_hp 60))
   (flags (hurtable T))
   (range 300 100)
-  (vars fire_delay burst_delay burst_total burst_wait burst_left 
+  (vars fire_delay burst_delay burst_total burst_wait burst_left
 	max_xvel   max_yvel    smoke_time fire_time)
   (fields ("fire_delay"   wrob_fdelay)
 	  ("burst_delay"  wrob_bdelay)
@@ -110,7 +110,7 @@
 	  ("hp"           ai_health)
 	  ("aistate"      ai_state))
 
-  (states "art/rob2.spe" 
+  (states "art/rob2.spe"
 	  (stopped "wwlk0001.pcx")
 	  (running (seq "wwlk" 1 10))
 	  (start_run_jump "wstart_jump")

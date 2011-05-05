@@ -43,7 +43,7 @@
   nil)
 
 
-(defun lsaber_draw () 
+(defun lsaber_draw ()
   (let ((c1 (find_rgb 255 255 255))
 	(c2 (find_rgb 70 59 67))
 	(c3 (find_rgb 147 155 195)))
@@ -83,7 +83,7 @@
 (defun dfris_ai ()
   (if (and (eq 0 (mod (game_tick) 2)) (not (frame_panic)))
       (let ((rand (rand_on)))
-	(with_object (add_object SMALL_LIGHT_CLOUD (+ (x) (random 3)) 
+	(with_object (add_object SMALL_LIGHT_CLOUD (+ (x) (random 3))
 				 (- (y) (random 3) (/ (picture_height) 2)))
 		     (set_fade_count 11))
 	(set_rand_on rand)))
@@ -92,11 +92,11 @@
 	  (< (total_objects) 1)
 	  (let ((mex (x))
 		(mey (y)))
-	    (with_object (get_object 0) (find_object_in_area (- mex 7) 
-							     (- mey 7) 
-							     (+ mex 7) 
+	    (with_object (get_object 0) (find_object_in_area (- mex 7)
+							     (- mey 7)
+							     (+ mex 7)
 							     (+ mey 7) bad_guy_list))))
-      (progn	
+      (progn
 	(do_white_explo 40 45)
 	nil)
     (progn
@@ -109,13 +109,13 @@
 		(if (>= angle_change 0)
 		    (set_aistate (mod (+ (aistate) 35) 360))
 		  (set_aistate (mod (+ (aistate) 325 ) 360)))))))
-      T))    
+      T))
 )
 
 
 
 (defun dfris_cache (type)
-  (list (list EXPLODE8 EXP_LIGHT) 
+  (list (list EXPLODE8 EXP_LIGHT)
 	(list GRENADE_SND)))
 
 (def_char DFRIS_BULLET

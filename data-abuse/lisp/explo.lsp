@@ -12,7 +12,7 @@
 
 	       T))))
 
-(defun do_small_explo (radius amount)  
+(defun do_small_explo (radius amount)
   (add_object EXPLODE3 (+ (x) (random 5)) (+ (y) (random 5)) 0)
   (add_object EXPLODE2 (+ (x) (random 5)) (+ (y) (random 5)) 2)
   (add_object EXPLODE3 (- (x) (random 5)) (- (y) (random 5)) 1)
@@ -49,7 +49,7 @@
 
 
 (def_char EXP_LIGHT
-  (funs (ai_fun   explo_light)  
+  (funs (ai_fun   explo_light)
 	(draw_fun dev_draw))
   (flags (unlistable T))
   (range 10000 10000)
@@ -57,14 +57,14 @@
 	  (stopped           "lhold")))
 
 
-(defun exp_ai () 
-  (if (eq (aitype) 0) (next_picture) 
+(defun exp_ai ()
+  (if (eq (aitype) 0) (next_picture)
     (progn (set_aitype (- (aitype) 1))
 	   T)))
 
 
 (defun exp_draw ()
-  (if (eq (aitype) 0) 
+  (if (eq (aitype) 0)
       (middle_draw)))
 
 (defun def_explo (symbol file seq_name last_frame)

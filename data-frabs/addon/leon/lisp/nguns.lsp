@@ -9,7 +9,7 @@
 			(setq sgb_angle angle)
 			(setq sgb_bright_color (find_rgb 255 245 235))
 			(setq sgb_medium_color (find_rgb 150 145 140))
-			(if creator 
+			(if creator
 			    (progn
 			      (setq sgb_speed (+ sgb_speed (/ (xvel) 2)))
 			      (link_object creator)))
@@ -30,7 +30,7 @@
 					(setq sgb_angle angle)
 					(setq sgb_bright_color (find_rgb 255 255 200))
 					(setq sgb_medium_color (find_rgb 150 150 0))
-					(if creator 
+					(if creator
 					    (progn
 					      (setq sgb_speed (+ sgb_speed (/ (xvel) 2)))
 					      (link_object creator)))
@@ -44,10 +44,10 @@
 					(setq sgb_lastx (x))
 					(setq sgb_lasty (y))
 					(setq sgb_angle angle)
-					
+
 					(setq sgb_bright_color (find_rgb 255 128 64))
 					(setq sgb_medium_color (find_rgb 255 0 0))
-					(if creator 
+					(if creator
 					    (progn
 					      (setq sgb_speed (+ sgb_speed (/ (xvel) 2)))
 					      (link_object creator)))
@@ -57,13 +57,13 @@
 			  (progn
 			    (play_sound GRENADE_THROW 127 x y)
 			    (set_course angle 20)
-			    (if creator	
+			    (if creator
 				(progn
 				  (link_object creator)
 				  (set_xvel (+ (xvel) (with_object creator (xvel))))
 				  (set_yvel (+ (yvel) (with_object creator (yvel))))
 				  ))
-			    
+
 			    (set_frame_angle 0 359 angle)
 			    )))
 	  (3 (with_object (add_object ROCKET x y)
@@ -73,7 +73,7 @@
 			    (if creator	(link_object creator))
 
 			    (if (and target   ;; don't link if not in line of site
-				     (can_see (x) (y) 
+				     (can_see (x) (y)
 					      (with_object target (x))
 					      (with_object target (y)) nil))
 					      (link_object target))
@@ -91,7 +91,7 @@
 					(play_sound PLASMA_SND 127 (x) (y))
 					(setq sgb_lastx (x))
 					(setq sgb_lasty (y))
-					(if creator 
+					(if creator
 					      (link_object creator))
 					(set_course angle 200)
 					(let ((old_x (x))
@@ -99,12 +99,12 @@
 					      (bx (bmove (if (> (total_objects) 0) (get_object 0) nil))))
 					  (if (not (eq bx T))
 					      (if (eq bx nil)
-						  (add_object EXPLODE5 (- (x) (random 5)) 
+						  (add_object EXPLODE5 (- (x) (random 5))
 							      (- (y) (random 5)) 0)
 						(progn
-						  (add_object EXPLODE3 (- (x) (random 5)) 
+						  (add_object EXPLODE3 (- (x) (random 5))
 							      (- (y) (random 5)) 0)
-						  (do_damage 10 bx (* (cos sgb_angle) 20) 
+						  (do_damage 10 bx (* (cos sgb_angle) 20)
 							     (* (sin sgb_angle) 10)))))
 					  (setq sgb_lastx (x))
 					  (setq sgb_lasty (y))
@@ -117,7 +117,7 @@
 			  (progn
 			    (play_sound FIREBOMB_SND 127 (x) (y))
 			    (set_course angle 20)
-			    (if creator	
+			    (if creator
 				(progn
 				  (link_object creator)
 				  (set_yvel (+ (yvel) (with_object creator (yvel))))
@@ -128,7 +128,7 @@
 					(play_sound ROCKET_LAUNCH_SND 127 x y)
 					(set_course angle 25)
 					(set_aistate angle)
-					(if creator 
+					(if creator
 					      (link_object creator))
 					(dfris_ai)
 					)))
@@ -138,21 +138,21 @@
 					(play_sound LSABER_SND 127 (x) (y))
 					(setq sgb_lastx (x))
 					(setq sgb_lasty (y))
-					(if creator 
+					(if creator
 					      (link_object creator))
 					(set_course angle 45)
 					(let ((bx (bmove (if (> (total_objects) 0) (get_object 0) nil))))
 					  (if (not (eq bx T))
 					      (if (not (eq bx nil))
-						  (do_damage 30 bx (* (cos sgb_angle) 20) 
+						  (do_damage 30 bx (* (cos sgb_angle) 20)
 							     (* (sin sgb_angle) 10)))))
 					)))
-			   
+
 
 	  (9 (with_object (add_object STRAIT_ROCKET x y)
 				      (progn
 					(play_sound MGUN_SND 127 (x) (y))
-					(if creator 
+					(if creator
 					      (link_object creator))
 					(set_aistate angle)
 					(set_frame_angle 0 359 angle)
@@ -168,7 +168,7 @@
 					(setq sgb_angle angle)
 					(setq sgb_bright_color (find_rgb 255 0 0))
 					(setq sgb_medium_color (find_rgb 150 0 0))
-					(if creator 
+					(if creator
 					    (progn
 					      (setq sgb_speed (+ sgb_speed (/ (xvel) 2)))
 					      (link_object creator)))
@@ -192,13 +192,13 @@
           (zap 6 16 x y (+ angle 30))
           (zap 6 16 x y (- angle 30))
 	  )
-	  ) 
+	  )
 )
 
 (defun las_ai ()
   (setq sgb_lastx (x))
   (setq sgb_lasty (y))
-  (set_course sgb_angle sgb_speed)  
+  (set_course sgb_angle sgb_speed)
   (if (eq sgb_lifetime 0)
       nil
     (let ((bx (bmove (if (> (total_objects) 0) (get_object 0) nil))))  ; don't hit the guy who fired us.
@@ -214,7 +214,7 @@
       T)))
 
 (def_char LASR_BULLET
-  (vars sgb_speed sgb_angle sgb_lastx sgb_lasty 
+  (vars sgb_speed sgb_angle sgb_lastx sgb_lasty
 	sgb_bright_color sgb_medium_color sgb_lifetime sgb_dam)
   (funs (ai_fun   las_ai)
 	(user_fun sgun_ufun)

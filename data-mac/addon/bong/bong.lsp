@@ -23,10 +23,10 @@
 ;;;; You might be interest to know emacs is also very customizable using a language
 ;;;; called lisp :-)
 
-;;;; Please do not ask me for docs on how to code with the abuse engine, there are 
+;;;; Please do not ask me for docs on how to code with the abuse engine, there are
 ;;;; none at this time and there won't be any until networked abuse is available.
 ;;;; ALL games written with the abuse engine are network ready with no additional
-;;;; work including this one, but there are some issues that need addressing 
+;;;; work including this one, but there are some issues that need addressing
 ;;;; that cannot be fully discussed until the net code is finished.  When these
 ;;;; docs are written they will be available at http://www.crack.com   Estimated
 ;;;; date for these docs is sometime late Oct. 1995
@@ -65,7 +65,7 @@
 
 (setq pong_dir "addon/bong/")  ; in case we change the location of these files later
                                ; this is always a very good idea to do because the user of
-                               ; this program may/may not be able to install into this directory       
+                               ; this program may/may not be able to install into this directory
 (setq pong_art (concatenate 'string pong_dir "bong.spe"))  ; all artwork is in this file
 
 (setq load_warn nil)            ; don't show a waringing if these files aren't there
@@ -115,7 +115,7 @@
   (if (not (eq digs_left 0))       ; end recursion
       (let ((this-digit (/ score digs_left)))
 	(put_image x y (aref nums this-digit))
-	(show_score (+ x (image_width (aref nums this-digit))) y 
+	(show_score (+ x (image_width (aref nums this-digit))) y
 		    (/ digs_left 10) (- score (* digs_left this-digit))))))
 
 (defun paddle_draw ()
@@ -152,7 +152,7 @@
 	      (blow_up_tile tilex (- tiley 1)))
 	  (blow_up_tile tilex (+ tiley 1))
 	  (blow_up_tile (+ tilex 1) tiley)))
-	      
+
     (with_object (bg) (add_hp 10))           ; give player points
 
     (add_object TILE_BLOW_UP gamex gamey)
@@ -164,7 +164,7 @@
 
 (defun check_collide (status)    ;; returns T if we hit something
   (if (not (eq status T))                                  ; did we hit anything?
-      (if (eq (car (cdr status)) 'object)                  ; did we hit an object?	      
+      (if (eq (car (cdr status)) 'object)                  ; did we hit an object?
 	  (let ((object (car (cdr (cdr status)))))
 	    (if (eq (with_object object (otype)) PADDLE)   ; did we hit the paddle?
 		(if (<= (aistate) 180)
@@ -172,7 +172,7 @@
 		      (set_aistate (+ (aistate) (- (with_object object (x)) (x))))
 		      (if (> 20 (aistate)) (set_aistate 20)
 			(if (< 160 (aistate)) (set_aistate 160)))
-		      T) 
+		      T)
 		  nil)
 	      nil)
 	    nil)
@@ -194,7 +194,7 @@
 
 (defun move_ball ()  ;; returns status of move
   (let ((status (float_tick)))
-    (if (not (eq status T))   ; T means we did not hit anything	
+    (if (not (eq status T))   ; T means we did not hit anything
 	(let ((block_flags (car status)))
 	  (if (or (blocked_left block_flags) (blocked_right block_flags)) ; bounce left/right
 	      (if (<= (aistate) 180)
@@ -217,7 +217,7 @@
   (set_course (aistate) 7)
   (select (aitype)
 	  (0  ; normal play, bounce around and stuff..
-	   (check_collide (move_ball))	   	   
+	   (check_collide (move_ball))
 	   (if (> (y) 240)  ; check to see if we are dead
 	       (progn
 		 (if (> score 500)
@@ -230,7 +230,7 @@
 		     (set_aitype 1)
 		     T)))
 	     T))
-		  
+
 	   (1 ; ball is dead - go to paddle and fade in
 	    (set_x (with_object (bg) (x)))
 	    (set_y (- (with_object (bg) (y)) 14))
@@ -238,7 +238,7 @@
 	    (if (eq (fade_count) 0)
 		(set_aitype 0))
 	    T)))
-	  
+
 
 (def_char BALL
   (funs (ai_fun ball_ai))
@@ -264,7 +264,7 @@
   (if (or (and (< xm 0) (> (x) 20)) (and (> xm 0) (< (x) 300)))
       (mover xm 0 0)
     0))
-     
+
 
 (def_char PADDLE
   (vars shooting_time fire_delay)
@@ -291,7 +291,7 @@
   (set_y (+ (y) 3))
   (next_picture)
   (if (touching_bg)  ; are we touching the paddle
-      (progn 
+      (progn
 	(add_score 1000)
 	(with_object (add_object BALL (x) (y) 1) (progn (set_fade_count 15) (set_aistate 80)))
 	nil)
@@ -338,6 +338,6 @@
 
 (create_players PADDLE)
 (set_first_level (get_level_name current_level))
-(gc)    ; garbage collect 
+(gc)    ; garbage collect
 (tmp-space)
 

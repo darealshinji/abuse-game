@@ -1,9 +1,9 @@
 ;; Copyright 1995 Crack dot Com,  All Rights reserved
 ;; See licensing information for more details on usage rights
 
-(setq ant_tints (make-array 13 :initial-contents (list 
+(setq ant_tints (make-array 13 :initial-contents (list
 						(def_tint "art/tints/ant/green.spe")
-						(def_tint "art/tints/ant/blue.spe") 
+						(def_tint "art/tints/ant/blue.spe")
 						(def_tint "art/tints/ant/brown.spe")
 						(def_tint "art/tints/ant/egg.spe")
 						(def_tint "art/tints/ant/yellow.spe")
@@ -17,7 +17,7 @@
 						normal_tint
 						)))
 
-/* 
+/*
 ------ this code has been compiled --------
 (defun no_fall_move (xm ym but)
   (move xm ym but))
@@ -36,8 +36,8 @@
 	    (set_gravity 0)
 	    0)
 	ret))))
-	    
-      
+
+
 (defun will_fall_if_jump ()
   nil)
   (let ((dist (* (abs (get_ability jump_yvel)) (get_ability jump_xvel)))
@@ -61,7 +61,7 @@
 
 
 (defun strait_rocket_ai ()
-  (set_course (aistate) 
+  (set_course (aistate)
 	      (select difficulty
 		      ('easy    12)
 		      ('medium  15)
@@ -73,7 +73,7 @@
 	T
     (progn
       (if (not (eq stat nil))
-	  (progn 
+	  (progn
 	    (add_object EXPLODE3 (+ (x) (random 5)) (+ (y) (random 5)) 0)
 	    (add_object EXPLODE2 (+ (x) (random 5)) (+ (y) (random 5)) 2)
 	    (add_object EXPLODE3 (- (x) (random 5)) (- (y) (random 5)) 1)
@@ -83,7 +83,7 @@
 	(let ((myself (me)))
 	  (with_object (add_object EG_EXPLO (x) (y)) (user_fun myself (car stat)))))
       nil))))
-    
+
 
 (def_char STRAIT_ROCKET
   (funs (ai_fun strait_rocket_ai))
@@ -98,7 +98,7 @@
   (if block_flags
       (if (or (blocked_left block_flags) (blocked_right block_flags))
 	  (set_state blocking))))
-	 
+
 (def_char EG_EXPLO
   (funs (ai_fun   animate_ai)
 	(user_fun eg_explo_ufun))
@@ -108,10 +108,10 @@
 	  (stopped  (seq "bifl" 1 4))
 	  (blocking (seq "bilw" 1 4))))
 
-/* 
+/*
 ------ this code has been compiled --------
 (defun alien_wait_time ()
-  (select difficulty 
+  (select difficulty
 	  ('easy    6)
 	  ('medium  4)
 	  ('hard    2)
@@ -132,8 +132,8 @@
     (if (find_object_in_area (- (x) 30) (- (y) 20) (- (x) 23) (+ (y) 20) (list ANT_ROOF))
 	nil
       T)))
-      
-      
+
+
 (defun roof_above () (not (can_see (x) (y) (x) (- (y) 120) nil)))
 
 (defun fire_at_player ()
@@ -141,7 +141,7 @@
 	(firey (- (y) 15))
 	(playerx (+ (with_object (bg) (x)) (with_object (bg) (* (xvel) 8))))
 	(playery (+ (- (with_object (bg) (y)) 15) (with_object (bg) (* (yvel) 2)))))
-    
+
     (if (and (can_see (x) (y) firex firey nil) (can_see firex firey playerx playery nil))
 	(progn
 	  (let ((angle (atan2 (- firey playery)
@@ -153,15 +153,15 @@
 
 (defun ant_dodge ()
   (if (eq need_to_dodge 1)
-      (progn 
+      (progn
 	(setq need_to_dodge 0)
 	(if (eq (random 2) 1)
 	    (progn
 	      (set_state stopped)
 	      (go_state 6))         ;; jump at player
 	  (if (roof_above)
-	      (progn			
-		(set_yvel -17)  ;; jump up  
+	      (progn
+		(set_yvel -17)  ;; jump up
 		(set_xvel 0)
 		(go_state 12))
 	    (progn
@@ -191,12 +191,12 @@
 			   (set_aistate 15)
 			 (set_aistate 16)))
 
-		  (15 ;; hanging on the roof waiting for the main character		   
+		  (15 ;; hanging on the roof waiting for the main character
 		   (if (next_picture) T (set_state hanging))
 		   (if (if (eq (total_objects) 0);; no sensor, wait for guy
 			   (and (< (distx) 130) (< (y) (with_object (bg) (y))))
 			 (not (eq (with_object (get_object 0) (aistate)) 0)))
-		       (progn 
+		       (progn
 			 (set_state fall_start)			 (set_direction (toward))
 			 (set_aistate 1))))
 
@@ -205,7 +205,7 @@
 		   (if (if (eq (total_objects) 0);; no sensor, wait for guy
 			   (and (< (distx) 130) (< (y) (with_object (bg) (y))))
 			 (not (eq (with_object (get_object 0) (aistate)) 0)))
-		       (progn 
+		       (progn
 			 (set_state fall_start)			 (set_direction (toward))
 			 (set_aistate 1))))
 
@@ -220,11 +220,11 @@
 
 		  (9 ;; landing / turn around (gerneal finish animation state)
 		   (if (next_picture) T
-		     (if (try_move 0 2)	
+		     (if (try_move 0 2)
 			 (progn
 			   (set_gravity 1)
 			   (set_aistate 1))
-		       (progn (set_state stopped)			  
+		       (progn (set_state stopped)
 			      (go_state 2)))))  ;; running
 
 		  (2 ;; running
@@ -255,7 +255,7 @@
 			     (set_direction (toward))
 			     (set_state turn_around)
 			     (set_aistate 9)))))
-	      
+
 		  (4 ;; wait for pounce
 		   (if (ant_dodge) T
 		     (progn
@@ -267,14 +267,14 @@
 			     (set_state stopped)
 			     (go_state 6))))))
 
-		  (6 ;; jump		  
+		  (6 ;; jump
 		   (setq need_to_dodge 0)
 		   (if (blocked_down (move (direction) -1 0))
 		       (progn
 			 (set_aistate 2))))
 
 		  (8 ;; fire at player
-		   (if (ant_dodge) T		     
+		   (if (ant_dodge) T
 		     (if (eq (state) fire_wait)
 			 (if (next_picture)
 			     T
@@ -305,8 +305,8 @@
 
 		  (13 ;; roof walking
 		   (scream_check)
-		   (if (or (and (< (y) (with_object (bg) (y))) 
-				(< (distx) 10) (eq (random 8) 0)) 
+		   (if (or (and (< (y) (with_object (bg) (y)))
+				(< (distx) 10) (eq (random 8) 0))
 			   (eq need_to_dodge 1))  ;; shooting at us, fall down
 		       (progn
 			 (set_gravity 1)
@@ -322,15 +322,15 @@
 			 (let ((xspeed (if (> (direction) 0) (get_ability run_top_speed)
 					 (- 0 (get_ability run_top_speed)))))
 			   (if (and (can_see (x) (- (y) 31) (+ (x) xspeed) (- (y) 31) nil)
-				    (not (can_see (+ (x) xspeed) (- (y) 31) 
+				    (not (can_see (+ (x) xspeed) (- (y) 31)
 						  (+ (x) xspeed) (- (y) 32) nil)))
 			       (progn
 				 (set_x (+ (x) xspeed))
-				 (if (not (next_picture)) 
+				 (if (not (next_picture))
 				     (set_state top_walk)))
 			     (set_aistate 1)))))))
 
-	
+
 		  (14 ;; cieling shoot
 		   (if (next_picture)
 		       T
@@ -340,9 +340,9 @@
 		       (set_aistate 13))))
 
 		  )))
-      
+
       T)
-*/   
+*/
 
 
 (defun create_dead_parts (array part_num type)
@@ -381,7 +381,7 @@
       'flaming_part
       'electric_part
       'normal_part)
-      
+
 (defun get_dead_part (from)
   (if from
       (let ((type (with_object from (otype))))
@@ -398,8 +398,8 @@
 (defun ant_damage (amount from hitx hity push_xvel push_yvel)  ; transfer damage to lower half
 
   (if (and (not (eq (state) dead))
-	   (or (not from) 
-	       (with_object from (if (eq (total_objects) 0) 
+	   (or (not from)
+	       (with_object from (if (eq (total_objects) 0)
 				     (not (eq (otype) ANT_ROOF))
 				   (with_object (get_object 0) (not (eq (otype) ANT_ROOF)))))))
       (if (not (eq (aistate) 15))
@@ -409,7 +409,7 @@
 	      (set_state flinch_down))
 	    (damage_fun amount from hitx hity push_xvel push_yvel)
 	    (play_sound APAIN_SND 127 (x) (y))
-	    (setq need_to_dodge 1)	    
+	    (setq need_to_dodge 1)
 	    (if (<= (hp) 0)
 		(progn
 		  (if (eq (aitype) 0)
@@ -461,7 +461,7 @@
 	  ("aistate"      ai_state))
   (range 250 20)
   (draw_range 40 40)
-  (funs (ai_fun     ant_ai)	
+  (funs (ai_fun     ant_ai)
 	(draw_fun   ant_draw)
 	(constructor ant_cons)
 	(type_change_fun ant_ct)
@@ -476,16 +476,16 @@
 	     (jump_xvel      20)
 	     (push_xrange     1)
 	     (jump_top_speed 20))
-  
+
   (flags (hurtable  T)
 	 (force_health T))
 
-  (states "art/ant.spe" 
+  (states "art/ant.spe"
 	  (hanging (rep "ant" 2))
 
 	  (fall_start "affc0001.pcx")
 	  (falling    "affc0002.pcx")
-	  
+
 	  (stopped "awlk0001.pcx")
 	  (running (seq "awlk" 1 10))
 	  (landing (seq "acff" 1 4))
@@ -517,7 +517,7 @@
 	hide_flag)
   (states "art/ant.spe" (stopped "hidden")))
 
-  
+
 
 
 (defun crack_ai ()
@@ -531,7 +531,7 @@
 	    (3
 	     (let ((d (direction))
 		   (type (aitype)))
-	       (if (or (eq create_total 0) (eq create_total 1))		  
+	       (if (or (eq create_total 0) (eq create_total 1))
 		   (set_current_frame 4)
 		 (progn
 		   (setq create_total (- create_total 1))
@@ -548,7 +548,7 @@
 	    (1 (next_picture))
 	    (2 (next_picture))))
   T)
-	    
+
 
 (defun crack_cons ()
   (setq create_total 1)
@@ -575,12 +575,12 @@
 	   (set_yvel (+ (yvel) 3))
 	   (bounce_move T T T '(progn (set_state dieing) (set_aistate 1)) T)
 	   (or (< (state_time) 15)
-	       (not (frame_panic))))	      
+	       (not (frame_panic))))
 	  (1 ;; hit the ground
 	   nil)
 	  ))
 
-(setq ant_dead_parts (make-array (* 3 4) :initial-contents 
+(setq ant_dead_parts (make-array (* 3 4) :initial-contents
 			     '((AD_1  "adbn") (AD_2  "adha") (AD_3  "adla")     ; disapear
 			       (AD_4  "adaf") (AD_5  "adah") (AD_6  "adlf")     ; flaming
 			       (AD_7  "adbe") (AD_8  "adhe") (AD_9  "adle")     ; electrical
@@ -591,7 +591,7 @@
   (list
    (list ANT_ROOF AD_1 AD_2 AD_3 AD_4 AD_5 AD_6 AD_7 AD_8 AD_9 AD_10 AD_11 AD_12)
    (list (aref ant_tints 0) (aref ant_tints 1) (aref ant_tints 2) (aref ant_tints 3)
-	 (aref ant_tints 4) (aref ant_tints 5) (aref ant_tints 6) (aref ant_tints 7) 
+	 (aref ant_tints 4) (aref ant_tints 5) (aref ant_tints 6) (aref ant_tints 7)
 	 (aref ant_tints 8) (aref ant_tints 9) (aref ant_tints 10)  )))
 
 
@@ -609,7 +609,7 @@
 
 (do ((i 0 (setq i (+ i 1))))
 	   ((>= i 12) nil)
-	   (setq (aref ant_dead_parts i) 
+	   (setq (aref ant_dead_parts i)
 		 (make_dead_part (car (aref ant_dead_parts i))
 				 (car (cdr (aref ant_dead_parts i))) 4 "art/ant.spe" 'ant_draw)))
 

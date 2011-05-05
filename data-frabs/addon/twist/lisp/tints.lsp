@@ -2,7 +2,7 @@
 ;; See licensing information for more details on usage rights
 
 
-(setq man_tints (make-array 11 :initial-contents (list 
+(setq man_tints (make-array 11 :initial-contents (list
 						 normal_tint
 						 (def_tint "art/tints/cop/pinkish.spe")
 						 (def_tint "art/tints/cop/olive.spe")

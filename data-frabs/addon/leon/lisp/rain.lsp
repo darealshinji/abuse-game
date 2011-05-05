@@ -31,18 +31,18 @@
   )
 
   (select (aistate)
-    (0 
+    (0
       (set_yvel (+ 100 (random 500) ) )
       (set_yacel (random 3) )
       (set_aistate 6)
     )
-    (4 (if (activated) 
+    (4 (if (activated)
          (go_state 0)
        )
     )
     (6 (if (eq (state_time) (yvel) )
          (progn
-           (add_object THUNDER (with_object (bg) (x)) (with_object (bg) (y))) 
+           (add_object THUNDER (with_object (bg) (x)) (with_object (bg) (y)))
            (set_aistate 2)
          )
       )
@@ -86,7 +86,7 @@
   (states "art/misc.spe"
 	  (stopped "latter")))
 
-(setq THUNDER_SOUNDS (make-array 5 :initial-contents (list 
+(setq THUNDER_SOUNDS (make-array 5 :initial-contents (list
 			       (def_sound "addon/leon/sfx/thunder.wav")   ;; 0
 			       (def_sound "addon/leon/sfx/thunder2.wav")   ;; 1
 			       (def_sound "addon/leon/sfx/thunder3.wav")   ;; 2
@@ -109,7 +109,7 @@
   (states "art/misc.spe"
 	  (stopped "latter")))
 
-(setq RAIN_SOUNDS (make-array 4 :initial-contents (list 
+(setq RAIN_SOUNDS (make-array 4 :initial-contents (list
 			       (def_sound "addon/leon/sfx/rain.wav")   ;; 0
 			       (def_sound "addon/leon/sfx/rain2.wav")   ;; 1
 			       (def_sound "addon/leon/sfx/rain3.wav")   ;; 2

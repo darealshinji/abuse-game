@@ -8,7 +8,7 @@
     (let ((bx (bmove (if (> (total_objects) 0) (get_object 0) nil))))  ; don't hit the guy who fired us.
       (if (eq bx T)
 	  T
-	(progn 
+	(progn
 	  (if (null bx)
 	      (if (eq (random 2) 0)
 		  (progn
@@ -19,7 +19,7 @@
 		  (play_sound MG_HIT_SND2 127 (x) (y))))
 	    (progn
 ;	      (add_panim EXPLO2 (x) (y) (direction))
-;	      (add_object EXP_LIGHT (x) (y) 80)	
+;	      (add_object EXP_LIGHT (x) (y) 80)
 	      (do_damage 5 bx (if (> 0 (direction)) -10 10) 0)
 	      ))
 	  nil))))
@@ -28,12 +28,12 @@
 (defun grenade_ai ()
   (if (and (eq (tick) 0)
 	   (if (< (total_objects) 1)
-	       nil	     
+	       nil
 	     (let ((mex (x))
 		   (mey (y)))
-	       (not (with_object (get_object 0) (find_object_in_area (- mex 7) 
-								     (- mey 7) 
-								     (+ mex 7) 
+	       (not (with_object (get_object 0) (find_object_in_area (- mex 7)
+								     (- mey 7)
+								     (+ mex 7)
 								     (+ mey 7) bad_guy_list))))))
       (progn (next_picture) T)
     (do_explo 40 36)))
@@ -43,22 +43,22 @@
 (defun firebomb_ai ()
 
   (add_object EXPLODE1 (- (x) (random 5)) (+ (y) (random 20)) 0)
-  (hurt_radius (x) (y) 60 40 (if (> (total_objects) 0) (get_object 0) nil) 10)     
+  (hurt_radius (x) (y) 60 40 (if (> (total_objects) 0) (get_object 0) nil) 10)
 
   (and (or (< (state_time) 3) (not (eq (xvel) 0)))
        (< (state_time) 20)
        (select (direction)
-	      (1 (progn ;(set_xvel 30) 
+	      (1 (progn ;(set_xvel 30)
 			(not (blocked_right (move 0 0 0)))
 			))
-	      (-1 (progn ;(set_xvel -30) 
+	      (-1 (progn ;(set_xvel -30)
 			 (not (blocked_left (move 0 0 0))))))))
-      
 
 
 
 
-(defun mbullet_ufun (creator) 
+
+(defun mbullet_ufun (creator)
   (set_direction (with_object creator (direction)))
 
   (let ((start (if (> (direction) 0) 335 155))
@@ -75,14 +75,14 @@
 )
 
 
-(defun firebomb_ufun (creator) 
+(defun firebomb_ufun (creator)
   (set_direction (with_object creator (direction)))
   (link_object creator)
 )
 
 
 
-(defun player_mine_ufun (creator) 
+(defun player_mine_ufun (creator)
   (set_x (with_object creator (x)))
   (set_y (with_object creator (y)))
   (link_object creator)
@@ -93,8 +93,8 @@
 (defun player_mine_ai ()
   (select (aistate)
 	  (0
-	   ;; wait till no player (just in case), or player lets go of fire button  
-	   (if (or (eq 0 (total_objects)) 
+	   ;; wait till no player (just in case), or player lets go of fire button
+	   (if (or (eq 0 (total_objects))
 		   (and (eq (with_object (get_object 0) (player_b1_suggest)) 0)
 			(eq (with_object (get_object 0) (player_b2_suggest)) 0)))
 	       (progn
@@ -106,10 +106,10 @@
 		 T
 	       (do_explo 50 40)
 	     ))))
-      
+
 
 (def_char MBULLET
-  (funs (ai_fun     mbullet_ai)  
+  (funs (ai_fun     mbullet_ai)
 	(draw_fun   dev_draw)     ; you can't see the bullets
 	(user_fun   mbullet_ufun))
   (range 10000 10000)
@@ -117,27 +117,27 @@
   (states "art/misc.spe" (stopped "mbullet_icon")))
 
 
-(defun grenade_ufun (creator) 
+(defun grenade_ufun (creator)
   (set_direction (with_object creator (direction)))
   (play_sound GRENADE_THROW 127 (x) (y))
   (select (aitype)
-	  (1 (progn (set_xvel (if (> (direction) 0) 
-				  (+ 13 (random 2)) 
+	  (1 (progn (set_xvel (if (> (direction) 0)
+				  (+ 13 (random 2))
 				(+ -13 (random 2)))) (set_yvel -4)))
-	  (2 (progn (set_xvel (if (> (direction) 0) 
-				  (+ 7 (random 2)) 
+	  (2 (progn (set_xvel (if (> (direction) 0)
+				  (+ 7 (random 2))
 				(+ -7 (random 2)))) (set_yvel -10))))
   (set_xvel (+ (xvel) (with_object creator (xvel))))
   (link_object creator)
 )
 
 (defun grenade_cache (type)
-  (list (list EXPLODE1 EXP_LIGHT) 
+  (list (list EXPLODE1 EXP_LIGHT)
 	(list GRENADE_SND)))
 
 
 (def_char GRENADE
-  (funs (ai_fun   grenade_ai)  
+  (funs (ai_fun   grenade_ai)
 	(get_cache_list_fun grenade_cache)
 	(user_fun grenade_ufun))
   (range 10000 10000)
@@ -146,7 +146,7 @@
 
 
 (def_char FIREBOMB
-  (funs (ai_fun   firebomb_ai)  
+  (funs (ai_fun   firebomb_ai)
 	(user_fun firebomb_ufun)
 	(get_cache_list_fun grenade_cache)
 	(draw_fun fb_draw))
@@ -158,7 +158,7 @@
 	  (stopped "firebomb")
 	  (walking "firebomb")))
 
-      
+
 
 (defun ammo_cache (type)    ;; tells what other chars to load in with this character
   (list
@@ -168,12 +168,12 @@
 	   (MBULLET_ICON5    `(,SHOTGUN_BULLET ,MGUN_TOP))
 	   (MBULLET_ICON20   `(,SHOTGUN_BULLET ,MGUN_TOP))
 	   (ROCKET_ICON2     `(,ROCKET ,ROCKET_TOP))
-	   (ROCKET_ICON5     `(,ROCKET ,ROCKET_TOP))	  
+	   (ROCKET_ICON5     `(,ROCKET ,ROCKET_TOP))
 	   (FBOMB_ICON1      `(,FIREBOMB ,FIREBOMB_TOP))
 	   (FBOMB_ICON5      `(,FIREBOMB ,FIREBOMB_TOP))
 
 	   (PLASMA_ICON20    `(,PLASMAGUN_BULLET))
-	   (PLASMA_ICON50    `(,PLASMAGUN_BULLET))	   
+	   (PLASMA_ICON50    `(,PLASMAGUN_BULLET))
 
 	   (LSABER_ICON50    `(,LSABER_BULLET ,PGUN_TOP))
 	   (LSABER_ICON100   `(,LSABER_BULLET ,PGUN_TOP))
@@ -182,7 +182,7 @@
 	   (DFRIS_ICON10     `(,DFRIS_BULLET ,DFRIS_TOP))
    nil)))
 
-      
+
 
 /*  written in C
 
@@ -191,7 +191,7 @@
       (draw)
     (dev_draw)))
 
-(defun weapon_icon_ai () 
+(defun weapon_icon_ai ()
   (if (eq0 (aistate))
       (if (activated)
 	  (progn
@@ -199,13 +199,13 @@
 	    (if (eq (second (see_dist (x) (y) (x) (+ (y) 1))) (y))  ; if we are on the floor, don't check falling anymore
 		(set_aistate 1))
 
-	    (if (touching_bg) 
+	    (if (touching_bg)
 		(progn
 		  (play_sound AMMO_SND 127 (x) (y))
 		  (select (otype)
 			  (MBULLET_ICON5   (giver 0));; these numbers correspond to status bar position
 			  (MBULLET_ICON20  (giver 0))
-			  (GRENADE_ICON2   (giver 1))		
+			  (GRENADE_ICON2   (giver 1))
 			  (GRENADE_ICON10  (giver 1))
 
 			  (ROCKET_ICON2    (giver 2))
@@ -228,13 +228,13 @@
 		  nil)
 	      T))
 	T)
-    (if (touching_bg) 
+    (if (touching_bg)
 	(progn
 	  (play_sound AMMO_SND 127 (x) (y))
 	  (select (otype)
 		  (MBULLET_ICON5   (giver 0));; these numbers correspond to status bar position
 		  (MBULLET_ICON20  (giver 0))
-		  (GRENADE_ICON2   (giver 1))		
+		  (GRENADE_ICON2   (giver 1))
 		  (GRENADE_ICON10  (giver 1))
 
 		  (ROCKET_ICON2    (giver 2))
@@ -258,7 +258,7 @@
 */
 
 (defun make_ammo_icon (symbol icon_name increment)
-  (eval (list 'def_char symbol	      
+  (eval (list 'def_char symbol
 	      '(funs (ai_fun weapon_icon_ai)
 		     (get_cache_list_fun ammo_cache)
 		     (draw_fun on_draw))
@@ -281,7 +281,7 @@
 
 
 
-(defun guner_cons () 
+(defun guner_cons ()
   (set_xvel 7)     ;; fire speed
   (set_yvel 50)    ;; speed of bullet
   (set_xacel 290)  ;; start angle
@@ -302,9 +302,9 @@
 	(if (<= (hp) 0)
 	    (progn
 	      (play_sound BLOWN_UP 127 (x) (y))
-	      (add_object EXPLODE1 (- hitx (random 10)) (- hity (random 25)) 0)      
-	      (add_object EXPLODE1 (+ hitx (random 10)) (+ hity (random 25)) 1)      
-	      (add_object EXPLODE1 (- hitx (random 10)) (- hity (random 10)) 2)      
+	      (add_object EXPLODE1 (- hitx (random 10)) (- hity (random 25)) 0)
+	      (add_object EXPLODE1 (+ hitx (random 10)) (+ hity (random 25)) 1)
+	      (add_object EXPLODE1 (- hitx (random 10)) (- hity (random 10)) 2)
 	      (add_object EXPLODE1 (+ hitx (random 10)) (+ hity (random 10)) 3) ))))
 )
 
@@ -312,7 +312,7 @@
 
 
 
-		
+
 (defun shot_ai () (eq (bmove nil) T))
 (defun gun_ai ()
   (if (> (hp) 0)
@@ -329,7 +329,7 @@
 				     (set_frame_angle 180 250 a)))
 				   (progn
 				     (with_object (add_object VIS_SHOT
-							      (+ (x) (* (cos a) 10)) 
+							      (+ (x) (* (cos a) 10))
 							      (- (y) (+ 10 (* (sin a) 10))))
 						  (progn
 						    (play_sound MGUN_SND 127 (x) (y))
@@ -345,10 +345,10 @@
   )
 
 
-(defun rocket_ai ()  
+(defun rocket_ai ()
   (if (not (frame_panic))
       (let ((rand (rand_on)))
-	(with_object (add_object SMALL_LIGHT_CLOUD (+ (x) (random 3)) 
+	(with_object (add_object SMALL_LIGHT_CLOUD (+ (x) (random 3))
 				 (- (y) (random 3) (/ (picture_height) 2)))
 		     (set_fade_count 11))
 	(set_rand_on rand)))
@@ -359,7 +359,7 @@
       (let ((clock_dist (if (< angle (aistate))          ;; calculate clockwise andle distance
 			    (- (aistate) angle)
 			  (+ (aistate) (- 360 angle)))))
-	(let ((closest_dist (if (> clock_dist 180) 
+	(let ((closest_dist (if (> clock_dist 180)
 				(- 360 clock_dist)
 			      clock_dist)))
 	  (let ((angle_add (if (> closest_dist 23)
@@ -376,21 +376,21 @@
   (set_course (aistate) speed)
   (set_frame_angle 0 359 (aistate))
   (if (or (eq (hp) 0)
-	  (not (eq (bmove (if (> (total_objects) 0) (get_object 0) nil)) T)) 
-	  (and (> (total_objects) 1) 
+	  (not (eq (bmove (if (> (total_objects) 0) (get_object 0) nil)) T))
+	  (and (> (total_objects) 1)
 	       (< (abs (- (with_object (get_object 1) (x)) (x) )) 10)
 	       (< (abs (- (- (with_object (get_object 1) (y)) (y)) 15 )) 10)))
       (progn
 	(do_explo 40 50)
 	nil)
   T))
-	  
 
-(defun rocket_ufun (creator) 
+
+(defun rocket_ufun (creator)
   (link_object creator)
   (play_sound ROCKET_SND 127 (x) (y))
 
-  (let ((target (with_object creator (find_object_in_area 
+  (let ((target (with_object creator (find_object_in_area
 				      (- (x) 160) (- (y) 160)
 				      (+ (x) 160) (+ (y) 160) bad_guy_list))))
     (select (aitype)
@@ -405,7 +405,7 @@
 
 (def_char ROCKET
   (funs (ai_fun   rocket_ai)
-	(get_cache_list_fun rocket_cache)	
+	(get_cache_list_fun rocket_cache)
 	(get_cache_list_fun grenade_cache)
 	(user_fun rocket_ufun))
   (vars speed max_speed)
@@ -422,7 +422,7 @@
   (setq sgb_lastx (x))
   (setq sgb_lasty (y))
   (setq sgb_speed (/ (* sgb_speed 6) 5))
-  (set_course sgb_angle sgb_speed)  
+  (set_course sgb_angle sgb_speed)
   (if (eq sgb_lifetime 0)
       nil
     (let ((bx (bmove (if (> (total_objects) 0) (get_object 0) nil))))  ; don't hit the guy who fired us.
@@ -451,7 +451,7 @@
 )
 
 
-(defun sgun_ufun (creator) 
+(defun sgun_ufun (creator)
   (set_direction (with_object creator (direction)))
   (set_y (- (y) 4))
   (set_x (+ (x) (* (direction) 20)))
@@ -465,7 +465,7 @@
       (if (and target (< (abs (- (x) (with_object target (x)))) 150)
 	       (< (abs (- (y) (with_object target (y)))) 100))
 	  (setq sgb_angle (site_angle target))
-	(if (> (direction) 0)	    
+	(if (> (direction) 0)
 	    (setq sgb_angle 0)
 	  (setq sgb_angle 180)))))
   (link_object creator)
@@ -473,7 +473,7 @@
 
 
 (def_char SHOTGUN_BULLET
-  (vars sgb_speed sgb_angle sgb_lastx sgb_lasty 
+  (vars sgb_speed sgb_angle sgb_lastx sgb_lasty
 	sgb_bright_color sgb_medium_color sgb_lifetime)
   (funs (ai_fun   sgun_ai)
 	(user_fun sgun_ufun)

@@ -4,7 +4,7 @@
 
 ;; New Power Up objects
 
-(defun shlmp_ai () 
+(defun shlmp_ai ()
   (try_move 0 10)
   (next_picture)
   (if (touching_bg)
@@ -46,7 +46,7 @@
   (funs  (ai_fun		shlmp2_ai)
 	 (constructor	slamp_cons)
 	 (draw_fun		dev_draw))
-  (states "art/misc.spe"	 
+  (states "art/misc.spe"
 	  (stopped           "lhold")))
 
 (def_char WTW

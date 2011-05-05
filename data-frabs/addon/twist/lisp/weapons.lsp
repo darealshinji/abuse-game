@@ -70,7 +70,7 @@
   (let ((c1 (find_rgb 128 0 128))
 	(c2 (find_rgb 70 59 67))
 	(c3 (find_rgb 147 155 195)))
-		(let ((target (with_object (me) (find_object_in_area 
+		(let ((target (with_object (me) (find_object_in_area
 				      (- (x) 50) (- (y) 50)
 				      (+ (x) 50) (+ (y) 50) object_destroyable_list))))
 	(if target
@@ -78,7 +78,7 @@
     (draw_line (with_object target (- (x) 1)) (with_object target (-(y)(/(picture_height)2))) (-(x)1) (-(y)10) 239)
     (draw_line (with_object target (x)) (with_object target (-(y)(/(picture_height)2))) (x) (-(y)10) 187)
     (draw_line (with_object target (+ (x) 1)) (with_object target (-(y)(/(picture_height)2))) (+(x)1) (-(y)10) 239)
-	(add_object EXPDRL (with_object target (-(+(x)10)(random 20))) (with_object target (- (+ (-(y)(/(picture_height)2)) 10) (random 20))) 1)		
+	(add_object EXPDRL (with_object target (-(+(x)10)(random 20))) (with_object target (- (+ (-(y)(/(picture_height)2)) 10) (random 20))) 1)
 	(hurt_radius (with_object target (x)) (with_object target (y)) 1 2 (bg) 15)
 	  )
 	)
@@ -89,7 +89,7 @@
 (set_aistate (get_dray_angle)))
 
 (defun death_ray_cache (type)
-  (list (list EXPDRAY QUICK_EXP_LIGHT) 
+  (list (list EXPDRAY QUICK_EXP_LIGHT)
 	(list DEATH_RAY_SND)))
 
 (def_char DEATH_RAY
@@ -128,12 +128,12 @@
 (defun giver (type)
   (let ((amount (get_ability start_hp)))
     (with_object (bg)
-		 (progn 
+		 (progn
 		   (if (and (not (has_weapon type)) change_on_pickup)
 		       (progn
 			 (if (or (get_option "-f") (eq enableammoandweapons 1)) (give_weapon type))
 			 (if (or (get_option "-f") (eq enableammoandweapons 1)) (set_current_weapon type))
-			)		     		     
+			)
 		     (if (or (get_option "-f") (eq enableammoandweapons 1)) (give_weapon type))
 			)
 		   (add_ammo type amount)))))
@@ -141,16 +141,16 @@
 (defun giverweap (type)
   (let ((amount (get_ability start_hp)))
     (with_object (bg)
-		 (progn 
+		 (progn
 		   (if (and (not (has_weapon type)) change_on_pickup)
 		       (progn
 			 (give_weapon type)
-			 (set_current_weapon type))		     		     
+			 (set_current_weapon type))
 		     (give_weapon type))
 		   (add_ammo type amount)))))
 
 
-(defun weapon_icon_ai () 
+(defun weapon_icon_ai ()
   (if (eq0 (aistate))
       (if (activated)
 	  (progn
@@ -158,13 +158,13 @@
 	    (if (eq (second (see_dist (x) (y) (x) (+ (y) 1))) (y))  ; if we are on the floor, don't check falling anymore
 		(set_aistate 1))
 
-	    (if (touching_bg) 
+	    (if (touching_bg)
 		(progn
 		  (play_sound AMMO_SND 127 (x) (y))
 		  (select (otype)
 			  (MBULLET_ICON5   (giver 0));; these numbers correspond to status bar position
 			  (MBULLET_ICON20  (giver 0))
-			  (GRENADE_ICON2   (giver 1))		
+			  (GRENADE_ICON2   (giver 1))
 			  (GRENADE_ICON10  (giver 1))
 
 			  (ROCKET_ICON2    (giver 2))
@@ -190,13 +190,13 @@
 		  nil)
 	      T))
 	T)
-    (if (touching_bg) 
+    (if (touching_bg)
 	(progn
 	  (play_sound AMMO_SND 127 (x) (y))
 	  (select (otype)
 		  (MBULLET_ICON5   (giver 0));; these numbers correspond to status bar position
 		  (MBULLET_ICON20  (giver 0))
-		  (GRENADE_ICON2   (giver 1))		
+		  (GRENADE_ICON2   (giver 1))
 		  (GRENADE_ICON10  (giver 1))
 
 		  (ROCKET_ICON2    (giver 2))
@@ -223,7 +223,7 @@
 
 
 
-(defun weapon_iconweap_ai () 
+(defun weapon_iconweap_ai ()
   (if (eq0 (aistate))
       (if (activated)
 	  (progn
@@ -231,12 +231,12 @@
 	    (if (eq (second (see_dist (x) (y) (x) (+ (y) 1))) (y))  ; if we are on the floor, don't check falling anymore
 		(set_aistate 1))
 
-	    (if (touching_bg) 
+	    (if (touching_bg)
 		(progn
 		  (play_sound AMMO_SND 127 (x) (y))
 		  (select (otype)
 			  (WEAP_MBULLET   (giverweap 0));; these numbers correspond to status bar position
-			  (WEAP_GRENADE   (giverweap 1))		
+			  (WEAP_GRENADE   (giverweap 1))
 			  (WEAP_ROCKET    (giverweap 2))
 			  (WEAP_FBOMB     (giverweap 3))
 			  (WEAP_PLASMA    (giverweap 4))
@@ -247,12 +247,12 @@
 		  nil)
 	      T))
 	T)
-    (if (touching_bg) 
+    (if (touching_bg)
 	(progn
 	  (play_sound AMMO_SND 127 (x) (y))
 	  (select (otype)
 			  (WEAP_MBULLET   (giverweap 0));; these numbers correspond to status bar position
-			  (WEAP_GRENADE   (giverweap 1))		
+			  (WEAP_GRENADE   (giverweap 1))
 			  (WEAP_ROCKET    (giverweap 2))
 			  (WEAP_FBOMB     (giverweap 3))
 			  (WEAP_PLASMA    (giverweap 4))
@@ -262,7 +262,7 @@
 		  )
 	  nil)
       T)))
-	
+
 
 (defun ammo_cache (type)    ;; tells what other chars to load in with this character
   (list
@@ -272,12 +272,12 @@
 	   (MBULLET_ICON5    `(,SHOTGUN_BULLET ,MGUN_TOP))
 	   (MBULLET_ICON20   `(,SHOTGUN_BULLET ,MGUN_TOP))
 	   (ROCKET_ICON2     `(,ROCKET ,ROCKET_TOP))
-	   (ROCKET_ICON5     `(,ROCKET ,ROCKET_TOP))	  
+	   (ROCKET_ICON5     `(,ROCKET ,ROCKET_TOP))
 	   (FBOMB_ICON1      `(,FIREBOMB ,FIREBOMB_TOP))
 	   (FBOMB_ICON5      `(,FIREBOMB ,FIREBOMB_TOP))
 
 	   (PLASMA_ICON20    `(,PLASMAGUN_BULLET))
-	   (PLASMA_ICON50    `(,PLASMAGUN_BULLET))	   
+	   (PLASMA_ICON50    `(,PLASMAGUN_BULLET))
 
 	   (LSABER_ICON50    `(,LSABER_BULLET ,PGUN_TOP))
 	   (LSABER_ICON100   `(,LSABER_BULLET ,PGUN_TOP))
@@ -304,7 +304,7 @@
    nil)))
 
 (defun make_ammo_icon (symbol icon_name increment)
-  (eval (list 'def_char symbol	      
+  (eval (list 'def_char symbol
 	      '(funs (ai_fun weapon_icon_ai)
 		     (get_cache_list_fun ammo_cache)
 		     (draw_fun on_draw))
@@ -314,7 +314,7 @@
 	      `(states  "art/chars/ammo.spe" (stopped ,icon_name)))))
 
 (defun make_ammoweap_icon (symbol icon_name increment)
-  (eval (list 'def_char symbol	      
+  (eval (list 'def_char symbol
 	      '(funs (ai_fun weapon_iconweap_ai)
 		     (get_cache_list_fun ammoweap_cache)
 		     (draw_fun on_draw))

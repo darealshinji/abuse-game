@@ -8,8 +8,8 @@
 (if (not (load "lisp/english.lsp"))             ;; load language specific stuff
     (progn
       (print "Please make sure you unzipped the game with the -d option")
-      (print "so that all directories get created properly.")      
-      (print "example : pkunzip -d abusXXXX.zip")      
+      (print "so that all directories get created properly.")
+      (print "example : pkunzip -d abusXXXX.zip")
       (quit)))
 (setq load_warn T)
 
@@ -17,7 +17,7 @@
 (load "lisp/common.lsp")
 (load "lisp/userfuns.lsp")
 (load "addon/twist/lisp/userfuns.lsp")
-(load "addon/twist/lisp/options.lsp")     
+(load "addon/twist/lisp/options.lsp")
 (load "addon/twist/lisp/startup.lsp")
 (if (not (local_load "addon/twist/lisp/input.lsp"))   ; get local copy first
     (load "addon/twist/lisp/input.lsp"))

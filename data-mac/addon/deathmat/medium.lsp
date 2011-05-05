@@ -1,4 +1,4 @@
-(setq net_levels 
+(setq net_levels
       '(
 	"netlevel/4play1.spe"
 	"netlevel/4play2.spe"

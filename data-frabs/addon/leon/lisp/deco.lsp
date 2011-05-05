@@ -6,14 +6,14 @@
 		(set_aistate 1))))
   T
 )
-    
-		     
+
+
 (def_char ANTBODY
   (funs (ai_fun antbody_ai)
         (draw_fun   ant_draw))
   (flags (unlistable T)(add_front T)) ;; This class is obsolete, just keeping it here for compatibility
   (states "art/ant.spe"  (stopped (seq "adib" 1 16))))
-		     
+
 (def_char DECO_ANTBODY
   (funs (ai_fun antbody_ai)
         (draw_fun   ant_draw))

@@ -9,15 +9,15 @@
 (if (not (load "lisp/english.lsp"))             ;; load language specific stuff
     (progn
       (print "Please make sure you unzipped the game with the -d option")
-      (print "so that all directories get created properly.")      
-      (print "example : pkunzip -d abusXXXX.zip")      
+      (print "so that all directories get created properly.")
+      (print "example : pkunzip -d abusXXXX.zip")
       (quit)))
 (setq load_warn T)
 
 
 (load "lisp/common.lsp")
 (load "lisp/userfuns.lsp")
-(load "lisp/options.lsp")     
+(load "lisp/options.lsp")
 (load "lisp/startup.lsp")
 (local_load "lisp/input.lsp")
 

@@ -9,11 +9,11 @@
     (progn
       (load "config/cur_lev.lsp")
       (set_first_level (nth current_net_level net_levels)))
-  
+
   ;; save the level we are so joining clients know which one to load
-  (open_file "config/cur_lev.lsp" "wb" 
+  (open_file "config/cur_lev.lsp" "wb"
 	     (print `(setq current_net_level ,current_net_level))))
-  
+
 
 ;; this is a simple check to see if they player has an engine version
 ;; capable of playing the game.  All games should at least check for version 1.10
@@ -31,8 +31,8 @@
 (if (not (load "lisp/common.lsp"))
     (progn
       (print "\nPlease make sure you unzipped the game with the -d option")
-      (print "so that all directories get created properly.")      
-      (print "example : pkunzip -d abusXXXX.zip")      
+      (print "so that all directories get created properly.")
+      (print "example : pkunzip -d abusXXXX.zip")
       (quit)))
 (setq load_warn T)
 
@@ -51,14 +51,14 @@
   (open_file "addon/deathmat/version.lsp" "wb"
 	     (print (list 'setq 'server_version_major (major_version) ))
 	     (print (list 'setq 'server_version_minor (minor_version)))))
-	      
+
 
 (if (not (am_a_client))
     (setq username "Myself"))
 
 ;(let ((input (nice_input "DEATHMATCH : Enter your name below" "Name" username)))
 ;  (open_file "config/username.lsp" "wb"
-;	     (print (list 'setq 'username 
+;	     (print (list 'setq 'username
 ;			  (concatenate 'string '(#\") input '(#\"))))))
 
 (local_load "config/username.lsp")
@@ -81,10 +81,10 @@
 
 (defun display_player (player text_x text_y)
   (if player
-      (with_object player	
-	(put_string (get_main_font) text_x text_y 
-		    (concatenate 'string (digstr (kills) 2) " " (player_name) 
-						     (if (local_player) 
+      (with_object player
+	(put_string (get_main_font) text_x text_y
+		    (concatenate 'string (digstr (kills) 2) " " (player_name)
+						     (if (local_player)
 							 " <<"
 						       ""))
 		    (aref player_text_color (player_number)))

@@ -26,7 +26,7 @@ T)
   (fields ("delay_time" gate_delay_time)
 	  ("aistate"    ai_state)
 	  )
-  (states "art/misc.spe" 
+  (states "art/misc.spe"
 	  (stopped "0_delay")
 	  (on_state "1_delay")))
 
@@ -34,30 +34,30 @@ T)
 (def_char GATE_OR
   (funs (ai_fun or_ai)
 	(draw_fun dev_draw))
-  (states "art/misc.spe" 
+  (states "art/misc.spe"
 	  (stopped "0_or_gate")
 	  (on_state "1_or_gate")))
-	  
+
 (def_char GATE_AND
   (funs (ai_fun and_ai)
 	(draw_fun dev_draw))
-  (states "art/misc.spe" 
+  (states "art/misc.spe"
 	  (stopped "0_and_gate")
 	  (on_state "1_and_gate")))
-	  
-	  
+
+
 (def_char GATE_NOT
   (funs (ai_fun not_ai)
 	(draw_fun dev_draw))
-  (states "art/misc.spe" 
+  (states "art/misc.spe"
 	  (stopped "0_not_gate")
 	  (on_state "1_not_gate")))
 
-	  
+
 (def_char GATE_XOR
   (funs (ai_fun xor_ai)
 	(draw_fun dev_draw))
-  (states "art/misc.spe" 
+  (states "art/misc.spe"
 	  (stopped "0_xor_gate")
 	  (on_state "1_xor_gate")))
 
@@ -71,13 +71,13 @@ T)
 	  (stopped "0_pulse")
 	  (on_state "1_pulse")))
 
-	  
+
 (def_char INDICATOR
   (funs (ai_fun indicator_ai))
-  (states "art/misc.spe" 
+  (states "art/misc.spe"
 	  (stopped "0_indicator")
 	  (on_state "1_indicator")))
-	
+
 (defun indicator_ai ()
   (if (> (total_objects) 0)
       (if (eq (with_obj0 (aistate)) 0)
@@ -110,7 +110,7 @@ T)
     (if (eq (with_object (get_object last_object) (aistate)) 0)
 	(or_check (- last_object 1))
       T)))
- 
+
 (defun or_ai ()
   (if (or_check (- (total_objects) 1))
       (progn
@@ -120,15 +120,15 @@ T)
       (set_state stopped)
       (set_aistate 0))) T)
 
-	
+
 (defun and_check (last_object)
   (if (< last_object 0)
       T
     (if (eq (with_object (get_object last_object) (aistate)) 0)
 	nil
       (and_check (- last_object 1)))))
-   
- 
+
+
 (defun and_ai ()
   (if (and_check (- (total_objects) 1))
       (progn

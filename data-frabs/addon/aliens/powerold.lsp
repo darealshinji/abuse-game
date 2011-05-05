@@ -4,7 +4,7 @@
 
 ;; New Power Up objects
 
-(defun shlmp_ai () 
+(defun shlmp_ai ()
   (try_move 0 10)
   (next_picture)
   (if (touching_bg)
@@ -46,7 +46,7 @@
   (funs  (ai_fun		shlmp2_ai)
 	 (constructor	slamp_cons)
 	 (draw_fun		dev_draw))
-  (states "art/misc.spe"	 
+  (states "art/misc.spe"
 	  (stopped           "lhold")))
 
 (def_char WTW
@@ -112,7 +112,7 @@
 	  (if (< b_ramp -7)
 	      (setq b_ramp (+ b_ramp 7))
 	    (setq b_ramp 0)))
-	(if (local_player)	
+	(if (local_player)
 	    (tint_palette r_ramp g_ramp b_ramp))))
 
   (select (aistate)
@@ -137,7 +137,7 @@
 	(if (eq min1 10)
 		(progn
 		(setq min2 (+ min2 1))
-		(setq min1 0)))	
+		(setq min1 0)))
 	(if (eq min2 10)
 		(setq min2 0))
 	   (select special_power
@@ -149,7 +149,7 @@
 		   (FLY_POWER  (player_draw (player_number))
 				(if (local_player)
 				    (put_image (- (view_x2) 20) (+ (view_y1) 5) fly_image)))
-		   (SNEAKY_POWER 
+		   (SNEAKY_POWER
 		    (if (local_player)
 			(put_image (- (view_x2) 20) (+ (view_y1) 5) sneaky_image))
 				 (sneaky_draw used_special_power (player_number)))
