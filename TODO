@@ -20,3 +20,17 @@ SAM'S TODO
  - replace write_PCX calls with SDL_WriteSurfaceBMP
  - is visobj.cpp really used?
 
+ABUSE-TOOL
+----------
+ - segfault with "abuse-tool foo.spe put 1 2" (missing argument)
+ - add an option to display an md5sum or something
+ - allow to query ids by name rather than by number
+
+DATA MERGE
+----------
+ - remove registration related code
+   - server check in src/net/netdrv.cp
+   - server check in src/innet.cpp
+   - Lisp symbol server_not_reg
+   - micron.vcd file
+
