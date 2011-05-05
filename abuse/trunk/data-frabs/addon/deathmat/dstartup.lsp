@@ -136,7 +136,7 @@
 (load "register/tiles.lsp")       ;; load up registered artwork if it's there
 (setq load_warn T)
 
-(setf title_screen      '("art/title.spe" . "title_screen1"))
+(setf title_screen      '("art/title.spe" . "frabs_screen1"))
 (setf logo              '("art/title.spe" . "cdc_logo"))
 ;(setq help_screens '("art/help.spe" "sell1" "sell2" "sell4"))
 
