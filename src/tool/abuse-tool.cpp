@@ -19,6 +19,7 @@
 #include "specs.h"
 #include "image.h"
 #include "pcxread.h"
+#include "crc.h"
 
 static void Usage();
 
@@ -122,16 +123,18 @@ int main(int argc, char *argv[])
     /* Now really execute commands */
     if (cmd == CMD_LIST)
     {
-        printf("   id  type     size  name & information\n");
-        printf(" ----  ----  -------  ----------------------------\n");
+        printf("   id  type    bytes   crc  name & information\n");
+        printf(" ----  ----  -------  ----  ----------------------------\n");
+
+        dir.FullyLoad(&fp);
 
         for (int i = 0; i < dir.total; i++)
         {
             spec_entry *se = dir.entries[i];
 
             /* Print basic information */
-            printf("% 5i   % 3i % 8i  %s",
-                   i, se->type, (int)se->size, se->name);
+            printf("% 5i   % 3i % 8i  %04x  %s", i, se->type, (int)se->size,
+                   calc_crc(se->data, se->size), se->name);
 
             /* Is there anything special to say? */
             switch (se->type)
@@ -143,17 +146,55 @@ int main(int argc, char *argv[])
             case SPEC_CHARACTER2:
               {
                 image *im = new image(&fp, se);
-                printf(" (%i x %i pixels)", im->Size().x, im->Size().y);
+                printf(" \t# %i x %i pixels", im->Size().x, im->Size().y);
                 delete im;
                 break;
               }
             case SPEC_PALETTE:
               {
                 palette *pal = new palette(se, &fp);
-                printf(" (%i colors)", pal->pal_size());
+                printf(" \t# %i colors", pal->pal_size());
                 delete pal;
                 break;
               }
+#if 0
+            default:
+              {
+                /* Try to print a representation of the item */
+                int has_binary = 0;
+                for (int i = 0; i < Min(20, (int)se->size); i++)
+                {
+                    uint8_t ch = ((uint8_t *)se->data)[i];
+                    if (ch < 0x20 || ch >= 0x7f)
+                        has_binary++;
+                }
+                if (has_binary <= 2 && se->size > 5)
+                    has_binary = 0;
+
+                printf(" \t# ");
+                if (!has_binary)
+                    putchar('\"');
+
+                size_t max = Min(has_binary ? 15 : 30, (int)se->size);
+                for (size_t i = 0; i < max; i++)
+                {
+                    uint8_t ch = ((uint8_t *)se->data)[i];
+                    if (has_binary)
+                        printf("%02x ", ch);
+                    else if (ch && (ch < 0x20 || ch >= 0x7f))
+                        printf("\\x%02x", ch);
+                    else if (ch)
+                        putchar(ch);
+                    else
+                        printf("\\0");
+                }
+                if (se->size > max)
+                    printf("...");
+                else if (!has_binary)
+                    printf("\"");
+                break;
+              }
+#endif
             }
 
             /* Finish line */

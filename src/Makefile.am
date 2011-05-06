@@ -69,7 +69,8 @@ abuse_LDADD = $(EXTRALIBS)
 abuse_DEPENDENCIES = $(EXTRALIBS)
 
 abuse_tool_SOURCES = \
-    tool/abuse-tool.cpp
+    tool/abuse-tool.cpp \
+    crc.cpp crc.h
 abuse_tool_LDADD = imlib/libimlib.a
 abuse_tool_DEPENDENCIES = $(abuse_tool_LDADD)
 

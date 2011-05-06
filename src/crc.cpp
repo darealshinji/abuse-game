@@ -14,17 +14,15 @@
 
 #include "crc.h"
 
-uint16_t calc_crc(uint8_t *buf, int len)
+uint16_t calc_crc(void *buf, size_t len)
 {
-  uint8_t c1=0,c2=0;
-  while (len)
-  {
-    len--;
-    c1+=*buf;
-    c2+=c1;
-    buf++;
-  }
-  return (c2<<8)|c1;
+    uint8_t *data = (uint8_t *)buf;
+    uint8_t c1 = 0, c2 = 0;
+
+    while (len--)
+        c2 += (c1 += *data++);
+
+    return (c2 << 8) | c1;
 }
 
 
