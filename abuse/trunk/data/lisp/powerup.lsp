@@ -15,7 +15,6 @@
 	     nil)
 	  T))
 
-
 (def_char HEALTH
   (funs (ai_fun hp_up))
   (flags (add_front T))
@@ -36,6 +35,7 @@
   (range 0 0)
   (states "art/compass.spe" (stopped "compass" )))
 
+
 (defun fast_ai ()
   (next_picture)
   (if (touching_bg)
@@ -45,7 +45,6 @@
 ;			    (user_fun SET_FAST_TIME 360)
 			    (make_view_solid (find_rgb 255 255 255))))
 	     nil) T))
-
 
 (defun fast_cache (type) (list nil (list fast_image)))
 
@@ -57,7 +56,54 @@
   (states "art/misc.spe" (stopped "fast" )))
 
 
+(defun sneaky_power_ai ()
+  (next_picture)
+  (if (touching_bg)
+      (progn
+	(with_object (bg) (setq special_power SNEAKY_POWER))
+	nil)
+    T))
 
-(setq load_warn nil)
-(load "register/powerup.lsp")
-(setq load_warn T)
+(def_char POWER_SNEAKY
+  (funs (ai_fun sneaky_power_ai))
+  (flags (add_front T))
+  (range 20 20)
+  (states "art/misc.spe" (stopped "sneaky")))
+
+
+(defun fly_power_ai ()
+  (next_picture)
+  (if (touching_bg)
+      (progn
+	(with_object (bg) (setq special_power FLY_POWER))
+	nil)
+    T))
+
+(defun power_fly_cache (type)
+  (list (list CLOUD) (list fly_image)))
+
+(def_char POWER_FLY
+  (funs (ai_fun fly_power_ai)
+	(get_cache_list_fun power_fly_cache))
+  (flags (add_front T))
+  (range 20 20)
+  (states "art/misc.spe" (stopped "fly")))
+
+
+(defun health_power_ai ()
+  (next_picture)
+  (if (touching_bg)
+      (progn
+	(with_object (bg)
+		     (progn
+		       (setq special_power HEALTH_POWER)
+		       (give_player_health 100)))
+	nil)
+    T))
+
+(def_char POWER_HEALTH
+  (funs (ai_fun health_power_ai))
+  (flags (add_front T))
+  (range 20 20)
+  (states "art/misc.spe" (stopped "b_check")))
+

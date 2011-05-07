@@ -6,10 +6,10 @@ REGULAR ABUSE FOREGROUND TILES
 /art/fore/techno3.spe    200- 236
 /art/fore/techno4.spe    300- 460
 /art/fore/cave.spe       500- 634
-/register/alien.spe      700- 774
-/register/trees.spe      800- 931
-/art/endgame.spe         950-1014
-/register/trees2.spe    1100-1134
+/art/fore/alien.spe      700- 774
+/art/fore/trees.spe      800- 931
+/art/fore/endgame.spe    950-1014
+/art/fore/trees2.spe     1100-1134
 
 NEW FOREGROUND TILES
 
@@ -31,9 +31,9 @@ REGULAR ABUSE BACKGROUND TILES
 /art/back/city.spe          40-70
 /art/back/cave.spe	    84-103
 /art/back/tech.spe	    110-139
-/register/alienb.spe	    150-179
-/register/green2.spe        200-268
-/register/galien.spe	    300-320
+/art/back/alienb.spe	    150-179
+/art/back/green2.spe        200-268
+/art/back/galien.spe	    300-320
 
 NEW BACKGROUND TILES
 

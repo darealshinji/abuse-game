@@ -969,13 +969,12 @@
   (funs (ai_fun do_nothing))
   (states "art/misc.spe" (stopped "eos")))
 
-(setq load_warn nil)
-(if (load "register/people.lsp")
-    (setq end_level 22)
-  (setq end_level 4))
-(setq load_warn T)
+
+(make_top_char 'PGUN_TOP     "4gza" 'plaser_ufun        'top_draw)
+(make_top_char 'LIGHT_SABER  "4gch" 'lsaber_ufun        'top_draw)
+(make_top_char 'DFRIS_TOP    "4gbo" 'top_ufun           'top_draw)
+(setq sell_screens '(("art/fore/endgame.spe" . "credit")))
 
 
-
-
+(setq end_level 22)
 

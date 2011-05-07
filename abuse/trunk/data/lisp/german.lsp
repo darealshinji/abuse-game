@@ -363,27 +363,7 @@
 
 	 (setq thank_you "Danke, da· Sie Abuse spielten!\n\n")     ; V-A
          (setq load_warn nil)
-         (if (not (load "register/english.lsp"))
-             (setq end_msg
-                   (concatenate 'string
-                                "* éndern Sie LISP/OPTIONS.LSP, um einige Optionen fÅr ABUSE zu\n"
-                                "    konfigurieren.\n\n"
-                                "* Halten Sie beim Einkaufsbummel die Augen auf, denn Ende MÑrz '96 erscheint die "
-				"  kommerzielle Version von ABUSE fÅr acht Spieler, IPX-Netzwerk unterstÅtzt, \n"
-                                "  mit einem eingebauten Level-Editor, 17 Einzelspieler-Level plus 12 Exklusiv-\n"
-                                "  Netzwerk- \n Level, todbringenderen Waffen, extra Powerups, \n"
-                                "  stÑrkeren Feinden, besseren Soundeffekten und noch mehr kÅnstlerischen\n"
-                                "  Effekten.\n\n"
-
-
-                                "* Um eine volle ABUSE-Version von Electronic Arts zu bestellen, rufen Sie bitte an:\n"
-                                "  USA       1-800-245-4525\n"
-                                "  CANADA    604-451-3600\n"
-                                "  ENGLAND   0753-549442\n"
-                                "  FRANKREICH    72 17 07 83\n"
-                                "  DEUTSCHLAND   05241 / 24307\n"
-                                "  AUSTRALIEN +61(75)911 388\n"
-                                "  JAPAN     03-5410-3100\n\n")))
+         (setq end_msg thank_you)
 
          (setq load_warn T)
 
