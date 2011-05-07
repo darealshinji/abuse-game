@@ -1,7 +1,0 @@
-(setq up_key 256)
-(setq left_key 258)
-(setq right_key 259)
-(setq down_key 257)
-(setq special_key 32)
-(setq weapon_left_key 49)
-(setq weapon_right_key 50)

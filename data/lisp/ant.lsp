@@ -1,7 +1,7 @@
 ;; Copyright 1995 Crack dot Com,  All Rights reserved
 ;; See licensing information for more details on usage rights
 
-(setq ant_tints (make-array 11 :initial-contents (list
+(setq ant_tints (make-array 13 :initial-contents (list
 						(def_tint "art/tints/ant/green.spe")
 						(def_tint "art/tints/ant/blue.spe")
 						(def_tint "art/tints/ant/brown.spe")
@@ -10,6 +10,8 @@
 						(def_tint "art/tints/ant/mustard.spe")
 						(def_tint "art/tints/ant/orange.spe")
 						(def_tint "art/tints/ant/gray.spe")
+						(def_tint "art/tints/guns/green.spe")
+						(def_tint "art/tints/ant/darkblue.spe")
 						normal_tint
 						normal_tint
 						normal_tint
@@ -442,6 +444,7 @@
 	  ))
 
 
+;; XXX: Mac Abuse reimplements this in C++
 (defun ant_draw ()
   (if (eq 0 (aitype))
       (draw)
@@ -589,7 +592,8 @@
   (list
    (list ANT_ROOF AD_1 AD_2 AD_3 AD_4 AD_5 AD_6 AD_7 AD_8 AD_9 AD_10 AD_11 AD_12)
    (list (aref ant_tints 0) (aref ant_tints 1) (aref ant_tints 2) (aref ant_tints 3)
-	 (aref ant_tints 4) (aref ant_tints 5) (aref ant_tints 6) (aref ant_tints 7))))
+	 (aref ant_tints 4) (aref ant_tints 5) (aref ant_tints 6) (aref ant_tints 7)
+	 (aref ant_tints 8) (aref ant_tints 9) (aref ant_tints 10))))
 
 
 

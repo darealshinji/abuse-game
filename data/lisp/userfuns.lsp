@@ -15,14 +15,15 @@
 (defun dig2char (x)
   (code-char (+ x (char-code "0"))))
 
-;; this creates a list of dpaint numbered antimation from a base name
-;; i.e. (seq "hi" 2 5)  -> '("hi0002.pcx" "hi0003.pcx" "hi0004.pcx" "hi0005.pcx")
+;; this creates a list of dpaint numbered antimation from a base name, ie:
+;;   (seq "hi" 2 5)  -> '("hi0002.pcx" "hi0003.pcx" "hi0004.pcx" "hi0005.pcx")
 ;; will take into acount reverse sequences
+;; XXX: Mac Abuse inlined calls to this function
 (defun seq (name first last)
   (if (<= first last)
       (forward-seq name first last)
-    (reverse-seq name first last))
-)
+    (reverse-seq name first last)))
+
 (defun forward-seq (name first last)
   (if (> first last)
       nil

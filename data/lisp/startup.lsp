@@ -52,6 +52,14 @@
 (setq load_warn T)
 
 (setf title_screen      '("art/title.spe" . "title_screen"))
+;; XXX: Frabs uses a random title screen
+;(select (random 6)
+;  (0 (setf title_screen '("art/title.spe" . "frabs_screen1")))
+;  (1 (setf title_screen '("art/title.spe" . "frabs_screen2")))
+;  (2 (setf title_screen '("art/title.spe" . "frabs_screen3")))
+;  (3 (setf title_screen '("art/title.spe" . "frabs_screen4")))
+;  (4 (setf title_screen '("art/title.spe" . "frabs_screen5")))
+;  (5 (setf title_screen '("art/title.spe" . "frabs_screen6"))))
 (setf logo              '("art/title.spe" . "cdc_logo"))
 
 (setf demos        '("levels/demo1.dat" "levels/demo3.dat" "levels/demo4.dat" "levels/demo5.dat"))

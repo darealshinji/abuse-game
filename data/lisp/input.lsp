@@ -45,22 +45,28 @@
 
 (defun get_local_input ()
   (let ((mstat (mouse_stat)))
-    (list (if (local_key_pressed left-key) -1 (if (local_key_pressed right-key) 1 0))  ;; xv
-	  (if (local_key_pressed up-key) -1   (if (local_key_pressed down-key)  1 0))  ;; yv
-	  (eq (fourth mstat) 1)                                            ;; special button
-	  (eq (third mstat) 1)                                             ;; fire button
+    (list (if (local_key_pressed left-key)
+	      -1
+	      (if (local_key_pressed right-key) 1 0))  ;; xv
+	  (if (local_key_pressed up-key)
+	      -1
+	      (if (local_key_pressed down-key) 1 0))  ;; yv
+	  (eq (fourth mstat) 1) ;; special button
+	  (eq (third mstat) 1) ;; fire button
 
 	  (if (or (eq (fifth mstat) 1)
-		  (local_key_pressed weapon-left-key)) -1                             ;; weapon toggle
+		  (local_key_pressed weapon-left-key)) -1 ;; weapon toggle
               (if (local_key_pressed weapon-right-key)  1 0))
-	  (first mstat)                                                    ;; mx
-	  (second mstat)                                                   ;; my
+	  (first mstat) ;; mx
+	  (second mstat) ;; my
 	  )))
 
-
-
-
-
-
-
+;; XXX: Mac Abuse uses these hardcoded values
+;(setq up_key 256)
+;(setq left_key 258)
+;(setq right_key 259)
+;(setq down_key 257)
+;(setq special_key 32)
+;(setq weapon_left_key 49)
+;(setq weapon_right_key 50)
 

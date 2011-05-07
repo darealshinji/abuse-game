@@ -56,13 +56,13 @@
   (states "art/misc.spe"
 	  (stopped           "lhold")))
 
-
+;; XXX: Mac Abuse reimplements this in C++
 (defun exp_ai ()
   (if (eq (aitype) 0) (next_picture)
     (progn (set_aitype (- (aitype) 1))
 	   T)))
 
-
+;; XXX: Mac Abuse reimplements this in C++
 (defun exp_draw ()
   (if (eq (aitype) 0)
       (middle_draw)))

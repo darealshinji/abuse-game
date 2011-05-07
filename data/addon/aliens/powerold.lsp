@@ -10,7 +10,7 @@
   (if (touching_bg)
 	(progn
 	   (with_object (bg) (make_view_solid (find_rgb 255 255 255)))
-	   (with_object (bg) (setq special_power SHLAMP))
+	   (with_object (bg) (setq special_power SHLAMP_POWER))
 	   (with_object (add_object_after SHLMP2 (x) (y)) (link_object (bg)))
 	   (with_object (add_object_after WTW (x) (y)) (link_object (bg)))
 	nil)
@@ -31,7 +31,7 @@
 	(set_light_x (get_light 0) (x))
 	(set_light_y (get_light 0) (y)))
     nil)
-  (if (not (eq (with_object (get_object 0) special_power) SHLAMP))
+  (if (not (eq (with_object (get_object 0) special_power) SHLAMP_POWER))
 	(progn
 	(if (eq (total_lights) 1)
 	   (delete_light (get_light 0))) nil)
@@ -64,7 +64,7 @@
       'FLY_POWER
       'SNEAKY_POWER
       'HEALTH_POWER
-	'SHLAMP)
+      'SHLAMP_POWER)
 
 (defun give_player_health (amount)
   (let ((h_amount  (select difficulty
@@ -153,7 +153,7 @@
 		    (if (local_player)
 			(put_image (- (view_x2) 20) (+ (view_y1) 5) sneaky_image))
 				 (sneaky_draw used_special_power (player_number)))
-		   (SHLAMP (player_draw (player_number))
+		   (SHLAMP_POWER (player_draw (player_number))
 				 (if (local_player)
 				     (put_image (- (view_x2) 20) (+ (view_y1) 5) shlamp_image)))
 	  ))))

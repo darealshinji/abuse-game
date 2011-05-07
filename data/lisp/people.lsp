@@ -46,7 +46,7 @@
 (setf fly_image (def_image "art/misc.spe" "fly_image"))
 (setf sneaky_image (def_image "art/misc.spe" "sneaky_image"))
 (setf health_image (def_image "art/misc.spe" "b_check_image"))
-
+(setf shlamp_image (def_image "addon/aliens/aliens.spe" "slmp_img"))
 
 
 
@@ -93,7 +93,8 @@
       'FAST_POWER
       'FLY_POWER
       'SNEAKY_POWER
-      'HEALTH_POWER)
+      'HEALTH_POWER
+      'SHLAMP_POWER)
 
 ; this is called by the engine when a level is loaded with no player_info in it
 ; i.e. not for savegames
@@ -487,7 +488,18 @@
 		    (if (local_player)
 			(put_image (- (view_x2) 20) (+ (view_y1) 5) sneaky_image))
 				 (sneaky_draw used_special_power (player_number)))
+		   (SHLAMP_POWER (player_draw (bottom_draw (player_number)))
+		    (if (local_player)
+			(put_image (- (view_x2) 20) (+ (view_y1) 5) shlamp_image)))
 	  ))))*/
+
+(defun frabs_bottom_draw()
+  (if (eq special_power SHLAMP_POWER)
+      (progn
+        (setq special_power NO_POWER)
+        (bottom_draw)
+        (setq special_power SHLAMP_POWER))
+      (bottom_draw)))
 
 (defun restart_player ()
   (setq special_power 0)
@@ -584,7 +596,7 @@
 
   (funs (move_fun           cop_mover)
 	(damage_fun         bottom_damage)
-	(draw_fun           bottom_draw)
+	(draw_fun           frabs_bottom_draw)
 	(map_draw_fun       compass_draw)
 	(get_cache_list_fun cop_cache)
 	(user_fun           cop_ufun))

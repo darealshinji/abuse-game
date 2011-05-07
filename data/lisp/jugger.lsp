@@ -4,7 +4,11 @@
 (defun jug_ai ()
   (if (<= (hp) 0)
       (if (eq (state) dieing)
-	  (next_picture)
+	  (if (not (next_picture))
+	      (progn
+		(with_object (bg) (set_kills (+ (kills) 1)))
+		nil)
+	      T)
 	(set_state dieing))
     (if (activated)
 	(progn

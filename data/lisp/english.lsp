@@ -7,6 +7,13 @@
 (select section
 	('game_section
 
+	 ;; XXX: Mac Abuse implements these
+	 ;(setq double_pix         "Double Pixel Mode")
+	 ;(setq scanlined_pix      "Scan skip Mode")
+	 ;(setq single_pix         "Single Pixel Mode")
+	 ;(setq smooth_pix         "Smoothed Pixel Mode")
+	 ;(setq round_pix          "Rounded Pixel Mode")
+
 	 /********** New for Version E (1.51)   **************/
 	 (setq level_name         "Level name")
 	 (setq FILENAME           "FILENAME")
@@ -213,7 +220,7 @@
 	 (setq secured " secured!")   ; V-A added
 	 (setq loading "loading %s")  ; V-A added
 
-         (setq gamma_msg "Click on the darkest grey visible \n on your monitor then click OK")
+         (setq gamma_msg "Select the darkest grey visible on your\nmonitor then click the check mark")
 	 (setq telep_msg "Press down to teleport")
 
 	 (defun get_train_msg (message_num)
@@ -222,14 +229,18 @@
 		   ;  "--------------------------------------------------------------------"  ; V-A
 		   ; Please keep all strings below shorter than the above line.               ; V-A
 		   (0 "Aim gun with mouse, fire with left mouse button")
+		   ;(0 "Aim gun with mouse, fire with left mouse button") XXX: Mac Abuse
 		   (1 "Collect ammo to increase firing speed")
-                   (2 "Press the down arrow to activate objects. This is a switch.")
+                   (2 "Press the down key to activate objects. This is a switch.")
 		   (3 "This console saves the state of the game, press down")
 		   (4 "Press down to activate platform")
 		   (5 "Hold down the right mouse button to use special powers")
 		   (6 "Use the CTRL & INS keys to select weapons")
-		   (7 "Press the up arrow to climb ladders")
-		   (8 "Press the down arrow to start!")
+		   ;(5 "You can now use the special key to use your special powers") XXX: Mac Abuse
+		   ;(6 "You can now select weapons with the selection keys") XXX: Mac Abuse
+		   (7 "Press the up key to climb ladders")
+		   (8 "Press the down key to start!")
+
 		   (9 "Shoot hidden walls to destroy them")
 		   (10 "Shoot switch ball to activate")
 		   (11 "Press down to teleport")
@@ -257,6 +268,7 @@
 	 (setq net_not_reg     "Sorry you cannot play against this server with a demo version\n")
 	 (setq min_wait        "Waiting for %d more player(s) to join!")
 	 (setq lev_complete    "Level Completed!")
+	 ;(setq lev_complete    "Level %d Completed!") XXX: Mac Abuse
 	 (setq no_low_mem      "Not enough low memory")
 	 (setq no_mem          "Not enough memory")
 
@@ -284,11 +296,14 @@
          (setq ic_load         "Load Saved Game")       ;  /\
          (setq ic_start        "Start New Game")        ;  |
 	 (setq ic_sell         "Credits")               ;  |
+	 ;; XXX: Mac Abuse
+	 ;(setq ic_mackeys      "Setup Keys")
+	 ;(setq ic_macconf      "Screen Options")
 	 (setq ic_networking   "Networking")            ; ----
 
 
 	 (setq no_file         "Could not find file '%s'")
-	 (setq SFXv            "SFX")    ; this needs to be <=6 characters!!
+	 (setq SFXv            "Sound")  ; this needs to be <=6 characters!!
 	 (setq MUSICv          "Music")  ; this needs to be <=6 characters!!
 
 	 (setq to_be_continued "To be continued.....")
@@ -387,5 +402,84 @@
                (concatenate 'string
                             "You've survived impossible odds and made it to the Control Room.  "
                             "By pulling the switch, you have diverted the water supply and stopped the spread of Abuse!\\n "
-                            "CONGRATULATIONS!  YOU'RE HOWLING!!!")))
+                            "CONGRATULATIONS!  YOU'RE HOWLING!!!"))
+;; XXX: Mac Abuse uses this
+;	 (setq thanks_text
+;               (concatenate 'string
+;                            "Bungie Crew\\n"
+;                            "- Production Manager "
+;                            "- Tuncer Deniz\\n"
+;                            "- Development Manager "
+;                            "- Eric Klein\\n"
+;                            "- Packaging "
+;                            "- Randy Nelsen\\n"
+;                            "- Damage & Spin\\n"
+;                            "- Alexander Seropian\\n"
+;                            "- Jay Barry\\n"
+;                            "- Alex Rosenberg\\n"
+;                            "- Doug Zartman\\n"
+;                            "- Jonas Enroth\\n"
+;                            "Special Thanks to:\\n"
+;                            "- Gnu Foundation\\n"
+;                            "- Steven Donaldson\\n"
+;                            "- Carly Staehlin for voices\\n"
+;                            "Apple Game Evangelists/Engineers\\n"
+;                            "- James Osborne for networking\\n"
+;                            "- Mark Gavini\\n"
+;                            "- Steve Bollinger\\n"
+;                            "- Chris DeSalvo\\n"
+;                            "- Michael Evans\\n"
+;                            "- Cary Farrier\\n"
+;                            "- and others...\\n"
+;                            "Beta Testers\\n"
+;                            "Chris Yeh, "
+;                            "Matt Lee, "
+;                            "Kaoru Ueda, "
+;                            "Cameron Logie, "
+;                            "Zachary Zeliff, "
+;                            "Francis W. Sweigart, "
+;                            "Dan Merchant, "
+;                            "Tim Seufert, "
+;                            "Donald Lawton, "
+;                            "Ryan Mack, "
+;                            "Kenneth R Brownfield, "
+;                            "Caleb Corey, "
+;                            "Michael Saji, "
+;                            "Jesse Shrieve, "
+;                            "Jedd Horvath, "
+;                            "Mark Woodward, "
+;                            "Michael Hale, "
+;                            "Wesley Arnett, "
+;                            "Brian Carter, "
+;                            "Will Starck, "
+;                            "Krzysztof Murawski, "
+;                            "John Whitney, "
+;                            "Ian Harford, "
+;                            "Robert Steel, "
+;                            "Joseph T. Hegeman, "
+;                            "Dave Harkness, "
+;                            "Marc Jordan, "
+;                            "Kenyon Kopp, "
+;                            "Peter Worley, "
+;                            "Peter Johnson, "
+;                            "Michael Roca Jr., "
+;                            "Preston Leingang Jr., "
+;                            "Jonathan Biebesheimer, "
+;                            "Chad G Poland, "
+;                            "James R Graham, "
+;                            "Karl L Jayne, "
+;                            "Patrick Hearon, "
+;                            "Joe Trussell, "
+;                            "Matthew Fleming, "
+;                            "Dave Lovell, "
+;                            "Ben Eloy, "
+;                            "Anthony Yvanovich, "
+;                            "Andre Snyder, "
+;                            "David Tessler, "
+;                            "Brian Johansen, "
+;                            "Scott Mullen, "
+;                            "Jason Budravage, "
+;                            "and Jonah Kowall\\n"
+;                            "\\nIcepops!\n"))
+	)
 )

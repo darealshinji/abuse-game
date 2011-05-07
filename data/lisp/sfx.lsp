@@ -204,6 +204,24 @@
 			       SCARE_SND                            ;; 16
 			       )))
 
+;; XXX: Mac Abuse uses voice hint SFXs
+;(setq voice_hints
+;  (make-array 12 :initial-contents
+;    (list
+;      (def_sound "sfx/voice/aimsave.wav")
+;      (def_sound "sfx/voice/ammosave.wav")
+;      (def_sound "sfx/voice/switch_1.wav")
+;      (def_sound "sfx/voice/savesave.wav")
+;      (def_sound "sfx/voice/platfo_1.wav")
+;      (def_sound "sfx/voice/poweru_1.wav")
+;      (def_sound "sfx/voice/weapon_1.wav")
+;      (def_sound "sfx/voice/ladder_1.wav")
+;      (def_sound "sfx/voice/starts_1.wav")
+;      (def_sound "sfx/voice/wallss_1.wav")
+;      (def_sound "sfx/voice/switch_2.wav")
+;      (def_sound "sfx/voice/telepo_1.wav"))))
+
+
 (defun amb_sound_ct ()
   (if (> (aitype) 16)
       (set_aitype 0)

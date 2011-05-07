@@ -66,12 +66,14 @@
 (defun train_ai ()
   (if (eq (aistate) 0)
       (if (activated)
-	  (progn
+	  (let ((my_type (aitype)))
 	    (with_object (bg)
-			 (progn
-			   (if (local_player)
-			       (show_help (get_train_msg (aitype))))
-			   (freeze_player 100)))
+                         (if (local_player)
+                             (progn
+                               ;; XXX: Mac Abuse plays voice hint SFXs
+                               ;(play_sound (aref voice_hints my_type))
+                               ;(expire_cache_item (aref voice_hints my_type))
+                               (show_help (get_train_msg my_type)))))
 	    (set_aistate 1)
 	    T)
 	T)

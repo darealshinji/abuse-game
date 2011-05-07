@@ -5,13 +5,12 @@
 ; such as start, etc.
 ; (defun dev_draw () (if (edit_mode) (draw) nil))       -- compiled C function --
 
+;; XXX: Mac Abuse reimplements this in C++
 (defun middle_draw ()
   (let ((y (y)))
     (set_y (+ (y) (/ (picture_height) 2)))
     (draw)
     (set_y y)))
-
-
 
 (defun push_char (xamount yamount)
   (let ((bgx (with_object (bg) (x)) (x))
