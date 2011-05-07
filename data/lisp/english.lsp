@@ -367,8 +367,7 @@
 	 (setq thank_you "Thank you for playing Abuse!\n\n")     ; V-A
 
          (setq load_warn nil)
-         (if (not (load "register/english.lsp"))
-             (setq end_msg "Visit us at http://abuse.zoy.org/.\n"))
+         (setq end_msg thank_you)
 
          (setq load_warn T)
 

@@ -31,6 +31,5 @@ DATA MERGE
  - remove registration related code
    - server check in src/net/netdrv.cp
    - server check in src/innet.cpp
-   - Lisp symbol server_not_reg
-   - micron.vcd file
+   - Lisp symbols server_not_reg and net_not_reg
 

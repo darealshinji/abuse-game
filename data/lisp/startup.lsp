@@ -39,17 +39,44 @@
 	    "art/fore/techno3.spe"   ;; 200-236
 	    "art/fore/techno4.spe"   ;; 300-460
 	    "art/fore/cave.spe"      ;; 500-634
+	    "art/fore/alien.spe"    ;; 700-774
+	    "art/fore/trees.spe"    ;; 800-931
+	    "art/fore/endgame.spe"  ;; 950-1014
+	    "art/fore/trees2.spe"   ;; 1100-1134
 
 	    "art/back/backgrnd.spe"  ;; 0
 	    "art/back/intro.spe"     ;; 5-37
 	    "art/back/city.spe"      ;; 40-70
 	    "art/back/cave.spe"      ;; 84-103
 	    "art/back/tech.spe"      ;; 110-139
+	    "art/back/alienb.spe"   ;; 150-179
+	    "art/back/green2.spe"   ;; 200-268
+	    "art/back/galien.spe"   ;; 300-320
 	    )
 
-(setq load_warn nil)
-(load "register/tiles.lsp")       ;; load up registered artwork if it's there
-(setq load_warn T)
+(defun end_game_ai ()
+  (if (activated)
+      (if (eq (aistate) 8)
+	  (if (not (next_picture))
+	      (request_end_game))
+	(set_aistate (+ (aistate) 1))))
+  T)
+
+
+(def_char END_GAME
+  (funs (ai_fun end_game_ai))
+  (range 0 0)
+  (states "art/fore/endgame.spe"
+	  (stopped (app (seq "pipe" 1 9)
+			(seq "pipe" 1 9)
+			(seq "pipe" 1 9)
+			(seq "pipe" 1 9)
+			(seq "pipe" 1 9)
+			(seq "pipe" 1 9)
+			(seq "pipe" 1 9)
+			(seq "pipe" 1 9)
+			(seq "pipe" 1 9)))))
+
 
 (setf title_screen      '("art/title.spe" . "title_screen"))
 ;; XXX: Frabs uses a random title screen

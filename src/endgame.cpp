@@ -149,10 +149,10 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
 void show_end2()
 {
   int i;
-  int planet=cache.reg("art/endgame.spe","planet",SPEC_IMAGE,1);
-  int planet2=cache.reg("art/endgame.spe","dead_planet",SPEC_IMAGE,1);
-  int mask=cache.reg("art/endgame.spe","mask",SPEC_IMAGE,1);
-  int ship=cache.reg("art/endgame.spe","ship",SPEC_IMAGE,1);
+  int planet=cache.reg("art/fore/endgame.spe","planet",SPEC_IMAGE,1);
+  int planet2=cache.reg("art/fore/endgame.spe","dead_planet",SPEC_IMAGE,1);
+  int mask=cache.reg("art/fore/endgame.spe","mask",SPEC_IMAGE,1);
+  int ship=cache.reg("art/fore/endgame.spe","ship",SPEC_IMAGE,1);
 
 
   int explo_snd = lnumber_value(LSymbol::FindOrCreate("P_EXPLODE_SND")->GetValue());
@@ -427,7 +427,7 @@ void share_end()
   wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
   screen->clear();
 
-  image *im=cache.img(cache.reg("art/endgame.spe","tbc",SPEC_IMAGE,1));
+  image *im=cache.img(cache.reg("art/fore/endgame.spe","tbc",SPEC_IMAGE,1));
 
   void *to_be = LSymbol::FindOrCreate("to_be_continued")->GetValue();
   PtrRef r1(to_be);
@@ -483,7 +483,7 @@ void show_end()
   wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
   screen->clear();
 
-  image *im=cache.img(cache.reg("art/endgame.spe","end.pcx",SPEC_IMAGE,1));
+  image *im=cache.img(cache.reg("art/fore/endgame.spe","end.pcx",SPEC_IMAGE,1));
 
   int dx=(xres+1)/2-320/2,dy=(yres+1)/2-200/2;
 

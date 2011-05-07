@@ -125,16 +125,42 @@
 	    "art/fore/techno3.spe"
 	    "art/fore/techno4.spe"
 	    "art/fore/cave.spe"
+	    "art/fore/alien.spe"
+	    "art/fore/trees.spe"
+	    "art/fore/endgame.spe"
+	    "art/fore/trees2.spe"
 
 	    "art/back/intro.spe"
 	    "art/back/city.spe"
 	    "art/back/tech.spe"
 	    "art/back/cave.spe"
-	    "art/back/backgrnd.spe")
+	    "art/back/backgrnd.spe"
+	    "art/back/alienb.spe"
+	    "art/back/green2.spe"
+	    "art/back/galien.spe")
 
-(setq load_warn nil)
-(load "register/tiles.lsp")       ;; load up registered artwork if it's there
-(setq load_warn T)
+(defun end_game_ai ()
+  (if (activated)
+      (if (eq (aistate) 8)
+          (if (not (next_picture))
+              (request_end_game))
+        (set_aistate (+ (aistate) 1))))
+  T)
+
+(def_char END_GAME
+  (funs (ai_fun end_game_ai))
+  (range 0 0)
+  (states "art/fore/endgame.spe"
+          (stopped (app (seq "pipe" 1 9)
+                        (seq "pipe" 1 9)
+                        (seq "pipe" 1 9)
+                        (seq "pipe" 1 9)
+                        (seq "pipe" 1 9)
+                        (seq "pipe" 1 9)
+                        (seq "pipe" 1 9)
+                        (seq "pipe" 1 9)
+                        (seq "pipe" 1 9)))))
+
 
 (setf title_screen      '("art/title.spe" . "title_screen"))
 (setf logo              '("art/title.spe" . "cdc_logo"))
