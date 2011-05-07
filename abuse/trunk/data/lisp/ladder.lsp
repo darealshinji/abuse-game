@@ -1,6 +1,7 @@
 ;; Copyright 1995 Crack dot Com,  All Rights reserved
 ;; See licensing information for more details on usage rights
 
+;; XXX: Mac Abuse reimplements this in C++
 (defun latter_check_area (first)
   (if first
       (progn
@@ -15,6 +16,7 @@
 	      (with_object first (setq in_climbing_area yd))))
 	(latter_check_area (next_focus first)))))
 
+;; XXX: Mac Abuse reimplements this in C++
 (defun latter_ai ()
   (if (> (total_objects) 0)
       (latter_check_area (first_focus)))
@@ -39,5 +41,4 @@
   (states "art/chars/step.spe"
 	  (stopped "step")
 	  (running "step_gone")))
-
 

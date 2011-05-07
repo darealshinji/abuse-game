@@ -67,4 +67,27 @@ T)
   (fields ("xvel"   tp_amb))
   (states "art/door.spe" (stopped (seq "door" 1 5))))
 
+;; Teleporting door AI
+(defun tpdi_ai ()
+  (let ((player (bg)))
+       (if (has_object player)
+	   (if (not (with_object player (pressing_action_key)))
+	       (remove_object player))
+	   (if (and (< (distx) 15)
+		    (< (disty) 20)
+		    (with_object player (pressing_action_key))
+		    (> (total_objects) 0))
+	       (let ((otherx (with_object (get_object 0) (x)))
+		     (othery (with_object (get_object 0) (y))))
+		    (with_object (get_object 0) (link_object player))
+		    (with_object player
+		      (progn (set_x otherx) (set_y othery)))))))
+  T)
+
+(def_char TP_DOOR_INVIS
+  (range 0 0)
+  (funs (ai_fun tpdi_ai)
+	(draw_fun dev_draw))
+  (fields ("xvel" tp_amb))
+  (states "art/misc.spe" (stopped "clone_icon")))
 

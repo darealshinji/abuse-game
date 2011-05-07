@@ -25,6 +25,7 @@
 	  (add_object EXPLODE1 (+ (x) (random 10)) (+ (+ (random 10) (y)) -20)     0)
 	  (add_object EXPLODE1 (- (x) (random 10)) (+ (- (y) (random 10)) -20)     2)
 	  (add_object EXPLODE1 (x) (+ (- (y) (random 20)) -20)                     4)
+	  (with_object (bg) (set_kills (+ (kills) 1)))
 	  nil)
       (progn
 	(if (eq (mod (state_time) 5) 0)      ;; make flyer noise every 5 ticks

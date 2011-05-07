@@ -305,6 +305,7 @@
 	  (spray.disappear   '("csht0002.pcx" "csht0001.pcx"))
 	  ))
 
+;; XXX: Mac Abuse reimplements this in C++
 (defun gun_draw ()
   (draw_tint (aref gun_tints (aitype))))
 

@@ -170,6 +170,7 @@
 		   (add_ammo type amount)))))
 
 
+;; XXX: Mac Abuse reimplements this in C++
 (defun weapon_icon_ai ()
   (if (eq0 (aistate))
       (if (activated)
@@ -235,12 +236,13 @@
 	  nil)
       T)))
 
+;; XXX: Mac Abuse reimplements this in C++
 (defun on_draw ()
   (if (activated)
       (draw)
     (dev_draw)))
 
-
+;; XXX: Mac Abuse reimplements this in C++
 (defun ammo_cache (type)    ;; tells what other chars to load in with this character
   (list
    (select type

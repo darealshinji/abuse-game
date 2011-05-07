@@ -227,6 +227,7 @@ T)
 	   (stopped (seq "lava" 1 15))))
 
 
+;; XXX: Mac Abuse reimplements this in C++
 (defun tp2_ai ()
   (if (> (total_objects) 0)
       (select (aistate)
