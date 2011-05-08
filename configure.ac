@@ -120,7 +120,8 @@ AC_OUTPUT([
     src/lisp/Makefile
     src/net/Makefile
     src/imlib/Makefile
-    src/sdlport/Makefile])
+    src/sdlport/Makefile
+    data/Makefile])
 
 echo "
 ------ Configuration for $PACKAGE $VERSION ------
