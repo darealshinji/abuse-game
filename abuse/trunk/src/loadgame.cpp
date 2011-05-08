@@ -47,7 +47,7 @@ void load_number_icons()
     for (int i = 0; i < MAX_SAVE_GAMES * 3; i++)
     {
         char name[100];
-        sprintf(name, "nums%04d.pcx", i % (5 * 3) + 1); // FIXME
+        sprintf(name, "nums%04d.pcx", i + 1);
         save_buts[i] = cache.reg("art/icons.spe", name, SPEC_IMAGE, 1);
     }
 }
