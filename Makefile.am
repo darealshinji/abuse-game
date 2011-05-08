@@ -2,10 +2,7 @@
 
 SUBDIRS = src data doc
 
-datafiledir = $(datadir)/games/abuse
-datafile_DATA = abuse.bmp abuse.png
-
-EXTRA_DIST = COPYING.GPL COPYING.WTFPL PACKAGERS bootstrap abuse.bmp abuse.png
+EXTRA_DIST = COPYING.GPL COPYING.WTFPL PACKAGERS bootstrap
 
 if HAVE_NONFREE
 else
