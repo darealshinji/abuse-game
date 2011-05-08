@@ -59,9 +59,9 @@ abuse_SOURCES = \
     crc.cpp crc.h \
     gamma.cpp gamma.h \
     id.h netface.h isllist.h sbar.h \
-    nfserver.h exitproc.h \
+    nfserver.h \
     \
-    ui/volumewindow.cpp volumewindow.h \
+    ui/volumewindow.cpp ui/volumewindow.h \
     $(NULL)
 
 EXTRALIBS = lisp/liblisp.a sdlport/libsdlport.a imlib/libimlib.a net/libnet.a
