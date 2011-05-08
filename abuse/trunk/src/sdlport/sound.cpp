@@ -65,7 +65,7 @@ int sound_init( int argc, char **argv )
     }
     free( sfxdir );
 
-    if (Mix_OpenAudio(11025, AUDIO_U8, 2, 128) < 0)
+    if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 128) < 0)
     {
         printf( "Sound: Unable to open audio - %s\nSound: Disabled (error)\n", SDL_GetError() );
         return 0;
