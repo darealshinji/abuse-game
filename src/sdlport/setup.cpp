@@ -92,9 +92,6 @@ void createRCFile( char *rcfile )
 
     if( (fd = fopen( rcfile, "w" )) != NULL )
     {
-        char datadir[255];
-        strncpy(datadir, EXPDATADIR, 255);
-
         fputs( "; Abuse-SDL Configuration file\n\n", fd );
         fputs( "; Startup fullscreen\nfullscreen=0\n\n", fd );
         #ifdef __APPLE__
@@ -104,8 +101,7 @@ void createRCFile( char *rcfile )
         fputs( "; Use DoubleBuffering\ndoublebuf=0\n\n", fd );
         fputs( "; Use OpenGL\ngl=0\n\n", fd );
         fputs( "; Location of the datafiles\ndatadir=", fd );
-        fputs( datadir, fd );
-        fputs( "\n\n", fd );
+        fputs( ASSETSDIR "\n\n", fd );
         #endif
         fputs( "; Use mono audio only\nmono=0\n\n", fd );
         fputs( "; Grab the mouse to the window\ngrabmouse=0\n\n", fd );
@@ -433,7 +429,7 @@ void setup( int argc, char **argv )
     else
         set_filename_prefix( (const char*)buffer );
     #else
-    set_filename_prefix( EXPDATADIR );
+    set_filename_prefix( ASSETSDIR );
     #endif
 
     // Load the users configuration

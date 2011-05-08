@@ -19,10 +19,6 @@ if [ "x$x_libraries" != "x" ]; then
   X_LIBS="-L$x_libraries"
 fi
 
-dnl Figure out where the datafiles will be
-EXPDATADIR="-DEXPDATADIR=\\\"$datadir/games/abuse\\\""
-AC_SUBST(EXPDATADIR)
-
 AC_ARG_ENABLE(debug,
   [  --enable-debug          build debug versions of the game (default no)])
 AC_ARG_ENABLE(release,
@@ -30,16 +26,26 @@ AC_ARG_ENABLE(release,
 AC_ARG_ENABLE(nonfree,
   [  --disable-nonfree       disable non-free data (default no)])
 
-dnl Checks for libraries
+AC_ARG_WITH(assetsdir,
+  [  --with-assetsdir=DIR    override default game data directory])
+
+dnl  Figure out where the datafiles will be
+if test "x${with_assetsdir}" = x; then
+  with_assetsdir='$(datadir)/games/abuse'
+fi
+AC_SUBST([assetsdir], [$with_assetsdir])
+
+dnl  Checks for libraries
 dnl Do we need to link against something for X shared memory support?
-AC_CHECK_LIB(Xext,XShmAttach,:,[
-AC_CHECK_LIB(XextSam,XShmAttach,LIBS="$LIBS -lXextSam",,$X_LIBS -lX11 -lXext)
-],$X_LIBS -lX11)
+AC_CHECK_LIB(Xext, XShmAttach, :,
+             [AC_CHECK_LIB(XextSam, XShmAttach, LIBS="$LIBS -lXextSam", :,
+                           $X_LIBS -lX11 -lXext)],
+             $X_LIBS -lX11)
 
 dnl Checks for Solaris compatibility
-AC_CHECK_LIB(m,pow,LIBS="$LIBS -lm")
-AC_CHECK_LIB(socket,socket,LIBS="$LIBS -lsocket")
-AC_CHECK_LIB(nsl,gethostbyname,LIBS="$LIBS -lnsl")
+AC_CHECK_LIB(m, pow, LIBS="$LIBS -lm")
+AC_CHECK_LIB(socket, socket, LIBS="$LIBS -lsocket")
+AC_CHECK_LIB(nsl, gethostbyname, LIBS="$LIBS -lnsl")
 
 dnl Check for SDL
 SDL_VERSION=1.1.6
@@ -113,13 +119,11 @@ AC_TRY_COMPILE([
     #error	/* Error so the compile fails on OSX */
     #else
     #include <GL/gl.h>
-    #endif
-],[
-],[
-have_opengl=yes
-])
+    #endif],
+  [],
+  [have_opengl=yes])
 AC_MSG_RESULT($have_opengl)
-if test x$have_opengl = xyes; then
+if test "x$have_opengl" = xyes; then
     CFLAGS="$CFLAGS -DHAVE_OPENGL"
     CXXFLAGS="$CXXFLAGS -DHAVE_OPENGL"
     LIBS="$LIBS -lGL -lpthread"
@@ -139,10 +143,11 @@ AC_OUTPUT([
 
 echo "
 ------ Configuration for $PACKAGE $VERSION ------
-    Compiler:         ${CC} (version `${CC} --version`)
-    Install prefix:   $prefix
-    SDL version:      `sdl-config --version`
-    OpenGL support:   $have_opengl
+    Compiler:          ${CC} (`${CC} --version | head -n 1`)
+    Install prefix:    ${prefix}
+    Assets directory:  ${with_assetsdir}
+    SDL version:       `sdl-config --version`
+    OpenGL support:    ${have_opengl}
 
 Now type 'make' to build $PACKAGE.
 "
