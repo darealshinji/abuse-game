@@ -19,8 +19,7 @@
 (load "addon/twist/lisp/userfuns.lsp")
 (load "addon/twist/lisp/options.lsp")
 (load "addon/twist/lisp/startup.lsp")
-(if (not (local_load "addon/twist/lisp/input.lsp"))   ; get local copy first
-    (load "addon/twist/lisp/input.lsp"))
+(load "lisp/input.lsp")
 
 (load "lisp/sfx.lsp")
 (load "addon/twist/lisp/sfx.lsp")

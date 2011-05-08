@@ -3,14 +3,7 @@
 
 
 ;; Note for /Messiah\
-;; in the main abuse.lsp, change
-;;
-;; (if (not (local_load "lisp/input.lsp"))   ; get local copy first
-;;    (load "lisp/input.lsp"))
-;; to: (if (not (local_load "addon/twist/lisp/input.lsp"))
-;;    (load "addon/twist/lisp/input.lsp"))
-;;
-;; also, append this to the final set of lines relating to the loading part:
+;; append this to the final set of lines relating to the loading part:
 ;; (load "addon/twist/lisp/dray.lsp")
 
 ;; make sure you add all the objects that the deathray's light beam will have effect on.
