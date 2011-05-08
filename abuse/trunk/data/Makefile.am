@@ -2,6 +2,22 @@
 EXTRA_DIST = \
     $(demos) $(music) $(lisp) $(extra) $(art) $(levels) $(doc) $(sound)
 
+datafiledir = $(datadir)/games/abuse
+
+install-data-local:
+	@for p in $(EXTRA_DIST); do \
+	  d="`echo \"$$p\" | sed -ne 's@\(.*\)/.*@\1@p'`"; \
+	  $(MKDIR_P) "$(DESTDIR)$(datafiledir)/$$d"; \
+	  echo " $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(datafiledir)/$$d"; \
+	  $(INSTALL_DATA) "$(srcdir)/$$p" "$(DESTDIR)$(datafiledir)/$$d" || exit $$?; \
+	done
+
+uninstall-local:
+	@for p in $(EXTRA_DIST); do \
+	  echo " ( cd '$(DESTDIR)$(datafiledir)' && rm -f" $$p ")"; \
+	  cd "$(DESTDIR)$(datafiledir)" && rm -f $$p; \
+	done
+
 demos = \
     levels/demo1.dat levels/mac/demo1.dat levels/mac/demo2.dat \
     levels/mac/demo3.dat levels/mac/demo4.dat levels/mac/demo5.dat
