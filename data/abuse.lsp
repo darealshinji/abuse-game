@@ -8,7 +8,7 @@
 (setq section 'game_section)
 (if (not (load "lisp/english.lsp"))             ;; load language specific stuff
     (progn
-      (print "Abuse data files not found. Maybe try the -datadir flag?")
+      (print "Abuse data files not found. Maybe try the `-datadir' option?")
       (quit)))
 (setq load_warn T)
 
