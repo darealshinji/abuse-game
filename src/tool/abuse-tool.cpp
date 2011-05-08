@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
         mode = "rb"; // Read-only access
         break;
     case CMD_PUT:
-        minargc = 5;
+        minargc = 6;
         break;
     case CMD_MOVE:
         minargc = 5;
@@ -95,13 +95,13 @@ int main(int argc, char *argv[])
         mode = "rb"; // Read-only access
         break;
     case CMD_PUTPCX:
-        minargc = 5;
+        minargc = 6;
         break;
     }
 
     if (argc < minargc)
     {
-        fprintf(stderr, "abuse-tool: too few arguments to command `%s'\n",
+        fprintf(stderr, "abuse-tool: too few arguments for command `%s'\n",
                          argv[2]);
         return EXIT_FAILURE;
     }
