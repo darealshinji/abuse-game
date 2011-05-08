@@ -27,6 +27,8 @@ AC_ARG_ENABLE(debug,
   [  --enable-debug          build debug versions of the game (default no)])
 AC_ARG_ENABLE(release,
   [  --enable-release        build final release of the game (default no)])
+AC_ARG_ENABLE(nonfree,
+  [  --disable-nonfree       disable non-free data (default no)])
 
 dnl Checks for libraries
 dnl Do we need to link against something for X shared memory support?
@@ -70,6 +72,17 @@ if test "${enable_release}" = "yes"; then
 else
   REL="-g"
 fi
+
+dnl  Is our package stripped from its non-free data? Or did the user
+dnl  maybe disable non-free data?
+ac_cv_have_nonfree="no"
+if test -f "${srcdir}/data/sfx/ambcave1.wav"; then
+  ac_cv_have_nonfree="yes"
+fi
+if test "${enable_nonfree}" = "no"; then
+  ac_cv_have_nonfree="no"
+fi
+AM_CONDITIONAL(HAVE_NONFREE, test "${ac_cv_have_nonfree}" = "yes")
 
 # Optimizations
 CXXFLAGS="${CXXFLAGS} ${OPT} ${REL}"

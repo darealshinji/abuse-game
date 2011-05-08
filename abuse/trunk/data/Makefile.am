@@ -18,16 +18,6 @@ uninstall-local:
 	  cd "$(DESTDIR)$(datafiledir)" && rm -f $$p; \
 	done
 
-demos = \
-    levels/demo1.dat levels/mac/demo1.dat levels/mac/demo2.dat \
-    levels/mac/demo3.dat levels/mac/demo4.dat levels/mac/demo5.dat
-
-music = \
-    music/intro.hmi music/victory.hmi \
-    music/abuse00.hmi music/abuse01.hmi music/abuse02.hmi music/abuse03.hmi \
-    music/abuse04.hmi music/abuse06.hmi music/abuse08.hmi music/abuse09.hmi \
-    music/abuse11.hmi music/abuse13.hmi music/abuse15.hmi music/abuse17.hmi
-
 lisp = \
     abuse.lsp edit.lsp hardness.lsp music/playhmp.lsp \
     lisp/ant.lsp lisp/chat.lsp lisp/common.lsp lisp/doors.lsp \
@@ -78,9 +68,6 @@ lisp += \
     addon/twist/lisp/tints.lsp addon/twist/lisp/title.lsp \
     addon/twist/lisp/userfuns.lsp addon/twist/lisp/weapons.lsp \
     addon/twist/twist.lsp
-
-extra = \
-    defaults.prp
 
 art = \
     art/ant.spe art/ball.spe art/blowups.spe art/bold.spe art/boss.spe \
@@ -222,6 +209,10 @@ levels += \
     addon/twist/levels/l01s01.lvl addon/twist/levels/l01s02.lvl \
     addon/twist/levels/l01s03.lvl addon/twist/levels/l01s04.lvl
 
+demos = \
+    levels/demo1.dat levels/mac/demo1.dat levels/mac/demo2.dat \
+    levels/mac/demo3.dat levels/mac/demo4.dat levels/mac/demo5.dat
+
 doc = \
     addon/aliens/aliens.txt \
     addon/aliens/readme.txt \
@@ -230,6 +221,16 @@ doc = \
     addon/newart/tiledoc.txt \
     addon/pong/pong.txt \
     addon/twist/readme.txt
+
+extra = \
+    defaults.prp
+
+if HAVE_NONFREE
+music = \
+    music/intro.hmi music/victory.hmi \
+    music/abuse00.hmi music/abuse01.hmi music/abuse02.hmi music/abuse03.hmi \
+    music/abuse04.hmi music/abuse06.hmi music/abuse08.hmi music/abuse09.hmi \
+    music/abuse11.hmi music/abuse13.hmi music/abuse15.hmi music/abuse17.hmi
 
 sound = \
     sfx/adie02.wav sfx/adie03.wav sfx/adie05.wav sfx/ahit01.wav \
@@ -282,4 +283,8 @@ sound += \
     addon/leon/sfx/thunder.wav \
     \
     addon/twist/sfx/dray.wav
+else
+music =
+sound =
+endif
 
