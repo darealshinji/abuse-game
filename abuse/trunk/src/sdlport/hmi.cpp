@@ -1,41 +1,55 @@
+//
+//  Abuse - dark 2D side-scrolling platform game
+//
+//  Copyright (c) 2011 Jochen Schleu <jjs@jjs.at>
+//   This program is free software; you can redistribute it and/or
+//   modify it under the terms of the Do What The Fuck You Want To
+//   Public License, Version 2, as published by Sam Hocevar. See
+//   http://sam.zoy.org/projects/COPYING.WTFPL for more details.
+//
+
+#if defined HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+
+#include "common.h"
+
 // Load Abuse HMI files and covert them to standard Midi format
 //
 // HMI files differ from Midi files in the following ways:
-// - there is a header giving offsets to the tracks and various other information (unknown)
-// - note-on events include the duration of the note instead of dedicated note-off events
+// - there is a header giving offsets to the tracks and various other
+//   information (unknown)
+// - note-on events include the duration of the note instead of dedicated
+//   note-off events
 // - additional 0xFE event with variable length, purpose unknown
 //
-// This converter does the bare minimum to get Abuse HMI files to convert. The bpm and
-// header information is fixed and not read from the file (except the number of tracks).
-// HMI files make use of running status notation, the converted files don't.
-
-#include <malloc.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-
+// This converter does the bare minimum to get Abuse HMI files to convert.
+// The bpm and header information is fixed and not read from the file (except
+// the number of tracks). HMI files make use of running status notation, the
+// converted files don't.
 
 #define MAX_NOTE_OFF_EVENTS 30
 
-typedef struct
+struct NoteOffEvent
 {
-    unsigned int time;
-    unsigned char command;
-    unsigned char note;
-}
-midi_note_off_event_t;
+    uint32_t time;
+    uint8_t command;
+    uint8_t note;
+};
 
-midi_note_off_event_t note_off_events[MAX_NOTE_OFF_EVENTS];
+NoteOffEvent note_off_events[MAX_NOTE_OFF_EVENTS];
 
-
-
-unsigned int get_int_from_buffer(unsigned char* buffer)
+static uint32_t get_int_from_buffer(uint8_t* buffer)
 {
-    return (buffer[3] << 24) + (buffer[2] << 16) + (buffer[1] << 8) + (buffer[0]);
+    return (buffer[3] << 24) + (buffer[2] << 16)
+             + (buffer[1] << 8) + (buffer[0]);
 }
 
-
-void write_big_endian_number(unsigned int le, unsigned char* buffer)
+static void write_big_endian_number(uint32_t le, uint8_t* buffer)
 {
     buffer[3] = (le & 0x000000FF);
     buffer[2] = (le & 0x0000FF00) >> 8;
@@ -43,24 +57,20 @@ void write_big_endian_number(unsigned int le, unsigned char* buffer)
     buffer[0] = (le & 0xFF000000) >> 24;
 }
 
-
-int compare_times(const void* a, const void* b)
+static int compare_times(const void* a, const void* b)
 {
-    if (((midi_note_off_event_t*)a)->time < ((midi_note_off_event_t*)b)->time)
-        return -1;
-    else if (((midi_note_off_event_t*)a)->time > ((midi_note_off_event_t*)b)->time)
-        return 1;
-    else
-        return 0;
+    NoteOffEvent const *ea = (NoteOffEvent const *)a;
+    NoteOffEvent const *eb = (NoteOffEvent const *)b;
+
+    return ea->time < eb->time ? -1 : ea->time == eb->time ? 0 : 1;
 }
 
-
-// Variable length number code from: http://www.chriswareham.demon.co.uk/midifiles/variable_length.html
-
-unsigned int read_time_value(unsigned char* &buffer)
+// Variable length number code
+// from: http://www.chriswareham.demon.co.uk/midifiles/variable_length.html
+static uint32_t read_time_value(uint8_t* &buffer)
 {
-    unsigned int value;
-    unsigned char c;
+    uint32_t value;
+    uint8_t c;
 
     if ((value = *buffer++) & 0x80)
     {
@@ -75,10 +85,9 @@ unsigned int read_time_value(unsigned char* &buffer)
     return value;
 }
 
-
-void write_time_value(unsigned int time, unsigned char* &buffer)
+static void write_time_value(uint32_t time, uint8_t* &buffer)
 {
-    unsigned int value_buffer = time & 0x7F;
+    uint32_t value_buffer = time & 0x7F;
 
     while (time >>= 7)
     {
@@ -96,30 +105,27 @@ void write_time_value(unsigned int time, unsigned char* &buffer)
     }
 }
 
-
-void remember_note_off_event(unsigned int time, unsigned char command, unsigned char note)
+static void remember_note_off_event(uint32_t time, uint8_t cmd, uint8_t note)
 {
-    int i;
-    for (i = 0; i < MAX_NOTE_OFF_EVENTS; i++)
+    for (int i = 0; i < MAX_NOTE_OFF_EVENTS; i++)
     {
         if (note_off_events[i].time == 0xFFFFFFFF)
         {
             note_off_events[i].time = time;
-            note_off_events[i].command = command;
+            note_off_events[i].command = cmd;
             note_off_events[i].note = note;
             break;
         }
     }
 
     // Sort the note off array by the time
-    qsort(note_off_events, MAX_NOTE_OFF_EVENTS, sizeof(midi_note_off_event_t), compare_times);
+    qsort(note_off_events, MAX_NOTE_OFF_EVENTS, sizeof(NoteOffEvent), compare_times);
 }
 
-
-void check_for_note_off_events(unsigned int &current_time, unsigned int &last_time, unsigned char* &buffer)
+static void check_for_note_off_events(uint32_t &current_time,
+                                      uint32_t &last_time, uint8_t* &buffer)
 {
-    int i;
-    for (i = 0; i < MAX_NOTE_OFF_EVENTS; i++)
+    for (int i = 0; i < MAX_NOTE_OFF_EVENTS; i++)
     {
         if (note_off_events[i].time == 0xFFFFFFFF)
             break;
@@ -140,27 +146,27 @@ void check_for_note_off_events(unsigned int &current_time, unsigned int &last_ti
     }
 
     // Sort the note off array by the time
-    qsort(note_off_events, MAX_NOTE_OFF_EVENTS, sizeof(midi_note_off_event_t), compare_times);
+    qsort(note_off_events, MAX_NOTE_OFF_EVENTS, sizeof(NoteOffEvent), compare_times);
 }
 
-
-void convert_hmi_track(unsigned char* input, unsigned int input_size, unsigned char* &output)
+static void convert_hmi_track(uint8_t* input,
+                              uint32_t input_size, uint8_t* &output)
 {
     int done = 0;
-    unsigned char current_command = 0;
-    unsigned char current_value = 0;
-    unsigned int current_time = 0;
-    unsigned int last_time = 0;
-    unsigned char* start_of_buffer = output;
-    unsigned char* start_of_input = input;
+    uint8_t current_command = 0;
+    uint8_t current_value = 0;
+    uint32_t current_time = 0;
+    uint32_t last_time = 0;
+    uint8_t* start_of_buffer = output;
+    uint8_t* start_of_input = input;
 
-    memset(note_off_events, 0xFF, sizeof(midi_note_off_event_t) * MAX_NOTE_OFF_EVENTS);
+    memset(note_off_events, 0xFF, sizeof(NoteOffEvent) * MAX_NOTE_OFF_EVENTS);
 
     // Midi data offset is at 0x57 from track start
     input += input[0x57];
 
     // Write track header, leave length as zero for now
-    unsigned char track_header[] = { 0x4D, 0x54, 0x72, 0x6B, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t track_header[] = { 0x4D, 0x54, 0x72, 0x6B, 0x00, 0x00, 0x00, 0x00, 0x00};
     memcpy(output, track_header, 8);
     output += 8;
 
@@ -249,27 +255,26 @@ void convert_hmi_track(unsigned char* input, unsigned int input_size, unsigned c
             break;
         }
 
-        if ((unsigned int)(input - start_of_input) >= input_size)
+        if ((uint32_t)(input - start_of_input) >= input_size)
             break;
     }
 
     // Write end marker if necessary
     if (done != 1)
     {
-        unsigned char end_marker[] = { 0x00, 0xFF, 0x2F, 0x00 };
+        uint8_t end_marker[] = { 0x00, 0xFF, 0x2F, 0x00 };
         memcpy(output, end_marker, 4);
         output += 4;
     }
 
     // Update header with length of track
-    write_big_endian_number((unsigned int)(output - start_of_buffer - 8), &start_of_buffer[4]);
+    write_big_endian_number((uint32_t)(output - start_of_buffer - 8), &start_of_buffer[4]);
 }
 
-
-unsigned char* load_hmi(char* filename, unsigned int &data_size)
+uint8_t* load_hmi(char const *filename, uint32_t &data_size)
 {
-    unsigned char* input_buffer;
-    unsigned char* output_buffer;
+    uint8_t* input_buffer;
+    uint8_t* output_buffer;
 
     FILE* hmifile = fopen(filename, "rb");
 
@@ -277,47 +282,46 @@ unsigned char* load_hmi(char* filename, unsigned int &data_size)
         return NULL;
 
     fseek(hmifile, 0, SEEK_END);
-    int buffersize = ftell(hmifile);
+    uint32_t buffersize = ftell(hmifile);
     fseek(hmifile, 0, SEEK_SET);
 
-    input_buffer = (unsigned char*)malloc(buffersize);
+    input_buffer = (uint8_t*)malloc(buffersize);
     fread(input_buffer, 1, buffersize, hmifile);
     fclose(hmifile);
 
-    output_buffer = (unsigned char*)malloc(buffersize * 10); // Midi files can be larger than HMI files
-    unsigned char* output_buffer_ptr = output_buffer;
+    output_buffer = (uint8_t*)malloc(buffersize * 10); // Midi files can be larger than HMI files
+    uint8_t* output_buffer_ptr = output_buffer;
 
     // Offset to tracks is at 0x113
-    unsigned int offset_tracks = get_int_from_buffer(&input_buffer[0xE8]);
-    unsigned int next_offset = get_int_from_buffer(&input_buffer[0xF4]);
+    uint32_t offset_tracks = get_int_from_buffer(&input_buffer[0xE8]);
+    uint32_t next_offset = get_int_from_buffer(&input_buffer[0xF4]);
 
-    unsigned char num_tracks = (next_offset - offset_tracks) / sizeof(int);
+    uint8_t num_tracks = (next_offset - offset_tracks) / sizeof(uint32_t);
 
     // Write Midi file header
-    unsigned char midi_header[] = { 0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, (num_tracks + 1), 0x00, 0xC0 };
+    uint8_t midi_header[] = { 0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, (num_tracks + 1), 0x00, 0xC0 };
     memcpy(output_buffer_ptr, midi_header, 14);
     output_buffer_ptr += 14;
 
     // Write additional first track with bpm info
-    unsigned char bpm_track[] = { 0x4D, 0x54, 0x72, 0x6B, 0x00, 0x00, 0x00, 0x0B, 0x00, 0xFF, 0x51, 0x03, 0x18, 0x7F, 0xFF, 0x00, 0xFF, 0x2F, 0x00 };
+    uint8_t bpm_track[] = { 0x4D, 0x54, 0x72, 0x6B, 0x00, 0x00, 0x00, 0x0B, 0x00, 0xFF, 0x51, 0x03, 0x18, 0x7F, 0xFF, 0x00, 0xFF, 0x2F, 0x00 };
     memcpy(output_buffer_ptr, bpm_track, sizeof(bpm_track));
     output_buffer_ptr += sizeof(bpm_track);
 
-    int i;
-    for (i = 0; i < num_tracks; i++)
+    for (int i = 0; i < num_tracks; i++)
     {
-        unsigned int trackposition = get_int_from_buffer(&input_buffer[offset_tracks + i * (sizeof(int))]);
-        unsigned int tracksize;
+        uint32_t trackposition = get_int_from_buffer(&input_buffer[offset_tracks + i * (sizeof(uint32_t))]);
+        uint32_t tracksize;
         if (i == num_tracks - 1)
             tracksize = buffersize - trackposition;
         else
-            tracksize = get_int_from_buffer(&input_buffer[offset_tracks + (i + 1) * (sizeof(int))]) - trackposition;
+            tracksize = get_int_from_buffer(&input_buffer[offset_tracks + (i + 1) * (sizeof(uint32_t))]) - trackposition;
 
         convert_hmi_track(&input_buffer[trackposition], tracksize, output_buffer_ptr);
     }
 
-    data_size = (unsigned int)(output_buffer_ptr - output_buffer);
-    output_buffer = (unsigned char*)realloc(output_buffer, data_size);
+    data_size = (uint32_t)(output_buffer_ptr - output_buffer);
+    output_buffer = (uint8_t*)realloc(output_buffer, data_size);
 
     free(input_buffer);
 

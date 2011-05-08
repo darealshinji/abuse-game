@@ -179,7 +179,7 @@ song::song(char const * filename)
     strcpy(realname, get_filename_prefix());
     strcat(realname, filename);
 
-    unsigned int data_size;
+    uint32_t data_size;
     data = load_hmi(realname, data_size);
 
     if (!data)
