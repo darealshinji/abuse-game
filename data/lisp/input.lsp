@@ -42,21 +42,97 @@
 (setq weapon-left-key   (get_key_code "right_ctrl"))
 (setq weapon-right-key  (get_key_code "insert"))
 
+(setq key-shiftr        (get_key_code "right_shift"))
+(setq key-end           (get_key_code "end"))
+
+(setq key-a  (get_key_code "a"))
+(setq key-b  (get_key_code "b"))
+(setq key-c  (get_key_code "c"))
+(setq key-d  (get_key_code "d"))
+(setq key-e  (get_key_code "e"))
+(setq key-f  (get_key_code "f"))
+(setq key-g  (get_key_code "g"))
+(setq key-h  (get_key_code "h"))
+(setq key-i  (get_key_code "i"))
+(setq key-j  (get_key_code "j"))
+(setq key-k  (get_key_code "k"))
+(setq key-l  (get_key_code "l"))
+(setq key-m  (get_key_code "m"))
+(setq key-n  (get_key_code "n"))
+(setq key-o  (get_key_code "o"))
+(setq key-p  (get_key_code "p"))
+(setq key-q  (get_key_code "q"))
+(setq key-r  (get_key_code "r"))
+(setq key-s  (get_key_code "s"))
+(setq key-t  (get_key_code "t"))
+(setq key-u  (get_key_code "u"))
+(setq key-v  (get_key_code "v"))
+(setq key-w  (get_key_code "w"))
+(setq key-x  (get_key_code "x"))
+(setq key-y  (get_key_code "y"))
+(setq key-z  (get_key_code "z"))
+
+(setq dray_has_fired 1)
+(setq godmode 0)
+(setq enemytarget 0)
+(setq noclip 0)
 
 (defun get_local_input ()
+  ;; fRaBs Twist extension input logic
+  (if (eq godmode 1)
+      (progn
+        (with_object (bg) (set_hp 100))
+        (if (or (eq (with_object (bg) (state)) flinch_up)
+                (eq (with_object (bg) (state)) flinch_down))
+            (with_object (bg) (set_state stopped)))))
+  (if (eq noclip 1)
+      (progn
+        (with_object (bg) (set_gravity 0))
+        (if (local_key_pressed up-key)
+            (with_object (bg) (set_y (- (y) run_top_speed))))
+        (if (local_key_pressed down-key)
+            (with_object (bg) (set_y (+ (y) run_top_speed))))
+        (if (local_key_pressed left-key)
+            (with_object (bg) (set_x (- (x) run_top_speed))))
+        (if (local_key_pressed right-key)
+            (with_object (bg) (set_x (+ (x) run_top_speed))))
+        (with_object (bg) (set_gravity 0))))
+  (if (and (eq (mod (game_tick) 15) 0)
+           (eq dray_has_fired 1))
+      (setq dray_has_fired 0))
+  (if (local_key_pressed key-shiftr)
+      (save_game (concatenate 'string "save"
+                              (digstr (get_save_slot) 4) ".spe")))
+  (if (and (eq (third (mouse_stat)) 1)
+           (with_object (bg) (eq (current_weapon_type) 7)))
+      (if (and (eq dray_has_fired 0)
+               (<= (ammo_total 7) 1)
+               (not (or (<= (with_object (bg) (hp)) 0)
+                        (eq (with_object (bg) (state)) dieing)
+                        (eq (with_object (bg) (state)) dead)
+                        (eq (with_object (bg) (state)) flinch_up)
+                        (eq (with_object (bg) (state)) flinch_down)
+                        (eq (with_object (bg) (state)) climbing)
+                        (eq (with_object (bg) (state)) climb_off)
+                        (eq (with_object (bg) (state)) climb_on))))
+          (progn
+            (setq dray_has_fired 1)
+            (play_sound DEATH_RAY_SND 127 (x) (y))
+            (with_object (bg) (add_object DEATH_RAY (x) (- (y)
+                                          (/ (picture_height) 2))))
+            (with_object (bg) (add_ammo 7 -1)))))
+  ;; Original Abuse logic
   (let ((mstat (mouse_stat)))
-    (list (if (local_key_pressed left-key)
-	      -1
+    (list (if (local_key_pressed left-key) -1
 	      (if (local_key_pressed right-key) 1 0))  ;; xv
-	  (if (local_key_pressed up-key)
-	      -1
+	  (if (local_key_pressed up-key) -1
 	      (if (local_key_pressed down-key) 1 0))  ;; yv
 	  (eq (fourth mstat) 1) ;; special button
 	  (eq (third mstat) 1) ;; fire button
 
 	  (if (or (eq (fifth mstat) 1)
 		  (local_key_pressed weapon-left-key)) -1 ;; weapon toggle
-              (if (local_key_pressed weapon-right-key)  1 0))
+              (if (local_key_pressed weapon-right-key) 1 0))
 	  (first mstat) ;; mx
 	  (second mstat) ;; my
 	  )))
