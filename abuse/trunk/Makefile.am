@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = src
+SUBDIRS = src data
 
 man_MANS = abuse.6 abuse-tool.6
 

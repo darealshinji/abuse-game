@@ -1,41 +1,36 @@
 Twisted Minds - Demo of some objects and the DEATH RAY
 ------------------------------------------------------
 
-installation:	extract to addon directory. make sure you
-		unzip with the -d option. twist directory
-		and other sub-diractory will be created.
+I am releasing this because i am excited due to the success of making the Death
+Ray work. I will make further releases when i come across other breakthroughs.
 
-make sure that the files are in:
-<abuse directory>\addon\twist
-<abuse directory>\addon\twist\art
-<abuse directory>\addon\twist\levels
-<abuse directory>\addon\twist\lisp
-<abuse directory>\addon\twist\sfx
+You need registered Abuse v2.0 for this to work!
+You can now press right shift to save!
 
-i am releasing this because i am excited due to
-the success of making the Death Ray work.
-i will make further releases when i come across
-other breakthroughs.
+This addon is still HEAVILY under construction. There are bound to be bugs.
 
-you need registered abuse v2.0 for this to work!
-you can now press right shift to save!
+I did not do the sounds for the new objects except for Death Ray.
 
-this addon is still HEAVILY under construction.
-there are bound to be bugs.
+The files contained in this archive are demos only! The levels are not actual
+levels (except l01s02.lvl) and are for demo purposes only!
 
-i did not do the sounds for the new objects
-except for Death Ray.
+Play through the four levels through edit mode. Use god mode for the first few
+tries.
 
-the files contained in this archive
-are demos only! the levels are not
-actual level (except l01s02.lvl) and
-are for demo purposes only!
 
-play through the four levels through
-edit mode. use god mode for the first few tries.
+RUNNING
+-------
 
-impt notes!
------------
+Play the game directly:
+% abuse -a twist
+
+Use the addon in the editor:
+% abuse -a twist -edit -nosound
+
+
+NOTES
+-----
+
 level1:	demo stuff
 	use god mode.
 	you will first run through a series of sensors.
@@ -46,7 +41,7 @@ level1:	demo stuff
 	you will then receive weapons. (if you don't have the
 	weapon, you can't fire even if you take ammo!)
 	i finally managed to make the last weapon work!!!:))))))
-	it will release a burst	of energy. 
+	it will release a burst	of energy.
 	it's a big round orb of purple coloured energy
 	(i got the gfx from doom - the bfg bullet. i just change the hue).
 	The Death Ray (what we will call that bullet) will eat through
@@ -107,8 +102,9 @@ level4: redant demo
 	turn on the switch to end game.
 
 
-some objects
-------------
+OBJECTS
+-------
+
 i'm not listing down all the new objects i made;
 just some of the ones i think you should know.
 
@@ -156,8 +152,9 @@ sensor_teleport:behaves just like tele2 only that it will work when within
 		both of them do not need action key to activate!!! If the player
 		is in range, he will switch back and fourth continously.
 
-Chat Console (NEW!)
--------------------
+CHAT CONSOLE
+------------
+
 While playing the game, press 'C' to toggle chat window (it now works even when not in multiplayer mode). type the commands on the chat window then enter.
 
 game stuff:
@@ -216,8 +213,21 @@ cheat stuff:
 
 /tip			displays random game tip
 
-new updates!!!
---------------
-you can now press right shift at any time to save game!
 
-in the previous update, you will need to find the gun before you can shoot, even if you already have the ammo. this is okay for twisted minds but there are people who may want to use the death ray code to work on their own or the abuse's original levels. if the original level is loaded into twisted minds, the player will have difficulty as he cannot get weapons as ammo is nothing without it. i made some changes and it should work now. if you play twisted minds, you will still need the gun but if you load twisted minds with the -f command to load external levels, you wont need the gun to shoot anymore. also note that in the original abuse, there are no death ray ammo so if you want to use it, you have to cheat a little. under the chat window, type "/give deathray" <enter> followed by "/give bfgcells" <enter>. there you have it!
+NEW UPDATES
+-----------
+
+You can now press right shift at any time to save game!
+
+In the previous update, you will need to find the gun before you can shoot,
+even if you already have the ammo. This is okay for twisted minds but there
+are people who may want to use the death ray code to work on their own or the
+Abuse's original levels. If the original level is loaded into twisted minds,
+the player will have difficulty as he cannot get weapons as ammo is nothing
+without it. I made some changes and it should work now. If you play twisted
+minds, you will still need the gun but if you load twisted minds with the -f
+command to load external levels, you wont need the gun to shoot anymore. Also
+note that in the original Abuse, there are no death ray ammo so if you want
+to use it, you have to cheat a little. Under the chat window, type "/give
+deathray" <enter> followed by "/give bfgcells" <enter>. There you have it!
+
