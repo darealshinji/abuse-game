@@ -32,4 +32,7 @@ DATA MERGE
    - server check in src/net/netdrv.cp
    - server check in src/innet.cpp
    - Lisp symbols server_not_reg and net_not_reg
+ - ensure gamma.lsp, hardness.lsp, defaults.prp, edit.lsp etc. are always
+   loaded and saved in the config directory, not in the datadir (use
+   local_load instead of load?). Same for addon/deathmat/cur_lev.lsp
 

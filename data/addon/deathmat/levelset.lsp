@@ -1,1 +1,1 @@
-(load "addon/deathmat/small.lsp")
+(load "addon/deathmat/medium.lsp")
