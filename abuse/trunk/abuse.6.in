@@ -3,7 +3,7 @@
 .\"
 .TH abuse 6 Abuse\ @VERSION@
 .SH NAME
-abuse \- An SDL port of the Abuse by Crack dot Com.
+abuse \- The Abuse game, by Crack dot Com and the Abuse community.
 
 .SH SYNOPSIS
 .B abuse
@@ -12,7 +12,7 @@ abuse \- An SDL port of the Abuse by Crack dot Com.
 .SH DESCRIPTION
 .B Abuse
 is a port of the classic Crack dot Com side-scroller shoot-em-up Abuse.
-It uses the Simple DirectMedia Layer API to draw it's graphics and play sound.
+It uses the Simple DirectMedia Layer API to draw its graphics and play sound.
 .PP
 .B Abuse
 has the following additional features over the original game:
@@ -36,7 +36,7 @@ requires the following:
 .IP
 SDL 1.1.6 or above.
 .IP
-Datafiles(graphics, sounds, maps etc.) from either Registered Abuse, Shareware Abuse, or fRaBs (Free Abuse).
+SDL-Mixer.
 
 .SH OPTIONS
 The following command-line options are available:
@@ -68,7 +68,7 @@ Enable anti-aliasing. (Only with -gl)
 
 .SH CONFIGURATION
 .B Abuse
-can load it's settings from a configuration file stored in the users home
+can load its settings from a configuration file stored in the user's home
 directory. The file is located at ($HOME/.abuse/abuserc).  If either the
 directory or the configuration file don't exist they will be created
 automatically with default values.
@@ -137,6 +137,9 @@ Switch to the next available weapon.
 .SH FILES
 ~/.abuse/abuserc - Abuse configuration file.
 
+.SH SEE ALSO
+abuse-tool(6)
+
 .SH AUTHORS
-Anthony Kruize <trandor@labyrinth.net.au>
+Sam Hocevar <sam@hocevar.net>, Anthony Kruize <trandor@labyrinth.net.au>
 See also the AUTHORS file included with Abuse.

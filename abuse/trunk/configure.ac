@@ -115,6 +115,7 @@ fi
 AC_OUTPUT([
     Makefile
     abuse.6
+    abuse-tool.6
     src/Makefile
     src/lisp/Makefile
     src/net/Makefile
