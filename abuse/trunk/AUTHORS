@@ -1,35 +1,45 @@
+Authors
+-------
+
 Sam Hocevar <sam@hocevar.net>
-  - Debian package maintainer, current code maintainer.
+  Major bugfixing
+  Current code maintainer
+  Debian package maintainer
 
 Anthony Kruize <trandor@labyrinth.net.au>
-  - SDL port maintainer.
+  SDL port maintainer
 
 Jeremy Scott
-  - Win32 DirectX port and ideas.
+  Win32 DirectX port and ideas
+
+Jochen Schleu <jjs@jjs.at>
+  Music playback support
 
 Arto Jantunen
-  - Debian package maintainer, suggestions and bug reports/fixes.
+  Previous Debian package maintainer
+  Suggestions and bug reports/fixes
 
 Michael Olson
-  - Bug fixes.
+  Bug fixes
 
 Ed Snible
-  - Performance tweaks.
+  Performance tweaks
 
 Nix
-  - Improvements to the Make and Configure scripts.
+  Improvements to the Make and Configure scripts
 
 Bob Ippolito
-  - Bug fixes.
+  Bug fixes
 
 Joris Beugnies
-  - OpenGL Support.
+  OpenGL Support
 
 Ben Hines
-  - Bug fixes for MacOSX.
+  Bug fixes for Mac OS X
 
 Julian Mayer
-  - Bug fixes for MacOSX.
+  Bug fixes for Mac OS X
 
 Crack Dot Com <http://www.abuse2.com>
-  - The best 2D platform shooter ever....Abuse!
+  The best 2D platform shooter ever... Abuse!
+
