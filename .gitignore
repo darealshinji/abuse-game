@@ -14,5 +14,6 @@ stamp-*
 .auto
 .deps
 abuse.6
+abuse-tool.6
 src/abuse
 src/abuse-tool
