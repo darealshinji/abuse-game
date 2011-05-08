@@ -1,1 +1,0 @@
-(setq server_version_major 1)(setq server_version_minor 0)

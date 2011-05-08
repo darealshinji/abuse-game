@@ -49,6 +49,7 @@ Abuse:
 Abuse-SDL has the following requirements:
 
   SDL 1.1.6 or above.
+  SDL-Mixer
   One of the following sets of datafiles:
     - Registered Abuse(original CD)
     - Abuse Shareware
@@ -155,20 +156,6 @@ fRaBs:
   is expecting them to be lowercase.
   Renaming the files to be all lowercase will fix this problem.
 
-BOSS_ANT has no value:
-  On some systems when running Abuse-SDL, the following error is given:
-    "BOSS_ANT has no value"
-  The exact cause of this is unknown, however there is a workaround.
-  If you don't already have a '.abuse' directory in your $HOME directory,
-  simply create it with the following command:
-
-    mkdir ~/.abuse
-
-  Then copy the file 'gamma.lsp' that is included with Abuse-SDL into that
-  directory.  This should fix the problem and allow Abuse-SDL to run correctly.
-  The 'gamma.lsp' file stores the settings for gamma correction and be adjusted
-  from the main game menu if desired.
-
 
 8. SPECIAL THANKS
 
@@ -185,10 +172,9 @@ See the AUTHORS file for details.
 
 9. FEEDBACK
 
-If you have any questions, comments or constructive criticism,
-Anthony's email address is:
+If you have any questions, comments or criticism, Sam's email address is:
 
-  trandor@labyrinth.net.au
+    sam@hocevar.net
 
 The Abuse-SDL webpage can be found at:
 
