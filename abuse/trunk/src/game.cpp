@@ -1508,13 +1508,13 @@ Game::Game(int argc, char **argv)
 }
 
 time_marker *led_last_time = NULL;
-static float avg_fps = 15.0f, possible_fps = 15.0f;
+static float avg_ms = 1000.0f / 15, possible_ms = 1000.0f / 15;
 
 void Game::toggle_delay()
 {
     no_delay = !no_delay;
     show_help(symbol_str(no_delay ? "delay_off" : "delay_on"));
-    avg_fps = possible_fps = 15.0f;
+    avg_ms = possible_ms = 1000.0f / 15;
 }
 
 void Game::show_time()
@@ -1523,7 +1523,7 @@ void Game::show_time()
         return;
 
     char str[16];
-    sprintf(str, "%ld", (long)(avg_fps * 10.0));
+    sprintf(str, "%ld", (long)(10000.0f / avg_ms));
     console_font->put_string(screen, first_view->cx1, first_view->cy1, str);
 
     sprintf(str, "%d", total_active);
@@ -1605,12 +1605,12 @@ int Game::calc_speed()
     }
 
     // Find average fps for last 10 frames
-    float fps = 1000.0f / Max(1.0f, frame_timer.PollMs());
+    float deltams = Max(1.0f, frame_timer.PollMs());
 
-    avg_fps = 0.9f * avg_fps + 0.1f * fps;
-    possible_fps = 0.9f * possible_fps + 0.1f * fps;
+    avg_ms = 0.9f * avg_ms + 0.1f * deltams;
+    possible_ms = 0.9f * possible_ms + 0.1f * deltams;
 
-    if (avg_fps > 14)
+    if (avg_ms < 1000.0f / 14)
         massive_frame_panic = Max(0, Min(20, massive_frame_panic - 1));
 
     int ret = 0;
@@ -1621,19 +1621,19 @@ int Game::calc_speed()
         // that we don't exceed 30FPS in edit mode and hog the CPU.
         frame_timer.WaitMs(33);
     }
-    else if (avg_fps > 15 && need_delay)
+    else if (avg_ms < 1000.0f / 15 && need_delay)
     {
         frame_panic = 0;
         if (!no_delay)
         {
             frame_timer.WaitMs(1000.0f / 15);
-            avg_fps -= 0.1f * fps;
-            avg_fps += 0.1f * 15.0f;
+            avg_ms -= 0.1f * deltams;
+            avg_ms += 0.1f * 1000.0f / 15;
         }
     }
-    else if (avg_fps < 14)
+    else if (avg_ms > 1000.0f / 14)
     {
-        if(avg_fps < 10)
+        if(avg_ms > 1000.0f / 10)
             massive_frame_panic++;
         frame_panic++;
         // All is lost, don't sleep during this frame
