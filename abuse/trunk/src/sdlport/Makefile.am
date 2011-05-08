@@ -1,5 +1,5 @@
-## Process this file with automake to produce Makefile.in
-DEFS = @DEFS@ @EXPDATADIR@
+
+DEFS = @DEFS@
 
 noinst_LIBRARIES = libsdlport.a
 
@@ -18,4 +18,5 @@ libsdlport_a_LIBADD =
 
 INCLUDES = -I$(srcdir)/../ -I$(srcdir)/../imlib $(SDL_CFLAGS)
 
-CPPFLAGS = @CPPFLAGS@ -DNO_CHECK
+CPPFLAGS = @CPPFLAGS@ -DNO_CHECK -DASSETSDIR=\"$(datadir)/games/abuse\"
+

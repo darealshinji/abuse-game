@@ -2,20 +2,18 @@
 EXTRA_DIST = \
     $(demos) $(music) $(lisp) $(extra) $(art) $(levels) $(doc) $(sound)
 
-datafiledir = $(datadir)/games/abuse
-
 install-data-local:
 	@for p in $(EXTRA_DIST); do \
 	  d="`echo \"$$p\" | sed -ne 's@\(.*\)/.*@\1@p'`"; \
-	  $(MKDIR_P) "$(DESTDIR)$(datafiledir)/$$d"; \
-	  echo " $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(datafiledir)/$$d"; \
-	  $(INSTALL_DATA) "$(srcdir)/$$p" "$(DESTDIR)$(datafiledir)/$$d" || exit $$?; \
+	  $(MKDIR_P) "$(DESTDIR)$(assetsdir)/$$d"; \
+	  echo " $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(assetsdir)/$$d"; \
+	  $(INSTALL_DATA) "$(srcdir)/$$p" "$(DESTDIR)$(assetsdir)/$$d" || exit $$?; \
 	done
 
 uninstall-local:
 	@for p in $(EXTRA_DIST); do \
-	  echo " ( cd '$(DESTDIR)$(datafiledir)' && rm -f" $$p ")"; \
-	  cd "$(DESTDIR)$(datafiledir)" && rm -f $$p; \
+	  echo " ( cd '$(DESTDIR)$(assetsdir)' && rm -f" $$p ")"; \
+	  cd "$(DESTDIR)$(assetsdir)" && rm -f $$p; \
 	done
 
 lisp = \
