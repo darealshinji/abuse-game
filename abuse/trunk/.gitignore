@@ -13,7 +13,7 @@ stamp-*
 *.a
 .auto
 .deps
-abuse.6
-abuse-tool.6
 src/abuse
 src/abuse-tool
+doc/abuse.6
+doc/abuse-tool.6

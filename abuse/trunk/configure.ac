@@ -127,14 +127,15 @@ fi
 
 AC_OUTPUT([
     Makefile
-    abuse.6
-    abuse-tool.6
     src/Makefile
     src/lisp/Makefile
     src/net/Makefile
     src/imlib/Makefile
     src/sdlport/Makefile
-    data/Makefile])
+    data/Makefile
+    doc/Makefile
+    doc/abuse.6
+    doc/abuse-tool.6])
 
 echo "
 ------ Configuration for $PACKAGE $VERSION ------
