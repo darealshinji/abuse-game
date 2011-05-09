@@ -1,14 +1,14 @@
-Abuse-SDL 0.7.1 README
-----------------------
+Abuse 0.8 README
+----------------
 
 ----
 
 1. Introduction
 2. Additional Features
 3. Requirements
-4. Running Abuse-SDL
+4. Running Abuse
 5. Configuration
-6. Installing the datafiles.
+6. Installing the datafiles
 7. Notes
 8. Special Thanks
 9. Feedback
@@ -18,22 +18,21 @@ Abuse-SDL 0.7.1 README
 
 1. INTRODUCTION
 
-Welcome to Abuse-SDL, the port of the classic game Abuse to the
-Simple DirectMedia Layer.  Abuse was originally developed by
-Crack dot Com and released in 1995 for MS-DOS.  A Linux version was
-also made available at a later date.  It had a few limitations
-the most restrictive of which was that it only ran on an 8-bit
-display, and only in a window.
-Abuse-SDL will run at any colour depth and supports fullscreen
-mode, as well as many other new features.  It should also be more
-portable and hopefully run on a variety of *nix variants, and possibly
-other systems supported by the SDL library.
+Welcome to Abuse, the port of the classic game Abuse to the Simple
+DirectMedia Layer. Abuse was originally developed by Crack dot Com and
+released in 1995 for MS-DOS. A Linux version was also made available at
+a later date. It had a few limitations the most restrictive of which was
+that it only ran on an 8-bit display, and only in a window.
+
+Abuse will run at any colour depth and supports fullscreen mode, as
+well as many other new features. It should also be more portable and
+hopefully run on a variety of *nix variants, and possibly other systems
+supported by the SDL library.
 
 
 2. ADDITIONAL FEATURES
 
-Abuse-SDL has the following extra features over the original
-Abuse:
+Abuse has the following extra features over the original:
 
   Runs at a screen bit depth of 8, 16, 24 or 32.
   Fullscreen display.
@@ -46,7 +45,7 @@ Abuse:
 
 3. REQUIREMENTS
 
-Abuse-SDL has the following requirements:
+Abuse has the following requirements:
 
   SDL 1.1.6 or above.
   SDL-Mixer
@@ -57,9 +56,9 @@ Abuse-SDL has the following requirements:
   OpenGL is optional.
 
 
-4. RUNNING ABUSE-SDL
+4. RUNNING ABUSE
 
-If Abuse-SDL has been installed properly, the command:
+If Abuse has been installed properly, the command:
 
   abuse
 
@@ -83,9 +82,10 @@ The following command-line switches can be used:
 
 5. CONFIGURATION
 
-Abuse-SDL also has a configuration file where these options can be set
-instead of using the command line.  The file "abuserc" will be created in
-your ~/.abuse directory the first time Abuse-SDL is run.
+Abuse also has a configuration file where these options can be set
+instead of using the command line. The file "abuserc" will be created in
+your ~/.abuse directory the first time Abuse is run.
+
 Lines starting with a ';' are comments.
 Setting an option to '1' turns it on, and '0' turns it off.
 
@@ -118,22 +118,26 @@ Right button for special.  Mousewheel can be used for changing weapons.
 
 6. INSTALLING THE DATAFILES
 
-Abuse-SDL requires a set of datafiles(graphics, sounds, maps and so on) to be
-installed before it will run.  They are available as a separate package from
-the Abuse-SDL website.
+Abuse requires a set of datafiles (graphics, sounds, maps and so on)
+to be installed before it will run. They are available as a separate
+package from the Abuse website.
 
-By default, Abuse-SDL expects the datafiles to be installed in the following
+By default, Abuse expects the datafiles to be installed in the following
 location:
 
   /usr/local/share/games/abuse
 
-However it is possible to change this and tell Abuse-SDL where to find the
+However it is possible to change this and tell Abuse where to find the
 files if they are in another location.
-The location can be set when Abuse-SDL is compiled.  See the INSTALL file for
+
+The location can be set when Abuse is compiled. See the INSTALL file for
 instructions on how to do this.
-You can also specify the location with the -datadir argument when Abuse-SDL is
-run.  See section 4 above.
-Finally, the location can be set in the configuration file. See section 5 above.
+
+You can also specify the location with the -datadir argument when
+Abuse is run. See section 4 above.
+
+Finally, the location can be set in the configuration file. See section
+5 above.
 
 To install the datafiles, simply unpack the archive into a location of your
 choice (preferably '/usr/local/share/games/abuse' as mentioned above).
@@ -159,12 +163,12 @@ fRaBs:
 
 8. SPECIAL THANKS
 
-Go to Jonathan Clark, Dave Taylor and the rest of the Crack Dot Com team for
-making the best 2D platform shooter ever, and then releasing the code that
-makes Abuse-SDL possible.
+Go to Jonathan Clark, Dave Taylor and the rest of the Crack Dot Com team
+for making the best 2D platform shooter ever, and then releasing the
+code that makes Abuse possible.
 
 Also, thanks go to Jonathan Clark for allowing Anthony to distribute the
-original datafiles with Abuse-SDL.
+original datafiles with Abuse.
 
 Thanks also to everyone who has contributed ideas, bug reports and patches.
 See the AUTHORS file for details.
@@ -176,7 +180,7 @@ If you have any questions, comments or criticism, Sam's email address is:
 
     sam@hocevar.net
 
-The Abuse-SDL webpage can be found at:
+The Abuse webpage can be found at:
 
   http://abuse.zoy.org/
 
