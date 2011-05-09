@@ -43,7 +43,7 @@ static SDL_AudioSpec audioObtained;
 int sound_init( int argc, char **argv )
 {
     char *sfxdir, *datadir;
-    FILE *fd = NULL;
+    FILE *f = NULL;
 
     // Disable sound if requested.
     if( flags.nosound )
@@ -55,15 +55,17 @@ int sound_init( int argc, char **argv )
 
     // Check for the sfx directory, disable sound if we can't find it.
     datadir = get_filename_prefix();
-    sfxdir = (char *)malloc( strlen( datadir ) + 5 + 1 );
-    sprintf( sfxdir, "%s/sfx/", datadir );
-    if( (fd = fopen( sfxdir,"r" )) == NULL )
+    sfxdir = (char *)malloc(strlen(datadir) + 5 + 1);
+    sprintf(sfxdir, "%s/sfx/ambcave1.wav", datadir);
+    FILE *f = fopen(sfxdir, "r");
+    if (!f)
     {
         // Didn't find the directory, so disable sound.
         printf( "Sound: Disabled (couldn't find the sfx directory)\n" );
         return 0;
     }
-    free( sfxdir );
+    fclose(f);
+    free(sfxdir);
 
     if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 128) < 0)
     {
