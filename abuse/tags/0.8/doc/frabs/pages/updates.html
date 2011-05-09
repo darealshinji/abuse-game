@@ -1,0 +1,904 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Justin Cassidy">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>The Free Abuse Project</title>
+</head>
+<body text="#FFFFFF" bgcolor="#000000" link="#C0C0C0" vlink="#666666" alink="#C0C0C0" background="../images/jmc.jpg" nosave>
+<font color="#FFFFFF"><u><font size=+4>fRaBs</font></u><i>&nbsp;
+updates</i></font>
+<br><a href="../index.html">Main</a><i><font color="#FFFFFF"> - </font></i><a href="updates.html">Updates</a><i><font color="#FFFFFF">
+- </font></i><a href="single.html">Single Player</a><i><font color="#FFFFFF">
+- </font></i><a href="dm.html">Deathmatch</a><i><font color="#FFFFFF">
+- </font></i><a href="editor.html">Level Editing</a><i><font color="#FFFFFF">
+- </font></i><a href="faq.html">FAQ</a><i><font color="#FFFFFF"> - </font></i><a href="credits.html">Credits</a><i><font color="#FFFFFF">
+- </font></i><a href="links.html">Links</a>
+<p><font color="#FFFFFF">This file catalogues all of the changes between
+fRaBs and the registered</font>
+<br><font color="#FFFFFF">version of Abuse, as well as various logs of
+updates, additions, gameplay</font>
+<br><font color="#FFFFFF">testing, deathmatch testing, and other modifications.</font>
+<p><tt>12/10/00 - Version 2.1</tt><tt></tt>
+<p><tt>- New to this version of fRaBs are some touching</tt>
+<br><tt>&nbsp; up on the levels, one replaced single player</tt>
+<br><tt>&nbsp; level, six new deathmatch levels, some new art,</tt>
+<br><tt>&nbsp; and a couple really noticable new features:</tt>
+<br><tt>&nbsp; randomized deathmatch level rotations and lots</tt>
+<br><tt>&nbsp; of very pretty random title screens.</tt>
+<br><tt>- On December 3, fRaBs turned a year old. I'm so</tt>
+<br><tt>&nbsp; happy that this project has gone as far as it has,</tt>
+<br><tt>&nbsp; and there are some really awesome ideas in store.</tt>
+<br><tt>- Chances are the next version of fRaBs will have a</tt>
+<br><tt>&nbsp; Windows Abuse port included. This port, maintained</tt>
+<br><tt>&nbsp; by a fellow University of Idaho alumni named Jeremy</tt>
+<br><tt>&nbsp; Scott, already has most of the solid features that</tt>
+<br><tt>&nbsp; the DOS version has. What makes this version special</tt>
+<br><tt>&nbsp; is that Jeremy plans on adding many new features to</tt>
+<br><tt>&nbsp; the engine, including hardware acceleration and</tt>
+<br><tt>&nbsp; DirectPlay support for native TCP/IP games!</tt>
+<br><tt>- I repeat: There will be dedicated Abuse servers on</tt>
+<br><tt>&nbsp; the Internet in the near future! :)</tt>
+<br><tt>- You have two options for obtaining the latest fRaBs</tt>
+<br><tt>&nbsp; now... I will still release entire new packages, but</tt>
+<br><tt>&nbsp; now, there will also be patches available for older</tt>
+<br><tt>&nbsp; versions of fRaBs, starting with a 2.0 to 2.1 patch.</tt>
+<br><tt>- Here's a hint on some more expected additions to the</tt>
+<br><tt>&nbsp; Abuse engine... I plan on beginning work on CTF maps</tt>
+<br><tt>&nbsp; in the near future. :)</tt><tt></tt>
+<p><tt>12/09/00</tt><tt></tt>
+<p><tt>- Fixed small lighting errors in 00dm.</tt>
+<br><tt>- Todo: change ANT_CRACK values in Level09 and</tt>
+<br><tt>&nbsp; Level11 to make gameplay easier and smoother.</tt>
+<p><tt>12/08/00</tt><tt></tt>
+<p><tt>- Moved Cistern and Occult to the small rotations.</tt>
+<br><tt>- Changed DM page and maps accordingly.</tt>
+<br><tt>- Fixed a deathmatch level bug. DM LISP now loads</tt>
+<br><tt>&nbsp; 4frabsdm.lsp out of /addon/leon. This makes some</tt>
+<br><tt>&nbsp; special tiles and objects appear in 00dm.</tt>
+<p><tt>12/05/00</tt>
+<p><tt>- Two new fRaBs mirrors... check the links page.</tt>
+<br><tt>- The fRaBs main mirror has officially moved!</tt>
+<p><tt>&nbsp; <a href="http://www.cs.uidaho.edu/~cass0664/fRaBs/">http://www.cs.uidaho.edu/~cass0664/fRaBs/</a></tt>
+<p><tt>12/02/00</tt>
+<p><tt>- Fixed some case-sensitive bugs in the map JPEG pages.</tt>
+<p><tt>11/30/00</tt>
+<p><tt>- Added more start points to 00dm.</tt>
+<br><tt>- Fixed a couple long-standing problems in the large Bugs</tt>
+<br><tt>&nbsp; DM level, with the fly powerup and a couple frisbee</tt>
+<br><tt>&nbsp; powerups not respawning properly.</tt>
+<p><tt>11/29/00</tt>
+<p><tt>- New DM level, 00dm. You'll be familiar with this one. :)</tt>
+<p><tt>11/28/00</tt>
+<p><tt>- Replaced /lisp/teleport.lsp with Leon's new one. This</tt>
+<br><tt>&nbsp; includes the new TP_DOOR_INVIS.</tt>
+<br><tt>- Fixed spacytdm and spacymed's background problems.</tt>
+<br><tt>- Added in new Level30, with map and info.</tt>
+<p><tt>11/27/00</tt>
+<p><tt>- Ergh. I included the unfinished Level30 with the release</tt>
+<br><tt>&nbsp; fRaBs. I don't know what I'll do here. I may just cut out</tt>
+<br><tt>&nbsp; that level... it wasn't very good anyways. In it's place</tt>
+<br><tt>&nbsp; will be Leon's new single player level, Leon1_2, perhaps</tt>
+<br><tt>&nbsp; augmented with a secret exit. :)</tt>
+<br><tt>- Making some gameplay changes to King of the Cross... I</tt>
+<br><tt>&nbsp; will rearrange the ammo and add in a fly powerup to the</tt>
+<br><tt>&nbsp; higher respawn points.</tt>
+<br><tt>- Added in new artwork and new deathmatch levels by Leon.</tt>
+<br><tt>&nbsp; This stuff is really really nice. Check out Cistern,</tt>
+<br><tt>&nbsp; Ruins, and Occult. Stones.spe is in /addon/newart.</tt>
+<br><tt>- Updated object list.</tt>
+<br><tt>- Reminder to self: update small and medium DM LISP, get</tt>
+<br><tt>&nbsp; map JPEGs of these three and of Leon1_2, the new Level30.</tt>
+<br><tt>&nbsp; Also update DM level documentation.</tt>
+<p><tt>11/13/00</tt>
+<p><tt>- Finished the new medium DM Level. It's called Laaz Rockit.</tt>
+<br><tt>&nbsp; All my newer DM Levels have the added benefit of testing</tt>
+<br><tt>&nbsp; behind them, thanks to my buddy Micah. He sketched this</tt>
+<br><tt>&nbsp; level out on paper too, so more kudos to him.</tt>
+<br><tt>- Finished new small DM level, King of the Cross.</tt>
+<br><tt>- Added Profound's new title screen. Sweetness.</tt>
+<br><tt>- I'm thinking the next fRaBs will be mainly a deathmatch</tt>
+<br><tt>&nbsp; release. Some of my older DM Levels just kinda suck, and</tt>
+<br><tt>&nbsp; the more DM I play the better I get at making this type</tt>
+<br><tt>&nbsp; of level. I think it would be cool to eventually have a</tt>
+<br><tt>&nbsp; totally new Deathmatch server interface, and as many</tt>
+<br><tt>&nbsp; packaged DM Levels as, say, Unreal or Q3A. Bots would be</tt>
+<br><tt>&nbsp; cool too, but that's way far down the line, if ever.</tt>
+<br><tt>- Todo: Fix PUSHER alignment in Aquarius and Laaz Rockit.</tt>
+<br><tt>&nbsp; Add map of KOTC. Add SFX to KOTC.</tt>
+<p><tt>11/12/00</tt>
+<p><tt>- Well, there was a slight problem with the title</tt>
+<br><tt>&nbsp; screen code in relation to /addon/deathmat/dstartup.lsp</tt>
+<br><tt>&nbsp; but it was a quick fix.</tt>
+<br><tt>- The deathmatch level sequences have been modified! Now</tt>
+<br><tt>&nbsp; upon selecting a level size, you will get a random level</tt>
+<br><tt>&nbsp; of that type. No more waiting for cool DM levels like</tt>
+<br><tt>&nbsp; Aquarius and Teardrop anymore... you just might get your</tt>
+<br><tt>&nbsp; level when you start the game.</tt>
+<br><tt>- In progress: New medium-sized Deathmatch Level.</tt>
+<br><tt>- Slightly old news, but Profound sent in another title</tt>
+<br><tt>&nbsp; screen. It's the one with the sharp-looking 'A'.</tt>
+<br><tt>- Todo: Fix item hiding and spacy background in spacytdm.</tt>
+<p><tt>11/11/00</tt>
+<p><tt>- Leon fixed up the title screen code and artwork.</tt>
+<br><tt>&nbsp; Very cool. There's a title.zip patch on his webspace</tt>
+<br><tt>&nbsp; and if you want the nifty new title screens before</tt>
+<br><tt>&nbsp; the next release of fRaBs, then grab it. The file is</tt>
+<br><tt>&nbsp; called title.zip.</tt>
+<p><tt>&nbsp; <a href="http://boksha.tripod.com">http://boksha.tripod.com/</a></tt>
+<p><tt>11/10/00</tt>
+<p><tt>- fRaBs now has random title screens! Check /lisp/</tt>
+<br><tt>&nbsp; startup.lsp for the code updates. Thanks to Crembo</tt>
+<br><tt>&nbsp; and Cypress for providing some sweet title screens</tt>
+<br><tt>&nbsp; and giving me this idea.</tt>
+<p><tt>11/08/00</tt>
+<p><tt>- Fixed a couple of documentation quips.</tt>
+<br><tt>- Added a couple links on the Links page.</tt>
+<p><tt>11/06/00 - Version 2.0</tt>
+<p><tt>- Finally. The first release of fRaBs in almost three</tt>
+<br><tt>&nbsp; months. There are a total of ten new levels in this</tt>
+<br><tt>&nbsp; version - eight are single player, and the other two</tt>
+<br><tt>&nbsp; are deathmatch. Plus there's a plethora of other</tt>
+<br><tt>&nbsp; additions in the documentation. I matched the ten</tt>
+<br><tt>&nbsp; new levels with ten new Pong levels as well... and</tt>
+<br><tt>&nbsp; lots of updates in the Level Editing and FAQ section.</tt>
+<br><tt>- Actually I lied... there's a secret level too. See if</tt>
+<br><tt>&nbsp; you can find it. The JPEG maps will not help you. :)</tt>
+<br><tt>- To Cypress: Sorry I didn't include the new fRaBs logo</tt>
+<br><tt>&nbsp; in the HTML pages... the versions you gave me didn't</tt>
+<br><tt>&nbsp; scale very well. I did spend some time tinkering with</tt>
+<br><tt>&nbsp; the artwork in GIMP though... it's gonna look cool. :)</tt>
+<br><tt>- As a sidenote... Episode 3 is not complete until</tt>
+<br><tt>&nbsp; there is a Level16 and there will probably be three</tt>
+<br><tt>&nbsp; or four levels added on to the Aliens Abuse episode</tt>
+<br><tt>&nbsp; in the future.</tt>
+<br><tt>- Finally, notes on adding art and objects... the docs</tt>
+<br><tt>&nbsp; talk about the /addon/newart folder. There is also a</tt>
+<br><tt>&nbsp; /addon/newobj folder for individual addon objects you</tt>
+<br><tt>&nbsp; decide to create.</tt>
+<p><tt>11/04/00</tt>
+<p><tt>- I've been doing work on the object documentation in</tt>
+<br><tt>&nbsp; the level editing section for the last few days.</tt>
+<br><tt>- Finished Level30. It's not my best level, but it's</tt>
+<br><tt>&nbsp; a unique challenge as far as my levels go.</tt>
+<br><tt>- As soon as Level15 is complete, the next fRaBs will</tt>
+<br><tt>&nbsp; be released!</tt>
+<p><tt>10/31/00</tt>
+<p><tt>- Level12 is fixed, but EitanTal is hopefully working</tt>
+<br><tt>&nbsp; on something to fix Level14.</tt>
+<br><tt>- Awesome! Eitan fixed Level14 as well.</tt>
+<p><tt>10/30/00</tt>
+<p><tt>- Finally fixed the SHOULDER_LAMP bug! Modified /lisp/</tt>
+<br><tt>&nbsp; people.lsp. Thanks a million to Leon for the fix.</tt>
+<br><tt>- Worked on the Level Editing documentation. I will</tt>
+<br><tt>&nbsp; definitely need help writing the section on how to</tt>
+<br><tt>&nbsp; create objects and enemies for Abuse. If you are a</tt>
+<br><tt>&nbsp; Satan Paint expert, please contact me if you would</tt>
+<br><tt>&nbsp; like to help in demystifying the process of creating</tt>
+<br><tt>&nbsp; objects for Abuse.</tt>
+<p><tt>10/29/00</tt>
+<p><tt>- There was a huge tile converter bug that screwed up</tt>
+<br><tt>&nbsp; two of my single player levels by cutting off the</tt>
+<br><tt>&nbsp; first column of foreground tiles in the larger of</tt>
+<br><tt>&nbsp; my levels, Level12 and Level14. I was lucky to have</tt>
+<br><tt>&nbsp; a working copy of Level12, but my only copy of</tt>
+<br><tt>&nbsp; Level14 was royally screwed. See, the bug shifted</tt>
+<br><tt>&nbsp; all the foreground tiles over ONE value, and one</tt>
+<br><tt>&nbsp; tile was lost. However, all of the objects remained</tt>
+<br><tt>&nbsp; where they were, so the entire level is screwed.</tt>
+<br><tt>&nbsp; Hopefully EitanTal can make a new converter to fix</tt>
+<br><tt>&nbsp; this broken level. If not, it can't be in fRaBs.</tt>
+<p><tt>10/28/00</tt>
+<p><tt>- Fixed up a couple nagging gameplay problems in</tt>
+<br><tt>&nbsp; treesmal. Lately I'm having trouble coming up with</tt>
+<br><tt>&nbsp; decent ideas for the last few single player levels</tt>
+<br><tt>&nbsp; that I'd like to finish, but whether these levels</tt>
+<br><tt>&nbsp; are done or not, I'd like to release fRaBs sometime</tt>
+<br><tt>&nbsp; in mid-November before I go on Thanksgiving break.</tt>
+<br><tt>- Fixed a bug in Limeston where the ladder would get</tt>
+<br><tt>&nbsp; the player stuck in the ground if they went down</tt>
+<br><tt>&nbsp; too far.</tt>
+<br><tt>- Leon offered to fix the SHOULDER_LAMP bug! Hooray!</tt>
+<p><tt>10/27/00</tt>
+<p><tt>- New small DM level... treesmal.spe is the fourth</tt>
+<br><tt>&nbsp; level in the small rotation.</tt>
+<p><tt>10/25/00</tt>
+<p><tt>- Fixing up the documentation for version 2.0. There</tt>
+<br><tt>&nbsp; is still lots of material to add to the editing</tt>
+<br><tt>&nbsp; section, which is now split into two parts. I'm</tt>
+<br><tt>&nbsp; probably going to split off parts of the object list</tt>
+<br><tt>&nbsp; as well.</tt>
+<p><tt>10/24/00</tt>
+<p><tt>- Finished a new medium deathmatch level with the blue</tt>
+<br><tt>&nbsp; background cave stuff. It's called 'Aquarius' and it</tt>
+<br><tt>&nbsp; is the third level in the Deathmatch rotation.</tt>
+<br><tt>- Changed the medium.lsp deathmatch level rotation.</tt>
+<br><tt>&nbsp; JDM3 is no longer in the medium rotation.</tt>
+<br><tt>- Tested Aquarius. It works rather nicely! It made</tt>
+<br><tt>&nbsp; me remember to update addon/deathmat/deathmat.lsp</tt>
+<br><tt>&nbsp; to include the addon/newart stuff.</tt>
+<br><tt>- Abuse is sweet. All I did was put the newart stuff</tt>
+<br><tt>&nbsp; in /addon and put the Aquarius level on my friend's</tt>
+<br><tt>&nbsp; computer... when we played, it updated his title</tt>
+<br><tt>&nbsp; screen and tons of stuff to be in sync with my dev</tt>
+<br><tt>&nbsp; fRaBs. Suprise suprise :)</tt>
+<p><tt>10/23/00</tt>
+<p><tt>- Renumbered Claudio's space tiles and used a special</tt>
+<br><tt>&nbsp; converter by EitanTal to change the levels that</tt>
+<br><tt>&nbsp; used those tiles. Sweetness! Now the foreground</tt>
+<br><tt>&nbsp; numbering system is fixed at long last!</tt>
+<p><tt>10/20/00</tt>
+<p><tt>- The new Mario level is finished! It will be a neat</tt>
+<br><tt>&nbsp; little secret for you to find. I'll edit the way to</tt>
+<br><tt>&nbsp; find this level out of the Map JPEGs. It's not too</tt>
+<br><tt>&nbsp; difficult to find though.</tt>
+<br><tt>- Implemented Cypress' background tiles for the blue</tt>
+<br><tt>&nbsp; caves and whatnot, finally. They look really nice</tt>
+<br><tt>&nbsp; in my upcoming fRaBs Level30.</tt>
+<br><tt>- Started on Level15 too. Not a very productive way</tt>
+<br><tt>&nbsp; to end a week of midterms... making fRaBs levels</tt>
+<br><tt>&nbsp; all day, but what the hell.</tt>
+<p><tt>10/19/00</tt>
+<p><tt>- Been working on the last few levels that exit the</tt>
+<br><tt>&nbsp; Level12 hub, and a Mario level.</tt>
+<br><tt>- Finished Level14 too! Yay!</tt>
+<br><tt>- Fixed the regular fRaBs SENSOR_LEVEL object so that</tt>
+<br><tt>&nbsp; it loads levels from the regular /levels directory.</tt>
+<p><tt>10/17/00</tt>
+<p><tt>- Huge changes to background numbering... the menu</tt>
+<br><tt>&nbsp; for background tiles is changed, because the space</tt>
+<br><tt>&nbsp; tiles that were numbered at around 9000 are now</tt>
+<br><tt>&nbsp; numbered at 500. Not many levels used these</tt>
+<br><tt>&nbsp; background tiles, so I changed the numbering. If</tt>
+<br><tt>&nbsp; your level did use these space background tiles,</tt>
+<br><tt>&nbsp; then you're going to have to go back and fix your</tt>
+<br><tt>&nbsp; level for the new fRaBs. I think I'm the only one</tt>
+<br><tt>&nbsp; with this problem though. :) So, not only is the</tt>
+<br><tt>&nbsp; background window easier to navigate, but all three</tt>
+<br><tt>&nbsp; sets of space background tiles will be grouped</tt>
+<br><tt>&nbsp; nicely together in the background window.</tt>
+<br><tt>- Tried to add Cypress' new background tiles but they</tt>
+<br><tt>&nbsp; weren't formatted correctly in Satan Paint. D'oh!</tt>
+<br><tt>- Added Cypress' 3D-Green fRaBs title screen as well.</tt>
+<br><tt>&nbsp; Rock on! It's very nice looking.</tt>
+<p><tt>10/15/00</tt>
+<p><tt>- Huge changes in the foreground and background tile</tt>
+<br><tt>&nbsp; naming system. I found some background tiles that</tt>
+<br><tt>&nbsp; were included with Claudio's addon that I had no</tt>
+<br><tt>&nbsp; earthly idea about. They are renumbered for ease of</tt>
+<br><tt>&nbsp; finding and using. Check addon/newart/tiledoc.txt</tt>
+<br><tt>&nbsp; for some notes on these.</tt>
+<br><tt>- Commented out the last two tiles that were numbered</tt>
+<br><tt>&nbsp; from 10,000 in /addon/claudio/claudio.lsp. This</tt>
+<br><tt>&nbsp; should help make the foreground tiles easier to</tt>
+<br><tt>&nbsp; navigate around.</tt>
+<br><tt>- News on a release... Leon is working on re-naming his</tt>
+<br><tt>&nbsp; object variations so don't get too comfortable with</tt>
+<br><tt>&nbsp; things like the ANT_CRACK_HIDDEN and the ANT_TOUGH.</tt>
+<br><tt>&nbsp; The ANT_VARIATIONS code currently used in levels will</tt>
+<br><tt>&nbsp; probably stay, although the objects these levels use</tt>
+<br><tt>&nbsp; will be tagged as 'Unlistable' for the purposes of</tt>
+<br><tt>&nbsp; keeping the object window in the Level Editor somewhat</tt>
+<br><tt>&nbsp; clean.</tt>
+<p><tt>10/06/00</tt>
+<p><tt>- Major changes under the hood again... I added in the</tt>
+<br><tt>&nbsp; sensors from the Twisted Minds addon as well as it's</tt>
+<br><tt>&nbsp; implementation of the WALK_ROB object. The new LISP</tt>
+<br><tt>&nbsp; is in /twist/f2xxx.lsp. In addition, this new object,</tt>
+<br><tt>&nbsp; the WALK_ROB2 was modified so that it has no shield</tt>
+<br><tt>&nbsp; when it's standing still.</tt>
+<br><tt>- Remind me to modify the SETQ_BAD_GUY lists.</tt>
+<p><tt>10/04/00</tt>
+<p><tt>- Added more new decorative foreground tiles... thanks</tt>
+<br><tt>&nbsp; again, Cypress. It's all in /newart.</tt>
+<br><tt>- All I need to do is finish up a few more levels for</tt>
+<br><tt>&nbsp; the third episode (levels 14-16) and fRaBs will be</tt>
+<br><tt>&nbsp; ready for a release. Until then, feel free to send</tt>
+<br><tt>&nbsp; in your art and levels. I may even start another new</tt>
+<br><tt>&nbsp; episode.</tt>
+<br><tt>- I was bored today, so I got an idea... why not add</tt>
+<br><tt>&nbsp; the Twisted Minds Mario object set to the fRaBs set</tt>
+<br><tt>&nbsp; of default objects? So I did... I'll need to add</tt>
+<br><tt>&nbsp; Profound's special set of sensors sometime in the</tt>
+<br><tt>&nbsp; future as well.</tt>
+<p><tt>10/01/00</tt>
+<p><tt>- Updated the Single Player Maps page... it's in touch</tt>
+<br><tt>&nbsp; with the latest dev version of fRaBs now.</tt>
+<p><tt>9/29/00</tt>
+<p><tt>- Fixed some of Cypress' tiles so that they look better,</tt>
+<br><tt>&nbsp; particularly the diagonal ceiling tiles.</tt>
+<br><tt>- Modified /addon/claudio/claudio.lsp to fix a bug with</tt>
+<br><tt>&nbsp; the ANT_SHIP object. When it fires frisbees, the game's</tt>
+<br><tt>&nbsp; video output gets all screwy. So for now, the ANT_SHIP</tt>
+<br><tt>&nbsp; doesn't shoot frisbees.</tt>
+<br><tt>- Created a short new level based on the new tileset. It</tt>
+<br><tt>&nbsp; will be the ending level of the ACLPP episode, Level10.</tt>
+<br><tt>- I also decided to use a couple of Cypress' levels as</tt>
+<br><tt>&nbsp; Level07 and Level08. These are both works in progress,</tt>
+<br><tt>&nbsp; but they will be finished soon. The previous Level07</tt>
+<br><tt>&nbsp; is now the new Level09. This makes the ACLPP episode</tt>
+<br><tt>&nbsp; complete!</tt>
+<br><tt>- The maps page needs to be updated again.</tt>
+<p><tt>9/28/00</tt>
+<p><tt>- Added some new artwork to the current fRaBs dev version,</tt>
+<br><tt>&nbsp; and released a patch to level editors. As of today, the</tt>
+<br><tt>&nbsp; link is on the Abuse forum. Kudos to Cypress! The artwork</tt>
+<br><tt>&nbsp; will be in /addon/newart... it's an icyblue foreground set.</tt>
+<br><tt>- Added a global listing of foreground tiles for Abuse into</tt>
+<br><tt>&nbsp; /addon/newart. The foreground and background tiles work
+on</tt>
+<br><tt>&nbsp; a numbering system... from 0 to around 10,000... if you</tt>
+<br><tt>&nbsp; make any foreground or background art in fRaBs, send it
+to</tt>
+<br><tt>&nbsp; me so I can end it to an empty 'spot' on this chart.</tt>
+<br><tt>- Cypress sent me some of his unfinished levels too. Some of</tt>
+<br><tt>&nbsp; these will be in the next fRaBs, but a few are either very</tt>
+<br><tt>&nbsp; unfinished or merely 'skeletons' of levels.</tt>
+<br><tt>- Finally, Jonathan is relocating so the server may be up/down</tt>
+<br><tt>&nbsp; or left/right or sideways or something.</tt>
+<p><tt>9/18/00</tt>
+<p><tt>- Updated two map JPEGs, including the one for Level12.</tt>
+<p><tt>9/17/00</tt>
+<p><tt>- Happy Birthday to me! I just turned 18! Now send me some money</tt>
+<br><tt>&nbsp; and go play some fRaBs. (and slutty whores... on channel
+4)</tt>
+<br><tt>- Fixed a glaring bug in Madrace. Lately I've been doing some</tt>
+<br><tt>&nbsp; deathmatch testing... expect a few slight gameplay changes
+in</tt>
+<br><tt>&nbsp; the deathmatch levels in fRaBs 2.0.</tt>
+<p><tt>9/12/2000</tt>
+<p><tt>- Back to work. My new computer is set up for progress on fRaBs.</tt>
+<br><tt>- Updated the FAQ page again, and made the font fixed-width.</tt>
+<br><tt>- Hello to all of you from the University of Idaho!</tt>
+<p><tt>8/11/00</tt>
+<p><tt>- Updated the FAQ with some info on ports, the Death Ray, and the</tt>
+<br><tt>&nbsp; Boss Ant objects. Keep the questions coming!</tt>
+<br><tt>- The links page had a bit of redundant stuff in it. Fixed.</tt>
+<p><tt>8/08/00</tt>
+<p><tt>- I've been busy at college... so sorry about the lack of news.</tt>
+<br><tt>&nbsp; I'll be back in swing by September at the latest.</tt>
+<br><tt>- The credits page was changed by Jonathan a while back. It's a</tt>
+<br><tt>&nbsp; bit more exact now.</tt>
+<p><tt>7/17/00</tt>
+<p><tt>- Modified the documentation strucure, and removed the /maps</tt>
+<br><tt>&nbsp; folder. All the new maps can be found in /docs/images now.</tt>
+<br><tt>&nbsp; This will make things easier in terms of keeping the up-</tt>
+<br><tt>&nbsp; coming website updated.</tt>
+<p><tt>7/12/00</tt>
+<p><tt>- Added the unfinished Level12 and a new Level13 into the level</tt>
+<br><tt>&nbsp; rotation of Episode 3, and updated the documentation of
+how I</tt>
+<br><tt>&nbsp; plan on structuring the order of Levels 12-16 along with
+a</tt>
+<br><tt>&nbsp; possible Aliens Abuse episode.</tt>
+<p><tt>7/10/00 - Version 1.9</tt>
+<p><tt>- Changed the arrangement of the documentation. If this isn't</tt>
+<br><tt>&nbsp; the best Abuse documentation there is then I suggest you
+make</tt>
+<br><tt>&nbsp; something better. :) I'm proud of it.</tt>
+<p><tt>7/09/00</tt>
+<p><tt>- Finally finished up the HTML documentation for fRaBs.</tt>
+<p><tt><font color="#FFFFFF">7/07/00</font></tt>
+<p><tt><font color="#FFFFFF">- I've been working on Pong levels, the new
+documentation, and a</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; special directory called /maps, filled
+with JPEGs of every level</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; in fRaBs, and then some. So far there
+is 10 new Pong levels</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; made by me.</font></tt>
+<br><tt><font color="#FFFFFF">- Still no resolution to the legs error.
+Until that is fixed, my</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; new level will remain unreleased.</font></tt>
+<p><tt><font color="#FFFFFF">7/03/00</font></tt>
+<p><tt><font color="#FFFFFF">- Thanks to Zoneman for finding a nasty error
+in fRaBs where upon</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; getting the POWER_UPs the player's
+legs didn't change. I have</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; this problem partially fixed at the
+moment... only now upon</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; obtaining the SHOULDER_LAMP, the player
+has no legs!</font></tt>
+<br><tt><font color="#FFFFFF">- I did this by moving lots of code directly
+into the</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; lisp/people.lsp file, and there is
+a backup called peoplold.lsp</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; in the same directory. Also, addon/aliens/powerups.lsp
+has been</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; changed, with the old file renamed
+to powerold.lsp... hope I</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; can fix this soon!</font></tt>
+<p><tt><font color="#FFFFFF">7/02/00</font></tt>
+<p><tt><font color="#FFFFFF">- Pong level making is easy! I made 5 nice
+levels in about half</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; an hour. Very neat stuff. I'll write
+a short briefing on it.</font></tt>
+<br><tt><font color="#FFFFFF">- At the moment I'm collaborating with Profound
+to make a couple</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; new objects for Pong that will allow
+for a string of levels...</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; right now it only plays one at a time,
+but this can be changed.</font></tt>
+<p><tt><font color="#FFFFFF">7/01/00</font></tt>
+<p><tt><font color="#FFFFFF">- Added abuse.txt in /docs, by Duong Dai Nguyen.
+There is a very</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; detailed tutorial on level design,
+as well as other things. I</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; may go through and add/modify some
+of the listings to account for</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; new ai_types and whatnot. I shouldn't
+have lost this file so long</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; ago... it's a useful tool, and I still
+learn things from it.</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; Swiped from the shareware version
+1.05.</font></tt>
+<p><tt><font color="#FFFFFF">6/30/00</font></tt>
+<p><tt><font color="#FFFFFF">- Check out addon/pong/ for a fun little pong
+game. Swiped from the</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; shareware version 1.05.</font></tt>
+<p><tt><font color="#FFFFFF">6/29/00</font></tt>
+<p><tt><font color="#FFFFFF">- Tried to fix the 'Aliens' issue, by changing
+their little green</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; acid shot to aitype 50, but I don't
+think I modified the LISP</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; correctly. Now they don't shoot anything
+at all! Maybe it's best</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; that way...</font></tt>
+<br><tt><font color="#FFFFFF">- Started doing some major tweaking to the
+Alien code... I want to</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; try and make them a bit more 'fair'.
+Changed default hit points,</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; and speed settings today...</font></tt>
+<p><tt><font color="#FFFFFF">6/28/00</font></tt>
+<p><tt><font color="#FFFFFF">- Ooh, with the addition of the new addon
+by Leon, the Aliens from</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; the Aliens Abuse addon now seem to
+want to shoot those zip-zappy</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; lasers. This is a bit of a problem...</font></tt>
+<p><tt><font color="#FFFFFF">6/26/00</font></tt>
+<p><tt><font color="#FFFFFF">- Updated Leon's addon material and edited
+/addon/leon/4frabs.lsp to</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; include his new foreground tiles.</font></tt>
+<p><tt><font color="#FFFFFF">6/25/00</font></tt>
+<p><tt><font color="#FFFFFF">- Added in Leon's new ant addons from his
+great new levels. All of it</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; is in addon/leon, including the original
+levels, which can be run</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; via leon.bat and l-edit.bat.</font></tt>
+<br><tt><font color="#FFFFFF">- Moved the bad_guy_list and the object_destroyable_list
+to the bottom</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; of abuse.lsp. Kept the older, existing
+ones just in case the seperate</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; addon is run instead of the entire
+fRaBs objects.</font></tt>
+<br><tt><font color="#FFFFFF">- Updated single player readme on new Ant
+AI.</font></tt>
+<br><tt><font color="#FFFFFF">- Tons of new objects in this update. I don't
+know how I will ever make</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; a document to describe each and every
+one of these... eventually I</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; need to though.</font></tt>
+<p><tt><font color="#FFFFFF">6/21/00</font></tt>
+<p><tt><font color="#FFFFFF">- Began work on Kokushi Salamander. It will
+be a shoot-em-up spaceship</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; game, similar to Gradius, using the
+Abuse engine. :) Profound is</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; doing the main bit of code, and I'm
+creating/ripping the artwork. I</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; have been on a shooter stint, with
+the Konami classics, and I thought</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; one day that I could do a project
+like this for Abuse. Stay tuned...</font></tt>
+<p><tt><font color="#FFFFFF">6/20/00</font></tt>
+<p><tt><font color="#FFFFFF">- I did some deathmatch testing on Kahn with
+EitanTal. I had a 56k modem,</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; and he had ISDN, and the results were
+slow, probably because of me...</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; we averaged about .5 fps. I'd imagine
+2 ISDN lines on Kahn would</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; get much better performance... the
+game's native rate is 15 fps. I am</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; in Alaska, and he was in Israel...
+my TCP/IP test with Ed wasn't as</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; good in terms of performance, and
+he had DSL.</font></tt>
+<br><tt><font color="#FFFFFF">- Missed a few of the art/tints directories
+in changing the file names</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; to lower case. Fixed.</font></tt>
+<br><tt><font color="#FFFFFF">- You may have noticed that there were constant
+updates from the 13th of</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; June to the 17th. This is a record
+number of updates for fRaBs, and it</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; can be attributed to the fact that
+I don't have a job. :)</font></tt>
+<p><tt><font color="#FFFFFF">6/17/00 - Version 1.75</font></tt>
+<p><tt><font color="#FFFFFF">- The Deathray and the Twisted Minds addon
+are now incorporated into</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; fRaBs! This makes for a whole new
+seperate addon, as well as better-</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; flowing single player play in the
+regular game.</font></tt>
+<br><tt><font color="#FFFFFF">- Added a couple of Leon's objects, save
+for a couple things related</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; to the ways in which ants die. These
+are the ANTHOLE and the SENSORBEAM.</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; The first one makes a new ant for
+each one that comes out of the crack</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; and dies, up to a maximum. The second
+is a nice bit of decor. Read</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; leon1.lsp in addon/leon for more info
+and check out my sample level,</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; sample.spe, in the same directory.</font></tt>
+<p><tt><font color="#FFFFFF">6/16/00</font></tt>
+<p><tt><font color="#FFFFFF">- Doh! There was a broken level exit in Level07.spe
+because I moved</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; Level08 to Level21. Fixed.</font></tt>
+<p><tt><font color="#FFFFFF">6/15/00 - Version 1.71</font></tt>
+<p><tt><font color="#FFFFFF">- Renamed every file except for the fRaBs171
+dir itself to lowercase so</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; that there's better Linux compatibility.
+If there are any problems that</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; come up with this then email me.</font></tt>
+<p><tt><font color="#FFFFFF">6/14/00</font></tt>
+<p><tt><font color="#FFFFFF">- I decided to release fRaBs and add the BFG
+and my new cave level in</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; a later version. There might not be
+much time between this release</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; and the next, but it's been long enough
+as it is. :)</font></tt>
+<br><tt><font color="#FFFFFF">- Remember that although this version has
+quite a few new levels,</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; most of the big changes are internal,
+with the new power up objects</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; which I hope you level editors out
+there can take advantage of.</font></tt>
+<br><tt><font color="#FFFFFF">- Updated the single player documentation
+with help for the new levels</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; as I'm sure you will need it. ;)</font></tt>
+<p><tt><font color="#FFFFFF">6/13/00</font></tt>
+<p><tt><font color="#FFFFFF">- Getting very close to a release. Implemented
+Eitan's easiest levels</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; and all that is left now is the BFG
+and possibly my new Abuse level</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; once I get it finished.</font></tt>
+<p><tt><font color="#FFFFFF">6/8/00</font></tt>
+<p><tt><font color="#FFFFFF">- Added in EitanTal's new levels, but they
+may need editing. This, and</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; the delays with adding in the new
+BFG code will delay fRaBs even</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; longer. I figure this is best though,
+unless you like downloading</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; new versions of software every two
+seconds that it is released.</font></tt>
+<br><tt><font color="#FFFFFF">- Modified /lisp/people.lsp to fix an issue
+where any level-ending</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; teleporter for Level22.spe ends the
+game. Now the end-game</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; sequence will only be triggered when
+you complete Level99.spe and</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; god knows if fRaBs will ever have
+one of these.</font></tt>
+<p><tt><font color="#FFFFFF">6/4/00</font></tt>
+<p><tt><font color="#FFFFFF">- Cleaned up some LISP references for possible
+Linux problems.</font></tt>
+<p><tt><font color="#FFFFFF">6/1/00</font></tt>
+<p><tt><font color="#FFFFFF">- Preparations for releasing fRaBs 1.7...
+there's gonna be plenty</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; of new stuff in this version, in terms
+of levels and additions to</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; the artwork and objects. Just a little
+more testing with the new</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; objects in a simulated deathmatch
+and it will be ready to go.</font></tt>
+<br><tt><font color="#FFFFFF">- Now that the important Aliens objects are
+included, does anyone</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; want to try and make an 'Aliens Abuse'
+episode of fRaBs? :)</font></tt>
+<br><tt><font color="#FFFFFF">- Input on how fast the new Aliens move would
+be nice... this can</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; be easily modified if the general
+consensus is that they should</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; move a little slower/faster.</font></tt>
+<br><tt><font color="#FFFFFF">- Did some slight updating to the documentation,
+with info about</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; the new Aliens.</font></tt>
+<br><tt><font color="#FFFFFF">- Added Ed Snible's fRaBs icons, and some
+related files, to /icons.</font></tt>
+<p><tt><font color="#FFFFFF">5/24/00</font></tt>
+<p><tt><font color="#FFFFFF">- Finally! Added Aliens Abuse foreground,
+background, and relevant</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; objects. And it all works perfectly!
+YAY! Now the SHOULDER_LAMP,</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; the FACE_HUGGER, and all the ALIEN_DUDES
+work! :)</font></tt>
+<p><tt><font color="#FFFFFF">5/21/00</font></tt>
+<p><tt><font color="#FFFFFF">- Ed and I had our first TCP/IP test of fRaBs
+for GNU/Linux. It</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; was slow and there were a couple LISP
+bugs, but we think they</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; were due to our different Abuse setups,
+and the fact that I live</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; in Alaska and he lives in New York.
+Overall though, things are</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; looking promising for TCP/IP play,
+just as long as you're not</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; playing someone halfway across the
+planet. :)</font></tt>
+<br><tt><font color="#FFFFFF">- Also, I've been contacted by someone who
+wants to do an Abuse</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; port for PSX. Stay tuned.</font></tt>
+<br><tt><font color="#FFFFFF">- I've been planning to make some GNU/Linux
+packages for different</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; distros, so look for these in the
+future. So far Redhat and</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; Debian packages are on the horizon,
+but if there's the demand,</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; then I'll make some others.</font></tt>
+<p><tt><font color="#FFFFFF">5/03/00</font></tt>
+<p><tt><font color="#FFFFFF">- fRaBs is working in Debian! Good news...
+but the palette is</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; screwy. To be fixed.</font></tt>
+<br><tt><font color="#FFFFFF">- Added Level17.spe finally.</font></tt>
+<p><tt><font color="#FFFFFF">4/24/00</font></tt>
+<p><tt><font color="#FFFFFF">- To do... Finish testing fRaBs-linux and
+integrate new SPLs.</font></tt>
+<p><tt><font color="#FFFFFF">4/13/00</font></tt>
+<p><tt><font color="#FFFFFF">- A cool guy by the name of Ed Snible has
+been fixing up a</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; GNU/Linux version of Abuse with TCP/IP
+support. We're in the</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; testing phase... stay tuned. This
+is gonna rock!</font></tt>
+<p><tt><font color="#FFFFFF">&nbsp; fRaBs + Linux + TCP/IP + Good Documentation
+= Bliss :)</font></tt>
+<p><tt><font color="#FFFFFF">- Changed Level00 so that bottom two teleporters
+to the left</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; loop back into Level00 until I get
+those episodes completed.</font></tt>
+<br><tt><font color="#FFFFFF">- Added SFX to Limestone DM level. It sounds
+cool now.</font></tt>
+<br><tt><font color="#FFFFFF">- Network testing went really well, although
+my little brother</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; beat me on the levels that I made.
+Go figure. I noticed some</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; lag in Bugs.spe on the network though...
+too many objects?</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; If someone can get 3-4 people or more
+playing 'Bugs' on a LAN</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; and do some further testing, I'd appreciate
+it. :)</font></tt>
+<br><tt><font color="#FFFFFF">- Added an episode with some of my older
+levels... it's a three</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; level deal that is situated off near
+the 'Abuse!' teleport in</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; Level00. This is old news really,
+but the new episode isn't in</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; any released versions of fRaBs.</font></tt>
+<p><tt><font color="#FFFFFF">3/24/00 - Version 1.51 (beta)</font></tt>
+<p><tt><font color="#FFFFFF">- Completed Limeston.spe (the new large DM
+level) and I think</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; I'm done with making deathmatch levels.
+Now to get back to</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; single-player.</font></tt>
+<br><tt><font color="#FFFFFF">- Modified /addon/deathmat/large.lsp</font></tt>
+<br><tt><font color="#FFFFFF">- Damn, another thing I forgot to add here...
+I finished a nice</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; new single-player level a while ago...
+about a month ago, to</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; be precise. :) Whoops.</font></tt>
+<br><tt><font color="#FFFFFF">- I'm gonna be able to do my own deathmatch
+testing this coming</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; week. Woohoo! My own networked computers
+to play with!</font></tt>
+<p><tt><font color="#FFFFFF">3/20/00</font></tt>
+<p><tt><font color="#FFFFFF">- I'm back for the attack!</font></tt>
+<br><tt><font color="#FFFFFF">- Don't know why this tidbit wasn't in the
+readme earlier,</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; but I've been working on the Underground
+Zone, another</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; large DM level. It, along with other
+fRaBs stuff, will</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; probably not be released until there's
+other significant</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; changes to the game... i.e. more single
+player episodes,</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; engine modifications. There's no point
+to releasing fRaBs</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; every two days just to put in another
+DM level and update</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; the one or two .lsp files that need
+updating.</font></tt>
+<p><tt><font color="#FFFFFF">2/21/00 - Version 1.5</font></tt>
+<p><tt><font color="#FFFFFF">- Released 1.5 with all new single-player
+mode, and</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; 4 new deathmatch levels. Single-player
+info has been</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; relegated to separate readme files,
+deathmat.txt and</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; oneplayr.txt, both of which are works
+in progress. My</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; aim is to have more material for Abuse
+newbies and a</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; full-fledged Abuse multiplayer step-by-step
+guide.</font></tt>
+<p><tt><font color="#FFFFFF">2/20/00</font></tt>
+<p><tt><font color="#FFFFFF">- I was inspired today... made a new medium
+DM level in about</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; 3 hours that is circle-shaped... it
+uses running water from</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; the claudio addon. :) It's the second
+level in the medium</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; rotation now... /netlevel/Teardrop.spe</font></tt>
+<p><tt><font color="#FFFFFF">2/18/00</font></tt>
+<p><tt><font color="#FFFFFF">- More SPL fixes (Level08.spe)</font></tt>
+<br><tt><font color="#FFFFFF">- Still working on a new SPL and a new DM
+level... school's</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; been bogging me down a bit though.</font></tt>
+<p><tt><font color="#FFFFFF">2/5/00</font></tt>
+<p><tt><font color="#FFFFFF">- Fixed some foreground tiles in the original
+SW levels</font></tt>
+<br><tt><font color="#FFFFFF">- Fixed some tiles and errors in both ACLPP
+levels</font></tt>
+<p><tt><font color="#FFFFFF">2/4/00</font></tt>
+<p><tt><font color="#FFFFFF">- Added a new level, redgrndm.spe, to the
+small deathmatch levels</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; and modified /addon/deathmat/small.lsp
+to a different order. I</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; don't plan on making any more small
+deathmatch levels, so this</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; file should stay the same from here
+on out. This DM level has</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; a 'new' feature: respawning flyers
+that cause random hell.</font></tt>
+<br><tt><font color="#FFFFFF">- Changed Level00 teleporter nomenclature.</font></tt>
+<p><tt><font color="#FFFFFF">2/2/00</font></tt>
+<p><tt><font color="#FFFFFF">- Modified some level names, added some new
+single player levels</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; into the addon. The first three top
+teleporters are in some</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; sort of working order.</font></tt>
+<p><tt><font color="#FFFFFF">1/28/00</font></tt>
+<p><tt><font color="#FFFFFF">- Totally rearranged included Shareware level's
+file names...</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; and added a new Level00.spe. This
+new Level00 was designed to</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; be very open-ended to including either
+new 'paks' of levels,</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; or even just exits to single levels.
+What does this mean? It</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; means that if you want your level(s)
+in fRaBs, just give me a</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; note of permission and send the level(s),
+tell me the order</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; you want them in, and they will be
+included into fRaBs.</font></tt>
+<br><tt><font color="#FFFFFF">- The new Level00 took only 3 hours and some
+rockin' music... :)</font></tt>
+<br><tt><font color="#FFFFFF">- Updated readme with Level00 schematics.
+Start sending in some</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; single-player levels! :)</font></tt>
+<p><tt><font color="#FFFFFF">1/22/00</font></tt>
+<p><tt><font color="#FFFFFF">- Keep forgetting that it's really 2000, not
+1999. Sheesh.</font></tt>
+<br><tt><font color="#FFFFFF">- Finally tried fRaBs on Kahn, but it was
+so slow that me and</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; my cohort couldn't even get the game
+started. Oh well... if</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; you're playing with someone geographically
+close to you, or</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; on the same ISP, then the bandwidth
+might be feasible over</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; Kahn, but I'm not sure otherwise.
+Once cable modems are the</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; norm, and everyone has good bandwidth,
+then Kahn will be the</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; way to go, but for now, it's probably
+not the best idea.</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; Thanks to CHaKKaWaKKa for being my
+partner in crime for this</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; test. I plan on trying again in the
+near future...</font></tt>
+<p><tt><font color="#FFFFFF">1/20/00</font></tt>
+<p><tt><font color="#FFFFFF">- Haven't played much Abuse lately. I have
+recovered my</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; original copies of Claudio and Aliens
+Abuse in my off time</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; however! What does this mean? fRaBs
+will include even</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; more foreground tiles and objects,
+and now I just might</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; have a chance of implementing the
+Aliens Abuse characters</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; into fRaBs. Be prepared for some more
+foreground and</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; background, enemies, and a flashlight
+power-up!</font></tt>
+<br><tt><font color="#FFFFFF">- Working on another level with the red aliens
+tiles...</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; these are always fun. It's nice and
+horizontal, unlike</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; many of my 'falling mine-shaft' levels.</font></tt>
+<br><tt><font color="#FFFFFF">- I got news from an Italian magazine that
+fRaBs will be</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; included with their monthly magazine
+on CD! More news as</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; it comes!</font></tt>
+<br><tt><font color="#FFFFFF">- Also, this month, Kahn, a program that
+allows IPX function-</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; ality over TCP/IP, became freeware!
+This is a wonderful</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; program, with a tight user-base. It's
+similar to Kali, but</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; much better IMO. Learn more about
+Kahn at:</font></tt>
+<p><tt><font color="#FFFFFF">&nbsp;http://www.stargatenetworks.com</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp;http://kahn.descent4.org</font></tt>
+<p><tt><font color="#FFFFFF">&nbsp; This effectively allows Abuse to be
+played over the Internet</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; for free! Thanks to 'Tiny' and the
+other ops for helping to</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; spread the word about fRaBs and to
+everyone who helped me out,</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; and seeing past my poor IRC skills
+to help the innocent newbie.</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; :) Props to you guys!</font></tt>
+<p><tt><font color="#FFFFFF">1/2/00</font></tt>
+<p><tt><font color="#FFFFFF">- Fixed up DM level bugs, and made a new small
+DM level.</font></tt>
+<br><tt><font color="#FFFFFF">- Been meaning to include this tidbit in
+the readme... you</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; can find Satan Paint in /art</font></tt>
+<p><tt><font color="#FFFFFF">1/1/00 - Version 1.3</font></tt>
+<p><tt><font color="#FFFFFF">- Released fRaBs, fixed email at the bottom
+of the readme.</font></tt>
+<p><tt><font color="#FFFFFF">12/31/99</font></tt>
+<p><tt><font color="#FFFFFF">- Almost Y2K... made new medium DM level in
+3 hours.</font></tt>
+<p><tt><font color="#FFFFFF">12/29/99</font></tt>
+<p><tt><font color="#FFFFFF">- Added 2 New DM levels based on the BUGS
+level.</font></tt>
+<br><tt><font color="#FFFFFF">- Modified /addon/deathmat/small.lsp</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp;&nbsp;&nbsp; /addon/deathmat/medium.lsp</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp;&nbsp;&nbsp; /addon/deathmat/large.lsp</font></tt>
+<br><tt><font color="#FFFFFF">- Fixed a bug that left the claudio addon
+support out of</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; the DeathMatch games. Whoops!</font></tt>
+<p><tt><font color="#FFFFFF">12/22/99 - Version 1.2</font></tt>
+<p><tt><font color="#FFFFFF">- Added 3 New DM levels.</font></tt>
+<br><tt><font color="#FFFFFF">- Modified /addon/deathmat/small.lsp</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp;&nbsp;&nbsp; /addon/deathmat/medium.lsp</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp;&nbsp;&nbsp; /addon/deathmat/large.lsp</font></tt>
+<p><tt><font color="#FFFFFF">12/10/99 - Version 1.1</font></tt>
+<p><tt><font color="#FFFFFF">- Added Claudio Bolzoni's free Abuse object
+set in</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; /addon/claudio</font></tt>
+<br><tt><font color="#FFFFFF">- Modified /addon/claudio/claudio.lsp so
+that Abuse doesn't</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; look for missing artwork. The original
+claudio.lsp can be</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; found at */oldclaud.lsp</font></tt>
+<br><tt><font color="#FFFFFF">- Modified /abuse.lsp with updated enemy
+info</font></tt>
+<br><tt><font color="#FFFFFF">- Added /Edit.lsp with palette info (press
+P in the editor)</font></tt>
+<p><tt><font color="#FFFFFF">12/3/99 - Initial Version 1.0</font></tt>
+<p><tt><font color="#FFFFFF">- Deleted registered levels 5-21 in /levels</font></tt>
+<br><tt><font color="#FFFFFF">- Deleted all the original DeathMatch levels
+in /netlevel</font></tt>
+<br><tt><font color="#FFFFFF">- Deleted original documentation</font></tt>
+<br><tt><font color="#FFFFFF">- Deleted /addon/example</font></tt>
+<br><tt><font color="#FFFFFF">- Deleted all but two files from /music</font></tt>
+<br><tt><font color="#FFFFFF">- Modified /addon/deathmat/small.lsp</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp;&nbsp;&nbsp; /addon/deathmat/medium.lsp</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp;&nbsp;&nbsp; /addon/deathmat/large.lsp</font></tt>
+<br><tt><font color="#FFFFFF">- Added two new deathmatch levels and three
+new single</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; player levels</font></tt>
+<br><tt><font color="#FFFFFF">- Modified the exit of /levels/LEVEL04.SPE
+to loop back to</font></tt>
+<br><tt><font color="#FFFFFF">&nbsp; /levels/LEVEL00.SPE</font></tt>
+<p><font color="#FFFFFF">Justin Cassidy</font>
+<br><a href="mailto: messiah15@*spam-me-and-die*dog.com">messiah15@dog.com</a>
+<p><img SRC="../images/ssig.GIF" NOSAVE height=17 width=20>
+</body>
+</html>
