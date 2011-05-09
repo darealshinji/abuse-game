@@ -1,3 +1,12 @@
+09-05-2011
+	- Abuse 0.8 released.
+	- Support for the original music packs.
+	- The fRaBs and main Abuse artwork were merged.
+	- 15 save slots instead of 5.
+	- The Lisp interpreter was heavily improved and now uses its
+		garbage collected allocator instead of malloc.
+	- A new abuse-tool binary helps editing Abuse data files.
+
 02-03-2008
 	- Abuse-SDL 0.7.1 released.
 	- Countless bugfixes (memory leaks, alignment issues, 64-bit
