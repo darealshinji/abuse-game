@@ -15,8 +15,8 @@ AC_C_BIGENDIAN
 
 dnl Check for X
 AC_PATH_X
-if [ "x$x_libraries" != "x" ]; then
-  X_LIBS="-L$x_libraries"
+if test "x${x_libraries}" != x; then
+  X_LIBS="-L${x_libraries}"
 fi
 
 AC_ARG_ENABLE(debug,
