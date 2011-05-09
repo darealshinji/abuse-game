@@ -26,14 +26,14 @@ AC_ARG_ENABLE(release,
 AC_ARG_ENABLE(nonfree,
   [  --disable-nonfree       disable non-free data (default no)])
 
-AC_ARG_WITH(assetsdir,
-  [  --with-assetsdir=DIR    override default game data directory])
+AC_ARG_WITH(assetdir,
+  [  --with-assetdir=DIR     override default game data directory])
 
 dnl  Figure out where the datafiles will be
-if test "x${with_assetsdir}" = x; then
-  with_assetsdir='$(datadir)/games/abuse'
+if test "x${with_assetdir}" = x; then
+  with_assetdir='$(datadir)/games/abuse'
 fi
-AC_SUBST([assetsdir], [$with_assetsdir])
+AC_SUBST([assetdir], [$with_assetdir])
 
 dnl  Checks for libraries
 dnl Do we need to link against something for X shared memory support?
@@ -145,7 +145,7 @@ echo "
 ------ Configuration for $PACKAGE $VERSION ------
     Compiler:          ${CC} (`${CC} --version | head -n 1`)
     Install prefix:    ${prefix}
-    Assets directory:  ${with_assetsdir}
+    Asset directory:   ${with_assetdir}
     SDL version:       `sdl-config --version`
     OpenGL support:    ${have_opengl}
 
