@@ -1,3 +1,48 @@
+Commit: 624
+Author: Sam Hocevar <sam@hocevar.net>
+Date:   Mon May 9 11:29:30 2011 +0000
+
+    doc: fix icons install location.
+
+ doc/Makefile.am |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
+
+Commit: 623
+Author: Sam Hocevar <sam@hocevar.net>
+Date:   Mon May 9 01:19:59 2011 +0000
+
+    build: fix a problem with `--with-assetdir` and make sure the flag
+    name does not have an `s'.
+
+ PACKAGERS               |    4 ++--
+ configure.ac            |   12 ++++++------
+ data/Makefile.am        |   10 +++++-----
+ src/sdlport/Makefile.am |    2 +-
+ src/sdlport/setup.cpp   |    4 ++--
+ 5 files changed, 16 insertions(+), 16 deletions(-)
+
+Commit: 622
+Author: Sam Hocevar <sam@hocevar.net>
+Date:   Mon May 9 01:19:55 2011 +0000
+
+    doc: add Antti to the list of packagers, and add a warning message when
+    building a full tarball.
+
+ Makefile.am |    7 ++++---
+ PACKAGERS   |    1 +
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+Commit: 621
+Author: Sam Hocevar <sam@hocevar.net>
+Date:   Mon May 9 01:19:51 2011 +0000
+
+    doc: update changelog and various documentation files.
+
+ ChangeLog | 4652 ++++++++++++++++++++++++++++++++++++++++---------------------
+ NEWS      |    9 +
+ README    |   76 +-
+ 3 files changed, 3139 insertions(+), 1598 deletions(-)
+
 Commit: 619
 Author: Sam Hocevar <sam@hocevar.net>
 Date:   Sun May 8 23:35:56 2011 +0000
@@ -1826,7 +1871,7 @@ Date:   Tue Aug 11 20:56:50 2009 +0000
  3 files changed, 20 insertions(+), 170 deletions(-)
 
 Commit: 151
-Author: holiday <holiday@1433025c-d204-0410-b9d4-f0ece44ced3d>
+Author: Justin Cassidy <justin@boil.afraid.org>
 Date:   Tue Jul 1 16:22:32 2008 +0000
 
     localhost net testing enabled by setting client listen port to udp/20204 (main_net_cfg->port+2 instead of +1)
@@ -1836,7 +1881,7 @@ Date:   Tue Jul 1 16:22:32 2008 +0000
  2 files changed, 6 insertions(+), 4 deletions(-)
 
 Commit: 150
-Author: holiday <holiday@1433025c-d204-0410-b9d4-f0ece44ced3d>
+Author: Justin Cassidy <justin@boil.afraid.org>
 Date:   Mon Jun 30 16:26:46 2008 +0000
 
     Point tcpip debug logs at /tmp
@@ -1845,7 +1890,7 @@ Date:   Mon Jun 30 16:26:46 2008 +0000
  1 files changed, 2 insertions(+), 2 deletions(-)
 
 Commit: 149
-Author: holiday <holiday@1433025c-d204-0410-b9d4-f0ece44ced3d>
+Author: Justin Cassidy <justin@boil.afraid.org>
 Date:   Tue Jun 24 15:50:47 2008 +0000
 
     EXPDATADIR from ./configure now written into new abuserc files
@@ -1854,7 +1899,7 @@ Date:   Tue Jun 24 15:50:47 2008 +0000
  1 files changed, 6 insertions(+), 1 deletions(-)
 
 Commit: 148
-Author: holiday <holiday@1433025c-d204-0410-b9d4-f0ece44ced3d>
+Author: Justin Cassidy <justin@boil.afraid.org>
 Date:   Tue Jun 24 06:06:01 2008 +0000
 
     tcpip fd read/write log on until netcode works!
@@ -1863,7 +1908,7 @@ Date:   Tue Jun 24 06:06:01 2008 +0000
  1 files changed, 8 insertions(+), 3 deletions(-)
 
 Commit: 147
-Author: holiday <holiday@1433025c-d204-0410-b9d4-f0ece44ced3d>
+Author: Justin Cassidy <justin@boil.afraid.org>
 Date:   Tue Jun 24 05:06:18 2008 +0000
 
     Changed #net_crc reference to NET_CRC_FILENAME
@@ -1872,7 +1917,7 @@ Date:   Tue Jun 24 05:06:18 2008 +0000
  1 files changed, 2 insertions(+), 1 deletions(-)
 
 Commit: 146
-Author: holiday <holiday@1433025c-d204-0410-b9d4-f0ece44ced3d>
+Author: Justin Cassidy <justin@boil.afraid.org>
 Date:   Tue Jun 24 02:17:12 2008 +0000
 
     compiled.cpp: added #include <malloc.h>, source now compiles.
