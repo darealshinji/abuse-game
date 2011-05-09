@@ -5,15 +5,15 @@ EXTRA_DIST = \
 install-data-local:
 	@for p in $(EXTRA_DIST); do \
 	  d="`echo \"$$p\" | sed -ne 's@\(.*\)/.*@\1@p'`"; \
-	  $(MKDIR_P) "$(DESTDIR)$(assetsdir)/$$d"; \
-	  echo " $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(assetsdir)/$$d"; \
-	  $(INSTALL_DATA) "$(srcdir)/$$p" "$(DESTDIR)$(assetsdir)/$$d" || exit $$?; \
+	  $(MKDIR_P) "$(DESTDIR)$(assetdir)/$$d"; \
+	  echo " $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(assetdir)/$$d"; \
+	  $(INSTALL_DATA) "$(srcdir)/$$p" "$(DESTDIR)$(assetdir)/$$d" || exit $$?; \
 	done
 
 uninstall-local:
 	@for p in $(EXTRA_DIST); do \
-	  echo " ( cd '$(DESTDIR)$(assetsdir)' && rm -f" $$p ")"; \
-	  cd "$(DESTDIR)$(assetsdir)" && rm -f $$p; \
+	  echo " ( cd '$(DESTDIR)$(assetdir)' && rm -f" $$p ")"; \
+	  cd "$(DESTDIR)$(assetdir)" && rm -f $$p; \
 	done
 
 lisp = \

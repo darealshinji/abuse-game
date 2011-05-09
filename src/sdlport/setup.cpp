@@ -101,7 +101,7 @@ void createRCFile( char *rcfile )
         fputs( "; Use DoubleBuffering\ndoublebuf=0\n\n", fd );
         fputs( "; Use OpenGL\ngl=0\n\n", fd );
         fputs( "; Location of the datafiles\ndatadir=", fd );
-        fputs( ASSETSDIR "\n\n", fd );
+        fputs( ASSETDIR "\n\n", fd );
         #endif
         fputs( "; Use mono audio only\nmono=0\n\n", fd );
         fputs( "; Grab the mouse to the window\ngrabmouse=0\n\n", fd );
@@ -429,7 +429,7 @@ void setup( int argc, char **argv )
     else
         set_filename_prefix( (const char*)buffer );
     #else
-    set_filename_prefix( ASSETSDIR );
+    set_filename_prefix( ASSETDIR );
     #endif
 
     // Load the users configuration
