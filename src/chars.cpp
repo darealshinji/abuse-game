@@ -207,14 +207,14 @@ void character_type::add_var(void *symbol, void *name)
   /* First see if the variable has been defined for another object
      if so report a conflict if any occur */
   LSymbol *s=(LSymbol *)symbol;
-  if (DEFINEDP(s->value) && (item_type(s->value)!=L_OBJECT_VAR))
+  if (DEFINEDP(s->m_value) && (item_type(s->m_value)!=L_OBJECT_VAR))
   {
     ((LObject *)symbol)->Print();
     lbreak("symbol already has a value, cannot instantiate an object varible");
     exit(0);
-  } else if (DEFINEDP(s->value))
+  } else if (DEFINEDP(s->m_value))
   {
-    int index=((LObjectVar *)s->value)->index;
+    int index = ((LObjectVar *)s->m_value)->m_index;
     if (index<tiv)
     {
       if (vars[index])
@@ -336,33 +336,34 @@ character_type::character_type(void *args, void *name)
 
     if (f==l_abil)
     {
-      void *l=CDR(CAR(field));
+      LObject *l = CDR(CAR(field));
       PtrRef r4(l);
       for (i=0; i<TOTAL_ABILITIES; i++)
       {
-    Cell *ab=assoc(LSymbol::FindOrCreate(ability_names[i]),l);
+    Cell *ab = LSymbol::FindOrCreate(ability_names[i])->Assoc(l);
     PtrRef r5(ab);
     if (!NILP(ab))
       abil[i]=lnumber_value(lcar(lcdr(ab))->Eval());
       }
     } else if (f==l_funs)
     {
-      void *l=CDR(CAR(field));
+      LObject *l = CDR(CAR(field));
       PtrRef r4(l);
       for (i=0; i<TOTAL_OFUNS; i++)
       {
-    Cell *ab=assoc(LSymbol::FindOrCreate(ofun_names[i]),l);
+    Cell *ab = LSymbol::FindOrCreate(ofun_names[i])->Assoc(l);
     PtrRef r5(ab);
     if (!NILP(ab) && lcar(lcdr(ab)))
     fun_table[i]=lcar(lcdr(ab));
       }
     } else if (f==l_flags)
     {
-      void *l=CDR(CAR(field));
+      LObject *l = CDR(CAR(field));
       PtrRef r4(l);
       for (i=0; i<TOTAL_CFLAGS; i++)
       {
-    Cell *ab=assoc(LSymbol::FindOrCreate(cflag_names[i]),l);
+
+    Cell *ab = LSymbol::FindOrCreate(cflag_names[i])->Assoc(l);
     PtrRef r5(ab);
     if (!NILP(ab) && lcar(lcdr(ab))->Eval())
     cflags|=(1<<i);
@@ -455,7 +456,7 @@ character_type::character_type(void *args, void *name)
   desc=lcdr(desc);  //  skip filename
 
 
-  Cell *mrph=assoc(l_morph,desc);     // check for morph info
+  Cell *mrph = l_morph->Assoc(desc);     // check for morph info
   morph_power=0;
   if (!NILP(mrph))
   {
@@ -464,7 +465,7 @@ character_type::character_type(void *args, void *name)
     morph_power=lnumber_value(lcar(lcdr(mrph)));
   } else morph_mask=-1;
 
-  Cell *sa=assoc(l_state_art,desc);
+  Cell *sa = l_state_art->Assoc(desc);
   if (NILP(sa))
   {
     printf("missing state state art in def-character (%s)\n",name);
@@ -483,7 +484,7 @@ character_type::character_type(void *args, void *name)
     sa=lcdr(sa);
   }
 
-  Cell *range=assoc(l_range,desc);
+  Cell *range = l_range->Assoc(desc);
   if (!NILP(range))
   {
     rangex=lnumber_value(lcar(lcdr(range)));
@@ -497,7 +498,7 @@ character_type::character_type(void *args, void *name)
 
 
 
-  Cell *mf=assoc(l_fields,desc);
+  Cell *mf = l_fields->Assoc(desc);
   if (!NILP(mf))
   {
     mf=lcdr(mf);
@@ -511,7 +512,7 @@ character_type::character_type(void *args, void *name)
       find=i;
       if (find<0)
       {
-    lprint(assoc(l_fields,desc));
+    lprint(l_fields->Assoc(desc));
     printf("fields : no such var name \"%s\"\n",name);
     printf("current possiblities are : \n");
     for (int i=0; i<t; i++) printf("\"%s\" ",default_simple.var_name(i));
@@ -528,7 +529,7 @@ character_type::character_type(void *args, void *name)
   } else total_fields=0;
 
 
-  Cell *lg=assoc(l_logo,desc);
+  Cell *lg = l_logo->Assoc(desc);
   if (NILP(lg))
   {
     if (get_cflag(CFLAG_IS_WEAPON))

@@ -487,33 +487,33 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
 
     am = LList::Create();
     PtrRef r1(am);
-    am->car = LNumber::Create(amount);
+    am->m_car = LNumber::Create(amount);
 
     frm = LList::Create();
     PtrRef r2(frm);
-    frm->car = LPointer::Create(from);
+    frm->m_car = LPointer::Create(from);
 
     hx = LList::Create();
     PtrRef r3(hx);
-    hx->car = LNumber::Create(hitx);
+    hx->m_car = LNumber::Create(hitx);
 
     hy = LList::Create();
     PtrRef r4(hy);
-    hy->car = LNumber::Create(hity);
+    hy->m_car = LNumber::Create(hity);
 
     px = LList::Create();
     PtrRef r5(px);
-    px->car = LNumber::Create(push_xvel);
+    px->m_car = LNumber::Create(push_xvel);
 
     py = LList::Create();
     PtrRef r6(py);
-    py->car = LNumber::Create(push_yvel);
+    py->m_car = LNumber::Create(push_yvel);
 
-    px->cdr = py;
-    hy->cdr = px;
-    hx->cdr = hy;
-    frm->cdr = hx;
-    am->cdr = frm;
+    px->m_cdr = py;
+    hy->m_cdr = px;
+    hx->m_cdr = hy;
+    frm->m_cdr = hx;
+    am->m_cdr = frm;
 
     time_marker *prof1 = NULL;
     if (profiling())
@@ -1202,18 +1202,18 @@ int game_object::move(int cx, int cy, int button)
     // make a list of the parameters, and call the lisp function
     lcx = LList::Create();
     PtrRef r1(lcx);
-    lcx->car = LNumber::Create(cx);
+    lcx->m_car = LNumber::Create(cx);
 
     lcy = LList::Create();
     PtrRef r2(lcy);
-    lcy->car = LNumber::Create(cy);
+    lcy->m_car = LNumber::Create(cy);
 
     lb = LList::Create();
     PtrRef r3(lb);
-    lb->car = LNumber::Create(button);
+    lb->m_car = LNumber::Create(button);
 
-    lcx->cdr = lcy;
-    lcy->cdr = lb;
+    lcx->m_cdr = lcy;
+    lcy->m_cdr = lb;
 
     void *m = LSpace::Tmp.Mark();
 
