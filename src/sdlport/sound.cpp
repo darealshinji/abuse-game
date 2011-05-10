@@ -54,7 +54,7 @@ int sound_init( int argc, char **argv )
 
     // Check for the sfx directory, disable sound if we can't find it.
     datadir = get_filename_prefix();
-    sfxdir = (char *)malloc(strlen(datadir) + 5 + 1);
+    sfxdir = (char *)malloc(strlen(datadir) + 17 + 1);
     sprintf(sfxdir, "%s/sfx/ambcave1.wav", datadir);
     FILE *f = fopen(sfxdir, "r");
     if (!f)
