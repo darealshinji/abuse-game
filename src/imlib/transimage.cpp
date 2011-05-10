@@ -168,8 +168,8 @@ void TransImage::PutImageGeneric(image *screen, vec2i pos, uint8_t color,
     if (!datap)
         return; // if ClipToLine says nothing to draw, return
 
-    CONDITION(N == BLEND && pos.y >= bpos.y
-                         && pos.y + ysteps < bpos.y + blend->Size().y + 1,
+    CONDITION(N != BLEND || (pos.y >= bpos.y
+                              && pos.y + ysteps <= bpos.y + blend->Size().y),
               "Blend doesn't fit on TransImage");
 
     if (N == FADE || N == FADE_TINT || N == BLEND)
