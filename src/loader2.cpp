@@ -360,7 +360,7 @@ void load_data(int argc, char **argv)
     exit(0);
   }
   compiled_init();
-  clear_tmp();
+  LSpace::Tmp.Clear();
 
   dprintf("Engine : Registering base graphics\n");
   for (int z=0; z<=11; z++)

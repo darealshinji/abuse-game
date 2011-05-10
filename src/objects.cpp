@@ -260,9 +260,9 @@ void game_object::reload_notify()
     game_object *o=current_object;
     current_object=this;
 
-    void *m=mark_heap(TMP_SPACE);
+    void *m = LSpace::Tmp.Mark();
     ((LSymbol *)ns)->EvalFunction(NULL);
-    restore_heap(m,TMP_SPACE);
+    LSpace::Tmp.Restore(m);
 
     current_object=o;
   }
@@ -274,9 +274,9 @@ void game_object::next_sequence()
     if( ns )
     {
         current_object = this;
-        void *m = mark_heap( TMP_SPACE );
+        void *m = LSpace::Tmp.Mark();
         ((LSymbol *)ns)->EvalFunction(NULL);
-        restore_heap( m, TMP_SPACE );
+        LSpace::Tmp.Restore(m);
     }
     else
     {
@@ -409,7 +409,7 @@ int game_object::decide()
     old_aistate=aistate();
 
     current_object=this;
-    void *m=mark_heap(TMP_SPACE);
+    void *m = LSpace::Tmp.Mark();
 
     time_marker *prof1=NULL;
     if (profiling())
@@ -423,7 +423,7 @@ int game_object::decide()
       delete prof1;
     }
 
-    restore_heap(m,TMP_SPACE);
+    LSpace::Tmp.Restore(m);
 
     if (keep_ai_info())
     {
@@ -483,7 +483,7 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
     game_object *o = current_object;
     current_object = this;
 
-    void *m = mark_heap(TMP_SPACE);
+    void *m = LSpace::Tmp.Mark();
 
     am = LList::Create();
     PtrRef r1(am);
@@ -527,7 +527,7 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
       delete prof1;
     }
 
-    restore_heap(m, TMP_SPACE);
+    LSpace::Tmp.Restore(m);
 
     current_object = o;
   } else damage_fun(amount,from,hitx,hity,push_xvel,push_yvel);
@@ -623,7 +623,7 @@ void game_object::draw()
   {
     current_object=this;
 
-    void *m=mark_heap(TMP_SPACE);
+    void *m = LSpace::Tmp.Mark();
     time_marker *prof1=NULL;
     if (profiling())
       prof1=new time_marker;
@@ -636,9 +636,7 @@ void game_object::draw()
       delete prof1;
     }
 
-
-
-    restore_heap(m,TMP_SPACE);
+    LSpace::Tmp.Restore(m);
 
   } else drawer();
 }
@@ -650,7 +648,7 @@ void game_object::map_draw()
   {
     current_object=this;
 
-    void *m=mark_heap(TMP_SPACE);
+    void *m = LSpace::Tmp.Mark();
     time_marker *prof1=NULL;
     if (profiling())
       prof1=new time_marker;
@@ -663,8 +661,7 @@ void game_object::map_draw()
       delete prof1;
     }
 
-    restore_heap(m,TMP_SPACE);
-
+    LSpace::Tmp.Restore(m);
   }
 }
 
@@ -1156,7 +1153,7 @@ game_object *create(int type, int32_t x, int32_t y, int skip_constructor, int ai
     game_object *o=current_object;
     current_object=g;
 
-    void *m=mark_heap(TMP_SPACE);
+    void *m = LSpace::Tmp.Mark();
 
     time_marker *prof1=NULL;
     if (profiling())
@@ -1170,11 +1167,8 @@ game_object *create(int type, int32_t x, int32_t y, int skip_constructor, int ai
       delete prof1;
     }
 
-
-
-    restore_heap(m,TMP_SPACE);
-
-    current_object=o;
+    LSpace::Tmp.Restore(m);
+    current_object = o;
   }
   return g;
 }
@@ -1221,7 +1215,7 @@ int game_object::move(int cx, int cy, int button)
     lcx->cdr = lcy;
     lcy->cdr = lb;
 
-    void *m = mark_heap(TMP_SPACE);
+    void *m = LSpace::Tmp.Mark();
 
     time_marker *prof1 = NULL;
     if (profiling())
@@ -1235,7 +1229,7 @@ int game_object::move(int cx, int cy, int button)
       delete prof1;
     }
 
-    restore_heap(m,TMP_SPACE);
+    LSpace::Tmp.Restore(m);
 
     if (item_type(r)!=L_NUMBER)
     {
@@ -1625,7 +1619,7 @@ void game_object::change_type(int new_type)
     game_object *o=current_object;
     current_object=this;
 
-    void *m=mark_heap(TMP_SPACE);
+    void *m = LSpace::Tmp.Mark();
 
     time_marker *prof1=NULL;
     if (profiling())
@@ -1639,9 +1633,7 @@ void game_object::change_type(int new_type)
       delete prof1;
     }
 
-
-    restore_heap(m,TMP_SPACE);
-
-    current_object=o;
+    LSpace::Tmp.Restore(m);
+    current_object = o;
   }
 }

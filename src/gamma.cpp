@@ -188,11 +188,11 @@ void gamma_correct(palette *&pal, int force_menu)
             {
                 fprintf(fp, "(setq darkest_gray %ld)\n", dg);
                 fclose(fp);
-                int sp = current_space;
-                current_space = PERM_SPACE;
+                LSpace *sp = LSpace::Current;
+                LSpace::Current = &LSpace::Perm;
                 LSymbol::FindOrCreate("darkest_gray")->SetNumber(dg);
 
-                current_space = sp;
+                LSpace::Current = sp;
             }
             else
             {

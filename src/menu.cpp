@@ -388,13 +388,13 @@ void show_sell(int abortable)
   LSymbol *ss = LSymbol::FindOrCreate("sell_screens");
   if (!DEFINEDP(ss->GetValue()))
   {
-    int sp=current_space;
-    current_space=PERM_SPACE;
+    LSpace *sp = LSpace::Current;
+    LSpace::Current = &LSpace::Perm;
 //    char *prog="((\"art/help.spe\" . \"sell2\")(\"art/help.spe\" . \"sell4\")(\"art/help.spe\" . \"sell3\")(\"art/fore/endgame.spe\" . \"credit\"))";
 //    char *prog="((\"art/fore/endgame.spe\" . \"credit\") (\"art/help.spe\" . \"sell6\"))";
     char const *prog = "((\"art/fore/endgame.spe\" . \"credit\"))";
     ss->SetValue(LObject::Compile(prog));
-    current_space=sp;
+    LSpace::Current = sp;
   }
 
   if (DEFINEDP(ss->GetValue()))
