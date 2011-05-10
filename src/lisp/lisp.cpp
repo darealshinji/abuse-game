@@ -53,6 +53,7 @@ size_t LSymbol::count = 0;
 
 int print_level = 0, trace_level = 0, trace_print_level = 1000;
 int total_user_functions;
+static int evaldepth = 0, maxevaldepth = 0;
 
 int break_level=0;
 
@@ -3054,6 +3055,8 @@ LObject *LObject::Eval()
 {
     PtrRef ref1(this);
 
+    maxevaldepth = Max(maxevaldepth, ++evaldepth);
+
     int tstart = trace_level;
 
     if (trace_level)
@@ -3119,6 +3122,7 @@ LObject *LObject::Eval()
 /*  l_user_stack.push(ret);
   Lisp::CollectSpace(&LSpace::Perm);
   ret=l_user_stack.pop(1);  */
+    --evaldepth;
 
     return ret;
 }
