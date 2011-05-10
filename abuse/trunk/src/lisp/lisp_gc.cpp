@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "common.h"
+
 #include "lisp.h"
 #include "lisp_gc.h"
 
@@ -39,6 +41,7 @@ static size_t reg_ptr_total = 0;
 static void ***reg_ptr_list = NULL;
 
 static uint8_t *cstart, *cend, *collected_start, *collected_end;
+static int gcdepth, maxgcdepth;
 
 LArray *Lisp::CollectArray(LArray *x)
 {
@@ -82,6 +85,8 @@ LList *Lisp::CollectList(LList *x)
 LObject *Lisp::CollectObject(LObject *x)
 {
     LObject *ret = x;
+
+    maxgcdepth = Max(maxgcdepth, ++gcdepth);
 
     if ((uint8_t *)x >= cstart && (uint8_t *)x < cend)
     {
@@ -168,6 +173,7 @@ LObject *Lisp::CollectObject(LObject *x)
         }
     }
 
+    --gcdepth;
     return ret;
 }
 
@@ -206,10 +212,12 @@ void Lisp::CollectStacks()
 
 void Lisp::CollectSpace(LSpace *which_space, int grow)
 {
-    LSpace *old_space = LSpace::Current;
+    LSpace *sp = LSpace::Current;
+
+    maxgcdepth = gcdepth = 0;
+
     cstart = which_space->m_data;
     cend = which_space->m_free;
-
     LSpace::Gc.m_size = which_space->m_size;
     if (grow)
     {
@@ -226,13 +234,11 @@ void Lisp::CollectSpace(LSpace *which_space, int grow)
     CollectSymbols(LSymbol::root);
     CollectStacks();
 
-    // for debuging clear it out
-    memset(which_space->m_data, 0, which_space->m_size);
     free(which_space->m_data);
-
     which_space->m_data = new_data;
     which_space->m_size = LSpace::Gc.m_size;
     which_space->m_free = new_data + (LSpace::Gc.m_free - LSpace::Gc.m_data);
-    LSpace::Current = old_space;
+
+    LSpace::Current = sp;
 }
 
