@@ -54,29 +54,28 @@ LArray *LispGC::CollectArray(LArray *x)
 
 LList *LispGC::CollectList(LList *x)
 {
-    LList *last = NULL, *first = NULL;
+    LList *prev = NULL, *first = NULL;
 
     for (; x && item_type(x) == L_CONS_CELL; )
     {
         LList *p = LList::Create();
         LObject *old_car = x->car;
-        LObject *old_cdr = x->cdr;
         LObject *old_x = x;
         x = (LList *)CDR(x);
         ((LRedirect *)old_x)->type = L_COLLECTED_OBJECT;
         ((LRedirect *)old_x)->ref = p;
 
         p->car = CollectObject(old_car);
-        p->cdr = CollectObject(old_cdr);
 
-        if (last)
-            last->cdr = p;
+        if (prev)
+            prev->cdr = p;
         else
             first = p;
-        last = p;
+        prev = p;
     }
     if (x)
-        last->cdr = CollectObject(x);
+        prev->cdr = CollectObject(x);
+
     return first; // we already set the collection pointers
 }
 
