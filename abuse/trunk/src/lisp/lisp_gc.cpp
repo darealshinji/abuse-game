@@ -40,9 +40,9 @@ static void ***reg_ptr_list = NULL;
 
 static uint8_t *cstart, *cend, *collected_start, *collected_end;
 
-LArray *LispGC::CollectArray(LArray *x)
+LArray *Lisp::CollectArray(LArray *x)
 {
-    size_t s = x->len;
+    size_t s = x->m_len;
     LArray *a = LArray::Create(s, NULL);
     LObject **src = x->GetData();
     LObject **dst = a->GetData();
@@ -52,34 +52,34 @@ LArray *LispGC::CollectArray(LArray *x)
     return a;
 }
 
-LList *LispGC::CollectList(LList *x)
+LList *Lisp::CollectList(LList *x)
 {
     LList *prev = NULL, *first = NULL;
 
     for (; x && item_type(x) == L_CONS_CELL; )
     {
         LList *p = LList::Create();
-        LObject *old_car = x->car;
+        LObject *old_car = x->m_car;
         LObject *old_x = x;
         x = (LList *)CDR(x);
-        ((LRedirect *)old_x)->type = L_COLLECTED_OBJECT;
-        ((LRedirect *)old_x)->ref = p;
+        ((LRedirect *)old_x)->m_type = L_COLLECTED_OBJECT;
+        ((LRedirect *)old_x)->m_ref = p;
 
-        p->car = CollectObject(old_car);
+        p->m_car = CollectObject(old_car);
 
         if (prev)
-            prev->cdr = p;
+            prev->m_cdr = p;
         else
             first = p;
         prev = p;
     }
     if (x)
-        prev->cdr = CollectObject(x);
+        prev->m_cdr = CollectObject(x);
 
     return first; // we already set the collection pointers
 }
 
-LObject *LispGC::CollectObject(LObject *x)
+LObject *Lisp::CollectObject(LObject *x)
 {
     LObject *ret = x;
 
@@ -91,7 +91,7 @@ LObject *LispGC::CollectObject(LObject *x)
             lbreak("error: collecting corrupted cell\n");
             break;
         case L_NUMBER:
-            ret = LNumber::Create(((LNumber *)x)->num);
+            ret = LNumber::Create(((LNumber *)x)->m_num);
             break;
         case L_SYS_FUNCTION:
             ret = new_lisp_sys_function(((LSysFunction *)x)->min_args,
@@ -110,7 +110,7 @@ LObject *LispGC::CollectObject(LObject *x)
             ret = LString::Create(lstring_value(x));
             break;
         case L_CHARACTER:
-            ret = LChar::Create(lcharacter_value(x));
+            ret = LChar::Create(((LChar *)x)->m_ch);
             break;
         case L_C_FUNCTION:
             ret = new_lisp_c_function(((LSysFunction *)x)->min_args,
@@ -140,17 +140,17 @@ LObject *LispGC::CollectObject(LObject *x)
             ret = CollectList((LList *)x);
             break;
         case L_OBJECT_VAR:
-            ret = LObjectVar::Create(((LObjectVar *)x)->index);
+            ret = LObjectVar::Create(((LObjectVar *)x)->m_index);
             break;
         case L_COLLECTED_OBJECT:
-            ret = ((LRedirect *)x)->ref;
+            ret = ((LRedirect *)x)->m_ref;
             break;
         default:
             lbreak("error: collecting bad object 0x%x\n", item_type(x));
             break;
         }
-        ((LRedirect *)x)->type = L_COLLECTED_OBJECT;
-        ((LRedirect *)x)->ref = ret;
+        ((LRedirect *)x)->m_type = L_COLLECTED_OBJECT;
+        ((LRedirect *)x)->m_ref = ret;
     }
     else if ((uint8_t *)x < collected_start || (uint8_t *)x >= collected_end)
     {
@@ -171,19 +171,19 @@ LObject *LispGC::CollectObject(LObject *x)
     return ret;
 }
 
-void LispGC::CollectSymbols(LSymbol *root)
+void Lisp::CollectSymbols(LSymbol *root)
 {
     if (!root)
         return;
 
-    root->value = CollectObject(root->value);
-    root->function = CollectObject(root->function);
-    root->name = (LString *)CollectObject(root->name);
-    CollectSymbols(root->left);
-    CollectSymbols(root->right);
+    root->m_value = CollectObject(root->m_value);
+    root->m_function = CollectObject(root->m_function);
+    root->m_name = (LString *)CollectObject(root->m_name);
+    CollectSymbols(root->m_left);
+    CollectSymbols(root->m_right);
 }
 
-void LispGC::CollectStacks()
+void Lisp::CollectStacks()
 {
     void **d = l_user_stack.sdata;
     for (size_t i = 0; i < l_user_stack.m_size; i++, d++)
@@ -204,7 +204,7 @@ void LispGC::CollectStacks()
     }
 }
 
-void LispGC::CollectSpace(LSpace *which_space, int grow)
+void Lisp::CollectSpace(LSpace *which_space, int grow)
 {
     LSpace *old_space = LSpace::Current;
     cstart = which_space->m_data;

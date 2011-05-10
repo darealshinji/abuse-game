@@ -37,15 +37,8 @@ enum { L_BAD_CELL,   // error catching type
        L_OBJECT_VAR, L_1D_ARRAY,
        L_FIXED_POINT, L_COLLECTED_OBJECT };
 
-typedef uint32_t ltype;    // make sure structures aren't packed differently on various compiler
+typedef uint8_t ltype;    // make sure structures aren't packed differently on various compiler
                        // and sure that word, etc are word aligned
-
-class Lisp
-{
-public:
-    static void Init();
-    static void Uninit();
-};
 
 struct LSpace
 {
@@ -72,10 +65,11 @@ struct LObject
 
     /* Methods */
     LObject *Eval();
+    LObject *Assoc(LObject *item);
     void Print();
 
     /* Members */
-    ltype type;
+    ltype m_type;
 };
 
 struct LObjectVar : LObject
@@ -84,7 +78,7 @@ struct LObjectVar : LObject
     static LObjectVar *Create(int index);
 
     /* Members */
-    int index;
+    int m_index;
 };
 
 struct LList : LObject
@@ -96,7 +90,7 @@ struct LList : LObject
     size_t GetLength();
 
     /* Members */
-    LObject *cdr, *car;
+    LObject *m_cdr, *m_car;
 };
 
 struct LNumber : LObject
@@ -105,13 +99,13 @@ struct LNumber : LObject
     static LNumber *Create(long num);
 
     /* Members */
-    long num;
+    long m_num;
 };
 
 struct LRedirect : LObject
 {
     /* Members */
-    LObject *ref;
+    LObject *m_ref;
 };
 
 struct LString : LObject
@@ -126,7 +120,7 @@ struct LString : LObject
 
     /* Members */
 private:
-    char str[1]; /* Can be allocated much larger than 1 */
+    char m_str[1]; /* Can be allocated much larger than 1 */
 };
 
 struct LSymbol : LObject
@@ -151,10 +145,10 @@ struct LSymbol : LObject
 #ifdef L_PROFILE
     float time_taken;
 #endif
-    LObject *value;
-    LObject *function;
-    LString *name;
-    LSymbol *left, *right; // tree structure
+    LObject *m_value;
+    LObject *m_function;
+    LString *m_name;
+    LSymbol *m_left, *m_right; // tree structure
 
     /* Static members */
     static LSymbol *root;
@@ -182,14 +176,14 @@ struct LArray : LObject
     static LArray *Create(size_t len, void *rest);
 
     /* Methods */
-    inline LObject **GetData() { return data; }
+    inline LObject **GetData() { return m_data; }
     LObject *Get(int x);
 
     /* Members */
-    size_t len;
+    size_t m_len;
 
 private:
-    LObject *data[1]; /* Can be allocated much larger than 1 */
+    LObject *m_data[1]; /* Can be allocated much larger than 1 */
 };
 
 struct LChar : LObject
@@ -197,8 +191,11 @@ struct LChar : LObject
     /* Factories */
     static LChar *Create(uint16_t ch);
 
+    /* Methods */
+    uint16_t GetValue();
+
     /* Members */
-    uint16_t ch;
+    uint16_t m_ch;
 };
 
 struct LPointer : LObject
@@ -207,7 +204,7 @@ struct LPointer : LObject
     static LPointer *Create(void *addr);
 
     /* Members */
-    void *addr;
+    void *m_addr;
 };
 
 struct LFixedPoint : LObject
@@ -216,18 +213,36 @@ struct LFixedPoint : LObject
     static LFixedPoint *Create(int32_t x);
 
     /* Members */
-    int32_t x;
+    int32_t m_fixed;
 };
 
-static inline LObject *&CAR(void *x) { return ((LList *)x)->car; }
-static inline LObject *&CDR(void *x) { return ((LList *)x)->cdr; }
+class Lisp
+{
+public:
+    static void Init();
+    static void Uninit();
+
+    static void InitConstants();
+
+    // Collect temporary or permanent spaces
+    static void CollectSpace(LSpace *which_space, int grow);
+
+private:
+    static LArray *CollectArray(LArray *x);
+    static LList *CollectList(LList *x);
+    static LObject *CollectObject(LObject *x);
+    static void CollectSymbols(LSymbol *root);
+    static void CollectStacks();
+};
+
+static inline LObject *&CAR(void *x) { return ((LList *)x)->m_car; }
+static inline LObject *&CDR(void *x) { return ((LList *)x)->m_cdr; }
 static inline ltype item_type(void *x) { if (x) return *(ltype *)x; return L_CONS_CELL; }
 
 void perm_space();
 void tmp_space();
 void *lpointer_value(void *lpointer);
 int32_t lnumber_value(void *lnumber);
-unsigned short lcharacter_value(void *c);
 long lfixed_point_value(void *c);
 void *lisp_atom(void *i);
 LObject *lcdr(void *c);
@@ -235,7 +250,6 @@ LObject *lcar(void *c);
 void *lisp_eq(void *n1, void *n2);
 void *lisp_equal(void *n1, void *n2);
 void *eval_block(void *list);
-void *assoc(void *item, void *list);
 void resize_tmp(size_t new_size);
 void resize_perm(size_t new_size);
 
@@ -257,15 +271,11 @@ LUserFunction *new_lisp_user_function(LList *arg_list, LList *block_list);
 LSysFunction *new_user_lisp_function(int min_args, int max_args, int fun_number);
 
 int end_of_program(char *s);
-void lisp_init();
-void lisp_uninit();
 
 void *nth(int num, void *list);
 int32_t lisp_atan2(int32_t dy, int32_t dx);
 int32_t lisp_sin(int32_t x);
 int32_t lisp_cos(int32_t x);
-void restore_heap(void *val, int heap);
-void *mark_heap(int heap);
 
 extern "C" {
 void lbreak(const char *format, ...);
