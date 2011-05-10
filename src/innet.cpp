@@ -57,6 +57,9 @@ extern void set_login(char const *name);
 
 int net_init(int argc, char **argv)
 {
+#if defined __CELLOS_LV2__
+    return 0;
+#else
     int i,x,db_level=0;
     base=&local_base;
 
@@ -177,6 +180,7 @@ int net_init(int argc, char **argv)
     base->packet.packet_reset();
 
     return 1;
+#endif
 }
 
 
@@ -189,6 +193,9 @@ int net_start()  // is the game starting up off the net? (i.e. -net hostname)
 
 int kill_net()
 {
+#if defined __CELLOS_LV2__
+  return 0;
+#else
   if (game_face) delete game_face;  game_face=NULL;
   if (join_array) free(join_array);  join_array=NULL;
   if (game_sock) { delete game_sock; game_sock=NULL; }
@@ -202,6 +209,7 @@ int kill_net()
     prot=NULL;
     return 1;
   } else return 0;
+#endif
 }
 
 void net_uninit()
@@ -212,6 +220,9 @@ void net_uninit()
 
 int NF_set_file_server(net_address *addr)
 {
+#if defined __CELLOS_LV2__
+  return 0;
+#else
   if (prot)
   {
     fman->set_default_fs(addr);
@@ -225,10 +236,12 @@ int NF_set_file_server(net_address *addr)
     delete sock;
     return cmd;
   } else return 0;
+#endif
 }
 
 int NF_set_file_server(char const *name)
 {
+#if !defined __CELLOS_LV2__
   if (prot)
   {
     net_address *addr=prot->get_node_address(name,DEFAULT_COMM_PORT,0);
@@ -238,56 +251,71 @@ int NF_set_file_server(char const *name)
       delete addr;
       return ret;
     } else return 0;
-  } else return 0;
+  }
+#endif
+  return 0;
 }
 
 
 int NF_open_file(char const *filename, char const *mode)
 {
-  if (prot)
-    return fman->rf_open_file(filename,mode);
-  else return -2;
+#if !defined __CELLOS_LV2__
+    if (prot)
+        return fman->rf_open_file(filename,mode);
+#endif
+    return -2;
 }
 
 
 long NF_close(int fd)
 {
+#if !defined __CELLOS_LV2__
   if (prot)
     return fman->rf_close(fd);
-  else return 0;
+#endif
+  return 0;
 }
 
 long NF_read(int fd, void *buf, long size)
 {
+#if !defined __CELLOS_LV2__
   if (prot)
     return fman->rf_read(fd,buf,size);
-  else return 0;
+#endif
+  return 0;
 }
 
 long NF_filelength(int fd)
 {
+#if !defined __CELLOS_LV2__
   if (prot)
     return fman->rf_file_size(fd);
-  else return 0;
+#endif
+  return 0;
 }
 
 long NF_seek(int fd, long offset)
 {
+#if !defined __CELLOS_LV2__
   if (prot)
     return fman->rf_seek(fd,offset);
-  else return 0;
+#endif
+  return 0;
 }
 
 long NF_tell(int fd)
 {
+#if !defined __CELLOS_LV2__
   if (prot)
     return fman->rf_tell(fd);
-  else return 0;
+#endif
+  return 0;
 }
 
 
 void service_net_request()
 {
+#if !defined __CELLOS_LV2__
   if (prot)
   {
     if (prot->select(0))  // anything happening net-wise?
@@ -350,11 +378,13 @@ void service_net_request()
       fman->process_net();
     }
   }
+#endif
 }
 
 
 int get_remote_lsf(net_address *addr, char *filename)  // filename should be 256 bytes
 {
+#if !defined __CELLOS_LV2__
   if (prot)
   {
     net_socket *sock=prot->connect_to_server(addr,net_socket::SOCKET_SECURE);
@@ -374,13 +404,16 @@ int get_remote_lsf(net_address *addr, char *filename)  // filename should be 256
     delete sock;
     return 1;
 
-  } else return 0;
+  }
+#endif
+  return 0;
 }
 
 void server_check() { ; }
 
 int request_server_entry()
 {
+#if !defined __CELLOS_LV2__
   if (prot && main_net_cfg)
   {
     if (!net_server) return 0;
@@ -452,26 +485,33 @@ int request_server_entry()
 
     local_client_number=cnum;
     return cnum;
-  } else return 0;
+  }
+#endif
+  return 0;
 }
 
 int reload_start()
 {
+#if !defined __CELLOS_LV2__
   if (prot)
     return game_face->start_reload();
-  else return 0;
+#endif
+  return 0;
 }
 
 int reload_end()
 {
+#if !defined __CELLOS_LV2__
   if (prot)
     return game_face->end_reload();
-  else return 0;
+#endif
+  return 0;
 }
 
 
 void net_reload()
 {
+#if !defined __CELLOS_LV2__
   if (prot)
   {
     if (net_server)
@@ -591,6 +631,7 @@ void net_reload()
 
     }
   }
+#endif
 }
 
 
@@ -703,6 +744,7 @@ int get_inputs_from_server(unsigned char *buf)
 
 int become_server(char *name)
 {
+#if !defined __CELLOS_LV2__
   if (prot && main_net_cfg)
   {
     delete game_face;
@@ -722,6 +764,7 @@ int become_server(char *name)
     local_client_number=0;
     return 1;
   }
+#endif
   return 0;
 }
 

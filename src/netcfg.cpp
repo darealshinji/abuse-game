@@ -34,9 +34,11 @@ extern char lsf[256];
 
 #if !defined __CELLOS_LV2__
 extern net_protocol *prot;
+#endif
 
 net_configuration::net_configuration()
 {
+#if !defined __CELLOS_LV2__
   strcpy(name,get_login());
 
   strcpy(server_name,"My Netgame");
@@ -48,6 +50,7 @@ net_configuration::net_configuration()
   port=20202;
   server_port=20202;
   state=SINGLE_PLAYER;
+#endif
 }
 
 
@@ -450,6 +453,7 @@ int net_configuration::get_options(int server)
 int net_configuration::input()   // pulls up dialog box and input fileds
 {
   int ret=0;
+#if !defined __CELLOS_LV2__
   screen->clear();
 
   image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
@@ -594,9 +598,8 @@ int net_configuration::input()   // pulls up dialog box and input fileds
       return 1;
     }
   }
+#endif
 
   return ret;
 }
-
-#endif // __CELLOS_LV2__
 
