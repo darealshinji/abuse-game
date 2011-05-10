@@ -43,7 +43,6 @@ static SDL_AudioSpec audioObtained;
 int sound_init( int argc, char **argv )
 {
     char *sfxdir, *datadir;
-    FILE *f = NULL;
 
     // Disable sound if requested.
     if( flags.nosound )
