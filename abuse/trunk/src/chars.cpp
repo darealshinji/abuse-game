@@ -112,10 +112,10 @@ int character_type::add_state(void *symbol) // returns index into seq to use
   {
     num=ts;
     if (num<MAX_STATE) num=MAX_STATE;
-    int sp=current_space;
-    current_space=PERM_SPACE;
+    LSpace *sp = LSpace::Current;
+    LSpace::Current = &LSpace::Perm;
     ((LSymbol *)symbol)->SetNumber(num);
-    current_space=sp;
+    LSpace::Current=sp;
   }
 
   if (num<ts && seq[num])
@@ -267,15 +267,15 @@ void character_type::add_var(void *symbol, void *name)
     }
 
     /* create the var and add to var list */
-    int sp=current_space;
-    current_space=PERM_SPACE;
+    LSpace *sp = LSpace::Current;
+    LSpace::Current = &LSpace::Perm;
 
     add_c_object(symbol,free_index);
 
     vars[free_index]=symbol;
     var_index[free_index]=tv;
     tv++;
-    current_space=sp;
+    LSpace::Current=sp;
   }
 }
 

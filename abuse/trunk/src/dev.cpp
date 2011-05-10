@@ -52,9 +52,8 @@ char const *symbol_str(char const *name)
 
 
   // maybe english.lsp was not loaded yet, let's try to do that
-  int sp=current_space;
-  current_space=PERM_SPACE;
-
+  LSpace *sp = LSpace::Current;
+  LSpace::Current = &LSpace::Perm;
 
   char prog[50];
   char const *cs=prog;
@@ -67,7 +66,7 @@ char const *symbol_str(char const *name)
     printf("unable to open file '%s'\n",lsf);
     exit(0);
   }
-  current_space=sp;
+  LSpace::Current=sp;
 
 
   // check again to see if the symbol is there

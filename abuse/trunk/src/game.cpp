@@ -698,9 +698,9 @@ static void post_render()
   if(DEFINEDP(l_post_render->GetFunction()))
   {
     screen->dirt_off();
-    clear_tmp();
+    LSpace::Tmp.Clear();
     l_post_render->EvalFunction(NULL);
-    clear_tmp();
+    LSpace::Tmp.Clear();
     screen->dirt_on();
   }
 }
@@ -1984,7 +1984,7 @@ void net_receive()
 
 void Game::step()
 {
-  clear_tmp();
+  LSpace::Tmp.Clear();
   if(current_level)
   {
     current_level->unactivate_all();
@@ -2281,7 +2281,7 @@ void check_for_lisp(int argc, char **argv)
     {
         if(!strcmp(argv[i], "-lisp"))
         {
-            lisp_init();
+            Lisp::Init();
             char const *eof_char = "Ctrl-D";
             fprintf(stderr,
                     " CLIVE (C) 1995 Jonathan Clark, all rights reserved\n"
@@ -2327,10 +2327,10 @@ void music_check()
 
 /*      if(DEFINEDP(symbol_function(l_next_song)))  // if user function installed, call it to load up next song
       {
-    int sp = current_space;
-    current_space = PERM_SPACE;
+    int sp = LSpace::Current;
+    LSpace::Current = SPACE_PERM;
     ((LSymbol *)l_next_song)->EvalFunction(NULL);
-    current_space = sp;
+    LSpace::Current = sp;
       } */
     }
   }
@@ -2458,7 +2458,7 @@ int main(int argc, char *argv[])
         }
 
         game_net_init(argc, argv);
-        lisp_init();
+        Lisp::Init();
 
         dev_init(argc, argv);
 
@@ -2587,7 +2587,7 @@ int main(int argc, char *argv[])
                 printf("%s\n", lstring_value(end_msg->GetValue()));
         }
 
-        lisp_uninit();
+        Lisp::Uninit();
 
 #if !defined __CELLOS_LV2__
         base->packet.packet_reset();

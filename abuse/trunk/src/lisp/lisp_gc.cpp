@@ -204,36 +204,35 @@ void LispGC::CollectStacks()
     }
 }
 
-void LispGC::CollectSpace(int which_space, int grow)
+void LispGC::CollectSpace(LSpace *which_space, int grow)
 {
-    int old_space = current_space;
-    cstart = space[which_space];
-    cend = free_space[which_space];
+    LSpace *old_space = LSpace::Current;
+    cstart = which_space->m_data;
+    cend = which_space->m_free;
 
-    space_size[GC_SPACE] = space_size[which_space];
+    LSpace::Gc.m_size = which_space->m_size;
     if (grow)
     {
-        space_size[GC_SPACE] += space_size[which_space] >> 1;
-        space_size[GC_SPACE] -= (space_size[GC_SPACE] & 7);
+        LSpace::Gc.m_size += which_space->m_size >> 1;
+        LSpace::Gc.m_size -= (LSpace::Gc.m_size & 7);
     }
-    uint8_t *new_space = (uint8_t *)malloc(space_size[GC_SPACE]);
-    current_space = GC_SPACE;
-    free_space[GC_SPACE] = space[GC_SPACE] = new_space;
+    uint8_t *new_data = (uint8_t *)malloc(LSpace::Gc.m_size);
+    LSpace::Current = &LSpace::Gc;
+    LSpace::Gc.m_free = LSpace::Gc.m_data = new_data;
 
-    collected_start = new_space;
-    collected_end = new_space + space_size[GC_SPACE];
+    collected_start = new_data;
+    collected_end = new_data + LSpace::Gc.m_size;
 
     CollectSymbols(LSymbol::root);
     CollectStacks();
 
     // for debuging clear it out
-    memset(space[which_space], 0, space_size[which_space]);
-    free(space[which_space]);
+    memset(which_space->m_data, 0, which_space->m_size);
+    free(which_space->m_data);
 
-    space[which_space] = new_space;
-    space_size[which_space] = space_size[GC_SPACE];
-    free_space[which_space] = new_space
-                            + (free_space[GC_SPACE] - space[GC_SPACE]);
-    current_space = old_space;
+    which_space->m_data = new_data;
+    which_space->m_size = LSpace::Gc.m_size;
+    which_space->m_free = new_data + (LSpace::Gc.m_free - LSpace::Gc.m_data);
+    LSpace::Current = old_space;
 }
 

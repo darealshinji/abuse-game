@@ -19,7 +19,7 @@ class LispGC
 {
 public:
     // Collect temporary or permanent spaces
-    static void CollectSpace(int which_space, int grow);
+    static void CollectSpace(LSpace *which_space, int grow);
 
 private:
     static LArray *CollectArray(LArray *x);

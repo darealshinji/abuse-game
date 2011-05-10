@@ -723,7 +723,7 @@ void *l_caller(long number, void *args)
       time_marker start;
       for (int x=0; x<trials; x++)
       {
-    clear_tmp();
+    LSpace::Tmp.Clear();
     CAR(args)->Eval();
       }
       time_marker end;
@@ -769,10 +769,10 @@ void *l_caller(long number, void *args)
         lbreak("expecting first arg to def-character to be a symbol!\n");
         exit(0);
       }
-      int sp=current_space;
-      current_space=PERM_SPACE;
+      LSpace *sp = LSpace::Current;
+      LSpace::Current = &LSpace::Perm;
       sym->SetNumber(total_objects);   // set the symbol value to the object number
-      current_space=sp;
+      LSpace::Current=sp;
       if (!total_objects)
       {
         object_names=(char **)malloc(sizeof(char *)*(total_objects+1));
@@ -1381,12 +1381,12 @@ long c_caller(long number, void *args)
     args=CDR(args);
       }
 
-      int sp=current_space;
-      current_space=PERM_SPACE;
+      LSpace *sp = LSpace::Current;
+      LSpace::Current = &LSpace::Perm;
       int id=cache.reg(lstring_value(lcar(args)),NULL,SPEC_EXTERN_SFX,1);
       if (sym)
         sym->SetNumber(id);    // set the symbol value to sfx id
-      current_space=sp;
+      LSpace::Current=sp;
       return id;
     } break;
     case 134 :  // play_sound

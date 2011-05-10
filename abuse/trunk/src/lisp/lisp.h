@@ -20,10 +20,6 @@
 
 #define Cell void
 #define MAX_LISP_TOKEN_LEN 200
-enum { PERM_SPACE,
-       TMP_SPACE,
-       USER_SPACE,
-       GC_SPACE };
 
 #define FIXED_TRIG_SIZE 360               // 360 degrees stored in table
 extern int32_t sin_table[FIXED_TRIG_SIZE];   // this should be filled in by external module
@@ -32,7 +28,6 @@ extern uint16_t atan_table[TBS];
 #define NILP(x) (x==NULL)
 #define DEFINEDP(x) (x!=l_undefined)
 class bFILE;
-extern int current_space;
 extern bFILE *current_print_file;
 
 
@@ -44,6 +39,31 @@ enum { L_BAD_CELL,   // error catching type
 
 typedef uint32_t ltype;    // make sure structures aren't packed differently on various compiler
                        // and sure that word, etc are word aligned
+
+class Lisp
+{
+public:
+    static void Init();
+    static void Uninit();
+};
+
+struct LSpace
+{
+    size_t GetFree();
+    void *Alloc(size_t size);
+
+    void *Mark();
+    void Restore(void *val);
+    void Clear();
+
+    static LSpace Tmp, Perm, Gc;
+    static LSpace *Current;
+
+    uint8_t *m_data;
+    uint8_t *m_free;
+    char const *m_name;
+    size_t m_size;
+};
 
 struct LObject
 {
@@ -205,7 +225,6 @@ static inline ltype item_type(void *x) { if (x) return *(ltype *)x; return L_CON
 
 void perm_space();
 void tmp_space();
-void use_user_space(void *addr, long size);
 void *lpointer_value(void *lpointer);
 int32_t lnumber_value(void *lnumber);
 unsigned short lcharacter_value(void *c);
@@ -238,12 +257,9 @@ LUserFunction *new_lisp_user_function(LList *arg_list, LList *block_list);
 LSysFunction *new_user_lisp_function(int min_args, int max_args, int fun_number);
 
 int end_of_program(char *s);
-void clear_tmp();
 void lisp_init();
 void lisp_uninit();
 
-extern uint8_t *space[4], *free_space[4];
-extern size_t space_size[4];
 void *nth(int num, void *list);
 int32_t lisp_atan2(int32_t dy, int32_t dx);
 int32_t lisp_sin(int32_t x);

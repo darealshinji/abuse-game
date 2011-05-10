@@ -472,11 +472,11 @@ void view::add_chat_key(int key)  // return string if buf is complete
       game_object *o=current_object;
       current_object=focus;
 
-      void *m=mark_heap(TMP_SPACE);
+      void *m = LSpace::Tmp.Mark();
       void *list=NULL;
       push_onto_list(LString::Create(chat_buf),list);
       ((LSymbol *)l_chat_input)->EvalFunction(list);
-      restore_heap(m,TMP_SPACE);
+      LSpace::Tmp.Restore(m);
 
       current_object=o;
 

@@ -41,19 +41,18 @@
  * variables will reside in permanant space.  Eveything else will reside in
  * tmp space which gets thrown away after completion of eval.  system
  * functions reside in permant space. */
+LSpace LSpace::Tmp, LSpace::Perm, LSpace::Gc;
 
-bFILE *current_print_file=NULL;
+/* Normally set to Tmp, unless compiling or other needs. */
+LSpace *LSpace::Current;
+
+bFILE *current_print_file = NULL;
 
 LSymbol *LSymbol::root = NULL;
 size_t LSymbol::count = 0;
 
-
-uint8_t *space[4], *free_space[4];
-size_t space_size[4];
 int print_level = 0, trace_level = 0, trace_print_level = 1000;
 int total_user_functions;
-
-int current_space;  // normally set to TMP_SPACE, unless compiling or other needs
 
 int break_level=0;
 
@@ -159,53 +158,52 @@ void lbreak(char const *format, ...)
 
 void need_perm_space(char const *why)
 {
-  if (current_space!=PERM_SPACE && current_space!=GC_SPACE)
+  if (LSpace::Current != &LSpace::Perm && LSpace::Current != &LSpace::Gc)
   {
     lbreak("%s : action requires permanant space\n", why);
     exit(0);
   }
 }
 
-void *mark_heap(int heap)
+void *LSpace::Mark()
 {
-  return free_space[heap];
+    return m_free;
 }
 
-void restore_heap(void *val, int heap)
+void LSpace::Restore(void *val)
 {
-  free_space[heap] = (uint8_t *)val;
+    m_free = (uint8_t *)val;
 }
 
-static size_t get_free_size(int which_space)
+size_t LSpace::GetFree()
 {
-    size_t used = free_space[which_space] - space[which_space];
-    return space_size[which_space] > used ? space_size[which_space] - used : 0;
+    size_t used = m_free - m_data;
+    return m_size > used ? m_size - used : 0;
 }
 
-static void *lmalloc(size_t size, int which_space)
+void *LSpace::Alloc(size_t size)
 {
     // Align allocation
     size = (size + sizeof(intptr_t) - 1) & ~(sizeof(intptr_t) - 1);
 
     // Collect garbage if necessary
-    if (size > get_free_size(which_space))
+    if (size > GetFree())
     {
-        if (which_space == PERM_SPACE || which_space == TMP_SPACE)
-            LispGC::CollectSpace(which_space, 0);
+        if (this == &LSpace::Perm || this == &LSpace::Tmp)
+            LispGC::CollectSpace(this, 0);
 
-        if (size > get_free_size(which_space))
-            LispGC::CollectSpace(which_space, 1);
+        if (size > GetFree())
+            LispGC::CollectSpace(this, 1);
 
-        if (size > get_free_size(which_space))
+        if (size > GetFree())
         {
-            lbreak("lisp: cannot find %d bytes in space #%d\n",
-                   size, which_space);
+            lbreak("lisp: cannot find %d bytes in %s\n", size, m_name);
             exit(0);
         }
     }
 
-    void *ret = (void *)free_space[which_space];
-    free_space[which_space] += size;
+    void *ret = m_free;
+    m_free += size;
     return ret;
 }
 
@@ -228,7 +226,7 @@ LArray *LArray::Create(size_t len, void *rest)
     if (size < sizeof(LRedirect))
         size = sizeof(LRedirect);
 
-    LArray *p = (LArray *)lmalloc(size, current_space);
+    LArray *p = (LArray *)LSpace::Current->Alloc(size);
     p->type = L_1D_ARRAY;
     p->len = len;
     LObject **data = p->GetData();
@@ -281,7 +279,7 @@ LFixedPoint *LFixedPoint::Create(int32_t x)
 {
     size_t size = Max(sizeof(LFixedPoint), sizeof(LRedirect));
 
-    LFixedPoint *p = (LFixedPoint *)lmalloc(size, current_space);
+    LFixedPoint *p = (LFixedPoint *)LSpace::Current->Alloc(size);
     p->type = L_FIXED_POINT;
     p->x = x;
     return p;
@@ -291,7 +289,7 @@ LObjectVar *LObjectVar::Create(int index)
 {
     size_t size = Max(sizeof(LObjectVar), sizeof(LRedirect));
 
-    LObjectVar *p = (LObjectVar *)lmalloc(size, current_space);
+    LObjectVar *p = (LObjectVar *)LSpace::Current->Alloc(size);
     p->type = L_OBJECT_VAR;
     p->index = index;
     return p;
@@ -303,7 +301,7 @@ LPointer *LPointer::Create(void *addr)
         return NULL;
     size_t size = Max(sizeof(LPointer), sizeof(LRedirect));
 
-    LPointer *p = (LPointer *)lmalloc(size, current_space);
+    LPointer *p = (LPointer *)LSpace::Current->Alloc(size);
     p->type = L_POINTER;
     p->addr = addr;
     return p;
@@ -313,7 +311,7 @@ LChar *LChar::Create(uint16_t ch)
 {
     size_t size = Max(sizeof(LChar), sizeof(LRedirect));
 
-    LChar *c = (LChar *)lmalloc(size, current_space);
+    LChar *c = (LChar *)LSpace::Current->Alloc(size);
     c->type = L_CHARACTER;
     c->ch = ch;
     return c;
@@ -338,7 +336,7 @@ struct LString *LString::Create(int length)
 {
     size_t size = Max(sizeof(LString) + length - 1, sizeof(LRedirect));
 
-    LString *s = (LString *)lmalloc(size, current_space);
+    LString *s = (LString *)LSpace::Current->Alloc(size);
     s->type = L_STRING;
     s->str[0] = '\0';
     return s;
@@ -350,7 +348,7 @@ LUserFunction *new_lisp_user_function(LList *arg_list, LList *block_list)
 
     size_t size = Max(sizeof(LUserFunction), sizeof(LRedirect));
 
-    LUserFunction *lu = (LUserFunction *)lmalloc(size, current_space);
+    LUserFunction *lu = (LUserFunction *)LSpace::Current->Alloc(size);
     lu->type = L_USER_FUNCTION;
     lu->arg_list = arg_list;
     lu->block_list = block_list;
@@ -362,8 +360,9 @@ LSysFunction *new_lisp_sys_function(int min_args, int max_args, int fun_number)
     size_t size = Max(sizeof(LSysFunction), sizeof(LRedirect));
 
     // System functions should reside in permanant space
-    int space = (current_space == GC_SPACE) ? GC_SPACE : PERM_SPACE;
-    LSysFunction *ls = (LSysFunction *)lmalloc(size, space);
+    LSysFunction *ls = LSpace::Current == &LSpace::Gc
+                     ? (LSysFunction *)LSpace::Gc.Alloc(size)
+                     : (LSysFunction *)LSpace::Perm.Alloc(size);
     ls->type = L_SYS_FUNCTION;
     ls->min_args = min_args;
     ls->max_args = max_args;
@@ -396,7 +395,7 @@ LSymbol *new_lisp_symbol(char *name)
 {
     size_t size = Max(sizeof(LSymbol), sizeof(LRedirect));
 
-    LSymbol *s = (LSymbol *)lmalloc(size, current_space);
+    LSymbol *s = (LSymbol *)LSpace::Current->Alloc(size);
     PtrRef ref(s);
 
     s->type = L_SYMBOL;
@@ -413,7 +412,7 @@ LNumber *LNumber::Create(long num)
 {
     size_t size = Max(sizeof(LNumber), sizeof(LRedirect));
 
-    LNumber *n = (LNumber *)lmalloc(size, current_space);
+    LNumber *n = (LNumber *)LSpace::Current->Alloc(size);
     n->type = L_NUMBER;
     n->num = num;
     return n;
@@ -423,7 +422,7 @@ LList *LList::Create()
 {
     size_t size = Max(sizeof(LList), sizeof(LRedirect));
 
-    LList *c = (LList *)lmalloc(size, current_space);
+    LList *c = (LList *)LSpace::Current->Alloc(size);
     c->type = L_CONS_CELL;
     c->car = NULL;
     c->cdr = NULL;
@@ -771,16 +770,16 @@ LSymbol *make_find_symbol(char const *name)    // find a symbol, if it doesn't e
   if (s) return s;
   else
   {
-    int sp=current_space;
-    if (current_space!=GC_SPACE)
-      current_space=PERM_SPACE;       // make sure all symbols get defined in permanant space
+    LSpace *sp = LSpace::Current;
+    if (LSpace::Current != &LSpace::Gc)
+      LSpace::Current = &LSpace::Perm;       // make sure all symbols get defined in permanant space
     LList *cs;
     cs=LList::Create();
     s=new_lisp_symbol(name);
     cs->car=s;
     cs->cdr=symbol_list;
     symbol_list=cs;
-    current_space=sp;
+    LSpace::Current = sp;
   }
   return s;
 }
@@ -814,9 +813,9 @@ LSymbol *LSymbol::FindOrCreate(char const *name)
     }
 
     // Make sure all symbols get defined in permanant space
-    int sp = current_space;
-    if (current_space != GC_SPACE)
-       current_space = PERM_SPACE;
+    LSpace *sp = LSpace::Current;
+    if (LSpace::Current != &LSpace::Gc)
+        LSpace::Current = &LSpace::Perm;
 
     p = (LSymbol *)malloc(sizeof(LSymbol));
     p->type = L_SYMBOL;
@@ -832,7 +831,7 @@ LSymbol *LSymbol::FindOrCreate(char const *name)
     *parent = p;
     count++;
 
-    current_space = sp;
+    LSpace::Current = sp;
     return p;
 }
 
@@ -2400,11 +2399,11 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
                 if (stat_man)
                     stat_man->update((cs - s) * 100 / l);
 #endif
-                void *m = mark_heap(TMP_SPACE);
+                void *m = LSpace::Tmp.Mark();
                 compiled_form = LObject::Compile(cs);
                 compiled_form->Eval();
                 compiled_form = NULL;
-                restore_heap(m, TMP_SPACE);
+                LSpace::Tmp.Restore(m);
             }
 #ifndef NO_LIBS
             if (stat_man)
@@ -2470,8 +2469,8 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
     }
     case SYS_FUNC_ENUM:
     {
-        int sp = current_space;
-        current_space = PERM_SPACE;
+        LSpace *sp = LSpace::Current;
+        LSpace::Current = &LSpace::Perm;
         int32_t x = 0;
         while (arg_list)
         {
@@ -2510,7 +2509,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
             arg_list = (LList *)CDR(arg_list);
             x++;
         }
-        current_space = sp;
+        LSpace::Current = sp;
         break;
     }
     case SYS_FUNC_QUIT:
@@ -2806,7 +2805,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
         break;
     }
     case SYS_FUNC_GC:
-        LispGC::CollectSpace(current_space, 0);
+        LispGC::CollectSpace(LSpace::Current, 0);
         break;
     case SYS_FUNC_SCHAR:
     {
@@ -2945,19 +2944,12 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
 
 void tmp_space()
 {
-    current_space = TMP_SPACE;
+    LSpace::Current = &LSpace::Tmp;
 }
 
 void perm_space()
 {
-    current_space = PERM_SPACE;
-}
-
-void use_user_space(void *addr, long size)
-{
-    current_space = USER_SPACE;
-    free_space[USER_SPACE] = space[USER_SPACE] = (uint8_t *)addr;
-    space_size[USER_SPACE] = size;
+    LSpace::Current = &LSpace::Perm;
 }
 
 /* PtrRef check: OK */
@@ -3070,7 +3062,7 @@ LObject *LObject::Eval()
         if (trace_level <= trace_print_level)
         {
             dprintf("%d (%d, %d, %d) TRACE : ", trace_level,
-                    get_free_size(PERM_SPACE), get_free_size(TMP_SPACE),
+                    LSpace::Perm.GetFree(), LSpace::Tmp.GetFree(),
                     PtrRef::stack.m_size);
             Print();
             dprintf("\n");
@@ -3119,14 +3111,14 @@ LObject *LObject::Eval()
         trace_level--;
         if (trace_level <= trace_print_level)
             dprintf("%d (%d, %d, %d) TRACE ==> ", trace_level,
-                    get_free_size(PERM_SPACE), get_free_size(TMP_SPACE),
+                    LSpace::Perm.GetFree(), LSpace::Tmp.GetFree(),
                     PtrRef::stack.m_size);
         ret->Print();
         dprintf("\n");
     }
 
 /*  l_user_stack.push(ret);
-  LispGC::CollectSpace(PERM_SPACE);
+  LispGC::CollectSpace(&LSpace::Perm);
   ret=l_user_stack.pop(1);  */
 
     return ret;
@@ -3134,42 +3126,46 @@ LObject *LObject::Eval()
 
 void l_comp_init();
 
-void lisp_init()
+void Lisp::Init()
 {
     LSymbol::root = NULL;
     total_user_functions = 0;
 
-    free_space[0] = space[0] = (uint8_t *)malloc(0x1000);
-    space_size[0] = 0x1000;
+    LSpace::Tmp.m_free = LSpace::Tmp.m_data = (uint8_t *)malloc(0x1000);
+    LSpace::Tmp.m_size = 0x1000;
+    LSpace::Tmp.m_name = "temporary space";
 
-    free_space[1] = space[1] = (uint8_t *)malloc(0x1000);
-    space_size[1] = 0x1000;
+    LSpace::Perm.m_free = LSpace::Perm.m_data = (uint8_t *)malloc(0x1000);
+    LSpace::Perm.m_size = 0x1000;
+    LSpace::Perm.m_name = "permanent space";
 
-    current_space = PERM_SPACE;
+    LSpace::Gc.m_name = "garbage space";
+
+    LSpace::Current = &LSpace::Perm;
 
     l_comp_init();
     for(size_t i = 0; i < sizeof(sys_funcs) / sizeof(*sys_funcs); i++)
         add_sys_function(sys_funcs[i].name,
                          sys_funcs[i].min_args, sys_funcs[i].max_args, i);
     clisp_init();
-    current_space = TMP_SPACE;
+    LSpace::Current = &LSpace::Tmp;
     dprintf("Lisp: %d symbols defined, %d system functions, "
             "%d pre-compiled functions\n", LSymbol::count,
             sizeof(sys_funcs) / sizeof(*sys_funcs), total_user_functions);
 }
 
-void lisp_uninit()
+void Lisp::Uninit()
 {
-    free(space[0]);
-    free(space[1]);
+    free(LSpace::Tmp.m_data);
+    free(LSpace::Perm.m_data);
     DeleteAllSymbols(LSymbol::root);
     LSymbol::root = NULL;
     LSymbol::count = 0;
 }
 
-void clear_tmp()
+void LSpace::Clear()
 {
-    free_space[TMP_SPACE] = space[TMP_SPACE];
+    m_free = m_data;
 }
 
 LString *LSymbol::GetName()

@@ -742,7 +742,7 @@ int level::tick()
       l=o;
     }
 
-    clear_tmp();
+    LSpace::Tmp.Clear();
 
     if (cur)
     {
@@ -821,7 +821,7 @@ void level::draw_objects(view *v)
       o->draw();
   }
 
-  clear_tmp();
+  LSpace::Tmp.Clear();
 }
 
 void calc_bgsize(uint16_t fgw, uint16_t  fgh, uint16_t  &bgw, uint16_t  &bgh)
@@ -940,7 +940,7 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
     {
       uint16_t t=fp->read_uint16();
       game_object *p=new game_object(o_remap[t],1);
-      clear_tmp();
+      LSpace::Tmp.Clear();
       if (!first) first=p; else last->next=p;
       last=p; p->next=NULL;
     }
@@ -1150,7 +1150,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
       {
         uint16_t t=fp->read_uint16();
         game_object *p=new game_object(o_remap[t],1);
-        clear_tmp();
+        LSpace::Tmp.Clear();
         if (!first) first=p; else last->next=p;
         last=p; p->next=NULL;
       }
@@ -1509,15 +1509,15 @@ void level::level_loaded_notify()
 
 /*  if (DEFINEDP(symbol_function(l_level_loaded)))
   {
-    int sp=current_space;
-    current_space=PERM_SPACE;
+    LSpace *sp = LSpace::Current;
+    LSpace::Current = &LSpace::Perm;
 
     void *arg_list=NULL;
     PtrRef r1(arg_list);
     push_onto_list(LString::Create(n),arg_list);
     ((LSymbol *)l_level_loaded)->EvalFunction(arg_list);
 
-    current_space=sp;
+    LSpace::Current = sp;
   } */
 }
 
@@ -1840,10 +1840,10 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
       {
     if (f->focus)
     {
-      current_object=f->focus;
-      void *m=mark_heap(TMP_SPACE);
+      current_object = f->focus;
+      void *m = LSpace::Tmp.Mark();
       fun->EvalFunction(NULL);
-      restore_heap(m,TMP_SPACE);
+      LSpace::Tmp.Restore(m);
     }
       }
       current_object=o;

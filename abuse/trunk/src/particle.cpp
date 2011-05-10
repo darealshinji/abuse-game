@@ -71,10 +71,10 @@ int defun_pseq(void *args)
     printf("expecting first arg to def-particle to be a symbol!\n");
     exit(0);
   }
-  int sp=current_space;
-  current_space=PERM_SPACE;
+  LSpace *sp = LSpace::Current;
+  LSpace::Current = &LSpace::Perm;
   sym->SetNumber(total_pseqs); // set the symbol value to the object number
-  current_space=sp;
+  LSpace::Current = sp;
   pseqs=(part_sequence **)realloc(pseqs,sizeof(part_sequence *)*(total_pseqs+1));
 
   args=lcdr(args);
