@@ -845,17 +845,15 @@ static void DeleteAllSymbols(LSymbol *root)
     }
 }
 
-LObject *LObject::Assoc(LObject *item)
+LList *LList::Assoc(LObject *item)
 {
-    if (item_type(this) != L_CONS_CELL)
-        return NULL;
-
-    LObject *list = this;
-    while (list)
+    LList *list = this;
+    while (list && item_type(list) == L_CONS_CELL
+                && item_type(CAR(list)) == L_CONS_CELL)
     {
         if (lisp_eq(CAR(CAR(list)), item))
-            return lcar(list);
-        list = CDR(list);
+            return (LList *)CAR(list);
+        list = (LList *)CDR(list);
     }
 
     return NULL;
