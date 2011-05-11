@@ -15,8 +15,8 @@ AC_C_BIGENDIAN
 
 dnl Check for X
 AC_PATH_X
-if test "x${x_libraries}" != x; then
-  X_LIBS="-L${x_libraries}"
+if [ "x$x_libraries" != "x" ]; then
+  X_LIBS="-L$x_libraries"
 fi
 
 AC_ARG_ENABLE(debug,
@@ -88,6 +88,12 @@ fi
 if test "${enable_nonfree}" = "no"; then
   ac_cv_have_nonfree="no"
 fi
+if test "x${ac_cv_have_nonfree}" = xno; then
+  distdir="\$(PACKAGE)-free-\$(VERSION)"
+else
+  distdir="\$(PACKAGE)-\$(VERSION)"
+fi
+AC_SUBST(distdir)
 AM_CONDITIONAL(HAVE_NONFREE, test "${ac_cv_have_nonfree}" = "yes")
 
 # Optimizations
