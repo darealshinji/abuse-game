@@ -25,20 +25,33 @@
 extern int32_t sin_table[FIXED_TRIG_SIZE];   // this should be filled in by external module
 #define TBS 1662                          // atan table granularity
 extern uint16_t atan_table[TBS];
-#define NILP(x) (x==NULL)
-#define DEFINEDP(x) (x!=l_undefined)
+#define NILP(x) ((x)==NULL)
+#define DEFINEDP(x) ((x)!=l_undefined)
 class bFILE;
 extern bFILE *current_print_file;
 
+enum
+{
+    L_BAD_CELL, // error catching type
+    L_CONS_CELL,
+    L_NUMBER,
+    L_SYMBOL,
+    L_SYS_FUNCTION,
+    L_USER_FUNCTION,
+    L_STRING,
+    L_CHARACTER,
+    L_C_FUNCTION,
+    L_C_BOOL,
+    L_L_FUNCTION,
+    L_POINTER,
+    L_OBJECT_VAR,
+    L_1D_ARRAY,
+    L_FIXED_POINT,
+    L_COLLECTED_OBJECT,
+};
 
-enum { L_BAD_CELL,   // error catching type
-       L_CONS_CELL, L_NUMBER, L_SYMBOL,     L_SYS_FUNCTION, L_USER_FUNCTION,
-       L_STRING, L_CHARACTER, L_C_FUNCTION, L_C_BOOL,       L_L_FUNCTION, L_POINTER,
-       L_OBJECT_VAR, L_1D_ARRAY,
-       L_FIXED_POINT, L_COLLECTED_OBJECT };
-
-typedef uint8_t ltype;    // make sure structures aren't packed differently on various compiler
-                       // and sure that word, etc are word aligned
+// FIXME: switch this to uint8_t one day? it still breaks stuff
+typedef uint8_t ltype;
 
 struct LSpace
 {
