@@ -336,34 +336,34 @@ character_type::character_type(void *args, void *name)
 
     if (f==l_abil)
     {
-      LObject *l = CDR(CAR(field));
+      LList *l = (LList *)CDR(CAR(field));
       PtrRef r4(l);
       for (i=0; i<TOTAL_ABILITIES; i++)
       {
-    Cell *ab = LSymbol::FindOrCreate(ability_names[i])->Assoc(l);
+    Cell *ab = l->Assoc(LSymbol::FindOrCreate(ability_names[i]));
     PtrRef r5(ab);
     if (!NILP(ab))
       abil[i]=lnumber_value(lcar(lcdr(ab))->Eval());
       }
     } else if (f==l_funs)
     {
-      LObject *l = CDR(CAR(field));
+      LList *l = (LList *)CDR(CAR(field));
       PtrRef r4(l);
       for (i=0; i<TOTAL_OFUNS; i++)
       {
-    Cell *ab = LSymbol::FindOrCreate(ofun_names[i])->Assoc(l);
+    Cell *ab = l->Assoc(LSymbol::FindOrCreate(ofun_names[i]));
     PtrRef r5(ab);
     if (!NILP(ab) && lcar(lcdr(ab)))
     fun_table[i]=lcar(lcdr(ab));
       }
     } else if (f==l_flags)
     {
-      LObject *l = CDR(CAR(field));
+      LList *l = (LList *)CDR(CAR(field));
       PtrRef r4(l);
       for (i=0; i<TOTAL_CFLAGS; i++)
       {
 
-    Cell *ab = LSymbol::FindOrCreate(cflag_names[i])->Assoc(l);
+    Cell *ab = l->Assoc(LSymbol::FindOrCreate(cflag_names[i]));
     PtrRef r5(ab);
     if (!NILP(ab) && lcar(lcdr(ab))->Eval())
     cflags|=(1<<i);
@@ -456,7 +456,7 @@ character_type::character_type(void *args, void *name)
   desc=lcdr(desc);  //  skip filename
 
 
-  Cell *mrph = l_morph->Assoc(desc);     // check for morph info
+  Cell *mrph = desc->Assoc(l_morph);     // check for morph info
   morph_power=0;
   if (!NILP(mrph))
   {
@@ -465,7 +465,7 @@ character_type::character_type(void *args, void *name)
     morph_power=lnumber_value(lcar(lcdr(mrph)));
   } else morph_mask=-1;
 
-  Cell *sa = l_state_art->Assoc(desc);
+  Cell *sa = desc->Assoc(l_state_art);
   if (NILP(sa))
   {
     printf("missing state state art in def-character (%s)\n",name);
@@ -484,7 +484,7 @@ character_type::character_type(void *args, void *name)
     sa=lcdr(sa);
   }
 
-  Cell *range = l_range->Assoc(desc);
+  Cell *range = desc->Assoc(l_range);
   if (!NILP(range))
   {
     rangex=lnumber_value(lcar(lcdr(range)));
@@ -498,7 +498,7 @@ character_type::character_type(void *args, void *name)
 
 
 
-  Cell *mf = l_fields->Assoc(desc);
+  Cell *mf = desc->Assoc(l_fields);
   if (!NILP(mf))
   {
     mf=lcdr(mf);
@@ -512,7 +512,7 @@ character_type::character_type(void *args, void *name)
       find=i;
       if (find<0)
       {
-    lprint(l_fields->Assoc(desc));
+    lprint(desc->Assoc(l_fields));
     printf("fields : no such var name \"%s\"\n",name);
     printf("current possiblities are : \n");
     for (int i=0; i<t; i++) printf("\"%s\" ",default_simple.var_name(i));
@@ -529,7 +529,7 @@ character_type::character_type(void *args, void *name)
   } else total_fields=0;
 
 
-  Cell *lg = l_logo->Assoc(desc);
+  Cell *lg = desc->Assoc(l_logo);
   if (NILP(lg))
   {
     if (get_cflag(CFLAG_IS_WEAPON))

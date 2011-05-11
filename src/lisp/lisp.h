@@ -65,7 +65,6 @@ struct LObject
 
     /* Methods */
     LObject *Eval();
-    LObject *Assoc(LObject *item);
     void Print();
 
     /* Members */
@@ -88,6 +87,7 @@ struct LList : LObject
 
     /* Methods */
     size_t GetLength();
+    LList *Assoc(LObject *item);
 
     /* Members */
     LObject *m_cdr, *m_car;
