@@ -1456,7 +1456,6 @@ Game::Game(int argc, char **argv)
 
   chat = new chat_console( console_font, 50, 6);
 
-#if !defined __CELLOS_LV2__
   if(!wm->has_mouse())
   {
     close_graphics();
@@ -1464,7 +1463,6 @@ Game::Game(int argc, char **argv)
     printf("No mouse driver detected, please rectify.\n");
     exit(0);
   }
-#endif
 
   gamma_correct(pal);
 
