@@ -105,7 +105,7 @@ int32_t game_object::get_var_by_name(char *name, int &error)
     {
       return lvars[figures[otype]->var_index[i]];
 /*      LObjectVar *cobj=(LObjectVar *)symbol_value(figures[otype]->vars[i]);
-      character_type *t=figures[otype];
+      CharacterType *t=figures[otype];
       int number=cobj->number;
       if (t->tiv<=number || !t->vars[number])
       {

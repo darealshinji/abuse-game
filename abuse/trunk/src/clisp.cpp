@@ -776,16 +776,16 @@ void *l_caller(long number, void *args)
       if (!total_objects)
       {
         object_names=(char **)malloc(sizeof(char *)*(total_objects+1));
-    figures=(character_type **)malloc(sizeof(character_type *)*(total_objects+1));
+    figures=(CharacterType **)malloc(sizeof(CharacterType *)*(total_objects+1));
       }
       else
       {
         object_names=(char **)realloc(object_names,sizeof(char *)*(total_objects+1));
-    figures=(character_type **)realloc(figures,sizeof(character_type *)*(total_objects+1));
+    figures=(CharacterType **)realloc(figures,sizeof(CharacterType *)*(total_objects+1));
       }
 
       object_names[total_objects] = strdup(lstring_value(sym->GetName()));
-      figures[total_objects]=new character_type(CDR(args),sym);
+      figures[total_objects]=new CharacterType((LList *)CDR(args),sym);
       total_objects++;
       return LNumber::Create(total_objects-1);
     } break;

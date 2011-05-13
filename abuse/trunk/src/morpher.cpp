@@ -37,7 +37,7 @@ void morph_char::draw(game_object *who, view *v)
 morph_char::morph_char(game_object *who, int to_type, void (*stat_fun)(int), int anneal, int frames)
 {
   mor=NULL;
-  character_type *t1=figures[who->otype],*t2=figures[to_type];
+  CharacterType *t1=figures[who->otype],*t2=figures[to_type];
   if (!t1->has_sequence(morph_pose) || t1->morph_mask<0 ||
       !t2->has_sequence(morph_pose) || t2->morph_mask<0)
     fleft=0;
