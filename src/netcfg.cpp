@@ -69,7 +69,7 @@ void net_configuration::cfg_error(char const *msg)
   do
   {
     wm->flush_screen();
-    do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->event_waiting());
+    do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->IsPending());
   } while (ev.type!=EV_MESSAGE || ev.message.id!=CFG_ERR_OK || ev.type==EV_CLOSE_WINDOW || (ev.type==EV_KEY && ev.key==JK_ESC));
   wm->close_window(j);
   wm->flush_screen();
@@ -192,7 +192,7 @@ extern int start_running,demo_start,start_edit;
   do
   {
     wm->flush_screen();
-    do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->event_waiting());
+    do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->IsPending());
     if (ev.type==EV_MESSAGE)
     {
       if (ev.message.id==NET_SERVER) { done=1; state=RESTART_SERVER;  start_edit=0; demo_start=0; start_running=1; }
@@ -249,7 +249,7 @@ extern int start_running,demo_start,start_edit;
   do
   {
     wm->flush_screen();
-    do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->event_waiting());
+    do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->IsPending());
     if (ev.type==EV_MESSAGE && ev.message.id==NET_OK && confirm_inputs(nw,state==RESTART_SERVER))
       done=1;
     if (ev.type==EV_MESSAGE && (ev.message.id==NET_CANCEL || ev.message.id==NET_SINGLE))
@@ -307,7 +307,7 @@ void net_configuration::error(char const *message)
     do
     {
       wm->flush_screen();
-      do  { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->event_waiting());
+      do  { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->IsPending());
       inm.handle_event(ev,NULL);
       if ((ev.type==EV_KEY && (ev.key==JK_ESC || ev.key==JK_ENTER)) ||
       ev.type==EV_MESSAGE) done=1;
@@ -427,7 +427,7 @@ int net_configuration::get_options(int server)
     do
     {
       wm->flush_screen();
-      do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->event_waiting());
+      do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->IsPending());
       inm.handle_event(ev,NULL);
       if (ev.type==EV_MESSAGE)
       {
@@ -490,9 +490,9 @@ int net_configuration::input()   // pulls up dialog box and input fileds
 
     do
     {
-      if (wm->event_waiting())
+      if (wm->IsPending())
       {
-        do  { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->event_waiting());
+        do  { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->IsPending());
         inm.handle_event(ev,NULL);
         if (ev.type==EV_MESSAGE)
         {

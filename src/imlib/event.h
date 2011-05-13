@@ -71,7 +71,7 @@ public:
 
   JCMouse *mouse;
   sprite *mouse_sprite() { return mouse->mouse_sprite(); }
-  int event_waiting();
+  int IsPending();
   void Get(Event &ev);
   void add_redraw(int X1, int Y1, int X2, int Y2, void *Start);
   void mouse_status(int &x, int &y, int &button)
@@ -92,7 +92,7 @@ private:
     int get_key_flags();
 
     linked_list m_events;
-    int mhere, ewaiting, last_keystat, last_key;
+    int mhere, m_pending, last_keystat, last_key;
     sprite_controller sc;
 };
 

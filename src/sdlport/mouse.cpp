@@ -49,7 +49,7 @@ unsigned char def_mouse[]=
 //
 // Constructor
 //
-JCMouse::JCMouse( image *Screen, palette *pal )
+JCMouse::JCMouse(image *screen, palette *pal)
 {
     image *im;
     int br, dr;
@@ -57,9 +57,8 @@ JCMouse::JCMouse( image *Screen, palette *pal )
     but = 0;
     cx = cy = 0;
     here = 1;
-    sp = NULL;
 
-    screen = Screen;
+    m_screen = screen;
     br = pal->brightest( 1 );
     dr = pal->darkest( 1 );
     f.Set( 1, br );
@@ -76,20 +75,17 @@ JCMouse::JCMouse( image *Screen, palette *pal )
 //
 JCMouse::~JCMouse()
 {
-    if( sp )
-    {
-        delete sp->visual;
-        delete sp;
-    }
+    delete sp->visual;
+    delete sp;
 }
 
 //
 // set_shape()
 // Set the shape of the mouse cursor
 //
-void JCMouse::set_shape( image *im, int centerx, int centery )
+void JCMouse::set_shape(image *im, int centerx, int centery)
 {
-    sp->change_visual( im, 1 );
+    sp->change_visual(im, 1);
     cx = -centerx;
     cy = -centery;
 }
@@ -98,41 +94,32 @@ void JCMouse::set_shape( image *im, int centerx, int centery )
 // set_position()
 // Set the position of the mouse cursor
 //
-void JCMouse::set_position( int new_mx, int new_my )
+void JCMouse::set_position(int new_mx, int new_my)
 {
     // Make sure the values we are given are sensible.
-    if( new_mx > screen->Size().x - 1 )
-    {
-        new_mx = screen->Size().x - 1;
-    }
-    if( new_my > screen->Size().y - 1 )
-    {
-        new_my = screen->Size().y - 1;
-    }
+    mx = Min(new_mx, m_screen->Size().x - 1);
+    my = Min(new_my, m_screen->Size().y - 1);
 
     // Set the new position
-    mx = new_mx;
-    my = new_my;
-    SDL_WarpMouse( new_mx, new_my );
+    SDL_WarpMouse(mx, my);
 }
 
 //
 // update()
-// Update the mouses position and buttons states
+// Update the mouse position and button states
 //
-void JCMouse::update( int newx, int newy, int new_but )
+void JCMouse::update(int newx, int newy, int new_but)
 {
-    if( newx < 0 )
+    if (newx < 0)
     {
-        Uint8 mask;
-
         lx = mx;
         ly = my;
         lbut = but;
-        mask = SDL_GetMouseState( &mx, &my );
-        but = ( ( mask & SDL_BUTTON(1) ) != 0 ) |
-              ( ( mask & SDL_BUTTON(2) ) != 0 ) << 2 |
-              ( ( mask & SDL_BUTTON(3) ) != 0 ) << 1;
+
+        uint8_t mask = SDL_GetMouseState(&mx, &my);
+        but = ((mask & SDL_BUTTON(1)) != 0) |
+              ((mask & SDL_BUTTON(2)) != 0) << 2 |
+              ((mask & SDL_BUTTON(3)) != 0) << 1;
     }
     else
     {
@@ -141,3 +128,4 @@ void JCMouse::update( int newx, int newy, int new_but )
         but = new_but;
     }
 }
+

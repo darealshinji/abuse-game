@@ -192,7 +192,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   do
   {
     wm->flush_screen();
-    if (wm->event_waiting())
+    if (wm->IsPending())
     {
       wm->get_event(ev);
       if (ev.type==EV_KEY)
@@ -291,7 +291,7 @@ static void create_volume_window()
         {
             wm->get_event(ev);
         }
-        while(ev.type == EV_MOUSE_MOVE && wm->event_waiting());
+        while(ev.type == EV_MOUSE_MOVE && wm->IsPending());
 
         wm->flush_screen();
 
@@ -675,12 +675,12 @@ void main_menu()
     {
         time_marker new_time;
 
-        if (wm->event_waiting())
+        if (wm->IsPending())
         {
             do
             {
                 wm->get_event(ev);
-            } while (ev.type==EV_MOUSE_MOVE && wm->event_waiting());
+            } while (ev.type==EV_MOUSE_MOVE && wm->IsPending());
             inm->handle_event(ev,NULL);
             if (ev.type==EV_KEY && ev.key==JK_ESC)
                 wm->Push(new Event(ID_QUIT,NULL));

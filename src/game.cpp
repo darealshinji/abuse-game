@@ -1298,7 +1298,7 @@ void do_title()
             wm->flush_screen();
             time_marker now;
 
-            while(wm->event_waiting() && ev.type != EV_KEY)
+            while(wm->IsPending() && ev.type != EV_KEY)
                 wm->get_event(ev);
 
             if((i % 5) == 0 && DEFINEDP(space_snd) && (sound_avail & SFX_INITIALIZED))

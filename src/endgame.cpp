@@ -362,7 +362,7 @@ void show_end2()
       i++;
     }
 
-    if (wm->event_waiting())
+    if (wm->IsPending())
       wm->get_event(ev);
 
   } while (ev.type!=EV_KEY && ev.type!=EV_MOUSE_BUTTON);
@@ -393,7 +393,7 @@ void show_end2()
     wm->flush_screen();
     time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
 
-    while (wm->event_waiting() && ev.type!=EV_KEY) wm->get_event(ev);
+    while (wm->IsPending() && ev.type!=EV_KEY) wm->get_event(ev);
   }
 
 
@@ -457,7 +457,7 @@ void share_end()
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(mid_plot),wm->font(),cmap,wm->bright_color());
     wm->flush_screen();
     time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
-    while (wm->event_waiting() && ev.type!=EV_KEY) wm->get_event(ev);
+    while (wm->IsPending() && ev.type!=EV_KEY) wm->get_event(ev);
   }
 
   if (ev.type!=EV_KEY)
@@ -507,7 +507,7 @@ void show_end()
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),wm->font(),cmap,wm->bright_color());
     wm->flush_screen();
     time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
-    while (wm->event_waiting() && ev.type!=EV_KEY) wm->get_event(ev);
+    while (wm->IsPending() && ev.type!=EV_KEY) wm->get_event(ev);
   }
 
   if (ev.type!=EV_KEY)

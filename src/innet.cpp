@@ -604,7 +604,7 @@ void net_reload()
       do
       {
                 service_net_request();
-                if (wm->event_waiting())
+                if (wm->IsPending())
                 {
                   Event ev;
                   do
@@ -616,7 +616,7 @@ void net_reload()
                       base->input_state=INPUT_PROCESSING;
                     }
 
-                  } while (wm->event_waiting());
+                  } while (wm->IsPending());
 
                   wm->flush_screen();
                 }
@@ -704,7 +704,7 @@ int get_inputs_from_server(unsigned char *buf)
       }
       if (abort)
       {
-    if (wm->event_waiting())
+    if (wm->IsPending())
     {
       Event ev;
       do
@@ -715,7 +715,7 @@ int get_inputs_from_server(unsigned char *buf)
           kill_slackers();
           base->input_state=INPUT_PROCESSING;
         }
-      } while (wm->event_waiting());
+      } while (wm->IsPending());
 
       wm->flush_screen();
     }
