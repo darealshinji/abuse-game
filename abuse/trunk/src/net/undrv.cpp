@@ -90,7 +90,7 @@ int kill_old_driver(int argc, char **argv)
     fclose(fp);
     unlink(DLOCK_NAME);
   }
-  unlink(DIN_NAME);    // remove any previous files if they exsists
+  unlink(DIN_NAME);    // remove any previous files if they existss
   unlink(DOUT_NAME);
   return 1;
 }

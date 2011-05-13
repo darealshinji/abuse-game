@@ -164,7 +164,7 @@ void draw_panims(view *v)
 {
   for (part_animation *p=first_anim; p; p=p->next)
   {
-    cache.part(p->seq->frames[p->frame])->draw(screen,p->x-v->xoff()+v->cx1,p->y-v->yoff()+v->cy1,p->dir);
+    cache.part(p->seq->frames[p->frame])->draw(main_screen,p->x-v->xoff()+v->cx1,p->y-v->yoff()+v->cy1,p->dir);
   }
 }
 
@@ -209,7 +209,7 @@ void part_frame::draw(image *screen, int x, int y, int dir)
 void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
 {
     int cx1, cy1, cx2, cy2;
-    screen->GetClip(cx1, cy1, cx2, cy2);
+    main_screen->GetClip(cx1, cy1, cx2, cy2);
 
     int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
     long xo = x1 << 16, yo = y1 << 16, dx = ( ( x2 - x1 ) << 16 ) / t, dy = ( ( y2 - y1 ) << 16 ) / t, x, y;
@@ -218,19 +218,19 @@ void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
     int ym = ( 1 << s );
     s = ( 15 - s );
 
-    screen->Lock();
+    main_screen->Lock();
     while( t-- )
     {
         x = ( xo >> 16 ) + ( jrand() >> s ) - xm;
         y = ( yo >> 16 ) + ( jrand() >> s ) - ym;
         if( !( x < cx1 || y < cy1 || x >= cx2 || y >= cy2 ) )
         {
-            *(screen->scan_line( y ) + x ) = c;
+            *(main_screen->scan_line( y ) + x ) = c;
         }
         xo += dx;
         yo += dy;
     }
-    screen->Unlock();
+    main_screen->Unlock();
 }
 
 
@@ -238,7 +238,7 @@ void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
 void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
 {
     int cx1, cy1, cx2, cy2;
-    screen->GetClip(cx1, cy1, cx2, cy2);
+    main_screen->GetClip(cx1, cy1, cx2, cy2);
 
     int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
     long xo = x1 << 16, yo = y1 << 16, dx = ( ( x2 - x1 ) << 16 ) / t, dy = ( ( y2 - y1 ) <<16 ) / t, x, y;
@@ -247,9 +247,9 @@ void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
     int ym = ( 1 << s );
     s = ( 15 - s );
 
-    screen->Lock();
+    main_screen->Lock();
 
-    int w = screen->Size().x;
+    int w = main_screen->Size().x;
     uint8_t *addr;
 
     while( t-- )
@@ -260,7 +260,7 @@ void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
         // refactoring.
         if( !( x <= cx1 || y <= cy1 || x >= cx2 - 1 || y >= cy2 - 1) )
         {
-            addr = screen->scan_line( y ) + x;
+            addr = main_screen->scan_line( y ) + x;
             *addr = c1;
             *(addr + w) = c2;
             *(addr - w) = c2;
@@ -271,6 +271,6 @@ void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
         yo += dy;
     }
 
-    screen->Unlock();
+    main_screen->Unlock();
 }
 

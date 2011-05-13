@@ -828,7 +828,7 @@ void *bottom_draw()
       {
     player_draw(just_fired,o->get_tint());
     if (o->controller() && o->controller()->local_player())
-      cache.img(S_health_image)->put_image(screen,o->controller()->cx2-20,
+      cache.img(S_health_image)->put_image(main_screen,o->controller()->cx2-20,
                         o->controller()->cy1+5,1);
       } break;
       case FAST_POWER :
@@ -849,7 +849,7 @@ void *bottom_draw()
     player_draw(just_fired,o->get_tint());
     o->state=(character_state)old_state;
     if (o->controller() && o->controller()->local_player())
-      cache.img(S_fast_image)->put_image(screen,o->controller()->cx2-20,
+      cache.img(S_fast_image)->put_image(main_screen,o->controller()->cx2-20,
                         o->controller()->cy1+5,1);
       } break;
       case FLY_POWER :
@@ -870,7 +870,7 @@ void *bottom_draw()
     o->state=(character_state)old_state;
 
     if (o->controller() && o->controller()->local_player())
-      cache.img(S_fly_image)->put_image(screen,o->controller()->cx2-20,
+      cache.img(S_fly_image)->put_image(main_screen,o->controller()->cx2-20,
                         o->controller()->cy1+5,1);
       } break;
       case SNEAKY_POWER :
@@ -883,7 +883,7 @@ void *bottom_draw()
       o->draw_predator();
 
     if (o->controller() && o->controller()->local_player())
-      cache.img(S_sneaky_image)->put_image(screen,o->controller()->cx2-20,
+      cache.img(S_sneaky_image)->put_image(main_screen,o->controller()->cx2-20,
                         o->controller()->cy1+5,1);
       } break;
     }
@@ -1030,7 +1030,7 @@ void *score_draw()
       if (sorted_players[i]==local)
         strcat(msg," <<");
 
-      fnt->put_string(screen,x,y,msg,color);
+      fnt->put_string(main_screen,x,y,msg,color);
       y+=fnt->height();
     }
   }
@@ -1045,10 +1045,10 @@ void *show_kills()
 {
   fade_out(8);
   wm->set_mouse_position(0,0);
-  screen->clear();
+  main_screen->clear();
   image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
-  im->put_image(screen,0,0);
-  int x1=im->Size().x+1,y1=0,y2=screen->Size().y;
+  im->put_image(main_screen,0,0);
+  int x1=im->Size().x+1,y1=0,y2=main_screen->Size().y;
   JCFont *fnt=wm->font();
 
   view *v=player_list; int tp=0,i;
@@ -1056,10 +1056,10 @@ void *show_kills()
 
   int y=(y1+y2)/2-(tp+2)*fnt->height()/2,x=x1+10;
   char const *header_str = symbol_str("score_header");
-  fnt->put_string(screen,x,y,header_str,wm->bright_color());
+  fnt->put_string(main_screen,x,y,header_str,wm->bright_color());
   y+=fnt->height();
 
-  screen->widget_bar(x,y+2,x+strlen(header_str)*fnt->width(),y+fnt->height()-3,
+  main_screen->widget_bar(x,y+2,x+strlen(header_str)*fnt->width(),y+fnt->height()-3,
              wm->bright_color(),wm->medium_color(),wm->dark_color());
   y+=fnt->height();
   v=player_list;
@@ -1074,7 +1074,7 @@ void *show_kills()
 
 
     sprintf(msg,"%-17s %3ld  %3ld",max_name,(long)v->kills,(long)(v->tkills+v->kills));
-    fnt->put_string(screen,x,y,msg,color);
+    fnt->put_string(main_screen,x,y,msg,color);
 
     y+=fnt->height();
     v=v->next;

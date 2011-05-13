@@ -72,7 +72,7 @@ ifield *ico_switch_button::unlink(int id)
   return NULL;
 }
 
-void ico_switch_button::handle_event(event &ev, image *screen, InputManager *im)
+void ico_switch_button::handle_event(Event &ev, image *screen, InputManager *im)
 {
   if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
                                          ev.mouse_button))
@@ -91,7 +91,7 @@ void ico_button::draw(int active, image *screen)
   area(x1,y1,x2,y2);
 
   if (active!=act  && activate_id!=-1 && active)
-    wm->push_event(new event(activate_id,NULL));
+    wm->Push(new Event(activate_id,NULL));
 
   if (up && !active)
     cache.img(u)->put_image(screen,x1,y1);
@@ -102,7 +102,7 @@ void ico_button::draw(int active, image *screen)
   else cache.img(da)->put_image(screen,x1,y1);
 
   if (act!=active && active && activate_id!=-1)
-    wm->push_event(new event(activate_id,NULL));
+    wm->Push(new Event(activate_id,NULL));
   act=active;
 
   if (active && key[0])
@@ -120,7 +120,7 @@ void ico_button::draw(int active, image *screen)
 extern long S_BUTTON_PRESS_SND;
 extern int sfx_volume;
 
-void ico_button::handle_event(event &ev, image *screen, InputManager *im)
+void ico_button::handle_event(Event &ev, image *screen, InputManager *im)
 {
   if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
                                          ev.mouse_button))
@@ -129,7 +129,7 @@ void ico_button::handle_event(event &ev, image *screen, InputManager *im)
     area(x1,y1,x2,y2);
     up=!up;
     draw(act,screen);
-    wm->push_event(new event(id,(char *)this));
+    wm->Push(new Event(id,(char *)this));
     if (S_BUTTON_PRESS_SND)
       cache.sfx(S_BUTTON_PRESS_SND)->play(sfx_volume);
   }

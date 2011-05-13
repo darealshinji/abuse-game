@@ -179,7 +179,7 @@ void scroller::draw(int active, image *screen)
 }
 
 
-void scroller::handle_event(event &ev, image *screen, InputManager *inm)
+void scroller::handle_event(Event &ev, image *screen, InputManager *inm)
 {
   int mx=ev.mouse_move.x,my=ev.mouse_move.y;
   switch (ev.type)
@@ -413,7 +413,7 @@ pick_list::pick_list(int X, int Y, int ID, int height,
   cur_sel=sx=start_yoffset;
 }
 
-void pick_list::handle_inside_event(event &ev, image *screen, InputManager *inm)
+void pick_list::handle_inside_event(Event &ev, image *screen, InputManager *inm)
 {
   if (ev.type==EV_MOUSE_MOVE && activate_on_mouse_move())
   {
@@ -430,7 +430,7 @@ void pick_list::handle_inside_event(event &ev, image *screen, InputManager *inm)
     if (sel<t && sel>=0)
     {
       if (sel==cur_sel)
-      wm->push_event(new event(id,(char *)this));
+      wm->Push(new Event(id,(char *)this));
       else
       {
     cur_sel=sel;
@@ -438,7 +438,7 @@ void pick_list::handle_inside_event(event &ev, image *screen, InputManager *inm)
       }
     }
   } else if (ev.type==EV_KEY && ev.key==JK_ENTER)
-    wm->push_event(new event(id,(char *)this));
+    wm->Push(new Event(id,(char *)this));
   else if (ev.type==EV_KEY)
   {
     int found=-1;
@@ -627,7 +627,7 @@ void spicker::scroll_event(int newx, image *screen)
 }
 
 
-void spicker::handle_inside_event(event &ev, image *screen, InputManager *inm)
+void spicker::handle_inside_event(Event &ev, image *screen, InputManager *inm)
 {
   switch (ev.type)
   {

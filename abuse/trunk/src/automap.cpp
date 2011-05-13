@@ -187,7 +187,7 @@ automap::automap(level *l, int width, int height)
   toggle_window();
 }
 
-void automap::handle_event(event &ev)
+void automap::handle_event(Event &ev)
 {
 
   //only respond to stuff in our window or on the main screen

@@ -102,7 +102,7 @@ class view
 
   void note_upkey();
   void note_downkey();
-  int handle_event(event &ev);
+  int handle_event(Event &ev);
   void update_scroll();
   void draw_hp();
   void draw_ammo();

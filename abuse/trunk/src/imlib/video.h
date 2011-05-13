@@ -21,10 +21,9 @@
 
 #include "image.h"
 
-
 extern int xres,yres;
 extern int xoff,yoff;
-extern image *screen;
+extern image *main_screen;
 
 void set_mode(int mode, int argc=0, char **argv=NULL);
 void close_graphics();
@@ -39,3 +38,4 @@ void clear_put_image(image *im, int x, int y);
 int get_vmode();
 
 #endif
+

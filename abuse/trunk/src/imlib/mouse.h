@@ -33,7 +33,7 @@ public :
   int lasty() { if (here) return ly; else return 0; }
   int last_button() { if (here) return lbut; else return 0; }
   int button() { return but; }
-  int exsist() { return here; }
+  int exists() { return here; }
   sprite *mouse_sprite() { return sp; }
   void set_position(int new_mx, int new_my);
   ~JCMouse();

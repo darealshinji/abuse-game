@@ -27,7 +27,7 @@ void write_include(image *im, palette *pal, char *filename, char *name)
     if (toupper(tmp_name[j])<'A' || toupper(tmp_name[j])>'Z')
       tmp_name[j]='_';
 
-  FILE *fp=fopen(filename,"rb");  // see if the file already exsist
+  FILE *fp=fopen(filename,"rb");  // see if the file already exists
   if (fp)
   {
     fclose(fp);

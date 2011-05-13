@@ -43,8 +43,8 @@ extern unsigned char *white_light;
 int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *font, uint8_t *cmap, char color)
 {
   int cx1, cy1, cx2, cy2, word_size, word_len;
-  screen->GetClip(cx1, cy1, cx2, cy2);
-  screen->InClip(x1,y1,x2+1,y2+1);
+  main_screen->GetClip(cx1, cy1, cx2, cy2);
+  main_screen->InClip(x1,y1,x2+1,y2+1);
   int h=font->height()+2,w=font->width(),x=x1,dist;
   y+=y1;
   char const *word_start;
@@ -106,15 +106,15 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *fo
     {
       while (word_len--)
       {
-    font->put_char(screen,x+1,y+1,*word_start,0);
-    font->put_char(screen,x,y,*word_start,c);
+    font->put_char(main_screen,x+1,y+1,*word_start,0);
+    font->put_char(main_screen,x,y,*word_start,c);
     word_start++;
     x+=w;
       }
     }
 
   }
-  screen->SetClip(cx1,cy1,cx2,cy2);
+  main_screen->SetClip(cx1,cy1,cx2,cy2);
   return (y<=y1);
 }
 
@@ -178,7 +178,7 @@ void director::wait(void *arg)
     wm->flush_screen();
     while (wm->event_waiting())
     {
-      event ev;
+      Event ev;
       wm->get_event(ev);
       if (ev.type==EV_KEY)
       {

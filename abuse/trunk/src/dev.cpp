@@ -180,7 +180,7 @@ int confirm_quit()
     {
         wm->flush_screen();
 
-        event ev;
+        Event ev;
         wm->get_event(ev);
         if(ev.type == EV_MESSAGE && ev.message.id == ID_QUIT_OK)
             fin = quit = 1;
@@ -256,7 +256,7 @@ void dev_controll::search_forward()
   if (search_window) // if no window then we can't get the object name
   {
     char *name=search_window->read(ID_SEARCH_TEXT);
-    int type=-1;    // see if this type exsists
+    int type=-1;    // see if this type existss
     int i;
     for (i=0; i<total_objects; i++)
       if (!strcmp(object_names[i],name))
@@ -264,7 +264,7 @@ void dev_controll::search_forward()
     if (type==-1)
     {
       char msg[60];
-      sprintf(msg,"Object type '%s' does not exsists!\n",name);
+      sprintf(msg,"Object type '%s' does not existss!\n",name);
       the_game->show_help(msg);
       the_game->need_refresh();
     } else
@@ -294,7 +294,7 @@ void dev_controll::search_forward()
       }
       else
       {
-    the_game->show_help("No object matching name exsist in level\n");
+    the_game->show_help("No object matching name exists in level\n");
 
       }
     }
@@ -338,7 +338,7 @@ void dev_term::execute(char *st)
            "load, esave, name\n");
   } else
   {
-    event ev;
+    Event ev;
     dv->do_command(st,ev);
   }
 }
@@ -481,8 +481,8 @@ void dev_controll::dev_draw(view *v)
     if (f->x-vx>=0 && f->x-vx<=(v->cx2-v->cx1+1) && f->y-vy>=0 && f->y-vy<=(v->cy2-v->cy1+1))
     {
       image *im=cache.img(light_buttons[f->type]);
-      im->put_image(screen,f->x-vx+v->cx1-im->Size().x/2,f->y-vy+v->cy1-im->Size().y/2,1);
-      screen->rectangle(f->x1-vx+v->cx1,f->y1-vy+v->cy1,f->x2-vx+v->cx1,f->y2-vy+v->cy1,
+      im->put_image(main_screen,f->x-vx+v->cx1-im->Size().x/2,f->y-vy+v->cy1-im->Size().y/2,1);
+      main_screen->rectangle(f->x1-vx+v->cx1,f->y1-vy+v->cy1,f->x2-vx+v->cx1,f->y2-vy+v->cy1,
                 wm->medium_color());
     }
       }
@@ -492,7 +492,7 @@ void dev_controll::dev_draw(view *v)
     {
       int32_t rx1,ry1;
       the_game->game_to_mouse(link_object->x,link_object->y,v,rx1,ry1);
-      screen->line(rx1,ry1,dlastx,dlasty,yellow);
+      main_screen->line(rx1,ry1,dlastx,dlasty,yellow);
     }
 
     if (selected_light)
@@ -501,7 +501,7 @@ void dev_controll::dev_draw(view *v)
       int l=i->Size().x/2,h=i->Size().y/2;
       int32_t rx1,ry1;
       the_game->game_to_mouse(selected_light->x,selected_light->y,v,rx1,ry1);
-      screen->rectangle(rx1-l,ry1-h,rx1+l,ry1+h,wm->bright_color());
+      main_screen->rectangle(rx1-l,ry1-h,rx1+l,ry1+h,wm->bright_color());
     }
 
     game_object *o;
@@ -510,7 +510,7 @@ void dev_controll::dev_draw(view *v)
       {
     the_game->game_to_mouse(o->x,o->y,current_view,x1,y1);
     char *nm=object_names[o->otype];
-    console_font->put_string(screen,x1-strlen(nm)*console_font->width()/2,y1+2,nm);
+    console_font->put_string(main_screen,x1-strlen(nm)*console_font->width()/2,y1+2,nm);
       }
 
     if (dev&DRAW_LINKS)
@@ -525,14 +525,14 @@ void dev_controll::dev_draw(view *v)
     {
       game_object *other=o->get_object(i);
       the_game->game_to_mouse(other->x,other->y,current_view,x2,y2);
-      screen->line(x1,y1,x2,y2,wm->bright_color());
+      main_screen->line(x1,y1,x2,y2,wm->bright_color());
     }
 
     for (i=0; i<o->total_lights(); i++)
     {
       light_source *l=o->get_light(i);
       the_game->game_to_mouse(l->x,l->y,current_view,x2,y2);
-      screen->line(x1,y1,x2,y2,light_connection_color);
+      main_screen->line(x1,y1,x2,y2,light_connection_color);
     }
 
       }
@@ -544,14 +544,14 @@ void dev_controll::dev_draw(view *v)
       int32_t rx1,ry1,rx2,ry2;
       the_game->game_to_mouse(x1,y1,v,rx1,ry1);
       the_game->game_to_mouse(x2,y2,v,rx2,ry2);
-      screen->rectangle(rx1,ry1,rx2,ry2,wm->bright_color());
+      main_screen->rectangle(rx1,ry1,rx2,ry2,wm->bright_color());
 
       the_game->game_to_mouse(selected_object->x,selected_object->y,current_view,x1,y1);
       for (int i=0; i<selected_object->total_objects(); i++)
       {
     game_object *other=selected_object->get_object(i);
     the_game->game_to_mouse(other->x,other->y,current_view,x2,y2);
-    screen->line(x1,y1,x2,y2,light_connection_color);
+    main_screen->line(x1,y1,x2,y2,light_connection_color);
       }
     }
 
@@ -975,7 +975,7 @@ void dev_controll::load_stuff()
 
 }
 
-void dev_controll::do_command(char const *command, event &ev)
+void dev_controll::do_command(char const *command, Event &ev)
 {
   char fword[50];
   char const *st;
@@ -1035,7 +1035,7 @@ void dev_controll::do_command(char const *command, event &ev)
       the_game->load_level(tmp);
       current_level->unactivate_all();
 
-      if (screen)  // don't draw if graphics haven't been setup yet.
+      if (main_screen)  // don't draw if graphics haven't been setup yet.
         the_game->draw();
       player_list->reset_player();
       player_list->focus->x=cx;
@@ -1515,7 +1515,7 @@ void dev_controll::close_ai_window()
 }
 
 
-void dev_controll::area_handle_input(event &ev)
+void dev_controll::area_handle_input(Event &ev)
 {
 
   if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
@@ -1553,7 +1553,7 @@ void dev_controll::close_area_win(int read_values)
   }
 }
 
-void dev_controll::pick_handle_input(event &ev)
+void dev_controll::pick_handle_input(Event &ev)
 {
   area_controller *find=NULL;
   int find_top=0;
@@ -1626,7 +1626,7 @@ void dev_controll::close_oedit_window()
 int screen_shot_on=1;
 int sshot_fcount=-1;
 
-void dev_controll::handle_event(event &ev)
+void dev_controll::handle_event(Event &ev)
 {
   int32_t x,y;
   if (link_object && (dlastx!=last_link_x || dlasty!=last_link_y))
@@ -1636,7 +1636,7 @@ void dev_controll::handle_event(event &ev)
     the_game->need_refresh();
   }
 
-  if (dev_menu && dev_menu->handle_event(ev,screen)) return ;
+  if (dev_menu && dev_menu->handle_event(ev,main_screen)) return ;
 
   if (!current_level) return ;
 
@@ -1651,12 +1651,12 @@ void dev_controll::handle_event(event &ev)
     return;
 
   if (ev.type==EV_KEY && ev.key==JK_F2)
-    write_PCX(screen,pal,"scrnshot.pcx");
+    write_PCX(main_screen,pal,"scrnshot.pcx");
   else if (ev.type==EV_KEY && ev.key==JK_F3)
   {
     char name[100];
     sprintf(name,"shot%04d.pcx",screen_shot_on++);
-    write_PCX(screen,pal,name);
+    write_PCX(main_screen,pal,name);
   } else if (ev.type==EV_KEY && ev.key==JK_F5)
   {
     if (sshot_fcount!=-1)
@@ -2048,7 +2048,7 @@ void dev_controll::handle_event(event &ev)
       char cmd[100];
       sprintf(cmd,"load %s",mess_win->read(ID_MESS_STR1));
       dev_cont->do_command(cmd,ev);
-      wm->push_event(new event(ID_CANCEL,NULL));        // close window
+      wm->Push(new Event(ID_CANCEL,NULL));        // close window
     } break;
     case ID_GAME_SAVE :
     {
@@ -2085,8 +2085,8 @@ void dev_controll::handle_event(event &ev)
       if (current_level)
       {
         current_level->set_name(mess_win->read(ID_MESS_STR1));
-        wm->push_event(new event(ID_CANCEL,NULL));        // close window after save
-        wm->push_event(new event(ID_LEVEL_SAVE,NULL));
+        wm->Push(new Event(ID_CANCEL,NULL));        // close window after save
+        wm->Push(new Event(ID_LEVEL_SAVE,NULL));
       }
     } break;
     case ID_EDIT_SAVE :
@@ -2126,7 +2126,7 @@ void dev_controll::handle_event(event &ev)
     } break;
     case ID_LEVEL_NEW_OK :
     {
-      wm->push_event(new event(ID_CANCEL,NULL));  // close_window
+      wm->Push(new Event(ID_CANCEL,NULL));  // close_window
       if (current_level)
         delete current_level;
       current_level=new level(100,100,"untitled.spe");
@@ -2152,7 +2152,7 @@ void dev_controll::handle_event(event &ev)
         current_level->set_size(atoi(mess_win->read(ID_MESS_STR1)),
                     atoi(mess_win->read(ID_MESS_STR2)));
       } else the_game->show_help("Create a level first!");
-      wm->push_event(new event(ID_CANCEL,NULL));  // close_window
+      wm->Push(new Event(ID_CANCEL,NULL));  // close_window
     } break;
 
     case ID_SUSPEND :
@@ -2200,7 +2200,7 @@ void dev_controll::handle_event(event &ev)
         case ID_RECORD_DEMO_OK :
     {
       demo_man.set_state(demo_manager::RECORDING,mess_win->read(ID_RECORD_DEMO_FILENAME));
-      wm->push_event(new event(ID_CANCEL,NULL));        // close window
+      wm->Push(new Event(ID_CANCEL,NULL));        // close window
     } break;
 
     case ID_PLAY_DEMO :
@@ -2257,12 +2257,12 @@ void dev_controll::handle_event(event &ev)
                       new button(40,h*4,ID_WARN_CANCEL,symbol_str("cancel_button"),NULL))),
                     symbol_str("WARNING"));
         wm->grab_focus(warn_win);
-      } else wm->push_event(new event(ID_SET_SCROLL_OK,NULL));
+      } else wm->Push(new Event(ID_SET_SCROLL_OK,NULL));
     } break;
     case ID_WARN_CANCEL :
     {
       wm->close_window(warn_win); warn_win=NULL;
-      wm->push_event(new event(ID_CANCEL,NULL));
+      wm->Push(new Event(ID_CANCEL,NULL));
     } break;
     case ID_SET_SCROLL_OK :
     {
@@ -2271,7 +2271,7 @@ void dev_controll::handle_event(event &ev)
       bg_xdiv=atoi(mess_win->read(ID_MESS_STR2));
       bg_ymul=atoi(mess_win->read(ID_MESS_STR3));
       bg_ydiv=atoi(mess_win->read(ID_MESS_STR4));
-      wm->push_event(new event(ID_CANCEL,NULL));        // close window
+      wm->Push(new Event(ID_CANCEL,NULL));        // close window
     } break;
 
     case ID_CENTER_PLAYER :
@@ -2310,7 +2310,7 @@ void dev_controll::handle_event(event &ev)
           atoi(mess_win->read(ID_MESS_STR2)));
       char const *s=name;
       LObject::Compile(s)->Eval();
-      wm->push_event(new event(ID_CANCEL,NULL));        // close window
+      wm->Push(new Event(ID_CANCEL,NULL));        // close window
     } break;
     case ID_TOGGLE_DELAY :
     {
@@ -2323,7 +2323,7 @@ void dev_controll::handle_event(event &ev)
     } break;
     case ID_CLEAR_WEAPONS :
     {
-      event ev;
+      Event ev;
       do_command("clear_weapons",ev);
     } break;
     case ID_GOD_MODE :
@@ -2760,7 +2760,7 @@ void dev_controll::handle_event(event &ev)
       case 'a' : toggle_toolbar(); break;
       case 'A' : { if (selected_object)
                {
-             if (oedit) wm->push_event(new event(DEV_OEDIT_OK,NULL));
+             if (oedit) wm->Push(new Event(DEV_OEDIT_OK,NULL));
              make_ai_window(selected_object);
                }
              } break;
@@ -2824,7 +2824,7 @@ void dev_controll::handle_event(event &ev)
       case 'C' :
       if (selected_object && selected_object->controller()==NULL)
       { copy_object=selected_object;
-            wm->push_event(new event(DEV_OEDIT_COPY,NULL)); } break;
+            wm->Push(new Event(DEV_OEDIT_COPY,NULL)); } break;
 
       case 'D' : the_game->toggle_delay(); break;
       case 'L' : toggle_show_menu(); break;
@@ -2871,7 +2871,7 @@ void dev_controll::handle_event(event &ev)
         if (v)
         {
           v->god=!v->god;
-          sbar.redraw(screen);
+          sbar.redraw(main_screen);
         }
       } break;
       case ' ' :
@@ -3025,7 +3025,7 @@ void pal_win::draw()
   }
 }
 
-void pal_win::handle_event(event &ev)
+void pal_win::handle_event(Event &ev)
 {
   int d=cur_fg;
 
@@ -3572,7 +3572,7 @@ static pmenu *make_menu(int x, int y)
   return new pmenu(x,y,
          new pmenu_item(symbol_str("file_top"),new psub_menu(i_recurse(filemenu),NULL),
      new pmenu_item(symbol_str("edit_top"),new psub_menu(i_recurse(editmenu),NULL),
-     new pmenu_item(symbol_str("window_top"),new psub_menu(i_recurse(winmenu),NULL),NULL))),screen);
+     new pmenu_item(symbol_str("window_top"),new psub_menu(i_recurse(winmenu),NULL),NULL))),main_screen);
 }
 
 

@@ -112,7 +112,7 @@ char *button_box::read()
   return NULL;
 }
 
-void button_box::handle_event(event &ev, image *screen, InputManager *im)
+void button_box::handle_event(Event &ev, image *screen, InputManager *im)
 {
   switch (ev.type)
   {
@@ -267,7 +267,7 @@ char *text_field::read()
   return data;
 }
 
-void text_field::handle_event(event &ev, image *screen, InputManager *im)
+void text_field::handle_event(Event &ev, image *screen, InputManager *im)
 {
   int xx;
   if (ev.type==EV_KEY)
@@ -292,7 +292,7 @@ void text_field::handle_event(event &ev, image *screen, InputManager *im)
            data[strlen(format)-1]=' ';
            draw_text(screen);
            draw_cur(wm->bright_color(),screen);
-           wm->push_event(new event(id,(char *)this));
+           wm->Push(new Event(id,(char *)this));
          } break;
       default : if (ev.key>=' ' && ev.key<='~')
          {
@@ -305,7 +305,7 @@ void text_field::handle_event(event &ev, image *screen, InputManager *im)
        data[strlen(format)]=0;
            draw_text(screen);
            draw_cur(wm->bright_color(),screen);
-           wm->push_event(new event(id,(char *)this));
+           wm->Push(new Event(id,(char *)this));
          } break;
     }
   }
@@ -365,7 +365,7 @@ text_field::text_field(int X, int Y, int ID, char const *Prompt,
 void button::push()
 { up=!up; }
 
-void button::handle_event(event &ev, image *screen, InputManager *im)
+void button::handle_event(Event &ev, image *screen, InputManager *im)
 {
   if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
                                          ev.mouse_button))
@@ -375,7 +375,7 @@ void button::handle_event(event &ev, image *screen, InputManager *im)
     up=!up;
     draw_first(screen);
     draw(act,screen);
-    wm->push_event(new event(id,(char *)this));
+    wm->Push(new Event(id,(char *)this));
   }
 }
 
@@ -384,7 +384,7 @@ void button::draw(int active, image *screen)
   int x1,y1,x2,y2,color=(active ? wm->bright_color() : wm->medium_color());
   area(x1,y1,x2,y2);
   if (active!=act  && act_id!=-1 && active)
-    wm->push_event(new event(act_id,NULL));
+    wm->Push(new Event(act_id,NULL));
 
   if (pressed)
   {

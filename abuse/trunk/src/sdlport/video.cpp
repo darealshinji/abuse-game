@@ -42,7 +42,7 @@
 #include "setup.h"
 
 SDL_Surface *window = NULL, *surface = NULL;
-image *screen = NULL;
+image *main_screen = NULL;
 int win_xscale, win_yscale, mouse_xscale, mouse_yscale;
 int xres, yres;
 
@@ -122,14 +122,14 @@ void set_mode(int mode, int argc, char **argv)
     }
 
     // Create the screen image
-    screen = new image(vec2i(xres, yres), NULL, 2);
-    if(screen == NULL)
+    main_screen = new image(vec2i(xres, yres), NULL, 2);
+    if(main_screen == NULL)
     {
         // Our screen image is no good, we have to bail.
         printf("Video : Unable to create screen image.\n");
         exit(1);
     }
-    screen->clear();
+    main_screen->clear();
 
     if (flags.gl)
     {
@@ -202,7 +202,7 @@ void set_mode(int mode, int argc, char **argv)
     if(flags.grabmouse)
         SDL_WM_GrabInput(SDL_GRAB_ON);
 
-    update_dirty(screen);
+    update_dirty(main_screen);
 }
 
 //
@@ -222,7 +222,7 @@ void close_graphics()
     if (texture)
         SDL_FreeSurface(texture);
 #endif
-    delete screen;
+    delete main_screen;
 }
 
 // put_part_image()

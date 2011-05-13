@@ -85,15 +85,15 @@ void status_bar::draw_num(image *screen, int x, int y, int num, int *offset)
   int dh=small_render ? im->Size().y*2 : im->Size().y;
 
   int n=num/100;
-  scale_put(cache.img(offset[n]),screen,x,y,dw,dh);
+  scale_put(cache.img(offset[n]),main_screen,x,y,dw,dh);
   num-=n*100;
 
   x+=dw; n=num/10;
-  scale_put(cache.img(offset[n]),screen,x,y,dw,dh);
+  scale_put(cache.img(offset[n]),main_screen,x,y,dw,dh);
   num-=n*10;
 
   x+=dw;
-  scale_put(cache.img(offset[num]),screen,x,y,dw,dh);
+  scale_put(cache.img(offset[num]),main_screen,x,y,dw,dh);
 }
 
 void status_bar::redraw(image *screen)
@@ -263,7 +263,7 @@ void status_bar::draw_update()
     }
 
     if (need_rf)
-      redraw(screen);
+      redraw(main_screen);
   }
 }
 

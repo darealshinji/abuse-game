@@ -131,7 +131,7 @@ public :
   void put_block_bg(int x, int y, image *im);
 
 
-  int in_area(event &ev, int x1, int y1, int x2, int y2);
+  int in_area(Event &ev, int x1, int y1, int x2, int y2);
   void load_level(char const *name);
   void set_level(level *nl);
   void show_time();
@@ -144,8 +144,8 @@ public :
   void update_screen();
   void get_input();
   void do_intro();
-  void joy_calb(event &ev);
-  void menu_select(event &ev2);
+  void joy_calb(Event &ev);
+  void menu_select(Event &ev2);
   int can_morph_into(int type);
   void morph_into(int type);
   void set_state(int new_state);

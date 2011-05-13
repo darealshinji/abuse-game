@@ -109,7 +109,7 @@ int32_t game_object::get_var_by_name(char *name, int &error)
       int number=cobj->number;
       if (t->tiv<=number || !t->vars[number])
       {
-    lbreak("access : variable does not exsist for this class\n");
+    lbreak("access : variable does not exists for this class\n");
     return 0;
       }
       return lvars[t->var_index[number]]; */
@@ -392,7 +392,7 @@ void game_object::draw_above(view *v)
     TransImage *p=picture();
 
     for (i=sy1; i<=sy2; i++)
-      p->PutScanLine(screen,vec2i(sx,i),0);
+      p->PutScanLine(main_screen,vec2i(sx,i),0);
   }
 }
 
@@ -668,7 +668,7 @@ void game_object::map_draw()
 void game_object::draw_trans(int count, int max)
 {
   TransImage *cpict=picture();
-  cpict->PutFade(screen,
+  cpict->PutFade(main_screen,
           vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                 y-cpict->Size().y+1-current_vyadd),
           count,max,
@@ -680,7 +680,7 @@ void game_object::draw_tint(int tint_id)
 {
   TransImage *cpict=picture();
   if (fade_count())
-    cpict->PutFadeTint(screen,
+    cpict->PutFadeTint(main_screen,
                vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                      y-cpict->Size().y+1-current_vyadd),
                fade_count(),fade_max(),
@@ -689,7 +689,7 @@ void game_object::draw_tint(int tint_id)
 
 
   else
-    cpict->PutRemap(screen,
+    cpict->PutRemap(main_screen,
                vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                      y-cpict->Size().y+1-current_vyadd),
                cache.ctint(tint_id)->data);
@@ -700,7 +700,7 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 {
   TransImage *cpict=picture();
   if (fade_count())
-    cpict->PutFadeTint(screen,
+    cpict->PutFadeTint(main_screen,
                vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                      y-cpict->Size().y+1-current_vyadd),
                fade_count(),fade_max(),
@@ -709,7 +709,7 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 
 
   else
-    cpict->PutDoubleRemap(screen,
+    cpict->PutDoubleRemap(main_screen,
                vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                      y-cpict->Size().y+1-current_vyadd),
                cache.ctint(tint_id)->data,
@@ -721,7 +721,7 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 void game_object::draw_predator()
 {
   TransImage *cpict=picture();
-  cpict->PutPredator(screen,
+  cpict->PutPredator(main_screen,
              vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                    y-cpict->Size().y+1-current_vyadd));
 
@@ -744,7 +744,7 @@ void game_object::drawer()
     else
     {
       TransImage *cpict=picture();
-      cpict->PutImage(screen,
+      cpict->PutImage(main_screen,
                vec2i((direction<0 ? x-(cpict->Size().x-x_center()-1) : x-x_center())-current_vxadd,
                      y-cpict->Size().y+1-current_vyadd));
     }

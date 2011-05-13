@@ -448,12 +448,12 @@ void show_stats()
   {
     fade_out(8);
     wm->set_mouse_position(0,0);
-    screen->clear();
+    main_screen->clear();
     image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
-    im->put_image(screen,0,0);
+    im->put_image(main_screen,0,0);
 
 
-    int x1=im->Size().x+1,y1=0,x2=xres,y2=screen->Size().y;
+    int x1=im->Size().x+1,y1=0,x2=xres,y2=main_screen->Size().y;
     fade_in(NULL,16);
 
     char name[50];
@@ -474,11 +474,11 @@ void show_stats()
 
     int w=wm->font()->width()*strlen(msg),h=wm->font()->height();
     int x=(x1+x2)/2-w/2,y=(y1+y2)/2-h/2;
-    screen->bar(x-10,y-10,x+w+10,y+h+10,wm->bright_color());
-    screen->bar(x-9,y-9,x+w+9,y+h+9,wm->medium_color());
+    main_screen->bar(x-10,y-10,x+w+10,y+h+10,wm->bright_color());
+    main_screen->bar(x-9,y-9,x+w+9,y+h+9,wm->medium_color());
 
-    wm->font()->put_string(screen,x+1,y+1,msg,wm->dark_color());
-    wm->font()->put_string(screen,x,y,msg,wm->bright_color());
+    wm->font()->put_string(main_screen,x+1,y+1,msg,wm->dark_color());
+    wm->font()->put_string(main_screen,x,y,msg,wm->bright_color());
     wm->flush_screen();
     Timer now; now.WaitMs(500);
   }

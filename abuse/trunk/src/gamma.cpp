@@ -149,7 +149,7 @@ void gamma_correct(palette *&pal, int force_menu)
 
         Jwindow *gw = wm->new_window(xres / 2 - 190, yres / 2 - 90, -1, -1, gp);
 
-        event ev;
+        Event ev;
         wm->flush_screen();
 #if !defined __CELLOS_LV2__
         do

@@ -606,7 +606,7 @@ void net_reload()
                 service_net_request();
                 if (wm->event_waiting())
                 {
-                  event ev;
+                  Event ev;
                   do
                   {
                     wm->get_event(ev);
@@ -706,7 +706,7 @@ int get_inputs_from_server(unsigned char *buf)
       {
     if (wm->event_waiting())
     {
-      event ev;
+      Event ev;
       do
       {
         wm->get_event(ev);
