@@ -303,7 +303,7 @@ extern void l_obj_set(long number, void *arg);  // exten lisp function switches 
 extern void l_obj_print(long number);  // exten lisp function switches on number
 
 // FIXME: get rid of this later
-static inline void *symbol_value(void *sym) { return ((LSymbol *)sym)->GetValue(); }
+static inline LObject *symbol_value(void *sym) { return ((LSymbol *)sym)->GetValue(); }
 static inline char *lstring_value(void *str) { return ((LString *)str)->GetString(); }
 
 #include "lisp_opt.h"
