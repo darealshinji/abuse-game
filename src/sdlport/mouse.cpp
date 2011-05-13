@@ -65,9 +65,9 @@ JCMouse::JCMouse(image *screen, palette *pal)
     f.Set( 2, dr );
     im = new image(vec2i(8, 10), def_mouse);
     f.Apply( im );
-    sp = new sprite(Screen, im, 100, 100);
-    mx = Screen->Size().x / 2;
-    my = Screen->Size().y / 2;
+    sp = new sprite(screen, im, 100, 100);
+    mx = screen->Size().x / 2;
+    my = screen->Size().y / 2;
 }
 
 //

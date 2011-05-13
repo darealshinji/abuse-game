@@ -77,9 +77,9 @@ void game_server::game_start_wait()
       last_count=total_players();
     }
 
-    if (wm->event_waiting())
+    if (wm->IsPending())
     {
-      do { wm->get_event(ev); }  while (ev.type==EV_MOUSE_MOVE && wm->event_waiting());
+      do { wm->get_event(ev); }  while (ev.type==EV_MOUSE_MOVE && wm->IsPending());
       wm->flush_screen();
       if (ev.type==EV_MESSAGE && ev.message.id==ID_CANCEL)
         abort=1;
