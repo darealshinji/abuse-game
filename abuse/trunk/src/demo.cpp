@@ -60,7 +60,7 @@ void get_event(Event &ev)
 }
 
 int event_waiting()
-{ return wm->event_waiting(); }
+{ return wm->IsPending(); }
 
 
 int demo_manager::start_recording(char *filename)

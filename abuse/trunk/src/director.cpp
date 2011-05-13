@@ -176,7 +176,7 @@ void director::wait(void *arg)
     } else if (arg==text_symbol) done=1;
 
     wm->flush_screen();
-    while (wm->event_waiting())
+    while (wm->IsPending())
     {
       Event ev;
       wm->get_event(ev);
