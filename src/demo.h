@@ -39,7 +39,7 @@ class demo_manager
 
 extern demo_manager demo_man;
 
-extern void get_event(event &ev);
+extern void get_event(Event &ev);
 extern int event_waiting();
 
 

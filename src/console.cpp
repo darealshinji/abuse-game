@@ -194,7 +194,7 @@ void shell_term::execute(char const *st)
   put_string(" : unhandled\n");
 }
 
-int shell_term::handle_event(event &ev)
+int shell_term::handle_event(Event &ev)
 {
   if (ev.window==con_win && con_win)
   {

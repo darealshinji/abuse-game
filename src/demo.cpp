@@ -37,7 +37,7 @@ extern void net_send(int force);
 extern void fade_in(image *im, int steps);
 extern void fade_out(int steps);
 
-void get_event(event &ev)
+void get_event(Event &ev)
 { wm->get_event(ev);
   switch (ev.type)
   {
@@ -167,7 +167,7 @@ int demo_manager::start_playing(char *filename)
   c=tname;
   while (*c) { if (*c=='\\') *c='/'; c++; }
 
-  bFILE *probe=open_file(tname,"rb");   // see if the level still exsist?
+  bFILE *probe=open_file(tname,"rb");   // see if the level still exists?
   if (probe->open_failure()) { delete record_file; delete probe; return 0; }
   delete probe;
 
@@ -208,7 +208,7 @@ int demo_manager::set_state(demo_state new_state, char *filename)
       delete record_file;
       l_difficulty = initial_difficulty;
       the_game->set_state(MENU_STATE);
-      wm->push_event(new event(ID_NULL,NULL));
+      wm->Push(new Event(ID_NULL,NULL));
 
       view *v=player_list;
       for (; v; v=v->next)  // reset all the players

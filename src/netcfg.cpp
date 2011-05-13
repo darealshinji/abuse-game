@@ -65,7 +65,7 @@ void net_configuration::cfg_error(char const *msg)
 {
   Jwindow *j=wm->new_window(-1,0,-1,-1,new info_field(0, 0, 0, msg,
       new button(0, 30,CFG_ERR_OK,symbol_str("ok_button"),NULL)),symbol_str("input_error"));
-  event ev;
+  Event ev;
   do
   {
     wm->flush_screen();
@@ -187,7 +187,7 @@ extern int start_running,demo_start,start_edit;
                      new button(0,wm->font()->height()*6,NET_CANCEL,symbol_str("cancel_net"),
                         NULL)))),symbol_str("Networking"));
 
-  event ev;
+  Event ev;
   int done=0;
   do
   {
@@ -269,25 +269,25 @@ extern int start_running,demo_start,start_edit;
 
 void net_configuration::error(char const *message)
 {
-  image *screen_backup=screen->copy();
+  image *screen_backup = main_screen->copy();
 
   image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
   int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
-  ns->put_image(screen,x,y);
+  ns->put_image(main_screen,x,y);
   JCFont *fnt=wm->font();
 
   uint8_t *remap=white_light+30*256;
 
-  uint8_t *sl=screen->scan_line(0);
-  int xx=screen->Size().x*screen->Size().y;
+  uint8_t *sl = main_screen->scan_line(0);
+  int xx = main_screen->Size().x * main_screen->Size().y;
   for (; xx; xx--,sl++) *sl=remap[*sl];
 
   int fx=x+ns_w/2-strlen(message)*fnt->width()/2,
     fy=y+ns_h/2-fnt->height();
 
-  fnt->put_string(screen,fx+1,fy+1,message,wm->black());
-  fnt->put_string(screen,fx,fy,message,wm->bright_color());
+  fnt->put_string(main_screen,fx+1,fy+1,message,wm->black());
+  fnt->put_string(main_screen,fx,fy,message,wm->bright_color());
 
 
   {
@@ -298,12 +298,12 @@ void net_configuration::error(char const *message)
 
     button *sb=new button(bx,by,NET_SERVER,ok,NULL);
 
-    InputManager inm(screen,sb);
+    InputManager inm(main_screen, sb);
     inm.allow_no_selections();
     inm.clear_current();
 
     int done=0;
-    event ev;
+    Event ev;
     do
     {
       wm->flush_screen();
@@ -314,7 +314,7 @@ void net_configuration::error(char const *message)
     } while (!done);
   }
 
-  screen_backup->put_image(screen,0,0);
+  screen_backup->put_image(main_screen, 0, 0);
   wm->flush_screen();
   delete screen_backup;
 }
@@ -339,7 +339,7 @@ int net_configuration::get_options(int server)
   image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
   int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
-  ns->put_image(screen,x,y);
+  ns->put_image(main_screen,x,y);
   JCFont *fnt=wm->font();
   image *ok_image=cache.img(cache.reg("art/frame.spe","dev_ok",SPEC_IMAGE,1))->copy(),
     *cancel_image=cache.img(cache.reg("art/frame.spe","cancel",SPEC_IMAGE,1))->copy();
@@ -418,12 +418,12 @@ int net_configuration::get_options(int server)
   int ret=0;
 
   {
-    InputManager inm(screen,list);
+    InputManager inm(main_screen, list);
     inm.allow_no_selections();
     inm.clear_current();
 
     int done=0;
-    event ev;
+    Event ev;
     do
     {
       wm->flush_screen();
@@ -454,17 +454,17 @@ int net_configuration::input()   // pulls up dialog box and input fileds
 {
   int ret=0;
 #if !defined __CELLOS_LV2__
-  screen->clear();
+  main_screen->clear();
 
   image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
   int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
-  ns->put_image(screen,x,y);
+  ns->put_image(main_screen, x, y);
   char const *nw_s = symbol_str("Networking");
   JCFont *fnt=wm->font();
 
 
-  wm->font()->put_string(screen,x+ns_w/2-strlen(nw_s)*fnt->width()/2,y+21/2-fnt->height()/2,
+  wm->font()->put_string(main_screen,x+ns_w/2-strlen(nw_s)*fnt->width()/2,y+21/2-fnt->height()/2,
       nw_s,wm->medium_color());
   {
 
@@ -474,13 +474,13 @@ int net_configuration::input()   // pulls up dialog box and input fileds
     if (main_net_cfg && (main_net_cfg->state==CLIENT || main_net_cfg->state==SERVER))
       sb=new button(x+40,y+ns_h-9-fnt->height(),NET_SINGLE,symbol_str("single_play"),sb);
 
-    InputManager inm(screen,sb);
+    InputManager inm(main_screen,sb);
 
     inm.allow_no_selections();
     inm.clear_current();
 
 
-    event ev;
+    Event ev;
     int done=0;
     int button_y=25,total_games=0;
     enum { MAX_GAMES=9 };

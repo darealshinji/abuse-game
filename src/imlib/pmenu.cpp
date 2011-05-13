@@ -147,7 +147,7 @@ void psub_menu::hide(Jwindow *parent, int x, int y)
   int w,h;
   calc_size(w,h);
   int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
+  main_screen->GetClip(cx1, cy1, cx2, cy2);
   // FIXME: is this correct? it looks like it used to be incorrect
   // before the GetClip refactoring...
   if (w+x>cx2-1)
@@ -190,7 +190,7 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
   int w,h,i=0;
   calc_size(w,h);
   int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
+  main_screen->GetClip(cx1, cy1, cx2, cy2);
   if (parent->x+w+x>=cx2)
     x=cx2-1-w-parent->x;
   if (h+y+parent->y>=cy2)
@@ -310,12 +310,12 @@ void pmenu::draw(image *screen, int top_only)
 }
 
 
-int psub_menu::handle_event(Jwindow *parent, int x, int y, event &ev)
+int psub_menu::handle_event(Jwindow *parent, int x, int y, Event &ev)
 {
   int w,h;
   calc_size(w,h);
   int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
+  main_screen->GetClip(cx1, cy1, cx2, cy2);
 
   x=win->x;
   y=win->y;
@@ -352,7 +352,7 @@ int psub_menu::handle_event(Jwindow *parent, int x, int y, event &ev)
 }
 
 int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top,
-                 event &ev)
+                 Event &ev)
 {
   x+=parent->x;
   y+=parent->y;
@@ -363,7 +363,7 @@ int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top,
     else
     {
       if (ev.type==EV_MOUSE_BUTTON &&n)
-        wm->push_event(new event(id,(char *)this));
+        wm->Push(new Event(id,(char *)this));
       return 1;
     }
   } else if (sub)
@@ -392,7 +392,7 @@ pmenu_item *pmenu::inarea(int mx, int my, image *screen)
   }
 }
 
-int psub_menu::own_event(event &ev)
+int psub_menu::own_event(Event &ev)
 {
   if (win && ev.window==win) return 1; else
     for (pmenu_item *p=first; p; p=p->next)
@@ -401,7 +401,7 @@ int psub_menu::own_event(event &ev)
   return 0;
 }
 
-int pmenu_item::own_event(event &ev)
+int pmenu_item::own_event(Event &ev)
 {
   if (sub)
     return sub->own_event(ev);
@@ -412,7 +412,7 @@ pmenu_item::~pmenu_item()
 { if (n) free(n); if (sub) delete sub;
 }
 
-int pmenu::handle_event(event &ev, image *screen)
+int pmenu::handle_event(Event &ev, image *screen)
 {
   if (!active && ev.window!=bar) return 0;
 /*
@@ -435,7 +435,7 @@ int pmenu::handle_event(event &ev, image *screen)
     pmenu_item *r=p->find_key(ev.key);
     if (r)
     {
-      wm->push_event(new event(r->id,(char *)r));
+      wm->Push(new Event(r->id,(char *)r));
       return 1;
     }
       }

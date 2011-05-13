@@ -62,7 +62,7 @@ void game_server::game_start_wait()
 {
   int last_count=0;
   Jwindow *stat=NULL;
-  event ev;
+  Event ev;
   int abort=0;
   while (!abort && total_players()<main_net_cfg->min_players)
   {

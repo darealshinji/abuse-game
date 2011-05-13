@@ -119,7 +119,7 @@ void handle_no_space()
     button *b = new button(0, 0, ID_QUIT_OK, "Quit", inf);
     Jwindow *no_space = wm->new_window(0, 0, -1, -1, b, "ERROR");
 
-    event ev;
+    Event ev;
     do
     {
         wm->flush_screen();
@@ -460,7 +460,7 @@ void Game::set_state(int new_state)
     dev_cont->set_state(new_state);
 }
 
-void Game::joy_calb(event &ev)
+void Game::joy_calb(Event &ev)
 {
     if(!joy_win) // make sure the joystick calibration window is open
         return;
@@ -489,13 +489,13 @@ void Game::joy_calb(event &ev)
     }
 }
 
-void Game::menu_select(event &ev)
+void Game::menu_select(Event &ev)
 {
     state = DEV_MOUSE_RELEASE;
     if(top_menu)
     {
 #if 0
-        wm->push_event(new event(men_mess[((pick_list *)ev.message.data)->get_selection()], NULL));
+        wm->Push(new Event(men_mess[((pick_list *)ev.message.data)->get_selection()], NULL));
         wm->close_window(top_menu);
         top_menu = NULL;
 #endif
@@ -580,11 +580,11 @@ void Game::put_block_fg(int x, int y, TransImage *im)
       if(xoff / ftile_width()>x || xoff / ftile_width()+(viewx2 - viewx1)/ftile_width()+1 < x ||
       yoff / ftile_height()>y || yoff / ftile_height()+(viewy2 - viewy1)/ftile_height()+1 < y) return;
       int cx1, cy1, cx2, cy2;
-      screen->GetClip(cx1, cy1, cx2, cy2);
-      screen->SetClip(viewx1, viewy1, viewx2 + 1, viewy2 + 1);
-      im->PutImage(screen, vec2i((x - xoff / ftile_width())*ftile_width()+viewx1 - xoff % ftile_width(),
+      main_screen->GetClip(cx1, cy1, cx2, cy2);
+      main_screen->SetClip(viewx1, viewy1, viewx2 + 1, viewy2 + 1);
+      im->PutImage(main_screen, vec2i((x - xoff / ftile_width())*ftile_width()+viewx1 - xoff % ftile_width(),
             (y - yoff / ftile_height())*ftile_height()+viewy1 - yoff % ftile_height()));
-      screen->SetClip(cx1, cy1, cx2, cy2);
+      main_screen->SetClip(cx1, cy1, cx2, cy2);
     }
   }
 }
@@ -602,11 +602,11 @@ void Game::put_block_bg(int x, int y, image *im)
       if(xo / btile_width()>x || xo / btile_width()+(viewx2 - viewx1)/btile_width()+1 < x ||
       yo / btile_height()>y || yo / btile_height()+(viewy2 - viewy1)/btile_height()+1 < y) return;
       int cx1, cy1, cx2, cy2;
-      screen->GetClip(cx1, cy1, cx2, cy2);
-      screen->SetClip(viewx1, viewy1, viewx2 + 1, viewy2 + 1);
-      im->put_image(screen, (x - xo / btile_width())*btile_width()+viewx1 - xo % btile_width(),
+      main_screen->GetClip(cx1, cy1, cx2, cy2);
+      main_screen->SetClip(viewx1, viewy1, viewx2 + 1, viewy2 + 1);
+      im->put_image(main_screen, (x - xo / btile_width())*btile_width()+viewx1 - xo % btile_width(),
             (y - yo / btile_height())*btile_height()+viewy1 - yo % btile_height(), 0);
-      screen->SetClip(cx1, cy1, cx2, cy2);
+      main_screen->SetClip(cx1, cy1, cx2, cy2);
     }
   }
 }
@@ -632,7 +632,7 @@ void Game::dev_scroll()
 
     int xs, ys;
     if(mousex < xmargin &&  dev_cont->ok_to_scroll()) xs = -18;
-    else if(mousex>(screen->Size().x-xmargin) &&  dev_cont->ok_to_scroll()) xs = 18;
+    else if(mousex>(main_screen->Size().x-xmargin) &&  dev_cont->ok_to_scroll()) xs = 18;
     else if(wm->key_pressed(JK_LEFT) && !last_input && !dev_cont->need_arrows())
       xs = -18;
     else if(wm->key_pressed(JK_RIGHT) && !last_input && !dev_cont->need_arrows())
@@ -641,7 +641,7 @@ void Game::dev_scroll()
 
 
     if(mousey < ymargin && dev_cont->ok_to_scroll()) ys = -18;
-    else if(mousey>(screen->Size().y-ymargin) &&  dev_cont->ok_to_scroll()) ys = 18;
+    else if(mousey>(main_screen->Size().y-ymargin) &&  dev_cont->ok_to_scroll()) ys = 18;
     else if(wm->key_pressed(JK_UP) && !last_input)
       ys = -18;
     else if(wm->key_pressed(JK_DOWN) && !last_input)
@@ -697,11 +697,11 @@ static void post_render()
 {
   if(DEFINEDP(l_post_render->GetFunction()))
   {
-    screen->dirt_off();
+    main_screen->dirt_off();
     LSpace::Tmp.Clear();
     l_post_render->EvalFunction(NULL);
     LSpace::Tmp.Clear();
-    screen->dirt_on();
+    main_screen->dirt_on();
   }
 }
 
@@ -710,19 +710,19 @@ void Game::draw_map(view *v, int interpolate)
   backtile *bt;
   int x1, y1, x2, y2, x, y, xo, yo, nxoff, nyoff;
   int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
+  main_screen->GetClip(cx1, cy1, cx2, cy2);
 
   if(!current_level || state == MENU_STATE)
   {
     if(title_screen >= 0)
     {
       if(state == SCENE_STATE)
-        screen->SetClip(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
+        main_screen->SetClip(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
       image *tit = cache.img(title_screen);
-      tit->put_image(screen, screen->Size().x/2 - tit->Size().x/2,
-                    screen->Size().y/2 - tit->Size().y/2);
+      tit->put_image(main_screen, main_screen->Size().x/2 - tit->Size().x/2,
+                    main_screen->Size().y/2 - tit->Size().y/2);
       if(state == SCENE_STATE)
-        screen->SetClip(cx1, cy1, cx2, cy2);
+        main_screen->SetClip(cx1, cy1, cx2, cy2);
       wm->flush_screen();
     }
     return;
@@ -735,17 +735,17 @@ void Game::draw_map(view *v, int interpolate)
   // view area dirty alreadt
 
   if(small_render)
-    screen->AddDirty(v->cx1, v->cy1, (v->cx2 - v->cx1 + 1)*2 + v->cx1 + 1, v->cy1+(v->cy2 - v->cy1 + 1)*2 + 1);
+    main_screen->AddDirty(v->cx1, v->cy1, (v->cx2 - v->cx1 + 1)*2 + v->cx1 + 1, v->cy1+(v->cy2 - v->cy1 + 1)*2 + 1);
   else
-    screen->AddDirty(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
+    main_screen->AddDirty(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
 
   if(v->draw_solid != -1)      // fill the screen and exit..
   {
     int c = v->draw_solid;
-    screen->Lock();
+    main_screen->Lock();
     for(int y = v->cy1; y <= v->cy2; y++)
-      memset(screen->scan_line(y)+v->cx1, c, v->cx2 - v->cx1 + 1);
-    screen->Unlock();
+      memset(main_screen->scan_line(y)+v->cx1, c, v->cx2 - v->cx1 + 1);
+    main_screen->Unlock();
     v->draw_solid = -1;
     return;
   }
@@ -764,10 +764,10 @@ void Game::draw_map(view *v, int interpolate)
     v->cx2 = small_render->Size().x-1;
     v->cy2 = small_render->Size().y-1;
 
-    old_screen = screen;
-    screen = small_render;
+    old_screen = main_screen;
+    main_screen = small_render;
   } else
-    screen->dirt_off();
+    main_screen->dirt_off();
 
 
   int32_t xoff, yoff;
@@ -787,7 +787,7 @@ void Game::draw_map(view *v, int interpolate)
   current_vxadd = xoff - v->cx1;
   current_vyadd = yoff - v->cy1;
 
-  screen->SetClip(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
+  main_screen->SetClip(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
 
   nxoff = xoff * bg_xmul / bg_xdiv;
   nyoff = yoff * bg_ymul / bg_ydiv;
@@ -827,7 +827,7 @@ void Game::draw_map(view *v, int interpolate)
     }
     else bt = get_bg(0);
 
-        bt->im->put_image(screen, draw_x, draw_y);
+        bt->im->put_image(main_screen, draw_x, draw_y);
 //        if(!(dev & EDIT_MODE) && bt->next)
 //      current_level->put_bg(x, y, bt->next);
       }
@@ -889,22 +889,22 @@ void Game::draw_map(view *v, int interpolate)
   if(dev & DRAW_FG_LAYER)
   {
     int ncx1, ncy1, ncx2, ncy2;
-    screen->GetClip(ncx1, ncy1, ncx2, ncy2);
+    main_screen->GetClip(ncx1, ncy1, ncx2, ncy2);
 
-    int scr_w = screen->Size().x;
+    int scr_w = main_screen->Size().x;
     if(dev & MAP_MODE)
     {
       if(dev & EDIT_MODE)
-        screen->clear(wm->bright_color());
+        main_screen->clear(wm->bright_color());
       else
-        screen->clear(wm->black());
-      screen->Lock();
+        main_screen->clear(wm->black());
+      main_screen->Lock();
       for(y = y1, draw_y = yo; y <= y2; y++, draw_y += yinc)
       {
     if(!(draw_y < ncy1 ||draw_y + yinc > ncy2))
     {
       uint16_t *cl = current_level->get_fgline(y)+x1;
-      uint8_t *sl1 = screen->scan_line(draw_y)+xo;
+      uint8_t *sl1 = main_screen->scan_line(draw_y)+xo;
       for(x = x1, draw_x = xo; x <= x2; x++, cl++, sl1 += xinc, draw_x += xinc)
       {
         if(!(draw_x < ncx1 || draw_x + xinc > ncx2))
@@ -923,7 +923,7 @@ void Game::draw_map(view *v, int interpolate)
       }
     }
       }
-      screen->Unlock();
+      main_screen->Unlock();
 
       if(dev & EDIT_MODE)
         current_level->draw_areas(v);
@@ -951,7 +951,7 @@ void Game::draw_map(view *v, int interpolate)
           int fort_num = fgvalue(*cl);
           if(fort_num != BLACK)
           {
-            get_fg(fort_num)->im->PutImage(screen, vec2i(draw_x, draw_y));
+            get_fg(fort_num)->im->PutImage(main_screen, vec2i(draw_x, draw_y));
 
         if(!(dev & EDIT_MODE))
             *cl|=0x8000;      // mark as has - been - seen
@@ -993,16 +993,16 @@ void Game::draw_map(view *v, int interpolate)
         if(fort_num != BLACK)
         {
           if(dev & DRAW_BG_LAYER)
-          get_fg(fort_num)->im->PutImage(screen, vec2i(draw_x, draw_y));
+          get_fg(fort_num)->im->PutImage(main_screen, vec2i(draw_x, draw_y));
           else
-          get_fg(fort_num)->im->PutFilled(screen, vec2i(draw_x, draw_y), 0);
+          get_fg(fort_num)->im->PutFilled(main_screen, vec2i(draw_x, draw_y), 0);
 
           if(!(dev & EDIT_MODE))
           current_level->mark_seen(x, y);
           else
           {
-        screen->line(draw_x, draw_y, draw_x + xinc, draw_y + yinc, wm->bright_color());
-        screen->line(draw_x + xinc, draw_y, draw_x, draw_y + yinc, wm->bright_color());
+        main_screen->line(draw_x, draw_y, draw_x + xinc, draw_y + yinc, wm->bright_color());
+        main_screen->line(draw_x + xinc, draw_y, draw_x, draw_y + yinc, wm->bright_color());
           }
         }
       }
@@ -1036,9 +1036,9 @@ void Game::draw_map(view *v, int interpolate)
         for(int i = 1; i < p->tot; i++)
         {
           d += 2;
-          screen->line(draw_x+*(d - 2), draw_y+*(d - 1), draw_x+*d, draw_y+*(d + 1), b);
+          main_screen->line(draw_x+*(d - 2), draw_y+*(d - 1), draw_x+*d, draw_y+*(d + 1), b);
         }
-        screen->line(draw_x+*d, draw_y+*(d - 1), draw_x + p->data[0], draw_y + p->data[1], b);
+        main_screen->line(draw_x+*d, draw_y+*(d - 1), draw_x + p->data[0], draw_y + p->data[1], b);
           }
         }
       }
@@ -1062,11 +1062,11 @@ void Game::draw_map(view *v, int interpolate)
 
     int x1 = v->cx1, y1 = v->cy1, x2 = v->cx2, y2 = v->cy1 + wm->font()->height()+10;
 
-    remap_area(screen, x1, y1, x2, y2, white_light + 40 * 256);
-    screen->bar(x1, y1, x2, y1, color);
-    screen->bar(x1, y2, x2, y2, color);
+    remap_area(main_screen, x1, y1, x2, y2, white_light + 40 * 256);
+    main_screen->bar(x1, y1, x2, y1, color);
+    main_screen->bar(x1, y2, x2, y2, color);
 
-    wm->font()->put_string(screen, x1 + 5, y1 + 5,
+    wm->font()->put_string(main_screen, x1 + 5, y1 + 5,
                    help_text, color);
     if(color > 30)
         help_text_frames = -1;
@@ -1078,41 +1078,41 @@ void Game::draw_map(view *v, int interpolate)
     if(dev_cont)
     dev_cont->dev_draw(v);
     if(cache.in_use())
-    cache.img(vmm_image)->put_image(screen, v->cx1, v->cy2 - cache.img(vmm_image)->Size().y+1);
+    cache.img(vmm_image)->put_image(main_screen, v->cx1, v->cy2 - cache.img(vmm_image)->Size().y+1);
 
     if(dev & DRAW_LIGHTS)
     {
       if(small_render)
       {
-    double_light_screen(screen, xoff, yoff, white_light, v->ambient, old_screen, old_cx1, old_cy1);
+    double_light_screen(main_screen, xoff, yoff, white_light, v->ambient, old_screen, old_cx1, old_cy1);
 
     v->cx1 = old_cx1;
     v->cy1 = old_cy1;
     v->cx2 = old_cx2;
     v->cy2 = old_cy2;
-    screen = old_screen;
+    main_screen = old_screen;
       } else
       {
-    screen->dirt_on();
+    main_screen->dirt_on();
     if(xres * yres <= 64000)
-          light_screen(screen, xoff, yoff, white_light, v->ambient);
-    else light_screen(screen, xoff, yoff, white_light, 63);            // no lighting for hi - rez
+          light_screen(main_screen, xoff, yoff, white_light, v->ambient);
+    else light_screen(main_screen, xoff, yoff, white_light, 63);            // no lighting for hi - rez
       }
 
     } else
-      screen->dirt_on();
+      main_screen->dirt_on();
 
 
 
   }  else
-    screen->dirt_on();
+    main_screen->dirt_on();
 
   rand_on = ro;                // restore random start in case in draw funs moved it
                                // ... not every machine will draw the same thing
 
   post_render();
 
-  screen->SetClip(cx1, cy1, cx2 + 1, cy2 + 1);
+  main_screen->SetClip(cx1, cy1, cx2 + 1, cy2 + 1);
 
 
 
@@ -1148,7 +1148,7 @@ void Game::put_bg(int x, int y, int type)
   }
 }
 
-int Game::in_area(event &ev, int x1, int y1, int x2, int y2)
+int Game::in_area(Event &ev, int x1, int y1, int x2, int y2)
 {
   return (last_demo_mx >= x1 && last_demo_mx <= x2 &&
       last_demo_my >= y1 && last_demo_my <= y2);
@@ -1170,8 +1170,8 @@ template<int N> static void Fade(image *im, int steps)
 
     if (im)
     {
-        screen->clear();
-        im->put_image(screen, (xres + 1) / 2 - im->Size().x / 2,
+        main_screen->clear();
+        im->put_image(main_screen, (xres + 1) / 2 - im->Size().x / 2,
                               (yres + 1) / 2 - im->Size().y / 2);
     }
 
@@ -1193,7 +1193,7 @@ template<int N> static void Fade(image *im, int steps)
 
     if (N == 0)
     {
-        screen->clear();
+        main_screen->clear();
         wm->flush_screen();
         old_pal->load();
     }
@@ -1267,19 +1267,19 @@ void do_title()
             smoke[i] = new image(fp, sd.find(nm));
         }
 
-        screen->clear();
+        main_screen->clear();
         pal->load();
 
         int dx = (xres + 1) / 2 - gray->Size().x / 2, dy = (yres + 1) / 2 - gray->Size().y / 2;
-        gray->put_image(screen, dx, dy);
-        smoke[0]->put_image(screen, dx + 24, dy + 5);
+        gray->put_image(main_screen, dx, dy);
+        smoke[0]->put_image(main_screen, dx + 24, dy + 5);
 
         fade_in(NULL, 16);
         uint8_t cmap[32];
         for(int i = 0; i < 32; i++)
         cmap[i] = pal->find_closest(i * 256 / 32, i * 256 / 32, i * 256 / 32);
 
-        event ev;
+        Event ev;
         ev.type = EV_SPURIOUS;
         Timer total;
 
@@ -1292,8 +1292,8 @@ void do_title()
             if (i >= 400)
                 break;
 
-            gray->put_image(screen, dx, dy);
-            smoke[i % 5]->put_image(screen, dx + 24, dy + 5);
+            gray->put_image(main_screen, dx, dy);
+            smoke[i % 5]->put_image(main_screen, dx + 24, dy + 5);
             text_draw(205 - i, dx + 15, dy, dx + 320 - 15, dy + 199, str, wm->font(), cmap, wm->bright_color());
             wm->flush_screen();
             time_marker now;
@@ -1445,7 +1445,7 @@ Game::Game(int argc, char **argv)
 
   console_font = new JCFont(cache.img(console_font_pict));
 
-  wm = new WindowManager(screen, pal, bright_color,
+  wm = new WindowManager(main_screen, pal, bright_color,
                          med_color, dark_color, game_font);
 
   delete stat_man;  // move to a graphical status manager
@@ -1495,12 +1495,12 @@ Game::Game(int argc, char **argv)
     set_state(RUN_STATE);
   else
   {
-    screen->clear();
+    main_screen->clear();
     if(title_screen >= 0)
     {
       image *tit = cache.img(title_screen);
-      tit->put_image(screen, screen->Size().x/2 - tit->Size().x/2,
-                    screen->Size().y/2 - tit->Size().y/2);
+      tit->put_image(main_screen, main_screen->Size().x/2 - tit->Size().x/2,
+                    main_screen->Size().y/2 - tit->Size().y/2);
     }
     set_state(MENU_STATE);   // then go to menu state so windows will turn off
   }
@@ -1523,10 +1523,10 @@ void Game::show_time()
 
     char str[16];
     sprintf(str, "%ld", (long)(10000.0f / avg_ms));
-    console_font->put_string(screen, first_view->cx1, first_view->cy1, str);
+    console_font->put_string(main_screen, first_view->cx1, first_view->cy1, str);
 
     sprintf(str, "%d", total_active);
-    console_font->put_string(screen, first_view->cx1, first_view->cy1 + 10, str);
+    console_font->put_string(main_screen, first_view->cx1, first_view->cy1 + 10, str);
 }
 
 void Game::update_screen()
@@ -1572,7 +1572,7 @@ void Game::update_screen()
     if(state == PAUSE_STATE)
     {
       for(view *f = first_view; f; f = f->next)
-        cache.img(pause_image)->put_image(screen, (f->cx1 + f->cx2)/2 - cache.img(pause_image)->Size().x/2,
+        cache.img(pause_image)->put_image(main_screen, (f->cx1 + f->cx2)/2 - cache.img(pause_image)->Size().x/2,
                    f->cy1 + 5, 1);
     }
 
@@ -1648,7 +1648,7 @@ extern int start_edit;
 
 void Game::get_input()
 {
-    event ev;
+    Event ev;
     idle_ticks++;
     while(event_waiting())
     {
@@ -1712,7 +1712,7 @@ void Game::get_input()
             for(; v; v = v->next)
             {
                 if(v->local_player() && v->handle_event(ev))
-                    ev.type = EV_SPURIOUS;       // if the event was used by the view, gobble it up
+                    ev.type = EV_SPURIOUS;       // if the Event was used by the view, gobble it up
             }
 
             if(current_automap)
@@ -1805,7 +1805,7 @@ void Game::get_input()
                                     } break;
                                     case 'v':
                                     {
-                                        wm->push_event(new event(DO_VOLUME, NULL));
+                                        wm->Push(new Event(DO_VOLUME, NULL));
                                     } break;
                                     case 'p':
                                     {
@@ -1820,7 +1820,7 @@ void Game::get_input()
                                     {
                                         if(start_edit)
                                         {
-                                            wm->push_event(new event(ID_LEVEL_SAVE, NULL));
+                                            wm->Push(new Event(ID_LEVEL_SAVE, NULL));
                                         }
                                     } break;
                                     case JK_TAB:
@@ -1864,7 +1864,7 @@ void Game::get_input()
                             } break;
                             case EV_REDRAW:
                             {
-                                screen->AddDirty(ev.redraw.x1, ev.redraw.y1,
+                                main_screen->AddDirty(ev.redraw.x1, ev.redraw.y1,
                                     ev.redraw.x2 + 1, ev.redraw.y2 + 1);
                             } break;
                             case EV_MESSAGE:
@@ -2032,7 +2032,7 @@ void Game::step()
       dev_scroll();
   } else if(state == JOY_CALB_STATE)
   {
-    event ev;
+    Event ev;
     joy_calb(ev);
   } else if(state == MENU_STATE)
     main_menu();
@@ -2127,36 +2127,36 @@ Game::~Game()
 
 void Game::draw(int scene_mode)
 {
-    screen->AddDirty(0, 0, xres + 1, yres + 1);
+    main_screen->AddDirty(0, 0, xres + 1, yres + 1);
 
-    screen->clear();
+    main_screen->clear();
 
     if(scene_mode)
     {
         char const *helpstr = "ARROW KEYS CHANGE TEXT SPEED";
-        wm->font()->put_string(screen, screen->Size().x/2-(wm->font()->width()*strlen(helpstr))/2 + 1,
-            screen->Size().y-wm->font()->height()-5 + 1, helpstr, wm->dark_color());
-        wm->font()->put_string(screen, screen->Size().x/2-(wm->font()->width()*strlen(helpstr))/2,
-            screen->Size().y-wm->font()->height()-5, helpstr, wm->bright_color());
+        wm->font()->put_string(main_screen, main_screen->Size().x/2-(wm->font()->width()*strlen(helpstr))/2 + 1,
+            main_screen->Size().y-wm->font()->height()-5 + 1, helpstr, wm->dark_color());
+        wm->font()->put_string(main_screen, main_screen->Size().x/2-(wm->font()->width()*strlen(helpstr))/2,
+            main_screen->Size().y-wm->font()->height()-5, helpstr, wm->bright_color());
     }
 /*    else
     {
         char *helpstr="PRESS h FOR HELP";
-        wm->font()->put_string(screen, screen->Size().x-wm->font()->width()*strlen(helpstr)-5,
-            screen->Size().y-wm->font()->height()-5, helpstr);
+        wm->font()->put_string(main_screen, main_screen->Size().x-wm->font()->width()*strlen(helpstr)-5,
+            main_screen->Size().y-wm->font()->height()-5, helpstr);
     }*/
 /*    int dc = cache.img(window_colors)->pixel(0, 2);
     int mc = cache.img(window_colors)->pixel(1, 2);
     int bc = cache.img(window_colors)->pixel(2, 2);
-    screen->line(0, 0, screen->Size().x-1, 0, dc);
-    screen->line(0, 0, 0, screen->Size().y-1, dc);
-    screen->line(0, screen->Size().y-1, screen->Size().x-1, screen->Size().y-1, bc);
-    screen->line(screen->Size().x-1, 0, screen->Size().x-1, screen->Size().y-1, bc); */
+    main_screen->line(0, 0, main_screen->Size().x-1, 0, dc);
+    main_screen->line(0, 0, 0, main_screen->Size().y-1, dc);
+    main_screen->line(0, main_screen->Size().y-1, main_screen->Size().x-1, main_screen->Size().y-1, bc);
+    main_screen->line(main_screen->Size().x-1, 0, main_screen->Size().x-1, main_screen->Size().y-1, bc); */
 
     for(view *f = first_view; f; f = f->next)
         draw_map(f, 0);
 
-    sbar.redraw(screen);
+    sbar.redraw(main_screen);
 }
 
 int external_print = 0;
@@ -2203,7 +2203,7 @@ void game_getter(char *st, int max)
   {
     dev_console->show();
     int t = 0;
-    event ev;
+    Event ev;
     do
     {
       get_event(ev);

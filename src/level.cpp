@@ -770,7 +770,7 @@ int level::tick()
     {
       char name[100];
       sprintf(name,"shot%04d.pcx",screen_shot_on++);
-      write_PCX(screen,pal,name);
+      write_PCX(main_screen,pal,name);
     }
   }
 
@@ -801,9 +801,9 @@ void level::draw_areas(view *v)
 
     the_game->game_to_mouse(a->x,a->y,v,sx1,sy1);
     the_game->game_to_mouse(a->x+a->w,a->y+a->h,v,sx2,sy2);
-    screen->rectangle(sx1,sy1,sx2,sy2,c1);
-    screen->bar(sx1-1,sy1-1,sx1+1,sy1+1,c2);
-    screen->bar(sx2-1,sy2-1,sx2+1,sy2+1,c2);
+    main_screen->rectangle(sx1,sy1,sx2,sy2,c1);
+    main_screen->bar(sx1-1,sy1-1,sx1+1,sy1+1,c2);
+    main_screen->bar(sx2-1,sy2-1,sx2+1,sy2+1,c2);
   }
 }
 
@@ -1078,7 +1078,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
       {
     fp->read(old_name,fp->read_uint8());
     int new_type=o_remap[i];
-    if (new_type<total_objects)     // make sure old object still exsist
+    if (new_type<total_objects)     // make sure old object still exists
     {
       int k=0;
       for (; k<figures[new_type]->ts; k++)
@@ -1116,7 +1116,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
     {
       fp->read(old_name,fp->read_uint8());
       int new_type=o_remap[i];
-      if (new_type!=0xffff)        // make sure old object still exsist
+      if (new_type!=0xffff)        // make sure old object still exists
       {
         int k=0;
         for (; k<figures[new_type]->tiv; k++)
@@ -1369,7 +1369,7 @@ level::level(spec_directory *sd, bFILE *fp, char const *lev_name)
   }
   stat_man->update(10);
 
-  /***************** Check map for non exsistant tiles **************************/
+  /***************** Check map for non existsant tiles **************************/
   int32_t i,w;
   uint16_t *m;
   spec_entry *load_all=sd->find("player_info");
@@ -1791,7 +1791,7 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
       fp->seek(se->offset,0);
       if (fp->read_uint8()==RC_32)
       {
-    int32_t m=fp->read_uint32();  // read how many weapons exsisted when last saved
+    int32_t m=fp->read_uint32();  // read how many weapons existsed when last saved
     int i;
     for (v=player_list; v; v=v->next)
     {
@@ -2322,7 +2322,7 @@ int level::save(char const *filename, int save_all)
             if( save_all )
             {
                 write_player_info( fp, objs );
-                write_thumb_nail( fp,screen );
+                write_thumb_nail( fp,main_screen );
             }
 
             delete fp;

@@ -793,10 +793,10 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
   light_patch *f=first;
 
-  screen->Lock();
+  main_screen->Lock();
 
-  int scr_w=screen->Size().x;
-  uint8_t *screen_line=screen->scan_line(cy1)+cx1;
+  int scr_w=main_screen->Size().x;
+  uint8_t *screen_line=main_screen->scan_line(cy1)+cx1;
 
   for (int y = cy1; y < cy2; )
   {
@@ -886,7 +886,7 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
     screen_line-=prefix;
   }
-  screen->Unlock();
+  main_screen->Unlock();
 
   while (first)
   {

@@ -154,7 +154,7 @@ main(int argc, char **argv)
   }
 
 
-  unlink(DIN_NAME);    // remove any previous files if they exsists
+  unlink(DIN_NAME);    // remove any previous files if they existss
   unlink(DOUT_NAME);
 
 

@@ -31,48 +31,70 @@
 
 class Jwindow;
 
-class event : public linked_node
+class Event : public linked_node
 {
-public :
-  int                             type;
-  struct { int x,y; }             mouse_move;
-  int                             mouse_button;
-  int                             key;
-  struct { char alt,ctrl,shift; } key_special;
-  struct { int x1,y1,x2,y2;
-       void *start; }         redraw;
-  Jwindow                        *window;      // NULL is root
-  struct { int x,y; }             window_position;
-  struct { int id; char *data; }  message;
-  event(int id, char *data) { type=EV_MESSAGE; message.id=id; message.data=data; }
-  event() { type=EV_SPURIOUS; }
-} ;
+public:
+    Event()
+    {
+        type = EV_SPURIOUS;
+    }
 
-class event_handler
+    Event(int id, char *data)
+    {
+        type = EV_MESSAGE;
+        message.id = id;
+        message.data = data;
+    }
+
+    int type;
+    vec2i mouse_move;
+    int mouse_button, key;
+
+    struct { char alt, ctrl, shift; } key_special;
+    struct { int x1, y1, x2, y2; void *start; } redraw;
+
+    Jwindow *window;      // NULL is root
+    vec2i window_position;
+    struct { int id; char *data; } message;
+};
+
+class EventHandler
 {
-  sprite_controller sc;
-  int mhere,ewaiting,last_keystat,last_key;
-  int get_key_flags();
-  linked_list events;
-public :
+public:
+    EventHandler(image *screen, palette *pal);
+    ~EventHandler();
+
+    void Push(Event *ev)
+    {
+        m_events.add_end(ev);
+    }
+
   JCMouse *mouse;
   sprite *mouse_sprite() { return mouse->mouse_sprite(); }
-  event_handler(image *screen, palette *pal);
   int event_waiting();
-  void get_event(event &ev);
+  void Get(Event &ev);
   void add_redraw(int X1, int Y1, int X2, int Y2, void *Start);
   void mouse_status(int &x, int &y, int &button)
-  { if (mouse)
+  {
+    if (mouse)
     {
-      x=mouse->x(); y=mouse->y(); button=mouse->button();
-    } else x=y=button=0;
+      x = mouse->x();
+      y = mouse->y();
+      button = mouse->button();
+    } else x = y = button = 0;
   }
-  void push_event(event *ev) { events.add_end(ev); }
   void flush_screen();
-  int has_mouse() { return mouse->exsist(); }
-  void set_mouse_shape(image *im, int centerx, int centery) { mouse->set_shape(im,-centerx,-centery); }
-  void set_mouse_position(int mx, int my) { if (mouse) mouse->set_position(mx,my); }
-  ~event_handler();
-} ;
+  int has_mouse() { return mouse->exists(); }
+  void set_mouse_shape(image *im, int centerx, int centery) { mouse->set_shape(im, -centerx, -centery); }
+  void set_mouse_position(int mx, int my) { if (mouse) mouse->set_position(mx, my); }
+
+private:
+    int get_key_flags();
+
+    linked_list m_events;
+    int mhere, ewaiting, last_keystat, last_key;
+    sprite_controller sc;
+};
+
 #endif
 

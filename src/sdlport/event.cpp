@@ -35,71 +35,54 @@
 #include "sprite.h"
 #include "game.h"
 
-extern int get_key_binding( char const *dir, int i );
+extern int get_key_binding(char const *dir, int i);
 extern int mouse_xscale, mouse_yscale;
 short mouse_buttons[5] = { 0, 0, 0, 0, 0 };
 
 // Pre-declarations
-void handle_mouse( event &ev );
+void handle_mouse(Event &ev);
 
 //
 // Constructor
 //
-event_handler::event_handler( image *screen, palette *pal )
+EventHandler::EventHandler(image *screen, palette *pal)
 {
-    CHECK( screen && pal );
-    mouse = new JCMouse( screen, pal );
-    mhere = mouse->exsist();
+    CHECK(screen && pal);
+    mouse = new JCMouse(screen, pal);
+    mhere = mouse->exists();
     last_keystat = get_key_flags();
     ewaiting = 0;
 
     // Ignore activate events
-    SDL_EventState( SDL_ACTIVEEVENT, SDL_IGNORE );
-}
-
-//
-// Destructor
-//
-event_handler::~event_handler()
-{
-    delete mouse;
-}
-
-//
-// flush_screen()
-// Redraw the screen
-//
-void event_handler::flush_screen()
-{
-    update_dirty( screen );
+    SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
 }
 
 //
 // get_key_flags()
 // Return the flag for the key modifiers
 //
-int event_handler::get_key_flags()
+int EventHandler::get_key_flags()
 {
     SDLMod key_flag;
 
     key_flag = SDL_GetModState();
 
-    return ( ( key_flag & KMOD_SHIFT ) != 0 ) << 3 |
-           ( ( key_flag & KMOD_CTRL ) != 0 ) << 2 |
-           ( ( key_flag & KMOD_ALT ) != 0 ) << 1;
+    return ((key_flag & KMOD_SHIFT) != 0) << 3 |
+           ((key_flag & KMOD_CTRL) != 0) << 2 |
+           ((key_flag & KMOD_ALT) != 0) << 1;
 }
 
 //
 // event_waiting()
 // Are there any events in the queue?
 //
-int event_handler::event_waiting()
+int EventHandler::event_waiting()
 {
-    if( ewaiting )
+    if(ewaiting)
     {
         return 1;
     }
-    if( SDL_PollEvent( NULL ) )
+    if(SDL_PollEvent(NULL))
     {
         ewaiting = 1;
     }
@@ -107,30 +90,13 @@ int event_handler::event_waiting()
 }
 
 //
-// add_redraw()
-// Add a redraw rectangle.
-//
-void event_handler::add_redraw( int X1, int Y1, int X2, int Y2, void *Start )
-{
-    event *ev;
-    ev = new event;
-    ev->type = EV_REDRAW;
-    ev->redraw.x1 = X1;
-    ev->redraw.x2 = X2;
-    ev->redraw.y1 = Y1;
-    ev->redraw.y2 = Y2;
-    ev->redraw.start = Start;
-    events.add_end(ev);
-}
-
-//
 // get_event()
 // Get and handle waiting events
 //
-void event_handler::get_event( event &ev )
+void EventHandler::Get(Event &ev)
 {
-    event *ep;
-    while( !ewaiting )
+    Event *ep;
+    while(!ewaiting)
     {
         event_waiting();
 
@@ -141,13 +107,13 @@ void event_handler::get_event( event &ev )
         }
     }
 
-    ep = (event *)events.first();
-    if( ep )
+    ep = (Event *)m_events.first();
+    if(ep)
     {
         ev = *ep;
-        events.unlink(ep);
+        m_events.unlink(ep);
         delete ep;
-        ewaiting = events.first() != NULL;
+        ewaiting = m_events.first() != NULL;
     }
     else
     {
@@ -158,14 +124,14 @@ void event_handler::get_event( event &ev )
         ev.mouse_button = mouse->button();
 
         // Gather events
-        SDL_Event event;
-        if( SDL_PollEvent( &event ) )
+        SDL_Event Event;
+        if(SDL_PollEvent(&Event))
         {
             // always sort the mouse out
-            handle_mouse( ev );
-            mouse->update( ev.mouse_move.x, ev.mouse_move.y, ev.mouse_button );
+            handle_mouse(ev);
+            mouse->update(ev.mouse_move.x, ev.mouse_move.y, ev.mouse_button);
 
-            switch( event.type )
+            switch(Event.type)
             {
                 case SDL_QUIT:
                 {
@@ -174,17 +140,17 @@ void event_handler::get_event( event &ev )
                 }
                 case SDL_MOUSEBUTTONUP:
                 {
-                    switch( event.button.button )
+                    switch(Event.button.button)
                     {
                         case 4:        // Mouse wheel goes up...
                         {
-                            ev.key = get_key_binding( "b4", 0 );
+                            ev.key = get_key_binding("b4", 0);
                             ev.type = EV_KEYRELEASE;
                             break;
                         }
                         case 5:        // Mouse wheel goes down...
                         {
-                            ev.key = get_key_binding( "b3", 0 );
+                            ev.key = get_key_binding("b3", 0);
                             ev.type = EV_KEYRELEASE;
                             break;
                         }
@@ -193,17 +159,17 @@ void event_handler::get_event( event &ev )
                 }
                 case SDL_MOUSEBUTTONDOWN:
                 {
-                    switch( event.button.button )
+                    switch(Event.button.button)
                     {
                         case 4:        // Mouse wheel goes up...
                         {
-                            ev.key = get_key_binding( "b4", 0 );
+                            ev.key = get_key_binding("b4", 0);
                             ev.type = EV_KEY;
                             break;
                         }
                         case 5:        // Mouse wheel goes down...
                         {
-                            ev.key = get_key_binding( "b3", 0 );
+                            ev.key = get_key_binding("b3", 0);
                             ev.type = EV_KEY;
                             break;
                         }
@@ -215,7 +181,7 @@ void event_handler::get_event( event &ev )
                 {
                     // Default to EV_SPURIOUS
                     ev.key = EV_SPURIOUS;
-                    if( event.type == SDL_KEYDOWN )
+                    if(Event.type == SDL_KEYDOWN)
                     {
                         ev.type = EV_KEY;
                     }
@@ -223,7 +189,7 @@ void event_handler::get_event( event &ev )
                     {
                         ev.type = EV_KEYRELEASE;
                     }
-                    switch( event.key.keysym.sym )
+                    switch(Event.key.keysym.sym)
                     {
                         case SDLK_DOWN:            ev.key = JK_DOWN; break;
                         case SDLK_UP:            ev.key = JK_UP; break;
@@ -265,10 +231,10 @@ void event_handler::get_event( event &ev )
                         case SDLK_F11:
                         {
                             // Only handle key down
-                            if( ev.type == EV_KEY )
+                            if(ev.type == EV_KEY)
                             {
                                 // Toggle fullscreen
-                                SDL_WM_ToggleFullScreen( SDL_GetVideoSurface() );
+                                SDL_WM_ToggleFullScreen(SDL_GetVideoSurface());
                             }
                             ev.key = EV_SPURIOUS;
                             break;
@@ -276,18 +242,18 @@ void event_handler::get_event( event &ev )
                         case SDLK_F12:
                         {
                             // Only handle key down
-                            if( ev.type == EV_KEY )
+                            if(ev.type == EV_KEY)
                             {
                                 // Toggle grab mouse
-                                if( SDL_WM_GrabInput( SDL_GRAB_QUERY ) == SDL_GRAB_ON )
+                                if(SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON)
                                 {
-                                    the_game->show_help( "Grab Mouse: OFF\n" );
-                                    SDL_WM_GrabInput( SDL_GRAB_OFF );
+                                    the_game->show_help("Grab Mouse: OFF\n");
+                                    SDL_WM_GrabInput(SDL_GRAB_OFF);
                                 }
                                 else
                                 {
-                                    the_game->show_help( "Grab Mouse: ON\n" );
-                                    SDL_WM_GrabInput( SDL_GRAB_ON );
+                                    the_game->show_help("Grab Mouse: ON\n");
+                                    SDL_WM_GrabInput(SDL_GRAB_ON);
                                 }
                             }
                             ev.key = EV_SPURIOUS;
@@ -296,35 +262,35 @@ void event_handler::get_event( event &ev )
                         case SDLK_PRINT:    // print-screen key
                         {
                             // Only handle key down
-                            if( ev.type == EV_KEY )
+                            if(ev.type == EV_KEY)
                             {
                                 // Grab a screenshot
-                                SDL_SaveBMP( SDL_GetVideoSurface(), "screenshot.bmp" );
-                                the_game->show_help( "Screenshot saved to: screenshot.bmp.\n" );
+                                SDL_SaveBMP(SDL_GetVideoSurface(), "screenshot.bmp");
+                                the_game->show_help("Screenshot saved to: screenshot.bmp.\n");
                             }
                             ev.key = EV_SPURIOUS;
                             break;
                         }
                         default:
                         {
-                            ev.key = (int)event.key.keysym.sym;
+                            ev.key = (int)Event.key.keysym.sym;
                             // Need to handle the case of shift being pressed
                             // There has to be a better way
-                            if( (event.key.keysym.mod & KMOD_SHIFT) != 0 )
+                            if((Event.key.keysym.mod & KMOD_SHIFT) != 0)
                             {
-                                if( event.key.keysym.sym >= SDLK_a &&
-                                    event.key.keysym.sym <= SDLK_z )
+                                if(Event.key.keysym.sym >= SDLK_a &&
+                                    Event.key.keysym.sym <= SDLK_z)
                                 {
                                     ev.key -= 32;
                                 }
-                                else if( event.key.keysym.sym >= SDLK_1 &&
-                                         event.key.keysym.sym <= SDLK_5 )
+                                else if(Event.key.keysym.sym >= SDLK_1 &&
+                                         Event.key.keysym.sym <= SDLK_5)
                                 {
                                     ev.key -= 16;
                                 }
                                 else
                                 {
-                                    switch( event.key.keysym.sym )
+                                    switch(Event.key.keysym.sym)
                                     {
                                         case SDLK_6:
                                             ev.key = SDLK_CARET; break;
@@ -370,68 +336,60 @@ void event_handler::get_event( event &ev )
 // SDL_GetMouseState doesn't seem to be
 // able to detect that.
 //
-void handle_mouse( event &ev )
+void handle_mouse(Event &ev)
 {
     Uint8 buttons;
     int x, y;
 
     // always sort the mouse out
-    buttons = SDL_GetMouseState( &x, &y );
-    x = (x << 16) / mouse_xscale;
-    y = (y << 16) / mouse_yscale;
-    if( x > screen->Size().x - 1 )
-    {
-        x = screen->Size().x - 1;
-    }
-    if( y > screen->Size().y - 1 )
-    {
-        y = screen->Size().y - 1;
-    }
+    buttons = SDL_GetMouseState(&x, &y);
+    x = Min((x << 16) / mouse_xscale, main_screen->Size().x - 1);
+    y = Min((y << 16) / mouse_yscale, main_screen->Size().y - 1);
     ev.mouse_move.x = x;
     ev.mouse_move.y = y;
     ev.type = EV_MOUSE_MOVE;
 
     // Left button
-    if( (buttons & SDL_BUTTON(1)) && !mouse_buttons[1] )
+    if((buttons & SDL_BUTTON(1)) && !mouse_buttons[1])
     {
         ev.type = EV_MOUSE_BUTTON;
         mouse_buttons[1] = !mouse_buttons[1];
         ev.mouse_button |= LEFT_BUTTON;
     }
-    else if( !(buttons & SDL_BUTTON(1)) && mouse_buttons[1] )
+    else if(!(buttons & SDL_BUTTON(1)) && mouse_buttons[1])
     {
         ev.type = EV_MOUSE_BUTTON;
         mouse_buttons[1] = !mouse_buttons[1];
-        ev.mouse_button &= ( 0xff - LEFT_BUTTON );
+        ev.mouse_button &= (0xff - LEFT_BUTTON);
     }
 
     // Middle button
-    if( (buttons & SDL_BUTTON(2)) && !mouse_buttons[2] )
+    if((buttons & SDL_BUTTON(2)) && !mouse_buttons[2])
     {
         ev.type = EV_MOUSE_BUTTON;
         mouse_buttons[2] = !mouse_buttons[2];
         ev.mouse_button |= LEFT_BUTTON;
         ev.mouse_button |= RIGHT_BUTTON;
     }
-    else if( !(buttons & SDL_BUTTON(2)) && mouse_buttons[2] )
+    else if(!(buttons & SDL_BUTTON(2)) && mouse_buttons[2])
     {
         ev.type = EV_MOUSE_BUTTON;
         mouse_buttons[2] = !mouse_buttons[2];
-        ev.mouse_button &= ( 0xff - LEFT_BUTTON );
-        ev.mouse_button &= ( 0xff - RIGHT_BUTTON );
+        ev.mouse_button &= (0xff - LEFT_BUTTON);
+        ev.mouse_button &= (0xff - RIGHT_BUTTON);
     }
 
     // Right button
-    if( (buttons & SDL_BUTTON(3)) && !mouse_buttons[3] )
+    if((buttons & SDL_BUTTON(3)) && !mouse_buttons[3])
     {
         ev.type = EV_MOUSE_BUTTON;
         mouse_buttons[3] = !mouse_buttons[3];
         ev.mouse_button |= RIGHT_BUTTON;
     }
-    else if( !(buttons & SDL_BUTTON(3)) && mouse_buttons[3] )
+    else if(!(buttons & SDL_BUTTON(3)) && mouse_buttons[3])
     {
         ev.type = EV_MOUSE_BUTTON;
         mouse_buttons[3] = !mouse_buttons[3];
-        ev.mouse_button &= ( 0xff - RIGHT_BUTTON );
+        ev.mouse_button &= (0xff - RIGHT_BUTTON);
     }
 }

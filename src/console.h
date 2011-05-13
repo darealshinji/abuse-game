@@ -47,7 +47,7 @@ class shell_term : public console
   public :
   shell_term(JCFont *font, int width, int height, char const *Name);
   virtual ~shell_term() { };
-  int handle_event(event &ev);
+  int handle_event(Event &ev);
   virtual void prompt();
   virtual void execute(char const *st);
 } ;

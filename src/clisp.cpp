@@ -1199,7 +1199,7 @@ long c_caller(long number, void *args)
     case 48 : return lnumber_value(CAR(args))&BLOCKED_RIGHT; break;
 
     case 50 : dev_cont->add_palette(args); break;
-    case 51 : write_PCX(screen,pal,lstring_value(CAR(args))); break;
+    case 51 : write_PCX(main_screen,pal,lstring_value(CAR(args))); break;
 
     case 52 : the_game->zoom=lnumber_value(CAR(args)); the_game->draw(); break;
     case 55 : the_game->show_help(lstring_value(CAR(args))); break;
@@ -1215,7 +1215,7 @@ long c_caller(long number, void *args)
     } break;
     case 59 : return menu(args,big_font); break;
     case 60 :
-    { event ev; dev_cont->do_command(lstring_value(CAR(args)),ev); return 1; } break;
+    { Event ev; dev_cont->do_command(lstring_value(CAR(args)),ev); return 1; } break;
     case 61 : the_game->set_state(lnumber_value(CAR(args))); break;
 
     case 62 :
@@ -1293,7 +1293,7 @@ long c_caller(long number, void *args)
       int32_t c=lnumber_value(CAR(args));
       the_game->game_to_mouse(x1,y1,current_view,cx1,cy1);
       the_game->game_to_mouse(x2,y2,current_view,cx2,cy2);
-      screen->line(cx1,cy1,cx2,cy2,c);
+      main_screen->line(cx1,cy1,cx2,cy2,c);
       return 1;
     } break;
     case 93 : return wm->dark_color(); break;
@@ -1843,7 +1843,7 @@ long c_caller(long number, void *args)
       int32_t x1=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t y1=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t id=lnumber_value(CAR(args));
-      cache.img(id)->put_image(screen,x1,y1,1);
+      cache.img(id)->put_image(main_screen,x1,y1,1);
     } break;
     case 217 :
     {
@@ -2043,7 +2043,7 @@ long c_caller(long number, void *args)
       int32_t cx2=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t cy2=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t c1=lnumber_value(CAR(args)); args=lcdr(args);
-      screen->bar(cx1,cy1,cx2,cy2,c1);
+      main_screen->bar(cx1,cy1,cx2,cy2,c1);
     } break;
     case 248 :
     {
@@ -2182,7 +2182,7 @@ long c_caller(long number, void *args)
       int x=lnumber_value(CAR(args));  args=CDR(args);
       int y=lnumber_value(CAR(args));
       c_target=id;
-      if (screen)
+      if (main_screen)
         wm->set_mouse_shape(cache.img(c_target)->copy(),x,y);
     } break;
     case 276 :
@@ -2203,7 +2203,7 @@ long c_caller(long number, void *args)
       int color=-1;
       if (args)
         color=lnumber_value(CAR(args));
-      fnt->put_string(screen,x,y,st,color);
+      fnt->put_string(main_screen,x,y,st,color);
     } break;
     case 278 : return ((JCFont *)lpointer_value(CAR(args)))->width(); break;
     case 279 : return ((JCFont *)lpointer_value(CAR(args)))->height(); break;
@@ -2221,7 +2221,7 @@ long c_caller(long number, void *args)
       int32_t x2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t y2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t c=lnumber_value(CAR(args));
-      screen->bar(x1,y1,x2,y2,c);
+      main_screen->bar(x1,y1,x2,y2,c);
     } break;
     case 283 :
     {
@@ -2230,7 +2230,7 @@ long c_caller(long number, void *args)
       int32_t x2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t y2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t c=lnumber_value(CAR(args));
-      screen->rectangle(x1,y1,x2,y2,c);
+      main_screen->rectangle(x1,y1,x2,y2,c);
     } break;
     case 284 :
     {

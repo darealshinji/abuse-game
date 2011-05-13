@@ -10,11 +10,11 @@
 
 #ifndef __JWIN__
 #define __JWIN__
+
 #include "video.h"
 #include "image.h"
 #include "event.h"
 #include "filter.h"
-#include "event.h"
 #include "fonts.h"
 
 class ifield;
@@ -39,9 +39,9 @@ private:
   int no_selections_allowed;
 
 public:
-  InputManager(image *Screen, ifield *First);
-  InputManager(Jwindow *owner, ifield *First);
-  void handle_event(event &ev, Jwindow *j);
+  InputManager(image *screen, ifield *first);
+  InputManager(Jwindow *owner, ifield *first);
+  void handle_event(Event &ev, Jwindow *j);
   ifield *get(int id);
   void redraw();
   void add(ifield *i);
@@ -73,7 +73,7 @@ public :
     virtual void area(int &x1, int &y1, int &x2, int &y2) = 0;
     virtual void draw_first(image *screen) = 0;
     virtual void draw(int active, image *screen) = 0;
-    virtual void handle_event(event &ev, image *screen, InputManager *im) = 0;
+    virtual void handle_event(Event &ev, image *screen, InputManager *im) = 0;
     virtual int selectable() { return 1; }
     virtual void remap(Filter *f) { ; }
     virtual char *read() = 0;
@@ -132,7 +132,7 @@ public:
     static int bottom_border();
 };
 
-class WindowManager
+class WindowManager : public EventHandler
 {
     friend class Jwindow;
 
@@ -141,19 +141,17 @@ protected:
     void remove_window(Jwindow *);
 
 public:
-    event_handler *eh;
+    WindowManager(image *, palette *, int hi, int med, int low, JCFont *);
+    ~WindowManager();
+
     Jwindow *first, *grab;
-    image *screen, *mouse_pic, *mouse_save;
-    palette *pal;
+    image *mouse_pic, *mouse_save;
     int hi, med, low, bk; // bright, medium, dark and black colors
     int key_state[512];
     enum { inputing, dragging } state;
     int drag_mousex, drag_mousey, frame_suppress;
     Jwindow *drag_window;
     JCFont *fnt, *wframe_fnt;
-
-    WindowManager(image *, palette *, int hi, int med, int low, JCFont *);
-    ~WindowManager();
 
     Jwindow *new_window(int x, int y, int l, int h,
                         ifield *fields = NULL, char const *Name = NULL);
@@ -163,9 +161,7 @@ public:
     void close_window(Jwindow *j);
     void resize_window(Jwindow *j, int l, int h);
     void move_window(Jwindow *j, int x, int y);
-    void get_event(event &ev);
-    void push_event(event *ev) { eh->push_event(ev); }
-    int event_waiting() { return eh->event_waiting(); }
+    void get_event(Event &ev);
     void flush_screen();
     int bright_color() { return hi; }
     int medium_color() { return med; }
@@ -173,13 +169,6 @@ public:
     int black() { return bk; }
     void set_colors(int Hi, int Med, int Low) { hi=Hi; med=Med; low=Low; }
     JCFont *font() { return fnt; }
-    int has_mouse() { return eh->has_mouse(); }
-    void mouse_status(int &x, int &y, int &button) { eh->mouse_status(x,y,button); }
-    void set_mouse_shape(image *im, int centerx, int centery)
-    { eh->set_mouse_shape(im,centerx,centery); }
-
-    void set_mouse_position(int mx, int my)
-    { eh->set_mouse_position(mx,my); }
 
     int key_pressed(int x) { return key_state[x]; }
     void hide_windows();
@@ -190,6 +179,10 @@ public:
     void grab_focus(Jwindow *j);
     void release_focus();
     int window_in_area(int x1, int y1, int x2, int y2); // true if a window lies in this area
+
+private:
+    palette *m_pal;
+    image *m_screen;
 };
 
 #endif

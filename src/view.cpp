@@ -307,7 +307,7 @@ void view::draw_character_damage()
       if (weapons[i]!=last_weapons[i])
       {
     last_weapons[i]=weapons[i];
-        sbar.draw_ammo(screen,i,weapons[i],current_weapon==i);
+        sbar.draw_ammo(main_screen,i,weapons[i],current_weapon==i);
       }
   }
 }
@@ -636,7 +636,7 @@ void view::last_weapon()
 
 }
 
-int view::handle_event(event &ev)
+int view::handle_event(Event &ev)
 {
     if( ev.type == EV_KEY )
     {
@@ -720,11 +720,11 @@ void view::draw_hp()
     {
         int h = focus->hp();
         last_hp=h;
-        sbar.draw_health( screen, focus->hp() );
+        sbar.draw_health( main_screen, focus->hp() );
     }
     else
     {
-        sbar.draw_health( screen, 0 );
+        sbar.draw_health( main_screen, 0 );
     }
 }
 
@@ -737,7 +737,7 @@ int view::drawable()
 void recalc_local_view_space()   // calculates view areas for local players, should be called
                                  // when adding or deleting local players
 {
-  if (screen)
+  if (main_screen)
   {
     int t=total_local_players();
     if (!t) return ;
@@ -906,7 +906,7 @@ void view::reset_player()
       ((LSymbol *)figures[focus->otype]->get_fun(OFUN_CONSTRUCTOR))->EvalUserFunction(NULL);
       current_object=o;
     }
-    sbar.redraw(screen);
+    sbar.redraw(main_screen);
 
     int i;
     for (i=0; i<focus->total_objects(); i++)   // reset the vars for the attached objects

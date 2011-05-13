@@ -146,7 +146,7 @@ void tile_picker::scroll_event(int newx, image *screen)
 }
 
 
-void tile_picker::handle_inside_event(event &ev, image *screen, InputManager *inm)
+void tile_picker::handle_inside_event(Event &ev, image *screen, InputManager *inm)
 {
   if (ev.type==EV_MOUSE_BUTTON)
   {

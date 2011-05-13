@@ -111,7 +111,7 @@ int get_save_spot()
   if(mx < 0) mx = 0;
 
   Jwindow *l_win=create_num_window(mx,MAX_SAVE_GAMES,MAX_SAVE_LINES,NULL);
-  event ev;
+  Event ev;
   int got_level=0;
   int quit=0;
   do
@@ -237,7 +237,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 
     first->put_image(preview->screen,preview->x1(),preview->y1());
 
-    event ev;
+    Event ev;
     int got_level=0;
     int quit=0;
     do

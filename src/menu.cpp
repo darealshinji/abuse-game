@@ -51,7 +51,7 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
 {
   int x,y;
   int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
+  main_screen->GetClip(cx1, cy1, cx2, cy2);
   if (x1<cx1) x1=cx1;
   if (y1<cy1) y1=cy1;
   if (x2>cx2-1) x2=cx2-1;
@@ -60,10 +60,10 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
 
   percent=256-percent;
 
-  screen->Lock();
+  main_screen->Lock();
   for (y=y1; y<=y2; y++)
   {
-    uint8_t *sl=screen->scan_line(y)+x1;
+    uint8_t *sl=main_screen->scan_line(y)+x1;
     for (x=x1; x<=x2; x++,sl++)
     {
       uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
@@ -73,25 +73,25 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
       *sl=color_table->Lookup((r)>>3,(g)>>3,(b)>>3);
     }
   }
-  screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
-  screen->Unlock();
+  main_screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
+  main_screen->Unlock();
 }
 
 void darken_area(int x1, int y1, int x2, int y2, int amount)
 {
   int x,y;
   int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
+  main_screen->GetClip(cx1, cy1, cx2, cy2);
   if (x1<cx1) x1=cx1;
   if (y1<cy1) y1=cy1;
   if (x2>cx2-1) x2=cx2-1;
   if (y2>cy2-1) y2=cy2-1;
   if (x2<x1 || y2<y1) return ;
 
-  screen->Lock();
+  main_screen->Lock();
   for (y=y1; y<=y2; y++)
   {
-    uint8_t *sl=screen->scan_line(y)+x1;
+    uint8_t *sl=main_screen->scan_line(y)+x1;
     for (x=x1; x<=x2; x++,sl++)
     {
       uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
@@ -101,17 +101,17 @@ void darken_area(int x1, int y1, int x2, int y2, int amount)
       *sl=color_table->Lookup((r)>>3,(g)>>3,(b)>>3);
     }
   }
-  screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
-  screen->Unlock();
+  main_screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
+  main_screen->Unlock();
 }
 
 void dark_widget(int x1, int y1, int x2, int y2, int br, int dr, int amount)
 {
-  screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
-  screen->line(x1,y1,x1,y2,br);
-  screen->line(x1+1,y1,x2,y1,br);
-  screen->line(x2,y1+1,x2,y2,dr);
-  screen->line(x1+1,y2,x2,y2,dr);
+  main_screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
+  main_screen->line(x1,y1,x1,y2,br);
+  main_screen->line(x1+1,y1,x2,y1,br);
+  main_screen->line(x2,y1+1,x2,y2,dr);
+  main_screen->line(x1+1,y2,x2,y2,dr);
   darken_area(x1+1,y1+1,x2-1,y2-1,amount);
 }
 
@@ -153,18 +153,18 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   }
 
   int mw=(font->width())*maxw+20;
-  int mx=screen->Size().x/2-mw/2,
-      my=screen->Size().y/2-mh/2;
+  int mx=main_screen->Size().x/2-mw/2,
+      my=main_screen->Size().y/2-mh/2;
 
 
-  screen->AddDirty(mx, my, mx + mw, my + mh);
+  main_screen->AddDirty(mx, my, mx + mw, my + mh);
 
   if (title)
   {
     int tl=strlen(title)*font->width();
-    int tx=screen->Size().x/2-tl/2;
+    int tx=main_screen->Size().x/2-tl/2;
     dark_widget(tx-2,my-font->height()-4,tx+tl+2,my-2,wm->medium_color(),wm->dark_color(),180);
-    font->put_string(screen,tx+1,my-font->height()-2,title,wm->bright_color());
+    font->put_string(main_screen,tx+1,my-font->height()-2,title,wm->bright_color());
   }
 
   dark_widget(mx,my,mx+mw-1,my+mh-1,wm->medium_color(),wm->dark_color(),200);
@@ -174,13 +174,13 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   for (c=(Cell *)args; !NILP(c); c=CDR(c))
   {
     char *ms=men_str(CAR(c));
-    font->put_string(screen,mx+10+1,y+1,ms,wm->black());
-    font->put_string(screen,mx+10,y,ms,wm->bright_color());
+    font->put_string(main_screen,mx+10+1,y+1,ms,wm->black());
+    font->put_string(main_screen,mx+10,y,ms,wm->bright_color());
     y+=font->height()+1;
   }
 
   wm->flush_screen();
-  event ev;
+  Event ev;
   int choice=0,done=0;
   int bh=font->height()+3;
   image *save = new image(vec2i(mw - 2,bh));
@@ -239,13 +239,13 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       int by1=(font->height()+1)*choice+my+5-2;
       int by2=by1+bh-1;
 
-      screen->put_part(save,0,0,mx+1,by1,mx+mw-2,by2);
+      main_screen->put_part(save,0,0,mx+1,by1,mx+mw-2,by2);
       tint_area(mx+1,by1,mx+mw-2,by2,63,63,63,color);
 
       char *cur=men_str(nth(choice,args));
-      font->put_string(screen,mx+10+1,by1+3,cur,wm->black());
-      font->put_string(screen,mx+10,by1+2,cur,wm->bright_color());
-      screen->rectangle(mx+1,by1,mx+mw-2,by2,wm->bright_color());
+      font->put_string(main_screen,mx+10+1,by1+3,cur,wm->black());
+      font->put_string(main_screen,mx+10,by1+2,cur,wm->bright_color());
+      main_screen->rectangle(mx+1,by1,mx+mw-2,by2,wm->bright_color());
 
       color+=cdir;
 
@@ -255,7 +255,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
     color+=cdir;
       }
       wm->flush_screen();
-      save->put_image(screen,mx+1,by1);
+      save->put_image(main_screen,mx+1,by1);
     } else { Timer tmp; tmp.WaitMs(10); }
 
   } while (!done);
@@ -285,7 +285,7 @@ static void create_volume_window()
 
     while(volume_window)
     {
-        event ev;
+        Event ev;
 
         do
         {
@@ -409,7 +409,7 @@ void show_sell(int abortable)
       int im=cache.reg_object("art/help.spe",CAR(tmp),SPEC_IMAGE,1);
       fade_in(cache.img(im),16);
 
-      event ev;
+      Event ev;
       do
       { wm->flush_screen();
     wm->get_event(ev);
@@ -424,7 +424,7 @@ void show_sell(int abortable)
 }
 
 
-void menu_handler(event &ev, InputManager *inm)
+void menu_handler(Event &ev, InputManager *inm)
 {
   switch (ev.type)
   {
@@ -515,12 +515,12 @@ void menu_handler(event &ev, InputManager *inm)
     if (!volume_window)
     {
       show_sell(1);
-      screen->clear();
+      main_screen->clear();
       if (title_screen>=0)
       {
         image *tit=cache.img(title_screen);
-          tit->put_image(screen,screen->Size().x/2-tit->Size().x/2,
-                          screen->Size().y/2-tit->Size().y/2);
+          tit->put_image(main_screen,main_screen->Size().x/2-tit->Size().x/2,
+                          main_screen->Size().y/2-tit->Size().y/2);
       }
       inm->redraw();
       fade_in(NULL,8);
@@ -660,13 +660,13 @@ void main_menu()
     ico_button *list=make_conditional_buttons(xres-33,y);
     list=make_default_buttons(xres-33,y,list);
 
-    InputManager *inm=new InputManager(screen,list);
+    InputManager *inm=new InputManager(main_screen,list);
     inm->allow_no_selections();
     inm->clear_current();
 
-    screen->AddDirty(0, 0, 320, 200);
+    main_screen->AddDirty(0, 0, 320, 200);
 
-    event ev;
+    Event ev;
 
     int stop_menu=0;
     time_marker start;
@@ -683,7 +683,7 @@ void main_menu()
             } while (ev.type==EV_MOUSE_MOVE && wm->event_waiting());
             inm->handle_event(ev,NULL);
             if (ev.type==EV_KEY && ev.key==JK_ESC)
-                wm->push_event(new event(ID_QUIT,NULL));
+                wm->Push(new Event(ID_QUIT,NULL));
 
             menu_handler(ev,inm);
             start.get_time();
