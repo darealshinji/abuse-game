@@ -30,7 +30,7 @@ void draw_help()
   image *im=cache.img(help_screens[help_page]);
   int x1=xres/2-im->Size().x/2,y1=yres/2-im->Size().y/2;
   int x2=x1+im->Size().x,y2=y1+im->Size().y;
-  im->put_image(main_screen,x1,y1);
+  main_screen->PutImage(im, x1, y1);
   main_screen->bar(0,0,x1-1,yres,0);
   main_screen->bar(0,0,xres,y1-1,0);
   main_screen->bar(x2,y1,xres,yres,0);

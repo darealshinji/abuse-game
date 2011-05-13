@@ -44,10 +44,10 @@ void console::redraw()
       for (i=0,dx=wx(); i<w; i++,s++,dx+=xa)
       {
     if (*s)
-      fnt->put_char(con_win->screen,dx,dy,*s);
+      fnt->put_char(con_win->m_surf,dx,dy,*s);
       }
     }
-    fnt->put_char(con_win->screen,wx()+cx*xa,wy()+cy*ya,'_');
+    fnt->put_char(con_win->m_surf,wx()+cx*xa,wy()+cy*ya,'_');
   }
 }
 
@@ -57,7 +57,7 @@ void console::show()
   {
     con_win=wm->new_window(lastx,lasty,screen_w(),screen_h(),NULL,name);
     redraw();
-    con_win->screen->SetClip(con_win->x1(),con_win->y1(),con_win->x2()+1,con_win->y2()+1);
+    con_win->m_surf->SetClip(con_win->x1(),con_win->y1(),con_win->x2()+1,con_win->y2()+1);
   }
 }
 
@@ -97,7 +97,7 @@ console::console(JCFont *font, int width, int height, char const *Name)
 void console::draw_cursor()
 {
   if (con_win)
-    fnt->put_char(con_win->screen,cx*fnt->width()+wx(),cy*fnt->height()+wy(),'_');
+    fnt->put_char(con_win->m_surf,cx*fnt->width()+wx(),cy*fnt->height()+wy(),'_');
 }
 
 
@@ -107,8 +107,8 @@ void console::draw_char(int x, int y, char ch)
   {
     int fw=fnt->width(),fh=fnt->height();
     int dx=wx()+x*fw,dy=wy()+y*fh;
-    con_win->screen->bar(dx,dy,dx+fw-1,dy+fh-1,wm->black());
-    fnt->put_char(con_win->screen,dx,dy,ch);
+    con_win->m_surf->bar(dx,dy,dx+fw-1,dy+fh-1,wm->black());
+    fnt->put_char(con_win->m_surf,dx,dy,ch);
   }
 }
 

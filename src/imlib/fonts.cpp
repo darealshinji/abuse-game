@@ -27,10 +27,10 @@ texture_font::texture_font(image *letters, image *font_pattern)
 
 void texture_font::put_char(image *screen,  int x, int y, char ch)
 { if (fntpat)
-    fntpat->put_part_masked(screen,let, x,y,
+    screen->PutPartMasked(fntpat, let, x,y,
        ((int)ch%32)*tl,((int)ch/32)*th,0,0,tl-1,th-1);
-  else let->put_part(screen,x,y,((int)ch%32)*tl,((int)ch/32)*th,
-     ((int)ch%32)*tl+tl-1,((int)ch/32)*th+th-1,1);
+  else screen->PutPart(let, x, y, ((int)ch%32)*tl, ((int)ch/32)*th,
+     ((int)ch%32)*tl+tl-1, ((int)ch/32)*th+th-1, 1);
 }
 
 void texture_font::put_string(image *screen, int x, int y, char const *st)
@@ -73,9 +73,9 @@ JCFont::JCFont(image *letters)
   for (ch=0; ch<256; ch++)
   {
     tmp.clear();
-    letters->put_part(&tmp,0,0,((int)ch%32)*tl,((int)ch/32)*th,
-              ((int)ch%32)*tl+tl-1,((int)ch/32)*th+th-1,1);
-    let[ch]=new TransImage(&tmp,"JCfont");
+    tmp.PutPart(letters, 0, 0, ((int)ch%32)*tl, ((int)ch/32)*th,
+                ((int)ch%32)*tl+tl-1, ((int)ch/32)*th+th-1, 1);
+    let[ch] = new TransImage(&tmp, "JCfont");
   }
 }
 

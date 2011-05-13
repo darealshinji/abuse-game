@@ -118,15 +118,15 @@ public:
                 int16_t xd, int16_t yd);
     void fill_image(image *screen, int16_t x1, int16_t y1,
                     int16_t x2, int16_t y2, int16_t align = 1);
-    void put_image(image *screen, int16_t x, int16_t y, char transparent = 0);
-    void put_part(image *screen, int16_t x, int16_t y, int16_t x1, int16_t y1,
-                  int16_t x2, int16_t y2, char transparent = 0);
-    void put_part_xrev(image *screen, int16_t x, int16_t y,
-                       int16_t x1, int16_t y1, int16_t x2, int16_t y2,
-                       char transparent = 0);
-    void put_part_masked(image *screen, image *mask, int16_t x, int16_t y,
-                         int16_t maskx, int16_t masky, int16_t x1, int16_t y1,
-                         int16_t x2, int16_t y2);
+    void PutImage(image *screen, int16_t x, int16_t y, char transparent = 0);
+    void PutPart(image *screen, int16_t x, int16_t y, int16_t x1, int16_t y1,
+                 int16_t x2, int16_t y2, char transparent = 0);
+    void PutPartXrev(image *screen, int16_t x, int16_t y,
+                     int16_t x1, int16_t y1, int16_t x2, int16_t y2,
+                     char transparent = 0);
+    void PutPartMasked(image *screen, image *mask, int16_t x, int16_t y,
+                       int16_t maskx, int16_t masky, int16_t x1, int16_t y1,
+                       int16_t x2, int16_t y2);
     image *copy_part_dithered(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
     void bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
     void xor_bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);

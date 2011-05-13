@@ -22,7 +22,7 @@ automap *current_automap=0;
 void automap::draw()
 {
   if (!automap_window) return ;
-  image *screen=automap_window->screen;
+  image *screen=automap_window->m_surf;
 
   long sx,ex,sy,ey,x,y,window_xstart,window_ystart,
                        window_xend,window_yend,centerx,centery,
@@ -63,13 +63,13 @@ void automap::draw()
   // if view position hasn't changed, only update the blinking dot and return
   if (draw_xstart==old_dx && draw_ystart==old_dy)
   {
-   automap_window->screen->Lock();
-   automap_window->screen->AddDirty(centerx,centery,centerx + 1,centery + 1);
+   automap_window->m_surf->Lock();
+   automap_window->m_surf->AddDirty(centerx,centery,centerx + 1,centery + 1);
     if ((tick++)&4)
-      automap_window->screen->PutPixel(vec2i(centerx,centery),255);
+      automap_window->m_surf->PutPixel(vec2i(centerx,centery),255);
     else
-      automap_window->screen->PutPixel(vec2i(centerx,centery),27);
-   automap_window->screen->Unlock();
+      automap_window->m_surf->PutPixel(vec2i(centerx,centery),27);
+   automap_window->m_surf->Unlock();
     return ;
   }
 
@@ -102,24 +102,24 @@ void automap::draw()
 
 
 
-  // draw the tiles that will be around the border of the automap with put_image
+  // draw the tiles that will be around the border of the automap with PutImage
   // because it handles clipping, but for ths reason is slower, the rest
   // we will slam on as fast as possible
 
-  screen->SetClip(window_xstart,window_ystart,window_xend+1,window_yend+1);
-/*  for (i=draw_xstart,j=draw_ystart,x=sx,y=sy; y<=ey; j+=AUTOTILE_HEIGHT,y++)
-    foretiles[cur_lev->get_fg(x,y)]->micro_image->put_image(screen,i,j,0);
+  screen->SetClip(window_xstart, window_ystart, window_xend+1, window_yend+1);
+#if 0
+  for (i=draw_xstart,j=draw_ystart,x=sx,y=sy; y<=ey; j+=AUTOTILE_HEIGHT,y++)
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, i, j, 0);
 
   for (i=draw_xstart+ex*AUTOTILE_WIDTH,j=draw_ystart,y=sy,x=ex; y<=ey; j+=AUTOTILE_HEIGHT,y++)
-    foretiles[cur_lev->get_fg(x,y)]->micro_image->put_image(screen,i,j,0);
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, i, j, 0);
 
   for (i=draw_xstart,j=draw_ystart,x=sx,y=sy; x<=ex; i+=AUTOTILE_WIDTH,x++)
-    foretiles[cur_lev->get_fg(x,y)]->micro_image->put_image(screen,i,j,0);
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, i, j, 0);
 
   for (i=draw_xstart,j=draw_ystart+ey*AUTOTILE_HEIGHT,x=sx,y=ex; x<=ex; i+=AUTOTILE_WIDTH,x++)
-    foretiles[cur_lev->get_fg(x,y)]->micro_image->put_image(screen,i,j,0); */
-
-
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, i, j, 0);
+#endif
 
   unsigned short *fgline;
   for (j=draw_ystart,y=sy; y<=ey; j+=AUTOTILE_HEIGHT,y++)
@@ -131,9 +131,9 @@ void automap::draw()
       {
     int id=foretiles[ (*fgline)&0x7fff];
     if (id>=0)
-          cache.foret(id)->micro_image->put_image(screen,i,j,0);
+          screen->PutImage(cache.foret(id)->micro_image, i, j, 0);
     else
-          cache.foret(foretiles[0])->micro_image->put_image(screen,i,j,0);
+          screen->PutImage(cache.foret(foretiles[0])->micro_image, i, j, 0);
       }
       else
         screen->bar(i,j,i+AUTOTILE_WIDTH-1,j+AUTOTILE_HEIGHT-1,0);
@@ -142,15 +142,15 @@ void automap::draw()
 
   // draw the person as a dot, no need to add a dirty because we marked the
   // whole screen already
-  automap_window->screen->Lock();
+  automap_window->m_surf->Lock();
   if ((tick++)&4)
-    automap_window->screen->PutPixel(vec2i(centerx,centery),255);
+    automap_window->m_surf->PutPixel(vec2i(centerx,centery),255);
   else
-    automap_window->screen->PutPixel(vec2i(centerx,centery),27);
-  automap_window->screen->Unlock();
+    automap_window->m_surf->PutPixel(vec2i(centerx,centery),27);
+  automap_window->m_surf->Unlock();
 
   // set the clip back to full window size because soemthing else could mess with the area
-  automap_window->screen->SetClip(0,0,screen->Size().x,screen->Size().y);
+  automap_window->m_surf->SetClip(0,0,screen->Size().x,screen->Size().y);
 }
 
 void automap::toggle_window()
@@ -167,9 +167,9 @@ void automap::toggle_window()
 
         automap_window = wm->new_window(0, 0, w * AUTOTILE_WIDTH,
                                         h * AUTOTILE_HEIGHT, NULL, "Map");
-        automap_window->screen->bar(17, 1, 17 + 8 * 6 + 3, 6,
+        automap_window->m_surf->bar(17, 1, 17 + 8 * 6 + 3, 6,
                                     wm->medium_color());
-        wm->font()->put_string(automap_window->screen, 20, 2, "Automap",
+        wm->font()->put_string(automap_window->m_surf, 20, 2, "Automap",
                                wm->dark_color());
         draw();
     }

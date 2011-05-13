@@ -87,34 +87,31 @@ void ico_switch_button::handle_event(Event &ev, image *screen, InputManager *im)
 
 void ico_button::draw(int active, image *screen)
 {
-  int x1,y1,x2,y2;
-  area(x1,y1,x2,y2);
+    int x1, y1, x2, y2;
+    area(x1, y1, x2, y2);
 
-  if (active!=act  && activate_id!=-1 && active)
-    wm->Push(new Event(activate_id,NULL));
+    if (active != act && activate_id != -1 && active)
+        wm->Push(new Event(activate_id, NULL));
 
-  if (up && !active)
-    cache.img(u)->put_image(screen,x1,y1);
-  else if (up && active)
-    cache.img(ua)->put_image(screen,x1,y1);
-  else if (!up && !active)
-    cache.img(d)->put_image(screen,x1,y1);
-  else cache.img(da)->put_image(screen,x1,y1);
+    screen->PutImage(cache.img((up && !active) ? u :
+                               (up && active) ? ua :
+                               (!up && !active) ? d : da), x1, y1);
 
-  if (act!=active && active && activate_id!=-1)
-    wm->Push(new Event(activate_id,NULL));
-  act=active;
+    if (act != active && active && activate_id != -1)
+        wm->Push(new Event(activate_id, NULL));
+    act = active;
 
-  if (active && key[0])
-  {
-    int g=80;
-    screen->bar(0,0,144,20,0);
-    wm->font()->put_string(screen,0,0,symbol_str(key),color_table->Lookup(g>>3,g>>3,g>>3));
-  } else if (!active && key[0])
-  {
-    screen->bar(0,0,144,20,0);
-  }
-
+    if (active && key[0])
+    {
+        int g=80;
+        screen->bar(0, 0, 144, 20, 0);
+        wm->font()->put_string(screen, 0, 0, symbol_str(key),
+                               color_table->Lookup(g>>3, g>>3, g>>3));
+    }
+    else if (!active && key[0])
+    {
+        screen->bar(0, 0, 144, 20, 0);
+    }
 }
 
 extern long S_BUTTON_PRESS_SND;

@@ -30,29 +30,30 @@ void set_frame_size(int x);
 
 class InputManager
 {
-  friend class Jwindow;
-
-private:
-  image *screen;
-  ifield *first, *active, *grab;
-  Jwindow *cur, *owner;
-  int no_selections_allowed;
+    friend class Jwindow;
 
 public:
-  InputManager(image *screen, ifield *first);
-  InputManager(Jwindow *owner, ifield *first);
-  void handle_event(Event &ev, Jwindow *j);
-  ifield *get(int id);
-  void redraw();
-  void add(ifield *i);
-  void remap(Filter *f);
-  ifield *unlink(int id);     // unlinks ID from fields list and return the pointer to it
-  void clear_current();
-  void grab_focus(ifield *i);
-  void release_focus();
-  void allow_no_selections();
-  ~InputManager();
-} ;
+    InputManager(image *screen, ifield *first);
+    InputManager(Jwindow *owner, ifield *first);
+    ~InputManager();
+
+    void handle_event(Event &ev, Jwindow *j);
+    ifield *get(int id);
+    void redraw();
+    void add(ifield *i);
+    void remap(Filter *f);
+    ifield *unlink(int id);     // unlinks ID from fields list and return the pointer to it
+    void clear_current();
+    void grab_focus(ifield *i);
+    void release_focus();
+    void allow_no_selections();
+
+private:
+    image *m_surf;
+    ifield *first, *active, *grab;
+    Jwindow *cur, *owner;
+    int no_selections_allowed;
+};
 
 class ifield
 {
@@ -86,21 +87,9 @@ class Jwindow
 {
     friend class InputManager;
 
-private:
-    char *_name;
-    bool _hidden;
-    bool _moveable;
-
-    void reconfigure();
-
-protected:
-    Jwindow *owner;
-    int _x1, _y1, _x2, _y2;
-
 public:
     Jwindow *next;
     int x, y, l, h, backg;
-    image *screen;
     InputManager *inm;
     void *local_info;  // pointer to info block for local system (may support windows)
 
@@ -110,7 +99,7 @@ public:
 
     virtual void redraw();
     void resize(int L, int H);
-    void clear(int color = 0) { screen->bar(x1(), y1(), x2(), y2(), color); }
+    void clear(int color = 0) { m_surf->bar(x1(), y1(), x2(), y2(), color); }
     void show() { _hidden = false; }
     void hide() { _hidden = true; }
     bool is_hidden() { return _hidden; }
@@ -121,8 +110,8 @@ public:
     int y1() { return _y1; }
     int x2() { return _x2; }
     int y2() { return _y2; }
-    void clip_in() { screen->SetClip(x1(), y1(), x2() + 1, y2() + 1); }
-    void clip_out() { screen->SetClip(0, 0, l, h); }
+    void clip_in() { m_surf->SetClip(x1(), y1(), x2() + 1, y2() + 1); }
+    void clip_out() { m_surf->SetClip(0, 0, l, h); }
     char *read(int id) { return inm->get(id)->read(); }
     void local_close();
 
@@ -130,6 +119,19 @@ public:
     static int right_border();
     static int top_border();
     static int bottom_border();
+
+    image *m_surf;
+
+protected:
+    Jwindow *owner;
+    int _x1, _y1, _x2, _y2;
+
+private:
+    char *_name;
+    bool _hidden;
+    bool _moveable;
+
+    void reconfigure();
 };
 
 class WindowManager : public EventHandler
@@ -182,7 +184,7 @@ public:
 
 private:
     palette *m_pal;
-    image *m_screen;
+    image *m_surf;
 };
 
 #endif

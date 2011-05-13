@@ -25,15 +25,15 @@
 
 void sprite::restore_background()
 { if (x+save->Size().x>=0 && y+save->Size().y>=0 && x<=xres && y<=yres)
-      save->put_image(screen,x,y); }
+      screen->PutImage(save, x, y); }
 
 void sprite::get_background()
 { if (x+visual->Size().x>=0 && y+visual->Size().y>=0 && x<=xres && y<=yres)
-   screen->put_part(save,0,0,x,y,x+save->Size().x-1,y+save->Size().y-1); }
+   save->PutPart(screen,0,0,x,y,x+save->Size().x-1,y+save->Size().y-1); }
 
 void sprite::draw()
 { if (x+visual->Size().x>=0 && y+visual->Size().y>=0 && x<=xres && y<=yres)
-   visual->put_image(screen,x,y,1); }
+   screen->PutImage(visual, x, y, 1); }
 
 sprite::sprite(image *Screen, image *Visual, int X, int Y)
 {
