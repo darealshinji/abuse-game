@@ -21,7 +21,7 @@ public:
     ~JCMouse();
 
     void set_shape(image *im, int centerx = 0, int centery = 0);
-    void update(int newx = -1, int newy = -1, int new_but = -1);
+    void update(int newx, int newy, int new_but);
     void set_shape(image *im) { if (here) sp->change_visual(im); }
     sprite *mouse_sprite() { return sp; }
     void set_position(int new_mx, int new_my);
