@@ -110,22 +110,8 @@ void JCMouse::set_position(int new_mx, int new_my)
 //
 void JCMouse::update(int newx, int newy, int new_but)
 {
-    if (newx < 0)
-    {
-        lx = mx;
-        ly = my;
-        lbut = but;
-
-        uint8_t mask = SDL_GetMouseState(&mx, &my);
-        but = ((mask & SDL_BUTTON(1)) != 0) |
-              ((mask & SDL_BUTTON(2)) != 0) << 2 |
-              ((mask & SDL_BUTTON(3)) != 0) << 1;
-    }
-    else
-    {
-        mx = newx;
-        my = newy;
-        but = new_but;
-    }
+    mx = newx;
+    my = newy;
+    but = new_but;
 }
 
