@@ -157,7 +157,7 @@ void gamma_correct(palette *&pal, int force_menu)
             do
             {
                 wm->get_event(ev);
-            } while(ev.type == EV_MOUSE_MOVE && wm->event_waiting());
+            } while(ev.type == EV_MOUSE_MOVE && wm->IsPending());
             wm->flush_screen();
             if(ev.type == EV_CLOSE_WINDOW)
                 abort = 1;
