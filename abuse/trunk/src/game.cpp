@@ -475,8 +475,8 @@ void Game::joy_calb(Event &ev)
         if(but) but = 1;
         int dx = 20, dy = 5;
         image *jim = cache.img(joy_picts[but * 9+(y + 1)*3 + x + 1]);
-        joy_win->screen->bar(dx, dy, dx + jim->Size().x+6, dy + jim->Size().y+6, wm->black());
-        jim->put_image(joy_win->screen, dx + 3, dy + 3);
+        joy_win->m_surf->bar(dx, dy, dx + jim->Size().x+6, dy + jim->Size().y+6, wm->black());
+        joy_win->m_surf->PutImage(jim, dx + 3, dy + 3);
 
         if(but)
             joy_calibrate();
@@ -604,7 +604,7 @@ void Game::put_block_bg(int x, int y, image *im)
       int cx1, cy1, cx2, cy2;
       main_screen->GetClip(cx1, cy1, cx2, cy2);
       main_screen->SetClip(viewx1, viewy1, viewx2 + 1, viewy2 + 1);
-      im->put_image(main_screen, (x - xo / btile_width())*btile_width()+viewx1 - xo % btile_width(),
+      main_screen->PutImage(im, (x - xo / btile_width())*btile_width()+viewx1 - xo % btile_width(),
             (y - yo / btile_height())*btile_height()+viewy1 - yo % btile_height(), 0);
       main_screen->SetClip(cx1, cy1, cx2, cy2);
     }
@@ -719,7 +719,7 @@ void Game::draw_map(view *v, int interpolate)
       if(state == SCENE_STATE)
         main_screen->SetClip(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
       image *tit = cache.img(title_screen);
-      tit->put_image(main_screen, main_screen->Size().x/2 - tit->Size().x/2,
+      main_screen->PutImage(tit, main_screen->Size().x/2 - tit->Size().x/2,
                     main_screen->Size().y/2 - tit->Size().y/2);
       if(state == SCENE_STATE)
         main_screen->SetClip(cx1, cy1, cx2, cy2);
@@ -827,7 +827,7 @@ void Game::draw_map(view *v, int interpolate)
     }
     else bt = get_bg(0);
 
-        bt->im->put_image(main_screen, draw_x, draw_y);
+        main_screen->PutImage(bt->im, draw_x, draw_y);
 //        if(!(dev & EDIT_MODE) && bt->next)
 //      current_level->put_bg(x, y, bt->next);
       }
@@ -1078,7 +1078,7 @@ void Game::draw_map(view *v, int interpolate)
     if(dev_cont)
     dev_cont->dev_draw(v);
     if(cache.in_use())
-    cache.img(vmm_image)->put_image(main_screen, v->cx1, v->cy2 - cache.img(vmm_image)->Size().y+1);
+    main_screen->PutImage(cache.img(vmm_image), v->cx1, v->cy2 - cache.img(vmm_image)->Size().y+1);
 
     if(dev & DRAW_LIGHTS)
     {
@@ -1171,8 +1171,8 @@ template<int N> static void Fade(image *im, int steps)
     if (im)
     {
         main_screen->clear();
-        im->put_image(main_screen, (xres + 1) / 2 - im->Size().x / 2,
-                              (yres + 1) / 2 - im->Size().y / 2);
+        main_screen->PutImage(im, (xres + 1) / 2 - im->Size().x / 2,
+                                  (yres + 1) / 2 - im->Size().y / 2);
     }
 
     for (Timer total; total.PollMs() < duration * steps; )
@@ -1271,8 +1271,8 @@ void do_title()
         pal->load();
 
         int dx = (xres + 1) / 2 - gray->Size().x / 2, dy = (yres + 1) / 2 - gray->Size().y / 2;
-        gray->put_image(main_screen, dx, dy);
-        smoke[0]->put_image(main_screen, dx + 24, dy + 5);
+        main_screen->PutImage(gray, dx, dy);
+        main_screen->PutImage(smoke[0], dx + 24, dy + 5);
 
         fade_in(NULL, 16);
         uint8_t cmap[32];
@@ -1292,8 +1292,8 @@ void do_title()
             if (i >= 400)
                 break;
 
-            gray->put_image(main_screen, dx, dy);
-            smoke[i % 5]->put_image(main_screen, dx + 24, dy + 5);
+            main_screen->PutImage(gray, dx, dy);
+            main_screen->PutImage(smoke[i % 5], dx + 24, dy + 5);
             text_draw(205 - i, dx + 15, dy, dx + 320 - 15, dy + 199, str, wm->font(), cmap, wm->bright_color());
             wm->flush_screen();
             time_marker now;
@@ -1499,8 +1499,8 @@ Game::Game(int argc, char **argv)
     if(title_screen >= 0)
     {
       image *tit = cache.img(title_screen);
-      tit->put_image(main_screen, main_screen->Size().x/2 - tit->Size().x/2,
-                    main_screen->Size().y/2 - tit->Size().y/2);
+      main_screen->PutImage(tit, main_screen->Size().x/2 - tit->Size().x/2,
+                            main_screen->Size().y/2 - tit->Size().y/2);
     }
     set_state(MENU_STATE);   // then go to menu state so windows will turn off
   }
@@ -1572,7 +1572,7 @@ void Game::update_screen()
     if(state == PAUSE_STATE)
     {
       for(view *f = first_view; f; f = f->next)
-        cache.img(pause_image)->put_image(main_screen, (f->cx1 + f->cx2)/2 - cache.img(pause_image)->Size().x/2,
+        main_screen->PutImage(cache.img(pause_image), (f->cx1 + f->cx2)/2 - cache.img(pause_image)->Size().x/2,
                    f->cy1 + 5, 1);
     }
 
@@ -1896,9 +1896,9 @@ void Game::get_input()
 
                                         ((button *)ev.message.data)->push();
 /*                                        volume_window->inm->redraw();
-                                        draw_value(volume_window->screen, 2, 43,
+                                        draw_value(volume_window->m_surf, 2, 43,
                                                 (volume_window->x2()-volume_window->x1()-1), 8, sfx_volume, 127);
-                                        draw_value(volume_window->screen, 2, 94,
+                                        draw_value(volume_window->m_surf, 2, 94,
                                                 (volume_window->x2()-volume_window->x1()-1), 8, music_volume, 127);
 */
                                         break;

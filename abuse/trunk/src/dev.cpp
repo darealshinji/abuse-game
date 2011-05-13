@@ -109,7 +109,7 @@ class cached_image : public visual_object
     if (f)
       f->PutImage(screen, cache.img(id), vec2i(x, y));
     else
-      cache.img(id)->put_image(screen,x,y);
+      screen->PutImage(cache.img(id), x, y);
   }
   virtual int width() { return cache.img(id)->Size().x; }
   virtual int height() { return cache.img(id)->Size().y; }
@@ -480,10 +480,12 @@ void dev_controll::dev_draw(view *v)
       {
     if (f->x-vx>=0 && f->x-vx<=(v->cx2-v->cx1+1) && f->y-vy>=0 && f->y-vy<=(v->cy2-v->cy1+1))
     {
-      image *im=cache.img(light_buttons[f->type]);
-      im->put_image(main_screen,f->x-vx+v->cx1-im->Size().x/2,f->y-vy+v->cy1-im->Size().y/2,1);
-      main_screen->rectangle(f->x1-vx+v->cx1,f->y1-vy+v->cy1,f->x2-vx+v->cx1,f->y2-vy+v->cy1,
-                wm->medium_color());
+      image *im = cache.img(light_buttons[f->type]);
+      main_screen->PutImage(im, f->x - vx + v->cx1 - im->Size().x / 2,
+                                f->y - vy + v->cy1 - im->Size().y / 2, 1);
+      main_screen->rectangle(f->x1 - vx + v->cx1, f->y1 - vy + v->cy1,
+                             f->x2 - vx + v->cx1, f->y2 - vy + v->cy1,
+                             wm->medium_color());
     }
       }
     }
@@ -598,7 +600,7 @@ void dev_controll::toggle_toolbar()
                         pal,pal,NULL);
     tbw=wm->new_window(prop->getd("toolbar x",-1),
                prop->getd("toolbar y",-1),-1,-1,tp);
-    tp->set_x(setx,tbw->screen);
+    tp->set_x(setx,tbw->m_surf);
   }
 }
 
@@ -757,7 +759,7 @@ void dev_controll::toggle_music_window()
   {
     music_window=wm->new_window(-1,30,0,0,
              new pick_list(0,0,DEV_MUSIC_PICKLIST,10,song_list,total_songs,0,NULL));
-    wm->fnt->put_string(music_window->screen,0,1,"songs");
+    wm->fnt->put_string(music_window->m_surf,0,1,"songs");
   } else
   {
     wm->close_window(music_window);
@@ -1224,7 +1226,7 @@ void dev_controll::do_command(char const *command, Event &ev)
     {
       cur_fg=current_level->get_fg(x,y);
       if (forew)
-    ((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->screen);
+    ((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->m_surf);
       the_game->need_refresh();
     }
   }
@@ -1248,7 +1250,7 @@ void dev_controll::do_command(char const *command, Event &ev)
       if (cur_fg>=nforetiles) cur_fg=nforetiles-1;
 
       if (forew)
-    ((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->screen);
+    ((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->m_surf);
     }
   }
 
@@ -3009,15 +3011,15 @@ void pal_win::draw()
     {
       im->clear();
       the_game->get_fg(pat[i])->im->PutImage(im,vec2i(0,0));
-      scale_put(im,me->screen,me->x1()+(i%w)*tw,
+      scale_put(im,me->m_surf,me->x1()+(i%w)*tw,
         me->y1()+(i/w)*th,tw,th);
       if (d==pat[i])
       {
     find=i;
-    me->screen->rectangle(me->x1()+(i%w)*tw,
-              me->y1()+(i/w)*th,
-              me->x1()+(i%w)*tw+tw-1,
-              me->y1()+(i/w)*th+th-1,wm->bright_color());
+    me->m_surf->rectangle(me->x1()+(i%w)*tw,
+                            me->y1()+(i/w)*th,
+                            me->x1()+(i%w)*tw+tw-1,
+                            me->y1()+(i/w)*th+th-1,wm->bright_color());
       }
     }
     delete im;
@@ -3056,7 +3058,7 @@ void pal_win::handle_event(Event &ev)
         cur_fg=pat[selx+sely*w];
         if (dev_cont->forew)
           ((tile_picker *)dev_cont->forew->
-           read(DEV_FG_PICKER))->recenter(dev_cont->forew->screen);
+           read(DEV_FG_PICKER))->recenter(dev_cont->forew->m_surf);
       }
     } else if (ev.mouse_button==2)
     {

@@ -58,12 +58,12 @@ void gui_status_manager::draw_bar(gui_status_node *whom, int perc)
   long l=whom->stat_win->x2()-whom->stat_win->x1()-6;
   long h=wm->font()->height();
 
-  whom->stat_win->screen->bar(whom->stat_win->x1()+1,whom->stat_win->y2()-h-1,whom->stat_win->x2()-1,
+  whom->stat_win->m_surf->bar(whom->stat_win->x1()+1,whom->stat_win->y2()-h-1,whom->stat_win->x2()-1,
               whom->stat_win->y2()-1,wm->black());
-  whom->stat_win->screen->bar(whom->stat_win->x1()+2,whom->stat_win->y2()-h,whom->stat_win->x2()-2,
+  whom->stat_win->m_surf->bar(whom->stat_win->x1()+2,whom->stat_win->y2()-h,whom->stat_win->x2()-2,
               whom->stat_win->y2()-2,wm->dark_color());
   if (perc)
-    whom->stat_win->screen->bar(whom->stat_win->x1()+3,whom->stat_win->y2()-h+1,
+    whom->stat_win->m_surf->bar(whom->stat_win->x1()+3,whom->stat_win->y2()-h+1,
                 whom->stat_win->x1()+l*perc/100,
                 whom->stat_win->y2()-3,wm->bright_color());
 }
@@ -105,10 +105,10 @@ void gui_status_manager::update(int percentage)
     int mx = first->stat_win->x1() + 1;
     int my = first->stat_win->y1() + wm->font()->height() / 2;
     first->stat_win=wm->new_window(wx, wy, len3, h1*2+h2, NULL, "status");
-    wm->font()->put_string(first->stat_win->screen, mx, my, first->name, wm->black());
-    wm->font()->put_string(first->stat_win->screen, mx, my, first->name, wm->bright_color());
+    wm->font()->put_string(first->stat_win->m_surf, mx, my, first->name, wm->black());
+    wm->font()->put_string(first->stat_win->m_surf, mx, my, first->name, wm->bright_color());
     if (first->show)
-      first->show->draw(first->stat_win->screen, (first->stat_win->x2()-first->stat_win->x1())/2-
+      first->show->draw(first->stat_win->m_surf, (first->stat_win->x2()-first->stat_win->x1())/2-
                 first->show->width()/2, my+h1, NULL);
 
     draw_bar(first,percentage);

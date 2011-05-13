@@ -59,7 +59,7 @@ void last_savegame_name(char *buf)
     sprintf(buf,"%ssave%04d.spe",get_save_filename_prefix(), (last_save_game_number+MAX_SAVE_GAMES-1)%MAX_SAVE_GAMES+1);
 }
 
-Jwindow *create_num_window(int mx, int total_saved, int lines, image **thumb_nails)
+Jwindow *create_num_window(int mx, int total_saved, int lines, image **thumbnails)
 {
   ico_button *buts[MAX_SAVE_GAMES];
   int y = 0, x = 0, i;
@@ -76,7 +76,7 @@ Jwindow *create_num_window(int mx, int total_saved, int lines, image **thumb_nai
         y = 0;
         x += iw;
     }
-    if (thumb_nails) { while (!thumb_nails[n]) n++; }
+    if (thumbnails) { while (!thumbnails[n]) n++; }
     buts[i]=new ico_button(x, y, ID_LOAD_GAME_NUMBER + n,
                save_buts[n*3+0],save_buts[n*3+0],save_buts[n*3+1],save_buts[n*3+2],NULL);
     buts[i]->set_act_id(ID_LOAD_GAME_PREVIEW+n);
@@ -166,10 +166,10 @@ int show_load_icon()
 int load_game(int show_all, char const *title)   // return 0 if the player escapes, else return the number of the game to load
 {
     int total_saved=0;
-    image *thumb_nails[MAX_SAVE_GAMES];
+    image *thumbnails[MAX_SAVE_GAMES];
     int start_num=0;
     int max_w=160,max_h=100;
-    memset(thumb_nails,0,sizeof(thumb_nails));
+    memset(thumbnails,0,sizeof(thumbnails));
 
     image *first=NULL;
 
@@ -190,10 +190,10 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
             spec_entry *se=sd.find("thumb nail");
             if (se && se->type==SPEC_IMAGE)
             {
-                thumb_nails[start_num] = new image(fp, se);
-                if (thumb_nails[start_num]->Size().x>max_w) max_w=thumb_nails[start_num]->Size().x;
-                if (thumb_nails[start_num]->Size().y>max_h) max_h=thumb_nails[start_num]->Size().y;
-                if (!first) first=thumb_nails[start_num];
+                thumbnails[start_num] = new image(fp, se);
+                if (thumbnails[start_num]->Size().x>max_w) max_w=thumbnails[start_num]->Size().x;
+                if (thumbnails[start_num]->Size().y>max_h) max_h=thumbnails[start_num]->Size().y;
+                if (!first) first=thumbnails[start_num];
                 total_saved++;
             }
             else
@@ -201,11 +201,11 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         }
         if (fail && show_all)
         {
-            thumb_nails[start_num] = new image(vec2i(160, 100));
-            thumb_nails[start_num]->clear();
-            console_font->put_string(thumb_nails[start_num],0,0,symbol_str("no_saved"));
+            thumbnails[start_num] = new image(vec2i(160, 100));
+            thumbnails[start_num]->clear();
+            console_font->put_string(thumbnails[start_num],0,0,symbol_str("no_saved"));
             total_saved++;
-            if (!first) first=thumb_nails[start_num];
+            if (!first) first=thumbnails[start_num];
         }
         delete fp;
     }
@@ -232,10 +232,10 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 */
 
 
-    Jwindow *l_win=create_num_window(0,total_saved,MAX_SAVE_LINES,thumb_nails);
+    Jwindow *l_win=create_num_window(0,total_saved,MAX_SAVE_LINES,thumbnails);
     Jwindow *preview=wm->new_window(l_win->x+l_win->l+5,l_win->y,max_w,max_h,NULL,title);
 
-    first->put_image(preview->screen,preview->x1(),preview->y1());
+    preview->m_surf->PutImage(first, preview->x1(), preview->y1());
 
     Event ev;
     int got_level=0;
@@ -251,7 +251,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         {
             int draw_num=ev.message.id-ID_LOAD_GAME_PREVIEW;
             preview->clear();
-            thumb_nails[draw_num]->put_image(preview->screen,preview->x1(),preview->y1());
+            preview->m_surf->PutImage(thumbnails[draw_num], preview->x1(), preview->y1());
         }
 
         if ((ev.type==EV_CLOSE_WINDOW) || (ev.type==EV_KEY && ev.key==JK_ESC))
@@ -262,8 +262,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
     wm->close_window(preview);
 
     for (i=0; i<total_saved; i++)
-        if (thumb_nails[i])
-            delete thumb_nails[i];
+        delete thumbnails[i];
 
     return got_level;
 }

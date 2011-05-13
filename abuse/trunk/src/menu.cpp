@@ -239,7 +239,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       int by1=(font->height()+1)*choice+my+5-2;
       int by2=by1+bh-1;
 
-      main_screen->put_part(save,0,0,mx+1,by1,mx+mw-2,by2);
+      save->PutPart(main_screen, 0, 0, mx + 1, by1, mx + mw - 2, by2);
       tint_area(mx+1,by1,mx+mw-2,by2,63,63,63,color);
 
       char *cur=men_str(nth(choice,args));
@@ -255,7 +255,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
     color+=cdir;
       }
       wm->flush_screen();
-      save->put_image(main_screen,mx+1,by1);
+      main_screen->PutImage(save, mx + 1, by1);
     } else { Timer tmp; tmp.WaitMs(10); }
 
   } while (!done);
@@ -519,8 +519,8 @@ void menu_handler(Event &ev, InputManager *inm)
       if (title_screen>=0)
       {
         image *tit=cache.img(title_screen);
-          tit->put_image(main_screen,main_screen->Size().x/2-tit->Size().x/2,
-                          main_screen->Size().y/2-tit->Size().y/2);
+          main_screen->PutImage(tit, main_screen->Size().x/2-tit->Size().x/2,
+                                main_screen->Size().y/2-tit->Size().y/2);
       }
       inm->redraw();
       fade_in(NULL,8);

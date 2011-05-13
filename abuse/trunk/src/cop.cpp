@@ -828,8 +828,8 @@ void *bottom_draw()
       {
     player_draw(just_fired,o->get_tint());
     if (o->controller() && o->controller()->local_player())
-      cache.img(S_health_image)->put_image(main_screen,o->controller()->cx2-20,
-                        o->controller()->cy1+5,1);
+      main_screen->PutImage(cache.img(S_health_image), o->controller()->cx2-20,
+                            o->controller()->cy1+5,1);
       } break;
       case FAST_POWER :
       {
@@ -849,8 +849,8 @@ void *bottom_draw()
     player_draw(just_fired,o->get_tint());
     o->state=(character_state)old_state;
     if (o->controller() && o->controller()->local_player())
-      cache.img(S_fast_image)->put_image(main_screen,o->controller()->cx2-20,
-                        o->controller()->cy1+5,1);
+      main_screen->PutImage(cache.img(S_fast_image), o->controller()->cx2-20,
+                            o->controller()->cy1+5,1);
       } break;
       case FLY_POWER :
       {
@@ -870,8 +870,8 @@ void *bottom_draw()
     o->state=(character_state)old_state;
 
     if (o->controller() && o->controller()->local_player())
-      cache.img(S_fly_image)->put_image(main_screen,o->controller()->cx2-20,
-                        o->controller()->cy1+5,1);
+      main_screen->PutImage(cache.img(S_fly_image), o->controller()->cx2-20,
+                            o->controller()->cy1+5,1);
       } break;
       case SNEAKY_POWER :
       {
@@ -883,8 +883,8 @@ void *bottom_draw()
       o->draw_predator();
 
     if (o->controller() && o->controller()->local_player())
-      cache.img(S_sneaky_image)->put_image(main_screen,o->controller()->cx2-20,
-                        o->controller()->cy1+5,1);
+      main_screen->PutImage(cache.img(S_sneaky_image), o->controller()->cx2-20,
+                            o->controller()->cy1+5,1);
       } break;
     }
   }
@@ -1047,7 +1047,7 @@ void *show_kills()
   wm->set_mouse_position(0,0);
   main_screen->clear();
   image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
-  im->put_image(main_screen,0,0);
+  main_screen->PutImage(im, 0, 0);
   int x1=im->Size().x+1,y1=0,y2=main_screen->Size().y;
   JCFont *fnt=wm->font();
 

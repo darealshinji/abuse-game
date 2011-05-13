@@ -391,10 +391,10 @@ void button::draw(int active, image *screen)
     if (up)
     {
       if (!active)
-        visual->put_image(screen,x,y);
+        screen->PutImage(visual, x, y);
       else
-        pressed->put_image(screen,x,y);
-    } else act_pict->put_image(screen,x,y);
+        screen->PutImage(pressed, x, y);
+    } else screen->PutImage(act_pict, x, y);
   }
   else
   {
@@ -424,7 +424,7 @@ void button::draw_first(image *screen)
         wm->font()->put_string(screen,x+4,y+5,text,wm->black());
         wm->font()->put_string(screen,x+3,y+4,text);
       }
-      else visual->put_image(screen,x+3,y+3,1);
+      else screen->PutImage(visual, x + 3, y + 3, 1);
     } else
     {
       screen->line(x1,y1,x2,y1,wm->dark_color());
@@ -433,7 +433,7 @@ void button::draw_first(image *screen)
       screen->line(x1+1,y2,x2,y2,wm->bright_color());
       screen->bar(x1+1,y1+1,x2-1,y2-1,wm->medium_color());
       if (visual)
-        visual->put_image(screen,x1+3,y1+3,1);
+        screen->PutImage(visual, x1 + 3, y1 + 3, 1);
       else
       {
         wm->font()->put_string(screen,x+4,y+5,text,wm->black());

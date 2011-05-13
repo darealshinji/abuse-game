@@ -318,26 +318,26 @@ void image::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 }
 
 
-void image::put_image(image *screen, int16_t x, int16_t y, char transparent)
+void image::PutImage(image *im, int16_t x, int16_t y, char transparent)
 {
     int16_t i, j, xl, yl;
     uint8_t *pg1, *pg2, *source, *dest;
 
     // the screen is clipped then we only want to put part of the image
-    if(screen->m_special)
+    if(m_special)
     {
-        put_part(screen, x, y, 0, 0, m_size.x-1, m_size.y-1, transparent);
+        PutPart(im, x, y, 0, 0, im->m_size.x-1, im->m_size.y-1, transparent);
         return;
     }
 
-    if(x < screen->Size().x && y < screen->Size().y)
+    if(x < m_size.x && y < m_size.y)
     {
-        xl = m_size.x;
-        if(x + xl > screen->Size().x) // clip to the border of the screen
-            xl = screen->Size().x - x;
-        yl = m_size.y;
-        if(y + yl > screen->Size().y)
-            yl = screen->Size().y - y;
+        xl = im->m_size.x;
+        if(x + xl > m_size.x) // clip to the border of the screen
+            xl = m_size.x - x;
+        yl = im->m_size.y;
+        if(y + yl > m_size.y)
+            yl = m_size.y - y;
 
         int startx = 0, starty = 0;
         if(x < 0)
@@ -354,13 +354,13 @@ void image::put_image(image *screen, int16_t x, int16_t y, char transparent)
         if(xl < 0 || yl < 0)
             return;
 
-        screen->AddDirty(x, y, x + xl, y + yl);
-        screen->Lock();
+        AddDirty(x, y, x + xl, y + yl);
         Lock();
+        im->Lock();
         for(j = starty; j < yl; j++, y++)
         {
-            pg1 = screen->scan_line(y);
-            pg2 = scan_line(j);
+            pg1 = scan_line(y);
+            pg2 = im->scan_line(j);
             if(transparent)
             {
                 for(i = startx, source = pg2+startx, dest = pg1 + x;
@@ -374,8 +374,8 @@ void image::put_image(image *screen, int16_t x, int16_t y, char transparent)
             else
                 memcpy(&pg1[x], pg2, xl); // straight copy
         }
+        im->Unlock();
         Unlock();
-        screen->Unlock();
     }
 }
 
@@ -433,30 +433,27 @@ void image::fill_image(image *screen, int16_t x1, int16_t y1, int16_t x2, int16_
 }
 
 
-void image::put_part(image *screen, int16_t x, int16_t y,
-        int16_t x1, int16_t y1, int16_t x2, int16_t y2, char transparent)
+void image::PutPart(image *im, int16_t x, int16_t y, int16_t x1, int16_t y1,
+                    int16_t x2, int16_t y2, char transparent)
 {
   int16_t xlen, ylen, j, i;
   uint8_t *pg1, *pg2, *source, *dest;
   CHECK(x1<=x2 && y1<=y2);
 
   int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
-
+  GetClip(cx1, cy1, cx2, cy2);
 
   // see if the are to be put is outside of actual image, if so adjust
   // to fit in the image
   if (x1<0) { x+=-x1; x1=0; }
   if (y1<0) { y+=-y1; y1=0; }
-  if (x2>=m_size.x) x2=m_size.x-1;
-  if (y2>=m_size.y) y2=m_size.y-1;
+  if (x2>=im->m_size.x) x2=im->m_size.x-1;
+  if (y2>=im->m_size.y) y2=im->m_size.y-1;
   if (x1>x2 || y1>y2) return ;      // return if it was adjusted so that nothing will be put
-
 
   // see if the image gets clipped off the screen
   if (x >= cx2 || y >= cy2 || x + (x2 - x1) < cx1 || y + (y2 - y1) < cy1)
     return ;
-
 
   if (x<cx1)
   { x1+=(cx1-x); x=cx1; }
@@ -470,18 +467,15 @@ void image::put_part(image *screen, int16_t x, int16_t y,
   { y2 = cy2 - 1 - y + y1; }
   if (x1>x2 || y1>y2) return ;
 
-
-
-
   xlen=x2-x1+1;
   ylen=y2-y1+1;
 
-  screen->AddDirty(x, y, x + xlen, y + ylen);
+  AddDirty(x, y, x + xlen, y + ylen);
 
-  screen->Lock();
   Lock();
-  pg1=screen->scan_line(y);
-  pg2=scan_line(y1);
+  im->Lock();
+  pg1 = scan_line(y);
+  pg2 = im->scan_line(y1);
 
   if (transparent)
   {
@@ -489,40 +483,40 @@ void image::put_part(image *screen, int16_t x, int16_t y,
     {
       for (i=0, source=&pg2[x1], dest=&pg1[x]; i<xlen; i++, source++, dest++)
         if (*source) *dest=*source;
-      pg1=screen->next_line(y+j, pg1);
-      pg2=next_line(y1+j, pg2);
+      pg1=next_line(y+j, pg1);
+      pg2=im->next_line(y1+j, pg2);
     }
   }
   else
   for (j=0; j<ylen; j++)
   {
     memcpy(&pg1[x], &pg2[x1], xlen);   // strait copy
-    pg1=screen->next_line(y+j, pg1);
-    pg2=next_line(y1+j, pg2);
+    pg1 = next_line(y+j, pg1);
+    pg2 = im->next_line(y1+j, pg2);
   }
+  im->Unlock();
   Unlock();
-  screen->Unlock();
 }
 
-void image::put_part_xrev(image *screen, int16_t x, int16_t y,
-        int16_t x1, int16_t y1, int16_t x2, int16_t y2, char transparent)
+void image::PutPartXrev(image *im, int16_t x, int16_t y, int16_t x1,
+                        int16_t y1, int16_t x2, int16_t y2, char transparent)
 {
   int16_t xl, yl, j, i;
   uint8_t *pg1, *pg2, *source, *dest;
   CHECK(x1<=x2 && y1<=y2);
 
-  i=x1; x1=m_size.x-x2-1;  // reverse the x locations
-  x2=m_size.x-i-1;
+  i=x1; x1=im->m_size.x-x2-1;  // reverse the x locations
+  x2=im->m_size.x-i-1;
 
   if (x1<0)
   { x-=x1; x1=0; }
   if (y1<0)
   { y-=y1; y1=0; }
 
-  if (screen->m_special)
+  if (m_special)
   {
     int cx1, cy1, cx2, cy2;
-    screen->m_special->GetClip(cx1, cy1, cx2, cy2);
+    m_special->GetClip(cx1, cy1, cx2, cy2);
     // FIXME: don't we need < cx1 instead of < 0 here?
     if (x >= cx2 || y >= cy2 || x + (x2 - x1) < 0 || y + (y2 - y1) < 0)
       return;
@@ -535,29 +529,29 @@ void image::put_part_xrev(image *screen, int16_t x, int16_t y,
     if (y + y2 - y1 + 1 >= cy2)
     { y2 = cy2 - 1 - y + y1; }
   }
-  else  if (x>screen->Size().x || y>screen->Size().y || x+x2<0 || y+y2<0)
+  else  if (x > m_size.x || y > m_size.y || x+x2<0 || y+y2<0)
     return ;
 
-  if (x<screen->Size().x && y<screen->Size().y && x1<m_size.x && y1<m_size.y &&
+  if (x<m_size.x && y<m_size.y && x1<im->m_size.x && y1<im->m_size.y &&
       x1<=x2 && y1<=y2)
   {
-    if (x2>=m_size.x)
-      x2=m_size.x-1;
-    if (y2>=m_size.y)
-      y2=m_size.y-1;
+    if (x2>=im->m_size.x)
+      x2=im->m_size.x-1;
+    if (y2>=im->m_size.y)
+      y2=im->m_size.y-1;
     xl=x2-x1+1;
-    if (x+xl>screen->Size().x)
-      xl=screen->Size().x-x;
+    if (x+xl>m_size.x)
+      xl=m_size.x-x;
     yl=y2-y1+1;
-    if (y+yl>screen->Size().y)
-      yl=screen->Size().y-y;
-    screen->AddDirty(x, y, x + xl, y + yl);
-    screen->Lock();
+    if (y+yl>m_size.y)
+      yl=m_size.y-y;
+    AddDirty(x, y, x + xl, y + yl);
     Lock();
+    im->Lock();
     for (j=0; j<yl; j++)
     {
-      pg1=screen->scan_line(y+j);
-      pg2=scan_line(y1+j);
+      pg1=scan_line(y+j);
+      pg2=im->scan_line(y1+j);
       if (transparent)
       {
     for (i=0, source=&pg2[x1], dest=&pg1[x+xl-1]; i<xl; i++, source++, dest--)
@@ -568,23 +562,22 @@ void image::put_part_xrev(image *screen, int16_t x, int16_t y,
           *dest=*source;
     }
     Unlock();
-    screen->Unlock();
+    im->Unlock();
   }
 }
 
-
-void image::put_part_masked(image *screen, image *mask, int16_t x, int16_t y,
-        int16_t maskx, int16_t masky,
-        int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+void image::PutPartMasked(image *im, image *mask, int16_t x, int16_t y,
+                          int16_t maskx, int16_t masky,
+                          int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
   int16_t xl, yl, j, i, ml, mh;
   uint8_t *pg1, *pg2, *pg3;
   CHECK(x1<=x2 && y1<=y2);
 
-  if (screen->m_special)
+  if (m_special)
   {
     int cx1, cy1, cx2, cy2;
-    screen->m_special->GetClip(cx1, cy1, cx2, cy2);
+    m_special->GetClip(cx1, cy1, cx2, cy2);
     if (x >= cx2 || y >= cy2 || x+(x2-x1)<0 || y+(y2-y1)<0) return ;
     if (x<cx1)
     { x1+=(cx1-x); x=cx1; }
@@ -595,33 +588,33 @@ void image::put_part_masked(image *screen, image *mask, int16_t x, int16_t y,
     if (y + y2 - y1 >= cy2)
     { y2 = cy2 - 1 + y1 - y; }
   }
-  else  if (x>screen->Size().x || y>screen->Size().y || x+x1<0 || y+y1<0)
+  else  if (x>m_size.x || y>m_size.y || x+x1<0 || y+y1<0)
     return ;
 
   ml=mask->Size().x;
   mh=mask->Size().y;
-  if (x<screen->Size().x && y<screen->Size().y && x1<m_size.x && y1<m_size.y &&
+  if (x<m_size.x && y<m_size.y && x1<im->m_size.x && y1<im->m_size.y &&
       maskx<ml && masky<mh && x1<=x2 && y1<=y2)
   {
 
-    if (x2>=m_size.x)
-      x2=m_size.x-1;
-    if (y2>=m_size.y)
-      y2=m_size.y-1;
+    if (x2>=im->m_size.x)
+      x2=im->m_size.x-1;
+    if (y2>=im->m_size.y)
+      y2=im->m_size.y-1;
     xl=x2-x1+1;
-    if (x+xl>screen->Size().x)
-      xl=screen->Size().x-x-1;
+    if (x+xl>m_size.x)
+      xl=m_size.x-x-1;
     yl=y2-y1+1;
-    if (y+yl>screen->Size().y)
-      yl=screen->Size().y-y-1;
-    screen->AddDirty(x, y, x + xl, y + yl);
-    screen->Lock();
-    mask->Lock();
+    if (y+yl>m_size.y)
+      yl=m_size.y-y-1;
+    AddDirty(x, y, x + xl, y + yl);
     Lock();
+    mask->Lock();
+    im->Lock();
     for (j=0; j<yl; j++)
     {
-      pg1=screen->scan_line(y+j);
-      pg2=scan_line(y1+j);
+      pg1=scan_line(y+j);
+      pg2=im->scan_line(y1+j);
       pg3=mask->scan_line(masky++);
       if (masky>=mh)           // wrap the mask around if out of bounds
     masky=0;
@@ -633,9 +626,9 @@ void image::put_part_masked(image *screen, image *mask, int16_t x, int16_t y,
       maskx=0;
       }
     }
-    Unlock();
+    im->Unlock();
     mask->Unlock();
-    screen->Unlock();
+    Unlock();
   }
 }
 
