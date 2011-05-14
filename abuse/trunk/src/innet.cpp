@@ -22,11 +22,15 @@
 #include "game.h"
 #include "dev.h"
 #include "timing.h"
-#include "fileman.h"
 #include "netface.h"
 
-#include "gserver.h"
-#include "gclient.h"
+#if HAVE_NETWORK
+#   include "fileman.h"
+#endif
+#include "net/sock.h"
+#include "net/ghandler.h"
+#include "net/gserver.h"
+#include "net/gclient.h"
 #include "dprint.h"
 #include "netcfg.h"
 
@@ -44,11 +48,11 @@ of a abuse and therefore is a bit simpler.
 
 base_memory_struct *base;   // points to shm_addr
 base_memory_struct local_base;
-net_address *net_server=NULL;
-net_protocol *prot=NULL;
-net_socket *comm_sock=NULL,*game_sock=NULL;
+net_address *net_server = NULL;
+net_protocol *prot = NULL;
+net_socket *comm_sock = NULL, *game_sock = NULL;
+game_handler *game_face = NULL;
 extern char lsf[256];
-game_handler *game_face=NULL;
 int local_client_number=0;        // 0 is the server
 join_struct *join_array=NULL;      // points to an array of possible joining clients
 extern char *get_login();
@@ -57,9 +61,6 @@ extern void set_login(char const *name);
 
 int net_init(int argc, char **argv)
 {
-#if defined __CELLOS_LV2__
-    return 0;
-#else
     int i,x,db_level=0;
     base=&local_base;
 
@@ -149,6 +150,7 @@ int net_init(int argc, char **argv)
     }
     prot=usable;
     prot->set_debug_printing((net_protocol::debug_type)db_level);
+
     if (main_net_cfg->state==net_configuration::SERVER)
         set_login(main_net_cfg->name);
 
@@ -166,8 +168,10 @@ int net_init(int argc, char **argv)
         dprintf("Server located!  Please wait while data loads....\n");
     }
 
-    fman=new file_manager(argc,argv,prot);                                       // manages remote file access
-    game_face=new game_handler;
+#if HAVE_NETWORK
+    fman = new file_manager(argc,argv,prot); // manages remote file access
+#endif
+    game_face = new game_handler;
     join_array=(join_struct *)malloc(sizeof(join_struct)*MAX_JOINERS);
     base->join_list=NULL;
     base->mem_lock=0;
@@ -180,36 +184,30 @@ int net_init(int argc, char **argv)
     base->packet.packet_reset();
 
     return 1;
-#endif
 }
 
-
-
-
 int net_start()  // is the game starting up off the net? (i.e. -net hostname)
-{   return (main_net_cfg && main_net_cfg->state==net_configuration::CLIENT);  }
-
-
+{
+    return main_net_cfg && main_net_cfg->state == net_configuration::CLIENT;
+}
 
 int kill_net()
 {
-#if defined __CELLOS_LV2__
-  return 0;
-#else
   if (game_face) delete game_face;  game_face=NULL;
   if (join_array) free(join_array);  join_array=NULL;
   if (game_sock) { delete game_sock; game_sock=NULL; }
   if (comm_sock) { delete comm_sock; comm_sock=NULL; }
+#if HAVE_NETWORK
   delete fman;  fman=NULL;
+#endif
   if (net_server) { delete net_server; net_server=NULL; }
   if (prot)
   {
-
     prot->cleanup();
     prot=NULL;
     return 1;
-  } else return 0;
-#endif
+  }
+  return 0;
 }
 
 void net_uninit()
@@ -218,11 +216,9 @@ void net_uninit()
 }
 
 
+#if HAVE_NETWORK
 int NF_set_file_server(net_address *addr)
 {
-#if defined __CELLOS_LV2__
-  return 0;
-#else
   if (prot)
   {
     fman->set_default_fs(addr);
@@ -236,12 +232,10 @@ int NF_set_file_server(net_address *addr)
     delete sock;
     return cmd;
   } else return 0;
-#endif
 }
 
 int NF_set_file_server(char const *name)
 {
-#if !defined __CELLOS_LV2__
   if (prot)
   {
     net_address *addr=prot->get_node_address(name,DEFAULT_COMM_PORT,0);
@@ -252,70 +246,58 @@ int NF_set_file_server(char const *name)
       return ret;
     } else return 0;
   }
-#endif
   return 0;
 }
 
 
 int NF_open_file(char const *filename, char const *mode)
 {
-#if !defined __CELLOS_LV2__
     if (prot)
         return fman->rf_open_file(filename,mode);
-#endif
     return -2;
 }
 
 
 long NF_close(int fd)
 {
-#if !defined __CELLOS_LV2__
   if (prot)
     return fman->rf_close(fd);
-#endif
   return 0;
 }
 
 long NF_read(int fd, void *buf, long size)
 {
-#if !defined __CELLOS_LV2__
   if (prot)
     return fman->rf_read(fd,buf,size);
-#endif
   return 0;
 }
 
 long NF_filelength(int fd)
 {
-#if !defined __CELLOS_LV2__
   if (prot)
     return fman->rf_file_size(fd);
-#endif
   return 0;
 }
 
 long NF_seek(int fd, long offset)
 {
-#if !defined __CELLOS_LV2__
   if (prot)
     return fman->rf_seek(fd,offset);
-#endif
   return 0;
 }
 
 long NF_tell(int fd)
 {
-#if !defined __CELLOS_LV2__
   if (prot)
     return fman->rf_tell(fd);
-#endif
   return 0;
 }
+#endif
 
 
 void service_net_request()
 {
-#if !defined __CELLOS_LV2__
+#if HAVE_NETWORK
   if (prot)
   {
     if (prot->select(0))  // anything happening net-wise?
@@ -378,13 +360,12 @@ void service_net_request()
       fman->process_net();
     }
   }
-#endif
+#endif // HAVE_NETWORK
 }
 
 
 int get_remote_lsf(net_address *addr, char *filename)  // filename should be 256 bytes
 {
-#if !defined __CELLOS_LV2__
   if (prot)
   {
     net_socket *sock=prot->connect_to_server(addr,net_socket::SOCKET_SECURE);
@@ -405,7 +386,6 @@ int get_remote_lsf(net_address *addr, char *filename)  // filename should be 256
     return 1;
 
   }
-#endif
   return 0;
 }
 
@@ -413,7 +393,6 @@ void server_check() { ; }
 
 int request_server_entry()
 {
-#if !defined __CELLOS_LV2__
   if (prot && main_net_cfg)
   {
     if (!net_server) return 0;
@@ -486,32 +465,26 @@ int request_server_entry()
     local_client_number=cnum;
     return cnum;
   }
-#endif
   return 0;
 }
 
 int reload_start()
 {
-#if !defined __CELLOS_LV2__
   if (prot)
     return game_face->start_reload();
-#endif
   return 0;
 }
 
 int reload_end()
 {
-#if !defined __CELLOS_LV2__
   if (prot)
     return game_face->end_reload();
-#endif
   return 0;
 }
 
 
 void net_reload()
 {
-#if !defined __CELLOS_LV2__
   if (prot)
   {
     if (net_server)
@@ -631,7 +604,6 @@ void net_reload()
 
     }
   }
-#endif
 }
 
 
@@ -640,7 +612,6 @@ int client_number() { return local_client_number; }
 
 void send_local_request()
 {
-
   if (prot)
   {
     if (current_level)
@@ -744,7 +715,6 @@ int get_inputs_from_server(unsigned char *buf)
 
 int become_server(char *name)
 {
-#if !defined __CELLOS_LV2__
   if (prot && main_net_cfg)
   {
     delete game_face;
@@ -764,15 +734,14 @@ int become_server(char *name)
     local_client_number=0;
     return 1;
   }
-#endif
   return 0;
 }
 
 void read_new_views() { ; }
 
-
 void wait_min_players()
 {
-  if (game_face) game_face->game_start_wait();
+    if (game_face)
+        game_face->game_start_wait();
 }
 

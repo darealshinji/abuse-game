@@ -12,12 +12,13 @@
 #   include "config.h"
 #endif
 
+#if HAVE_NETWORK
+
 #include "common.h"
 
 #include "netfile.h"
 #include "../inc/netface.h"
 #include "engine.h"
-
 
 nfs_client *first_nfs_client=NULL;
 remote_file *remote_file_list=NULL;
@@ -472,4 +473,5 @@ int fetch_crcs(char *server)
 
 }
 
+#endif // HAVE_NETWORK
 

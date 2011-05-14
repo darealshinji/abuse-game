@@ -12,6 +12,8 @@
 #   include "config.h"
 #endif
 
+#if HAVE_NETWORK
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -598,3 +600,6 @@ int net_driver::add_client(int type, net_socket *sock, net_address *from)
   }
   return 0;
 }
+
+#endif // HAVE_NETWORK
+

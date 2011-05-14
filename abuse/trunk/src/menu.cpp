@@ -37,12 +37,9 @@
 #include "scroller.h"
 #include "netcfg.h"
 
-#if !defined __CELLOS_LV2__
-#   include "net/sock.h"
+#include "net/sock.h"
+
 extern net_protocol *prot;
-#else
-static int const prot = 0;
-#endif
 
 static VolumeWindow *volume_window;
 

@@ -12,6 +12,7 @@
 #   include "config.h"
 #endif
 
+#if HAVE_NETWORK
 #include "common.h"
 
 #include "../inc/netface.h"      // net interface structures to the engine will use
@@ -1249,8 +1250,5 @@ void net_watch()
   }
 }
 
-
-
-
-
+#endif // HAVE_NETWORK
 

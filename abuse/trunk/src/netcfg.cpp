@@ -24,25 +24,19 @@
 
 #include "dev.h"
 
-#if !defined __CELLOS_LV2__
-#   include "net/sock.h"
-#endif
+#include "net/sock.h"
 
 extern char *get_login();
 net_configuration *main_net_cfg = NULL;
 extern char lsf[256];
 
-#if !defined __CELLOS_LV2__
 extern net_protocol *prot;
-#endif
 
 net_configuration::net_configuration()
 {
-#if !defined __CELLOS_LV2__
   strcpy(name,get_login());
 
   strcpy(server_name,"My Netgame");
-
 
   min_players=2;
   max_players=8;
@@ -50,7 +44,6 @@ net_configuration::net_configuration()
   port=20202;
   server_port=20202;
   state=SINGLE_PLAYER;
-#endif
 }
 
 
@@ -453,7 +446,6 @@ int net_configuration::get_options(int server)
 int net_configuration::input()   // pulls up dialog box and input fileds
 {
   int ret=0;
-#if !defined __CELLOS_LV2__
   main_screen->clear();
 
   image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
@@ -598,7 +590,6 @@ int net_configuration::input()   // pulls up dialog box and input fileds
       return 1;
     }
   }
-#endif
 
   return ret;
 }

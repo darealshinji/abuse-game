@@ -12,6 +12,8 @@
 #   include "config.h"
 #endif
 
+#if HAVE_NETWORK
+
 #ifdef _AIX
 #include <strings.h>
 #endif
@@ -681,4 +683,6 @@ $Log$
 // folded-file: t
 // End:
 //}}}
+
+#endif
 

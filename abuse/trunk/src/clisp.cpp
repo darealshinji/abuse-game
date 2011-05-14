@@ -2187,12 +2187,8 @@ long c_caller(long number, void *args)
     } break;
     case 276 :
     {
-#if defined __CELLOS_LV2__
-      return 0;
-#else
       if (!main_net_cfg) return 0;
       return become_server(game_name);
-#endif
     } break;
     case 277 :
     {

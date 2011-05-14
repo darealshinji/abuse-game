@@ -20,11 +20,13 @@ if [ "x$x_libraries" != "x" ]; then
 fi
 
 AC_ARG_ENABLE(debug,
-  [  --enable-debug          build debug versions of the game (default no)])
+  [  --enable-debug          build debug versions of the game (default disabled)])
 AC_ARG_ENABLE(release,
-  [  --enable-release        build final release of the game (default no)])
+  [  --enable-release        build final release of the game (default disabled)])
 AC_ARG_ENABLE(nonfree,
-  [  --disable-nonfree       disable non-free data (default no)])
+  [  --disable-nonfree       disable non-free data (default enabled)])
+AC_ARG_ENABLE(network,
+  [  --disable-network       disable networking (default enabled)])
 
 AC_ARG_WITH(assetdir,
   [  --with-assetdir=DIR     override default game data directory])
@@ -85,7 +87,7 @@ ac_cv_have_nonfree="no"
 if test -f "${srcdir}/data/sfx/ambcave1.wav"; then
   ac_cv_have_nonfree="yes"
 fi
-if test "${enable_nonfree}" = "no"; then
+if test "x${enable_nonfree}" = xno; then
   ac_cv_have_nonfree="no"
 fi
 if test "x${ac_cv_have_nonfree}" = xno; then
@@ -94,7 +96,13 @@ else
   distdir="\$(PACKAGE)-\$(VERSION)"
 fi
 AC_SUBST(distdir)
-AM_CONDITIONAL(HAVE_NONFREE, test "${ac_cv_have_nonfree}" = "yes")
+AM_CONDITIONAL(HAVE_NONFREE, test "x${ac_cv_have_nonfree}" = xyes)
+
+dnl  Is networking enabled?
+if test "x${enable_network}" != xno; then
+  AC_DEFINE(HAVE_NETWORK, 1, Define to 1 to enable networking)
+fi
+AM_CONDITIONAL(HAVE_NETWORK, test "x${enable_network}" != xno)
 
 # Optimizations
 CXXFLAGS="${CXXFLAGS} ${OPT} ${REL}"

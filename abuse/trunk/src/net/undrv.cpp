@@ -12,6 +12,8 @@
 #   include "config.h"
 #endif
 
+#if HAVE_NETWORK
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -199,7 +201,7 @@ main(int argc, char **argv)
 
     fman->process_net();
   }
-
-
 }
+
+#endif // HAVE_NETWORK
 
