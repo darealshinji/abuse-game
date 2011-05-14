@@ -29,7 +29,6 @@
 #include "image.h"
 #include "palette.h"
 #include "video.h"
-#include "mouse.h"
 #include "event.h"
 #include "timing.h"
 #include "sprite.h"
@@ -39,19 +38,15 @@ extern int get_key_binding(char const *dir, int i);
 extern int mouse_xscale, mouse_yscale;
 short mouse_buttons[5] = { 0, 0, 0, 0, 0 };
 
-//
-// Constructor
-//
-EventHandler::EventHandler(image *screen, palette *pal)
+void EventHandler::SysInit()
 {
-    CHECK(screen && pal);
-    mouse = new JCMouse(screen, pal);
-    mhere = mouse->exists();
-    last_keystat = get_key_flags();
-    m_pending = 0;
-
     // Ignore activate events
     SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
+}
+
+void EventHandler::SysWarpMouse(vec2i pos)
+{
+    SDL_WarpMouse(pos.x, pos.y);
 }
 
 //
@@ -111,9 +106,9 @@ void EventHandler::Get(Event &ev)
 
     // NOTE : that the mouse status should be known
     // even if another event has occurred.
-    ev.mouse_move.x = mouse->x();
-    ev.mouse_move.y = mouse->y();
-    ev.mouse_button = mouse->button();
+    ev.mouse_move.x = m_pos.x;
+    ev.mouse_move.y = m_pos.y;
+    ev.mouse_button = m_button;
 
     // Gather next event
     SDL_Event sdlev;
@@ -172,7 +167,8 @@ void EventHandler::Get(Event &ev)
         mouse_buttons[3] = !mouse_buttons[3];
         ev.mouse_button &= (0xff - RIGHT_BUTTON);
     }
-    mouse->update(ev.mouse_move.x, ev.mouse_move.y, ev.mouse_button);
+    m_pos = vec2i(ev.mouse_move.x, ev.mouse_move.y);
+    m_button = ev.mouse_button;
 
     // Sort out other kinds of events
     switch(sdlev.type)
