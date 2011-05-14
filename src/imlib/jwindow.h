@@ -42,7 +42,7 @@ public:
     void redraw();
     void add(ifield *i);
     void remap(Filter *f);
-    ifield *unlink(int id);     // unlinks ID from fields list and return the pointer to it
+    ifield *unlink(int id); // unlink ID from list and return field pointer
     void clear_current();
     void grab_focus(ifield *i);
     void release_focus();
@@ -50,8 +50,8 @@ public:
 
 private:
     image *m_surf;
-    ifield *first, *active, *grab;
-    Jwindow *cur, *owner;
+    ifield *m_first, *m_active, *m_grab;
+    Jwindow *m_cur, *m_owner;
     int no_selections_allowed;
 };
 
@@ -146,7 +146,7 @@ public:
     WindowManager(image *, palette *, int hi, int med, int low, JCFont *);
     ~WindowManager();
 
-    Jwindow *first, *grab;
+    Jwindow *m_first, *m_grab;
     image *mouse_pic, *mouse_save;
     int hi, med, low, bk; // bright, medium, dark and black colors
     int key_state[512];
