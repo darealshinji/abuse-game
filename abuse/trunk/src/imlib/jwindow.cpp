@@ -46,17 +46,17 @@ void set_frame_size(int x)
  // true if a window lies in this area
 int WindowManager::window_in_area(int x1, int y1, int x2, int y2)
 {
-  for (Jwindow *f=first; f; f=f->next)
+  for (Jwindow *f=m_first; f; f=f->next)
     if (f->x<=x2 && f->y<=y2 && f->x+f->l-1>=x1 && f->y+f->h-1>=y1)
       return 1;
   return 0;
 }
 
 void WindowManager::grab_focus(Jwindow *j)
-{ grab=j; }
+{ m_grab=j; }
 
 void WindowManager::release_focus()
-{ grab=NULL; }
+{ m_grab=NULL; }
 
 
 void WindowManager::close_window(Jwindow *j)
@@ -66,7 +66,7 @@ void WindowManager::close_window(Jwindow *j)
 
 void WindowManager::hide_windows()
 {
-    for (Jwindow *p = first; p; p = p->next)
+    for (Jwindow *p = m_first; p; p = p->next)
     {
         if (!p->is_hidden())
         {
@@ -79,19 +79,19 @@ void WindowManager::hide_windows()
 void WindowManager::show_windows()
 {
   Jwindow *p;
-  for (p=first; p; p=p->next)
+  for (p=m_first; p; p=p->next)
     if (p->is_hidden())
       show_window(p);
 }
 
 void WindowManager::hide_window(Jwindow *j)
 {
-    if (j == first)
-        first = first->next;
+    if (j == m_first)
+        m_first = m_first->next;
     else
     {
         Jwindow *k;
-        for (k = first; k->next != j; k = k->next)
+        for (k = m_first; k->next != j; k = k->next)
             k->m_surf->AddDirty(j->x - k->x, j->y - k->y,
                                   j->x + j->l - k->x, j->y + j->h - k->y);
         k->m_surf->AddDirty(j->x - k->x, j->y - k->y,
@@ -123,12 +123,12 @@ void WindowManager::get_event(Event &ev)
   if (state==inputing)
   {
     Jwindow *j;
-    for (ev.window=NULL,j=first; j; j=j->next)
+    for (ev.window=NULL,j=m_first; j; j=j->next)
       if (!j->is_hidden() && ev.mouse_move.x>=j->x && ev.mouse_move.y>=j->y &&
           ev.mouse_move.x<j->x+j->l && ev.mouse_move.y<j->y+j->h)
         ev.window=j;
 
-    if (!ev.window && grab) ev.window=grab;
+    if (!ev.window && m_grab) ev.window=m_grab;
 
     if (ev.window)
     {
@@ -140,8 +140,8 @@ void WindowManager::get_event(Event &ev)
       {
     if (ev.mouse_move.x-ev.window->x<11) closew=1;
     else if (ev.window->is_moveable()) movew=1;
-      } else if (grab)
-        ev.window=grab;
+      } else if (m_grab)
+        ev.window=m_grab;
 
       if (ev.type==EV_KEY && ev.key==JK_ESC)
         closew=1;
@@ -153,25 +153,25 @@ void WindowManager::get_event(Event &ev)
       else if (movew)
       {
     int red=0;
-    if (ev.window==first)       // see if we need to raise the window
+    if (ev.window==m_first)       // see if we need to raise the window
     {
-      first=first->next;
-      if (first)
+      m_first=m_first->next;
+      if (m_first)
         red=1;
     }
     else
     {
-      Jwindow *last=first;
+      Jwindow *last=m_first;
       for (; last->next!=ev.window; last=last->next);
       if (ev.window->next)
         red=1;
       last->next=ev.window->next;
     }
-    if (!first)
-      first=ev.window;
+    if (!m_first)
+      m_first=ev.window;
     else
     {
-      Jwindow *last=first;
+      Jwindow *last=m_first;
       for (; last->next; last=last->next);
       last->next=ev.window;
     }
@@ -180,7 +180,7 @@ void WindowManager::get_event(Event &ev)
     {
       Jwindow *j=ev.window;
 /*      m_surf->AddDirty(j->x,j->y,j->x+j->l,j->y+j->h);
-      for (p=first; p!=j; p=p->next)
+      for (p=m_first; p!=j; p=p->next)
         p->m_surf->AddDirty(j->x-p->x,j->y-p->y,j->x+j->l-p->x,j->y+j->h-p->y); */
       j->m_surf->AddDirty(0, 0, j->l, j->h);
       flush_screen();
@@ -212,7 +212,7 @@ void WindowManager::get_event(Event &ev)
   }
   if (ev.type == EV_REDRAW)
   {
-    for (Jwindow *j = first; j; j = j->next)
+    for (Jwindow *j = m_first; j; j = j->next)
        j->m_surf->AddDirty(ev.redraw.x1 - j->x, ev.redraw.y1 - j->y,
                              ev.redraw.x2 + 1 - j->x, ev.redraw.y2 + 1 - j->y);
     m_surf->AddDirty(ev.redraw.x1, ev.redraw.y1, ev.redraw.x2 + 1, ev.redraw.y2 + 1);
@@ -231,7 +231,7 @@ void WindowManager::resize_window(Jwindow *j, int l, int h)
 {
   Jwindow *p;
   m_surf->AddDirty(j->x, j->y, j->x + j->l, j->y + j->h);
-  for (p=first; p!=j; p=p->next)
+  for (p=m_first; p!=j; p=p->next)
     p->m_surf->AddDirty(j->x - p->x, j->y - p->y, j->x + j->l - p->x, j->y + j->h - p->y);
   j->resize(l,h);
   if (!frame_suppress)
@@ -241,7 +241,7 @@ void WindowManager::resize_window(Jwindow *j, int l, int h)
 void WindowManager::move_window(Jwindow *j, int x, int y)
 {
     m_surf->AddDirty(j->x, j->y, j->x + j->l, j->y + j->h);
-    for(Jwindow *p = first; p != j; p = p->next)
+    for(Jwindow *p = m_first; p != j; p = p->next)
         p->m_surf->AddDirty(j->x - p->x, j->y - p->y,
                               j->x + j->l - p->x, j->y + j->h - p->y);
     j->x = x;
@@ -255,7 +255,7 @@ WindowManager::WindowManager(image *screen, palette *pal, int Hi,
 {
     wm = this;
     m_surf = screen;
-    hi = Hi; low = Low; med = Med; first = NULL; m_pal = pal; grab = NULL;
+    hi = Hi; low = Low; med = Med; m_first = NULL; m_pal = pal; m_grab = NULL;
     bk = pal->find_closest(0, 0, 0);
     state = inputing; fnt = Font;  wframe_fnt = Font;
     memset(key_state, 0, sizeof(key_state));
@@ -264,18 +264,18 @@ WindowManager::WindowManager(image *screen, palette *pal, int Hi,
 
 WindowManager::~WindowManager()
 {
-    while(first)
-        close_window(first);
+    while(m_first)
+        close_window(m_first);
     wm = NULL;
 }
 
 void WindowManager::add_window(Jwindow *win)
 {
-    if(!first)
-        first = win;
+    if(!m_first)
+        m_first = win;
     else
     {
-        Jwindow *tmp = first;
+        Jwindow *tmp = m_first;
         while(tmp->next)
             tmp = tmp->next;
         tmp->next = win;
@@ -285,19 +285,19 @@ void WindowManager::add_window(Jwindow *win)
 
 void WindowManager::remove_window(Jwindow *win)
 {
-    if(grab == win)
-        grab = NULL;
+    if(m_grab == win)
+        m_grab = NULL;
 
     // close the window we were dragging
     if(state == dragging && win == drag_window)
         state = inputing;
 
-    if(first == win)
-        first = first->next;
+    if(m_first == win)
+        m_first = m_first->next;
     else
     {
         Jwindow * search;
-        for(search = first; search->next != win; search = search->next)
+        for(search = m_first; search->next != win; search = search->next)
             search->m_surf->AddDirty(win->x - search->x,
                                        win->y - search->y,
                                        win->x + win->l - search->x,
@@ -345,7 +345,7 @@ void WindowManager::flush_screen()
         m_surf->PutImage(mouse_pic, mx, my, 1);
     }
 
-    for(p = first; p; p = p->next)
+    for(p = m_first; p; p = p->next)
         if(!p->is_hidden())
             m_surf->delete_dirty(p->x, p->y, p->x + p->l, p->y + p->h);
     update_dirty(m_surf);
@@ -353,7 +353,7 @@ void WindowManager::flush_screen()
     if(has_mouse())
         m_surf->PutImage(mouse_save, mx, my);
 
-    for(p = first; p; p = p->next)
+    for(p = m_first; p; p = p->next)
     {
         if(p->is_hidden())
             continue;
@@ -465,7 +465,7 @@ void Jwindow::reconfigure()
     ifield *i;
     l = 2;
     h = 2;
-    for(i = inm->first; i; i = i->next)
+    for(i = inm->m_first; i; i = i->next)
     {
         i->set_owner(this);
         i->area(x1, y1, x2, y2);
@@ -558,16 +558,16 @@ int Jwindow::bottom_border()
 
 ifield *InputManager::unlink(int id)     // unlinks ID from fields list and return the pointer to it
 {
-  for (ifield *i=first,*last=NULL; i; i=i->next)
+  for (ifield *i=m_first,*last=NULL; i; i=i->next)
   {
     if (i->id==id)
     {
-      if (i==first)
-    first=first->next;
+      if (i==m_first)
+    m_first=m_first->next;
       else
         last->next=i->next;
-      if (active==i)
-        active=first;
+      if (m_active==i)
+        m_active=m_first;
       return i;
     }
     ifield *x=i->unlink(id);
@@ -579,20 +579,20 @@ ifield *InputManager::unlink(int id)     // unlinks ID from fields list and retu
 
 InputManager::~InputManager()
 { ifield *i;
-  while (first)
-  { i=first;
-    first=first->next;
+  while (m_first)
+  { i=m_first;
+    m_first=m_first->next;
     delete i;
   }
 }
 
 void InputManager::clear_current()
 {
-    if(owner)
-        m_surf = owner->m_surf;
-    if(active)
-        active->draw(0, m_surf);
-    active = NULL;
+    if(m_owner)
+        m_surf = m_owner->m_surf;
+    if(m_active)
+        m_active->draw(0, m_surf);
+    m_active = NULL;
 }
 
 void InputManager::handle_event(Event &ev, Jwindow *j)
@@ -600,63 +600,63 @@ void InputManager::handle_event(Event &ev, Jwindow *j)
   ifield *i,*in_area=NULL;
   int x1,y1,x2,y2;
 
-  if(owner)
-      m_surf = owner->m_surf;
+  if(m_owner)
+      m_surf = m_owner->m_surf;
 
   if (j)
   {
     ev.mouse_move.x-=j->x;
     ev.mouse_move.y-=j->y;
-    cur=j;
+    m_cur=j;
   }
 
-  if (!grab)
+  if (!m_grab)
   {
     if ((ev.type==EV_MOUSE_BUTTON && ev.mouse_button==1) || ev.type==EV_MOUSE_MOVE)
     {
-      for (i=first; i; i=i->next)
+      for (i=m_first; i; i=i->next)
       {
     i->area(x1,y1,x2,y2);
     if (ev.mouse_move.x>=x1 && ev.mouse_move.y>=y1 &&
         ev.mouse_move.x<=x2 && ev.mouse_move.y<=y2)
         in_area=i;
       }
-      if (in_area!=active && (no_selections_allowed || (in_area && in_area->selectable())))
+      if (in_area!=m_active && (no_selections_allowed || (in_area && in_area->selectable())))
       {
-    if (active)
-          active->draw(0,m_surf);
+    if (m_active)
+          m_active->draw(0,m_surf);
 
-    active=in_area;
+    m_active=in_area;
 
-    if (active)
-      active->draw(1,m_surf);
+    if (m_active)
+      m_active->draw(1,m_surf);
       }
     }
-    if (ev.type==EV_KEY && ev.key==JK_TAB && active)
+    if (ev.type==EV_KEY && ev.key==JK_TAB && m_active)
     {
-      active->draw(0,m_surf);
+      m_active->draw(0,m_surf);
       do
       {
-    active=active->next;
-    if (!active) active=first;
-      } while (active && !active->selectable());
-      active->draw(1,m_surf);
+    m_active=m_active->next;
+    if (!m_active) m_active=m_first;
+      } while (m_active && !m_active->selectable());
+      m_active->draw(1,m_surf);
     }
-  } else active=grab;
+  } else m_active=m_grab;
 
-  if (active)
+  if (m_active)
   {
     if (ev.type!=EV_MOUSE_MOVE && ev.type!=EV_MOUSE_BUTTON)
-      active->handle_event(ev,m_surf,this);
+      m_active->handle_event(ev,m_surf,this);
     else
     {
-      active->area(x1,y1,x2,y2);
-      if (grab || (ev.mouse_move.x>=x1 && ev.mouse_move.y>=y1 &&
+      m_active->area(x1,y1,x2,y2);
+      if (m_grab || (ev.mouse_move.x>=x1 && ev.mouse_move.y>=y1 &&
           ev.mouse_move.x<=x2 && ev.mouse_move.y<=y2))
       {
     if (j)
-      active->handle_event(ev,m_surf,j->inm);
-    else active->handle_event(ev,m_surf,this);
+      m_active->handle_event(ev,m_surf,j->inm);
+    else m_active->handle_event(ev,m_surf,this);
       }
     }
   }
@@ -670,71 +670,73 @@ void InputManager::handle_event(Event &ev, Jwindow *j)
 
 void InputManager::allow_no_selections()
 {
-  no_selections_allowed=1;
+    no_selections_allowed=1;
 }
 
 void InputManager::redraw()
 {
     ifield *i;
-    if(owner)
-        m_surf = owner->m_surf;
-    for(i = first; i; i = i->next)
+    if(m_owner)
+        m_surf = m_owner->m_surf;
+    for(i = m_first; i; i = i->next)
         i->draw_first(m_surf);
-    if(active)
-        active->draw(1, m_surf);
+    if(m_active)
+        m_active->draw(1, m_surf);
 }
 
-InputManager::InputManager(image *screen, ifield *First)
+InputManager::InputManager(image *screen, ifield *first)
 {
     no_selections_allowed = 0;
-    cur = NULL;
-    grab = NULL;
-    owner = NULL;
+    m_cur = NULL;
+    m_grab = NULL;
+    m_owner = NULL;
     m_surf = screen;
-    active = first = First;
-    while(active && !active->selectable())
-        active = active->next;
+    m_active = m_first = first;
+    while(m_active && !m_active->selectable())
+        m_active = m_active->next;
     if(m_surf)
         redraw();
 }
 
-InputManager::InputManager(Jwindow *Owner, ifield *First)
+InputManager::InputManager(Jwindow *owner, ifield *first)
 {
     no_selections_allowed = 0;
-    cur = NULL;
-    grab = NULL;
-    owner = Owner;
+    m_cur = NULL;
+    m_grab = NULL;
+    m_owner = owner;
     m_surf = NULL;
-    active = first = First;
-    while(active && !active->selectable())
-        active = active->next;
+    m_active = m_first = first;
+    while(m_active && !m_active->selectable())
+        m_active = m_active->next;
 }
 
 void InputManager::grab_focus(ifield *i)
-{ grab=i;
-  if (cur)
-    wm->grab_focus(cur);
+{
+    m_grab = i;
+    if (m_cur)
+        wm->grab_focus(m_cur);
 }
 
 void InputManager::release_focus()
-{ grab=NULL;
-  if (cur)
-    wm->release_focus();
+{
+    m_grab = NULL;
+    if (m_cur)
+        wm->release_focus();
 }
 
 void InputManager::remap(Filter *f)
 {
-  for (ifield *i=first; i; i=i->next)
-   i->remap(f);
-  redraw();
+    for (ifield *i = m_first; i; i = i->next)
+        i->remap(f);
+    redraw();
 }
 
 void InputManager::add(ifield *i)
-{ ifield *f=first;
+{ ifield *f=m_first;
   if (i->selectable())
   {
     if (!f)
-      first=i;
+      m_first=i;
     else
     {
       while (f->next) f=f->next;
@@ -746,7 +748,7 @@ void InputManager::add(ifield *i)
 ifield *InputManager::get(int id)
 {
   ifield *f;
-  for (f=first; f; f=f->next)
+  for (f=m_first; f; f=f->next)
   {
     ifield *ret=f->find(id);
     if (ret) return ret;
