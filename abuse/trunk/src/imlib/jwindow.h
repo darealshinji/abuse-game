@@ -76,10 +76,10 @@ public :
     virtual void draw(int active, image *screen) = 0;
     virtual void handle_event(Event &ev, image *screen, InputManager *im) = 0;
     virtual int selectable() { return 1; }
-    virtual void remap(Filter *f) { ; }
+    virtual void remap(Filter *f) { (void)f; }
     virtual char *read() = 0;
     virtual ifield *find(int search_id) { if (id==search_id) return this; else return NULL; }
-    virtual ifield *unlink(int id) { return NULL; }
+    virtual ifield *unlink(int id) { (void)id; return NULL; }
     virtual ~ifield();
 } ;
 

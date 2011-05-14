@@ -398,7 +398,7 @@ void level::try_pushback(game_object *subject,game_object *target)
 /*
 void level::check_collisions()
 {
-  game_object *target,*reciever=NULL;
+  game_object *target,*receiver=NULL;
   int32_t sx1,sy1,sx2,sy2,tx1,ty1,tx2,ty2,hitx,hity,
       s_centerx,t_centerx;
 
@@ -408,7 +408,7 @@ void level::check_collisions()
     s_centerx=subject->x_center();
 
     int hit=0;
-    reciever=NULL;
+    receiver=NULL;
     for (target=first_active; target; target=target->next_active)
     {
       if (target!=subject)
@@ -455,7 +455,7 @@ void level::check_collisions()
 
         if (x2!=_x2 || _y2!=y2)
         {
-          reciever=target;
+          receiver=target;
           hitx=((x1+x2)/2+(xp1+xp2)/2)/2;
           hity=((y1+y1)/2+(yp1+yp2)/2)/2;
         }
@@ -466,10 +466,10 @@ void level::check_collisions()
     }
       }
     }
-    if (reciever)
+    if (receiver)
     {
-      reciever->do_damage((int)subject->current_figure()->hit_damage,subject,hitx,hity,0,0);
-      subject->note_attack(reciever);
+      receiver->do_damage((int)subject->current_figure()->hit_damage,subject,hitx,hity,0,0);
+      subject->note_attack(receiver);
       hit=1;
     }
   }
@@ -2768,7 +2768,7 @@ void level::send_signal(int32_t signal)
   {
     game_object *o=first_active;
     for (; o; o=o->next_active)
-      o->recieve_signal(signal);
+      o->receive_signal(signal);
   }
 }
 

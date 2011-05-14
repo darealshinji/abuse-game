@@ -38,7 +38,7 @@ public :
   elevator(long X, long Y);
   elevator(FILE *fp, unsigned char *state_remap);
   virtual int size();
-  virtual void recieve_signal(long signal) { ; }
+  virtual void receive_signal(long signal) { (void)signal; }
   virtual game_objects type() { return O_elevator; }
   virtual ifield *make_fields(int ystart, ifield *Next);
   virtual void gather_input(InputManager *inm);
