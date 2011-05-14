@@ -327,54 +327,50 @@ Jwindow * WindowManager::new_window(int x, int y, int l, int h,
 
 void WindowManager::flush_screen()
 {
-    Jwindow *p, *q;
-
     int mx = 0, my = 0;
-    image *mouse_pic = NULL, *mouse_save = NULL;
 
-    if(has_mouse())
+    if (has_mouse())
     {
-        mouse_pic = mouse_sprite()->visual;
-        mouse_save = mouse_sprite()->save;
-        mx = mouse->drawx();
-        my = mouse->drawy();
+        mx = (m_pos - m_center).x;
+        my = (m_pos - m_center).y;
 
-        mouse_save->PutPart(m_surf, 0, 0, mx, my,
-                            mx + mouse_pic->Size().x - 1,
-                            my + mouse_pic->Size().y - 1);
-        m_surf->PutImage(mouse_pic, vec2i(mx, my), 1);
+        m_sprite->save->PutPart(m_surf, 0, 0, mx, my,
+                                mx + m_sprite->visual->Size().x - 1,
+                                my + m_sprite->visual->Size().y - 1);
+        m_surf->PutImage(m_sprite->visual, vec2i(mx, my), 1);
     }
 
-    for(p = m_first; p; p = p->next)
-        if(!p->is_hidden())
+    for (Jwindow *p = m_first; p; p = p->next)
+        if (!p->is_hidden())
             m_surf->delete_dirty(p->x, p->y, p->x + p->l, p->y + p->h);
     update_dirty(m_surf);
 
-    if(has_mouse())
-        m_surf->PutImage(mouse_save, vec2i(mx, my));
+    if (has_mouse())
+        m_surf->PutImage(m_sprite->save, vec2i(mx, my));
 
-    for(p = m_first; p; p = p->next)
+    for (Jwindow *p = m_first; p; p = p->next)
     {
-        if(p->is_hidden())
+        if (p->is_hidden())
             continue;
 
-        if(has_mouse())
+        if (has_mouse())
         {
-            mouse_save->PutPart(p->m_surf, 0, 0, mx - p->x, my - p->y,
-                                mx - p->x + mouse_pic->Size().x - 1,
-                                my - p->y + mouse_pic->Size().y - 1);
-            p->m_surf->PutImage(mouse_pic, vec2i(mx - p->x, my - p->y), 1);
+            m_sprite->save->PutPart(p->m_surf, 0, 0, mx - p->x, my - p->y,
+                                    mx - p->x + m_sprite->visual->Size().x - 1,
+                                    my - p->y + m_sprite->visual->Size().y - 1);
+            p->m_surf->PutImage(m_sprite->visual,
+                                vec2i(mx - p->x, my - p->y), 1);
         }
 
 //          m_surf->delete_dirty(p->x, p->y, p->x+p->l, p->y+p->h);
-        for(q = p->next; q; q = q->next)
-            if(!q->is_hidden())
+        for (Jwindow *q = p->next; q; q = q->next)
+            if (!q->is_hidden())
                 p->m_surf->delete_dirty(q->x - p->x, q->y - p->y,
-                                          q->x + q->l - p->x,
-                                          q->y + q->h - p->y);
+                                        q->x + q->l - p->x,
+                                        q->y + q->h - p->y);
         update_dirty(p->m_surf, p->x, p->y);
-        if(has_mouse())
-            p->m_surf->PutImage(mouse_save, vec2i(mx - p->x, my - p->y), 0);
+        if (has_mouse())
+            p->m_surf->PutImage(m_sprite->save, vec2i(mx - p->x, my - p->y), 0);
     }
 }
 

@@ -5,7 +5,6 @@ noinst_LIBRARIES = libsdlport.a
 
 libsdlport_a_SOURCES = \
     video.cpp \
-    mouse.cpp \
     event.cpp \
     sound.cpp sound.h \
     timing.cpp \

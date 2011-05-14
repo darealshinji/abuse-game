@@ -27,7 +27,6 @@
 #define MIDDLE_BUTTON  4
 #include "keys.h"
 #include "sprite.h"
-#include "mouse.h"
 
 class Jwindow;
 
@@ -69,31 +68,41 @@ public:
         m_events.add_end(ev);
     }
 
-  JCMouse *mouse;
-  sprite *mouse_sprite() { return mouse->mouse_sprite(); }
+    void SysInit();
+    void SysWarpMouse(vec2i pos);
+
   int IsPending();
   void Get(Event &ev);
   void add_redraw(int X1, int Y1, int X2, int Y2, void *Start);
-  void mouse_status(int &x, int &y, int &button)
-  {
-    if (mouse)
-    {
-      x = mouse->x();
-      y = mouse->y();
-      button = mouse->button();
-    } else x = y = button = 0;
-  }
   void flush_screen();
-  int has_mouse() { return mouse->exists(); }
-  void set_mouse_shape(image *im, int centerx, int centery) { mouse->set_shape(im, -centerx, -centery); }
-  void set_mouse_position(int mx, int my) { if (mouse) mouse->set_position(mx, my); }
+
+  int has_mouse() { return 1; }
+  void set_mouse_shape(image *im, int centerx, int centery)
+  {
+    m_sprite->change_visual(im);
+    m_center = vec2i(-centerx, -centery);
+  }
+  void set_mouse_position(int mx, int my)
+  {
+    m_pos = vec2i(Min(mx, m_screen->Size().x - 1),
+                  Min(my, m_screen->Size().y - 1));
+    SysWarpMouse(m_pos);
+  }
 
 private:
     int get_key_flags();
 
     linked_list m_events;
-    int mhere, m_pending, last_keystat, last_key;
+    int m_pending, last_keystat, last_key;
     sprite_controller sc;
+
+    image *m_screen;
+
+protected:
+    /* Mouse information */
+    sprite *m_sprite;
+    vec2i m_pos, m_lastpos, m_center;
+    int m_button, m_lastbutton;
 };
 
 #endif

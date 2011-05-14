@@ -26,13 +26,55 @@
 
 #include "event.h"
 #include "video.h"
+#include "filter.h"
+
+//
+// Constructor
+//
+EventHandler::EventHandler(image *screen, palette *pal)
+{
+    CHECK(screen && pal);
+    last_keystat = get_key_flags();
+    m_pending = 0;
+
+    m_screen = screen;
+
+    // Mouse stuff
+    uint8_t mouse_sprite[]=
+    {
+        0, 2, 0, 0, 0, 0, 0, 0,
+        2, 1, 2, 0, 0, 0, 0, 0,
+        2, 1, 1, 2, 0, 0, 0, 0,
+        2, 1, 1, 1, 2, 0, 0, 0,
+        2, 1, 1, 1, 1, 2, 0, 0,
+        2, 1, 1, 1, 1, 1, 2, 0,
+        0, 2, 1, 1, 2, 2, 0, 0,
+        0, 0, 2, 1, 1, 2, 0, 0,
+        0, 0, 2, 1, 1, 2, 0, 0,
+        0, 0, 0, 2, 2, 0, 0, 0
+    };
+
+    Filter f;
+    f.Set(1, pal->brightest(1));
+    f.Set(2, pal->darkest(1));
+    image *im = new image(vec2i(8, 10), mouse_sprite);
+    f.Apply(im);
+
+    m_sprite = new sprite(screen, im, 100, 100);
+    m_pos = m_lastpos = screen->Size() / 2;
+    m_button = m_lastbutton = 0;
+    m_center = vec2i(0, 0);
+
+    // Platform-specific stuff
+    SysInit();
+}
 
 //
 // Destructor
 //
 EventHandler::~EventHandler()
 {
-    delete mouse;
+    ;
 }
 
 //
