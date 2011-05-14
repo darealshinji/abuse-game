@@ -24,15 +24,15 @@ extern linked_list image_list;
 class dirty_rect : public linked_node
 {
 public :
-  int16_t dx1,dy1,dx2,dy2;
-  dirty_rect(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
-  { dx1=x1; dy1=y1; dx2=x2; dy2=y2;
-    if(x2<x1 || y2<y1)
-      printf("add incorrect dirty\n");
-  }
-  virtual int16_t compare(void *n1, int16_t field)
-  { return((dirty_rect *)n1)->dy1>dy1; }
-} ;
+    int16_t dx1, dy1, dx2, dy2;
+    dirty_rect(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+    {
+        dx1 = x1; dy1 = y1; dx2 = x2; dy2 = y2;
+        if (x2 < x1 || y2 < y1)
+            printf("add incorrect dirty\n");
+    }
+    virtual int compare(void *n1) { return ((dirty_rect *)n1)->dy1 > dy1; }
+};
 
 class image_descriptor
 {

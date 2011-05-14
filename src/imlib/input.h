@@ -102,8 +102,11 @@ public :
   info_field(int X, int Y, int ID, char const *info, ifield *Next);
   virtual void area(int &x1, int &y1, int &x2, int &y2);
   virtual void draw_first(image *screen);
-  virtual void draw(int active, image *screen) { ; }
-  virtual void handle_event(Event &ev, image *screen, InputManager *im) { ; }
+  virtual void draw(int active, image *screen) { (void)active; (void)screen; }
+  virtual void handle_event(Event &ev, image *screen, InputManager *im)
+  {
+      (void)ev; (void)screen; (void)im;
+  }
   virtual char *read() { return text; }
   virtual int selectable() { return 0; }
   virtual ~info_field() { free(text); }
