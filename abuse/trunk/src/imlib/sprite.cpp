@@ -25,7 +25,7 @@
 
 void sprite::restore_background()
 { if (x+save->Size().x>=0 && y+save->Size().y>=0 && x<=xres && y<=yres)
-      screen->PutImage(save, x, y); }
+      screen->PutImage(save, vec2i(x, y)); }
 
 void sprite::get_background()
 { if (x+visual->Size().x>=0 && y+visual->Size().y>=0 && x<=xres && y<=yres)
@@ -33,7 +33,7 @@ void sprite::get_background()
 
 void sprite::draw()
 { if (x+visual->Size().x>=0 && y+visual->Size().y>=0 && x<=xres && y<=yres)
-   screen->PutImage(visual, x, y, 1); }
+   screen->PutImage(visual, vec2i(x, y), 1); }
 
 sprite::sprite(image *Screen, image *Visual, int X, int Y)
 {

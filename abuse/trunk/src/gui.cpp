@@ -95,7 +95,7 @@ void ico_button::draw(int active, image *screen)
 
     screen->PutImage(cache.img((up && !active) ? u :
                                (up && active) ? ua :
-                               (!up && !active) ? d : da), x1, y1);
+                               (!up && !active) ? d : da), vec2i(x1, y1));
 
     if (act != active && active && activate_id != -1)
         wm->Push(new Event(activate_id, NULL));

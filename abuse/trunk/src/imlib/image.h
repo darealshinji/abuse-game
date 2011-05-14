@@ -105,10 +105,6 @@ public:
     {
         return m_data + y * m_size.x;
     }
-    inline uint8_t *next_line(int16_t lasty, uint8_t *last_scan)
-    {
-        return last_scan + m_size.x;
-    }
     image *copy(); // makes a copy of an image
     void clear(int16_t color = -1); // -1 is background color
 
@@ -118,7 +114,7 @@ public:
                 int16_t xd, int16_t yd);
     void fill_image(image *screen, int16_t x1, int16_t y1,
                     int16_t x2, int16_t y2, int16_t align = 1);
-    void PutImage(image *screen, int16_t x, int16_t y, char transparent = 0);
+    void PutImage(image *screen, vec2i pos, int transparent = 0);
     void PutPart(image *screen, int16_t x, int16_t y, int16_t x1, int16_t y1,
                  int16_t x2, int16_t y2, char transparent = 0);
     void PutPartXrev(image *screen, int16_t x, int16_t y,

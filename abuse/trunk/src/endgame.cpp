@@ -237,7 +237,7 @@ void show_end2()
 
       if (i>=30 && i<=37)
       {
-    tcopy->PutImage(cache.img(planet), 0, 0);
+    tcopy->PutImage(cache.img(planet), vec2i(0, 0));
     cache.fig(explo_frames1[i-30])->forward->PutImage(tcopy,vec2i(100,50));
         scan_map(main_screen,ex,ey,tcopy,
            cache.img(planet2),
@@ -436,7 +436,7 @@ void share_end()
   PtrRef r2(mid_plot);
 
   int dx=(xres+1)/2-im->Size().x/2,dy=(yres+1)/2-im->Size().y/2;
-  main_screen->PutImage(im, dx, dy);
+  main_screen->PutImage(im, vec2i(dx, dy));
   console_font->put_string(main_screen,xres/2+35,yres/2+100-console_font->height()-2,
                lstring_value(to_be));
   fade_in(NULL,32);
@@ -450,7 +450,7 @@ void share_end()
   time_marker start;
   for (i=0; i<320 && ev.type!=EV_KEY; i++)
   {
-    main_screen->PutImage(im, dx, dy);
+    main_screen->PutImage(im, vec2i(dx, dy));
     console_font->put_string(main_screen,xres/2+35,yres/2+100-console_font->height()-2,
                lstring_value(to_be));
 
@@ -502,7 +502,7 @@ void show_end()
   time_marker start;
   for (i=0; i<320 && ev.type!=EV_KEY; i++)
   {
-    main_screen->PutImage(im, dx, dy);
+    main_screen->PutImage(im, vec2i(dx, dy));
 
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),wm->font(),cmap,wm->bright_color());
     wm->flush_screen();
