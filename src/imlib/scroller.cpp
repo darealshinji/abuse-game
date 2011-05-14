@@ -500,7 +500,7 @@ void pick_list::scroll_event(int newx, image *screen)
     int dy=y;
     for (int j=0; j<th; j++,dy+=tex->Size().y)
       for (int i=0,dx=x; i<tw; i++,dx+=tex->Size().x)
-        screen->PutImage(tex, dx, dy);
+        screen->PutImage(tex, vec2i(dx, dy));
 
     screen->SetClip(cx1, cy1, cx2, cy2);
   } else screen->bar(x,y,x+l-1,y+h-1,wm->black());

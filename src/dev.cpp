@@ -109,7 +109,7 @@ class cached_image : public visual_object
     if (f)
       f->PutImage(screen, cache.img(id), vec2i(x, y));
     else
-      screen->PutImage(cache.img(id), x, y);
+      screen->PutImage(cache.img(id), vec2i(x, y));
   }
   virtual int width() { return cache.img(id)->Size().x; }
   virtual int height() { return cache.img(id)->Size().y; }
@@ -481,8 +481,8 @@ void dev_controll::dev_draw(view *v)
     if (f->x-vx>=0 && f->x-vx<=(v->cx2-v->cx1+1) && f->y-vy>=0 && f->y-vy<=(v->cy2-v->cy1+1))
     {
       image *im = cache.img(light_buttons[f->type]);
-      main_screen->PutImage(im, f->x - vx + v->cx1 - im->Size().x / 2,
-                                f->y - vy + v->cy1 - im->Size().y / 2, 1);
+      main_screen->PutImage(im, vec2i(f->x - vx + v->cx1 - im->Size().x / 2,
+                                      f->y - vy + v->cy1 - im->Size().y / 2), 1);
       main_screen->rectangle(f->x1 - vx + v->cx1, f->y1 - vy + v->cy1,
                              f->x2 - vx + v->cx1, f->y2 - vy + v->cy1,
                              wm->medium_color());
@@ -3010,7 +3010,7 @@ void pal_win::draw()
     for (i=0; i<w*h; i++)
     {
       im->clear();
-      the_game->get_fg(pat[i])->im->PutImage(im,vec2i(0,0));
+      the_game->get_fg(pat[i])->im->PutImage(im, vec2i(0,0));
       scale_put(im,me->m_surf,me->x1()+(i%w)*tw,
         me->y1()+(i/w)*th,tw,th);
       if (d==pat[i])

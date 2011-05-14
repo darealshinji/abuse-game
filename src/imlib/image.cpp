@@ -318,7 +318,7 @@ void image::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 }
 
 
-void image::PutImage(image *im, int16_t x, int16_t y, char transparent)
+void image::PutImage(image *im, vec2i pos, int transparent)
 {
     int16_t i, j, xl, yl;
     uint8_t *pg1, *pg2, *source, *dest;
@@ -326,44 +326,44 @@ void image::PutImage(image *im, int16_t x, int16_t y, char transparent)
     // the screen is clipped then we only want to put part of the image
     if(m_special)
     {
-        PutPart(im, x, y, 0, 0, im->m_size.x-1, im->m_size.y-1, transparent);
+        PutPart(im, pos.x, pos.y, 0, 0, im->m_size.x-1, im->m_size.y-1, transparent);
         return;
     }
 
-    if(x < m_size.x && y < m_size.y)
+    if(pos.x < m_size.x && pos.y < m_size.y)
     {
         xl = im->m_size.x;
-        if(x + xl > m_size.x) // clip to the border of the screen
-            xl = m_size.x - x;
+        if(pos.x + xl > m_size.x) // clip to the border of the screen
+            xl = m_size.x - pos.x;
         yl = im->m_size.y;
-        if(y + yl > m_size.y)
-            yl = m_size.y - y;
+        if(pos.y + yl > m_size.y)
+            yl = m_size.y - pos.y;
 
         int startx = 0, starty = 0;
-        if(x < 0)
+        if(pos.x < 0)
         {
-            startx = -x;
-            x = 0;
+            startx = -pos.x;
+            pos.x = 0;
         }
-        if(y < 0)
+        if(pos.y < 0)
         {
-            starty = -y;
-            y = 0;
+            starty = -pos.y;
+            pos.y = 0;
         }
 
         if(xl < 0 || yl < 0)
             return;
 
-        AddDirty(x, y, x + xl, y + yl);
+        AddDirty(pos.x, pos.y, pos.x + xl, pos.y + yl);
         Lock();
         im->Lock();
-        for(j = starty; j < yl; j++, y++)
+        for(j = starty; j < yl; j++, pos.y++)
         {
-            pg1 = scan_line(y);
+            pg1 = scan_line(pos.y);
             pg2 = im->scan_line(j);
             if(transparent)
             {
-                for(i = startx, source = pg2+startx, dest = pg1 + x;
+                for(i = startx, source = pg2+startx, dest = pg1 + pos.x;
                     i < xl;
                     i++, source++, dest++)
                 {
@@ -372,7 +372,7 @@ void image::PutImage(image *im, int16_t x, int16_t y, char transparent)
                 }
             }
             else
-                memcpy(&pg1[x], pg2, xl); // straight copy
+                memcpy(&pg1[pos.x], pg2, xl); // straight copy
         }
         im->Unlock();
         Unlock();
@@ -474,25 +474,23 @@ void image::PutPart(image *im, int16_t x, int16_t y, int16_t x1, int16_t y1,
 
   Lock();
   im->Lock();
-  pg1 = scan_line(y);
-  pg2 = im->scan_line(y1);
 
   if (transparent)
   {
     for (j=0; j<ylen; j++)
     {
+      pg1 = scan_line(y + j);
+      pg2 = im->scan_line(y1 + j);
       for (i=0, source=&pg2[x1], dest=&pg1[x]; i<xlen; i++, source++, dest++)
         if (*source) *dest=*source;
-      pg1=next_line(y+j, pg1);
-      pg2=im->next_line(y1+j, pg2);
     }
   }
   else
   for (j=0; j<ylen; j++)
   {
+    pg1 = scan_line(y + j);
+    pg2 = im->scan_line(y1 + j);
     memcpy(&pg1[x], &pg2[x1], xlen);   // strait copy
-    pg1 = next_line(y+j, pg1);
-    pg2 = im->next_line(y1+j, pg2);
   }
   im->Unlock();
   Unlock();

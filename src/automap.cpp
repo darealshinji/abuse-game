@@ -109,16 +109,16 @@ void automap::draw()
   screen->SetClip(window_xstart, window_ystart, window_xend+1, window_yend+1);
 #if 0
   for (i=draw_xstart,j=draw_ystart,x=sx,y=sy; y<=ey; j+=AUTOTILE_HEIGHT,y++)
-    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, i, j, 0);
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, vec2i(i, j), 0);
 
   for (i=draw_xstart+ex*AUTOTILE_WIDTH,j=draw_ystart,y=sy,x=ex; y<=ey; j+=AUTOTILE_HEIGHT,y++)
-    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, i, j, 0);
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, vec2i(i, j), 0);
 
   for (i=draw_xstart,j=draw_ystart,x=sx,y=sy; x<=ex; i+=AUTOTILE_WIDTH,x++)
-    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, i, j, 0);
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, vec2i(i, j), 0);
 
   for (i=draw_xstart,j=draw_ystart+ey*AUTOTILE_HEIGHT,x=sx,y=ex; x<=ex; i+=AUTOTILE_WIDTH,x++)
-    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, i, j, 0);
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, vec2i(i, j), 0);
 #endif
 
   unsigned short *fgline;
@@ -131,9 +131,9 @@ void automap::draw()
       {
     int id=foretiles[ (*fgline)&0x7fff];
     if (id>=0)
-          screen->PutImage(cache.foret(id)->micro_image, i, j, 0);
+          screen->PutImage(cache.foret(id)->micro_image, vec2i(i, j), 0);
     else
-          screen->PutImage(cache.foret(foretiles[0])->micro_image, i, j, 0);
+          screen->PutImage(cache.foret(foretiles[0])->micro_image, vec2i(i, j), 0);
       }
       else
         screen->bar(i,j,i+AUTOTILE_WIDTH-1,j+AUTOTILE_HEIGHT-1,0);

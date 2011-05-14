@@ -255,7 +255,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
     color+=cdir;
       }
       wm->flush_screen();
-      main_screen->PutImage(save, mx + 1, by1);
+      main_screen->PutImage(save, vec2i(mx + 1, by1));
     } else { Timer tmp; tmp.WaitMs(10); }
 
   } while (!done);
@@ -518,9 +518,8 @@ void menu_handler(Event &ev, InputManager *inm)
       main_screen->clear();
       if (title_screen>=0)
       {
-        image *tit=cache.img(title_screen);
-          main_screen->PutImage(tit, main_screen->Size().x/2-tit->Size().x/2,
-                                main_screen->Size().y/2-tit->Size().y/2);
+        image *im = cache.img(title_screen);
+        main_screen->PutImage(im, main_screen->Size() / 2 - im->Size() / 2);
       }
       inm->redraw();
       fade_in(NULL,8);

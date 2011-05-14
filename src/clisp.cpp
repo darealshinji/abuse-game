@@ -1843,7 +1843,7 @@ long c_caller(long number, void *args)
       int32_t x1=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t y1=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t id=lnumber_value(CAR(args));
-      main_screen->PutImage(cache.img(id), x1, y1, 1);
+      main_screen->PutImage(cache.img(id), vec2i(x1, y1), 1);
     } break;
     case 217 :
     {

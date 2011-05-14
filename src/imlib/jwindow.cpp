@@ -342,7 +342,7 @@ void WindowManager::flush_screen()
         mouse_save->PutPart(m_surf, 0, 0, mx, my,
                             mx + mouse_pic->Size().x - 1,
                             my + mouse_pic->Size().y - 1);
-        m_surf->PutImage(mouse_pic, mx, my, 1);
+        m_surf->PutImage(mouse_pic, vec2i(mx, my), 1);
     }
 
     for(p = m_first; p; p = p->next)
@@ -351,7 +351,7 @@ void WindowManager::flush_screen()
     update_dirty(m_surf);
 
     if(has_mouse())
-        m_surf->PutImage(mouse_save, mx, my);
+        m_surf->PutImage(mouse_save, vec2i(mx, my));
 
     for(p = m_first; p; p = p->next)
     {
@@ -363,7 +363,7 @@ void WindowManager::flush_screen()
             mouse_save->PutPart(p->m_surf, 0, 0, mx - p->x, my - p->y,
                                 mx - p->x + mouse_pic->Size().x - 1,
                                 my - p->y + mouse_pic->Size().y - 1);
-            p->m_surf->PutImage(mouse_pic, mx - p->x, my - p->y, 1);
+            p->m_surf->PutImage(mouse_pic, vec2i(mx - p->x, my - p->y), 1);
         }
 
 //          m_surf->delete_dirty(p->x, p->y, p->x+p->l, p->y+p->h);
@@ -374,7 +374,7 @@ void WindowManager::flush_screen()
                                           q->y + q->h - p->y);
         update_dirty(p->m_surf, p->x, p->y);
         if(has_mouse())
-            p->m_surf->PutImage(mouse_save, mx - p->x, my - p->y, 0);
+            p->m_surf->PutImage(mouse_save, vec2i(mx - p->x, my - p->y), 0);
     }
 }
 

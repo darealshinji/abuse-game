@@ -235,7 +235,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
     Jwindow *l_win=create_num_window(0,total_saved,MAX_SAVE_LINES,thumbnails);
     Jwindow *preview=wm->new_window(l_win->x+l_win->l+5,l_win->y,max_w,max_h,NULL,title);
 
-    preview->m_surf->PutImage(first, preview->x1(), preview->y1());
+    preview->m_surf->PutImage(first, vec2i(preview->x1(), preview->y1()));
 
     Event ev;
     int got_level=0;
@@ -251,7 +251,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         {
             int draw_num=ev.message.id-ID_LOAD_GAME_PREVIEW;
             preview->clear();
-            preview->m_surf->PutImage(thumbnails[draw_num], preview->x1(), preview->y1());
+            preview->m_surf->PutImage(thumbnails[draw_num], vec2i(preview->x1(), preview->y1()));
         }
 
         if ((ev.type==EV_CLOSE_WINDOW) || (ev.type==EV_KEY && ev.key==JK_ESC))

@@ -450,7 +450,7 @@ void show_stats()
     wm->set_mouse_position(0,0);
     main_screen->clear();
     image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
-    main_screen->PutImage(im, 0, 0);
+    main_screen->PutImage(im, vec2i(0, 0));
 
 
     int x1=im->Size().x+1,y1=0,x2=xres,y2=main_screen->Size().y;
