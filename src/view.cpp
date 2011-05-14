@@ -393,7 +393,6 @@ void view::get_input()
             sug_px = sug_py = 0;
     }
 
-#if !defined __CELLOS_LV2__
     if( view_changed() )
     {
         base->packet.write_uint8( SCMD_VIEW_RESIZE );
@@ -442,7 +441,6 @@ void view::get_input()
     base->packet.write_uint8( mflags );
     base->packet.write_uint16((uint16_t)((int16_t)sug_px));
     base->packet.write_uint16((uint16_t)((int16_t)sug_py));
-#endif
 }
 
 
@@ -493,7 +491,6 @@ void view::add_chat_key(int key)  // return string if buf is complete
 
 int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went wrong
 {
-#if !defined __CELLOS_LV2__
   switch (cmd)
   {
     case SCMD_CHAT_KEYPRESS :
@@ -565,17 +562,12 @@ int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went 
     case SCMD_KEYRELEASE : set_key_down(*(pk++),0); break;
     case SCMD_EXT_KEYRELEASE : set_key_down(*(pk++)+256,0); break;
   }
-#endif
   return 1;
 }
 
 int view::local_player()
 {
-#if defined __CELLOS_LV2__
-  return 1;
-#else
   return player_number==client_number();
-#endif
 }
 
 void view::next_weapon()
@@ -1177,7 +1169,6 @@ void view::configure_for_area(area_controller *a)
 
 void process_packet_commands(uint8_t *pk, int size)
 {
-#if !defined __CELLOS_LV2__
   int32_t sync_uint16=-1;
 
   if (!size) return ;
@@ -1277,7 +1268,6 @@ void process_packet_commands(uint8_t *pk, int size)
 
     }
   } while (cmd!=SCMD_END_OF_PACKET);
-#endif
 }
 
 void view::set_tint(int tint)
