@@ -38,6 +38,9 @@ static inline unsigned long Max(unsigned long a, unsigned long b) { return a > b
 static inline float Min(float a, float b) { return a < b ? a : b; }
 static inline float Max(float a, float b) { return a > b ? a : b; }
 
+static inline vec2i Min(vec2i a, vec2i b) { return vec2i(Min(a.x, b.x), Min(a.y, b.y)); }
+static inline vec2i Max(vec2i a, vec2i b) { return vec2i(Max(a.x, b.x), Max(a.y, b.y)); }
+
 //
 // Byte swapping
 //

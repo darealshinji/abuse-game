@@ -335,7 +335,7 @@ void WindowManager::flush_screen()
         m1 = m_pos - m_center;
         vec2i m2 = m1 + m_sprite->visual->Size() - vec2i(1, 1);
 
-        m_sprite->save->PutPart(m_surf, 0, 0, m1.x, m1.y, m2.x, m2.y);
+        m_sprite->save->PutPart(m_surf, vec2i(0, 0), m1, m2);
         m_surf->PutImage(m_sprite->visual, m1, 1);
     }
 
@@ -354,9 +354,8 @@ void WindowManager::flush_screen()
 
         if (has_mouse())
         {
-            m_sprite->save->PutPart(p->m_surf, 0, 0, m1.x - p->m_pos.x, m1.y - p->m_pos.y,
-                                    m1.x - p->m_pos.x + m_sprite->visual->Size().x - 1,
-                                    m1.y - p->m_pos.y + m_sprite->visual->Size().y - 1);
+            m_sprite->save->PutPart(p->m_surf, vec2i(0, 0), m1 - p->m_pos,
+                                    m1 - p->m_pos + m_sprite->visual->Size() - vec2i(1, 1));
             p->m_surf->PutImage(m_sprite->visual, m1 - p->m_pos, 1);
         }
 
