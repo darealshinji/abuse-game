@@ -106,7 +106,7 @@ int get_save_spot()
   if (last_free) return last_free;    // if there are any slots not created yet...
 
   int w=cache.img(save_buts[0])->Size().x;
-  int mx=last_demo_mx-w/2;
+  int mx=last_demo_mpos.x-w/2;
   if(mx + w + 10 > xres) mx = xres - w - 10;
   if(mx < 0) mx = 0;
 

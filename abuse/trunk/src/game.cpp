@@ -1124,8 +1124,8 @@ void Game::put_bg(int x, int y, int type)
 
 int Game::in_area(Event &ev, int x1, int y1, int x2, int y2)
 {
-  return (last_demo_mx >= x1 && last_demo_mx <= x2 &&
-      last_demo_my >= y1 && last_demo_my <= y2);
+  return (last_demo_mpos.x >= x1 && last_demo_mpos.x <= x2 &&
+      last_demo_mpos.y >= y1 && last_demo_mpos.y <= y2);
 }
 
 void Game::request_level_load(char *name)
@@ -1685,8 +1685,8 @@ void Game::get_input()
             }
 
             help_handle_event(ev);
-            mousex = last_demo_mx;
-            mousey = last_demo_my;
+            mousex = last_demo_mpos.x;
+            mousey = last_demo_mpos.y;
 
             if(ev.type == EV_MESSAGE)
             {

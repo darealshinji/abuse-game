@@ -55,12 +55,10 @@ There may be interesting code in there:
 
 REFACTOR
 --------
-game_to_mouse : utiliser vec2i, ftile_on btile_on
-console::draw_char : pareil
+console::draw_char : vec2i
 VolumeWindow::draw_vol plus grand !!
 
-dlastx, dlasty, x, y (apparemment des membres de object)
-last_demo_mx, last_demo_my
+x, y (apparemment des membres de object)
 get_fg ?
 snap_x() snap_y()
 scatter_line, ascatter_line

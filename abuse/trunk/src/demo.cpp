@@ -28,7 +28,8 @@
 
 
 demo_manager demo_man;
-int last_demo_mx,last_demo_my,last_demo_mbut;
+vec2i last_demo_mpos;
+int last_demo_mbut;
 extern base_memory_struct *base;   // points to shm_addr
 extern int idle_ticks;
 
@@ -53,9 +54,8 @@ void get_event(Event &ev)
     } break;
   }
 
-  last_demo_mx=ev.mouse_move.x;
-  last_demo_my=ev.mouse_move.y;
-  last_demo_mbut=ev.mouse_button;
+  last_demo_mpos = ev.mouse_move;
+  last_demo_mbut = ev.mouse_button;
   idle_ticks=0;
 }
 
@@ -145,7 +145,8 @@ void demo_manager::reset_game()
   view *v=player_list;
   for (; v; v=v->next) { if (v->focus) v->reset_player(); }
 
-  last_demo_mx=last_demo_my=last_demo_mbut=0;
+  last_demo_mpos = vec2i(0, 0);
+  last_demo_mbut = 0;
   current_level->set_tick_counter(0);
 
 }

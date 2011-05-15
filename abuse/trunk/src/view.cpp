@@ -383,7 +383,7 @@ void view::get_input()
         get_movement( 0, sug_x, sug_y, sug_b1, sug_b2, sug_b3, sug_b4 );
         if( focus )
         {
-            sug_p = the_game->MouseToGame(vec2i(last_demo_mx, last_demo_my));
+            sug_p = the_game->MouseToGame(last_demo_mpos);
             if(last_demo_mbut & 1)
                 sug_b2 = 1;
             if(last_demo_mbut & 2)
