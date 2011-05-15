@@ -58,6 +58,10 @@ REFACTOR
 - move to vec2i:
   - AddDirty !!
   - update_dirty
+  - scale_put, scale_put_trans
+  - tint_area, darken_area
+
+Jwindow::_x1 _x2
 
 JCFont::tl,th -> m_size
 sprite::x,y -> m_pos

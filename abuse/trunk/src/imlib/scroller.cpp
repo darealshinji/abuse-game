@@ -56,8 +56,9 @@ uint8_t vs_down_arrow[8*10]={
 
 void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
 {
-  int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
+  vec2i caa, cbb;
+  screen->GetClip(caa, cbb);
+
   uint8_t remap[3];
   remap[0]=wm->medium_color();
   remap[1]=wm->bright_color();
@@ -66,12 +67,12 @@ void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
   screen->Lock();
   for (int yc=ich; yc; yc--,y++)
   {
-    if (y >= cy1 && y < cy2)
+    if (y >= caa.y && y < cbb.y)
     {
       uint8_t *sl=screen->scan_line(y)+x;
       for (int xc=icw,xo=x; xc; xc--,xo++,sl++,buf++)
       {
-    if (xo >= cx1 && xo < cx2)
+    if (xo >= caa.x && xo < cbb.x)
       *sl=remap[*buf];
       }
     }
@@ -493,9 +494,9 @@ void pick_list::scroll_event(int newx, image *screen)
   last_sel=newx;
   if (tex)
   {
-    int cx1, cy1, cx2, cy2;
-    screen->GetClip(cx1, cy1, cx2, cy2);
-    screen->SetClip(m_pos.x,m_pos.y,m_pos.x+l,m_pos.y+h);
+    vec2i caa, cbb;
+    screen->GetClip(caa, cbb);
+    screen->SetClip(m_pos, m_pos + vec2i(l, h));
     int tw=(l+tex->Size().x-1)/tex->Size().x;
     int th=(h+tex->Size().y-1)/tex->Size().y;
     int dy=m_pos.y;
@@ -503,7 +504,7 @@ void pick_list::scroll_event(int newx, image *screen)
       for (int i=0,dx=m_pos.x; i<tw; i++,dx+=tex->Size().x)
         screen->PutImage(tex, vec2i(dx, dy));
 
-    screen->SetClip(cx1, cy1, cx2, cy2);
+    screen->SetClip(caa, cbb);
   } else screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->black());
 
   int dy=m_pos.y;

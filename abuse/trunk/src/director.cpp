@@ -42,12 +42,14 @@ extern unsigned char *white_light;
 
 int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *font, uint8_t *cmap, char color)
 {
-  int cx1, cy1, cx2, cy2, word_size, word_len;
-  main_screen->GetClip(cx1, cy1, cx2, cy2);
-  main_screen->InClip(x1,y1,x2+1,y2+1);
+    vec2i caa, cbb;
+    main_screen->GetClip(caa, cbb);
+    main_screen->InClip(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
+
   int h=font->height()+2,w=font->width(),x=x1,dist;
   y+=y1;
   char const *word_start;
+  int word_size, word_len;
 
   while (buf && *buf)
   {
@@ -114,8 +116,8 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *fo
     }
 
   }
-  main_screen->SetClip(cx1,cy1,cx2,cy2);
-  return (y<=y1);
+  main_screen->SetClip(caa, cbb);
+  return y <= y1;
 }
 
 void director::wait(void *arg)

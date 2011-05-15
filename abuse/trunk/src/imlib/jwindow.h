@@ -112,8 +112,8 @@ public:
     int y1() { return _y1; }
     int x2() { return _x2; }
     int y2() { return _y2; }
-    void clip_in() { m_surf->SetClip(x1(), y1(), x2() + 1, y2() + 1); }
-    void clip_out() { m_surf->SetClip(0, 0, l, h); }
+    void clip_in() { m_surf->SetClip(vec2i(x1(), y1()), vec2i(x2() + 1, y2() + 1)); }
+    void clip_out() { m_surf->SetClip(vec2i(0), vec2i(l, h)); }
     char *read(int id) { return inm->get(id)->read(); }
     void local_close();
 

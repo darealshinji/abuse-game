@@ -46,22 +46,21 @@ static VolumeWindow *volume_window;
 //percent is 0..256
 void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int percent)
 {
-  int x,y;
-  int cx1, cy1, cx2, cy2;
-  main_screen->GetClip(cx1, cy1, cx2, cy2);
-  if (x1<cx1) x1=cx1;
-  if (y1<cy1) y1=cy1;
-  if (x2>cx2-1) x2=cx2-1;
-  if (y2>cy2-1) y2=cy2-1;
-  if (x2<x1 || y2<y1) return ;
+  vec2i caa, cbb;
+  main_screen->GetClip(caa, cbb);
+  if (x1 < caa.x) x1 = caa.x;
+  if (y1 < caa.y) y1 = caa.y;
+  if (x2 > cbb.x - 1) x2 = cbb.x - 1;
+  if (y2 > cbb.y - 1) y2 = cbb.y - 1;
+  if (x2 < x1 || y2 < y1) return;
 
   percent=256-percent;
 
   main_screen->Lock();
-  for (y=y1; y<=y2; y++)
+  for (int y=y1; y<=y2; y++)
   {
     uint8_t *sl=main_screen->scan_line(y)+x1;
-    for (x=x1; x<=x2; x++,sl++)
+    for (int x=x1; x<=x2; x++,sl++)
     {
       uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
       uint8_t r=((*(paddr++))-r_to)*percent/256+r_to;
@@ -76,20 +75,19 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
 
 void darken_area(int x1, int y1, int x2, int y2, int amount)
 {
-  int x,y;
-  int cx1, cy1, cx2, cy2;
-  main_screen->GetClip(cx1, cy1, cx2, cy2);
-  if (x1<cx1) x1=cx1;
-  if (y1<cy1) y1=cy1;
-  if (x2>cx2-1) x2=cx2-1;
-  if (y2>cy2-1) y2=cy2-1;
-  if (x2<x1 || y2<y1) return ;
+  vec2i caa, cbb;
+  main_screen->GetClip(caa, cbb);
+  if (x1 < caa.x) x1 = caa.x;
+  if (y1 < caa.y) y1 = caa.y;
+  if (x2 > cbb.x - 1) x2 = cbb.x - 1;
+  if (y2 > cbb.y - 1) y2 = cbb.y - 1;
+  if (x2 < x1 || y2 < y1) return;
 
   main_screen->Lock();
-  for (y=y1; y<=y2; y++)
+  for (int y=y1; y<=y2; y++)
   {
     uint8_t *sl=main_screen->scan_line(y)+x1;
-    for (x=x1; x<=x2; x++,sl++)
+    for (int x=x1; x<=x2; x++,sl++)
     {
       uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
       uint8_t r=(*(paddr++))*amount/256;

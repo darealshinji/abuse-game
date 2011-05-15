@@ -57,7 +57,8 @@ void console::show()
   {
     con_win=wm->new_window(lastx,lasty,screen_w(),screen_h(),NULL,name);
     redraw();
-    con_win->m_surf->SetClip(con_win->x1(),con_win->y1(),con_win->x2()+1,con_win->y2()+1);
+    con_win->m_surf->SetClip(vec2i(con_win->x1(), con_win->y1()),
+                             vec2i(con_win->x2() + 1, con_win->y2() + 1));
   }
 }
 

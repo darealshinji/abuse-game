@@ -108,7 +108,8 @@ void automap::draw()
   // because it handles clipping, but for ths reason is slower, the rest
   // we will slam on as fast as possible
 
-  screen->SetClip(window_xstart, window_ystart, window_xend+1, window_yend+1);
+  screen->SetClip(vec2i(window_xstart, window_ystart),
+                  vec2i(window_xend + 1, window_yend + 1));
 #if 0
   for (i=draw_xstart,j=draw_ystart,x=sx,y=sy; y<=ey; j+=AUTOTILE_HEIGHT,y++)
     screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, vec2i(i, j), 0);
@@ -153,7 +154,7 @@ void automap::draw()
   automap_window->m_surf->Unlock();
 
   // set the clip back to full window size because soemthing else could mess with the area
-  automap_window->m_surf->SetClip(0,0,screen->Size().x,screen->Size().y);
+  automap_window->m_surf->SetClip(vec2i(0), screen->Size());
 }
 
 void automap::toggle_window()
