@@ -56,10 +56,12 @@ There may be interesting code in there:
 REFACTOR
 --------
 - move to vec2i:
-  - PutPart
+  - PutPart -> changer le 2e arg. de la bbox
   - AddDirty !!
   - update_dirty
 
+JCFont::tl,th -> m_size
+sprite::x,y -> m_pos
 console::draw_char : vec2i
 VolumeWindow::draw_vol plus grand !!
 
@@ -69,4 +71,6 @@ snap_x() snap_y()
 scatter_line, ascatter_line
 xstart() / xend() etc.
 jwindow::area
+
+refactor image::Line to merge loops
 
