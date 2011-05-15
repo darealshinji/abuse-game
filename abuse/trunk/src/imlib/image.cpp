@@ -24,9 +24,10 @@ linked_list image_list; // FIXME: only jwindow.cpp needs this
 image_descriptor::image_descriptor(vec2i size,
                                    int keep_dirties, int static_memory)
 {
-    m_clipx1 = 0; m_clipy1 = 0;
-    m_l = size.x; m_h = size.y;
-    m_clipx2 = m_l; m_clipy2 = m_h;
+    m_aa = vec2i(0);
+    m_bb = size;
+    m_size = size;
+
     keep_dirt = keep_dirties;
     static_mem = static_memory;
 }
@@ -505,8 +506,8 @@ void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
     if (!keep_dirt)
         return;
 
-    x1 = Max(0, x1); x2 = Min(m_l, x2);
-    y1 = Max(0, y1); y2 = Min(m_h, y2);
+    x1 = Max(0, x1); x2 = Min(m_size.x, x2);
+    y1 = Max(0, y1); y2 = Min(m_size.y, y2);
 
     if (x1 >= x2 || y1 >= y2)
         return;
@@ -604,8 +605,8 @@ void image_descriptor::AddDirty(int x1, int y1, int x2, int y2)
     if (!keep_dirt)
         return;
 
-    x1 = Max(0, x1); x2 = Min(m_l, x2);
-    y1 = Max(0, y1); y2 = Min(m_h, y2);
+    x1 = Max(0, x1); x2 = Min(m_size.x, x2);
+    y1 = Max(0, y1); y2 = Min(m_size.y, y2);
 
     if (x1 >= x2 || y1 >= y2)
         return;
