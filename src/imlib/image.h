@@ -37,8 +37,7 @@ public :
 class image_descriptor
 {
 private:
-    int m_l, m_h;
-    int m_clipx1, m_clipy1, m_clipx2, m_clipy2;
+    vec2i m_size, m_aa, m_bb;
 
 public:
     uint8_t keep_dirt,
@@ -48,33 +47,34 @@ public:
     void *extended_descriptor;
 
     image_descriptor(vec2i size, int keep_dirties = 1, int static_memory = 0);
-    int bound_x1(int x1) { return x1 < m_clipx1 ? m_clipx1 : x1; }
-    int bound_y1(int y1) { return y1 < m_clipy1 ? m_clipy1 : y1; }
-    int bound_x2(int x2) { return x2 > m_clipx2 ? m_clipx2 : x2; }
-    int bound_y2(int y2) { return y2 > m_clipy2 ? m_clipy2 : y2; }
-    inline int x1_clip() { return m_clipx1; }
-    inline int y1_clip() { return m_clipy1; }
-    inline int x2_clip() { return m_clipx2; }
-    inline int y2_clip() { return m_clipy2; }
+    int bound_x1(int x1) { return Max(x1, m_aa.x); }
+    int bound_y1(int y1) { return Max(y1, m_aa.y); }
+    int bound_x2(int x2) { return Min(x2, m_bb.x); }
+    int bound_y2(int y2) { return Min(y2, m_bb.y); }
+    inline int x1_clip() { return m_aa.x; }
+    inline int y1_clip() { return m_aa.y; }
+    inline int x2_clip() { return m_bb.x; }
+    inline int y2_clip() { return m_bb.y; }
     void ClearDirties();
     void GetClip(int &x1, int &y1, int &x2, int &y2)
     {
-        x1 = m_clipx1; y1 = m_clipy1; x2 = m_clipx2; y2 = m_clipy2;
+        x1 = m_aa.x; y1 = m_aa.y; x2 = m_bb.x; y2 = m_bb.y;
     }
     void SetClip(int x1, int y1, int x2, int y2)
     {
         if(x2 < x1 + 1) x2 = x1 + 1;
         if(y2 < y1 + 1) y2 = y1 + 1;
-        m_clipx1 = Max(x1, 0); m_clipy1 = Max(y1, 0);
-        m_clipx2 = Min(x2, m_l); m_clipy2 = Min(y2, m_h);
+        m_aa.x = Max(x1, 0); m_aa.y = Max(y1, 0);
+        m_bb.x = Min(x2, m_size.x); m_bb.y = Min(y2, m_size.y);
     }
     void ReduceDirties();
     void AddDirty(int x1, int y1, int x2, int y2);
     void delete_dirty(int x1, int y1, int x2, int y2);
     void Resize(vec2i size)
     {
-        m_l = size.x; m_h = size.y;
-        m_clipx1 = 0; m_clipy1 = 0; m_clipx2 = m_l; m_clipy2 = m_h;
+        m_size = size;
+        m_aa = vec2i(0);
+        m_bb = size;
     }
 };
 
