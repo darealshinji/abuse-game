@@ -898,8 +898,8 @@ void *l_caller(long number, void *args)
     push_onto_list(LNumber::Create((last_demo_mbut&4)==4),ret);
     push_onto_list(LNumber::Create((last_demo_mbut&2)==2),ret);
     push_onto_list(LNumber::Create((last_demo_mbut&1)==1),ret);
-    push_onto_list(LNumber::Create(last_demo_my),ret);
-    push_onto_list(LNumber::Create(last_demo_mx),ret);
+    push_onto_list(LNumber::Create(last_demo_mpos.y),ret);
+    push_onto_list(LNumber::Create(last_demo_mpos.x),ret);
       }
       return ret;
     } break;

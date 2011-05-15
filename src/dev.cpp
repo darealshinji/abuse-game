@@ -94,7 +94,8 @@ game_object *edit_object;
 dev_controll *dev_cont=NULL;
 image *small_render=NULL;
 
-int scale_mult,scale_div,dlastx,dlasty;
+vec2i dlast;
+int scale_mult,scale_div;
 int last_created_type=-1;
 char level_file[100]="levels/level00.spe";
 
@@ -491,7 +492,7 @@ void dev_controll::dev_draw(view *v)
     if (link_object)
     {
       vec2i pos = the_game->GameToMouse(vec2i(link_object->x, link_object->y), v);
-      main_screen->Line(pos, vec2i(dlastx, dlasty), yellow);
+      main_screen->Line(pos, dlast, yellow);
     }
 
     if (selected_light)
@@ -1045,7 +1046,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
   if (!strcmp(fword,"unchop"))
   {
-    vec2i tile = the_game->GetBgTile(vec2i(dlastx, dlasty));
+    vec2i tile = the_game->GetBgTile(dlast);
     if (tile.x>=0 && tile.y>=0)
     {
       if (sscanf(command,"%s%d%d",fword,&l,&h)==3)
@@ -1166,7 +1167,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
     if (t>=0)                                 // did we find it?
     {
-      vec2i pos = the_game->MouseToGame(vec2i(dlastx, dlasty));
+      vec2i pos = the_game->MouseToGame(dlast);
       edit_object=create(t, pos.x, pos.y);
       current_level->add_object(edit_object);
       the_game->need_refresh();
@@ -1210,7 +1211,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
   if (!strcmp(fword,"fg_select"))
   {
-    vec2i tile = the_game->GetFgTile(vec2i(dlastx, dlasty));
+    vec2i tile = the_game->GetFgTile(dlast);
     if (tile.x >= 0 && tile.y >= 0 &&
         tile.x < current_level->foreground_width() &&
         tile.y < current_level->foreground_height())
@@ -1224,7 +1225,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
   if (!strcmp(fword,"toggle_fg_raise"))
   {
-    vec2i tile = the_game->GetFgTile(vec2i(dlastx, dlasty));
+    vec2i tile = the_game->GetFgTile(dlast);
     if (tile.x >= 0 && tile.y >= 0 &&
         tile.x < current_level->foreground_width() &&
         tile.y < current_level->foreground_height())
@@ -1513,7 +1514,7 @@ void dev_controll::area_handle_input(Event &ev)
 
   if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
   {
-    vec2i pos = the_game->MouseToGame(vec2i(last_demo_mx, last_demo_my));
+    vec2i pos = the_game->MouseToGame(last_demo_mpos);
     if (!current_level) return ;
     current_area=current_level->area_list=new area_controller(pos.x, pos.y,
                                   the_game->ftile_width(),
@@ -1552,15 +1553,15 @@ void dev_controll::pick_handle_input(Event &ev)
   if (!current_level) return;
   if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
   {
-    int32_t mx=last_demo_mx,my=last_demo_my;
-    view *v = the_game->GetView(vec2i(mx, my));
+    vec2i m = last_demo_mpos;
+    view *v = the_game->GetView(m);
     for (area_controller *a=current_level->area_list; a; a=a->next)
     {
       vec2i pos1 = the_game->GameToMouse(vec2i(a->x, a->y), v);
       vec2i pos2 = the_game->GameToMouse(vec2i(a->x + a->w, a->y + a->h), v);
-      if (abs(pos1.x - mx) < 2 && abs(pos1.y - my) < 2)
+      if (abs(pos1.x - m.x) < 2 && abs(pos1.y - m.y) < 2)
       { find = a; find_top = 1; }
-      else if (abs(pos2.x - mx) < 2 && abs(pos2.y - my) < 2)
+      else if (abs(pos2.x - m.x) < 2 && abs(pos2.y - m.y) < 2)
       { find = a; find_top = 0; }
     }
 
@@ -1620,10 +1621,10 @@ int sshot_fcount=-1;
 void dev_controll::handle_event(Event &ev)
 {
   int32_t x,y;
-  if (link_object && (dlastx!=last_link_x || dlasty!=last_link_y))
+  if (link_object && (dlast.x!=last_link_x || dlast.y!=last_link_y))
   {
-    last_link_x=dlastx;
-    last_link_y=dlasty;
+    last_link_x=dlast.x;
+    last_link_y=dlast.y;
     the_game->need_refresh();
   }
 
@@ -1634,10 +1635,7 @@ void dev_controll::handle_event(Event &ev)
   for (x=0; x<total_pals; x++)
     pal_wins[x]->handle_event(ev);
   if (ev.type==EV_MOUSE_MOVE)
-  {
-    dlastx=last_demo_mx;
-    dlasty=last_demo_my;
-  }
+    dlast = last_demo_mpos;
   if (dev_console && dev_console->handle_event(ev))
     return;
 
@@ -1685,7 +1683,7 @@ void dev_controll::handle_event(Event &ev)
       {
     if (ev.type==EV_MOUSE_MOVE)
     {
-      vec2i pos = the_game->MouseToGame(vec2i(last_demo_mx, last_demo_my));
+      vec2i pos = the_game->MouseToGame(last_demo_mpos);
       edit_object->x = snap_x(pos.x);
       edit_object->y = snap_y(pos.y);
       the_game->need_refresh();
@@ -1713,7 +1711,7 @@ void dev_controll::handle_event(Event &ev)
       {
     if (ev.type==EV_MOUSE_MOVE)
     {
-      vec2i pos = the_game->MouseToGame(vec2i(last_demo_mx, last_demo_my));
+      vec2i pos = the_game->MouseToGame(last_demo_mpos);
       edit_light->x = snap_x(pos.x);
       edit_light->y = snap_y(pos.y);
 
@@ -1795,7 +1793,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (current_area)
       {
-    vec2i pos = the_game->MouseToGame(vec2i(last_demo_mx, last_demo_my));
+    vec2i pos = the_game->MouseToGame(last_demo_mpos);
     if (pos.x>current_area->x && pos.y>current_area->y)
     {
       if (pos.x-current_area->x!=current_area->w || pos.y-current_area->y!=current_area->h)
@@ -1817,7 +1815,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (current_area)
       {
-    vec2i pos = the_game->MouseToGame(vec2i(last_demo_mx, last_demo_my));
+    vec2i pos = the_game->MouseToGame(last_demo_mpos);
     if (pos.x<current_area->x+current_area->w && pos.y<current_area->y+current_area->h)
     {
       if (pos.x!=current_area->x || pos.y!=current_area->y)
@@ -1843,7 +1841,7 @@ void dev_controll::handle_event(Event &ev)
     selected_object=NULL;
     if (ev.window==NULL)
     {
-      vec2i pos = the_game->MouseToGame(vec2i(last_demo_mx, last_demo_my));
+      vec2i pos = the_game->MouseToGame(last_demo_mpos);
 
       if (!(dev & MAP_MODE))
       {
@@ -1860,14 +1858,14 @@ void dev_controll::handle_event(Event &ev)
         // FIXME: there is a bug here, the two if conditionals are the same
         if (ev.mouse_button==1 && !selected_object && !selected_light)
         {
-          vec2i tile = the_game->GetFgTile(vec2i(last_demo_mx, last_demo_my));
+          vec2i tile = the_game->GetFgTile(last_demo_mpos);
           if (tile.x>=0 && tile.y>=0 && tile.x<current_level->foreground_width() &&
           tile.y<current_level->foreground_height())
           current_level->put_fg(tile.x,tile.y,raise_all ? make_above_tile(cur_fg) : cur_fg);
           the_game->need_refresh();
         } else if (ev.mouse_button==1 && !selected_object && !selected_light)
         {
-          vec2i tile = the_game->GetBgTile(vec2i(last_demo_mx, last_demo_my));
+          vec2i tile = the_game->GetBgTile(last_demo_mpos);
           if (tile.x>=0 && tile.y>=0 && tile.x<current_level->background_width() &&
           tile.y<current_level->background_height())
           current_level->put_bg(tile.x,tile.y,cur_fg);
@@ -1948,18 +1946,18 @@ void dev_controll::handle_event(Event &ev)
       }
       else if (ev.window==NULL)
       {
-        if (dlastx>=0 && dlasty>=0 && edit_mode==ID_DMODE_DRAW)
+        if (dlast.x>=0 && dlast.y>=0 && edit_mode==ID_DMODE_DRAW)
         {
           if ((dev & DRAW_FG_LAYER) && ev.mouse_button==1)
           {
-        vec2i tile = the_game->GetFgTile(vec2i(last_demo_mx, last_demo_my));
+        vec2i tile = the_game->GetFgTile(last_demo_mpos);
         if (tile.x>=0 && tile.y>=0 && tile.x<current_level->foreground_width() &&
             tile.y<current_level->foreground_height())
         the_game->put_fg(tile.x,tile.y,raise_all ? make_above_tile(cur_fg) : cur_fg);
           }
           if ((dev & DRAW_BG_LAYER) && ev.mouse_button==2)
           {
-        vec2i tile = the_game->GetBgTile(vec2i(last_demo_mx, last_demo_my));
+        vec2i tile = the_game->GetBgTile(last_demo_mpos);
         if (tile.x>=0 && tile.y>=0 && tile.x<current_level->background_width() &&
             tile.y<current_level->background_height())
         the_game->put_bg(tile.x,tile.y,cur_bg);
@@ -2484,7 +2482,7 @@ void dev_controll::handle_event(Event &ev)
     case DEV_LIGHT8 :
     case DEV_LIGHT9 :
     {
-      vec2i pos = the_game->MouseToGame(vec2i(last_demo_mx, last_demo_my));
+      vec2i pos = the_game->MouseToGame(last_demo_mpos);
       edit_light = add_light_source(ev.message.id - DEV_LIGHT0,
                                     snap_x(pos.x), snap_y(pos.y),
                                     atoi(lightw->read(DEV_LIGHTR1)),
@@ -2731,7 +2729,7 @@ void dev_controll::handle_event(Event &ev)
       {
         if (ev.window==NULL || ev.window==forew)
         {
-          vec2i tile = the_game->GetFgTile(vec2i(last_demo_mx, last_demo_my));
+          vec2i tile = the_game->GetFgTile(last_demo_mpos);
           fg_fill(cur_fg, tile.x, tile.y, NULL);
         }
       } break;
@@ -2817,7 +2815,7 @@ void dev_controll::handle_event(Event &ev)
       case 'R' : do_command("reload",ev); break;
       case 'w' :
       {
-        vec2i pos = the_game->MouseToGame(vec2i(dlastx, dlasty));
+        vec2i pos = the_game->MouseToGame(dlast);
         char msg[100]; sprintf(msg, symbol_str("mouse_at"), pos.x, pos.y);
         the_game->show_help(msg);
         the_game->need_refresh();
@@ -2838,7 +2836,7 @@ void dev_controll::handle_event(Event &ev)
       {
         if (current_level && player_list && player_list->focus)
         {
-          vec2i pos = the_game->MouseToGame(vec2i(dlastx, dlasty));
+          vec2i pos = the_game->MouseToGame(dlast);
           player_list->focus->x = pos.x;
           player_list->focus->y = pos.y;
           do_command("center",ev);
@@ -2847,7 +2845,7 @@ void dev_controll::handle_event(Event &ev)
       } break;
       case 'z' : do_command("clear_weapons",ev); break;
       case 'Z' : if (dev&EDIT_MODE)
-      { view *v = the_game->GetView(vec2i(last_demo_mx, last_demo_my));
+      { view *v = the_game->GetView(last_demo_mpos);
         if (v)
         {
           v->god=!v->god;
@@ -3029,8 +3027,8 @@ void pal_win::handle_event(Event &ev)
       {
         if (ev.mouse_button==1)
     {
-      int selx=(last_demo_mx-me->x-me->x1())/(the_game->ftile_width()/scale),
-          sely=(last_demo_my-me->y-me->y1())/(the_game->ftile_height()/scale);
+      int selx=(last_demo_mpos.x-me->x-me->x1())/(the_game->ftile_width()/scale),
+          sely=(last_demo_mpos.y-me->y-me->y1())/(the_game->ftile_height()/scale);
       if (selx>=0 && sely>=0 && selx<w && sely<h)
       {
         cur_fg=pat[selx+sely*w];
@@ -3044,8 +3042,8 @@ void pal_win::handle_event(Event &ev)
         the_game->show_help(symbol_str("pal_lock"));
       else
       {
-        int selx=(last_demo_mx-me->x-me->x1())/(the_game->ftile_width()/scale),
-            sely=(last_demo_my-me->y-me->y1())/(the_game->ftile_height()/scale);
+        int selx=(last_demo_mpos.x-me->x-me->x1())/(the_game->ftile_width()/scale),
+            sely=(last_demo_mpos.y-me->y-me->y1())/(the_game->ftile_height()/scale);
         if (selx>=0 && sely>=0 && selx<w && sely<h)
         {
           pat[selx+sely*w]=cur_fg;

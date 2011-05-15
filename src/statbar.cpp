@@ -300,8 +300,8 @@ void status_bar::step()
   if (sbar<=0 || !total_weapons) return ;
 
 
-  int mx=small_render ? (last_demo_mx-v->cx1)*2+v->cx1 : last_demo_mx;
-  int my=small_render ? (last_demo_my-v->cy1)*2+v->cy1 : last_demo_my;
+  int mx=small_render ? (last_demo_mpos.x-v->cx1)*2+v->cx1 : last_demo_mpos.x;
+  int my=small_render ? (last_demo_mpos.y-v->cy1)*2+v->cy1 : last_demo_mpos.y;
 
 
   if (mx>sx1 && my>sy1 && mx<sx2 && my<sy2)
