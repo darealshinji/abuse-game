@@ -190,17 +190,17 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
   calc_size(w,h);
   int cx1, cy1, cx2, cy2;
   main_screen->GetClip(cx1, cy1, cx2, cy2);
-  if (parent->x+w+x>=cx2)
-    x=cx2-1-w-parent->x;
-  if (h+y+parent->y>=cy2)
+  if (parent->m_pos.x + w + x >= cx2)
+    x=cx2-1-w-parent->m_pos.x;
+  if (h+y+parent->m_pos.y>=cy2)
   {
-    if (parent->y+parent->h+wm->font()->height()>=cy2)
+    if (parent->m_pos.y+parent->h+wm->font()->height()>=cy2)
       y=-h;
     else y=y-h+wm->font()->height()+5;
   }
 
 
-  win=wm->new_window(parent->x+x,parent->y+y,
+  win=wm->new_window(parent->m_pos.x+x,parent->m_pos.y+y,
              w - Jwindow::left_border() - Jwindow::right_border(),
              h - Jwindow::top_border() - Jwindow::bottom_border(),
                      NULL);
@@ -324,8 +324,8 @@ int psub_menu::handle_event(Jwindow *parent, int x, int y, Event &ev)
   int cx1, cy1, cx2, cy2;
   main_screen->GetClip(cx1, cy1, cx2, cy2);
 
-  x=win->x;
-  y=win->y;
+  x=win->m_pos.x;
+  y=win->m_pos.y;
 
   int has_flags=0,dx=3;
   for (pmenu_item *p=first; p; p=p->next) if (p->on_off) has_flags=1;
@@ -352,7 +352,7 @@ int psub_menu::handle_event(Jwindow *parent, int x, int y, Event &ev)
       else return 0;
     } else return 1;
   } else if (active!=-1)
-    return item_num(active)->handle_event(win,win->x+dx,win->y+3+active*(th+1),w-6,0,ev);
+    return item_num(active)->handle_event(win,win->m_pos.x+dx,win->m_pos.y+3+active*(th+1),w-6,0,ev);
   else return 0;
 
 
@@ -361,8 +361,8 @@ int psub_menu::handle_event(Jwindow *parent, int x, int y, Event &ev)
 int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top,
                  Event &ev)
 {
-  x+=parent->x;
-  y+=parent->y;
+  x+=parent->m_pos.x;
+  y+=parent->m_pos.y;
   if (ev.mouse_move.x>=x && ev.mouse_move.y>=y && ev.mouse_move.x<x+w &&
       ev.mouse_move.y<y+wm->font()->height()+2)
   {
@@ -385,8 +385,8 @@ pmenu_item *pmenu::inarea(int mx, int my, image *screen)
 {
   int cx1, cy1, cx2, cy2;
   screen->GetClip(cx1, cy1, cx2, cy2);
-  mx-=bar->x;
-  my-=bar->y;
+  mx-=bar->m_pos.x;
+  my-=bar->m_pos.y;
   if (mx<0 || my<0 || mx>=bar->m_surf->Size().x || my>=bar->m_surf->Size().y) return NULL;
   else
   {

@@ -147,10 +147,10 @@ class amb_cont : public scroller
   { if (player_list) sx=player_list->ambient; }
   virtual void scroll_event(int newx, image *screen)
   {
-    screen->Bar(vec2i(x, y), vec2i(x + l - 1, y + h - 1), wm->dark_color());
+    screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->dark_color());
     char st[100];
     sprintf(st,"%d",newx);
-    wm->font()->put_string(screen,x+30,y+1,st,wm->bright_color());
+    wm->font()->put_string(screen,m_pos.x+30,m_pos.y+1,st,wm->bright_color());
     if (player_list)
       player_list->ambient=newx;
     the_game->need_refresh();
@@ -573,8 +573,8 @@ void dev_controll::toggle_toolbar()
   if (tbw)
   {
     tbw_on=0;
-    prop->setd("toolbar x",tbw->x);
-    prop->setd("toolbar y",tbw->y);
+    prop->setd("toolbar x",tbw->m_pos.x);
+    prop->setd("toolbar y",tbw->m_pos.y);
     wm->close_window(tbw);
     tbw=NULL;
   } else
@@ -603,8 +603,8 @@ void dev_controll::toggle_show_menu()
     if(show_menu)
     {
         show_menu_on = 0;
-        prop->setd("layer x", show_menu->x);
-        prop->setd("layer y", show_menu->y);
+        prop->setd("layer x", show_menu->m_pos.x);
+        prop->setd("layer y", show_menu->m_pos.y);
         wm->close_window(show_menu);
         show_menu = NULL;
         return;
@@ -646,8 +646,8 @@ void dev_controll::toggle_omenu()
     if(omenu)
     {
         omenu_on = 0;
-        prop->setd("objects x", omenu->x);
-        prop->setd("objects y", omenu->y);
+        prop->setd("objects x", omenu->m_pos.x);
+        prop->setd("objects y", omenu->m_pos.y);
         wm->close_window(omenu);
         omenu = NULL;
         free(listable_objs);
@@ -693,8 +693,8 @@ void dev_controll::toggle_pmenu()
     if(pmenu)
     {
         pmenu_on = 0;
-        prop->setd("pal x", pmenu->x);
-        prop->setd("pal y", pmenu->y);
+        prop->setd("pal x", pmenu->m_pos.x);
+        prop->setd("pal y", pmenu->m_pos.y);
         wm->close_window(pmenu);
         pmenu = NULL;
         free(pwin_list);
@@ -727,8 +727,8 @@ void dev_controll::toggle_fgw()
     if(forew)
     {
         forew_on = 1;
-        prop->setd("fore x", forew->x);
-        prop->setd("fore y", forew->y);
+        prop->setd("fore x", forew->m_pos.x);
+        prop->setd("fore y", forew->m_pos.y);
         wm->close_window(forew);
         forew = NULL;
         return;
@@ -766,8 +766,8 @@ void dev_controll::toggle_bgw()
     if(backw)
     {
         backw_on = 1;
-        prop->setd("back x", backw->x);
-        prop->setd("back y", backw->y);
+        prop->setd("back x", backw->m_pos.x);
+        prop->setd("back y", backw->m_pos.y);
         wm->close_window(backw);
         backw = NULL;
         return;
@@ -789,8 +789,8 @@ void dev_controll::toggle_search_window()
     if(search_window)
     {
         searchw_on = 1;
-        prop->setd("searchw x", search_window->x);
-        prop->setd("searchw y", search_window->y);
+        prop->setd("searchw x", search_window->m_pos.x);
+        prop->setd("searchw y", search_window->m_pos.y);
         prop->set("search name", search_window->read(ID_SEARCH_TEXT));
         wm->close_window(search_window);
         search_window = NULL;
@@ -1319,8 +1319,8 @@ void dev_controll::toggle_light_window()
 {
     if(lightw)
     {
-        prop->setd("light create x", lightw->x);
-        prop->setd("light create y", lightw->y);
+        prop->setd("light create x", lightw->m_pos.x);
+        prop->setd("light create y", lightw->m_pos.y);
         prop->setd("light create w", atoi(lightw->read(DEV_LIGHTW)));
         prop->setd("light create h", atoi(lightw->read(DEV_LIGHTH)));
         prop->setd("light create r1", atoi(lightw->read(DEV_LIGHTR1)));
@@ -1424,8 +1424,8 @@ void dev_controll::notify_deleted_light(light_source *l)
   {
     if (ledit)
     {
-      prop->setd("ledit x",ledit->x);
-      prop->setd("ledit y",ledit->y);
+      prop->setd("ledit x",ledit->m_pos.x);
+      prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
     }
     edit_light=NULL;
@@ -1499,8 +1499,8 @@ void dev_controll::close_ai_window()
     x=atoi(aiw->read(DEV_AI_FADE)); if (x!=o->fade_count()) o->set_fade_count(x);
       }
     }
-    prop->setd("ai x",aiw->x);
-    prop->setd("ai y",aiw->y);
+    prop->setd("ai x",aiw->m_pos.x);
+    prop->setd("ai y",aiw->m_pos.y);
     wm->close_window(aiw);
     aiw=NULL;
     ai_object=NULL;
@@ -1529,8 +1529,8 @@ void dev_controll::close_area_win(int read_values)
 {
   if (area_win)
   {
-    prop->setd("area_box x",area_win->x);
-    prop->setd("area_box y",area_win->y);
+    prop->setd("area_box x",area_win->m_pos.x);
+    prop->setd("area_box y",area_win->m_pos.y);
 
     if (current_area && read_values)
     {
@@ -1607,8 +1607,8 @@ void dev_controll::close_oedit_window()
 {
   if (oedit)
   {
-    prop->setd("oedit x",oedit->x);
-    prop->setd("oedit y",oedit->y);
+    prop->setd("oedit x",oedit->m_pos.x);
+    prop->setd("oedit y",oedit->m_pos.y);
     wm->close_window(oedit);
     oedit=NULL;
     edit_object=NULL;
@@ -1919,8 +1919,8 @@ void dev_controll::handle_event(Event &ev)
       {
         if (ledit)
         {
-          prop->setd("ledit x",ledit->x);
-          prop->setd("ledit x",ledit->y);
+          prop->setd("ledit x",ledit->m_pos.x);
+          prop->setd("ledit x",ledit->m_pos.y);
           wm->close_window(ledit);
         }
         int bw=20+6,bh=16+6,th=wm->font()->height()+4;
@@ -2421,8 +2421,8 @@ void dev_controll::handle_event(Event &ev)
 
     case DEV_LEDIT_DEL :
     {
-      prop->setd("ledit x",ledit->x);
-      prop->setd("ledit y",ledit->y);
+      prop->setd("ledit x",ledit->m_pos.x);
+      prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       if (current_level)
         current_level->remove_light(edit_light);
@@ -2449,23 +2449,23 @@ void dev_controll::handle_event(Event &ev)
 
       edit_light->calc_range();
       edit_light=NULL;
-      prop->setd("ledit x",ledit->x);
-      prop->setd("ledit y",ledit->y);
+      prop->setd("ledit x",ledit->m_pos.x);
+      prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       the_game->need_refresh();
     } break;
     case DEV_LEDIT_MOVE :
     {
-      prop->setd("ledit x",ledit->x);
-      prop->setd("ledit y",ledit->y);
+      prop->setd("ledit x",ledit->m_pos.x);
+      prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       state=DEV_MOVE_LIGHT;
     } break;
     case DEV_LEDIT_COPY :
     {
       edit_light=edit_light->copy();
-      prop->setd("ledit x",ledit->x);
-      prop->setd("ledit y",ledit->y);
+      prop->setd("ledit x",ledit->m_pos.x);
+      prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       state=DEV_MOVE_LIGHT;
     } break;
@@ -2545,8 +2545,8 @@ void dev_controll::handle_event(Event &ev)
     {
       char cmd[100];
       strcpy(cmd,commandw->inm->get(DEV_COMMAND)->read());
-      prop->setd("commandw x",commandw->x);
-      prop->setd("commandw y",commandw->y);
+      prop->setd("commandw x",commandw->m_pos.x);
+      prop->setd("commandw y",commandw->m_pos.y);
       wm->close_window(commandw);
       commandw=NULL;
       do_command(cmd,ev);
@@ -2648,8 +2648,8 @@ void dev_controll::handle_event(Event &ev)
       {
     if (ev.window==commandw)
     {
-      prop->setd("commandw x",commandw->x);
-      prop->setd("commandw y",commandw->y);
+      prop->setd("commandw x",commandw->m_pos.x);
+      prop->setd("commandw y",commandw->m_pos.y);
       wm->close_window(commandw);
       commandw=NULL;
     } else if (ev.window==oedit)
@@ -2965,9 +2965,9 @@ void pal_win::close_window()
 {
   if (me)       // dont' close the window if the window is already closed
   {
-    x=me->x;    //  save the old poisition of the window so that when we  open it
+    x=me->m_pos.x;    //  save the old poisition of the window so that when we  open it
                 //  it will be in the same spot
-    y=me->y;
+    y=me->m_pos.y;
     wm->close_window(me);
     me=NULL;
 
@@ -3027,8 +3027,8 @@ void pal_win::handle_event(Event &ev)
       {
         if (ev.mouse_button==1)
     {
-      int selx=(last_demo_mpos.x-me->x-me->x1())/(the_game->ftile_width()/scale),
-          sely=(last_demo_mpos.y-me->y-me->y1())/(the_game->ftile_height()/scale);
+      int selx=(last_demo_mpos.x-me->m_pos.x-me->x1())/(the_game->ftile_width()/scale),
+          sely=(last_demo_mpos.y-me->m_pos.y-me->y1())/(the_game->ftile_height()/scale);
       if (selx>=0 && sely>=0 && selx<w && sely<h)
       {
         cur_fg=pat[selx+sely*w];
@@ -3042,8 +3042,8 @@ void pal_win::handle_event(Event &ev)
         the_game->show_help(symbol_str("pal_lock"));
       else
       {
-        int selx=(last_demo_mpos.x-me->x-me->x1())/(the_game->ftile_width()/scale),
-            sely=(last_demo_mpos.y-me->y-me->y1())/(the_game->ftile_height()/scale);
+        int selx=(last_demo_mpos.x-me->m_pos.x-me->x1())/(the_game->ftile_width()/scale),
+            sely=(last_demo_mpos.y-me->m_pos.y-me->y1())/(the_game->ftile_height()/scale);
         if (selx>=0 && sely>=0 && selx<w && sely<h)
         {
           pat[selx+sely*w]=cur_fg;
@@ -3100,7 +3100,7 @@ void pal_win::handle_event(Event &ev)
       case ' ' :
       {
         int32_t xx, yy;
-        vec2i tile = the_game->GetFgTile(vec2i(me->x, me->y));
+        vec2i tile = the_game->GetFgTile(me->m_pos);
 
         for (xx=tile.x; xx<tile.x+w; xx++)
         {
@@ -3114,7 +3114,7 @@ void pal_win::handle_event(Event &ev)
       } break;
       case 't' :
       {
-        vec2i tile = the_game->GetFgTile(vec2i(me->x, me->y));
+        vec2i tile = the_game->GetFgTile(me->m_pos);
         dev_cont->fg_fill(-1, tile.x, tile.y, this);
       } break;
 
@@ -3155,8 +3155,8 @@ void pal_win::save(FILE *fp)
 {
   if (me)
   {
-    x=me->x;
-    y=me->y;
+    x=me->m_pos.x;
+    y=me->m_pos.y;
   }
 
   fprintf(fp,"(add_palette \"%s\" %ld %ld %ld %ld %ld ",name,(long)w,(long)h,(long)x,(long)y,(long)scale);

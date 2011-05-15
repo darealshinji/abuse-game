@@ -26,11 +26,12 @@ void ico_button::set_act_id(int id)
 
 ico_switch_button::ico_switch_button(int X, int Y, int ID, int start_on, ifield *butts, ifield *Next)
 {
-  x=X; y=Y; id=ID;
+  m_pos = vec2i(X, Y); id=ID;
   next=Next;
   blist=cur_but=butts;
   act=0;
-  for (ifield *b=blist; b; b=b->next) { b->x=x; b->y=y; }
+  for (ifield *b=blist; b; b=b->next)
+      b->m_pos = m_pos;
   while (cur_but && start_on--) cur_but=cur_but->next;
   if (!cur_but) cur_but=blist;
 }
@@ -50,7 +51,7 @@ void ico_switch_button::area(int &x1, int &y1, int &x2, int &y2)
     if (X2>x2) x2=X2;
     if (Y2>y2) y2=Y2;
   }
-  if (!blist) { x1=x2=x; y1=y2=y; }
+  if (!blist) { x1=x2=m_pos.x; y1=y2=m_pos.y; }
 }
 
 ifield *ico_switch_button::unlink(int id)
@@ -134,9 +135,9 @@ void ico_button::handle_event(Event &ev, image *screen, InputManager *im)
 
 void ico_button::area(int &x1, int &y1, int &x2, int &y2)
 {
-  x1=x; y1=y;
-  x2=x+cache.img(u)->Size().x-1;
-  y2=y+cache.img(u)->Size().y-1;
+  x1=m_pos.x; y1=m_pos.y;
+  x2=m_pos.x+cache.img(u)->Size().x-1;
+  y2=m_pos.y+cache.img(u)->Size().y-1;
 }
 
 ico_button::ico_button(int X, int Y, int ID, int Up, int down, int upa, int downa, ifield *Next, int act_id, char const *help_key)
@@ -149,7 +150,7 @@ ico_button::ico_button(int X, int Y, int ID, int Up, int down, int upa, int down
   else key[0]=0;
 
   up=1;
-  x=X; y=Y; id=ID;
+  m_pos = vec2i(X, Y); id=ID;
   u=Up; d=down;
   ua=upa; da=downa;
   next=Next;

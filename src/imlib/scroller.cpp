@@ -81,25 +81,25 @@ void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
 }
 
 scroller::scroller(int X, int Y, int ID, int L, int H, int Vert, int Total_items, ifield *Next)
-{  x=X; y=Y; id=ID; next=Next;  l=L; h=H;  sx=0;  t=Total_items;  drag=-1; vert=Vert;
+{  m_pos = vec2i(X, Y); id=ID; next=Next;  l=L; h=H;  sx=0;  t=Total_items;  drag=-1; vert=Vert;
 }
 
 
 void scroller::area(int &x1, int &y1, int &x2, int &y2)
 {
   area_config();
-  x1=x-1; y1=y-1;
+  x1=m_pos.x-1; y1=m_pos.y-1;
   if (vert)
-  { x2=x+l+bw();  y2=y+h; }
+  { x2=m_pos.x+l+bw();  y2=m_pos.y+h; }
   else
-  { x2=x+l;  y2=y+h+bh(); }
+  { x2=m_pos.x+l;  y2=m_pos.y+h+bh(); }
 }
 
 void scroller::dragger_area(int &x1, int &y1, int &x2, int &y2)
 {
   if (vert)
-  { x1=x+l; y1=y+bh(); x2=x+l+bw()-1; y2=y+h-bh()-1; }
-  else { x1=x+bw(); y1=y+h; x2=x+l-bw(); y2=y+h+bh()-1; }
+  { x1=m_pos.x+l; y1=m_pos.y+bh(); x2=m_pos.x+l+bw()-1; y2=m_pos.y+h-bh()-1; }
+  else { x1=m_pos.x+bw(); y1=m_pos.y+h; x2=m_pos.x+l-bw(); y2=m_pos.y+h+bh()-1; }
 }
 
 int scroller::bh() { if (vert) return 15; else return 13; }
@@ -145,16 +145,16 @@ void scroller::wig_area(int &x1, int &y1, int &x2, int &y2)
   dragger_area(sx1,sy1,sx2,sy2);
   if (vert)
   {
-    x1=x+l+1;
+    x1=m_pos.x+l+1;
     if (t<2)
-      y1=y+bh()+1;
+      y1=m_pos.y+bh()+1;
     else
-      y1=y+bh()+1+sx*(sy2-sy1+1-bh())/(t-1);
+      y1=m_pos.y+bh()+1+sx*(sy2-sy1+1-bh())/(t-1);
   } else
   {
-    if (t<2) x1=x+bw()+1;
-    else x1=x+bw()+1+sx*(sx2-sx1+1-bw())/(t-1);
-    y1=y+h+1;
+    if (t<2) x1=m_pos.x+bw()+1;
+    else x1=m_pos.x+bw()+1+sx*(sx2-sx1+1-bw())/(t-1);
+    y1=m_pos.y+h+1;
   }
   x2=x1+bw()-3;
   y2=y1+bh()-3;
@@ -258,7 +258,7 @@ void scroller::handle_event(Event &ev, image *screen, InputManager *inm)
       {
     int x1,y1,x2,y2;
     wig_area(x1,y1,x2,y2);
-    if (mx>=x && mx<=x+l-1 && my>=y && my<=y+h-1)
+    if (mx>=m_pos.x && mx<=m_pos.x+l-1 && my>=m_pos.y && my<=m_pos.y+h-1)
       handle_inside_event(ev,screen,inm);
       }
 
@@ -350,14 +350,14 @@ int scroller::mouse_to_drag(int mx,int my)
   {
     int h=(y2-y1+1-bh());
     if (h)
-      return (my-y-bh()-bh()/2)*(t-1)/h;
+      return (my-m_pos.y-bh()-bh()/2)*(t-1)/h;
     else return 0;
   }
   else
   {
     int w=(x2-x1+1-bw());
     if (w)
-      return (mx-x-bw()-bw()/2)*(t-1)/w;
+      return (mx-m_pos.x-bw()-bw()/2)*(t-1)/w;
     else return 0;
   }
 }
@@ -365,9 +365,9 @@ int scroller::mouse_to_drag(int mx,int my)
 
 void scroller::scroll_event(int newx, image *screen)
 {
-  screen->Bar(vec2i(x, y), vec2i(x + l - 1, y + h - 1), wm->black());
+  screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->black());
   int xa,ya,xo=0,yo;
-  if (vert) { xa=0; ya=30; yo=x+5; yo=y+5; } else { xa=30; ya=0; xo=x+5; yo=y+5; }
+  if (vert) { xa=0; ya=30; yo=m_pos.x+5; yo=m_pos.y+5; } else { xa=30; ya=0; xo=m_pos.x+5; yo=m_pos.y+5; }
   for (int i=newx,c=0; c<30 && i<100; i++,c++)
   {
     char st[10];
@@ -418,7 +418,7 @@ void pick_list::handle_inside_event(Event &ev, image *screen, InputManager *inm)
 {
   if (ev.type==EV_MOUSE_MOVE && activate_on_mouse_move())
   {
-    int sel=last_sel+(ev.mouse_move.y-y)/(wm->font()->height()+1);
+    int sel=last_sel+(ev.mouse_move.y-m_pos.y)/(wm->font()->height()+1);
     if (sel!=cur_sel && sel<t && sel>=0)
     {
       cur_sel=sel;
@@ -427,7 +427,7 @@ void pick_list::handle_inside_event(Event &ev, image *screen, InputManager *inm)
   }
   else if (ev.type==EV_MOUSE_BUTTON)
   {
-    int sel=last_sel+(ev.mouse_move.y-y)/(wm->font()->height()+1);
+    int sel=last_sel+(ev.mouse_move.y-m_pos.y)/(wm->font()->height()+1);
     if (sel<t && sel>=0)
     {
       if (sel==cur_sel)
@@ -495,26 +495,26 @@ void pick_list::scroll_event(int newx, image *screen)
   {
     int cx1, cy1, cx2, cy2;
     screen->GetClip(cx1, cy1, cx2, cy2);
-    screen->SetClip(x,y,x+l,y+h);
+    screen->SetClip(m_pos.x,m_pos.y,m_pos.x+l,m_pos.y+h);
     int tw=(l+tex->Size().x-1)/tex->Size().x;
     int th=(h+tex->Size().y-1)/tex->Size().y;
-    int dy=y;
+    int dy=m_pos.y;
     for (int j=0; j<th; j++,dy+=tex->Size().y)
-      for (int i=0,dx=x; i<tw; i++,dx+=tex->Size().x)
+      for (int i=0,dx=m_pos.x; i<tw; i++,dx+=tex->Size().x)
         screen->PutImage(tex, vec2i(dx, dy));
 
     screen->SetClip(cx1, cy1, cx2, cy2);
-  } else screen->Bar(vec2i(x, y), vec2i(x + l - 1, y + h - 1), wm->black());
+  } else screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->black());
 
-  int dy=y;
+  int dy=m_pos.y;
   for (int i=0; i<th; i++,dy+=wm->font()->height()+1)
   {
     if (i+newx==cur_sel)
-      screen->Bar(vec2i(x, dy), vec2i(x + wid * wm->font()->width() - 1,
+      screen->Bar(vec2i(m_pos.x, dy), vec2i(m_pos.x + wid * wm->font()->width() - 1,
                                       dy + wm->font()->height()),
                   wm->dark_color());
     if (i+newx<t)
-      wm->font()->put_string(screen,x,dy,lis[i+newx].name,wm->bright_color());
+      wm->font()->put_string(screen,m_pos.x,dy,lis[i+newx].name,wm->bright_color());
   }
 }
 
@@ -580,7 +580,7 @@ void spicker::reconfigure()
 
 void spicker::draw_background(image *screen)
 {
-    screen->Bar(vec2i(x, y), vec2i(x + l - 1, y + h - 1), wm->dark_color());
+    screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->dark_color());
 }
 
 
@@ -610,8 +610,8 @@ void spicker::scroll_event(int newx, image *screen)
 {
   last_sel=newx;
   int xa,ya,xo,yo;
-  xo=x+2;
-  yo=y+2;
+  xo=m_pos.x+2;
+  yo=m_pos.y+2;
   if (vert) { xa=0; ya=item_height(); }
   else { xa=item_width(); ya=0; }
   draw_background(screen);
@@ -640,9 +640,9 @@ void spicker::handle_inside_event(Event &ev, image *screen, InputManager *inm)
       {
     int me;
     if (vert)
-      me=last_sel+(ev.mouse_move.y-y)/item_height();
+      me=last_sel+(ev.mouse_move.y-m_pos.y)/item_height();
     else
-      me=last_sel+(ev.mouse_move.x-x)/item_width();
+      me=last_sel+(ev.mouse_move.x-m_pos.x)/item_width();
     if (me<t && me>=0)
     {
       if (cur_sel!=me)
@@ -658,9 +658,9 @@ void spicker::handle_inside_event(Event &ev, image *screen, InputManager *inm)
     {
       int me;
       if (vert)
-    me=last_sel+(ev.mouse_move.y-y)/item_height();
+    me=last_sel+(ev.mouse_move.y-m_pos.y)/item_height();
       else
-    me=last_sel+(ev.mouse_move.x-x)/item_width();
+    me=last_sel+(ev.mouse_move.x-m_pos.x)/item_width();
       if (me<t && me>=0)
       {
     if (m)

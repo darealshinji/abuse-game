@@ -55,11 +55,18 @@ There may be interesting code in there:
 
 REFACTOR
 --------
+- move to vec2i:
+  - PutPart
+  - AddDirty !!
+  - update_dirty
+
 console::draw_char : vec2i
 VolumeWindow::draw_vol plus grand !!
 
-x, y (apparemment des membres de object)
+x, y in game_object?
 get_fg ?
 snap_x() snap_y()
 scatter_line, ascatter_line
+xstart() / xend() etc.
+jwindow::area
 

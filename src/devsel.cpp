@@ -92,15 +92,14 @@ tile_picker::tile_picker(int X, int Y, int ID, int spec_type,
 
 void tile_picker::scroll_event(int newx, image *screen)
 {
-  int yo=y,ya=pich(),xw=picw(),c=get_current(),xo;
+  int ya = pich(), xw = picw(), c = get_current();
   image im(vec2i(xw, ya));
   last_sel=newx;
 
-  screen->Bar(vec2i(x, y), vec2i(x + l - 1, y + h - 1), wm->black());
+  screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->black());
   for (int i=newx; i<newx+th*wid; i++)
   {
-    xo=x+((i-newx)%wid)*xw;
-    yo=y+((i-newx)/wid)*ya;
+    vec2i xyo = m_pos + vec2i(((i - newx) % wid) * xw, ((i - newx) / wid) * ya);
 
       int blank=0;
       if (i<t)
@@ -117,30 +116,29 @@ void tile_picker::scroll_event(int newx, image *screen)
 
           if (rev)
           {
-        screen->Bar(vec2i(xo, yo), vec2i(xo + xw - 1, yo + ya - 1),
-                    wm->bright_color());
-        scale_put_trans(&im,screen,xo,yo,xw,ya);
+        screen->Bar(xyo, xyo + vec2i(xw - 1, ya - 1), wm->bright_color());
+        scale_put_trans(&im,screen,xyo.x,xyo.y,xw,ya);
           }
-          else scale_put(&im,screen,xo,yo,xw,ya);
+          else scale_put(&im,screen,xyo.x,xyo.y,xw,ya);
         }
       } break;
       case SPEC_BACKTILE :
       {
         if (backtiles[i]<0) blank=1;
         else
-          scale_put(the_game->get_bg(i)->im,screen,xo,yo,xw,ya);
+          scale_put(the_game->get_bg(i)->im,screen,m_pos.x,m_pos.y,xw,ya);
 
       } break;
       case SPEC_CHARACTER :
       {
         figures[i]->get_sequence(stopped)->get_figure(0)->forward->PutImage(&im,vec2i(0,0));
-        scale_put(&im,screen,xo,yo,xw,ya);
+        scale_put(&im,screen,m_pos.x,m_pos.y,xw,ya);
       } break;
     }
       } else blank=1;
 
       if (i==c)
-        screen->Rectangle(vec2i(xo, yo), vec2i(xo + xw - 1, yo + ya - 1),
+        screen->Rectangle(m_pos, m_pos + vec2i(xw - 1, ya - 1),
                           wm->bright_color());
 
 
@@ -152,7 +150,7 @@ void tile_picker::handle_inside_event(Event &ev, image *screen, InputManager *in
 {
   if (ev.type==EV_MOUSE_BUTTON)
   {
-    int sel=((ev.mouse_move.y-y)/pich()*wid)+(ev.mouse_move.x-x)/picw()+last_sel;
+    int sel=((ev.mouse_move.y-m_pos.y)/pich()*wid)+(ev.mouse_move.x-m_pos.x)/picw()+last_sel;
     if (sel<t && sel>=0 && sel!=get_current())
     {
       set_current(sel);

@@ -22,10 +22,10 @@ protected :
   int bw();
   void drag_area(int &x1, int &y1, int &x2, int &y2);
   void dragger_area(int &x1, int &y1, int &x2, int &y2);
-  int b1x() { if (vert) return x+l; else return x; }
-  int b1y() { if (vert) return y; else return y+h; }
-  int b2x() { if (vert) return x+l; else return x+l-bw(); }
-  int b2y() { if (vert) return y+h-bh(); else return y+h; }
+  int b1x() { if (vert) return m_pos.x+l; else return m_pos.x; }
+  int b1y() { if (vert) return m_pos.y; else return m_pos.y+h; }
+  int b2x() { if (vert) return m_pos.x+l; else return m_pos.x+l-bw(); }
+  int b2y() { if (vert) return m_pos.y+h-bh(); else return m_pos.y+h; }
   unsigned char *b1();
   unsigned char *b2();
   void wig_area(int &x1, int &y1, int &x2, int &y2);
