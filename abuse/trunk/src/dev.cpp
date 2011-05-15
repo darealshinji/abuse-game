@@ -277,7 +277,6 @@ void dev_controll::search_forward()
       for (; !find && first; first=first->next)
         if (first->otype==type)
       find=first;
-      int loop=0;
       if (!find)
       {
     for (first=current_level->first_object(); first && !find; first=first->next)
@@ -285,7 +284,6 @@ void dev_controll::search_forward()
       if (first->otype==type)
         find=first;
     }
-    loop=1;
       }
       if (find)
       {
@@ -3002,7 +3000,7 @@ void pal_win::close_window()
 
 void pal_win::draw()
 {
-  int i,find=-1,d=cur_fg;
+  int i,d=cur_fg;
   if (me)
   {
     me->clear();
@@ -3017,7 +3015,6 @@ void pal_win::draw()
         me->y1()+(i/w)*th,tw,th);
       if (d==pat[i])
       {
-    find=i;
     me->m_surf->Rectangle(vec2i(me->x1() + (i % w) * tw,
                                 me->y1() + (i / w) * th),
                           vec2i(me->x1() + (i % w) * tw + tw - 1,
@@ -3587,13 +3584,13 @@ void toggle_edit_mode()
   dev=dev^EDIT_MODE;
   if (dev&EDIT_MODE)
   {
-    wm->set_mouse_shape(cache.img(c_normal)->copy(),1,1);
+    wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1, 1));
     pal->load();
   }
   else
   {
     if (dev&MAP_MODE) dev-=MAP_MODE;                        // no map mode while playing!
-    wm->set_mouse_shape(cache.img(c_target)->copy(),8,8);
+    wm->SetMouseShape(cache.img(c_target)->copy(), vec2i(8, 8));
   }
   if ((dev&EDIT_MODE) && !dev_menu)
   {

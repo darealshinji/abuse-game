@@ -181,7 +181,7 @@ void show_end2()
   fade_out(16);
 
   image blank(vec2i(2)); blank.clear();
-  wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
+  wm->SetMouseShape(blank.copy(), vec2i(0, 0));      // don't show mouse
 
 
   main_screen->clear();
@@ -413,8 +413,7 @@ void show_end2()
   fade_out(16);
   main_screen->clear();
 
-
-  wm->set_mouse_shape(cache.img(c_normal)->copy(),1,1);
+  wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1, 1));
   the_game->set_state(MENU_STATE);
 }
 
@@ -424,7 +423,7 @@ void share_end()
 {
   fade_out(16);
   image blank(vec2i(2, 2)); blank.clear();
-  wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
+  wm->SetMouseShape(blank.copy(), vec2i(0, 0)); // don't show mouse
   main_screen->clear();
 
   image *im=cache.img(cache.reg("art/fore/endgame.spe","tbc",SPEC_IMAGE,1));
@@ -470,7 +469,7 @@ void share_end()
   }
 
   fade_out(16);
-  wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
+  wm->SetMouseShape(blank.copy(), vec2i(0, 0)); // don't show mouse
   show_sell(1);
   wm->Push(new Event(ID_SHOW_SELL,NULL));
 }
@@ -480,7 +479,7 @@ void show_end()
 {
   fade_out(16);
   image blank(vec2i(2, 2)); blank.clear();
-  wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
+  wm->SetMouseShape(blank.copy(), vec2i(0, 0));      // don't show mouse
   main_screen->clear();
 
   image *im=cache.img(cache.reg("art/fore/endgame.spe","end.pcx",SPEC_IMAGE,1));
@@ -527,7 +526,7 @@ void show_end()
 
   show_sell(1);
 
-  wm->set_mouse_shape(cache.img(c_normal)->copy(),1,1);
+  wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1, 1));
   the_game->set_state(MENU_STATE);
 }
 

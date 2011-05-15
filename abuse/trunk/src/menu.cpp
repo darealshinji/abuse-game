@@ -398,7 +398,7 @@ void show_sell(int abortable)
   if (DEFINEDP(ss->GetValue()))
   {
     image blank(vec2i(2, 2)); blank.clear();
-    wm->set_mouse_shape(blank.copy(),0,0);      // don't show mouse
+    wm->SetMouseShape(blank.copy(), vec2i(0, 0));      // don't show mouse
 
     LObject *tmp = (LObject *)ss->GetValue();
     int quit=0;
@@ -417,7 +417,7 @@ void show_sell(int abortable)
       fade_out(16);
       tmp = (LObject *)CDR(tmp);
     }
-    wm->set_mouse_shape(cache.img(c_normal)->copy(),1,1);
+    wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1, 1));
   }
 }
 

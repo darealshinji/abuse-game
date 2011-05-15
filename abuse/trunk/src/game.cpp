@@ -442,9 +442,9 @@ void Game::set_state(int new_state)
     pal->load();    // restore old palette
 
     if(playing_state(state) &&  !(dev & EDIT_MODE))
-        wm->set_mouse_shape(cache.img(c_target)->copy(), 8, 8);
+        wm->SetMouseShape(cache.img(c_target)->copy(), vec2i(8, 8));
     else
-        wm->set_mouse_shape(cache.img(c_normal)->copy(), 1, 1);
+        wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1, 1));
 
     if(old_state == SCENE_STATE && new_state != SCENE_STATE)
     {
@@ -1242,7 +1242,7 @@ void do_title()
     // image_list in image.cpp) the image on the stack -> boom.
     image *blank = new image(vec2i(2, 2));
     blank->clear();
-    wm->set_mouse_shape(blank->copy(), 0, 0); // hide mouse
+    wm->SetMouseShape(blank->copy(), vec2i(0, 0)); // hide mouse
     delete blank;
     fade_in(cache.img(cdc_logo), 32);
     Timer tmp; tmp.WaitMs(400);
