@@ -317,12 +317,12 @@ ifield *net_configuration::center_ifield(ifield *i,int x1, int x2, ifield *place
 {
   int X1,Y1,X2,Y2;
   i->area(X1,Y1,X2,Y2);
-  i->x=(x1+x2)/2-(X2-X1)/2;
+  i->m_pos.x=(x1+x2)/2-(X2-X1)/2;
 
   if (place_below)
   {
     place_below->area(X1,Y1,X2,Y2);
-    i->y=Y2+2;
+    i->m_pos.y=Y2+2;
   }
   return i;
 }

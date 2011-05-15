@@ -65,8 +65,8 @@ void console::hide()
 {
   if (con_win)
   {
-    lastx=con_win->x;
-    lasty=con_win->y;
+    lastx=con_win->m_pos.x;
+    lasty=con_win->m_pos.y;
     wm->close_window(con_win);
     con_win=NULL;
   }

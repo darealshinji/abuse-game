@@ -47,7 +47,7 @@ void set_frame_size(int x)
 int WindowManager::window_in_area(int x1, int y1, int x2, int y2)
 {
   for (Jwindow *f=m_first; f; f=f->next)
-    if (f->x<=x2 && f->y<=y2 && f->x+f->l-1>=x1 && f->y+f->h-1>=y1)
+    if (f->m_pos.x<=x2 && f->m_pos.y<=y2 && f->m_pos.x+f->l-1>=x1 && f->m_pos.y+f->h-1>=y1)
       return 1;
   return 0;
 }
@@ -71,7 +71,7 @@ void WindowManager::hide_windows()
         if (!p->is_hidden())
         {
             p->hide();
-            m_surf->AddDirty(p->x, p->y, p->x + p->l, p->y + p->h);
+            m_surf->AddDirty(p->m_pos.x, p->m_pos.y, p->m_pos.x + p->l, p->m_pos.y + p->h);
         }
     }
 }
@@ -92,13 +92,13 @@ void WindowManager::hide_window(Jwindow *j)
     {
         Jwindow *k;
         for (k = m_first; k->next != j; k = k->next)
-            k->m_surf->AddDirty(j->x - k->x, j->y - k->y,
-                                  j->x + j->l - k->x, j->y + j->h - k->y);
-        k->m_surf->AddDirty(j->x - k->x, j->y - k->y,
-                              j->x + j->l - k->x, j->y + j->h - k->y);
+            k->m_surf->AddDirty(j->m_pos.x - k->m_pos.x, j->m_pos.y - k->m_pos.y,
+                                  j->m_pos.x + j->l - k->m_pos.x, j->m_pos.y + j->h - k->m_pos.y);
+        k->m_surf->AddDirty(j->m_pos.x - k->m_pos.x, j->m_pos.y - k->m_pos.y,
+                              j->m_pos.x + j->l - k->m_pos.x, j->m_pos.y + j->h - k->m_pos.y);
         k->next = j->next;
     }
-    m_surf->AddDirty(j->x, j->y, j->x + j->l, j->y + j->h);
+    m_surf->AddDirty(j->m_pos.x, j->m_pos.y, j->m_pos.x + j->l, j->m_pos.y + j->h);
     j->hide();
 }
 
@@ -124,8 +124,8 @@ void WindowManager::get_event(Event &ev)
   {
     Jwindow *j;
     for (ev.window=NULL,j=m_first; j; j=j->next)
-      if (!j->is_hidden() && ev.mouse_move.x>=j->x && ev.mouse_move.y>=j->y &&
-          ev.mouse_move.x<j->x+j->l && ev.mouse_move.y<j->y+j->h)
+      if (!j->is_hidden() && ev.mouse_move >= j->m_pos
+                          && ev.mouse_move < j->m_pos + vec2i(j->l, j->h))
         ev.window=j;
 
     if (!ev.window && m_grab) ev.window=m_grab;
@@ -135,10 +135,10 @@ void WindowManager::get_event(Event &ev)
       int closew=0,movew=0;
 
       if ((ev.type==EV_MOUSE_BUTTON && ev.mouse_button==1 && ev.window &&
-       ev.mouse_move.x>=ev.window->x && ev.mouse_move.y>=ev.window->y &&
-       ev.mouse_move.x<ev.window->x+ev.window->l && ev.mouse_move.y<ev.window->y+ev.window->y1()))
+       ev.mouse_move >= ev.window->m_pos &&
+       ev.mouse_move < ev.window->m_pos + vec2i(ev.window->l, ev.window->y1())))
       {
-    if (ev.mouse_move.x-ev.window->x<11) closew=1;
+    if (ev.mouse_move.x-ev.window->m_pos.x < 11) closew=1;
     else if (ev.window->is_moveable()) movew=1;
       } else if (m_grab)
         ev.window=m_grab;
@@ -188,8 +188,8 @@ void WindowManager::get_event(Event &ev)
 
         state=dragging;
         drag_window=ev.window;
-        drag_mousex=ev.window->x-ev.mouse_move.x;
-        drag_mousey=ev.window->y-ev.mouse_move.y;
+        drag_mousex=ev.window->m_pos.x-ev.mouse_move.x;
+        drag_mousey=ev.window->m_pos.y-ev.mouse_move.y;
         ev.type=EV_SPURIOUS;
       } else if (ev.window)
         ev.window->inm->handle_event(ev,ev.window);
@@ -213,8 +213,8 @@ void WindowManager::get_event(Event &ev)
   if (ev.type == EV_REDRAW)
   {
     for (Jwindow *j = m_first; j; j = j->next)
-       j->m_surf->AddDirty(ev.redraw.x1 - j->x, ev.redraw.y1 - j->y,
-                             ev.redraw.x2 + 1 - j->x, ev.redraw.y2 + 1 - j->y);
+       j->m_surf->AddDirty(ev.redraw.x1 - j->m_pos.x, ev.redraw.y1 - j->m_pos.y,
+                             ev.redraw.x2 + 1 - j->m_pos.x, ev.redraw.y2 + 1 - j->m_pos.y);
     m_surf->AddDirty(ev.redraw.x1, ev.redraw.y1, ev.redraw.x2 + 1, ev.redraw.y2 + 1);
     flush_screen();
     ev.type=EV_SPURIOUS;   // we took care of this one by ourselves.
@@ -230,9 +230,9 @@ void Jwindow::resize(int L, int H)
 void WindowManager::resize_window(Jwindow *j, int l, int h)
 {
   Jwindow *p;
-  m_surf->AddDirty(j->x, j->y, j->x + j->l, j->y + j->h);
+  m_surf->AddDirty(j->m_pos.x, j->m_pos.y, j->m_pos.x + j->l, j->m_pos.y + j->h);
   for (p=m_first; p!=j; p=p->next)
-    p->m_surf->AddDirty(j->x - p->x, j->y - p->y, j->x + j->l - p->x, j->y + j->h - p->y);
+    p->m_surf->AddDirty(j->m_pos.x - p->m_pos.x, j->m_pos.y - p->m_pos.y, j->m_pos.x + j->l - p->m_pos.x, j->m_pos.y + j->h - p->m_pos.y);
   j->resize(l,h);
   if (!frame_suppress)
   j->redraw();
@@ -240,12 +240,12 @@ void WindowManager::resize_window(Jwindow *j, int l, int h)
 
 void WindowManager::move_window(Jwindow *j, int x, int y)
 {
-    m_surf->AddDirty(j->x, j->y, j->x + j->l, j->y + j->h);
+    m_surf->AddDirty(j->m_pos.x, j->m_pos.y, j->m_pos.x + j->l, j->m_pos.y + j->h);
     for(Jwindow *p = m_first; p != j; p = p->next)
-        p->m_surf->AddDirty(j->x - p->x, j->y - p->y,
-                              j->x + j->l - p->x, j->y + j->h - p->y);
-    j->x = x;
-    j->y = y;
+        p->m_surf->AddDirty(j->m_pos.x - p->m_pos.x, j->m_pos.y - p->m_pos.y,
+                              j->m_pos.x + j->l - p->m_pos.x, j->m_pos.y + j->h - p->m_pos.y);
+    j->m_pos.x = x;
+    j->m_pos.y = y;
     j->m_surf->AddDirty(0, 0, j->l, j->h);
 }
 
@@ -298,17 +298,18 @@ void WindowManager::remove_window(Jwindow *win)
     {
         Jwindow * search;
         for(search = m_first; search->next != win; search = search->next)
-            search->m_surf->AddDirty(win->x - search->x,
-                                       win->y - search->y,
-                                       win->x + win->l - search->x,
-                                       win->y + win->h - search->y);
-        search->m_surf->AddDirty(win->x - search->x, win->y - search->y,
-                                   win->x + win->l - search->x,
-                                   win->y + win->h - search->y);
+            search->m_surf->AddDirty(win->m_pos.x - search->m_pos.x,
+                                     win->m_pos.y - search->m_pos.y,
+                                     win->m_pos.x + win->l - search->m_pos.x,
+                                     win->m_pos.y + win->h - search->m_pos.y);
+        search->m_surf->AddDirty(win->m_pos.x - search->m_pos.x,
+                                 win->m_pos.y - search->m_pos.y,
+                                 win->m_pos.x + win->l - search->m_pos.x,
+                                 win->m_pos.y + win->h - search->m_pos.y);
         search->next = win->next;
     }
 
-    m_surf->AddDirty(win->x, win->y, win->x + win->l, win->y + win->h);
+    m_surf->AddDirty(win->m_pos.x, win->m_pos.y, win->m_pos.x + win->l, win->m_pos.y + win->h);
 }
 
 Jwindow * WindowManager::new_window(int x, int y, int l, int h,
@@ -319,7 +320,7 @@ Jwindow * WindowManager::new_window(int x, int y, int l, int h,
     if(y > m_surf->Size().y - 4)
         y = m_surf->Size().y - 10;
 
-    Jwindow * j = new Jwindow (x, y, l, h, fields, name);
+    Jwindow * j = new Jwindow (vec2i(x, y), l, h, fields, name);
     j->show();
 
     return j;
@@ -327,26 +328,24 @@ Jwindow * WindowManager::new_window(int x, int y, int l, int h,
 
 void WindowManager::flush_screen()
 {
-    int mx = 0, my = 0;
+    vec2i m1(0, 0);
 
     if (has_mouse())
     {
-        mx = (m_pos - m_center).x;
-        my = (m_pos - m_center).y;
+        m1 = m_pos - m_center;
+        vec2i m2 = m1 + m_sprite->visual->Size() - vec2i(1, 1);
 
-        m_sprite->save->PutPart(m_surf, 0, 0, mx, my,
-                                mx + m_sprite->visual->Size().x - 1,
-                                my + m_sprite->visual->Size().y - 1);
-        m_surf->PutImage(m_sprite->visual, vec2i(mx, my), 1);
+        m_sprite->save->PutPart(m_surf, 0, 0, m1.x, m1.y, m2.x, m2.y);
+        m_surf->PutImage(m_sprite->visual, m1, 1);
     }
 
     for (Jwindow *p = m_first; p; p = p->next)
         if (!p->is_hidden())
-            m_surf->delete_dirty(p->x, p->y, p->x + p->l, p->y + p->h);
+            m_surf->delete_dirty(p->m_pos.x, p->m_pos.y, p->m_pos.x + p->l, p->m_pos.y + p->h);
     update_dirty(m_surf);
 
     if (has_mouse())
-        m_surf->PutImage(m_sprite->save, vec2i(mx, my));
+        m_surf->PutImage(m_sprite->save, m1);
 
     for (Jwindow *p = m_first; p; p = p->next)
     {
@@ -355,22 +354,21 @@ void WindowManager::flush_screen()
 
         if (has_mouse())
         {
-            m_sprite->save->PutPart(p->m_surf, 0, 0, mx - p->x, my - p->y,
-                                    mx - p->x + m_sprite->visual->Size().x - 1,
-                                    my - p->y + m_sprite->visual->Size().y - 1);
-            p->m_surf->PutImage(m_sprite->visual,
-                                vec2i(mx - p->x, my - p->y), 1);
+            m_sprite->save->PutPart(p->m_surf, 0, 0, m1.x - p->m_pos.x, m1.y - p->m_pos.y,
+                                    m1.x - p->m_pos.x + m_sprite->visual->Size().x - 1,
+                                    m1.y - p->m_pos.y + m_sprite->visual->Size().y - 1);
+            p->m_surf->PutImage(m_sprite->visual, m1 - p->m_pos, 1);
         }
 
-//          m_surf->delete_dirty(p->x, p->y, p->x+p->l, p->y+p->h);
+//          m_surf->delete_dirty(p->m_pos.x, p->m_pos.y, p->m_pos.x+p->l, p->m_pos.y+p->h);
         for (Jwindow *q = p->next; q; q = q->next)
             if (!q->is_hidden())
-                p->m_surf->delete_dirty(q->x - p->x, q->y - p->y,
-                                        q->x + q->l - p->x,
-                                        q->y + q->h - p->y);
-        update_dirty(p->m_surf, p->x, p->y);
+                p->m_surf->delete_dirty(q->m_pos.x - p->m_pos.x, q->m_pos.y - p->m_pos.y,
+                                        q->m_pos.x + q->l - p->m_pos.x,
+                                        q->m_pos.y + q->h - p->m_pos.y);
+        update_dirty(p->m_surf, p->m_pos.x, p->m_pos.y);
         if (has_mouse())
-            p->m_surf->PutImage(m_sprite->save, vec2i(mx - p->x, my - p->y), 0);
+            p->m_surf->PutImage(m_sprite->save, m1 - p->m_pos, 0);
     }
 }
 
@@ -396,7 +394,7 @@ Jwindow::Jwindow(char const *name)
     wm->add_window(this);
 }
 
-Jwindow::Jwindow(int X, int Y, int L, int H, ifield *f, char const *name)
+Jwindow::Jwindow(vec2i pos, int L, int H, ifield *f, char const *name)
 {
     l = 0;
     h = 0;
@@ -412,8 +410,8 @@ Jwindow::Jwindow(int X, int Y, int L, int H, ifield *f, char const *name)
 
     l = L >= 0 ? L + left_border() : l - L;
     h = H >= 0 ? H + top_border() : h - H;
-    y = Y >= 0 ? Y : yres - h + Y - top_border() - bottom_border() - 1;
-    x = X >= 0 ? X : xres - l + X - left_border() - right_border() - 1;
+    m_pos.x = pos.x >= 0 ? pos.x : xres - l + pos.x - left_border() - right_border() - 1;
+    m_pos.y = pos.y >= 0 ? pos.y : yres - h + pos.y - top_border() - bottom_border() - 1;
 
     backg = wm->medium_color();
 
@@ -604,9 +602,8 @@ void InputManager::handle_event(Event &ev, Jwindow *j)
 
   if (j)
   {
-    ev.mouse_move.x-=j->x;
-    ev.mouse_move.y-=j->y;
-    m_cur=j;
+    ev.mouse_move -= j->m_pos;
+    m_cur = j;
   }
 
   if (!m_grab)
@@ -661,10 +658,7 @@ void InputManager::handle_event(Event &ev, Jwindow *j)
   }
 
   if (j)
-  {
-    ev.mouse_move.x+=j->x;
-    ev.mouse_move.y+=j->y;
-  }
+    ev.mouse_move += j->m_pos;
 }
 
 void InputManager::allow_no_selections()
@@ -758,8 +752,7 @@ ifield *InputManager::get(int id)
 ifield::ifield()
 {
     owner = NULL;
-    x = 0;
-    y = 0;
+    m_pos = vec2i(0, 0);
     next = NULL;
     id = 0;
 }
@@ -773,9 +766,9 @@ ifield::~ifield()
 void ifield::set_owner(Jwindow * newowner)
 {
     if(owner)
-        move(x - owner->x1(), y - owner->y1());
+        Move(m_pos - vec2i(owner->x1(), owner->y1()));
     owner = newowner;
     if(owner)
-        move(x + owner->x1(), y + owner->y1());
+        Move(m_pos + vec2i(owner->x1(), owner->y1()));
 }
 

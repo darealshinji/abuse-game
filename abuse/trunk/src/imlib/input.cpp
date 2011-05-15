@@ -48,7 +48,7 @@ ifield *button_box::find(int search_id)
 
 button_box::button_box(int X, int Y, int ID, int MaxDown, button *Buttons, ifield *Next)
 {
-  x=X; y=Y; id=ID; next=Next;
+  m_pos = vec2i(X, Y); id=ID; next=Next;
   buttons=Buttons;
   maxdown=MaxDown;
   if (buttons && maxdown) buttons->push();  // the first button is automatically selected!
@@ -94,12 +94,11 @@ void button_box::draw(int active, image *screen)
   return ;
 }
 
-void button_box::move(int newx, int newy)
+void button_box::Move(vec2i pos)
 {
     for(button * b = buttons; b; b = (button *)b->next)
-        b->move(newx + b->x, newy + b->y);
-    x = newx;
-    y = newy;
+        b->Move(pos + b->m_pos);
+    m_pos = pos;
 }
 
 char *button_box::read()
@@ -168,28 +167,26 @@ void button_box::add_button(button *b)
 
 void button_box::arrange_left_right()
 {
-  button *b=buttons;
-  int x_on=x,x1,y1,x2,y2;
-  for (; b; b=(button *)b->next)
-  {
-    b->area(x1,y1,x2,y2);
-    b->x=x_on;
-    b->y=y;
-    x_on+=(x2-x1+1)+1;
-  }
+    vec2i on = m_pos;
+    for (button *b = buttons; b; b = (button *)b->next)
+    {
+        int x1, y1, x2, y2;
+        b->area(x1, y1, x2, y2);
+        b->m_pos = on;
+        on.x += (x2 - x1 + 1) + 1;
+    }
 }
 
 void button_box::arrange_up_down()
 {
-  button *b=buttons;
-  int y_on=y,x1,y1,x2,y2;
-  for (; b; b=(button *)b->next)
-  {
-    b->area(x1,y1,x2,y2);
-    b->y=y_on;
-    b->x=x;
-    y_on+=(y2-y1+1)+1;
-  }
+    vec2i on = m_pos;
+    for (button *b = buttons; b; b = (button *)b->next)
+    {
+        int x1, y1, x2, y2;
+        b->area(x1,y1,x2,y2);
+        b->m_pos = on;
+        on.y += (y2 - y1 + 1) + 1;
+    }
 }
 
 void button::change_visual(image *new_visual)
@@ -200,51 +197,51 @@ void button::change_visual(image *new_visual)
 
 void button::area(int &x1, int &y1, int &x2, int &y2)
 {
-  x1=x; y1=y;
-  if (pressed)
-  {
-    x2=x+pressed->Size().x-1;
-    y2=y+pressed->Size().y-1;
-  }
-  else
-  {
-    if (text)
-    {
-      x2=x+wm->font()->width()*strlen(text)+6;
-      y2=y+wm->font()->height()+6;
-    } else
-    {
-      x2=x+6+visual->Size().x;
-      y2=y+6+visual->Size().y;
-    }
-  }
+    vec2i pos1 = m_pos;
+    vec2i pos2 = m_pos;
+
+    if (pressed)
+        pos2 += pressed->Size() - vec2i(1, 1);
+    else if (text)
+        pos2 += vec2i(wm->font()->width() * strlen(text) + 6,
+                      wm->font()->height() + 6);
+    else
+        pos2 += visual->Size() + vec2i(6, 6);
+
+    x1 = pos1.x; y1 = pos1.y;
+    x2 = pos2.x; y2 = pos2.y;
 }
 
 
 button::button(int X, int Y, int ID, char const *Text, ifield *Next)
 {
-  x=X; y=Y; id=ID;
-  act_id=-1;
-  text = strdup(Text);
-  up=1; next=Next; act=0;
-  visual=NULL;
-  pressed=NULL;
+    m_pos = vec2i(X, Y);
+    id = ID;
+    act_id=-1;
+    text = strdup(Text);
+    up=1; next=Next; act=0;
+    visual=NULL;
+    pressed=NULL;
 }
 
 
 button::button(int X, int Y, int ID, image *vis, ifield *Next)
-{ x=X; y=Y; id=ID; text=NULL;
-  act_id=-1;
-  visual=vis; up=1; next=Next; act=0;
-  pressed=NULL;
+{
+    m_pos = vec2i(X, Y);
+    id=ID; text=NULL;
+    act_id=-1;
+    visual=vis; up=1; next=Next; act=0;
+    pressed=NULL;
 }
 
 button::button(int X, int Y, int ID, image *Depressed, image *Pressed, image *active, ifield *Next)
-{ x=X; y=Y; id=ID; text=NULL;
-  act_id=-1;
-  visual=Depressed; up=1; next=Next; act=0;
-  pressed=Pressed;
-  act_pict=active;
+{
+    m_pos = vec2i(X, Y);
+    id=ID; text=NULL;
+    act_id=-1;
+    visual=Depressed; up=1; next=Next; act=0;
+    pressed=Pressed;
+    act_pict=active;
 }
 
 
@@ -315,13 +312,13 @@ void text_field::draw(int active, image *screen)
 {
   if (active)
   {
-    screen->Rectangle(vec2i(xstart(), y), vec2i(xend(), yend()),
+    screen->Rectangle(vec2i(xstart(), m_pos.y), vec2i(xend(), yend()),
                       wm->bright_color());
     draw_cur(wm->bright_color(),screen);
   }
   else
   {
-    screen->Rectangle(vec2i(xstart(), y), vec2i(xend(), yend()),
+    screen->Rectangle(vec2i(xstart(), m_pos.y), vec2i(xend(), yend()),
                       wm->dark_color());
     draw_cur(wm->dark_color(),screen);
   }
@@ -329,23 +326,23 @@ void text_field::draw(int active, image *screen)
 
 void text_field::area(int &x1, int &y1, int &x2, int &y2)
 {
-  x1=x; y1=y;
-  x2=xend();
-  y2=yend();
+    x1 = m_pos.x; y1 = m_pos.y;
+    x2 = xend(); y2 = yend();
 }
 
 text_field::text_field(int X, int Y, int ID, char const *Prompt,
                        char const *Format, char const *Data, ifield *Next)
 {
-  int slen=(strlen(Format)>strlen(Data) ? strlen(Format) : strlen(Data));
+    int slen=(strlen(Format)>strlen(Data) ? strlen(Format) : strlen(Data));
 
-  x=X; y=Y; id=ID;
-  prompt = strdup(Prompt);
-  format=strcpy((char *)malloc(slen+1),Format);
-  data=strcpy((char *)malloc(slen+1),Data);
-  cur=strlen(data);
-  while (cur && data[cur-1]==' ') cur--;
-  next=Next;
+    m_pos = vec2i(X, Y);
+    id=ID;
+    prompt = strdup(Prompt);
+    format=strcpy((char *)malloc(slen+1),Format);
+    data=strcpy((char *)malloc(slen+1),Data);
+    cur=strlen(data);
+    while (cur && data[cur-1]==' ') cur--;
+    next=Next;
 }
 
 text_field::text_field(int X, int Y, int ID, char const *Prompt,
@@ -354,7 +351,7 @@ text_field::text_field(int X, int Y, int ID, char const *Prompt,
   char num[20];
   sprintf(num,"%g",Data);
   int slen=(strlen(Format)>strlen(num) ? strlen(Format) : strlen(num));
-  x=X; y=Y; id=ID;
+  m_pos = vec2i(X, Y); id=ID;
   prompt = strdup(Prompt);
   format=strcpy((char *)malloc(slen+1),Format);
   data=strcpy((char *)malloc(slen+1),num);
@@ -393,10 +390,10 @@ void button::draw(int active, image *screen)
     if (up)
     {
       if (!active)
-        screen->PutImage(visual, vec2i(x, y));
+        screen->PutImage(visual, m_pos);
       else
-        screen->PutImage(pressed, vec2i(x, y));
-    } else screen->PutImage(act_pict, vec2i(x, y));
+        screen->PutImage(pressed, m_pos);
+    } else screen->PutImage(act_pict, m_pos);
   }
   else
   {
@@ -424,10 +421,10 @@ void button::draw_first(image *screen)
                         wm->bright_color(),wm->medium_color(),wm->dark_color());
       if (text)
       {
-        wm->font()->put_string(screen,x+4,y+5,text,wm->black());
-        wm->font()->put_string(screen,x+3,y+4,text);
+        wm->font()->put_string(screen,m_pos.x+4,m_pos.y+5,text,wm->black());
+        wm->font()->put_string(screen,m_pos.x+3,m_pos.y+4,text);
       }
-      else screen->PutImage(visual, vec2i(x + 3, y + 3), 1);
+      else screen->PutImage(visual, m_pos + vec2i(3, 3), 1);
     } else
     {
       screen->Line(vec2i(x1, y1), vec2i(x2, y1), wm->dark_color());
@@ -440,8 +437,8 @@ void button::draw_first(image *screen)
         screen->PutImage(visual, vec2i(x1 + 3, y1 + 3), 1);
       else
       {
-        wm->font()->put_string(screen,x+4,y+5,text,wm->black());
-        wm->font()->put_string(screen,x+3,y+4,text);
+        wm->font()->put_string(screen,m_pos.x+4,m_pos.y+5,text,wm->black());
+        wm->font()->put_string(screen,m_pos.x+3,m_pos.y+4,text);
       }
     }
   }
@@ -449,9 +446,9 @@ void button::draw_first(image *screen)
 
 void text_field::draw_first(image *screen)
 {
-  wm->font()->put_string(screen,x,y+3,prompt);
-  screen->Bar(vec2i(xstart(), y), vec2i(xend(), yend()), wm->dark_color());
-  wm->font()->put_string(screen,xstart()+1,y+3,data);
+  wm->font()->put_string(screen,m_pos.x,m_pos.y+3,prompt);
+  screen->Bar(vec2i(xstart(), m_pos.y), vec2i(xend(), yend()), wm->dark_color());
+  wm->font()->put_string(screen,xstart()+1,m_pos.y+3,data);
 }
 
 
@@ -466,7 +463,7 @@ void text_field::draw_cur(int color, image *screen)
 
 info_field::info_field(int X, int Y, int ID, char const *info, ifield *Next)
 {
-  x = X; y = Y; id = ID; next = Next;
+  m_pos = vec2i(X, Y); id = ID; next = Next;
   text = strdup(info);
   w = -1;
 }
@@ -490,10 +487,10 @@ void info_field::area(int &x1, int &y1, int &x2, int &y2)
     }
     w=maxw;
   }
-  x1=x;
-  y1=y;
-  x2=x+w;
-  y2=y+h;
+  x1 = m_pos.x;
+  y1 = m_pos.y;
+  x2 = m_pos.x + w;
+  y2 = m_pos.y + h;
 }
 
 void info_field::put_para(image *screen, char const *st, int dx, int dy,
@@ -518,8 +515,8 @@ void info_field::put_para(image *screen, char const *st, int dx, int dy,
 
 void info_field::draw_first(image *screen)
 {
-  put_para(screen,text,x+1,y+1,wm->font()->width(),wm->font()->height(),wm->font(),wm->black());
-  put_para(screen,text,x,y,wm->font()->width(),wm->font()->height(),wm->font(),wm->bright_color());
+  put_para(screen,text,m_pos.x+1,m_pos.y+1,wm->font()->width(),wm->font()->height(),wm->font(),wm->black());
+  put_para(screen,text,m_pos.x,m_pos.y,wm->font()->width(),wm->font()->height(),wm->font(),wm->bright_color());
 }
 
 

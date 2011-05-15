@@ -27,9 +27,6 @@ public :
   virtual void handle_event(Event &ev, image *screen, InputManager *im);
 
   virtual char *read() { return (char *)&up; }
-  void set_xy(int X, int Y) { x=X; y=Y; }
-  int X() { return x; }
-  int Y() { return y; }
   int status() { return up; }
   void set_act_id(int id);
 } ;

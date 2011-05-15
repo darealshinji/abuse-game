@@ -108,7 +108,7 @@ void gui_status_manager::update(int percentage)
 
     gui_status_node *p=first->next;
     while (p && !p->stat_win) p=p->next;
-    if (p) wy=p->stat_win->y+p->stat_win->y2()+5;
+    if (p) wy=p->stat_win->m_pos.y+p->stat_win->y2()+5;
 
     int mx = first->stat_win->x1() + 1;
     int my = first->stat_win->y1() + wm->font()->height() / 2;

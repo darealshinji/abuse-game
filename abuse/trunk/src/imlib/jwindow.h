@@ -60,17 +60,12 @@ class ifield
     friend class Jwindow;
     friend class InputManager;
 
-protected:
-    Jwindow *owner;
-
 public :
     ifield();
-    int x, y;
+    virtual ~ifield();
 
-    int id;
-    ifield *next;
     virtual void set_owner(Jwindow *owner);
-    virtual void move(int newx, int newy) { x = newx; y = newy; }
+    virtual void Move(vec2i pos) { m_pos = pos; }
     virtual void area(int &x1, int &y1, int &x2, int &y2) = 0;
     virtual void draw_first(image *screen) = 0;
     virtual void draw(int active, image *screen) = 0;
@@ -80,8 +75,14 @@ public :
     virtual char *read() = 0;
     virtual ifield *find(int search_id) { if (id==search_id) return this; else return NULL; }
     virtual ifield *unlink(int id) { (void)id; return NULL; }
-    virtual ~ifield();
-} ;
+
+    vec2i m_pos;
+    int id;
+    ifield *next;
+
+protected:
+    Jwindow *owner;
+};
 
 class Jwindow
 {
@@ -89,12 +90,12 @@ class Jwindow
 
 public:
     Jwindow *next;
-    int x, y, l, h, backg;
+    int l, h, backg;
     InputManager *inm;
     void *local_info;  // pointer to info block for local system (may support windows)
 
     Jwindow(char const *name = NULL);
-    Jwindow(int X, int Y, int L, int H, ifield *f, char const *name = NULL);
+    Jwindow(vec2i pos, int L, int H, ifield *f, char const *name = NULL);
     ~Jwindow();
 
     virtual void redraw();
@@ -121,6 +122,7 @@ public:
     static int top_border();
     static int bottom_border();
 
+    vec2i m_pos;
     image *m_surf;
 
 protected:
