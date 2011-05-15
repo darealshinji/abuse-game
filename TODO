@@ -56,7 +56,6 @@ There may be interesting code in there:
 REFACTOR
 --------
 - move to vec2i:
-  - PutPart -> changer le 2e arg. de la bbox
   - AddDirty !!
   - update_dirty
 

@@ -29,7 +29,7 @@ void sprite::restore_background()
 
 void sprite::get_background()
 { if (x+visual->Size().x>=0 && y+visual->Size().y>=0 && x<=xres && y<=yres)
-   save->PutPart(screen,vec2i(0,0), vec2i(x,y), vec2i(x+save->Size().x-1,y+save->Size().y-1)); }
+   save->PutPart(screen,vec2i(0,0), vec2i(x,y), vec2i(x+save->Size().x,y+save->Size().y)); }
 
 void sprite::draw()
 { if (x+visual->Size().x>=0 && y+visual->Size().y>=0 && x<=xres && y<=yres)
