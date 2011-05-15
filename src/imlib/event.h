@@ -79,8 +79,8 @@ public:
   int has_mouse() { return 1; }
   void set_mouse_shape(image *im, int centerx, int centery)
   {
-    m_sprite->change_visual(im);
-    m_center = vec2i(-centerx, -centery);
+    m_sprite->change_visual(im, 1);
+    m_center = vec2i(centerx, centery);
   }
   void set_mouse_position(int mx, int my)
   {
