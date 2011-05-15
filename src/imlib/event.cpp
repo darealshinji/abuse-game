@@ -34,7 +34,6 @@
 EventHandler::EventHandler(image *screen, palette *pal)
 {
     CHECK(screen && pal);
-    last_keystat = get_key_flags();
     m_pending = 0;
 
     m_screen = screen;
@@ -61,9 +60,9 @@ EventHandler::EventHandler(image *screen, palette *pal)
     f.Apply(im);
 
     m_sprite = new sprite(screen, im, 100, 100);
-    m_pos = m_lastpos = screen->Size() / 2;
-    m_button = m_lastbutton = 0;
+    m_pos = screen->Size() / 2;
     m_center = vec2i(0, 0);
+    m_button = 0;
 
     // Platform-specific stuff
     SysInit();
@@ -75,6 +74,33 @@ EventHandler::EventHandler(image *screen, palette *pal)
 EventHandler::~EventHandler()
 {
     ;
+}
+
+void EventHandler::Get(Event &ev)
+{
+    // Sleep until there are events available
+    while(!m_pending)
+    {
+        Timer tmp;
+        IsPending();
+
+        if (!m_pending)
+            tmp.WaitMs(1);
+    }
+
+    // Return first queued event if applicable
+    Event *ep = (Event *)m_events.first();
+    if(ep)
+    {
+        ev = *ep;
+        m_events.unlink(ep);
+        delete ep;
+        m_pending = m_events.first() != NULL;
+        return;
+    }
+
+    // Return an event from the platform-specific system
+    SysEvent(ev);
 }
 
 //

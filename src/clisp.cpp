@@ -2183,7 +2183,7 @@ long c_caller(long number, void *args)
       int y=lnumber_value(CAR(args));
       c_target=id;
       if (main_screen)
-        wm->set_mouse_shape(cache.img(c_target)->copy(),x,y);
+        wm->SetMouseShape(cache.img(c_target)->copy(), vec2i(x, y));
     } break;
     case 276 :
     {

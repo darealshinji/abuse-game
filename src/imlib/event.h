@@ -70,6 +70,7 @@ public:
 
     void SysInit();
     void SysWarpMouse(vec2i pos);
+    void SysEvent(Event &ev);
 
   int IsPending();
   void Get(Event &ev);
@@ -77,23 +78,21 @@ public:
   void flush_screen();
 
   int has_mouse() { return 1; }
-  void set_mouse_shape(image *im, int centerx, int centery)
-  {
-    m_sprite->change_visual(im, 1);
-    m_center = vec2i(centerx, centery);
-  }
-  void set_mouse_position(int mx, int my)
-  {
-    m_pos = vec2i(Min(mx, m_screen->Size().x - 1),
-                  Min(my, m_screen->Size().y - 1));
-    SysWarpMouse(m_pos);
-  }
+    void SetMouseShape(image *im, vec2i center)
+    {
+        m_sprite->change_visual(im, 1);
+        m_center = center;
+    }
+    void SetMousePos(vec2i pos)
+    {
+        m_pos = vec2i(Min(Max(pos.x, 0), m_screen->Size().x - 1),
+                      Min(Max(pos.y, 0), m_screen->Size().y - 1));
+        SysWarpMouse(m_pos);
+    }
 
 private:
-    int get_key_flags();
-
     linked_list m_events;
-    int m_pending, last_keystat, last_key;
+    int m_pending, last_key;
     sprite_controller sc;
 
     image *m_screen;
@@ -101,8 +100,8 @@ private:
 protected:
     /* Mouse information */
     sprite *m_sprite;
-    vec2i m_pos, m_lastpos, m_center;
-    int m_button, m_lastbutton;
+    vec2i m_pos, m_center;
+    int m_button;
 };
 
 #endif

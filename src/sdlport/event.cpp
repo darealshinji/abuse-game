@@ -50,19 +50,6 @@ void EventHandler::SysWarpMouse(vec2i pos)
 }
 
 //
-// get_key_flags()
-// Return the flag for the key modifiers
-//
-int EventHandler::get_key_flags()
-{
-    SDLMod key_flag = SDL_GetModState();
-
-    return ((key_flag & KMOD_SHIFT) != 0) << 3 |
-           ((key_flag & KMOD_CTRL) != 0) << 2 |
-           ((key_flag & KMOD_ALT) != 0) << 1;
-}
-
-//
 // IsPending()
 // Are there any events in the queue?
 //
@@ -75,32 +62,10 @@ int EventHandler::IsPending()
 }
 
 //
-// get_event()
 // Get and handle waiting events
 //
-void EventHandler::Get(Event &ev)
+void EventHandler::SysEvent(Event &ev)
 {
-    while(!m_pending)
-    {
-        IsPending();
-
-        if (!m_pending)
-        {
-            // Sleep for 1 millisecond if there are no events
-            Timer tmp; tmp.WaitMs(1);
-        }
-    }
-
-    Event *ep = (Event *)m_events.first();
-    if(ep)
-    {
-        ev = *ep;
-        m_events.unlink(ep);
-        delete ep;
-        m_pending = m_events.first() != NULL;
-        return;
-    }
-
     // No more events
     m_pending = 0;
 

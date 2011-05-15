@@ -122,7 +122,7 @@ void demo_manager::do_inputs()
         process_packet_commands(buf,size);
     int32_t mx,my;
     the_game->game_to_mouse(player_list->pointer_x,player_list->pointer_y,player_list,mx,my);
-    wm->set_mouse_position(small_render ? mx*2 : mx, small_render ? my*2 : my);
+    wm->SetMousePos((small_render ? 2 : 1) * vec2i(mx, my));
       }
       else
       {

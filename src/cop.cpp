@@ -1048,7 +1048,7 @@ extern void fade_out(int steps);
 void *show_kills()
 {
   fade_out(8);
-  wm->set_mouse_position(0,0);
+  wm->SetMousePos(vec2i(0, 0));
   main_screen->clear();
   image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
   main_screen->PutImage(im, vec2i(0, 0));
