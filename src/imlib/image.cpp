@@ -45,7 +45,7 @@ void image::MakePage(vec2i size, uint8_t *page_buffer)
 
 void image::DeletePage()
 {
-    if(!m_special || !m_special->static_mem)
+    if (!m_special || !m_special->static_mem)
         free(m_data);
 }
 
@@ -320,63 +320,7 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
 
 void image::PutImage(image *im, vec2i pos, int transparent)
 {
-    int16_t i, j, xl, yl;
-    uint8_t *pg1, *pg2, *source, *dest;
-
-    // the screen is clipped then we only want to put part of the image
-    if(m_special)
-    {
-        PutPart(im, pos, vec2i(0), im->m_size, transparent);
-        return;
-    }
-
-    if(pos.x < m_size.x && pos.y < m_size.y)
-    {
-        xl = im->m_size.x;
-        if(pos.x + xl > m_size.x) // clip to the border of the screen
-            xl = m_size.x - pos.x;
-        yl = im->m_size.y;
-        if(pos.y + yl > m_size.y)
-            yl = m_size.y - pos.y;
-
-        int startx = 0, starty = 0;
-        if(pos.x < 0)
-        {
-            startx = -pos.x;
-            pos.x = 0;
-        }
-        if(pos.y < 0)
-        {
-            starty = -pos.y;
-            pos.y = 0;
-        }
-
-        if(xl < 0 || yl < 0)
-            return;
-
-        AddDirty(pos.x, pos.y, pos.x + xl, pos.y + yl);
-        Lock();
-        im->Lock();
-        for(j = starty; j < yl; j++, pos.y++)
-        {
-            pg1 = scan_line(pos.y);
-            pg2 = im->scan_line(j);
-            if(transparent)
-            {
-                for(i = startx, source = pg2+startx, dest = pg1 + pos.x;
-                    i < xl;
-                    i++, source++, dest++)
-                {
-                    if (*source)
-                        *dest = *source;
-                }
-            }
-            else
-                memcpy(&pg1[pos.x], pg2, xl); // straight copy
-        }
-        im->Unlock();
-        Unlock();
-    }
+    PutPart(im, pos, vec2i(0), im->m_size, transparent);
 }
 
 void image::PutPart(image *im, vec2i pos, vec2i aa, vec2i bb, int transparent)
@@ -501,7 +445,7 @@ void image::SetClip(int x1, int y1, int x2, int y2)
 {
     // If the image does not already have an Image descriptor, allocate one
     // with no dirty rectangle keeping.
-    if(!m_special)
+    if (!m_special)
         m_special = new image_descriptor(m_size.x, m_size.y, 0);
 
     // set the image descriptor what the clip
