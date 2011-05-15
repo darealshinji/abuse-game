@@ -905,31 +905,29 @@ void *l_caller(long number, void *args)
     } break;
     case 49 :
     {
-      int32_t x=lnumber_value(CAR(args)->Eval()); args=CDR(args);
-      int32_t y=lnumber_value(CAR(args)->Eval()); args=CDR(args);
+      int x = lnumber_value(CAR(args)->Eval()); args = CDR(args);
+      int y = lnumber_value(CAR(args)->Eval()); args = CDR(args);
 
-      int32_t rx,ry;
-      the_game->mouse_to_game(x,y,rx,ry);
-      void *ret=NULL;
+      vec2i pos = the_game->MouseToGame(vec2i(x, y));
+      void *ret = NULL;
       {
-    PtrRef r1(ret);
-    push_onto_list(LNumber::Create(ry),ret);
-    push_onto_list(LNumber::Create(rx),ret);
+          PtrRef r1(ret);
+          push_onto_list(LNumber::Create(pos.y), ret);
+          push_onto_list(LNumber::Create(pos.x), ret);
       }
       return ret;
     } break;
     case 50 :
     {
-      int32_t x=lnumber_value(CAR(args)->Eval()); args=CDR(args);
-      int32_t y=lnumber_value(CAR(args)->Eval()); args=CDR(args);
+      int x = lnumber_value(CAR(args)->Eval()); args=CDR(args);
+      int y = lnumber_value(CAR(args)->Eval()); args=CDR(args);
 
-      int32_t rx,ry;
-      the_game->game_to_mouse(x,y,current_view,rx,ry);
-      void *ret=NULL;
+      vec2i pos = the_game->GameToMouse(vec2i(x, y), current_view);
+      void *ret = NULL;
       {
-    PtrRef r1(ret);
-    push_onto_list(LNumber::Create(ry),ret);
-    push_onto_list(LNumber::Create(rx),ret);
+        PtrRef r1(ret);
+        push_onto_list(LNumber::Create(pos.y), ret);
+        push_onto_list(LNumber::Create(pos.x), ret);
       }
       return ret;
     } break;
@@ -1286,14 +1284,14 @@ long c_caller(long number, void *args)
     case 91 : current_object->add_object((game_object *)lpointer_value(CAR(args))); return 1; break;
     case 92 :
     {
-      int32_t cx1,x1=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t cy1,y1=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t cx2,x2=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t cy2,y2=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t c=lnumber_value(CAR(args));
-      the_game->game_to_mouse(x1,y1,current_view,cx1,cy1);
-      the_game->game_to_mouse(x2,y2,current_view,cx2,cy2);
-      main_screen->Line(vec2i(cx1, cy1), vec2i(cx2, cy2), c);
+      int32_t x1 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t y1 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t x2 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t y2 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t c = lnumber_value(CAR(args));
+      vec2i pos1 = the_game->GameToMouse(vec2i(x1, y1), current_view);
+      vec2i pos2 = the_game->GameToMouse(vec2i(x2, y2), current_view);
+      main_screen->Line(pos1, pos2, c);
       return 1;
     } break;
     case 93 : return wm->dark_color(); break;
@@ -1963,15 +1961,15 @@ long c_caller(long number, void *args)
 
     case 234 :
     {
-      int32_t cx1,x1=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t cy1,y1=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t cx2,x2=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t cy2,y2=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t c=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t s=lnumber_value(CAR(args));
-      the_game->game_to_mouse(x1,y1,current_view,cx1,cy1);
-      the_game->game_to_mouse(x2,y2,current_view,cx2,cy2);
-      scatter_line(cx1,cy1,cx2,cy2,c,s);
+      int32_t x1 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t y1 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t x2 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t y2 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t c = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t s = lnumber_value(CAR(args));
+      vec2i pos1 = the_game->GameToMouse(vec2i(x1, y1), current_view);
+      vec2i pos2 = the_game->GameToMouse(vec2i(x2, y2), current_view);
+      scatter_line(pos1.x, pos1.y, pos2.x, pos2.y, c, s);
       return 1;
 
     } break;
@@ -2015,16 +2013,16 @@ long c_caller(long number, void *args)
     } break;
     case 244 :
     {
-      int32_t cx1,x1=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t cy1,y1=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t cx2,x2=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t cy2,y2=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t c1=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t c2=lnumber_value(CAR(args)); args=lcdr(args);
-      int32_t s=lnumber_value(CAR(args));
-      the_game->game_to_mouse(x1,y1,current_view,cx1,cy1);
-      the_game->game_to_mouse(x2,y2,current_view,cx2,cy2);
-      ascatter_line(cx1,cy1,cx2,cy2,c1,c2,s);
+      int32_t x1 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t y1 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t x2 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t y2 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t c1 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t c2 = lnumber_value(CAR(args)); args = lcdr(args);
+      int32_t s = lnumber_value(CAR(args));
+      vec2i pos1 = the_game->GameToMouse(vec2i(x1, y1), current_view);
+      vec2i pos2 = the_game->GameToMouse(vec2i(x2, y2), current_view);
+      ascatter_line(pos1.x, pos1.y, pos2.x, pos2.y, c1, c2, s);
       return 1;
 
     } break;
