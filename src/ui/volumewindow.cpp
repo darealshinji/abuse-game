@@ -68,7 +68,7 @@ void VolumeWindow::draw_vol(int x1, int y1, int x2, int y2, int t,
         dx--;
 
     if(dx < x2)
-        m_surf->bar(dx + 1, y1, x2, y2, c2);
+        m_surf->Bar(vec2i(dx + 1, y1), vec2i(x2, y2), c2);
 }
 
 void VolumeWindow::draw_sfx_vol()

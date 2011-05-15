@@ -31,10 +31,10 @@ void draw_help()
   int x1=xres/2-im->Size().x/2,y1=yres/2-im->Size().y/2;
   int x2=x1+im->Size().x,y2=y1+im->Size().y;
   main_screen->PutImage(im, vec2i(x1, y1));
-  main_screen->bar(0,0,x1-1,yres,0);
-  main_screen->bar(0,0,xres,y1-1,0);
-  main_screen->bar(x2,y1,xres,yres,0);
-  main_screen->bar(x1,y2,x2,yres,0);
+  main_screen->Bar(vec2i(0, 0), vec2i(x1 - 1, yres), 0);
+  main_screen->Bar(vec2i(0, 0), vec2i(xres, y1 - 1), 0);
+  main_screen->Bar(vec2i(x2, y1), vec2i(xres, yres), 0);
+  main_screen->Bar(vec2i(x1, y2), vec2i(x2, yres), 0);
 }
 
 void help_handle_event(Event &ev)

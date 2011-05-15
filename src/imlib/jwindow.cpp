@@ -479,55 +479,58 @@ void Jwindow::local_close()
 
 void Jwindow::redraw()
 {
-    int hi = wm->bright_color ();
-    int med = wm->medium_color ();
-    int low = wm->dark_color ();
-    JCFont * fnt = wm->frame_font ();
+    int hi = wm->bright_color();
+    int med = wm->medium_color();
+    int low = wm->dark_color();
+    JCFont * fnt = wm->frame_font();
 
     if(_name)
     {
         if (right_border() >= 1)
         {
-            m_surf->widget_bar (0, 0, l - 1, h - 1, hi, med, low);
+            m_surf->WidgetBar(vec2i(0, 0), vec2i(l - 1, h - 1), hi, med, low);
             if (right_border() >= 3)
-                m_surf->widget_bar(right_border() - 1, top_border() - 1,
-                                     l - left_border(), h - bottom_border(),
-                                     low, med, hi);
+                m_surf->WidgetBar(vec2i(right_border() - 1, top_border() - 1),
+                                  vec2i(l - left_border(), h - bottom_border()),
+                                  low, med, hi);
 
           else
-            m_surf->line (left_border() - 1, top_border() - 1,
-                           right_border() - 1, top_border() - 1, low);
+            m_surf->Line(vec2i(left_border() - 1, top_border() - 1),
+                         vec2i(right_border() - 1, top_border() - 1), low);
         }
-      m_surf->rectangle (2, 2, top_border() - 2, top_border() - 3,
-                           wm->black ());
-      m_surf->widget_bar (3, 3, top_border() - 3, top_border() - 4, hi, med, low);     // draws the 'close' button
+      m_surf->Rectangle(vec2i(2, 2), vec2i(top_border() - 2, top_border() - 3),
+                        wm->black());
+      m_surf->WidgetBar(vec2i(3, 3), vec2i(top_border() - 3, top_border() - 4),
+                        hi, med, low); // draws the 'close' button
     }
 
   else
     {
       if (right_border() >= 1)
         {
-          m_surf->widget_bar (0, 0, l - 1, h - 1, hi, med, low);
+          m_surf->WidgetBar(vec2i(0, 0), vec2i(l - 1, h - 1), hi, med, low);
           if (right_border() >= 3)
-            m_surf->widget_bar (right_border() - 1, jw_top + 4,
-                                l - left_border(), h - bottom_border(), low,
-                                med, hi);
-
+            m_surf->WidgetBar(vec2i(right_border() - 1, jw_top + 4),
+                              vec2i(l - left_border(), h - bottom_border()),
+                              low, med, hi);
           else
-            m_surf->line (left_border() - 1, jw_top + 4, right_border() - 1,
-                           jw_top + 4, low);
+            m_surf->Line(vec2i(left_border() - 1, jw_top + 4),
+                         vec2i(right_border() - 1, jw_top + 4), low);
         }
-      m_surf->rectangle (1, 1, 4, 4, wm->black ());
-      m_surf->widget_bar (2, 2, 3, 3, hi, med, low);   // draws the 'close' button
+      // Draw the 'close' button
+      m_surf->Rectangle(vec2i(1, 1), vec2i(4, 4), wm->black ());
+      m_surf->WidgetBar(vec2i(2, 2), vec2i(3, 3), hi, med, low);
     }
   if (_name && _name[0])
     {
-      m_surf->bar (top_border(), 1,
-                    top_border() + fnt->width() * strlen (_name) + 1,
-                    top_border() - 2, med);
-      fnt->put_string (m_surf, top_border() + 1, 1, _name, low);
+      m_surf->Bar(vec2i(top_border(), 1),
+                  vec2i(top_border() + fnt->width() * strlen (_name) + 1,
+                        top_border() - 2),
+                  med);
+      fnt->put_string(m_surf, top_border() + 1, 1, _name, low);
     }
-  m_surf->bar (x1 (), y1 (), x2 (), y2 (), backg);  // clear 'client' region
+  // clear 'client' region
+  m_surf->Bar(vec2i(x1(), y1()), vec2i(x2(), y2()), backg);
   inm->redraw ();
 }
 

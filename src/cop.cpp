@@ -1063,8 +1063,11 @@ void *show_kills()
   fnt->put_string(main_screen,x,y,header_str,wm->bright_color());
   y+=fnt->height();
 
-  main_screen->widget_bar(x,y+2,x+strlen(header_str)*fnt->width(),y+fnt->height()-3,
-             wm->bright_color(),wm->medium_color(),wm->dark_color());
+  main_screen->WidgetBar(vec2i(x, y + 2),
+                         vec2i(x + strlen(header_str) * fnt->width(),
+                               y + fnt->height() - 3),
+                         wm->bright_color(), wm->medium_color(),
+                         wm->dark_color());
   y+=fnt->height();
   v=player_list;
   for (i=0; i<tp; i++)

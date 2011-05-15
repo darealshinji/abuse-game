@@ -99,7 +99,8 @@ public:
 
     virtual void redraw();
     void resize(int L, int H);
-    void clear(int color = 0) { m_surf->bar(x1(), y1(), x2(), y2(), color); }
+    void clear(int color = 0) { m_surf->Bar(vec2i(x1(), y1()),
+                                            vec2i(x2(), y2()), color); }
     void show() { _hidden = false; }
     void hide() { _hidden = true; }
     bool is_hidden() { return _hidden; }

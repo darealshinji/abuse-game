@@ -474,8 +474,10 @@ void show_stats()
 
     int w=wm->font()->width()*strlen(msg),h=wm->font()->height();
     int x=(x1+x2)/2-w/2,y=(y1+y2)/2-h/2;
-    main_screen->bar(x-10,y-10,x+w+10,y+h+10,wm->bright_color());
-    main_screen->bar(x-9,y-9,x+w+9,y+h+9,wm->medium_color());
+    main_screen->Bar(vec2i(x - 10, y - 10), vec2i(x + w + 10, y + h + 10),
+                     wm->bright_color());
+    main_screen->Bar(vec2i(x - 9, y - 9), vec2i(x + w + 9, y + h + 9),
+                     wm->medium_color());
 
     wm->font()->put_string(main_screen,x+1,y+1,msg,wm->dark_color());
     wm->font()->put_string(main_screen,x,y,msg,wm->bright_color());

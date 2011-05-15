@@ -96,7 +96,7 @@ void tile_picker::scroll_event(int newx, image *screen)
   image im(vec2i(xw, ya));
   last_sel=newx;
 
-  screen->bar(x,y,x+l-1,y+h-1,wm->black());
+  screen->Bar(vec2i(x, y), vec2i(x + l - 1, y + h - 1), wm->black());
   for (int i=newx; i<newx+th*wid; i++)
   {
     xo=x+((i-newx)%wid)*xw;
@@ -117,7 +117,8 @@ void tile_picker::scroll_event(int newx, image *screen)
 
           if (rev)
           {
-        screen->bar(xo,yo,xo+xw-1,yo+ya-1,wm->bright_color());
+        screen->Bar(vec2i(xo, yo), vec2i(xo + xw - 1, yo + ya - 1),
+                    wm->bright_color());
         scale_put_trans(&im,screen,xo,yo,xw,ya);
           }
           else scale_put(&im,screen,xo,yo,xw,ya);
@@ -139,7 +140,8 @@ void tile_picker::scroll_event(int newx, image *screen)
       } else blank=1;
 
       if (i==c)
-        screen->rectangle(xo,yo,xo+xw-1,yo+ya-1,wm->bright_color());
+        screen->Rectangle(vec2i(xo, yo), vec2i(xo + xw - 1, yo + ya - 1),
+                          wm->bright_color());
 
 
   }

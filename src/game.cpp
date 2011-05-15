@@ -475,7 +475,9 @@ void Game::joy_calb(Event &ev)
         if(but) but = 1;
         int dx = 20, dy = 5;
         image *jim = cache.img(joy_picts[but * 9+(y + 1)*3 + x + 1]);
-        joy_win->m_surf->bar(dx, dy, dx + jim->Size().x+6, dy + jim->Size().y+6, wm->black());
+        joy_win->m_surf->Bar(vec2i(dx, dy), vec2i(dx + jim->Size().x + 6,
+                                                  dy + jim->Size().y + 6),
+                             wm->black());
         joy_win->m_surf->PutImage(jim, vec2i(dx + 3, dy + 3));
 
         if(but)
@@ -513,8 +515,9 @@ void Game::show_help(char const *st)
 void Game::draw_value(image *screen, int x, int y, int w, int h,
                       int val, int max)
 {
-    screen->bar(x, y, x + w - 1, y + h, wm->dark_color());
-    screen->bar(x, y + 1, x + w * val / max, y + h - 1, wm->bright_color());
+    screen->Bar(vec2i(x, y), vec2i(x + w - 1, y + h), wm->dark_color());
+    screen->Bar(vec2i(x, y + 1), vec2i(x + w * val / max, y + h - 1),
+                wm->bright_color());
 }
 
 
@@ -998,8 +1001,8 @@ void Game::draw_map(view *v, int interpolate)
           current_level->mark_seen(x, y);
           else
           {
-        main_screen->line(draw_x, draw_y, draw_x + xinc, draw_y + yinc, wm->bright_color());
-        main_screen->line(draw_x + xinc, draw_y, draw_x, draw_y + yinc, wm->bright_color());
+        main_screen->Line(vec2i(draw_x, draw_y), vec2i(draw_x + xinc, draw_y + yinc), wm->bright_color());
+        main_screen->Line(vec2i(draw_x + xinc, draw_y), vec2i(draw_x, draw_y + yinc), wm->bright_color());
           }
         }
       }
@@ -1033,9 +1036,11 @@ void Game::draw_map(view *v, int interpolate)
         for(int i = 1; i < p->tot; i++)
         {
           d += 2;
-          main_screen->line(draw_x+*(d - 2), draw_y+*(d - 1), draw_x+*d, draw_y+*(d + 1), b);
+          main_screen->Line(vec2i(draw_x + *(d - 2), draw_y + *(d - 1)),
+                            vec2i(draw_x + *d, draw_y + *(d + 1)), b);
         }
-        main_screen->line(draw_x+*d, draw_y+*(d - 1), draw_x + p->data[0], draw_y + p->data[1], b);
+        main_screen->Line(vec2i(draw_x + *d, draw_y + *(d - 1)),
+                          vec2i(draw_x + p->data[0], draw_y + p->data[1]), b);
           }
         }
       }
@@ -1060,8 +1065,8 @@ void Game::draw_map(view *v, int interpolate)
     int x1 = v->cx1, y1 = v->cy1, x2 = v->cx2, y2 = v->cy1 + wm->font()->height()+10;
 
     remap_area(main_screen, x1, y1, x2, y2, white_light + 40 * 256);
-    main_screen->bar(x1, y1, x2, y1, color);
-    main_screen->bar(x1, y2, x2, y2, color);
+    main_screen->Bar(vec2i(x1, y1), vec2i(x2, y1), color);
+    main_screen->Bar(vec2i(x1, y2), vec2i(x2, y2), color);
 
     wm->font()->put_string(main_screen, x1 + 5, y1 + 5,
                    help_text, color);

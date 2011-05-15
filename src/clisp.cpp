@@ -1293,7 +1293,7 @@ long c_caller(long number, void *args)
       int32_t c=lnumber_value(CAR(args));
       the_game->game_to_mouse(x1,y1,current_view,cx1,cy1);
       the_game->game_to_mouse(x2,y2,current_view,cx2,cy2);
-      main_screen->line(cx1,cy1,cx2,cy2,c);
+      main_screen->Line(vec2i(cx1, cy1), vec2i(cx2, cy2), c);
       return 1;
     } break;
     case 93 : return wm->dark_color(); break;
@@ -2043,7 +2043,7 @@ long c_caller(long number, void *args)
       int32_t cx2=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t cy2=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t c1=lnumber_value(CAR(args)); args=lcdr(args);
-      main_screen->bar(cx1,cy1,cx2,cy2,c1);
+      main_screen->Bar(vec2i(cx1, cy1), vec2i(cx2, cy2), c1);
     } break;
     case 248 :
     {
@@ -2217,7 +2217,7 @@ long c_caller(long number, void *args)
       int32_t x2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t y2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t c=lnumber_value(CAR(args));
-      main_screen->bar(x1,y1,x2,y2,c);
+      main_screen->Bar(vec2i(x1, y1), vec2i(x2, y2), c);
     } break;
     case 283 :
     {
@@ -2226,7 +2226,7 @@ long c_caller(long number, void *args)
       int32_t x2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t y2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t c=lnumber_value(CAR(args));
-      main_screen->rectangle(x1,y1,x2,y2,c);
+      main_screen->Rectangle(vec2i(x1, y1), vec2i(x2, y2), c);
     } break;
     case 284 :
     {

@@ -121,14 +121,16 @@ void profile_update()
 
   float time_scaler=(float)max_bar_length/prof_list[0].total_time;
 
-  prof_win->m_surf->bar(0,prof_win->y1(),prof_win->m_surf->Size().x-1,prof_win->m_surf->Size().y,0);
+  prof_win->m_surf->Bar(vec2i(0, prof_win->y1()),
+                        vec2i(prof_win->m_surf->Size().x - 1,
+                              prof_win->m_surf->Size().y), 0);
   int dy = 0;
   for (; i<prof_height; i++)
   {
     console_font->put_string(prof_win->m_surf,spliter+1,dy,object_names[prof_list[i].otype]);
-    prof_win->m_surf->bar(spliter-1-(int)(prof_list[i].total_time*time_scaler),dy+1,
-              spliter-1,
-              dy+console_font->height()-1,wm->bright_color());
+    prof_win->m_surf->Bar(vec2i(spliter - 1 - (int)(prof_list[i].total_time * time_scaler), dy + 1),
+                          vec2i(spliter - 1, dy + console_font->height() - 1),
+                          wm->bright_color());
     dy+=console_font->height()+1;
   }
 

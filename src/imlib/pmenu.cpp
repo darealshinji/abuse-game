@@ -36,10 +36,9 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
 
   bar=wm->new_window(X, Y, w, 0, NULL);
   bar->freeze();  // can't drag this window
-  bar->m_surf->widget_bar(0,0,w-1,h-1,wm->bright_color(),wm->medium_color(),
-            wm->dark_color());
-
-
+  bar->m_surf->WidgetBar(vec2i(0, 0), vec2i(w - 1, h - 1),
+                         wm->bright_color(), wm->medium_color(),
+                         wm->dark_color());
 
   int total=0,tx,tw;
   pmenu_item *p=top;
@@ -206,7 +205,9 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
              h - Jwindow::top_border() - Jwindow::bottom_border(),
                      NULL);
   win->freeze();
-  win->m_surf->widget_bar(0,0,w-1,h-1,wm->bright_color(),wm->medium_color(),wm->dark_color());
+  win->m_surf->WidgetBar(vec2i(0, 0), vec2i(w - 1, h - 1),
+                         wm->bright_color(), wm->medium_color(),
+                         wm->dark_color());
 
   int has_flags=0;
   pmenu_item *p=first;
@@ -227,7 +228,9 @@ void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int ac
   if (!n)
   {
     int h=wm->font()->height();
-    parent->m_surf->widget_bar(x,y+h/2-1,x+w-1,y+h/2,wm->dark_color(),wm->medium_color(),wm->bright_color());
+    parent->m_surf->WidgetBar(vec2i(x, y + h / 2 - 1),
+                              vec2i(x + w - 1, y + h / 2), wm->dark_color(),
+                              wm->medium_color(), wm->bright_color());
   } else
   {
     if (active)
@@ -236,7 +239,9 @@ void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int ac
         parent->m_surf->xor_bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->dark_color());
       else
       {
-    parent->m_surf->bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->dark_color());
+    parent->m_surf->Bar(vec2i(bx, y),
+                        vec2i(x + w - 1, y + wm->font()->height() + 1),
+                        wm->dark_color());
     wm->font()->put_string(parent->m_surf,x+1,y+1,n,wm->medium_color());
     if (on_off && *on_off) wm->font()->put_string(parent->m_surf,bx+1,y+1,"*",wm->medium_color());
       }
@@ -246,7 +251,9 @@ void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int ac
         parent->m_surf->xor_bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->dark_color());
       else
       {
-    parent->m_surf->bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->medium_color());
+    parent->m_surf->Bar(vec2i(bx, y),
+                        vec2i(x + w - 1, y + wm->font()->height() + 1),
+                        wm->medium_color());
     wm->font()->put_string(parent->m_surf,x+1,y+1,n,wm->bright_color());
     if (on_off && *on_off) wm->font()->put_string(parent->m_surf,bx+1,y+1,"*",wm->bright_color());
       }

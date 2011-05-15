@@ -105,11 +105,11 @@ void darken_area(int x1, int y1, int x2, int y2, int amount)
 void dark_widget(int x1, int y1, int x2, int y2, int br, int dr, int amount)
 {
   main_screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
-  main_screen->line(x1,y1,x1,y2,br);
-  main_screen->line(x1+1,y1,x2,y1,br);
-  main_screen->line(x2,y1+1,x2,y2,dr);
-  main_screen->line(x1+1,y2,x2,y2,dr);
-  darken_area(x1+1,y1+1,x2-1,y2-1,amount);
+  main_screen->Line(vec2i(x1, y1), vec2i(x1, y2), br);
+  main_screen->Line(vec2i(x1 + 1, y1), vec2i(x2, y1), br);
+  main_screen->Line(vec2i(x2, y1 + 1), vec2i(x2, y2), dr);
+  main_screen->Line(vec2i(x1 + 1, y2), vec2i(x2, y2), dr);
+  darken_area(x1 + 1, y1 + 1, x2 - 1, y2 - 1, amount);
 }
 
 char *men_str(void *arg)
@@ -242,7 +242,8 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       char *cur=men_str(nth(choice,args));
       font->put_string(main_screen,mx+10+1,by1+3,cur,wm->black());
       font->put_string(main_screen,mx+10,by1+2,cur,wm->bright_color());
-      main_screen->rectangle(mx+1,by1,mx+mw-2,by2,wm->bright_color());
+      main_screen->Rectangle(vec2i(mx + 1, by1), vec2i(mx + mw - 2, by2),
+                             wm->bright_color());
 
       color+=cdir;
 

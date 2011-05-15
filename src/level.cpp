@@ -801,9 +801,9 @@ void level::draw_areas(view *v)
 
     the_game->game_to_mouse(a->x,a->y,v,sx1,sy1);
     the_game->game_to_mouse(a->x+a->w,a->y+a->h,v,sx2,sy2);
-    main_screen->rectangle(sx1,sy1,sx2,sy2,c1);
-    main_screen->bar(sx1-1,sy1-1,sx1+1,sy1+1,c2);
-    main_screen->bar(sx2-1,sy2-1,sx2+1,sy2+1,c2);
+    main_screen->Rectangle(vec2i(sx1, sy1), vec2i(sx2, sy2), c1);
+    main_screen->Bar(vec2i(sx1 - 1, sy1 - 1), vec2i(sx1 + 1, sy1 + 1), c2);
+    main_screen->Bar(vec2i(sx2 - 1, sy2 - 1), vec2i(sx2 + 1, sy2 + 1), c2);
   }
 }
 
