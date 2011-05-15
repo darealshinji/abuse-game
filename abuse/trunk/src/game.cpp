@@ -259,11 +259,11 @@ void Game::pan(int xv, int yv)
     first_view->pan_y += yv;
 }
 
-view *Game::view_in(int mousex, int mousey)
+view *Game::GetView(vec2i pos)
 {
     for(view *f = first_view; f; f = f->next)
-        if(f->drawable() && mousex >= f->cx1 && mousey >= f->cy1
-           && mousex <= f->cx2 && mousey <= f->cy2)
+        if(f->drawable() && pos.x >= f->cx1 && pos.y >= f->cy1
+           && pos.x <= f->cx2 && pos.y <= f->cy2)
             return f;
     return NULL;
 }
@@ -273,99 +273,71 @@ int playing_state(int state)
     return state == RUN_STATE || state == PAUSE_STATE;
 }
 
-void Game::ftile_on(int screenx, int screeny, int32_t &x, int32_t &y)
+vec2i Game::GetFgTile(vec2i pos)
 {
-    mouse_to_game(screenx, screeny, x, y);
-    x /= ftile_width();
-    y /= ftile_height();
+    return MouseToGame(pos) / vec2i(ftile_width(), ftile_height());
 }
 
-void Game::btile_on(int screenx, int screeny, int32_t &x, int32_t &y)
+vec2i Game::GetBgTile(vec2i pos)
 {
-    view *f = view_in(screenx, screeny);
-    if(f)
-    {
-        x = ((int32_t)screenx - (int32_t)f->cx1
-                + f->xoff() * bg_xmul / bg_xdiv) / (int32_t)b_wid;
-        y = ((int32_t)screeny - (int32_t)f->cy1
-                + f->yoff() * bg_ymul / bg_ydiv) / (int32_t)b_hi;
-    }
-    else
-    {
-        x = -1;
-        y = -1;
-    }
-}
-
-void Game::mouse_to_game(int32_t x, int32_t y,
-                         int32_t &gamex, int32_t &gamey, view *f)
-{
+    view *f = GetView(pos);
     if(!f)
-        f = view_in(x, y);
-    if(!f)
-        f = player_list;  // if not in a view use the first one
+        return vec2i(-1, -1);
 
-    if(f)
-    {
-        if(dev & MAP_MODE)
-        {
-            gamex = (x - (int32_t)f->cx1) * ftile_width() / AUTOTILE_WIDTH + map_xoff * ftile_width();
-            gamey = (y - (int32_t)f->cy1) * ftile_height() / AUTOTILE_HEIGHT + map_yoff * ftile_height();
-        }
-        else
-        {
-            gamex = x - (int32_t)f->cx1 + f->xoff();
-            gamey = y - (int32_t)f->cy1 + f->yoff();
-        }
-    }
+    return vec2i((pos.x - f->cx1 + f->xoff() * bg_xmul / bg_xdiv) / b_wid,
+                 (pos.y - f->cy1 + f->yoff() * bg_ymul / bg_ydiv) / b_hi);
 }
 
-void Game::game_to_mouse(int32_t gamex, int32_t gamey, view *which,
-                         int32_t &x, int32_t &y)
+vec2i Game::MouseToGame(vec2i pos, view *v)
 {
-    if(!(dev & MAP_MODE))
-    {
-        x = gamex - which->xoff() + which->cx1;
-        y = gamey - which->yoff() + which->cy1;
-        return;
-    }
+    if (!v)
+        v = GetView(pos);
+    if (!v)
+        v = player_list;  // if not in a view use the first one
+    if (!v)
+        return vec2i(-1, -1);
 
-    int32_t x1, y1;
+    if(dev & MAP_MODE)
+        return vec2i((pos.x - v->cx1) * ftile_width()
+                           / AUTOTILE_WIDTH + map_xoff * ftile_width(),
+                     (pos.y - v->cy1) * ftile_height()
+                           / AUTOTILE_HEIGHT + map_yoff * ftile_height());
 
-    if(dev & EDIT_MODE)
-    {
-        x1 = map_xoff;
-        y1 = map_yoff;
-    }
+    return pos - vec2i(v->cx1 - v->xoff(), v->cy1 - v->yoff());
+}
+
+vec2i Game::GameToMouse(vec2i pos, view *v)
+{
+    if (!(dev & MAP_MODE))
+        return pos + vec2i(v->cx1 - v->xoff(), v->cy1 - v->yoff());
+
+    vec2i tmp;
+
+    if (dev & EDIT_MODE)
+        tmp = vec2i(map_xoff, map_yoff);
+    else if(v->focus)
+        tmp = vec2i(v->focus->x / ftile_width()
+                       - (v->cx2 - v->cx1) / AUTOTILE_WIDTH / 2,
+                    v->focus->y / ftile_height()
+                       - (v->cy2 - v->cy1) / AUTOTILE_HEIGHT / 2);
     else
-    {
-        if(which->focus)
-        {
-            x1 = which->focus->x / ftile_width()
-                  - (which->cx2 - which->cx1) / AUTOTILE_WIDTH / 2;
-            y1 = which->focus->y / ftile_height()
-                  - (which->cy2 - which->cy1) / AUTOTILE_HEIGHT / 2;
-        }
-        else
-            x1 = y1 = 0;
-    }
+        tmp = vec2i(0, 0);
 
-    if(x1 < 0)
-        x1 = 0;
-    if(y1 < 0)
-        y1 = 0;
+    tmp.x = Max(tmp.x, 0);
+    tmp.y = Max(tmp.y, 0);
 
-    x = gamex * AUTOTILE_WIDTH / ftile_width()
-          - x1 * AUTOTILE_WIDTH + which->cx1;
-    if(x1 > 0)
-        x -= (which->focus->x * AUTOTILE_WIDTH / ftile_width())
-               % AUTOTILE_WIDTH;
+    vec2i ret(pos.x * AUTOTILE_WIDTH / ftile_width()
+                 - tmp.x * AUTOTILE_WIDTH + v->cx1,
+              pos.y * AUTOTILE_HEIGHT / ftile_height()
+                 - tmp.y * AUTOTILE_HEIGHT + v->cy1);
+    if (tmp.x > 0)
+        ret.x -= (v->focus->x * AUTOTILE_WIDTH / ftile_width())
+                     % AUTOTILE_WIDTH;
+    if(tmp.y > 0)
+        ret.y -= (v->focus->y * AUTOTILE_HEIGHT / ftile_height())
+                     % AUTOTILE_HEIGHT;
 
-    y = gamey * AUTOTILE_HEIGHT / ftile_height()
-          - y1 * AUTOTILE_HEIGHT + which->cy1;
-    if(y1 > 0)
-        y -= (which->focus->y * AUTOTILE_HEIGHT / ftile_height())
-               % AUTOTILE_HEIGHT;
+    return ret;
 }
 
 int window_state(int state)

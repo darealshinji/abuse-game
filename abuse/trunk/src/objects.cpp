@@ -377,22 +377,23 @@ void game_object::morph_into(int type, void (*stat_fun)(int), int anneal, int fr
 
 void game_object::draw_above(view *v)
 {
-  int32_t x1,y1,x2,y2,sy1,sy2,sx,i;
+  int32_t x1, y1, x2, y2;
   picture_space(x1,y1,x2,y2);
 
-  the_game->game_to_mouse(x1,y1,v,sx,sy2);
-  if (sy2>=v->cy1)
+  vec2i pos1 = the_game->GameToMouse(vec2i(x1, y1), v);
+  if (pos1.y >= v->cy1)
   {
-    int32_t draw_to=y1-(sy2-v->cy1),tmp=x;
-    current_level->foreground_intersect(x,y1,tmp,draw_to);
-    the_game->game_to_mouse(x1,draw_to,v,i,sy1);     // calculate sy1
+    int32_t draw_to = y1 - (pos1.y - v->cy1), tmp = x;
+    current_level->foreground_intersect(x, y1, tmp, draw_to);
+    // calculate pos2.y
+    vec2i pos2 = the_game->GameToMouse(vec2i(x1, draw_to), v);
 
-    sy1 = Max(v->cy1, sy1);
-    sy2 = Min(v->cy2, sy2);
-    TransImage *p=picture();
+    pos2.y = Max(v->cy1, pos2.y);
+    pos1.y = Min(v->cy2, pos1.y);
+    TransImage *p = picture();
 
-    for (i=sy1; i<=sy2; i++)
-      p->PutScanLine(main_screen,vec2i(sx,i),0);
+    for (int i = pos2.y; i <= pos1.y; i++)
+      p->PutScanLine(main_screen, vec2i(pos1.x, i), 0);
   }
 }
 

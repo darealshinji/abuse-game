@@ -21,15 +21,15 @@
 
 void morph_char::draw(game_object *who, view *v)
 {
-  if (fleft)
-  {
-    int32_t rx,ry;
-    the_game->game_to_mouse(who->x-(cx>>16),who->y-(cy>>16),v,rx,ry);
-    mor->show(main_screen,rx,ry,color_table,pal,1000);
-    cx+=dcx;
-    cy+=dcy;
-    fleft--;
-  }
+    if (fleft)
+    {
+        vec2i pos = the_game->GameToMouse(vec2i(who->x - (cx >> 16),
+                                                who->y - (cy >> 16)), v);
+        mor->show(main_screen, pos.x, pos.x, color_table, pal, 1000);
+        cx += dcx;
+        cy += dcy;
+        fleft--;
+    }
 }
 
 

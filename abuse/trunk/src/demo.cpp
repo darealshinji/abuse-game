@@ -119,10 +119,11 @@ void demo_manager::do_inputs()
       int size;
       if (get_packet(buf,size))              // get starting inputs
       {
-        process_packet_commands(buf,size);
-    int32_t mx,my;
-    the_game->game_to_mouse(player_list->pointer_x,player_list->pointer_y,player_list,mx,my);
-    wm->SetMousePos((small_render ? 2 : 1) * vec2i(mx, my));
+        process_packet_commands(buf, size);
+        vec2i mouse = the_game->GameToMouse(vec2i(player_list->pointer_x,
+                                                  player_list->pointer_y),
+                                            player_list);
+        wm->SetMousePos((small_render ? 2 : 1) * mouse);
       }
       else
       {

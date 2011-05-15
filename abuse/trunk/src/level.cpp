@@ -784,27 +784,17 @@ void level::set_tick_counter(uint32_t x)
 
 void level::draw_areas(view *v)
 {
-  int32_t sx1,sy1,sx2,sy2;
-  area_controller *a=area_list;
-  for (; a; a=a->next)
-  {
-    int c1,c2;
-    if (a->active)
+    for (area_controller *a = area_list; a; a = a->next)
     {
-      c1=morph_sel_frame_color;
-      c2=wm->bright_color();
-    } else
-    {
-      c2=morph_sel_frame_color;
-      c1=wm->bright_color();
-    }
+        int c1 = a->active ? morph_sel_frame_color : wm->bright_color();
+        int c2 = a->active ? wm->bright_color() : morph_sel_frame_color;
 
-    the_game->game_to_mouse(a->x,a->y,v,sx1,sy1);
-    the_game->game_to_mouse(a->x+a->w,a->y+a->h,v,sx2,sy2);
-    main_screen->Rectangle(vec2i(sx1, sy1), vec2i(sx2, sy2), c1);
-    main_screen->Bar(vec2i(sx1 - 1, sy1 - 1), vec2i(sx1 + 1, sy1 + 1), c2);
-    main_screen->Bar(vec2i(sx2 - 1, sy2 - 1), vec2i(sx2 + 1, sy2 + 1), c2);
-  }
+        vec2i pos1 = the_game->GameToMouse(vec2i(a->x, a->y), v);
+        vec2i pos2 = the_game->GameToMouse(vec2i(a->x + a->w, a->y + a->h), v);
+        main_screen->Rectangle(pos1, pos2, c1);
+        main_screen->Bar(pos1 - vec2i(1, 1), pos1 + vec2i(1, 1), c2);
+        main_screen->Bar(pos2 - vec2i(1, 1), pos2 + vec2i(1, 1), c2);
+    }
 }
 
 void level::draw_objects(view *v)

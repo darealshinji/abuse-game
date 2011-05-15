@@ -340,7 +340,7 @@ uint16_t make_sync()
 void view::get_input()
 {
     int sug_x,sug_y,sug_b1,sug_b2,sug_b3,sug_b4;
-    int32_t sug_px,sug_py;
+    vec2i sug_p(0, 0);
 
 // NOTE:(AK) I have commented this out so we don't use the lisp
 //        file "input.lsp" to get our key mappings.
@@ -383,14 +383,12 @@ void view::get_input()
         get_movement( 0, sug_x, sug_y, sug_b1, sug_b2, sug_b3, sug_b4 );
         if( focus )
         {
-            the_game->mouse_to_game( last_demo_mx, last_demo_my, sug_px, sug_py, this );
-            if( last_demo_mbut & 1 )
+            sug_p = the_game->MouseToGame(vec2i(last_demo_mx, last_demo_my));
+            if(last_demo_mbut & 1)
                 sug_b2 = 1;
-            if( last_demo_mbut & 2 )
+            if(last_demo_mbut & 2)
                 sug_b1 = 1;
         }
-        else
-            sug_px = sug_py = 0;
     }
 
     if( view_changed() )
@@ -438,9 +436,9 @@ void view::get_input()
     if( sug_b4 )
         mflags |= 128;
 
-    base->packet.write_uint8( mflags );
-    base->packet.write_uint16((uint16_t)((int16_t)sug_px));
-    base->packet.write_uint16((uint16_t)((int16_t)sug_py));
+    base->packet.write_uint8(mflags);
+    base->packet.write_uint16((uint16_t)sug_p.x);
+    base->packet.write_uint16((uint16_t)sug_p.y);
 }
 
 

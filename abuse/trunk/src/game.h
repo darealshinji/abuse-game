@@ -62,6 +62,10 @@ extern FILE *open_FILE(char const *filename, char const *mode);
 
 class Game
 {
+public:
+    Game(int argc, char **argv);
+    ~Game();
+
 private:
   JCFont *fnt;
   bool finished;
@@ -88,9 +92,6 @@ public :
   view *first_view,*old_view;
   int state,zoom;
 
-  Game(int argc, char **argv);
-  ~Game();
-
   void step();
   void show_help(char const *st);
   void draw_value(image *screen, int x, int y, int w, int h, int val, int max);
@@ -105,15 +106,15 @@ public :
                            return cache.foret(foretiles[BLACK]); else
                return cache.foret(foretiles[x]); }
 
-  void ftile_on(int screenx, int screeny, int32_t &x, int32_t &y);
-  void btile_on(int screenx, int screeny, int32_t &x, int32_t &y);
+    vec2i GetFgTile(vec2i pos);
+    vec2i GetBgTile(vec2i pos);
   void toggle_delay();
   void set_delay(int on) { no_delay=!on; }
   void pan(int xv, int yv);
 
-  void mouse_to_game(int32_t x, int32_t y, int32_t &gamex, int32_t &gamey, view *v=NULL);
-  void game_to_mouse(int32_t gamex, int32_t gamey, view *which, int32_t &x, int32_t &y);
-  view *view_in(int mousex, int mousey);
+    vec2i MouseToGame(vec2i pos, view *v = NULL);
+    vec2i GameToMouse(vec2i pos, view *v);
+    view *GetView(vec2i pos);
 
   int calc_speed();
   int ftile_width()  { return f_wid; }
