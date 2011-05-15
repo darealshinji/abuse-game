@@ -104,13 +104,13 @@ void ico_button::draw(int active, image *screen)
     if (active && key[0])
     {
         int g=80;
-        screen->bar(0, 0, 144, 20, 0);
+        screen->Bar(vec2i(0, 0), vec2i(144, 20), 0);
         wm->font()->put_string(screen, 0, 0, symbol_str(key),
                                color_table->Lookup(g>>3, g>>3, g>>3));
     }
     else if (!active && key[0])
     {
-        screen->bar(0, 0, 144, 20, 0);
+        screen->Bar(vec2i(0, 0), vec2i(144, 20), 0);
     }
 }
 

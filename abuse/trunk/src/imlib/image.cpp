@@ -174,147 +174,147 @@ image *image::copy()
     return im;
 }
 
-void image::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
+void image::Line(vec2i p1, vec2i p2, uint8_t color)
 {
-  int16_t i, xc, yc, er, n, m, xi, yi, xcxi, ycyi, xcyi;
-  unsigned dcy, dcx;
-  // check to make sure that both endpoint are on the screen
+    int xc, yc, er, n, m, xi, yi, xcxi, ycyi, xcyi;
+    unsigned int dcy, dcx;
 
-  int cx1, cy1, cx2, cy2;
+    int cx1, cy1, cx2, cy2;
 
-  // check to see if the line is completly clipped off
-  GetClip(cx1, cy1, cx2, cy2);
-  if ((x1 < cx1 && x2 < cx1) || (x1 >= cx2 && x2 >= cx2) ||
-      (y1 < cy1 && y2 < cy1) || (y1 >= cy2 && y2 >= cy2))
-    return;
+    // check to see if the line is completly clipped off
+    GetClip(cx1, cy1, cx2, cy2);
+    if ((p1.x < cx1 && p2.x < cx1) || (p1.x >= cx2 && p2.x >= cx2) ||
+        (p1.y < cy1 && p2.y < cy1) || (p1.y >= cy2 && p2.y >= cy2))
+        return;
 
-  if (x1>x2)        // make sure that x1 is to the left
-  {
-    i=x1; x1=x2; x2=i;  // if not swap points
-    i=y1; y1=y2; y2=i;
-  }
-
-  // clip the left side
-  if (x1<cx1)
-  {
-    int my=(y2-y1);
-    int mx=(x2-x1), b;
-    if (!mx) return ;
-    if (my)
+    if (p1.x > p2.x) // make sure that p1.x is to the left
     {
-      b=y1-(y2-y1)*x1/mx;
-      y1=my*cx1/mx+b;
-      x1=cx1;
+        vec2i tmp = p1; p1 = p2; p2 = tmp; // if not swap points
     }
-    else x1=cx1;
-  }
 
-  // clip the right side
-  if (x2 >= cx2)
-  {
-    int my=(y2-y1);
-    int mx=(x2-x1), b;
-    if (!mx) return ;
-    if (my)
+    // clip the left side
+    if (p1.x < cx1)
     {
-      b=y1-(y2-y1)*x1/mx;
-      y2=my * (cx2 - 1) / mx + b;
-      x2 = cx2 - 1;
+        vec2i m = p2 - p1;
+
+        if (!m.x)
+            return;
+        if (m.y)
+        {
+            int b = p1.y - m.y * p1.x / m.x;
+            p1.y = b + m.y * cx1 / m.x;
+        }
+        p1.x = cx1;
     }
-    else x2 = cx2 - 1;
-  }
 
-  if (y1>y2)        // make sure that y1 is on top
-  {
-    i=x1; x1=x2; x2=i;  // if not swap points
-    i=y1; y1=y2; y2=i;
-  }
-
-  // clip the bottom
-  if (y2 >= cy2)
-  {
-    int mx=(x2-x1);
-    int my=(y2-y1), b;
-    if (!my)
-      return ;
-    if (mx)
+    // clip the right side
+    if (p2.x >= cx2)
     {
-      b = y1 - (y2 - y1) * x1 / mx;
-      x2 = (cy2 - 1 - b) * mx / my;
-      y2 = cy2 - 1;
+        vec2i m = p2 - p1;
+        if (!m.x)
+            return;
+        if (m.y)
+        {
+            int b = p1.y - m.y * p1.x / m.x;
+            p2.y = b + m.y * (cx2 - 1) / m.x;
+        }
+        p2.x = cx2 - 1;
     }
-    else y2 = cy2 - 1;
-  }
 
-  // clip the top
-  if (y1<cy1)
-  {
-    int mx=(x2-x1);
-    int my=(y2-y1), b;
-    if (!my) return ;
-    if (mx)
+    if (p1.y > p2.y) // make sure that p1.y is on top
     {
-      b=y1-(y2-y1)*x1/mx;
-      x1=(cy1-b)*mx/my;
-      y1=cy1;
+        vec2i tmp = p1; p1 = p2; p2 = tmp; // if not swap points
     }
-    else y1=cy1;
-  }
 
-
-  // see if it got cliped into the box, out out
-  if (x1<cx1 || x2<cx1 || x1 >= cx2 || x2 >= cx2 || y1<cy1 || y2 <cy1 || y1 >= cy2 || y2 >= cy2)
-    return;
-
-
-
-  if (x1>x2)
-  { xc=x2; xi=x1; }
-  else { xi=x2; xc=x1; }
-
-
-  // assume y1<=y2 from above swap operation
-  yi=y2; yc=y1;
-
-  AddDirty(xc, yc, xi + 1, yi + 1);
-  dcx=x1; dcy=y1;
-  xc=(x2-x1); yc=(y2-y1);
-  if (xc<0) xi=-1; else xi=1;
-  if (yc<0) yi=-1; else yi=1;
-  n=abs(xc); m=abs(yc);
-  ycyi=abs(2*yc*xi);
-  er=0;
-
-  Lock();
-  if (n>m)
-  {
-    xcxi=abs(2*xc*xi);
-    for (i=0; i<=n; i++)
+    // clip the bottom
+    if (p2.y >= cy2)
     {
-      *(scan_line(dcy)+dcx)=color;
-      if (er>0)
-      { dcy+=yi;
-    er-=xcxi;
-      }
-      er+=ycyi;
-      dcx+=xi;
+        vec2i m = p2 - p1;
+        if (!m.y)
+            return;
+        if (m.x)
+        {
+            int b = p1.y - (p2.y - p1.y) * p1.x / m.x;
+            p2.x = (cy2 - 1 - b) * m.x / m.y;
+        }
+        p2.y = cy2 - 1;
     }
-  }
-  else
-  {
-    xcyi=abs(2*xc*yi);
-    for (i=0; i<=m; i++)
+
+    // clip the top
+    if (p1.y < cy1)
     {
-      *(scan_line(dcy)+dcx)=color;
-      if (er>0)
-      { dcx+=xi;
-    er-=ycyi;
-      }
-      er+=xcyi;
-      dcy+=yi;
+        vec2i m = p2 - p1;
+        if (!m.y)
+            return;
+        if (m.x)
+        {
+            int b = p1.y - m.y * p1.x / m.x;
+            p1.x = (cy1 - b) * m.x / m.y;
+        }
+        p1.y = cy1;
     }
-  }
-  Unlock();
+
+    // see if it got cliped into the box, out out
+    if (p1.x < cx1 || p2.x < cx1 || p1.x >= cx2 || p2.x >= cx2
+         || p1.y < cy1 || p2.y < cy1 || p1.y >= cy2 || p2.y >= cy2)
+        return;
+
+    if (p1.x > p2.x)
+    {
+        xc = p2.x; xi = p1.x;
+    }
+    else
+    {
+        xi = p2.x;
+        xc = p1.x;
+    }
+
+    // assume p1.y <= p2.y from above swap operation
+    yi = p2.y; yc = p1.y;
+
+    AddDirty(xc, yc, xi + 1, yi + 1);
+    dcx = p1.x; dcy = p1.y;
+    xc = (p2.x - p1.x);
+    yc = (p2.y - p1.y);
+    xi = (xc < 0) ? -1 : 1;
+    yi = (yc < 0) ? -1 : 1;
+    n = abs(xc);
+    m = abs(yc);
+    ycyi = abs(2 * yc * xi);
+    er = 0;
+
+    Lock();
+    if (n > m)
+    {
+        xcxi = abs(2 * xc * xi);
+        for (int i = 0; i <= n; i++)
+        {
+            scan_line(dcy)[dcx] = color;
+            if (er > 0)
+            {
+                dcy += yi;
+                er -= xcxi;
+            }
+            er += ycyi;
+            dcx += xi;
+        }
+    }
+    else
+    {
+        xcyi = abs(2 * xc * yi);
+        for (int i = 0; i <= m; i++)
+        {
+            scan_line(dcy)[dcx] = color;
+            if (er > 0)
+            {
+                dcx += xi;
+                er -= ycyi;
+            }
+            er += xcyi;
+            dcy += yi;
+        }
+    }
+    Unlock();
 }
 
 
@@ -630,12 +630,12 @@ void image::PutPartMasked(image *im, image *mask, int16_t x, int16_t y,
   }
 }
 
-void image::rectangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
+void image::Rectangle(vec2i p1, vec2i p2, uint8_t color)
 {
-  line(x1, y1, x2, y1, color);
-  line(x2, y1, x2, y2, color);
-  line(x1, y2, x2, y2, color);
-  line(x1, y1, x1, y2, color);
+    Line(p1, vec2i(p2.x, p1.y), color);
+    Line(vec2i(p2.x, p1.y), p2, color);
+    Line(vec2i(p1.x, p2.y), p2, color);
+    Line(p1, vec2i(p1.x, p2.y), color);
 }
 
 void image::SetClip(int x1, int y1, int x2, int y2)
@@ -868,29 +868,33 @@ void image_descriptor::AddDirty(int x1, int y1, int x2, int y2)
     }
 }
 
-void image::bar      (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
+void image::Bar(vec2i p1, vec2i p2, uint8_t color)
 {
-  int16_t y;
-  if (x1>x2 || y1>y2) return ;
-  if (m_special)
-  { x1=m_special->bound_x1(x1);
-    y1=m_special->bound_y1(y1);
-    x2=m_special->bound_x2(x2+1)-1;
-    y2=m_special->bound_y2(y2+1)-1;
-  }
-  else
-  { if (x1<0) x1=0;
-    if (y1<0) y1=0;
-    if (x2>=m_size.x)  x2=m_size.x-1;
-    if (y2>=m_size.y) y2=m_size.y-1;
-  }
-  if (x2<0 || y2<0 || x1>=m_size.x || y1>=m_size.y || x2<x1 || y2<y1)
-    return ;
-  Lock();
-  for (y=y1; y<=y2; y++)
-    memset(scan_line(y)+x1, color, (x2-x1+1));
-  Unlock();
-  AddDirty(x1, y1, x2 + 1, y2 + 1);
+    if (p1.x > p2.x || p1.y > p2.y)
+        return;
+    if (m_special)
+    {
+        p1.x = m_special->bound_x1(p1.x);
+        p1.y = m_special->bound_y1(p1.y);
+        p2.x = m_special->bound_x2(p2.x + 1) - 1;
+        p2.y = m_special->bound_y2(p2.y + 1) - 1;
+    }
+    else
+    {
+        p1.x = Max(p1.x, 0);
+        p1.y = Max(p1.y, 0);
+        p2.x = Min(p2.x, m_size.x - 1);
+        p2.y = Min(p2.y, m_size.y - 1);
+    }
+    if (p2.x < 0 || p2.y < 0 || p1.x >= m_size.x || p1.y >= m_size.y
+         || p2.x < p1.x || p2.y < p1.y)
+        return;
+
+    Lock();
+    for (int y = p1.y; y <= p2.y; y++)
+        memset(scan_line(y) + p1.x, color, (p2.x - p1.x + 1));
+    Unlock();
+    AddDirty(p1.x, p1.y, p2.x + 1, p2.y + 1);
 }
 
 void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
@@ -952,7 +956,7 @@ void image::unpack_scanline(int16_t line, char bitsperpixel)
 
 void image::dither(palette *pal)
 {
-  int16_t x, y, i, j;
+  int16_t x, y, j;
   uint8_t dt_matrix[]={ 0,  136, 24, 170,
            68, 204, 102, 238,
            51, 187, 17, 153,
@@ -963,7 +967,7 @@ void image::dither(palette *pal)
   for (y = 0; y < m_size.y; y++)
   {
     sl=scan_line(y);
-    for (i=0, j=y%4, x=0; x < m_size.x; x++)
+    for (j=y%4, x=0; x < m_size.x; x++)
       sl[x] = (pal->red(sl[x]) > dt_matrix[j * 4 + (x & 3)]) ? 255 : 0;
   }
   Unlock();
@@ -1060,14 +1064,14 @@ image *image::create_smooth(int16_t smoothness)
   return im;
 }
 
-void image::widget_bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2,
-       uint8_t light, uint8_t med, uint8_t dark)
+void image::WidgetBar(vec2i p1, vec2i p2,
+                      uint8_t light, uint8_t med, uint8_t dark)
 {
-  line(x1, y1, x2, y1, light);
-  line(x1, y1, x1, y2, light);
-  line(x2, y1+1, x2, y2, dark);
-  line(x1+1, y2, x2-1, y2, dark);
-  bar(x1+1, y1+1, x2-1, y2-1, med);
+    Line(p1, vec2i(p2.x, p1.y), light);
+    Line(p1, vec2i(p1.x, p2.y), light);
+    Line(vec2i(p2.x, p1.y + 1), p2, dark);
+    Line(vec2i(p1.x + 1, p2.y), vec2i(p2.x - 1, p2.y - 1), dark);
+    Bar(p1 + vec2i(1, 1), p2 - vec2i(1, 1), med);
 }
 
 class fill_rec
@@ -1184,8 +1188,8 @@ void image::burn_led(int16_t x, int16_t y, int32_t num, int16_t color, int16_t s
     zz=st[xx]-'0';
       for (yy=0; yy<7; yy++)
     if ((1<<yy)&dig[zz])
-      line(x+ledx[yy*2]*scale, y+ledy[yy*2]*scale, x+ledx[yy*2+1]*scale,
-        y+ledy[yy*2+1]*scale, color);
+      Line(vec2i(x+ledx[yy*2]*scale, y+ledy[yy*2]*scale),
+           vec2i(x+ledx[yy*2+1]*scale, y+ledy[yy*2+1]*scale), color);
     }
     x+=6*scale;
   }

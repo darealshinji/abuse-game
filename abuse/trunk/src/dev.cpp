@@ -146,7 +146,7 @@ class amb_cont : public scroller
   { if (player_list) sx=player_list->ambient; }
   virtual void scroll_event(int newx, image *screen)
   {
-    screen->bar(x,y,x+l-1,y+h-1,wm->dark_color());
+    screen->Bar(vec2i(x, y), vec2i(x + l - 1, y + h - 1), wm->dark_color());
     char st[100];
     sprintf(st,"%d",newx);
     wm->font()->put_string(screen,x+30,y+1,st,wm->bright_color());
@@ -483,8 +483,8 @@ void dev_controll::dev_draw(view *v)
       image *im = cache.img(light_buttons[f->type]);
       main_screen->PutImage(im, vec2i(f->x - vx + v->cx1 - im->Size().x / 2,
                                       f->y - vy + v->cy1 - im->Size().y / 2), 1);
-      main_screen->rectangle(f->x1 - vx + v->cx1, f->y1 - vy + v->cy1,
-                             f->x2 - vx + v->cx1, f->y2 - vy + v->cy1,
+      main_screen->Rectangle(vec2i(f->x1 - vx + v->cx1, f->y1 - vy + v->cy1),
+                             vec2i(f->x2 - vx + v->cx1, f->y2 - vy + v->cy1),
                              wm->medium_color());
     }
       }
@@ -494,7 +494,7 @@ void dev_controll::dev_draw(view *v)
     {
       int32_t rx1,ry1;
       the_game->game_to_mouse(link_object->x,link_object->y,v,rx1,ry1);
-      main_screen->line(rx1,ry1,dlastx,dlasty,yellow);
+      main_screen->Line(vec2i(rx1, ry1), vec2i(dlastx, dlasty), yellow);
     }
 
     if (selected_light)
@@ -503,7 +503,8 @@ void dev_controll::dev_draw(view *v)
       int l=i->Size().x/2,h=i->Size().y/2;
       int32_t rx1,ry1;
       the_game->game_to_mouse(selected_light->x,selected_light->y,v,rx1,ry1);
-      main_screen->rectangle(rx1-l,ry1-h,rx1+l,ry1+h,wm->bright_color());
+      main_screen->Rectangle(vec2i(rx1 - l, ry1 - h), vec2i(rx1 + l, ry1 + h),
+                             wm->bright_color());
     }
 
     game_object *o;
@@ -527,14 +528,14 @@ void dev_controll::dev_draw(view *v)
     {
       game_object *other=o->get_object(i);
       the_game->game_to_mouse(other->x,other->y,current_view,x2,y2);
-      main_screen->line(x1,y1,x2,y2,wm->bright_color());
+      main_screen->Line(vec2i(x1, y1), vec2i(x2, y2), wm->bright_color());
     }
 
     for (i=0; i<o->total_lights(); i++)
     {
       light_source *l=o->get_light(i);
       the_game->game_to_mouse(l->x,l->y,current_view,x2,y2);
-      main_screen->line(x1,y1,x2,y2,light_connection_color);
+      main_screen->Line(vec2i(x1, y1), vec2i(x2, y2), light_connection_color);
     }
 
       }
@@ -546,14 +547,15 @@ void dev_controll::dev_draw(view *v)
       int32_t rx1,ry1,rx2,ry2;
       the_game->game_to_mouse(x1,y1,v,rx1,ry1);
       the_game->game_to_mouse(x2,y2,v,rx2,ry2);
-      main_screen->rectangle(rx1,ry1,rx2,ry2,wm->bright_color());
+      main_screen->Rectangle(vec2i(rx1, ry1), vec2i(rx2, ry2),
+                             wm->bright_color());
 
       the_game->game_to_mouse(selected_object->x,selected_object->y,current_view,x1,y1);
       for (int i=0; i<selected_object->total_objects(); i++)
       {
     game_object *other=selected_object->get_object(i);
     the_game->game_to_mouse(other->x,other->y,current_view,x2,y2);
-    main_screen->line(x1,y1,x2,y2,light_connection_color);
+    main_screen->Line(vec2i(x1, y1), vec2i(x2, y2), light_connection_color);
       }
     }
 
@@ -3016,10 +3018,11 @@ void pal_win::draw()
       if (d==pat[i])
       {
     find=i;
-    me->m_surf->rectangle(me->x1()+(i%w)*tw,
-                            me->y1()+(i/w)*th,
-                            me->x1()+(i%w)*tw+tw-1,
-                            me->y1()+(i/w)*th+th-1,wm->bright_color());
+    me->m_surf->Rectangle(vec2i(me->x1() + (i % w) * tw,
+                                me->y1() + (i / w) * th),
+                          vec2i(me->x1() + (i % w) * tw + tw - 1,
+                                me->y1() + (i / w) * th + th - 1),
+                          wm->bright_color());
       }
     }
     delete im;

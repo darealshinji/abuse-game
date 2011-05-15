@@ -71,7 +71,8 @@ class text_field : public ifield
   int last_spot() { int x=strlen(data); while (x && data[x-1]==' ') x--; return x; }
   void draw_text(image *screen)
   {
-    screen->bar(xstart()+1,y+1,xend()-1,yend()-1,wm->dark_color());
+    screen->Bar(vec2i(xstart() + 1, y + 1), vec2i(xend() - 1, yend() - 1),
+                wm->dark_color());
     wm->font()->put_string(screen,xstart()+1,y+3,data);
   }
 public :

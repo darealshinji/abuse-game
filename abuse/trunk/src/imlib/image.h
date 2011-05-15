@@ -124,13 +124,12 @@ public:
                        int16_t maskx, int16_t masky, int16_t x1, int16_t y1,
                        int16_t x2, int16_t y2);
     image *copy_part_dithered(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-    void bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
+    void Bar(vec2i p1, vec2i p2, uint8_t color);
     void xor_bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
-    void widget_bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2,
-                    uint8_t light, uint8_t med, uint8_t dark);
-    void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
-    void rectangle(int16_t x1, int16_t y1, int16_t x2, int16_t y2,
-                   uint8_t color);
+    void WidgetBar(vec2i p1, vec2i p2,
+                   uint8_t light, uint8_t med, uint8_t dark);
+    void Line(vec2i p1, vec2i p2, uint8_t color);
+    void Rectangle(vec2i p1, vec2i p2, uint8_t color);
     void burn_led(int16_t x, int16_t y, int32_t num, int16_t color,
                   int16_t scale = 1);
     void SetClip(int x1, int y1, int x2, int y2);

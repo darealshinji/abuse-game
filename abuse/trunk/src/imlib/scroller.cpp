@@ -122,17 +122,19 @@ void scroller::draw_first(image *screen)
 {
   if (sx>=t) sx=t-1;
   draw(0,screen);
-  screen->widget_bar(b1x(),b1y(),b1x()+bw()-1,b1y()+bh()-1,
-            wm->bright_color(),wm->medium_color(),wm->dark_color());
-  screen->widget_bar(b2x(),b2y(),b2x()+bw()-1,b2y()+bh()-1,
-            wm->bright_color(),wm->medium_color(),wm->dark_color());
+  screen->WidgetBar(vec2i(b1x(), b1y()),
+                    vec2i(b1x() + bw() - 1, b1y() + bh() - 1),
+                    wm->bright_color(), wm->medium_color(), wm->dark_color());
+  screen->WidgetBar(vec2i(b2x(), b2y()),
+                    vec2i(b2x() + bw() - 1, b2y() + bh() - 1),
+                    wm->bright_color(), wm->medium_color(), wm->dark_color());
   show_icon(screen,b1x()+2,b1y()+2,bw()-4,bh()-4,b1());
   show_icon(screen,b2x()+2,b2y()+2,bw()-4,bh()-4,b2());
 
   int x1,y1,x2,y2;
   dragger_area(x1,y1,x2,y2);
-  screen->bar(x1,y1,x2,y2,wm->black());
-  screen->bar(x1+1,y1+1,x2-1,y2-1,wm->medium_color());
+  screen->Bar(vec2i(x1, y1), vec2i(x2, y2), wm->black());
+  screen->Bar(vec2i(x1 + 1, y1 + 1), vec2i(x2 - 1, y2 - 1), wm->medium_color());
   draw_widget(screen,0);
   scroll_event(sx,screen);
 }
@@ -159,25 +161,24 @@ void scroller::wig_area(int &x1, int &y1, int &x2, int &y2)
 
 }
 
-
 void scroller::draw_widget(image *screen, int erase)
 {
   int x1,y1,x2,y2;
   wig_area(x1,y1,x2,y2);
   if (erase)
-    screen->bar(x1,y1,x2,y2,wm->medium_color());
+    screen->Bar(vec2i(x1, y1), vec2i(x2, y2), wm->medium_color());
   else
-    screen->widget_bar(x1,y1,x2,y2,
-              wm->bright_color(),wm->medium_color(),wm->dark_color());
+    screen->WidgetBar(vec2i(x1, y1), vec2i(x2, y2), wm->bright_color(),
+                      wm->medium_color(), wm->dark_color());
 }
 
 void scroller::draw(int active, image *screen)
 {
   int x1,y1,x2,y2;
   area(x1,y1,x2,y2);
-  screen->rectangle(x1,y1,x2,y2,active ? wm->bright_color() : wm->dark_color());
+  screen->Rectangle(vec2i(x1, y1), vec2i(x2, y2),
+                    active ? wm->bright_color() : wm->dark_color());
 }
-
 
 void scroller::handle_event(Event &ev, image *screen, InputManager *inm)
 {
@@ -364,7 +365,7 @@ int scroller::mouse_to_drag(int mx,int my)
 
 void scroller::scroll_event(int newx, image *screen)
 {
-  screen->bar(x,y,x+l-1,y+h-1,wm->black());
+  screen->Bar(vec2i(x, y), vec2i(x + l - 1, y + h - 1), wm->black());
   int xa,ya,xo=0,yo;
   if (vert) { xa=0; ya=30; yo=x+5; yo=y+5; } else { xa=30; ya=0; xo=x+5; yo=y+5; }
   for (int i=newx,c=0; c<30 && i<100; i++,c++)
@@ -503,13 +504,15 @@ void pick_list::scroll_event(int newx, image *screen)
         screen->PutImage(tex, vec2i(dx, dy));
 
     screen->SetClip(cx1, cy1, cx2, cy2);
-  } else screen->bar(x,y,x+l-1,y+h-1,wm->black());
+  } else screen->Bar(vec2i(x, y), vec2i(x + l - 1, y + h - 1), wm->black());
 
   int dy=y;
   for (int i=0; i<th; i++,dy+=wm->font()->height()+1)
   {
     if (i+newx==cur_sel)
-      screen->bar(x,dy,x+wid*wm->font()->width()-1,dy+wm->font()->height(),wm->dark_color());
+      screen->Bar(vec2i(x, dy), vec2i(x + wid * wm->font()->width() - 1,
+                                      dy + wm->font()->height()),
+                  wm->dark_color());
     if (i+newx<t)
       wm->font()->put_string(screen,x,dy,lis[i+newx].name,wm->bright_color());
   }
@@ -577,7 +580,7 @@ void spicker::reconfigure()
 
 void spicker::draw_background(image *screen)
 {
-  screen->bar(x,y,x+l-1,y+h-1,wm->dark_color());
+    screen->Bar(vec2i(x, y), vec2i(x + l - 1, y + h - 1), wm->dark_color());
 }
 
 

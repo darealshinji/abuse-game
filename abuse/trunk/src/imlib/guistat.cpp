@@ -55,17 +55,25 @@ gui_status_node::~gui_status_node()
 
 void gui_status_manager::draw_bar(gui_status_node *whom, int perc)
 {
-  long l=whom->stat_win->x2()-whom->stat_win->x1()-6;
-  long h=wm->font()->height();
+    long l = whom->stat_win->x2() - whom->stat_win->x1() - 6;
+    long h = wm->font()->height();
 
-  whom->stat_win->m_surf->bar(whom->stat_win->x1()+1,whom->stat_win->y2()-h-1,whom->stat_win->x2()-1,
-              whom->stat_win->y2()-1,wm->black());
-  whom->stat_win->m_surf->bar(whom->stat_win->x1()+2,whom->stat_win->y2()-h,whom->stat_win->x2()-2,
-              whom->stat_win->y2()-2,wm->dark_color());
-  if (perc)
-    whom->stat_win->m_surf->bar(whom->stat_win->x1()+3,whom->stat_win->y2()-h+1,
-                whom->stat_win->x1()+l*perc/100,
-                whom->stat_win->y2()-3,wm->bright_color());
+    whom->stat_win->m_surf->Bar(vec2i(whom->stat_win->x1() + 1,
+                                      whom->stat_win->y2() - h - 1),
+                                vec2i(whom->stat_win->x2() - 1,
+                                      whom->stat_win->y2() - 1),
+                                wm->black());
+    whom->stat_win->m_surf->Bar(vec2i(whom->stat_win->x1() + 2,
+                                      whom->stat_win->y2() - h),
+                                vec2i(whom->stat_win->x2() - 2,
+                                      whom->stat_win->y2() - 2),
+                                wm->dark_color());
+    if (perc)
+        whom->stat_win->m_surf->Bar(vec2i(whom->stat_win->x1() + 3,
+                                          whom->stat_win->y2() - h + 1),
+                                    vec2i(whom->stat_win->x1() + l * perc / 100,
+                                          whom->stat_win->y2() - 3),
+                                    wm->bright_color());
 }
 
 void gui_status_manager::push(char const *name, visual_object *show)

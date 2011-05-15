@@ -57,7 +57,7 @@ void file_picker::note_selection(image *screen, InputManager *inm, int x)
     {
       int x1,y1,x2,y2;
       area(x1,y1,x2,y2);
-      screen->bar(x1,y1,x2,y2,wm->medium_color());
+      screen->Bar(vec2i(x1, y1), vec2i(x2, y2), wm->medium_color());
 
       char st[200],curdir[200];
       sprintf(st,"%s/%s",cd,d[x]);
@@ -95,7 +95,9 @@ void file_picker::note_selection(image *screen, InputManager *inm, int x)
 void file_picker::draw_item(image *screen, int x, int y, int num, int active)
 {
   if (active)
-    screen->bar(x,y,x+item_width()-1,y+item_height()-1,wm->black());
+    screen->Bar(vec2i(x, y),
+                vec2i(x + item_width() - 1, y + item_height() - 1),
+                wm->black());
 
   if (num<td)
   {

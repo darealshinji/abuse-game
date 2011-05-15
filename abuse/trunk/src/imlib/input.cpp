@@ -315,12 +315,14 @@ void text_field::draw(int active, image *screen)
 {
   if (active)
   {
-    screen->rectangle(xstart(),y,xend(),yend(),wm->bright_color());
+    screen->Rectangle(vec2i(xstart(), y), vec2i(xend(), yend()),
+                      wm->bright_color());
     draw_cur(wm->bright_color(),screen);
   }
   else
   {
-    screen->rectangle(xstart(),y,xend(),yend(),wm->dark_color());
+    screen->Rectangle(vec2i(xstart(), y), vec2i(xend(), yend()),
+                      wm->dark_color());
     draw_cur(wm->dark_color(),screen);
   }
 }
@@ -398,8 +400,8 @@ void button::draw(int active, image *screen)
   }
   else
   {
-    screen->rectangle(x1+2,y1+2,x2-2,y2-2,color);
-    act=active;
+    screen->Rectangle(vec2i(x1 + 2, y1 + 2), vec2i(x2 - 2, y2 - 2), color);
+    act = active;
   }
 }
 
@@ -416,9 +418,10 @@ void button::draw_first(image *screen)
 
     if (up)
     {
-      screen->rectangle(x1,y1,x2,y2,wm->black());
+      screen->Rectangle(vec2i(x1, y1), vec2i(x2, y2), wm->black());
 //      screen->widget_bar(,wm->bright_color(),wm->medium_color(),wm->dark_color());
-      screen->widget_bar(x1+1,y1+1,x2-1,y2-1,wm->bright_color(),wm->medium_color(),wm->dark_color());
+      screen->WidgetBar(vec2i(x1 + 1, y1 + 1), vec2i(x2 - 1, y2 - 1),
+                        wm->bright_color(),wm->medium_color(),wm->dark_color());
       if (text)
       {
         wm->font()->put_string(screen,x+4,y+5,text,wm->black());
@@ -427,11 +430,12 @@ void button::draw_first(image *screen)
       else screen->PutImage(visual, vec2i(x + 3, y + 3), 1);
     } else
     {
-      screen->line(x1,y1,x2,y1,wm->dark_color());
-      screen->line(x1,y1,x1,y2,wm->dark_color());
-      screen->line(x2,y1+1,x2,y2,wm->bright_color());
-      screen->line(x1+1,y2,x2,y2,wm->bright_color());
-      screen->bar(x1+1,y1+1,x2-1,y2-1,wm->medium_color());
+      screen->Line(vec2i(x1, y1), vec2i(x2, y1), wm->dark_color());
+      screen->Line(vec2i(x1, y1), vec2i(x1, y2), wm->dark_color());
+      screen->Line(vec2i(x2, y1 + 1), vec2i(x2, y2), wm->bright_color());
+      screen->Line(vec2i(x1 + 1, y2), vec2i(x2, y2), wm->bright_color());
+      screen->Bar(vec2i(x1 + 1, y1 + 1), vec2i(x2 - 1, y2 - 1),
+                  wm->medium_color());
       if (visual)
         screen->PutImage(visual, vec2i(x1 + 3, y1 + 3), 1);
       else
@@ -446,17 +450,16 @@ void button::draw_first(image *screen)
 void text_field::draw_first(image *screen)
 {
   wm->font()->put_string(screen,x,y+3,prompt);
-  screen->bar(xstart(),y,xend(),yend(),wm->dark_color());
+  screen->Bar(vec2i(xstart(), y), vec2i(xend(), yend()), wm->dark_color());
   wm->font()->put_string(screen,xstart()+1,y+3,data);
 }
 
 
 void text_field::draw_cur(int color, image *screen)
 {
-  screen->bar(xstart()+cur*wm->font()->width()+1,
-                      yend()-2,
-                      xstart()+(cur+1)*wm->font()->width(),
-                      yend()-1,color);
+  screen->Bar(vec2i(xstart() + cur * wm->font()->width() + 1, yend() - 2),
+              vec2i(xstart() + (cur + 1) * wm->font()->width(), yend() - 1),
+              color);
 }
 
 

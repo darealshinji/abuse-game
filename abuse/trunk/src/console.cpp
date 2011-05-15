@@ -107,7 +107,8 @@ void console::draw_char(int x, int y, char ch)
   {
     int fw=fnt->width(),fh=fnt->height();
     int dx=wx()+x*fw,dy=wy()+y*fh;
-    con_win->m_surf->bar(dx,dy,dx+fw-1,dy+fh-1,wm->black());
+    con_win->m_surf->Bar(vec2i(dx, dy), vec2i(dx + fw - 1, dy + fh - 1),
+                         wm->black());
     fnt->put_char(con_win->m_surf,dx,dy,ch);
   }
 }

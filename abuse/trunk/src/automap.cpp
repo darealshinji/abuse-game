@@ -83,8 +83,10 @@ void automap::draw()
     ey=cur_lev->foreground_height()-1;
 
 
-  screen->bar(window_xstart,window_ystart,draw_xstart,window_yend,0);
-  screen->bar(window_xstart,window_ystart,window_xend,draw_ystart,0);
+  screen->Bar(vec2i(window_xstart, window_ystart),
+              vec2i(draw_xstart, window_yend), 0);
+  screen->Bar(vec2i(window_xstart, window_ystart),
+              vec2i(window_xend, draw_ystart), 0);
 
 
 /*  if (ex>=cur_lev->foreground_width())
@@ -136,7 +138,8 @@ void automap::draw()
           screen->PutImage(cache.foret(foretiles[0])->micro_image, vec2i(i, j), 0);
       }
       else
-        screen->bar(i,j,i+AUTOTILE_WIDTH-1,j+AUTOTILE_HEIGHT-1,0);
+        screen->Bar(vec2i(i, j),
+                    vec2i(i + AUTOTILE_WIDTH - 1, j + AUTOTILE_HEIGHT - 1), 0);
     }
   }
 
@@ -167,7 +170,7 @@ void automap::toggle_window()
 
         automap_window = wm->new_window(0, 0, w * AUTOTILE_WIDTH,
                                         h * AUTOTILE_HEIGHT, NULL, "Map");
-        automap_window->m_surf->bar(17, 1, 17 + 8 * 6 + 3, 6,
+        automap_window->m_surf->Bar(vec2i(17, 1), vec2i(17 + 8 * 6 + 3, 6),
                                     wm->medium_color());
         wm->font()->put_string(automap_window->m_surf, 20, 2, "Automap",
                                wm->dark_color());

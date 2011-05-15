@@ -37,11 +37,11 @@ public:
     {
         long x2 = x + item_width() - 1;
         long y2 = y + item_height() - 1;
-        screen->bar(x, y, x2, y2, 0);
-        screen->bar(x, y, x2 - 3, y2, sc + num);
+        screen->Bar(vec2i(x, y), vec2i(x2, y2), 0);
+        screen->Bar(vec2i(x, y), vec2i(x2 - 3, y2), sc + num);
         if(active)
         {
-            screen->rectangle(x, y, x2, y2, 255);
+            screen->Rectangle(vec2i(x, y), vec2i(x2, y2), 255);
         }
     }
     void set_pos(int x) { cur_sel = x; }

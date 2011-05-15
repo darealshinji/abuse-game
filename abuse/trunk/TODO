@@ -53,3 +53,8 @@ There may be interesting code in there:
    - smoosh.cpp
    - unixnfc.cpp
 
+REFACTOR
+--------
+game_to_mouse : utiliser vec2i
+console::draw_char : pareil
+VolumeWindow::draw_vol plus grand !!
