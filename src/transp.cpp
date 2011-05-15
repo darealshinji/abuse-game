@@ -18,42 +18,33 @@
 
 void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
 {
-  int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
-  int xs=0,ys=0,xl=im->Size().x,yl=im->Size().y;
-  if (x<cx1)
-  {
-    int chop=cx1-x;
-    xs+=chop;
-    xl-=chop;
-    x+=chop;
-  }
-  if (y<cy1)
-  {
-    int chop=cy1-y;
-    ys+=chop;
-    yl-=chop;
-    y+=chop;
-  }
-  if (x + xl >= cx2)
-    xl = cx2 - 1 - x;
-  if (y + yl >= cy2)
-    yl = cy2 - 1 - y;
+    vec2i caa, cbb;
+    screen->GetClip(caa, cbb);
 
-  if (xl<0 || yl<0) return ;
-  screen->AddDirty(x, y, x + xl, y + yl);
+    vec2i aa(0), bb = im->Size();
+    vec2i pos(x, y);
 
-  int ye=ys+yl;
-  int xe=xs+xl;
+    aa += Max(caa - pos, vec2i(0));
+    bb -= Max(caa - pos, vec2i(0));
+    pos = Max(caa, pos);
 
-  uint8_t *isl=im->scan_line(ys)+xs;
+    bb = Min(bb, cbb - vec2i(1) - pos);
+
+    if (!(bb >= vec2i(0)))
+        return;
+    screen->AddDirty(pos.x, pos.y, pos.x + bb.x, pos.y + bb.y);
+
+  int ye=aa.y+bb.y;
+  int xe=aa.x+bb.x;
+
+  uint8_t *isl=im->scan_line(aa.y)+aa.x;
   uint8_t *ssl=screen->scan_line(y)+x;
   int iw=im->Size().x,sw=screen->Size().x;
 
-  for (int iy=ys; iy<ye; iy++,y++,isl+=iw,ssl+=sw)
+  for (int iy=aa.y; iy<ye; iy++,y++,isl+=iw,ssl+=sw)
   {
     uint8_t *s=ssl,*i=isl;
-    for (int ix=xs; ix<xe; ix++,s++,i++)
+    for (int ix=aa.x; ix<xe; ix++,s++,i++)
     {
       if (*i)
         *s=*i;

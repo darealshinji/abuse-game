@@ -552,12 +552,12 @@ void Game::put_block_fg(int x, int y, TransImage *im)
       int xoff = f->xoff(), yoff = f->yoff(), viewx1 = f->cx1, viewy1 = f->cy1, viewx2 = f->cx2, viewy2 = f->cy2;
       if(xoff / ftile_width()>x || xoff / ftile_width()+(viewx2 - viewx1)/ftile_width()+1 < x ||
       yoff / ftile_height()>y || yoff / ftile_height()+(viewy2 - viewy1)/ftile_height()+1 < y) return;
-      int cx1, cy1, cx2, cy2;
-      main_screen->GetClip(cx1, cy1, cx2, cy2);
-      main_screen->SetClip(viewx1, viewy1, viewx2 + 1, viewy2 + 1);
+      vec2i caa, cbb;
+      main_screen->GetClip(caa, cbb);
+      main_screen->SetClip(vec2i(viewx1, viewy1), vec2i(viewx2 + 1, viewy2 + 1));
       im->PutImage(main_screen, vec2i((x - xoff / ftile_width())*ftile_width()+viewx1 - xoff % ftile_width(),
             (y - yoff / ftile_height())*ftile_height()+viewy1 - yoff % ftile_height()));
-      main_screen->SetClip(cx1, cy1, cx2, cy2);
+      main_screen->SetClip(caa, cbb);
     }
   }
 }
@@ -574,12 +574,12 @@ void Game::put_block_bg(int x, int y, image *im)
 
       if(xo / btile_width()>x || xo / btile_width()+(viewx2 - viewx1)/btile_width()+1 < x ||
       yo / btile_height()>y || yo / btile_height()+(viewy2 - viewy1)/btile_height()+1 < y) return;
-      int cx1, cy1, cx2, cy2;
-      main_screen->GetClip(cx1, cy1, cx2, cy2);
-      main_screen->SetClip(viewx1, viewy1, viewx2 + 1, viewy2 + 1);
+      vec2i caa, cbb;
+      main_screen->GetClip(caa, cbb);
+      main_screen->SetClip(vec2i(viewx1, viewy1), vec2i(viewx2 + 1, viewy2 + 1));
       main_screen->PutImage(im, vec2i((x - xo / btile_width())*btile_width()+viewx1 - xo % btile_width(),
             (y - yo / btile_height())*btile_height()+viewy1 - yo % btile_height()), 0);
-      main_screen->SetClip(cx1, cy1, cx2, cy2);
+      main_screen->SetClip(caa, cbb);
     }
   }
 }
@@ -682,19 +682,19 @@ void Game::draw_map(view *v, int interpolate)
 {
   backtile *bt;
   int x1, y1, x2, y2, x, y, xo, yo, nxoff, nyoff;
-  int cx1, cy1, cx2, cy2;
-  main_screen->GetClip(cx1, cy1, cx2, cy2);
+  vec2i caa, cbb;
+  main_screen->GetClip(caa, cbb);
 
   if(!current_level || state == MENU_STATE)
   {
     if(title_screen >= 0)
     {
       if(state == SCENE_STATE)
-        main_screen->SetClip(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
+        main_screen->SetClip(vec2i(v->cx1, v->cy1), vec2i(v->cx2 + 1, v->cy2 + 1));
       image *tit = cache.img(title_screen);
       main_screen->PutImage(tit, main_screen->Size() / 2 - tit->Size() / 2);
       if(state == SCENE_STATE)
-        main_screen->SetClip(cx1, cy1, cx2, cy2);
+        main_screen->SetClip(caa, cbb);
       wm->flush_screen();
     }
     return;
@@ -759,7 +759,7 @@ void Game::draw_map(view *v, int interpolate)
   current_vxadd = xoff - v->cx1;
   current_vyadd = yoff - v->cy1;
 
-  main_screen->SetClip(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
+  main_screen->SetClip(vec2i(v->cx1, v->cy1), vec2i(v->cx2 + 1, v->cy2 + 1));
 
   nxoff = xoff * bg_xmul / bg_xdiv;
   nyoff = yoff * bg_ymul / bg_ydiv;
@@ -860,8 +860,8 @@ void Game::draw_map(view *v, int interpolate)
 
   if(dev & DRAW_FG_LAYER)
   {
-    int ncx1, ncy1, ncx2, ncy2;
-    main_screen->GetClip(ncx1, ncy1, ncx2, ncy2);
+    vec2i ncaa, ncbb;
+    main_screen->GetClip(ncaa, ncbb);
 
     int scr_w = main_screen->Size().x;
     if(dev & MAP_MODE)
@@ -873,13 +873,13 @@ void Game::draw_map(view *v, int interpolate)
       main_screen->Lock();
       for(y = y1, draw_y = yo; y <= y2; y++, draw_y += yinc)
       {
-    if(!(draw_y < ncy1 ||draw_y + yinc > ncy2))
+    if (!(draw_y < ncaa.y || draw_y + yinc > ncbb.y))
     {
       uint16_t *cl = current_level->get_fgline(y)+x1;
       uint8_t *sl1 = main_screen->scan_line(draw_y)+xo;
       for(x = x1, draw_x = xo; x <= x2; x++, cl++, sl1 += xinc, draw_x += xinc)
       {
-        if(!(draw_x < ncx1 || draw_x + xinc > ncx2))
+        if(!(draw_x < ncaa.x || draw_x + xinc > ncbb.x))
         {
           int fort_num;
 //          if(*cl & 0x8000 || (dev & EDIT_MODE))
@@ -1086,9 +1086,7 @@ void Game::draw_map(view *v, int interpolate)
 
   post_render();
 
-  main_screen->SetClip(cx1, cy1, cx2 + 1, cy2 + 1);
-
-
+  main_screen->SetClip(caa, cbb);
 
 
   if(playing_state(state))        // draw stuff outside the clipping region

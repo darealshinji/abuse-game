@@ -372,25 +372,25 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
        ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
   screen->AddDirty(x, y, x + new_width, y + new_height);
 
-  int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
-  if (cx1>cx2 || cy1>cy2 || x>cx2-1 || y>cy2-1 || x+new_width<=cx1 || y+new_height<=cy1) return ;
-  if (x<cx1)
+  vec2i caa, cbb;
+  screen->GetClip(caa, cbb);
+  if (caa.x > cbb.x || caa.y > cbb.y || x>=cbb.x || y>=cbb.y || x+new_width<=caa.x || y+new_height<=caa.y) return ;
+  if (x<caa.x)
   {
-    ix_start=(cx1-x)*xstep;
-    new_width-=(cx1-x);
-    x=cx1;
+    ix_start=(caa.x-x)*xstep;
+    new_width-=(caa.x-x);
+    x=caa.x;
   } else ix_start=0;
-  if (x+new_width>cx2)
-    new_width-=x+new_width-cx2;
-  if (y<cy1)
+  if (x+new_width>cbb.x)
+    new_width-=x+new_width-cbb.x;
+  if (y<caa.y)
   {
-    iy_start=(cy1-y)*ystep;
-    new_height-=(cy1-y);
-    y=cy1;
+    iy_start=(caa.y-y)*ystep;
+    new_height-=(caa.y-y);
+    y=caa.y;
   } else iy_start=0;
-  if (y+new_height>cy2)
-    new_height-=y+new_height-cy2;
+  if (y+new_height>cbb.y)
+    new_height-=y+new_height-cbb.y;
 
   screen->Lock();
   im->Lock();
@@ -413,25 +413,25 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
        ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
   screen->AddDirty(x, y, x + new_width, y + new_height);
 
-  int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
-  if (cx1>cx2 || cy1>cy2 || x>cx2-1 || y>cy2-1 || x+new_width<=cx1 || y+new_height<=cy1) return ;
-  if (x<cx1)
+  vec2i caa, cbb;
+  screen->GetClip(caa, cbb);
+  if (caa.x > cbb.x || caa.y > cbb.y || x >= cbb.x || y >= cbb.y || x+new_width<=caa.x || y+new_height<=caa.y) return ;
+  if (x<caa.x)
   {
-    ix_start=(cx1-x)*xstep;
-    new_width-=(cx1-x);
-    x=cx1;
+    ix_start=(caa.x-x)*xstep;
+    new_width-=(caa.x-x);
+    x=caa.x;
   } else ix_start=0;
-  if (x+new_width>cx2)
-    new_width-=x+new_width-cx2;
-  if (y<cy1)
+  if (x+new_width>cbb.x)
+    new_width-=x+new_width-cbb.x;
+  if (y<caa.y)
   {
-    iy_start=(cy1-y)*ystep;
-    new_height-=(cy1-y);
-    y=cy1;
+    iy_start=(caa.y-y)*ystep;
+    new_height-=(caa.y-y);
+    y=caa.y;
   } else iy_start=0;
-  if (y+new_height>cy2)
-    new_height-=y+new_height-cy2;
+  if (y+new_height>cbb.y)
+    new_height-=y+new_height-cbb.y;
 
   uint8_t d;
   screen->Lock();

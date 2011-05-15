@@ -153,7 +153,7 @@ void TransImage::PutImageGeneric(image *screen, vec2i pos, uint8_t color,
     vec2i pos1, pos2;
     int ysteps, mul = 0;
 
-    screen->GetClip(pos1.x, pos1.y, pos2.x, pos2.y);
+    screen->GetClip(pos1, pos2);
 
     if (N == SCANLINE)
     {

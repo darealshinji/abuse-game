@@ -28,10 +28,10 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
   top=first;
   active=NULL;
 
-  int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
-  if (cx1<X) cx1=X;
-  int w = cx2 - cx1 - Jwindow::left_border() - Jwindow::right_border();
+  vec2i caa, cbb;
+  screen->GetClip(caa, cbb);
+  if (caa.x<X) caa.x=X;
+  int w = cbb.x - caa.x - Jwindow::left_border() - Jwindow::right_border();
   int h = Jwindow::top_border() + Jwindow::bottom_border();
 
   bar=wm->new_window(X, Y, w, 0, NULL);
@@ -145,12 +145,12 @@ void psub_menu::hide(Jwindow *parent, int x, int y)
 {
   int w,h;
   calc_size(w,h);
-  int cx1, cy1, cx2, cy2;
-  main_screen->GetClip(cx1, cy1, cx2, cy2);
+  vec2i caa, cbb;
+  main_screen->GetClip(caa, cbb);
   // FIXME: is this correct? it looks like it used to be incorrect
   // before the GetClip refactoring...
-  if (w+x>cx2-1)
-    x=cx2-1-w;
+  if (w+x>cbb.x-1)
+    x=cbb.x-1-w;
 
   if (win)
   {
@@ -188,13 +188,13 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
 
   int w,h,i=0;
   calc_size(w,h);
-  int cx1, cy1, cx2, cy2;
-  main_screen->GetClip(cx1, cy1, cx2, cy2);
-  if (parent->m_pos.x + w + x >= cx2)
-    x=cx2-1-w-parent->m_pos.x;
-  if (h+y+parent->m_pos.y>=cy2)
+  vec2i caa, cbb;
+  main_screen->GetClip(caa, cbb);
+  if (parent->m_pos.x + w + x >= cbb.x)
+    x=cbb.x-1-w-parent->m_pos.x;
+  if (h+y+parent->m_pos.y>=cbb.y)
   {
-    if (parent->m_pos.y+parent->h+wm->font()->height()>=cy2)
+    if (parent->m_pos.y+parent->h+wm->font()->height()>=cbb.y)
       y=-h;
     else y=y-h+wm->font()->height()+5;
   }
@@ -321,8 +321,6 @@ int psub_menu::handle_event(Jwindow *parent, int x, int y, Event &ev)
 {
   int w,h;
   calc_size(w,h);
-  int cx1, cy1, cx2, cy2;
-  main_screen->GetClip(cx1, cy1, cx2, cy2);
 
   x=win->m_pos.x;
   y=win->m_pos.y;
@@ -383,8 +381,6 @@ int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top,
 
 pmenu_item *pmenu::inarea(int mx, int my, image *screen)
 {
-  int cx1, cy1, cx2, cy2;
-  screen->GetClip(cx1, cy1, cx2, cy2);
   mx-=bar->m_pos.x;
   my-=bar->m_pos.y;
   if (mx<0 || my<0 || mx>=bar->m_surf->Size().x || my>=bar->m_surf->Size().y) return NULL;

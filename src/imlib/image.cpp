@@ -180,12 +180,10 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
     int xc, yc, er, n, m, xi, yi, xcxi, ycyi, xcyi;
     unsigned int dcy, dcx;
 
-    int cx1, cy1, cx2, cy2;
-
     // check to see if the line is completly clipped off
-    GetClip(cx1, cy1, cx2, cy2);
-    if ((p1.x < cx1 && p2.x < cx1) || (p1.x >= cx2 && p2.x >= cx2) ||
-        (p1.y < cy1 && p2.y < cy1) || (p1.y >= cy2 && p2.y >= cy2))
+    vec2i caa, cbb;
+    GetClip(caa, cbb);
+    if (!(p1 >= caa && p2 >= caa && p1 < cbb && p2 < cbb))
         return;
 
     if (p1.x > p2.x) // make sure that p1.x is to the left
@@ -194,7 +192,7 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
     }
 
     // clip the left side
-    if (p1.x < cx1)
+    if (p1.x < caa.x)
     {
         vec2i m = p2 - p1;
 
@@ -203,13 +201,13 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
         if (m.y)
         {
             int b = p1.y - m.y * p1.x / m.x;
-            p1.y = b + m.y * cx1 / m.x;
+            p1.y = b + m.y * caa.x / m.x;
         }
-        p1.x = cx1;
+        p1.x = caa.x;
     }
 
     // clip the right side
-    if (p2.x >= cx2)
+    if (p2.x >= cbb.x)
     {
         vec2i m = p2 - p1;
         if (!m.x)
@@ -217,9 +215,9 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
         if (m.y)
         {
             int b = p1.y - m.y * p1.x / m.x;
-            p2.y = b + m.y * (cx2 - 1) / m.x;
+            p2.y = b + m.y * (cbb.x - 1) / m.x;
         }
-        p2.x = cx2 - 1;
+        p2.x = cbb.x - 1;
     }
 
     if (p1.y > p2.y) // make sure that p1.y is on top
@@ -228,7 +226,7 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
     }
 
     // clip the bottom
-    if (p2.y >= cy2)
+    if (p2.y >= cbb.y)
     {
         vec2i m = p2 - p1;
         if (!m.y)
@@ -236,13 +234,13 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
         if (m.x)
         {
             int b = p1.y - (p2.y - p1.y) * p1.x / m.x;
-            p2.x = (cy2 - 1 - b) * m.x / m.y;
+            p2.x = (cbb.y - 1 - b) * m.x / m.y;
         }
-        p2.y = cy2 - 1;
+        p2.y = cbb.y - 1;
     }
 
     // clip the top
-    if (p1.y < cy1)
+    if (p1.y < caa.y)
     {
         vec2i m = p2 - p1;
         if (!m.y)
@@ -250,19 +248,19 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
         if (m.x)
         {
             int b = p1.y - m.y * p1.x / m.x;
-            p1.x = (cy1 - b) * m.x / m.y;
+            p1.x = (caa.y - b) * m.x / m.y;
         }
-        p1.y = cy1;
+        p1.y = caa.y;
     }
 
     // see if it got cliped into the box, out out
-    if (p1.x < cx1 || p2.x < cx1 || p1.x >= cx2 || p2.x >= cx2
-         || p1.y < cy1 || p2.y < cy1 || p1.y >= cy2 || p2.y >= cy2)
+    if (!(p1 >= caa && p2 >= caa && p1 < cbb && p2 < cbb))
         return;
 
     if (p1.x > p2.x)
     {
-        xc = p2.x; xi = p1.x;
+        xc = p2.x;
+        xi = p1.x;
     }
     else
     {
@@ -328,8 +326,8 @@ void image::PutPart(image *im, vec2i pos, vec2i aa, vec2i bb, int transparent)
 {
     CHECK(aa < bb);
 
-    int cx1, cy1, cx2, cy2;
-    GetClip(cx1, cy1, cx2, cy2);
+    vec2i caa, cbb;
+    GetClip(caa, cbb);
 
     // see if the are to be put is outside of actual image, if so adjust
     // to fit in the image
@@ -341,12 +339,12 @@ void image::PutPart(image *im, vec2i pos, vec2i aa, vec2i bb, int transparent)
         return;
 
     // see if the image gets clipped off the screen
-    if (pos.x >= cx2 || pos.y >= cy2 || pos.x + (bb.x - aa.x) <= cx1 || pos.y + (bb.y - aa.y) <= cy1)
+    if (!(pos < cbb && pos + (bb - aa) > caa))
         return;
 
-    aa += Max(vec2i(cx1, cy1) - pos, vec2i(0));
-    pos += Max(vec2i(cx1, cy1) - pos, vec2i(0));
-    bb = Min(bb, vec2i(cx2, cy2) - pos + aa);
+    aa += Max(caa - pos, vec2i(0));
+    pos += Max(caa - pos, vec2i(0));
+    bb = Min(bb, cbb - pos + aa);
     if (!(aa < bb))
         return;
 
@@ -382,15 +380,15 @@ void image::PutPartMasked(image *im, vec2i pos, image *mask, vec2i mpos,
 
     if (m_special)
     {
-        int cx1, cy1, cx2, cy2;
-        m_special->GetClip(cx1, cy1, cx2, cy2);
+        vec2i caa, cbb;
+        m_special->GetClip(caa, cbb);
 
-        if (!(pos < vec2i(cx2, cy2) && pos > aa - bb))
+        if (!(pos < cbb && pos > aa - bb))
             return;
 
-        aa += Max(vec2i(cx1, cy1) - pos, vec2i(0));
-        pos += Max(vec2i(cx1, cy1) - pos, vec2i(0));
-        bb = Min(bb, vec2i(cx2, cy2) - pos + aa);
+        aa += Max(caa - pos, vec2i(0));
+        pos += Max(caa - pos, vec2i(0));
+        bb = Min(bb, cbb - pos + aa);
     }
     else if (!(pos <= m_size && pos >= -aa))
         return;
@@ -442,7 +440,7 @@ void image::Rectangle(vec2i p1, vec2i p2, uint8_t color)
     Line(p1, vec2i(p1.x, p2.y), color);
 }
 
-void image::SetClip(int x1, int y1, int x2, int y2)
+void image::SetClip(vec2i aa, vec2i bb)
 {
     // If the image does not already have an Image descriptor, allocate one
     // with no dirty rectangle keeping.
@@ -451,6 +449,40 @@ void image::SetClip(int x1, int y1, int x2, int y2)
 
     // set the image descriptor what the clip
     // should be it will adjust to fit within the image.
+    m_special->SetClip(aa, bb);
+}
+
+void image::GetClip(vec2i &aa, vec2i &bb)
+{
+    if (m_special)
+        m_special->GetClip(aa, bb);
+    else
+    {
+        aa = vec2i(0);
+        bb = m_size;
+    }
+}
+
+void image::InClip(vec2i aa, vec2i bb)
+{
+    if (m_special)
+    {
+        aa = Min(aa, vec2i(m_special->x1_clip(), m_special->y1_clip()));
+        bb = Max(bb, vec2i(m_special->x2_clip(), m_special->y2_clip()));
+    }
+
+    SetClip(aa, bb);
+}
+
+void image::SetClip(int x1, int y1, int x2, int y2)
+{
+   // If the image does not already have an Image descriptor, allocate one
+   // with no dirty rectangle keeping.
+   if (!m_special)
+       m_special = new image_descriptor(m_size.x, m_size.y, 0);
+
+   // set the image descriptor what the clip
+   // should be it will adjust to fit within the image.
     m_special->SetClip(x1, y1, x2, y2);
 }
 
@@ -824,9 +856,9 @@ void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, i
   CHECK(x1>=0 && y1>=0 && x1<x2 && y1<y2 && x2<m_size.x && y2<m_size.y);
   if (m_special)
   {
-    int cx1, cy1, cx2, cy2;
-    m_special->GetClip(cx1, cy1, cx2, cy2);
-    x1=Max(x1, cx1); y1=Max(cy1, y1); x2=Min(x2, cx2 - 1); y2=Min(y2, cy2 - 1);
+    vec2i caa, cbb;
+    m_special->GetClip(caa, cbb);
+    x1=Max(x1, caa.x); y1=Max(caa.y, y1); x2=Min(x2, cbb.x - 1); y2=Min(y2, cbb.y - 1);
   }
   int16_t xsrc, ysrc, xdst, ydst, xtot=x2-x1-abs(xd)+1, ytot, xt;
   uint8_t *src, *dst;
@@ -1006,14 +1038,15 @@ uint8_t dither_matrix[]={ 0,  136, 24, 170,
 
 image *image::copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-  int x, y, cx1, cy1, cx2, cy2, ry, rx, bo, dity, ditx;
+  int x, y, ry, rx, bo, dity, ditx;
   image *ret;
   uint8_t *sl1, *sl2;
-  GetClip(cx1, cy1, cx2, cy2);
-  if (y1<cy1) y1=cy1;
-  if (x1<cx1) x1=cx1;
-  if (y2>cy2 - 1) y2=cy2 - 1;
-  if (x2>cx2 - 1) x2=cx2 - 1;
+  vec2i caa, cbb;
+  GetClip(caa, cbb);
+  if (y1<caa.y) y1=caa.y;
+  if (x1<caa.x) x1=caa.x;
+  if (y2>cbb.y - 1) y2=cbb.y - 1;
+  if (x2>cbb.x - 1) x2=cbb.x - 1;
   CHECK(x2>=x1 && y2>=y1);
   if (x2<x1 || y2<y1) return NULL;
   ret=new image(vec2i((x2-x1+8)/8, (y2-y1+1)));

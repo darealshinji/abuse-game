@@ -56,6 +56,15 @@ public:
     inline int x2_clip() { return m_bb.x; }
     inline int y2_clip() { return m_bb.y; }
     void ClearDirties();
+    void GetClip(vec2i &aa, vec2i &bb)
+    {
+        aa = m_aa; bb = m_bb;
+    }
+    void SetClip(vec2i aa, vec2i bb)
+    {
+        m_aa = Max(aa, vec2i(0));
+        m_bb = Min(Max(bb, m_aa + vec2i(1)), m_size);
+    }
     void GetClip(int &x1, int &y1, int &x2, int &y2)
     {
         x1 = m_aa.x; y1 = m_aa.y; x2 = m_bb.x; y2 = m_bb.y;
@@ -126,6 +135,9 @@ public:
     void Rectangle(vec2i p1, vec2i p2, uint8_t color);
     void burn_led(int16_t x, int16_t y, int32_t num, int16_t color,
                   int16_t scale = 1);
+    void SetClip(vec2i aa, vec2i bb);
+    void GetClip(vec2i &aa, vec2i &bb);
+    void InClip(vec2i aa, vec2i bb);
     void SetClip(int x1, int y1, int x2, int y2);
     void GetClip(int &x1, int &y1, int &x2, int &y2);
     void InClip(int x1, int y1, int x2, int y2);
