@@ -236,7 +236,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       int by1=(font->height()+1)*choice+my+5-2;
       int by2=by1+bh-1;
 
-      save->PutPart(main_screen, vec2i(0, 0), vec2i(mx + 1, by1), vec2i(mx + mw - 2, by2));
+      save->PutPart(main_screen, vec2i(0, 0), vec2i(mx + 1, by1), vec2i(mx + mw - 1, by2 + 1));
       tint_area(mx+1,by1,mx+mw-2,by2,63,63,63,color);
 
       char *cur=men_str(nth(choice,args));

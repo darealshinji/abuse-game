@@ -326,7 +326,7 @@ void image::PutImage(image *im, vec2i pos, int transparent)
     // the screen is clipped then we only want to put part of the image
     if(m_special)
     {
-        PutPart(im, pos, vec2i(0), im->m_size - vec2i(1), transparent);
+        PutPart(im, pos, vec2i(0), im->m_size, transparent);
         return;
     }
 
@@ -381,8 +381,7 @@ void image::PutImage(image *im, vec2i pos, int transparent)
 
 void image::PutPart(image *im, vec2i pos, vec2i aa, vec2i bb, int transparent)
 {
-    vec2i span;
-    CHECK(aa <= bb);
+    CHECK(aa < bb);
 
     int cx1, cy1, cx2, cy2;
     GetClip(cx1, cy1, cx2, cy2);
@@ -391,22 +390,22 @@ void image::PutPart(image *im, vec2i pos, vec2i aa, vec2i bb, int transparent)
     // to fit in the image
     pos += Min(aa, vec2i(0));
     aa += Min(aa, vec2i(0));
-    bb = Min(bb, im->m_size - vec2i(1));
+    bb = Min(bb, im->m_size);
     // return if it was adjusted so that nothing will be put
-    if (!(aa <= bb))
+    if (!(aa < bb))
         return;
 
     // see if the image gets clipped off the screen
-    if (pos.x >= cx2 || pos.y >= cy2 || pos.x + (bb.x - aa.x) < cx1 || pos.y + (bb.y - aa.y) < cy1)
+    if (pos.x >= cx2 || pos.y >= cy2 || pos.x + (bb.x - aa.x) <= cx1 || pos.y + (bb.y - aa.y) <= cy1)
         return;
 
     aa += Max(vec2i(cx1, cy1) - pos, vec2i(0));
     pos += Max(vec2i(cx1, cy1) - pos, vec2i(0));
-    bb = Min(bb, vec2i(cx2, cy2) - vec2i(1) - pos + aa);
-    if (!(aa <= bb))
+    bb = Min(bb, vec2i(cx2, cy2) - pos + aa);
+    if (!(aa < bb))
         return;
 
-    span = bb - aa + vec2i(1);
+    vec2i span = bb - aa;
 
     AddDirty(pos.x, pos.y, pos.x + span.x, pos.y + span.y);
 
@@ -434,32 +433,32 @@ void image::PutPart(image *im, vec2i pos, vec2i aa, vec2i bb, int transparent)
 void image::PutPartMasked(image *im, vec2i pos, image *mask, vec2i mpos,
                           vec2i aa, vec2i bb)
 {
-    CHECK(aa <= bb);
+    CHECK(aa < bb);
 
     if (m_special)
     {
         int cx1, cy1, cx2, cy2;
         m_special->GetClip(cx1, cy1, cx2, cy2);
 
-        if (!(pos < vec2i(cx2, cy2) && pos >= aa - bb))
+        if (!(pos < vec2i(cx2, cy2) && pos > aa - bb))
             return;
 
         aa += Max(vec2i(cx1, cy1) - pos, vec2i(0));
         pos += Max(vec2i(cx1, cy1) - pos, vec2i(0));
-        bb = Min(bb, vec2i(cx2, cy2) - vec2i(1) - pos + aa);
+        bb = Min(bb, vec2i(cx2, cy2) - pos + aa);
     }
     else if (!(pos <= m_size && pos >= -aa))
         return;
 
     vec2i mask_size = mask->Size();
 
-    if (!(pos < m_size && aa < im->m_size && mpos < mask_size && aa <= bb))
+    if (!(pos < m_size && aa < im->m_size && mpos < mask_size && aa < bb))
         return;
 
-    bb = Min(bb, im->m_size - vec2i(1));
+    bb = Min(bb, im->m_size);
 
-    vec2i span = bb - aa + vec2i(1);
-    span = Min(span, m_size - pos - vec2i(1));
+    vec2i span = bb - aa;
+    span = Min(span, m_size - pos);
     AddDirty(pos.x, pos.y, pos.x + span.x, pos.y + span.y);
 
     Lock();
