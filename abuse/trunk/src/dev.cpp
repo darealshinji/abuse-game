@@ -229,26 +229,21 @@ void dev_controll::search_backward()
 
 static void single_render()
 {
-  // enlarge clip area
-  the_game->first_view->cx2=the_game->first_view->cx1+
-                            (the_game->first_view->cx2-the_game->first_view->cx1+1)*2;
-  the_game->first_view->cy2=the_game->first_view->cy1+
-                            (the_game->first_view->cy2-the_game->first_view->cy1+1)*2;
-  delete small_render;
-  small_render=NULL;
-  small_render_on=0;
+    // enlarge clip area
+    view *v = the_game->first_view;
+    v->m_bb = v->m_aa + 2 * (v->m_bb - v->m_aa + vec2i(1));
+    delete small_render;
+    small_render = NULL;
+    small_render_on = 0;
 }
 
 static void double_render()
 {
-  small_render_on=1;
-  // reduce clip area
-  the_game->first_view->cx2=the_game->first_view->cx1+
-                            (the_game->first_view->cx2-the_game->first_view->cx1+1)/2;
-  the_game->first_view->cy2=the_game->first_view->cy1+
-                            (the_game->first_view->cy2-the_game->first_view->cy1+1)/2;
-
-  small_render=new image(vec2i(the_game->first_view->cx2-the_game->first_view->cx1+1, the_game->first_view->cy2-the_game->first_view->cy1+1),NULL,2);
+    // reduce clip area
+    view *v = the_game->first_view;
+    v->m_bb = v->m_aa + (v->m_bb - v->m_aa + vec2i(1)) / 2;
+    small_render = new image(v->m_bb - v->m_aa + vec2i(1), NULL, 2);
+    small_render_on = 1;
 }
 
 
@@ -477,13 +472,13 @@ void dev_controll::dev_draw(view *v)
     {
       for (light_source *f=first_light_source; f; f=f->next)
       {
-    if (f->x-vx>=0 && f->x-vx<=(v->cx2-v->cx1+1) && f->y-vy>=0 && f->y-vy<=(v->cy2-v->cy1+1))
+    if (f->x-vx>=0 && f->x-vx<=(v->m_bb.x-v->m_aa.x+1) && f->y-vy>=0 && f->y-vy<=(v->m_bb.y-v->m_aa.y+1))
     {
       image *im = cache.img(light_buttons[f->type]);
-      main_screen->PutImage(im, vec2i(f->x - vx + v->cx1 - im->Size().x / 2,
-                                      f->y - vy + v->cy1 - im->Size().y / 2), 1);
-      main_screen->Rectangle(vec2i(f->x1 - vx + v->cx1, f->y1 - vy + v->cy1),
-                             vec2i(f->x2 - vx + v->cx1, f->y2 - vy + v->cy1),
+      main_screen->PutImage(im, vec2i(f->x - vx, f->y - vy)
+                                  + v->m_aa - im->Size() / 2);
+      main_screen->Rectangle(vec2i(f->x1 - vx, f->y1 - vy) + v->m_aa,
+                             vec2i(f->x2 - vx, f->y2 - vy) + v->m_aa,
                              wm->medium_color());
     }
       }

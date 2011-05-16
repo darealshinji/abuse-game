@@ -381,15 +381,15 @@ void game_object::draw_above(view *v)
   picture_space(x1,y1,x2,y2);
 
   vec2i pos1 = the_game->GameToMouse(vec2i(x1, y1), v);
-  if (pos1.y >= v->cy1)
+  if (pos1.y >= v->m_aa.y)
   {
-    int32_t draw_to = y1 - (pos1.y - v->cy1), tmp = x;
+    int32_t draw_to = y1 - (pos1.y - v->m_aa.y), tmp = x;
     current_level->foreground_intersect(x, y1, tmp, draw_to);
     // calculate pos2.y
     vec2i pos2 = the_game->GameToMouse(vec2i(x1, draw_to), v);
 
-    pos2.y = Max(v->cy1, pos2.y);
-    pos1.y = Min(v->cy2, pos1.y);
+    pos2.y = Max(v->m_aa.y, pos2.y);
+    pos1.y = Min(v->m_bb.y, pos1.y);
     TransImage *p = picture();
 
     for (int i = pos2.y; i <= pos1.y; i++)

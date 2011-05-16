@@ -829,8 +829,8 @@ void *bottom_draw()
     player_draw(just_fired,o->get_tint());
     if (o->controller() && o->controller()->local_player())
       main_screen->PutImage(cache.img(S_health_image),
-                            vec2i(o->controller()->cx2-20,
-                                  o->controller()->cy1+5), 1);
+                            vec2i(o->controller()->m_bb.x - 20,
+                                  o->controller()->m_aa.y + 5), 1);
       } break;
       case FAST_POWER :
       {
@@ -851,8 +851,8 @@ void *bottom_draw()
     o->state=(character_state)old_state;
     if (o->controller() && o->controller()->local_player())
       main_screen->PutImage(cache.img(S_fast_image),
-                            vec2i(o->controller()->cx2-20,
-                                  o->controller()->cy1+5), 1);
+                            vec2i(o->controller()->m_bb.x - 20,
+                                  o->controller()->m_aa.y + 5), 1);
       } break;
       case FLY_POWER :
       {
@@ -873,8 +873,8 @@ void *bottom_draw()
 
     if (o->controller() && o->controller()->local_player())
       main_screen->PutImage(cache.img(S_fly_image),
-                            vec2i(o->controller()->cx2-20,
-                                  o->controller()->cy1+5), 1);
+                            vec2i(o->controller()->m_bb.x - 20,
+                                  o->controller()->m_aa.y + 5), 1);
       } break;
       case SNEAKY_POWER :
       {
@@ -887,8 +887,8 @@ void *bottom_draw()
 
     if (o->controller() && o->controller()->local_player())
       main_screen->PutImage(cache.img(S_sneaky_image),
-                            vec2i(o->controller()->cx2-20,
-                                  o->controller()->cy1+5), 1);
+                            vec2i(o->controller()->m_bb.x - 20,
+                                  o->controller()->m_aa.y + 5), 1);
       } break;
     }
   }
@@ -1022,8 +1022,7 @@ void *score_draw()
   {
     qsort(sorted_players,tp,sizeof(view *),compare_players);
 
-    int x=local->cx1;
-    int y=local->cy1;
+    vec2i pos = local->m_aa;
     char msg[100];
 
     int i;
@@ -1034,8 +1033,8 @@ void *score_draw()
       if (sorted_players[i]==local)
         strcat(msg," <<");
 
-      fnt->PutString(main_screen, vec2i(x, y), msg, color);
-      y += fnt->Size().y;
+      fnt->PutString(main_screen, pos, msg, color);
+      pos.y += fnt->Size().y;
     }
   }
   return NULL;

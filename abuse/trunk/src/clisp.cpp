@@ -1845,25 +1845,25 @@ long c_caller(long number, void *args)
     {
       view *v=current_object->controller();
       if (!v) lbreak("object has no view : view_x1");
-      else return v->cx1;
+      else return v->m_aa.x;
     } break;
     case 218 :
     {
       view *v=current_object->controller();
       if (!v) lbreak("object has no view : view_x1");
-      else return v->cy1;
+      else return v->m_aa.y;
     } break;
     case 219 :
     {
       view *v=current_object->controller();
       if (!v) lbreak("object has no view : view_x1");
-      else return v->cx2;
+      else return v->m_bb.x;
     } break;
     case 220 :
     {
       view *v=current_object->controller();
       if (!v) lbreak("object has no view : view_x1");
-      else return v->cy2;
+      else return v->m_bb.y;
     } break;
     case 221 :
     {

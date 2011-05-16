@@ -228,12 +228,12 @@ int status_bar::mouse_in_area()
   int mx,my;
   if (small_render)
   {
-    mx=(v->pointer_x-v->cx1)*2+v->cx1;
-    my=(v->pointer_y-v->cy1)*2+v->cy1;
+    mx = v->pointer_x * 2 - v->m_aa.x;
+    my = v->pointer_y * 2 - v->m_aa.y;
   } else
   {
-    mx=v->pointer_x;
-    my=v->pointer_y;
+    mx = v->pointer_x;
+    my = v->pointer_y;
   }
 
   if (mx>=x1 && my>=y1 && mx<=x2 && my<=y2)
@@ -287,22 +287,20 @@ void status_bar::step()
   int sx1,sy1,sx2,sy2;
   area(sx1,sy1,sx2,sy2);
 
-  int view_y2=small_render ? (v->cy2-v->cy1+1)*2+v->cy1 : v->cy2;
+  int view_y2=small_render ? (v->m_bb.y-v->m_aa.y+1)*2+v->m_aa.y : v->m_bb.y;
   if (sy1<view_y2)     // tell view to shrink if it is overlapping the status bar
   {
     v->suggest.send_view=1;
-    v->suggest.cx1=v->cx1;
-    v->suggest.cy1=v->cy1;
-    v->suggest.cx2=v->cx2;
-    v->suggest.cy2=small_render ? (sy1-v->cy1-2)/2+v->cy1 : sy1-2;
+    v->suggest.cx1 = v->m_aa.x;
+    v->suggest.cy1 = v->m_aa.y;
+    v->suggest.cx2 = v->m_bb.x;
+    v->suggest.cy2 = small_render ? (sy1 - v->m_aa.y - 2) / 2 + v->m_aa.y : sy1 - 2;
   }
 
   if (sbar<=0 || !total_weapons) return ;
 
-
-  int mx=small_render ? (last_demo_mpos.x-v->cx1)*2+v->cx1 : last_demo_mpos.x;
-  int my=small_render ? (last_demo_mpos.y-v->cy1)*2+v->cy1 : last_demo_mpos.y;
-
+  int mx = small_render ? last_demo_mpos.x * 2 - v->m_aa.x : last_demo_mpos.x;
+  int my = small_render ? last_demo_mpos.y * 2 - v->m_aa.y : last_demo_mpos.y;
 
   if (mx>sx1 && my>sy1 && mx<sx2 && my<sy2)
   {

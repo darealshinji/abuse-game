@@ -32,9 +32,10 @@ class view;
 
 class view
 {
-  uint8_t keymap[512/8];
-  char chat_buf[60];
-  public :
+public:
+    view(game_object *Focus, view *Next, int number);
+    ~view();
+
   int key_down(int key) { return keymap[key/8]&(1<<(key%8)); }
   void set_key_down(int key, int x) { if (x) keymap[key/8]|=(1<<(key%8)); else keymap[key/8]&=~(1<<(key%8)); }
   void reset_keymap() { memset(keymap,0,sizeof(keymap)); }
@@ -42,8 +43,7 @@ class view
 
   char name[100];
   struct suggest_struct suggest;
-  int32_t cx1,cy1,cx2,cy2,                    // view area to show
-      shift_down,shift_right;             // shift of view
+  int32_t shift_down,shift_right;             // shift of view
 
   int god;                                // :) if you believe in such things
   int player_number;
@@ -77,9 +77,6 @@ class view
        last_b1,last_b2,last_b3,last_b4,last_hp,last_ammo,last_type;
   int32_t secrets,kills,tsecrets,tkills;
 
-  view(game_object *Focus, view *Next, int number);
-  ~view();
-
   void draw_character_damage();           // draws the characters 'status' on the viewer
 
   int32_t x_center();                        // center of attention
@@ -107,7 +104,6 @@ class view
   void draw_hp();
   void draw_ammo();
   void draw_logo();
-  void resize_view(int32_t Cx1, int32_t Cy1, int32_t Cx2, int32_t Cy2);
   void set_input(int cx, int cy, int b1, int b2, int b3, int b4, int px, int py);
   int view_changed() { return suggest.send_view; }
   int weapon_changed() { return suggest.send_weapon_change; }
@@ -125,6 +121,12 @@ class view
   int get_tint();
   void set_team(int);
   int get_team();
+
+    vec2i m_aa, m_bb; // view area to show
+
+private:
+    uint8_t keymap[512 / 8];
+    char chat_buf[60];
 };
 
 extern view *player_list;
