@@ -1783,11 +1783,6 @@ void Game::get_input()
                                 }
                                 draw();
                             } break;
-                            case EV_REDRAW:
-                            {
-                                main_screen->AddDirty(vec2i(ev.redraw.x1, ev.redraw.y1),
-                                    vec2i(ev.redraw.x2 + 1, ev.redraw.y2 + 1));
-                            } break;
                             case EV_MESSAGE:
                             {
                                 switch (ev.message.id)

@@ -72,6 +72,5 @@ button::area
 
 refactor image::Line to merge loops
 
-event::redraw::x1,y1...
 view::cx1,cx2...
 
