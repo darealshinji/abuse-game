@@ -1813,6 +1813,10 @@ void Game::get_input()
 
 void net_send(int force = 0)
 {
+    // XXX: this was added to avoid crashing on the PS3.
+    if(!player_list)
+        return;
+
   if((!(dev & EDIT_MODE)) || force)
   {
     if(demo_man.state == demo_manager::PLAYING)
