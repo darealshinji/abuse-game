@@ -124,8 +124,6 @@ public:
     void PutImage(image *screen, vec2i pos, int transparent = 0);
     void PutPart(image *screen, vec2i pos, vec2i aa, vec2i bb,
                  int transparent = 0);
-    void PutPartMasked(image *screen, vec2i pos, image *mask, vec2i mpos,
-                       vec2i aa, vec2i bb);
     image *copy_part_dithered(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
     void Bar(vec2i p1, vec2i p2, uint8_t color);
     void xor_bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);

@@ -373,65 +373,6 @@ void image::PutPart(image *im, vec2i pos, vec2i aa, vec2i bb, int transparent)
     Unlock();
 }
 
-void image::PutPartMasked(image *im, vec2i pos, image *mask, vec2i mpos,
-                          vec2i aa, vec2i bb)
-{
-    CHECK(aa < bb);
-
-    if (m_special)
-    {
-        vec2i caa, cbb;
-        m_special->GetClip(caa, cbb);
-
-        if (!(pos < cbb && pos > aa - bb))
-            return;
-
-        aa += Max(caa - pos, vec2i(0));
-        pos += Max(caa - pos, vec2i(0));
-        bb = Min(bb, cbb - pos + aa);
-    }
-    else if (!(pos <= m_size && pos >= -aa))
-        return;
-
-    vec2i mask_size = mask->Size();
-
-    if (!(pos < m_size && aa < im->m_size && mpos < mask_size && aa < bb))
-        return;
-
-    bb = Min(bb, im->m_size);
-
-    vec2i span = bb - aa;
-    span = Min(span, m_size - pos);
-    AddDirty(pos.x, pos.y, pos.x + span.x, pos.y + span.y);
-
-    Lock();
-    mask->Lock();
-    im->Lock();
-
-    for (int j = 0; j < span.y; j++)
-    {
-        uint8_t *dst = scan_line(pos.y + j) + pos.x;
-        uint8_t *src = im->scan_line(aa.y + j) + aa.x;
-        uint8_t *pg3 = mask->scan_line(mpos.y) + mpos.x;
-
-        if (++mpos.y >= mask_size.y) // wrap mask y around
-            mpos.y = 0;
-
-        for (int i = 0; i < span.x; i++, dst++, src++, pg3++)
-        {
-            if (mpos.x + i >= mask_size.x) // wrap mask x around
-                pg3 -= mask_size.x;
-
-            if (pg3[mpos.x + i]) // check to make sure not 0 before putting
-                *dst = *src;
-        }
-    }
-
-    im->Unlock();
-    mask->Unlock();
-    Unlock();
-}
-
 void image::Rectangle(vec2i p1, vec2i p2, uint8_t color)
 {
     Line(p1, vec2i(p2.x, p1.y), color);
