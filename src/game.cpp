@@ -117,7 +117,7 @@ void handle_no_space()
     info_field *inf = new info_field(0, wm->font()->Size().y * 2, ID_NULL,
                                      no_space_msg, NULL);
     button *b = new button(0, 0, ID_QUIT_OK, "Quit", inf);
-    Jwindow *no_space = wm->new_window(0, 0, -1, -1, b, "ERROR");
+    Jwindow *no_space = wm->CreateWindow(vec2i(0), vec2i(-1), b, "ERROR");
 
     Event ev;
     do
@@ -1653,7 +1653,7 @@ void Game::get_input()
                     {
                         if(!joy_win)
                         {
-                            joy_win = wm->new_window(80, 50, -1, -1,
+                            joy_win = wm->CreateWindow(vec2i(80, 50), vec2i(-1),
                                     new button(70, 9, JOY_OK, "OK",
                                     new info_field(0, 30, DEV_NULL,
                                     " Center joystick and\n"

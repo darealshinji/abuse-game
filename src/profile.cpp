@@ -59,12 +59,10 @@ void profile_init()
   profile_reset();
 
 
-  prof_win=wm->new_window(prop->getd("profile x",-1),
-              prop->getd("profile y",-1),
-              20 * console_font->Size().x,
-              (prof_height + 1) * console_font->Size().y,
-              NULL,
-              "PROFILE");
+  prof_win=wm->CreateWindow(vec2i(prop->getd("profile x", -1),
+                                  prop->getd("profile y", -1)),
+                            vec2i(20, prof_height + 1) * console_font->Size(),
+                            NULL, "PROFILE");
 }
 
 

@@ -133,7 +133,7 @@ Jwindow *file_dialog(char const *prompt, char const *def,
 {
   int wh2 = 5 + wm->font()->Size().y + 5;
   int wh3 = wh2 + wm->font()->Size().y + 12;
-  Jwindow *j=wm->new_window(0,0,-1,-1,
+  Jwindow *j=wm->CreateWindow(vec2i(0), vec2i(-1),
                 new info_field(5, 5, 0, prompt,
                             new text_field(0, wh2, filename_id,
                        ">","****************************************",def,

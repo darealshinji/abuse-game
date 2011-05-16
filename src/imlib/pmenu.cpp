@@ -34,7 +34,7 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
   int w = cbb.x - caa.x - Jwindow::left_border() - Jwindow::right_border();
   int h = Jwindow::top_border() + Jwindow::bottom_border();
 
-  bar=wm->new_window(X, Y, w, 0, NULL);
+  bar = wm->CreateWindow(vec2i(X, Y), vec2i(w, 0), NULL);
   bar->freeze();  // can't drag this window
   bar->m_surf->WidgetBar(vec2i(0, 0), vec2i(w - 1, h - 1),
                          wm->bright_color(), wm->medium_color(),
@@ -194,16 +194,16 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
     x=cbb.x-1-w-parent->m_pos.x;
   if (h+y+parent->m_pos.y>=cbb.y)
   {
-    if (parent->m_pos.y+parent->h+wm->font()->Size().y>=cbb.y)
+    if (parent->m_pos.y+parent->m_size.y+wm->font()->Size().y>=cbb.y)
       y=-h;
     else y=y-h+wm->font()->Size().y+5;
   }
 
 
-  win=wm->new_window(parent->m_pos.x+x,parent->m_pos.y+y,
-             w - Jwindow::left_border() - Jwindow::right_border(),
-             h - Jwindow::top_border() - Jwindow::bottom_border(),
-                     NULL);
+  win=wm->CreateWindow(parent->m_pos + vec2i(x, y),
+             vec2i(w - Jwindow::left_border() - Jwindow::right_border(),
+                   h - Jwindow::top_border() - Jwindow::bottom_border()),
+             NULL);
   win->freeze();
   win->m_surf->WidgetBar(vec2i(0, 0), vec2i(w - 1, h - 1),
                          wm->bright_color(), wm->medium_color(),

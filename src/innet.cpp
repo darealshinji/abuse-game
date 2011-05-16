@@ -561,7 +561,7 @@ void net_reload()
       base->mem_lock=0;
 
 
-      Jwindow *j=wm->new_window(0,yres/2,-1,-1,new info_field(0, 0, 0, symbol_str("resync"),
+      Jwindow *j=wm->CreateWindow(vec2i(0, yres / 2), vec2i(-1), new info_field(0, 0, 0, symbol_str("resync"),
                           new button(0, wm->font()->Size().y + 5, ID_NET_DISCONNECT,
                              symbol_str("slack"),NULL)),symbol_str("hold!"))
 ;
@@ -666,7 +666,7 @@ int get_inputs_from_server(unsigned char *buf)
     total_retry++;
     if (total_retry==12000)    // 2 minutes and nothing
     {
-      abort=wm->new_window(0,yres/2,-1,wm->font()->Size().y*4,
+      abort=wm->CreateWindow(vec2i(0, yres / 2), vec2i(-1, wm->font()->Size().y*4),
                    new info_field(0, 0, 0, symbol_str("waiting"),
                           new button(0, wm->font()->Size().y + 5, ID_NET_DISCONNECT,
                              symbol_str("slack"),NULL)),symbol_str("Error"));
