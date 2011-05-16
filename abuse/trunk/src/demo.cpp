@@ -143,7 +143,7 @@ void demo_manager::reset_game()
   rand_on=0;
 
   view *v=player_list;
-  for (; v; v=v->next) { if (v->focus) v->reset_player(); }
+  for (; v; v=v->next) { if (v->m_focus) v->reset_player(); }
 
   last_demo_mpos = vec2i(0, 0);
   last_demo_mbut = 0;
@@ -214,7 +214,7 @@ int demo_manager::set_state(demo_state new_state, char *filename)
 
       view *v=player_list;
       for (; v; v=v->next)  // reset all the players
-      { if (v->focus) { v->reset_player(); v->focus->set_aistate(0); } }
+      { if (v->m_focus) { v->reset_player(); v->m_focus->set_aistate(0); } }
       delete current_level;
       current_level=NULL;
       the_game->reset_keymap();

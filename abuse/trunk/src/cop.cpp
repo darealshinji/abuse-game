@@ -501,8 +501,8 @@ static int climb_off_handler(game_object *o)
   else
   {
     o->y-=28;
-    o->controller()->pan_y+=28;
-    o->controller()->last_y-=28;
+    o->controller()->pan_y += 28;
+    o->controller()->m_lastpos.y -= 28;
     o->set_state(stopped);
   }
   return 0;
@@ -580,7 +580,7 @@ static int climb_handler(game_object *o, int xm, int ym, int but)
     {
       o->y+=28;
       o->controller()->pan_y-=28;
-      o->controller()->last_y+=28;
+      o->controller()->m_lastpos.y += 28;
       o->set_state((character_state)S_climb_on);
     }
     else if (o->yvel()>=0 && (ym>0 || (ym<0 && yd>8)))
@@ -699,14 +699,14 @@ void *ladder_ai()
     game_object *other=o->get_object(0);
     for (; f; f=f->next)
     {
-      int mex=f->focus->x;
-      int mey=f->focus->y;
+      int mex=f->m_focus->x;
+      int mey=f->m_focus->y;
 
       if (o->x<=mex && o->y<=mey && other->x>=mex && other->y>=mey)
       {
-    if (f->focus->state==S_climbing)
-      f->focus->x=(o->x+other->x)/2;
-        f->focus->lvars[in_climbing_area]=mey-o->y;
+    if (f->m_focus->state==S_climbing)
+      f->m_focus->x=(o->x+other->x)/2;
+        f->m_focus->lvars[in_climbing_area]=mey-o->y;
       }
     }
   }

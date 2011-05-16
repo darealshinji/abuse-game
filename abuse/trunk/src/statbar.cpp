@@ -134,8 +134,8 @@ void status_bar::redraw(image *screen)
     int sel_off=small_render ?  8 : 4;
     scale_put(sb,screen,sx,sy,sb_w,sb_h);
 
-    if (v->focus)
-      draw_num(screen,sx+(small_render ? 17*2 : 17),sy+(small_render ? 11*2 : 11),v->focus->hp(),bnum);
+    if (v->m_focus)
+      draw_num(screen,sx+(small_render ? 17*2 : 17),sy+(small_render ? 11*2 : 11),v->m_focus->hp(),bnum);
 
     int ammo_x,ammo_y;
     if (small_render)

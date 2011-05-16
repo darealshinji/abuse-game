@@ -43,14 +43,14 @@ int morph_sel_frame_color;
 
 view::~view()
 {
-  if (local_player())
-    sbar.associate(NULL);
+    if (local_player())
+        sbar.associate(NULL);
 
-  if (total_weapons)
-  {
-    free(weapons);
-    free(last_weapons);
-  }
+    if (total_weapons)
+    {
+        free(weapons);
+        free(last_weapons);
+    }
 }
 
 
@@ -115,66 +115,55 @@ int view::weapon_total(int type)
 
 int32_t view::xoff()
 {
-    if (!focus)
+    if (!m_focus)
         return pan_x;
 
-    return Max(0, last_x - (m_bb.x - m_aa.x + 1) / 2 + shift_right + pan_x);
+    return Max(0, m_lastpos.x - (m_bb.x - m_aa.x + 1) / 2 + m_shift.x + pan_x);
 }
 
 int32_t view::interpolated_xoff()
 {
-    if (!focus)
+    if (!m_focus)
         return pan_x;
 
-    return Max(0, (last_last_x + last_x) / 2
-                    - (m_bb.x - m_aa.x + 1) / 2 + shift_right + pan_x);
+    return Max(0, (m_lastlastpos.x + m_lastpos.x) / 2
+                    - (m_bb.x - m_aa.x + 1) / 2 + m_shift.x + pan_x);
 }
-
 
 int32_t view::yoff()
 {
-    if (!focus)
+    if (!m_focus)
         return pan_y;
 
-    return Max(0, last_y - (m_bb.y - m_aa.y + 1) / 2 - shift_down + pan_y);
+    return Max(0, m_lastpos.y - (m_bb.y - m_aa.y + 1) / 2 - m_shift.y + pan_y);
 }
-
 
 int32_t view::interpolated_yoff()
 {
-    if (!focus)
+    if (!m_focus)
         return pan_y;
 
-    return Max(0, (last_last_y + last_y) / 2
-                    - (m_bb.y - m_aa.y + 1) / 2 - shift_down + pan_y);
+    return Max(0, (m_lastlastpos.y + m_lastpos.y) / 2
+                    - (m_bb.y - m_aa.y + 1) / 2 - m_shift.y + pan_y);
 }
 
 
 void view::update_scroll()
 {
-  if (focus)
-  {
-    last_last_x=last_x;
-    last_last_y=last_y;
-    if (focus->x>last_x)
-    {
-      if (focus->x-last_x>=no_xright)
-        last_x=focus->x-no_xright;
-    } else if (focus->x<last_x)
-    {
-      if (last_x-focus->x>=no_xleft)
-        last_x=focus->x+no_xleft;
-    }
-    if (focus->y>last_y)
-    {
-      if (focus->y-last_y>=no_ybottom)
-        last_y=focus->y-no_ybottom;
-    } else if (focus->y<last_y)
-    {
-      if (last_y-focus->y>=no_ytop)
-        last_y=focus->y+no_ytop;
-    }
-  }
+    if (!m_focus)
+        return;
+
+    m_lastlastpos = m_lastpos;
+
+    if (m_focus->x > m_lastpos.x)
+        m_lastpos.x = Max(m_lastpos.x, m_focus->x - no_xright);
+    else if (m_focus->x < m_lastpos.x)
+        m_lastpos.x = Min(m_lastpos.x, m_focus->x + no_xleft);
+
+    if (m_focus->y > m_lastpos.y)
+        m_lastpos.y = Max(m_lastpos.y, m_focus->y - no_ybottom);
+    else if (m_focus->y < m_lastpos.y)
+        m_lastpos.y = Min(m_lastpos.y, m_focus->y + no_ytop);
 }
 
 static char cur_user_name[20] = { 0 };
@@ -198,26 +187,16 @@ void set_login(char const *name)
     strncpy(cur_user_name, name, 20);
 }
 
-view::view(game_object *Focus, view *Next, int number)
+view::view(game_object *focus, view *Next, int number)
 {
-  chat_buf[0]=0;
+    m_chat_buf[0] = 0;
 
   draw_solid=-1;
   no_xleft=0;
   no_xright=0;
   no_ytop=0;
   no_ybottom=0;
-  if (Focus)
-  {
-    last_x=Focus->x;
-    last_y=Focus->y;
-  } else
-  {
-    last_x=last_y=0;
-  }
-
-  last_last_x=last_x;
-  last_last_y=last_y;
+    m_lastlastpos = m_lastpos = focus ? vec2i(focus->x, focus->y) : vec2i(0);
   last_hp=last_ammo=-1;
   last_type=-1;
   tsecrets=secrets=0;
@@ -238,10 +217,9 @@ view::view(game_object *Focus, view *Next, int number)
   player_number=number;
     m_aa = vec2i(0);
     m_bb = vec2i(100);
-  focus=Focus;
+    m_focus = focus;
   next=Next;
-  shift_down=SHIFT_DOWN_DEFAULT;
-  shift_right=SHIFT_RIGHT_DEFAULT;
+    m_shift = vec2i(SHIFT_RIGHT_DEFAULT, SHIFT_DOWN_DEFAULT);
   x_suggestion=0;
   y_suggestion=0;
   b1_suggestion=0;
@@ -275,19 +253,19 @@ view::view(game_object *Focus, view *Next, int number)
 
 int32_t view::x_center()
 {
-    return focus ? focus->x : (m_aa.x + m_bb.x) / 2;
+    return m_focus ? m_focus->x : (m_aa.x + m_bb.x) / 2;
 }
 
 int32_t view::y_center()
 {
-    return focus ? focus->y : (m_aa.y + m_bb.y) / 2;
+    return m_focus ? m_focus->y : (m_aa.y + m_bb.y) / 2;
 }
 
 void view::draw_character_damage()
 {
-  if (focus && drawable())
+  if (m_focus && drawable())
   {
-    if (last_hp!=focus->hp()) draw_hp();
+    if (last_hp!=m_focus->hp()) draw_hp();
     int i;
     for (i=0; i<total_weapons; i++)
       if (weapons[i]!=last_weapons[i])
@@ -309,10 +287,10 @@ uint16_t make_sync()
     view *f=player_list;
     for (; f; f=f->next)
     {
-      if (f->focus)
+      if (f->m_focus)
       {
-    x^=(f->focus->x&0xffff);
-    x^=(f->focus->y&0xffff);
+    x^=(f->m_focus->x&0xffff);
+    x^=(f->m_focus->y&0xffff);
       }
     }
   }
@@ -367,7 +345,7 @@ void view::get_input()
     else*/
     {
         get_movement( 0, sug_x, sug_y, sug_b1, sug_b2, sug_b3, sug_b4 );
-        if( focus )
+        if( m_focus )
         {
             sug_p = the_game->MouseToGame(last_demo_mpos);
             if(last_demo_mbut & 1)
@@ -388,8 +366,8 @@ void view::get_input()
 
         base->packet.write_uint32( suggest.pan_x );
         base->packet.write_uint32( suggest.pan_y );
-        base->packet.write_uint32( suggest.shift_down );
-        base->packet.write_uint32( suggest.shift_right );
+        base->packet.write_uint32( suggest.shift.y );
+        base->packet.write_uint32( suggest.shift.x );
     }
 
     if( weapon_changed() )
@@ -430,21 +408,21 @@ void view::get_input()
 
 void view::add_chat_key(int key)  // return string if buf is complete
 {
-  int len=strlen(chat_buf);
+    int len = strlen(m_chat_buf);
   if (key==JK_BACKSPACE)
   {
     if (len)
     {
-      chat_buf[len-1]=0;
+      m_chat_buf[len-1]=0;
       if (local_player() && chat)
-        chat->draw_user(chat_buf);
+        chat->draw_user(m_chat_buf);
     }
   } else if (key!=JK_ENTER)
   {
-    chat_buf[len]=key;
-    chat_buf[len+1]=0;
+    m_chat_buf[len]=key;
+    m_chat_buf[len+1]=0;
     if (local_player() && chat)
-      chat->draw_user(chat_buf);
+      chat->draw_user(m_chat_buf);
   }
 
   if (len>38 || key==JK_ENTER)
@@ -452,11 +430,11 @@ void view::add_chat_key(int key)  // return string if buf is complete
     if (DEFINEDP(l_chat_input->GetFunction()))
     {
       game_object *o=current_object;
-      current_object=focus;
+      current_object=m_focus;
 
       void *m = LSpace::Tmp.Mark();
       void *list=NULL;
-      push_onto_list(LString::Create(chat_buf),list);
+      push_onto_list(LString::Create(m_chat_buf),list);
       ((LSymbol *)l_chat_input)->EvalFunction(list);
       LSpace::Tmp.Restore(m);
 
@@ -465,11 +443,11 @@ void view::add_chat_key(int key)  // return string if buf is complete
     } else
     {
       if (chat)
-        chat->put_all(chat_buf);
+        chat->put_all(m_chat_buf);
     }
-    chat_buf[0]=0;
+    m_chat_buf[0]=0;
     if (local_player() && chat)
-      chat->draw_user(chat_buf);
+      chat->draw_user(m_chat_buf);
   }
 }
 
@@ -490,8 +468,7 @@ int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went 
 
       pan_x=lltl(x[4]);
       pan_y=lltl(x[5]);
-      shift_down=lltl(x[6]);
-      shift_right=lltl(x[7]);
+      m_shift = vec2i(lltl(x[7]), lltl(x[6]));
       if (small_render)
           small_render->Scale(m_bb - m_aa + vec2i(1));
 
@@ -688,11 +665,11 @@ int view::handle_event(Event &ev)
 
 void view::draw_hp()
 {
-    if (focus)
+    if (m_focus)
     {
-        int h = focus->hp();
+        int h = m_focus->hp();
         last_hp=h;
-        sbar.draw_health( main_screen, focus->hp() );
+        sbar.draw_health( main_screen, m_focus->hp() );
     }
     else
     {
@@ -733,8 +710,7 @@ void recalc_local_view_space()   // calculates view areas for local players, sho
     f->suggest.cy1=y;
     f->suggest.cy2=h-(total_weapons ? 33 : 0);
 
-    f->suggest.shift_down=f->shift_down;
-    f->suggest.shift_right=f->shift_right;
+    f->suggest.shift = f->m_shift;
     f->suggest.pan_x=f->pan_x;
     f->suggest.pan_y=f->pan_y;
     f->suggest.send_view=1;
@@ -798,7 +774,7 @@ void set_local_players(int total)
     }
     v->m_aa = vec2i(320 / 2 - 155, 200 / 2 - 95);
     v->m_bb = vec2i(320 / 2 + 155, 200 / 2 + total_weapons ? 60 : 95);
-    v->focus->set_controller(v);
+    v->m_focus->set_controller(v);
     total--;
     rdw=1;
   }
@@ -831,45 +807,44 @@ void view::set_input(int cx, int cy, int b1, int b2, int b3, int b4, int px, int
 
 void view::reset_player()
 {
-  if (focus)
+  if (m_focus)
   {
 
-    game_object *start=current_level ? current_level->get_random_start(320,focus->controller()) : 0;
-    focus->defaults();
+    game_object *start=current_level ? current_level->get_random_start(320,m_focus->controller()) : 0;
+    m_focus->defaults();
     if (start)
     {
-      focus->x=start->x;
-      focus->y=start->y;
+      m_focus->x=start->x;
+      m_focus->y=start->y;
       dprintf("reset player position to %d %d\n",start->x,start->y);
     }
-    focus->set_state(stopped);
-    focus->set_tint(_tint);
-    focus->set_team(_team);
+    m_focus->set_state(stopped);
+    m_focus->set_tint(_tint);
+    m_focus->set_team(_team);
     memset(weapons,0xff,total_weapons*sizeof(int32_t));
     memset(last_weapons,0xff,total_weapons*sizeof(int32_t));
 
-    shift_down=SHIFT_DOWN_DEFAULT;
-    shift_right=SHIFT_RIGHT_DEFAULT;
+    m_shift = vec2i(SHIFT_RIGHT_DEFAULT, SHIFT_DOWN_DEFAULT);
 
     if (total_weapons)
       weapons[0]=0;  // give him the first weapon
     current_weapon=0;
 
-    memset(focus->lvars,0,figures[focus->otype]->tv*4);
-    focus->set_aistate(0);
-    if (figures[focus->otype]->get_fun(OFUN_CONSTRUCTOR))
+    memset(m_focus->lvars,0,figures[m_focus->otype]->tv*4);
+    m_focus->set_aistate(0);
+    if (figures[m_focus->otype]->get_fun(OFUN_CONSTRUCTOR))
     {
       game_object *o=current_object;
-      current_object=focus;
-      ((LSymbol *)figures[focus->otype]->get_fun(OFUN_CONSTRUCTOR))->EvalUserFunction(NULL);
+      current_object=m_focus;
+      ((LSymbol *)figures[m_focus->otype]->get_fun(OFUN_CONSTRUCTOR))->EvalUserFunction(NULL);
       current_object=o;
     }
     sbar.redraw(main_screen);
 
     int i;
-    for (i=0; i<focus->total_objects(); i++)   // reset the vars for the attached objects
+    for (i=0; i<m_focus->total_objects(); i++)   // reset the vars for the attached objects
     {
-      game_object *o=focus->get_object(i);
+      game_object *o=m_focus->get_object(i);
       memset(o->lvars,0,figures[o->otype]->tv*4);
     }
 
@@ -885,19 +860,19 @@ object_node *make_player_onodes(int player_num)
   object_node *first=NULL,*last=NULL;
   for (view *o=player_list; o; o=o->next)
   {
-    if (o->focus && (player_num==-1 || o->player_number==player_num))
+    if (o->m_focus && (player_num==-1 || o->player_number==player_num))
     {
-      if (!object_to_number_in_list(o->focus,first))
+      if (!object_to_number_in_list(o->m_focus,first))
       {
-    object_node *q=new object_node(o->focus,NULL);
+    object_node *q=new object_node(o->m_focus,NULL);
     if (first)
       last->next=q;
     else first=q;
     last=q;
       }
-      for (int i=0; i<o->focus->total_objects(); i++)
+      for (int i=0; i<o->m_focus->total_objects(); i++)
       {
-    game_object *p=o->focus->get_object(i);
+    game_object *p=o->m_focus->get_object(i);
 
     if (!object_to_number_in_list(p,first))
     {
@@ -976,8 +951,8 @@ int32_t view::get_view_var_value(int num)
     case V_CY1 : return m_aa.y; break;
     case V_CX2 : return m_bb.x; break;
     case V_CY2 : return m_bb.y; break;
-    case V_SHIFT_DOWN : return shift_down; break;
-    case V_SHIFT_RIGHT : return shift_right; break;
+    case V_SHIFT_DOWN : return m_shift.y; break;
+    case V_SHIFT_RIGHT : return m_shift.x; break;
     case V_GOD : return god; break;
     case V_PLAYER_NUMBER : return player_number; break;
 
@@ -996,8 +971,8 @@ int32_t view::get_view_var_value(int num)
     case V_NO_XRIGHT : return no_xright; break;
     case V_NO_YTOP : return no_ytop; break;
     case V_NO_YBOTTOM : return no_ybottom; break;
-    case V_LAST_X : return last_x; break;
-    case V_LAST_Y : return last_y; break;
+    case V_LAST_X : return m_lastpos.x; break;
+    case V_LAST_Y : return m_lastpos.y; break;
     case V_LAST_LEFT : return last_left; break;
     case V_LAST_RIGHT : return last_right; break;
     case V_LAST_UP : return last_up; break;
@@ -1014,8 +989,8 @@ int32_t view::get_view_var_value(int num)
     case V_AMBIENT : return ambient; break;
     case V_POINTER_X : return pointer_x; break;
     case V_POINTER_Y : return pointer_y; break;
-    case V_LAST_LAST_X : return last_last_x; break;
-    case V_LAST_LAST_Y : return last_last_y; break;
+    case V_LAST_LAST_X : return m_lastlastpos.x; break;
+    case V_LAST_LAST_Y : return m_lastlastpos.y; break;
     case V_FREEZE_TIME : return freeze_time; break;
   }
   return 0;
@@ -1031,8 +1006,8 @@ int32_t view::set_view_var_value(int num, int32_t x)
     case V_CY1 : m_aa.y = x; break;
     case V_CX2 : m_bb.x = x; break;
     case V_CY2 : m_bb.y = x; break;
-    case V_SHIFT_DOWN : shift_down=x; break;
-    case V_SHIFT_RIGHT : shift_right=x; break;
+    case V_SHIFT_DOWN : m_shift.y = x; break;
+    case V_SHIFT_RIGHT : m_shift.x = x; break;
     case V_GOD : god=x; break;
     case V_PLAYER_NUMBER : { player_number=x; if (local_player()) sbar.associate(this); }  break;
 
@@ -1051,8 +1026,8 @@ int32_t view::set_view_var_value(int num, int32_t x)
     case V_NO_XRIGHT : no_xright=x; break;
     case V_NO_YTOP : no_ytop=x; break;
     case V_NO_YBOTTOM : no_ybottom=x; break;
-    case V_LAST_X : last_x=x; break;
-    case V_LAST_Y : last_y=x; break;
+    case V_LAST_X : m_lastpos.x=x; break;
+    case V_LAST_Y : m_lastpos.y=x; break;
     case V_LAST_LEFT : last_left=x; break;
     case V_LAST_RIGHT : last_right=x; break;
     case V_LAST_UP : last_up=x; break;
@@ -1070,8 +1045,8 @@ int32_t view::set_view_var_value(int num, int32_t x)
     case V_AMBIENT : ambient=x; break;
     case V_POINTER_X : pointer_x=x; break;
     case V_POINTER_Y : pointer_y=x; break;
-    case V_LAST_LAST_X : last_last_x=x; break;
-    case V_LAST_LAST_Y : last_last_y=x; break;
+    case V_LAST_LAST_X : m_lastlastpos.x = x; break;
+    case V_LAST_LAST_Y : m_lastlastpos.y = x; break;
     case V_FREEZE_TIME : freeze_time=x; break;
   }
   return 1;
@@ -1221,7 +1196,7 @@ void process_packet_commands(uint8_t *pk, int size)
         delete last;
       }
 
-      v->focus=NULL;
+      v->m_focus=NULL;
       if (last)
       last->next=v->next;
       else player_list=player_list->next;
@@ -1241,7 +1216,7 @@ void view::set_tint(int tint)
     if(tint < 0)
         tint = 0;
     _tint = tint;
-    focus->set_tint(tint);
+    m_focus->set_tint(tint);
 }
 
 int view::get_tint()
@@ -1254,7 +1229,7 @@ void view::set_team(int team)
     if(team < 0)
         team = 0;
     _team = team;
-    focus->set_team(team);
+    m_focus->set_team(team);
 }
 
 int view::get_team()
