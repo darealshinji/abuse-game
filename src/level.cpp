@@ -843,14 +843,14 @@ void level::set_size(int w, int h)
 
   for (y=0; y<miny; y++)
     for (x=0; x<minx; x++)
-      new_fg[x+y*w]=get_fg(x,y);
+      new_fg[x+y*w]=GetFg(vec2i(x, y));
 
   miny=(nbh<bg_height) ? nbh : bg_height;
   minx=(nbw<bg_width) ? nbw : bg_width;
 
   for (y=0; y<miny; y++)
     for (x=0; x<minx; x++)
-      new_bg[x+y*nbw]=get_bg(x,y);
+      new_bg[x+y*nbw]=GetBg(vec2i(x, y));
 
   free(map_fg);
   free(map_bg);
@@ -2637,7 +2637,7 @@ void level::foreground_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y
   {
     for (by=blocky1; by<=blocky2; by++)
     {
-      block=the_game->get_map_fg(bx,by);
+      block=the_game->GetMapFg(vec2i(bx, by));
       if (block>BLACK)        // don't check BLACK, should be no points in it
       {
         // now check the all the line segments in the block
@@ -2711,7 +2711,7 @@ void level::vforeground_intersect(int32_t x1, int32_t y1, int32_t &y2)
 
   for (by=blocky1; by<=blocky2; by++,y1-=f_hi,y2-=f_hi,y_addback+=f_hi)
   {
-    block=the_game->get_map_fg(bx,by);
+    block=the_game->GetMapFg(vec2i(bx, by));
 
     // now check the all the line segments in the block
     foretile *f=the_game->get_fg(block);

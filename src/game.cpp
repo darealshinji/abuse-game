@@ -543,47 +543,6 @@ void Game::end_session()
   }
 }
 
-void Game::put_block_fg(int x, int y, TransImage *im)
-{
-  for(view *f = first_view; f; f = f->next)
-  {
-    if(f->drawable())
-    {
-      int xoff = f->xoff(), yoff = f->yoff(), viewx1 = f->cx1, viewy1 = f->cy1, viewx2 = f->cx2, viewy2 = f->cy2;
-      if(xoff / ftile_width()>x || xoff / ftile_width()+(viewx2 - viewx1)/ftile_width()+1 < x ||
-      yoff / ftile_height()>y || yoff / ftile_height()+(viewy2 - viewy1)/ftile_height()+1 < y) return;
-      vec2i caa, cbb;
-      main_screen->GetClip(caa, cbb);
-      main_screen->SetClip(vec2i(viewx1, viewy1), vec2i(viewx2 + 1, viewy2 + 1));
-      im->PutImage(main_screen, vec2i((x - xoff / ftile_width())*ftile_width()+viewx1 - xoff % ftile_width(),
-            (y - yoff / ftile_height())*ftile_height()+viewy1 - yoff % ftile_height()));
-      main_screen->SetClip(caa, cbb);
-    }
-  }
-}
-
-void Game::put_block_bg(int x, int y, image *im)
-{
-  for(view *f = first_view; f; f = f->next)
-  {
-    if(f->drawable())
-    {
-      int xoff = f->xoff(), yoff = f->yoff(), viewx1 = f->cx1, viewy1 = f->cy1, viewx2 = f->cx2, viewy2 = f->cy2;
-      int xo = xoff * bg_xmul / bg_xdiv;
-      int yo = yoff * bg_ymul / bg_ydiv;
-
-      if(xo / btile_width()>x || xo / btile_width()+(viewx2 - viewx1)/btile_width()+1 < x ||
-      yo / btile_height()>y || yo / btile_height()+(viewy2 - viewy1)/btile_height()+1 < y) return;
-      vec2i caa, cbb;
-      main_screen->GetClip(caa, cbb);
-      main_screen->SetClip(vec2i(viewx1, viewy1), vec2i(viewx2 + 1, viewy2 + 1));
-      main_screen->PutImage(im, vec2i((x - xo / btile_width())*btile_width()+viewx1 - xo % btile_width(),
-            (y - yo / btile_height())*btile_height()+viewy1 - yo % btile_height()), 0);
-      main_screen->SetClip(caa, cbb);
-    }
-  }
-}
-
 int need_delay = 1;
 
 void Game::dev_scroll()
@@ -1098,26 +1057,26 @@ void Game::draw_map(view *v, int interpolate)
   sbar.draw_update();
 }
 
-void Game::put_fg(int x, int y, int type)
+void Game::PutFg(vec2i pos, int type)
 {
-  if(current_level->get_fg(x, y)!=type)
-  {
-    current_level->put_fg(x, y, type);
+    if (current_level->GetFg(pos) == type)
+        return;
+
+    current_level->PutFg(pos, type);
     for(view *f = first_view; f; f = f->next)
-      if(f->drawable())
-        draw_map(f);
-  }
+        if(f->drawable())
+            draw_map(f);
 }
 
-void Game::put_bg(int x, int y, int type)
+void Game::PutBg(vec2i pos, int type)
 {
-  if(current_level->get_bg(x, y)!=type)
-  {
-    current_level->put_bg(x, y, type);
+    if (current_level->GetBg(pos) == type)
+        return;
+
+    current_level->PutBg(pos, type);
     for(view *f = first_view; f; f = f->next)
-      if(f->drawable())
-        draw_map(f);
-  }
+        if(f->drawable())
+            draw_map(f);
 }
 
 int Game::in_area(Event &ev, int x1, int y1, int x2, int y2)

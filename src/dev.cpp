@@ -1056,7 +1056,7 @@ void dev_controll::do_command(char const *command, Event &ev)
     h=(h+the_game->btile_height()-1)/the_game->btile_height();
     for (y=0,i=cur_bg; y<h; y++)
           for (x=0; x<l; x++)
-            the_game->put_bg(tile.x+x,tile.y+y,i++);
+            the_game->PutBg(tile + vec2i(x, y), i++);
     dprintf("%dx%d\n",l,h);
       } else dprintf(symbol_str("unchop1"));
 
@@ -1216,7 +1216,7 @@ void dev_controll::do_command(char const *command, Event &ev)
         tile.x < current_level->foreground_width() &&
         tile.y < current_level->foreground_height())
     {
-      cur_fg=current_level->get_fg(tile.x, tile.y);
+      cur_fg=current_level->GetFg(tile);
       if (forew)
     ((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->m_surf);
       the_game->need_refresh();
@@ -1861,14 +1861,14 @@ void dev_controll::handle_event(Event &ev)
           vec2i tile = the_game->GetFgTile(last_demo_mpos);
           if (tile.x>=0 && tile.y>=0 && tile.x<current_level->foreground_width() &&
           tile.y<current_level->foreground_height())
-          current_level->put_fg(tile.x,tile.y,raise_all ? make_above_tile(cur_fg) : cur_fg);
+          current_level->PutFg(tile, raise_all ? make_above_tile(cur_fg) : cur_fg);
           the_game->need_refresh();
         } else if (ev.mouse_button==1 && !selected_object && !selected_light)
         {
           vec2i tile = the_game->GetBgTile(last_demo_mpos);
           if (tile.x>=0 && tile.y>=0 && tile.x<current_level->background_width() &&
           tile.y<current_level->background_height())
-          current_level->put_bg(tile.x,tile.y,cur_fg);
+          current_level->PutBg(tile, cur_fg);
           the_game->need_refresh();
         }
       } else if (edit_mode==ID_DMODE_AREA)
@@ -1953,14 +1953,14 @@ void dev_controll::handle_event(Event &ev)
         vec2i tile = the_game->GetFgTile(last_demo_mpos);
         if (tile.x>=0 && tile.y>=0 && tile.x<current_level->foreground_width() &&
             tile.y<current_level->foreground_height())
-        the_game->put_fg(tile.x,tile.y,raise_all ? make_above_tile(cur_fg) : cur_fg);
+        the_game->PutFg(tile, raise_all ? make_above_tile(cur_fg) : cur_fg);
           }
           if ((dev & DRAW_BG_LAYER) && ev.mouse_button==2)
           {
         vec2i tile = the_game->GetBgTile(last_demo_mpos);
         if (tile.x>=0 && tile.y>=0 && tile.x<current_level->background_width() &&
             tile.y<current_level->background_height())
-        the_game->put_bg(tile.x,tile.y,cur_bg);
+        the_game->PutBg(tile, cur_bg);
           }
         }
       }
@@ -3108,7 +3108,7 @@ void pal_win::handle_event(Event &ev)
           {
         if (xx>=0 && yy>=0 && xx<current_level->foreground_width() &&
             yy<current_level->foreground_height())
-          the_game->put_fg(xx,yy,raise_all ? make_above_tile(pat[xx-tile.x+(yy-tile.y)*w]) : pat[xx-tile.x+(yy-tile.y)*w] );
+          the_game->PutFg(vec2i(xx, yy), raise_all ? make_above_tile(pat[xx-tile.x+(yy-tile.y)*w]) : pat[xx-tile.x+(yy-tile.y)*w] );
           }
         }
       } break;

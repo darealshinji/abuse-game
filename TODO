@@ -60,6 +60,7 @@ REFACTOR
   - update_dirty
   - scale_put, scale_put_trans
   - tint_area, darken_area
+  - fg_width, etc.
 
 Jwindow::_x1 _x2
 
@@ -69,7 +70,6 @@ console::draw_char : vec2i
 VolumeWindow::draw_vol plus grand !!
 
 x, y in game_object?
-get_fg ?
 snap_x() snap_y()
 scatter_line, ascatter_line
 xstart() / xend() etc.
