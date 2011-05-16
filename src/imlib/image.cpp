@@ -159,7 +159,7 @@ void image::clear(int16_t color)
     else
         for(int j = 0; j < m_size.y; j++)
             memset(scan_line(j), color, m_size.x);
-    AddDirty(0, 0, m_size.x, m_size.y);
+    AddDirty(vec2i(0), m_size);
     Unlock();
 }
 
@@ -271,7 +271,7 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
     // assume p1.y <= p2.y from above swap operation
     yi = p2.y; yc = p1.y;
 
-    AddDirty(xc, yc, xi + 1, yi + 1);
+    AddDirty(vec2i(xc, yc), vec2i(xi + 1, yi + 1));
     dcx = p1.x; dcy = p1.y;
     xc = (p2.x - p1.x);
     yc = (p2.y - p1.y);
@@ -350,7 +350,7 @@ void image::PutPart(image *im, vec2i pos, vec2i aa, vec2i bb, int transparent)
 
     vec2i span = bb - aa;
 
-    AddDirty(pos.x, pos.y, pos.x + span.x, pos.y + span.y);
+    AddDirty(pos, pos + span);
 
     Lock();
     im->Lock();
@@ -456,22 +456,21 @@ void image::InClip(int x1, int y1, int x2, int y2)
 //
 void image_descriptor::ReduceDirties()
 {
-    dirty_rect *p = (dirty_rect *)dirties.first();
-    int x1 = 6000, y1 = 6000, x2 = -1, y2 = -1;
+    vec2i aa(6000), bb(-1);
 
-    for (int i = dirties.Count(); i--; )
+    for (dirty_rect *p = (dirty_rect *)dirties.first(); p; )
     {
-        x1 = Min(x1, p->dx1); y1 = Min(y1, p->dy1);
-        x2 = Max(x1, p->dx1); y2 = Max(y1, p->dy1);
+        aa = Min(aa, p->m_aa);
+        bb = Max(bb, p->m_bb);
         dirty_rect *tmp = (dirty_rect *)p->Next();
         dirties.unlink(p);
         delete p;
         p = tmp;
     }
-    dirties.add_front(new dirty_rect(x1, y1, x2, y2));
+    dirties.add_front(new dirty_rect(aa, bb));
 }
 
-void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
+void image_descriptor::DeleteDirty(vec2i aa, vec2i bb)
 {
     int ax1, ay1, ax2, ay2;
     dirty_rect *p, *next;
@@ -479,10 +478,10 @@ void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
     if (!keep_dirt)
         return;
 
-    x1 = Max(0, x1); x2 = Min(m_size.x, x2);
-    y1 = Max(0, y1); y2 = Min(m_size.y, y2);
+    aa = Max(aa, vec2i(0));
+    bb = Min(bb, m_size);
 
-    if (x1 >= x2 || y1 >= y2)
+    if (!(aa < bb))
         return;
 
     int i = dirties.Count();
@@ -494,77 +493,79 @@ void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
         next = (dirty_rect *)p->Next();
 
         // are the two touching?
-        if (x2 <= p->dx1 || y2 <= p->dy1 || x1 > p->dx2 || y1 > p->dy2)
+        if (!(bb > p->m_aa && aa <= p->m_bb))
             continue;
 
         // does it take a x slice off? (across)
-        if (x2 >= p->dx2 + 1 && x1 <= p->dx1)
+        if (bb.x >= p->m_bb.x + 1 && aa.x <= p->m_aa.x)
         {
-            if (y2 >= p->dy2 + 1 && y1 <= p->dy1)
+            if (bb.y >= p->m_bb.y + 1 && aa.y <= p->m_aa.y)
             {
                 dirties.unlink(p);
                 delete p;
             }
-            else if (y2 >= p->dy2 + 1)
-                p->dy2 = y1 - 1;
-            else if (y1 <= p->dy1)
-                p->dy1 = y2;
+            else if (bb.y >= p->m_bb.y + 1)
+                p->m_bb.y = aa.y - 1;
+            else if (aa.y <= p->m_aa.y)
+                p->m_aa.y = bb.y;
             else
             {
-                dirties.add_front(new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
-                p->dy1 = y2;
+                dirties.add_front(new dirty_rect(p->m_aa, vec2i(p->m_bb.x, aa.y - 1)));
+                p->m_aa.y = bb.y;
             }
         }
         // does it take a y slice off (down)
-        else if (y2 - 1>=p->dy2 && y1<=p->dy1)
+        else if (bb.y - 1 >= p->m_bb.y && aa.y <= p->m_aa.y)
         {
-            if (x2 - 1>=p->dx2)
-                p->dx2=x1-1;
-            else if (x1<=p->dx1)
-                p->dx1=x2;
+            if (bb.x - 1 >= p->m_bb.x)
+                p->m_bb.x = aa.x - 1;
+            else if (aa.x <= p->m_aa.x)
+                p->m_aa.x = bb.x;
             else
             {
-                dirties.add_front(new dirty_rect(p->dx1, p->dy1, x1-1, p->dy2));
-                p->dx1=x2;
+                dirties.add_front(new dirty_rect(p->m_aa, vec2i(aa.x - 1, p->m_bb.y)));
+                p->m_aa.x = bb.x;
             }
         }
         // otherwise it just takes a little chunk off
         else
         {
-            if (x2 - 1>=p->dx2)      { ax1=p->dx1; ax2=x1; }
-            else if (x1<=p->dx1) { ax1=x2; ax2=p->dx2+1; }
-            else                { ax1=p->dx1; ax2=x1; }
-            if (y2 - 1>=p->dy2)      { ay1=y1; ay2=p->dy2+1; }
-            else if (y1<=p->dy1) { ay1=p->dy1; ay2=y2; }
-            else                { ay1=y1; ay2=y2; }
-            dirties.add_front(new dirty_rect(ax1, ay1, ax2-1, ay2-1));
+            if (bb.x - 1 >= p->m_bb.x) { ax1=p->m_aa.x; ax2 = aa.x; }
+            else if (aa.x<=p->m_aa.x) { ax1=bb.x; ax2=p->m_bb.x+1; }
+            else { ax1=p->m_aa.x; ax2=aa.x; }
 
-            if (x2 - 1>=p->dx2 || x1<=p->dx1)  { ax1=p->dx1; ax2=p->dx2+1; }
-            else                         { ax1=x2; ax2=p->dx2+1; }
+            if (bb.y - 1>=p->m_bb.y) { ay1=aa.y; ay2=p->m_bb.y+1; }
+            else if (aa.y<=p->m_aa.y) { ay1=p->m_aa.y; ay2=bb.y; }
+            else { ay1=aa.y; ay2=bb.y; }
 
-            if (y2 - 1>=p->dy2)
-            { if (ax1==p->dx1) { ay1=p->dy1; ay2=y1; }
-                          else { ay1=y1; ay2=p->dy2+1;   } }
-            else if (y1<=p->dy1) { if (ax1==p->dx1) { ay1=y2; ay2=p->dy2+1; }
-                                             else  { ay1=p->dy1; ay2=y2; } }
-            else           { if (ax1==p->dx1) { ay1=p->dy1; ay2=y1; }
-                             else { ay1=y1; ay2=y2; } }
-            dirties.add_front(new dirty_rect(ax1, ay1, ax2 - 1, ay2 - 1));
+            dirties.add_front(new dirty_rect(vec2i(ax1, ay1), vec2i(ax2 - 1, ay2 - 1)));
 
-            if (x1>p->dx1 && x2 - 1<p->dx2)
+            if (bb.x - 1>=p->m_bb.x || aa.x<=p->m_aa.x)  { ax1=p->m_aa.x; ax2=p->m_bb.x+1; }
+            else { ax1=bb.x; ax2=p->m_bb.x+1; }
+
+            if (bb.y - 1>=p->m_bb.y)
+            { if (ax1==p->m_aa.x) { ay1=p->m_aa.y; ay2=aa.y; }
+              else { ay1=aa.y; ay2=p->m_bb.y+1;   } }
+            else if (aa.y<=p->m_aa.y) { if (ax1==p->m_aa.x) { ay1=bb.y; ay2=p->m_bb.y+1; }
+                                        else  { ay1=p->m_aa.y; ay2=bb.y; } }
+            else { if (ax1==p->m_aa.x) { ay1=p->m_aa.y; ay2=aa.y; }
+                   else { ay1=aa.y; ay2=bb.y; } }
+            dirties.add_front(new dirty_rect(vec2i(ax1, ay1), vec2i(ax2 - 1, ay2 - 1)));
+
+            if (aa.x > p->m_aa.x && bb.x - 1 < p->m_bb.x)
             {
-                if (y1>p->dy1 && y2 - 1<p->dy2)
+                if (aa.y > p->m_aa.y && bb.y - 1 < p->m_bb.y)
                 {
-                    dirties.add_front(new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
-                    dirties.add_front(new dirty_rect(p->dx1, y2, p->dx2, p->dy2));
+                    dirties.add_front(new dirty_rect(p->m_aa, vec2i(p->m_bb.x, aa.y - 1)));
+                    dirties.add_front(new dirty_rect(vec2i(p->m_aa.x, bb.y), p->m_bb));
                 }
-                else if (y1<=p->dy1)
-                    dirties.add_front(new dirty_rect(p->dx1, y2, p->dx2, p->dy2));
+                else if (aa.y <= p->m_aa.y)
+                    dirties.add_front(new dirty_rect(vec2i(p->m_aa.x, bb.y), p->m_bb));
                 else
-                    dirties.add_front(new dirty_rect(p->dx1, p->dy1, p->dx2, y1-1));
+                    dirties.add_front(new dirty_rect(p->m_aa, vec2i(p->m_bb.x, aa.y - 1)));
             }
-            else if (y1>p->dy1 && y2 - 1<p->dy2)
-                dirties.add_front(new dirty_rect(p->dx1, y2, p->dx2, p->dy2));
+            else if (aa.y > p->m_aa.y && bb.y - 1 < p->m_bb.y)
+                dirties.add_front(new dirty_rect(vec2i(p->m_aa.x, bb.y), p->m_bb));
             dirties.unlink(p);
             delete p;
         }
@@ -572,24 +573,24 @@ void image_descriptor::delete_dirty(int x1, int y1, int x2, int y2)
 }
 
 // specifies that an area is a dirty
-void image_descriptor::AddDirty(int x1, int y1, int x2, int y2)
+void image_descriptor::AddDirty(vec2i aa, vec2i bb)
 {
     dirty_rect *p;
     if (!keep_dirt)
         return;
 
-    x1 = Max(0, x1); x2 = Min(m_size.x, x2);
-    y1 = Max(0, y1); y2 = Min(m_size.y, y2);
+    aa = Max(aa, vec2i(0));
+    bb = Min(bb, m_size);
 
-    if (x1 >= x2 || y1 >= y2)
+    if (!(aa < bb))
         return;
 
     int i = dirties.Count();
     if (!i)
-        dirties.add_front(new dirty_rect(x1, y1, x2 - 1, y2 - 1));
+        dirties.add_front(new dirty_rect(aa, bb - vec2i(1)));
     else if (i >= MAX_DIRTY)
     {
-        dirties.add_front(new dirty_rect(x1, y1, x2 - 1, y2 - 1));
+        dirties.add_front(new dirty_rect(aa, bb - vec2i(1)));
         ReduceDirties();  // reduce to one dirty rectangle, we have to many
     }
     else
@@ -598,7 +599,7 @@ void image_descriptor::AddDirty(int x1, int y1, int x2, int y2)
       {
 
         // check to see if this new rectangle completly encloses the check rectangle
-        if (x1<=p->dx1 && y1<=p->dy1 && x2>=p->dx2+1 && y2>=p->dy2+1)
+        if (aa.x<=p->m_aa.x && aa.y<=p->m_aa.y && bb.x>=p->m_bb.x+1 && bb.y>=p->m_bb.y+1)
         {
           dirty_rect *tmp=(dirty_rect*) p->Next();
           dirties.unlink(p);
@@ -607,41 +608,43 @@ void image_descriptor::AddDirty(int x1, int y1, int x2, int y2)
               i=0;
           else p=tmp;
         }
-        else if (!(x2 - 1 <p->dx1 || y2 - 1 <p->dy1 || x1>p->dx2 || y1>p->dy2))
+        else if (!(bb.x - 1 <p->m_aa.x || bb.y - 1 <p->m_aa.y || aa.x>p->m_bb.x || aa.y>p->m_bb.y))
         {
 
 
 
-/*          if (x1<=p->dx1) { a+=p->dx1-x1; ax1=x1; } else ax1=p->dx1;
-          if (y1<=p->dy1) { a+=p->dy1-y1; ay1=y1; } else ay1=p->dy1;
-          if (x2 - 1 >=p->dx2) { a+=x2 - 1 -p->dx2; ax2=x2 - 1; } else ax2=p->dx2;
-          if (y2 - 1 >=p->dy2) { a+=y2 - 1 -p->dy2; ay2=y2 - 1; } else ay2=p->dy2;
+/*          if (x1<=p->m_aa.x) { a+=p->m_aa.x-x1; ax1=x1; } else ax1=p->m_aa.x;
+          if (y1<=p->m_aa.y) { a+=p->m_aa.y-y1; ay1=y1; } else ay1=p->m_aa.y;
+          if (x2 - 1 >=p->m_bb.x) { a+=x2 - 1 -p->m_bb.x; ax2=x2 - 1; } else ax2=p->m_bb.x;
+          if (y2 - 1 >=p->m_bb.y) { a+=y2 - 1 -p->m_bb.y; ay2=y2 - 1; } else ay2=p->m_bb.y;
 
       if (a<50)
-      { p->dx1=ax1;                         // then expand the dirty
-        p->dy1=ay1;
-        p->dx2=ax2;
-        p->dy2=ay2;
+      { p->m_aa.x=ax1;                         // then expand the dirty
+        p->m_aa.y=ay1;
+        p->m_bb.x=ax2;
+        p->m_bb.y=ay2;
         return ;
       }
       else */
             {
-              if (x1<p->dx1)
-                AddDirty(x1, Max(y1, p->dy1), p->dx1, Min(y2, p->dy2 + 1));
-              if (x2>p->dx2+1)
-                AddDirty(p->dx2+1, Max(y1, p->dy1), x2, Min(y2, p->dy2 + 1));
-              if (y1<p->dy1)
-                AddDirty(x1, y1, x2, p->dy1);
-              if (y2 - 1>p->dy2)
-                AddDirty(x1, p->dy2+1, x2, y2);
+              if (aa.x < p->m_aa.x)
+                AddDirty(vec2i(aa.x, Max(aa.y, p->m_aa.y)),
+                         vec2i(p->m_aa.x, Min(bb.y, p->m_bb.y + 1)));
+              if (bb.x > p->m_bb.x + 1)
+                AddDirty(vec2i(p->m_bb.x + 1, Max(aa.y, p->m_aa.y)),
+                         vec2i(bb.x, Min(bb.y, p->m_bb.y + 1)));
+              if (aa.y < p->m_aa.y)
+                AddDirty(aa, vec2i(bb.x, p->m_aa.y));
+              if (bb.y - 1 > p->m_bb.y)
+                AddDirty(vec2i(aa.x, p->m_bb.y + 1), bb);
               return ;
             }
-            p=(dirty_rect *)p->Next();
-          } else p=(dirty_rect *)p->Next();
+            p = (dirty_rect *)p->Next();
+          } else p = (dirty_rect *)p->Next();
 
       }
-      CHECK(x1 < x2 && y1 < y2);
-      dirties.add_end(new dirty_rect(x1, y1, x2 - 1, y2 - 1));
+      CHECK(aa < bb);
+      dirties.add_end(new dirty_rect(aa, bb - vec2i(1)));
     }
 }
 
@@ -671,7 +674,7 @@ void image::Bar(vec2i p1, vec2i p2, uint8_t color)
     for (int y = p1.y; y <= p2.y; y++)
         memset(scan_line(y) + p1.x, color, (p2.x - p1.x + 1));
     Unlock();
-    AddDirty(p1.x, p1.y, p2.x + 1, p2.y + 1);
+    AddDirty(p1, p2 + vec2i(1));
 }
 
 void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
@@ -704,7 +707,7 @@ void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t co
   }
   Unlock();
 
-  AddDirty(x1, y1, x2 + 1, y2 + 1);
+  AddDirty(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
 }
 
 
@@ -815,7 +818,7 @@ void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, i
         *dst-- = *src--;
     if (yd<0) { ysrc++; ydst++; } else { ysrc--; ydst--; }
   }
-  AddDirty(x1, y1, x2 + 1, y2 + 1);
+  AddDirty(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
 }
 
 

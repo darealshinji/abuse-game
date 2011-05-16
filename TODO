@@ -56,8 +56,6 @@ There may be interesting code in there:
 REFACTOR
 --------
 - move to vec2i:
-  - AddDirty !!
-  - update_dirty
   - scale_put, scale_put_trans
   - tint_area, darken_area
   - fg_width, etc.
@@ -75,4 +73,7 @@ jwindow::area
 button::area
 
 refactor image::Line to merge loops
+
+event::redraw::x1,y1...
+view::cx1,cx2...
 

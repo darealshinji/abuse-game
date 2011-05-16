@@ -25,7 +25,7 @@ void automap::draw()
   image *screen=automap_window->m_surf;
 
   long sx,ex,sy,ey,x,y,window_xstart,window_ystart,
-                       window_xend,window_yend,centerx,centery,
+                       window_xend,window_yend,
                        draw_xstart,draw_ystart,
                        i,j;
 
@@ -37,8 +37,7 @@ void automap::draw()
   window_ystart=automap_window->y1();
   window_xend=automap_window->x2();
   window_yend=automap_window->y2();
-  centerx=(window_xstart+window_xend)/2;
-  centery=(window_ystart+window_yend)/2;
+  vec2i center((window_xstart+window_xend)/2, (window_ystart+window_yend)/2);
 
   sx=x/f_wid-w/2;                // start drawing with this foretile
   sy=y/f_hi-h/2;
@@ -47,28 +46,28 @@ void automap::draw()
 
   if (sx<0)                       // does the map scroll past the left side ?
   { sx=0;                         // yes, start drawing at 0
-    draw_xstart=centerx-(x*AUTOTILE_WIDTH/f_wid);
+    draw_xstart=center.x-(x*AUTOTILE_WIDTH/f_wid);
   }
   else
-    draw_xstart=centerx-(x*AUTOTILE_WIDTH/f_wid-sx*AUTOTILE_WIDTH);
+    draw_xstart=center.x-(x*AUTOTILE_WIDTH/f_wid-sx*AUTOTILE_WIDTH);
 
   if (sy<0)
   {
     sy=0;
-    draw_ystart=centery-(y*AUTOTILE_HEIGHT/f_hi);
+    draw_ystart=center.y-(y*AUTOTILE_HEIGHT/f_hi);
   }
   else
-    draw_ystart=centery-(y*AUTOTILE_HEIGHT/f_hi-sy*AUTOTILE_HEIGHT);
+    draw_ystart=center.y-(y*AUTOTILE_HEIGHT/f_hi-sy*AUTOTILE_HEIGHT);
 
   // if view position hasn't changed, only update the blinking dot and return
   if (draw_xstart==old_dx && draw_ystart==old_dy)
   {
    automap_window->m_surf->Lock();
-   automap_window->m_surf->AddDirty(centerx,centery,centerx + 1,centery + 1);
+   automap_window->m_surf->AddDirty(center, center + vec2i(1));
     if ((tick++)&4)
-      automap_window->m_surf->PutPixel(vec2i(centerx,centery),255);
+      automap_window->m_surf->PutPixel(center, 255);
     else
-      automap_window->m_surf->PutPixel(vec2i(centerx,centery),27);
+      automap_window->m_surf->PutPixel(center, 27);
    automap_window->m_surf->Unlock();
     return ;
   }
@@ -94,15 +93,10 @@ void automap::draw()
     draw_xend=center
     ex=foreground_width()-1; */
 
-
-
-
-  // we are going to redraw the whole map, so make the dirty rect work easier by marking
-  // everything dirty
-  screen->AddDirty(window_xstart,window_ystart,window_xend+1,window_yend+1);
-
-
-
+  // we are going to redraw the whole map, so make the dirty rect work
+  // easier by marking everything dirty
+  screen->AddDirty(vec2i(window_xstart, window_ystart),
+                   vec2i(window_xend + 1, window_yend + 1));
 
   // draw the tiles that will be around the border of the automap with PutImage
   // because it handles clipping, but for ths reason is slower, the rest
@@ -148,9 +142,9 @@ void automap::draw()
   // whole screen already
   automap_window->m_surf->Lock();
   if ((tick++)&4)
-    automap_window->m_surf->PutPixel(vec2i(centerx,centery),255);
+    automap_window->m_surf->PutPixel(center, 255);
   else
-    automap_window->m_surf->PutPixel(vec2i(centerx,centery),27);
+    automap_window->m_surf->PutPixel(center, 27);
   automap_window->m_surf->Unlock();
 
   // set the clip back to full window size because soemthing else could mess with the area

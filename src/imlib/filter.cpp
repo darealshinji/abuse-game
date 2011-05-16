@@ -96,7 +96,7 @@ void Filter::PutImage(image *screen, image *im, vec2i pos)
 
     vec2i span = bb - aa;
 
-    screen->AddDirty(pos.x, pos.y, pos.x + span.x, pos.y + span.y);
+    screen->AddDirty(pos, pos + span);
 
     screen->Lock();
     im->Lock();

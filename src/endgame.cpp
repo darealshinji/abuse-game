@@ -128,7 +128,7 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
     if (sx+n->x+x>x2) x2=sx+n->x+x;
 
   }
-  screen->AddDirty(x1, sy, x2 + 1, sy + mask_height);
+  screen->AddDirty(vec2i(x1, sy), vec2i(x2 + 1, sy + mask_height));
 }
 
 

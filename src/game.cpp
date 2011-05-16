@@ -666,9 +666,9 @@ void Game::draw_map(view *v, int interpolate)
   // view area dirty alreadt
 
   if(small_render)
-    main_screen->AddDirty(v->cx1, v->cy1, (v->cx2 - v->cx1 + 1)*2 + v->cx1 + 1, v->cy1+(v->cy2 - v->cy1 + 1)*2 + 1);
+    main_screen->AddDirty(vec2i(v->cx1, v->cy1), vec2i((v->cx2 - v->cx1 + 1)*2 + v->cx1 + 1, v->cy1+(v->cy2 - v->cy1 + 1)*2 + 1));
   else
-    main_screen->AddDirty(v->cx1, v->cy1, v->cx2 + 1, v->cy2 + 1);
+    main_screen->AddDirty(vec2i(v->cx1, v->cy1), vec2i(v->cx2 + 1, v->cy2 + 1));
 
   if(v->draw_solid != -1)      // fill the screen and exit..
   {
@@ -1785,8 +1785,8 @@ void Game::get_input()
                             } break;
                             case EV_REDRAW:
                             {
-                                main_screen->AddDirty(ev.redraw.x1, ev.redraw.y1,
-                                    ev.redraw.x2 + 1, ev.redraw.y2 + 1);
+                                main_screen->AddDirty(vec2i(ev.redraw.x1, ev.redraw.y1),
+                                    vec2i(ev.redraw.x2 + 1, ev.redraw.y2 + 1));
                             } break;
                             case EV_MESSAGE:
                             {
@@ -2044,7 +2044,7 @@ Game::~Game()
 
 void Game::draw(int scene_mode)
 {
-    main_screen->AddDirty(0, 0, xres + 1, yres + 1);
+    main_screen->AddDirty(vec2i(0), vec2i(xres, yres));
 
     main_screen->clear();
 
