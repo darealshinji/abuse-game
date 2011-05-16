@@ -115,44 +115,38 @@ int view::weapon_total(int type)
 
 int32_t view::xoff()
 {
-  if (focus)
-  {
-    int x=last_x-(cx2-cx1+1)/2+shift_right+pan_x;
-    if (x<0) return 0;
-    else return x;
-  } else return pan_x;
+    if (!focus)
+        return pan_x;
+
+    return Max(0, last_x - (m_bb.x - m_aa.x + 1) / 2 + shift_right + pan_x);
 }
 
 int32_t view::interpolated_xoff()
 {
-  if (focus)
-  {
-    int x=(last_last_x+last_x)/2-(cx2-cx1+1)/2+shift_right+pan_x;
-    if (x<0) return 0;
-    else return x;
-  } else return pan_x;
+    if (!focus)
+        return pan_x;
+
+    return Max(0, (last_last_x + last_x) / 2
+                    - (m_bb.x - m_aa.x + 1) / 2 + shift_right + pan_x);
 }
 
 
 int32_t view::yoff()
 {
-  if (focus)
-  {
-    int y=last_y-(cy2-cy1+1)/2-shift_down+pan_y;
-    if (y<0) return 0;
-    else return y;
-  } else return pan_y;
+    if (!focus)
+        return pan_y;
+
+    return Max(0, last_y - (m_bb.y - m_aa.y + 1) / 2 - shift_down + pan_y);
 }
 
 
 int32_t view::interpolated_yoff()
 {
-  if (focus)
-  {
-    int y=(last_y+last_last_y)/2-(cy2-cy1+1)/2-shift_down+pan_y;
-    if (y<0) return 0;
-    else return y;
-  } else return pan_y;
+    if (!focus)
+        return pan_y;
+
+    return Max(0, (last_last_y + last_y) / 2
+                    - (m_bb.y - m_aa.y + 1) / 2 - shift_down + pan_y);
 }
 
 
@@ -242,10 +236,8 @@ view::view(game_object *Focus, view *Next, int number)
   god=0;
 
   player_number=number;
-  cx1=0;
-  cy1=0;
-  cx2=100;
-  cy2=100;
+    m_aa = vec2i(0);
+    m_bb = vec2i(100);
   focus=Focus;
   next=Next;
   shift_down=SHIFT_DOWN_DEFAULT;
@@ -283,18 +275,12 @@ view::view(game_object *Focus, view *Next, int number)
 
 int32_t view::x_center()
 {
-  if (!focus)
-    return (cx1+cx2)/2;
-  else
-    return focus->x;
+    return focus ? focus->x : (m_aa.x + m_bb.x) / 2;
 }
 
 int32_t view::y_center()
 {
-  if (!focus)
-    return (cy1+cy2)/2;
-  else
-    return focus->y;
+    return focus ? focus->y : (m_aa.y + m_bb.y) / 2;
 }
 
 void view::draw_character_damage()
@@ -499,19 +485,15 @@ int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went 
     {
       int32_t x[8];
       memcpy(x,pk,8*4);  pk+=8*4;
-      cx1=lltl(x[0]);
-      cy1=lltl(x[1]);
-      cx2=lltl(x[2]);
-      cy2=lltl(x[3]);
+      m_aa = vec2i(lltl(x[0]), lltl(x[1]));
+      m_bb = vec2i(lltl(x[2]), lltl(x[3]));
 
       pan_x=lltl(x[4]);
       pan_y=lltl(x[5]);
       shift_down=lltl(x[6]);
       shift_right=lltl(x[7]);
       if (small_render)
-      {
-        small_render->Scale(vec2i(cx2 - cx1 + 1, cy2 - cy1 + 1));
-      }
+          small_render->Scale(m_bb - m_aa + vec2i(1));
 
       suggest.send_view=0;
       if (local_player())
@@ -759,11 +741,9 @@ void recalc_local_view_space()   // calculates view areas for local players, sho
 
     if (!player_list->next)
     {
-      f->cx1=f->suggest.cx1;
-      f->cy1=f->suggest.cy1;
-      f->cx2=f->suggest.cx2;
-      f->cy2=f->suggest.cy2;
-      f->suggest.send_view=0;
+      f->m_aa = vec2i(f->suggest.cx1, f->suggest.cy1);
+      f->m_bb = vec2i(f->suggest.cx2, f->suggest.cy2);
+      f->suggest.send_view = 0;
     }
     y+=h;
       }
@@ -816,7 +796,8 @@ void set_local_players(int total)
       f->next=new view(o,NULL,f->player_number+1);
       v=f->next;
     }
-    v->cx1=320/2-155; v->cy1=200/2-95; v->cx2=320/2+155; v->cy2=200/2+(total_weapons ? 60 : 95);
+    v->m_aa = vec2i(320 / 2 - 155, 200 / 2 - 95);
+    v->m_bb = vec2i(320 / 2 + 155, 200 / 2 + total_weapons ? 60 : 95);
     v->focus->set_controller(v);
     total--;
     rdw=1;
@@ -833,19 +814,6 @@ int total_local_players()
     if (f->local_player()) t++;
   return t;
 }
-
-
-void view::resize_view(int32_t Cx1, int32_t Cy1, int32_t Cx2, int32_t Cy2)
-{
-  if (cx1!=Cx1 || cx2!=Cx2 || cy1!=Cy1 || cy2!=Cy2)
-  {
-    cx1=Cx1; cy1=Cy1;
-    cx2=Cx2; cy2=Cy2;
-    if (playing_state(the_game->state) && local_player())
-      the_game->draw(0);
-  }
-}
-
 
 void view::set_input(int cx, int cy, int b1, int b2, int b3, int b4, int px, int py)
 {
@@ -1004,10 +972,10 @@ int32_t view::get_view_var_value(int num)
 {
   switch (num)
   {
-    case V_CX1 : return cx1; break;
-    case V_CY1 : return cy1; break;
-    case V_CX2 : return cx2; break;
-    case V_CY2 : return cy2; break;
+    case V_CX1 : return m_aa.x; break;
+    case V_CY1 : return m_aa.y; break;
+    case V_CX2 : return m_bb.x; break;
+    case V_CY2 : return m_bb.y; break;
     case V_SHIFT_DOWN : return shift_down; break;
     case V_SHIFT_RIGHT : return shift_right; break;
     case V_GOD : return god; break;
@@ -1059,10 +1027,10 @@ int32_t view::set_view_var_value(int num, int32_t x)
 {
   switch (num)
   {
-    case V_CX1 : cx1=x; break;
-    case V_CY1 : cy1=x; break;
-    case V_CX2 : cx2=x; break;
-    case V_CY2 : cy2=x; break;
+    case V_CX1 : m_aa.x = x; break;
+    case V_CY1 : m_aa.y = x; break;
+    case V_CX2 : m_bb.x = x; break;
+    case V_CY2 : m_bb.y = x; break;
     case V_SHIFT_DOWN : shift_down=x; break;
     case V_SHIFT_RIGHT : shift_right=x; break;
     case V_GOD : god=x; break;

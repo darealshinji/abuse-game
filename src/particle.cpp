@@ -164,7 +164,7 @@ void draw_panims(view *v)
 {
   for (part_animation *p=first_anim; p; p=p->next)
   {
-    cache.part(p->seq->frames[p->frame])->draw(main_screen,p->x-v->xoff()+v->cx1,p->y-v->yoff()+v->cy1,p->dir);
+    cache.part(p->seq->frames[p->frame])->draw(main_screen,p->x-v->xoff()+v->m_aa.x,p->y-v->yoff()+v->m_aa.y,p->dir);
   }
 }
 

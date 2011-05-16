@@ -548,13 +548,10 @@ void net_reload()
                 else
                 current_level->add_object(o);
 
-                view *v=f->next;
-
-                v->cx1=5;
-                v->cy1=5;
-                v->cx2=319-5;
-                v->cy2=199-5;
-                join_list=join_list->next;
+                view *v = f->next;
+                v->m_aa = vec2i(5);
+                v->m_bb = vec2i(319, 199) - vec2i(5);
+                join_list = join_list->next;
       }
       base->join_list=NULL;
       current_level->save(NET_STARTFILE,1);

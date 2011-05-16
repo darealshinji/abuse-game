@@ -23,7 +23,7 @@ director scene_director;
 
 void director::scroll_text(char *Text)
 { text=Text;
-  text_y=the_game->first_view->cy2-the_game->first_view->cy1+1;
+  text_y = the_game->first_view->m_bb.y - the_game->first_view->m_aa.y + 1;
 }
 
 director::director()
@@ -154,12 +154,11 @@ void director::wait(void *arg)
     if (text)
     {
       if (text_draw(text_y,
-            the_game->first_view->cx1+tleft,
-            the_game->first_view->cy1+ttop,
-            the_game->first_view->cx2-tright,
-            the_game->first_view->cy2-tbottom,text,font,
-            white_light+32*256,
-            wm->bright_color()
+                    the_game->first_view->m_aa.x + tleft,
+                    the_game->first_view->m_aa.y + ttop,
+                    the_game->first_view->m_bb.x - tright,
+                    the_game->first_view->m_bb.y - tbottom,
+                    text, font, white_light + 32 * 256, wm->bright_color()
 
             ))
         text=NULL;

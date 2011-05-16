@@ -225,10 +225,10 @@ void Game::grow_views(int amount)
         if(!f->local_player())
             continue;
 
-        f->suggest.cx1=(f->cx1 - amount);
-        f->suggest.cy1 = f->cy1 - amount / 2;
-        f->suggest.cx2=(f->cx2 + amount);
-        f->suggest.cy2 = f->cy2 + amount / 2;
+        f->suggest.cx1=(f->m_aa.x - amount);
+        f->suggest.cy1 = f->m_aa.y - amount / 2;
+        f->suggest.cx2=(f->m_bb.x + amount);
+        f->suggest.cy2 = f->m_bb.y + amount / 2;
         f->suggest.shift_down = f->shift_down;
         f->suggest.shift_right = f->shift_right;
         f->suggest.pan_x = f->pan_x;
@@ -248,7 +248,7 @@ void Game::grow_views(int amount)
             f->suggest.send_view = 0;
 
         if(f->next && f->next->local_player()
-           && f->suggest.cy2 >= f->next->cy1)
+           && f->suggest.cy2 >= f->next->m_aa.y)
             f->suggest.send_view = 0;
     }
 }
@@ -262,8 +262,7 @@ void Game::pan(int xv, int yv)
 view *Game::GetView(vec2i pos)
 {
     for(view *f = first_view; f; f = f->next)
-        if(f->drawable() && pos.x >= f->cx1 && pos.y >= f->cy1
-           && pos.x <= f->cx2 && pos.y <= f->cy2)
+        if(f->drawable() && pos >= f->m_aa && pos <= f->m_bb)
             return f;
     return NULL;
 }
@@ -284,8 +283,8 @@ vec2i Game::GetBgTile(vec2i pos)
     if(!f)
         return vec2i(-1, -1);
 
-    return vec2i((pos.x - f->cx1 + f->xoff() * bg_xmul / bg_xdiv) / b_wid,
-                 (pos.y - f->cy1 + f->yoff() * bg_ymul / bg_ydiv) / b_hi);
+    return vec2i((pos.x - f->m_aa.x + f->xoff() * bg_xmul / bg_xdiv) / b_wid,
+                 (pos.y - f->m_aa.y + f->yoff() * bg_ymul / bg_ydiv) / b_hi);
 }
 
 vec2i Game::MouseToGame(vec2i pos, view *v)
@@ -298,18 +297,18 @@ vec2i Game::MouseToGame(vec2i pos, view *v)
         return vec2i(-1, -1);
 
     if(dev & MAP_MODE)
-        return vec2i((pos.x - v->cx1) * ftile_width()
+        return vec2i((pos.x - v->m_aa.x) * ftile_width()
                            / AUTOTILE_WIDTH + map_xoff * ftile_width(),
-                     (pos.y - v->cy1) * ftile_height()
+                     (pos.y - v->m_aa.y) * ftile_height()
                            / AUTOTILE_HEIGHT + map_yoff * ftile_height());
 
-    return pos - vec2i(v->cx1 - v->xoff(), v->cy1 - v->yoff());
+    return pos - v->m_aa + vec2i(v->xoff(), v->yoff());
 }
 
 vec2i Game::GameToMouse(vec2i pos, view *v)
 {
     if (!(dev & MAP_MODE))
-        return pos + vec2i(v->cx1 - v->xoff(), v->cy1 - v->yoff());
+        return pos + v->m_aa - vec2i(v->xoff(), v->yoff());
 
     vec2i tmp;
 
@@ -317,9 +316,9 @@ vec2i Game::GameToMouse(vec2i pos, view *v)
         tmp = vec2i(map_xoff, map_yoff);
     else if(v->focus)
         tmp = vec2i(v->focus->x / ftile_width()
-                       - (v->cx2 - v->cx1) / AUTOTILE_WIDTH / 2,
+                       - (v->m_bb.x - v->m_aa.x) / AUTOTILE_WIDTH / 2,
                     v->focus->y / ftile_height()
-                       - (v->cy2 - v->cy1) / AUTOTILE_HEIGHT / 2);
+                       - (v->m_bb.y - v->m_aa.y) / AUTOTILE_HEIGHT / 2);
     else
         tmp = vec2i(0, 0);
 
@@ -327,9 +326,9 @@ vec2i Game::GameToMouse(vec2i pos, view *v)
     tmp.y = Max(tmp.y, 0);
 
     vec2i ret(pos.x * AUTOTILE_WIDTH / ftile_width()
-                 - tmp.x * AUTOTILE_WIDTH + v->cx1,
+                 - tmp.x * AUTOTILE_WIDTH + v->m_aa.x,
               pos.y * AUTOTILE_HEIGHT / ftile_height()
-                 - tmp.y * AUTOTILE_HEIGHT + v->cy1);
+                 - tmp.y * AUTOTILE_HEIGHT + v->m_aa.y);
     if (tmp.x > 0)
         ret.x -= (v->focus->x * AUTOTILE_WIDTH / ftile_width())
                      % AUTOTILE_WIDTH;
@@ -391,13 +390,10 @@ void Game::set_state(int new_state)
         }
         else
             first_view = new view(NULL, NULL, 0);
-        first_view->cx1 = (xres + 1) / 2 - 155;
-        first_view->cy1 = (yres + 1) / 2 - 95;
-        first_view->cx2 = (xres + 1) / 2 + 155;
-        if(total_weapons)
-            first_view->cy2 = (yres + 1) / 2 + 68;
-        else
-            first_view->cy2 = (yres + 1) / 2 + 95;
+        first_view->m_aa.x = (xres + 1) / 2 - 155;
+        first_view->m_aa.y = (yres + 1) / 2 - 95;
+        first_view->m_bb.x = (xres + 1) / 2 + 155;
+        first_view->m_bb.y = (yres + 1) / 2 + (total_weapons ? 68 : 95);
         d = 1;
     }
 
@@ -414,9 +410,9 @@ void Game::set_state(int new_state)
     pal->load();    // restore old palette
 
     if(playing_state(state) &&  !(dev & EDIT_MODE))
-        wm->SetMouseShape(cache.img(c_target)->copy(), vec2i(8, 8));
+        wm->SetMouseShape(cache.img(c_target)->copy(), vec2i(8));
     else
-        wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1, 1));
+        wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1));
 
     if(old_state == SCENE_STATE && new_state != SCENE_STATE)
     {
@@ -649,7 +645,7 @@ void Game::draw_map(view *v, int interpolate)
     if(title_screen >= 0)
     {
       if(state == SCENE_STATE)
-        main_screen->SetClip(vec2i(v->cx1, v->cy1), vec2i(v->cx2 + 1, v->cy2 + 1));
+        main_screen->SetClip(v->m_aa, v->m_bb + vec2i(1));
       image *tit = cache.img(title_screen);
       main_screen->PutImage(tit, main_screen->Size() / 2 - tit->Size() / 2);
       if(state == SCENE_STATE)
@@ -666,34 +662,32 @@ void Game::draw_map(view *v, int interpolate)
   // view area dirty alreadt
 
   if(small_render)
-    main_screen->AddDirty(vec2i(v->cx1, v->cy1), vec2i((v->cx2 - v->cx1 + 1)*2 + v->cx1 + 1, v->cy1+(v->cy2 - v->cy1 + 1)*2 + 1));
+    main_screen->AddDirty(v->m_aa, (v->m_bb - v->m_aa + vec2i(1)) * 2 + vec2i(v->m_aa.x, 0) + vec2i(1));
   else
-    main_screen->AddDirty(vec2i(v->cx1, v->cy1), vec2i(v->cx2 + 1, v->cy2 + 1));
+    main_screen->AddDirty(v->m_aa, v->m_bb + vec2i(1));
 
   if(v->draw_solid != -1)      // fill the screen and exit..
   {
     int c = v->draw_solid;
     main_screen->Lock();
-    for(int y = v->cy1; y <= v->cy2; y++)
-      memset(main_screen->scan_line(y)+v->cx1, c, v->cx2 - v->cx1 + 1);
+    for(int y = v->m_aa.y; y <= v->m_bb.y; y++)
+      memset(main_screen->scan_line(y)+v->m_aa.x, c, v->m_bb.x - v->m_aa.x + 1);
     main_screen->Unlock();
     v->draw_solid = -1;
     return;
   }
 
-  int32_t old_cx1 = 0, old_cy1 = 0, old_cx2 = 0, old_cy2 = 0;   // if we do a small render, we need to restore these
-  image *old_screen = NULL;
+    // if we do a small render, we need to restore these
+    vec2i old_aa(0), old_bb(0);
+    image *old_screen = NULL;
+
   if(small_render && (dev & DRAW_LIGHTS))  // cannot do this if we skip lighting
   {
-    old_cx1 = v->cx1;
-    old_cy1 = v->cy1;
-    old_cx2 = v->cx2;
-    old_cy2 = v->cy2;
+    old_aa = v->m_aa;
+    old_bb = v->m_bb;
 
-    v->cx1 = 0;
-    v->cy1 = 0;
-    v->cx2 = small_render->Size().x-1;
-    v->cy2 = small_render->Size().y-1;
+    v->m_aa = vec2i(0);
+    v->m_bb = small_render->Size() - vec2i(1);
 
     old_screen = main_screen;
     main_screen = small_render;
@@ -715,22 +709,22 @@ void Game::draw_map(view *v, int interpolate)
 //  if(xoff > max_xoff) xoff = max_xoff;
 //  if(yoff > max_yoff) yoff = max_yoff;
 
-  current_vxadd = xoff - v->cx1;
-  current_vyadd = yoff - v->cy1;
+  current_vxadd = xoff - v->m_aa.x;
+  current_vyadd = yoff - v->m_aa.y;
 
-  main_screen->SetClip(vec2i(v->cx1, v->cy1), vec2i(v->cx2 + 1, v->cy2 + 1));
+  main_screen->SetClip(v->m_aa, v->m_bb + vec2i(1));
 
   nxoff = xoff * bg_xmul / bg_xdiv;
   nyoff = yoff * bg_ymul / bg_ydiv;
 
 
-  x1 = nxoff / btile_width(); y1 = nyoff / btile_height();
-  x2 = x1+(v->cx2 - v->cx1 + btile_width())/btile_width();
-  y2 = y1+(v->cy2 - v->cy1 + btile_height())/btile_height();
+  x1 = nxoff / btile_width();
+  y1 = nyoff / btile_height();
+  x2 = x1 + (v->m_bb.x - v->m_aa.x + btile_width()) / btile_width();
+  y2 = y1 + (v->m_bb.y - v->m_aa.y + btile_height()) / btile_height();
 
-
-  xo = v->cx1 - nxoff % btile_width();
-  yo = v->cy1 - nyoff % btile_height();
+  xo = v->m_aa.x - nxoff % btile_width();
+  yo = v->m_aa.y - nyoff % btile_height();
 
   int xinc, yinc, draw_x, draw_y;
 
@@ -784,35 +778,33 @@ void Game::draw_map(view *v, int interpolate)
       {
     if(v->focus)
     {
-      x1 = v->focus->x / ftile_width()-(v->cx2 - v->cx1)/fw / 2;
-      y1 = v->focus->y / ftile_height()-(v->cy2 - v->cy1)/fh / 2;
+      x1 = v->focus->x / ftile_width() - (v->m_bb.x - v->m_aa.x) / fw / 2;
+      y1 = v->focus->y / ftile_height() - (v->m_bb.y - v->m_aa.y) / fh / 2;
     } else x1 = y1 = 0;
       }
       if(x1 > 0)
-        xo = v->cx1-((v->focus->x * fw / ftile_width()) %fw);
-      else xo = v->cx1;
+        xo = v->m_aa.x - ((v->focus->x * fw / ftile_width()) % fw);
+      else xo = v->m_aa.x;
       if(y1 > 0)
-        yo = v->cy1-((v->focus->y * fh / ftile_height()) %fh);
-      else yo = v->cy1;
+        yo = v->m_aa.y - ((v->focus->y * fh / ftile_height()) % fh);
+      else yo = v->m_aa.y;
     } else
     {
       fw = ftile_width();
       fh = ftile_height();
-      x1=(xoff)/fw; y1=(yoff)/fh;
-      xo = v->cx1 - xoff % fw;
-      yo = v->cy1 - yoff % fh;
+      x1 = xoff / fw;
+      y1 = yoff / fh;
+      xo = v->m_aa.x - xoff % fw;
+      yo = v->m_aa.y - yoff % fh;
 
     }
     if(x1 < 0) x1 = 0;
     if(y1 < 0) y1 = 0;
 
-    x2 = x1+(v->cx2 - v->cx1 + fw)/fw;
-    y2 = y1+(v->cy2 - v->cy1 + fh)/fh;
-    if(x2 >= current_level->foreground_width())
-      x2 = current_level->foreground_width()-1;
-    if(y2 >= current_level->foreground_height())
-      y2 = current_level->foreground_height()-1;
-
+      x2 = x1 + (v->m_bb.x - v->m_aa.x + fw) / fw;
+      y2 = y1 + (v->m_bb.y - v->m_aa.y + fh) / fh;
+      x2 = Min(x2, current_level->foreground_width() - 1);
+      y2 = Min(y2, current_level->foreground_height() - 1);
 
     xinc = fw;
     yinc = fh;
@@ -986,21 +978,16 @@ void Game::draw_map(view *v, int interpolate)
     {
       if(help_text_frames >= 0)
       {
-    int color;
+    int color = 2 + Max(0, help_text_frames - 10);
 
-    if(help_text_frames < 10)
-        color = 2;
-    else
-        color = 2+(help_text_frames - 10);
+    vec2i aa = v->m_aa;
+    vec2i bb(v->m_bb.x, v->m_aa.y + wm->font()->Size().y + 10);
 
-    int x1 = v->cx1, y1 = v->cy1, x2 = v->cx2, y2 = v->cy1 + wm->font()->Size().y+10;
+    remap_area(main_screen, aa.x, aa.y, bb.x, bb.y, white_light + 40 * 256);
+    main_screen->Bar(aa, vec2i(bb.x, aa.y), color);
+    main_screen->Bar(vec2i(aa.x, bb.y), bb, color);
 
-    remap_area(main_screen, x1, y1, x2, y2, white_light + 40 * 256);
-    main_screen->Bar(vec2i(x1, y1), vec2i(x2, y1), color);
-    main_screen->Bar(vec2i(x1, y2), vec2i(x2, y2), color);
-
-    wm->font()->PutString(main_screen, vec2i(x1 + 5, y1 + 5),
-                          help_text, color);
+    wm->font()->PutString(main_screen, aa + vec2i(5), help_text, color);
     if(color > 30)
         help_text_frames = -1;
     else help_text_frames++;
@@ -1011,18 +998,16 @@ void Game::draw_map(view *v, int interpolate)
     if(dev_cont)
     dev_cont->dev_draw(v);
     if(cache.in_use())
-    main_screen->PutImage(cache.img(vmm_image), vec2i(v->cx1, v->cy2 - cache.img(vmm_image)->Size().y+1));
+    main_screen->PutImage(cache.img(vmm_image), vec2i(v->m_aa.x, v->m_bb.y - cache.img(vmm_image)->Size().y+1));
 
     if(dev & DRAW_LIGHTS)
     {
       if(small_render)
       {
-    double_light_screen(main_screen, xoff, yoff, white_light, v->ambient, old_screen, old_cx1, old_cy1);
+    double_light_screen(main_screen, xoff, yoff, white_light, v->ambient, old_screen, old_aa.x, old_aa.y);
 
-    v->cx1 = old_cx1;
-    v->cy1 = old_cy1;
-    v->cx2 = old_cx2;
-    v->cy2 = old_cy2;
+    v->m_aa = old_aa;
+    v->m_bb = old_bb;
     main_screen = old_screen;
       } else
       {
@@ -1446,10 +1431,10 @@ void Game::show_time()
 
     char str[16];
     sprintf(str, "%ld", (long)(10000.0f / avg_ms));
-    console_font->PutString(main_screen, vec2i(first_view->cx1, first_view->cy1), str);
+    console_font->PutString(main_screen, first_view->m_aa, str);
 
     sprintf(str, "%d", total_active);
-    console_font->PutString(main_screen, vec2i(first_view->cx1, first_view->cy1 + 10), str);
+    console_font->PutString(main_screen, first_view->m_aa + vec2i(0, 10), str);
 }
 
 void Game::update_screen()
@@ -1468,8 +1453,8 @@ void Game::update_screen()
     {
       int w, h;
 
-      w=(f->cx2 - f->cx1 + 1);
-      h=(f->cy2 - f->cy1 + 1);
+      w = (f->m_bb.x - f->m_aa.x + 1);
+      h = (f->m_bb.y - f->m_aa.y + 1);
 
       total_active += current_level->add_drawables(f->xoff()-w / 4, f->yoff()-h / 4,
                              f->xoff()+w + w / 4, f->yoff()+h + h / 4);
@@ -1495,8 +1480,7 @@ void Game::update_screen()
     if(state == PAUSE_STATE)
     {
       for(view *f = first_view; f; f = f->next)
-        main_screen->PutImage(cache.img(pause_image), vec2i((f->cx1 + f->cx2)/2 - cache.img(pause_image)->Size().x/2,
-                   f->cy1 + 5), 1);
+        main_screen->PutImage(cache.img(pause_image), vec2i((f->m_aa.x + f->m_bb.x) / 2 - cache.img(pause_image)->Size().x/2, f->m_aa.y + 5), 1);
     }
 
     show_time();
@@ -1906,8 +1890,8 @@ void Game::step()
     f->update_scroll();
     int w, h;
 
-    w=(f->cx2 - f->cx1 + 1);
-    h=(f->cy2 - f->cy1 + 1);
+    w = (f->m_bb.x - f->m_aa.x + 1);
+    h = (f->m_bb.y - f->m_aa.y + 1);
         total_active += current_level->add_actives(f->xoff()-w / 4, f->yoff()-h / 4,
                          f->xoff()+w + w / 4, f->yoff()+h + h / 4);
       }
