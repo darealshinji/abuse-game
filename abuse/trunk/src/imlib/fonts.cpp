@@ -18,46 +18,42 @@
 
 #include "fonts.h"
 
-void JCFont::put_string(image *screen, int x, int y, char const *st, int color)
-{ while (*st)
-  { put_char(screen,x,y,*st,color);
-    st++;
-    x+=tl;
-  }
+void JCFont::PutString(image *screen, vec2i pos, char const *st, int color)
+{
+    for ( ; *st; st++, pos.x += m_size.x)
+        PutChar(screen, pos, *st, color);
 }
 
-void JCFont::put_char(image *screen,  int x, int y, char ch, int color)
+void JCFont::PutChar(image *screen, vec2i pos, char ch, int color)
 {
-  if (let[(int)ch])
-  {
-    if (color>=0)
-      let[(int)ch]->PutColor(screen,vec2i(x,y),color);
-    else let[(int)ch]->PutImage(screen,vec2i(x,y));
-  }
+    if (!m_data[(int)ch])
+        return;
+
+    if (color >= 0)
+        m_data[(int)ch]->PutColor(screen, pos, color);
+    else
+        m_data[(int)ch]->PutImage(screen, pos);
 }
 
 JCFont::JCFont(image *letters)
 {
-  tl=(letters->Size().x+1)/32;
-  th=(letters->Size().y+1)/8;
+    m_size = (letters->Size() + vec2i(1)) / vec2i(32, 8);
 
-  image tmp(vec2i(tl,th));
+    image tmp(m_size);
 
-  int ch;
-
-  for (ch=0; ch<256; ch++)
-  {
-    tmp.clear();
-    tmp.PutPart(letters, vec2i(0, 0), vec2i(((int)ch%32)*tl, ((int)ch/32)*th),
-                vec2i(((int)ch%32)*tl+tl, ((int)ch/32)*th+th), 1);
-    let[ch] = new TransImage(&tmp, "JCfont");
-  }
+    for (int ch = 0; ch < 256; ch++)
+    {
+        tmp.clear();
+        tmp.PutPart(letters, vec2i(0),
+                    vec2i(ch % 32, ch / 32) * m_size,
+                    vec2i(ch % 32 + 1, ch / 32 + 1) * m_size, 1);
+        m_data[ch] = new TransImage(&tmp, "JCfont");
+    }
 }
 
 JCFont::~JCFont()
 {
-  int ch;
-  for (ch=0; ch<256; ch++)
-    delete let[ch];
+    for (int ch = 0; ch < 256; ch++)
+        delete m_data[ch];
 }
 

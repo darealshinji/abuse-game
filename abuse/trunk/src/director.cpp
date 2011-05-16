@@ -46,7 +46,7 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *fo
     main_screen->GetClip(caa, cbb);
     main_screen->InClip(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
 
-  int h=font->height()+2,w=font->width(),x=x1,dist;
+  int h=font->Size().y+2,w=font->Size().x,x=x1,dist;
   y+=y1;
   char const *word_start;
   int word_size, word_len;
@@ -108,8 +108,8 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *fo
     {
       while (word_len--)
       {
-    font->put_char(main_screen,x+1,y+1,*word_start,0);
-    font->put_char(main_screen,x,y,*word_start,c);
+    font->PutChar(main_screen, vec2i(x + 1, y + 1), *word_start, 0);
+    font->PutChar(main_screen, vec2i(x, y), *word_start, c);
     word_start++;
     x+=w;
       }

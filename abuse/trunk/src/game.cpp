@@ -114,7 +114,7 @@ void handle_no_space()
         exit(0);
     }
 
-    info_field *inf = new info_field(0, wm->font()->height() * 2, ID_NULL,
+    info_field *inf = new info_field(0, wm->font()->Size().y * 2, ID_NULL,
                                      no_space_msg, NULL);
     button *b = new button(0, 0, ID_QUIT_OK, "Quit", inf);
     Jwindow *no_space = wm->new_window(0, 0, -1, -1, b, "ERROR");
@@ -993,14 +993,14 @@ void Game::draw_map(view *v, int interpolate)
     else
         color = 2+(help_text_frames - 10);
 
-    int x1 = v->cx1, y1 = v->cy1, x2 = v->cx2, y2 = v->cy1 + wm->font()->height()+10;
+    int x1 = v->cx1, y1 = v->cy1, x2 = v->cx2, y2 = v->cy1 + wm->font()->Size().y+10;
 
     remap_area(main_screen, x1, y1, x2, y2, white_light + 40 * 256);
     main_screen->Bar(vec2i(x1, y1), vec2i(x2, y1), color);
     main_screen->Bar(vec2i(x1, y2), vec2i(x2, y2), color);
 
-    wm->font()->put_string(main_screen, x1 + 5, y1 + 5,
-                   help_text, color);
+    wm->font()->PutString(main_screen, vec2i(x1 + 5, y1 + 5),
+                          help_text, color);
     if(color > 30)
         help_text_frames = -1;
     else help_text_frames++;
@@ -1446,10 +1446,10 @@ void Game::show_time()
 
     char str[16];
     sprintf(str, "%ld", (long)(10000.0f / avg_ms));
-    console_font->put_string(main_screen, first_view->cx1, first_view->cy1, str);
+    console_font->PutString(main_screen, vec2i(first_view->cx1, first_view->cy1), str);
 
     sprintf(str, "%d", total_active);
-    console_font->put_string(main_screen, first_view->cx1, first_view->cy1 + 10, str);
+    console_font->PutString(main_screen, vec2i(first_view->cx1, first_view->cy1 + 10), str);
 }
 
 void Game::update_screen()
@@ -2051,16 +2051,17 @@ void Game::draw(int scene_mode)
     if(scene_mode)
     {
         char const *helpstr = "ARROW KEYS CHANGE TEXT SPEED";
-        wm->font()->put_string(main_screen, main_screen->Size().x/2-(wm->font()->width()*strlen(helpstr))/2 + 1,
-            main_screen->Size().y-wm->font()->height()-5 + 1, helpstr, wm->dark_color());
-        wm->font()->put_string(main_screen, main_screen->Size().x/2-(wm->font()->width()*strlen(helpstr))/2,
-            main_screen->Size().y-wm->font()->height()-5, helpstr, wm->bright_color());
+        vec2i span = wm->font()->Size() * vec2i(strlen(helpstr), 1);
+        vec2i pos = (main_screen->Size() - span) / vec2i(2, 1);
+        wm->font()->PutString(main_screen, pos + vec2i(1),
+                              helpstr, wm->dark_color());
+        wm->font()->PutString(main_screen, pos, helpstr, wm->bright_color());
     }
 /*    else
     {
         char *helpstr="PRESS h FOR HELP";
         wm->font()->put_string(main_screen, main_screen->Size().x-wm->font()->width()*strlen(helpstr)-5,
-            main_screen->Size().y-wm->font()->height()-5, helpstr);
+            main_screen->Size().y-wm->font()->Size().y-5, helpstr);
     }*/
 /*    int dc = cache.img(window_colors)->pixel(0, 2);
     int mc = cache.img(window_colors)->pixel(1, 2);

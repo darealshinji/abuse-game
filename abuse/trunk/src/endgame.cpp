@@ -436,7 +436,7 @@ void share_end()
 
   int dx=(xres+1)/2-im->Size().x/2,dy=(yres+1)/2-im->Size().y/2;
   main_screen->PutImage(im, vec2i(dx, dy));
-  console_font->put_string(main_screen,xres/2+35,yres/2+100-console_font->height()-2,
+  console_font->PutString(main_screen, vec2i(xres / 2 + 35, yres / 2 + 100 - console_font->Size().y - 2),
                lstring_value(to_be));
   fade_in(NULL,32);
 
@@ -450,7 +450,7 @@ void share_end()
   for (i=0; i<320 && ev.type!=EV_KEY; i++)
   {
     main_screen->PutImage(im, vec2i(dx, dy));
-    console_font->put_string(main_screen,xres/2+35,yres/2+100-console_font->height()-2,
+    console_font->PutString(main_screen, vec2i(xres / 2 + 35, yres / 2 + 100 - console_font->Size().y - 2),
                lstring_value(to_be));
 
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(mid_plot),wm->font(),cmap,wm->bright_color());

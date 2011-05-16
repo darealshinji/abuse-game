@@ -173,8 +173,8 @@ void automap::toggle_window()
                                         h * AUTOTILE_HEIGHT, NULL, "Map");
         automap_window->m_surf->Bar(vec2i(17, 1), vec2i(17 + 8 * 6 + 3, 6),
                                     wm->medium_color());
-        wm->font()->put_string(automap_window->m_surf, 20, 2, "Automap",
-                               wm->dark_color());
+        wm->font()->PutString(automap_window->m_surf, vec2i(20, 2), "Automap",
+                              wm->dark_color());
         draw();
     }
 }

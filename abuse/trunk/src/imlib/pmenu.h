@@ -63,7 +63,7 @@ class pmenu
   Jwindow *bar;
   pmenu_item *top,*active;
   int itemw(pmenu_item *p)
-  { return strlen(p->name())*wm->font()->width()+2; }
+  { return strlen(p->name())*wm->font()->Size().x+2; }
   int itemx(pmenu_item *p);
   pmenu_item *inarea(int mx, int my, image *screen);
 public :

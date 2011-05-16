@@ -61,8 +61,8 @@ void profile_init()
 
   prof_win=wm->new_window(prop->getd("profile x",-1),
               prop->getd("profile y",-1),
-              20*console_font->width(),
-              (prof_height+1)*console_font->height(),
+              20 * console_font->Size().x,
+              (prof_height + 1) * console_font->Size().y,
               NULL,
               "PROFILE");
 }
@@ -127,17 +127,11 @@ void profile_update()
   int dy = 0;
   for (; i<prof_height; i++)
   {
-    console_font->put_string(prof_win->m_surf,spliter+1,dy,object_names[prof_list[i].otype]);
+    console_font->PutString(prof_win->m_surf, vec2i(spliter + 1, dy), object_names[prof_list[i].otype]);
     prof_win->m_surf->Bar(vec2i(spliter - 1 - (int)(prof_list[i].total_time * time_scaler), dy + 1),
-                          vec2i(spliter - 1, dy + console_font->height() - 1),
+                          vec2i(spliter - 1, dy + console_font->Size().y - 1),
                           wm->bright_color());
-    dy+=console_font->height()+1;
+    dy+=console_font->Size().y+1;
   }
-
 }
-
-
-
-
-
 

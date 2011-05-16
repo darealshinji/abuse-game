@@ -158,7 +158,7 @@ void psub_menu::hide(Jwindow *parent, int x, int y)
     {
       int w,h;
       calc_size(w,h);
-      item_num(active)->draw(win,x+3,y+3+active*(wm->font()->height()+1),w-6,0,0);
+      item_num(active)->draw(win,x+3,y+3+active*(wm->font()->Size().y+1),w-6,0,0);
     }
     wm->close_window(win);
     win=NULL;
@@ -167,19 +167,19 @@ void psub_menu::hide(Jwindow *parent, int x, int y)
 
 void psub_menu::calc_size(int &w, int &h)
 {
-  int tw=wm->font()->width(),th=wm->font()->height();
+    vec2i ts = wm->font()->Size();
   w=h=0;
   for (pmenu_item *p=first; p; p=p->next)
   {
     if (p->name())
     {
-      int l=strlen(p->name())*tw+8;
-      if (p->on_off) l+=tw*4;
+      int l=strlen(p->name())*ts.x+8;
+      if (p->on_off) l+=ts.x*4;
       if (l>w) w=l;
     }
     h++;
   }
-  h=h*(th+1)+8;
+  h=h*(ts.y+1)+8;
 }
 
 void psub_menu::draw(Jwindow *parent, int x, int y)
@@ -194,9 +194,9 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
     x=cbb.x-1-w-parent->m_pos.x;
   if (h+y+parent->m_pos.y>=cbb.y)
   {
-    if (parent->m_pos.y+parent->h+wm->font()->height()>=cbb.y)
+    if (parent->m_pos.y+parent->h+wm->font()->Size().y>=cbb.y)
       y=-h;
-    else y=y-h+wm->font()->height()+5;
+    else y=y-h+wm->font()->Size().y+5;
   }
 
 
@@ -212,10 +212,10 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
   int has_flags=0;
   pmenu_item *p=first;
   for (; p; p=p->next) if (p->on_off) has_flags=1;
-  x=has_flags ? 3+wm->font()->width() : 3;
-  y=3;
+  x = has_flags ? 3 + wm->font()->Size().x : 3;
+  y = 3;
 
-  for (p=first; p; p=p->next,i++,y+=wm->font()->height()+1)
+  for (p=first; p; p=p->next,i++,y+=wm->font()->Size().y+1)
     p->draw(win,x,y,w-6,0,i==active);
 
 }
@@ -223,11 +223,11 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
 void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int active)
 {
   int bx=x;
-  if (on_off) bx=x-wm->font()->width();
+  if (on_off) bx=x-wm->font()->Size().x;
 
   if (!n)
   {
-    int h=wm->font()->height();
+    int h=wm->font()->Size().y;
     parent->m_surf->WidgetBar(vec2i(x, y + h / 2 - 1),
                               vec2i(x + w - 1, y + h / 2), wm->dark_color(),
                               wm->medium_color(), wm->bright_color());
@@ -236,26 +236,26 @@ void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int ac
     if (active)
     {
       if (xp!=-1)
-        parent->m_surf->xor_bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->dark_color());
+        parent->m_surf->xor_bar(bx,y,x+w-1,y+wm->font()->Size().y+1,wm->dark_color());
       else
       {
     parent->m_surf->Bar(vec2i(bx, y),
-                        vec2i(x + w - 1, y + wm->font()->height() + 1),
+                        vec2i(x + w - 1, y + wm->font()->Size().y + 1),
                         wm->dark_color());
-    wm->font()->put_string(parent->m_surf,x+1,y+1,n,wm->medium_color());
-    if (on_off && *on_off) wm->font()->put_string(parent->m_surf,bx+1,y+1,"*",wm->medium_color());
+    wm->font()->PutString(parent->m_surf, vec2i(x+1, y+1), n, wm->medium_color());
+    if (on_off && *on_off) wm->font()->PutString(parent->m_surf, vec2i(bx+1, y+1), "*", wm->medium_color());
       }
     } else
     {
       if (xp!=-1)
-        parent->m_surf->xor_bar(bx,y,x+w-1,y+wm->font()->height()+1,wm->dark_color());
+        parent->m_surf->xor_bar(bx,y,x+w-1,y+wm->font()->Size().y+1,wm->dark_color());
       else
       {
     parent->m_surf->Bar(vec2i(bx, y),
-                        vec2i(x + w - 1, y + wm->font()->height() + 1),
+                        vec2i(x + w - 1, y + wm->font()->Size().y + 1),
                         wm->medium_color());
-    wm->font()->put_string(parent->m_surf,x+1,y+1,n,wm->bright_color());
-    if (on_off && *on_off) wm->font()->put_string(parent->m_surf,bx+1,y+1,"*",wm->bright_color());
+    wm->font()->PutString(parent->m_surf, vec2i(x + 1, y + 1), n, wm->bright_color());
+    if (on_off && *on_off) wm->font()->PutString(parent->m_surf, vec2i(bx + 1, y + 1), "*", wm->bright_color());
       }
     }
   }
@@ -272,7 +272,7 @@ void pmenu_item::draw(Jwindow *parent, int x, int y, int w, int top,
       if (sub)
       {
     if (top)
-          sub->draw(parent,x,y+wm->font()->height()+2);
+          sub->draw(parent,x,y+wm->font()->Size().y+2);
     else
       sub->draw(parent,x+w,y);
       }
@@ -282,7 +282,7 @@ void pmenu_item::draw(Jwindow *parent, int x, int y, int w, int top,
       if (sub)
       {
     if (top)
-          sub->hide(parent,x,y+wm->font()->height()+2);
+          sub->hide(parent,x,y+wm->font()->Size().y+2);
     else
       sub->hide(parent,x+w,y);
       }
@@ -327,9 +327,9 @@ int psub_menu::handle_event(Jwindow *parent, int x, int y, Event &ev)
 
   int has_flags=0,dx=3;
   for (pmenu_item *p=first; p; p=p->next) if (p->on_off) has_flags=1;
-  if (has_flags) dx+=wm->font()->width();
+  if (has_flags) dx+=wm->font()->Size().x;
 
-  int th=wm->font()->height();
+  int th=wm->font()->Size().y;
   if (ev.mouse_move.x>=x && ev.mouse_move.y>=y && ev.mouse_move.x<x+w && ev.mouse_move.y<y+h)
   {
     int new_active=(ev.mouse_move.y-y-3)/(th+1);
@@ -362,7 +362,7 @@ int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top,
   x+=parent->m_pos.x;
   y+=parent->m_pos.y;
   if (ev.mouse_move.x>=x && ev.mouse_move.y>=y && ev.mouse_move.x<x+w &&
-      ev.mouse_move.y<y+wm->font()->height()+2)
+      ev.mouse_move.y<y+wm->font()->Size().y+2)
   {
     if (sub) return 1;
     else
@@ -374,7 +374,7 @@ int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top,
   } else if (sub)
   {
     if (top)
-      return sub->handle_event(parent,x,y+wm->font()->height()+2,ev);
+      return sub->handle_event(parent,x,y+wm->font()->Size().y+2,ev);
     else return sub->handle_event(parent,x+w,y,ev);
   } else return 0;
 }

@@ -56,7 +56,7 @@ gui_status_node::~gui_status_node()
 void gui_status_manager::draw_bar(gui_status_node *whom, int perc)
 {
     long l = whom->stat_win->x2() - whom->stat_win->x1() - 6;
-    long h = wm->font()->height();
+    long h = wm->font()->Size().y;
 
     whom->stat_win->m_surf->Bar(vec2i(whom->stat_win->x1() + 1,
                                       whom->stat_win->y2() - h - 1),
@@ -98,8 +98,8 @@ void gui_status_manager::update(int percentage)
       time_marker now;
       if (now.diff_time(&first->last_time)>1)
       {
-    long wx=xres/2,wy=10,len1=strlen(first->name)*wm->font()->width()+10,len2=0,len3,
-      h1=wm->font()->height()+5,h2=first->show ? first->show->height() : 0;
+    long wx=xres/2,wy=10,len1=strlen(first->name)*wm->font()->Size().x+10,len2=0,len3,
+      h1=wm->font()->Size().y+5,h2=first->show ? first->show->height() : 0;
 
     if (first->show) len2=first->show->width()/2;
     if (len2>len1) len3=len2; else len3=len1;
@@ -111,10 +111,10 @@ void gui_status_manager::update(int percentage)
     if (p) wy=p->stat_win->m_pos.y+p->stat_win->y2()+5;
 
     int mx = first->stat_win->x1() + 1;
-    int my = first->stat_win->y1() + wm->font()->height() / 2;
+    int my = first->stat_win->y1() + wm->font()->Size().y / 2;
     first->stat_win=wm->new_window(wx, wy, len3, h1*2+h2, NULL, "status");
-    wm->font()->put_string(first->stat_win->m_surf, mx, my, first->name, wm->black());
-    wm->font()->put_string(first->stat_win->m_surf, mx, my, first->name, wm->bright_color());
+    wm->font()->PutString(first->stat_win->m_surf, vec2i(mx, my), first->name, wm->black());
+    wm->font()->PutString(first->stat_win->m_surf, vec2i(mx, my), first->name, wm->bright_color());
     if (first->show)
       first->show->draw(first->stat_win->m_surf, (first->stat_win->x2()-first->stat_win->x1())/2-
                 first->show->width()/2, my+h1, NULL);

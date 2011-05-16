@@ -64,16 +64,16 @@ class text_field : public ifield
 {
   int cur;
   char *prompt,*data,*format;
-  int xstart() { return m_pos.x+wm->font()->width()*(strlen(prompt)+1)+3; }
-  int xend() { return m_pos.x+wm->font()->width()*(strlen(prompt)+1+strlen(format))+7; }
-  int yend() { return m_pos.y+wm->font()->height()+5; }
+  int xstart() { return m_pos.x + wm->font()->Size().x * (strlen(prompt)+1) + 3; }
+  int xend() { return m_pos.x + wm->font()->Size().x * (strlen(prompt) + 1 + strlen(format)) + 7; }
+  int yend() { return m_pos.y + wm->font()->Size().y + 5; }
   void draw_cur(int color, image *screen);
   int last_spot() { int x=strlen(data); while (x && data[x-1]==' ') x--; return x; }
   void draw_text(image *screen)
   {
     screen->Bar(vec2i(xstart() + 1, m_pos.y + 1), vec2i(xend() - 1, yend() - 1),
                 wm->dark_color());
-    wm->font()->put_string(screen,xstart()+1,m_pos.y+3,data);
+    wm->font()->PutString(screen, vec2i(xstart() + 1, m_pos.y + 3), data);
   }
 public :
   text_field(int X, int Y, int ID, char const *Prompt, char const *Format,

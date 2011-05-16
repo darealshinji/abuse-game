@@ -138,7 +138,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   args=CAR(CDR(args));
 
   int options = ((LList *)args)->GetLength();
-  int mh=(font->height()+1)*options+10,maxw=0;
+  int mh=(font->Size().y+1)*options+10,maxw=0;
 
   Cell *c=(Cell *)args;
   for (; !NILP(c); c=CDR(c))
@@ -147,7 +147,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       maxw = strlen(men_str(CAR(c)));
   }
 
-  int mw=(font->width())*maxw+20;
+  int mw=(font->Size().x)*maxw+20;
   int mx=main_screen->Size().x/2-mw/2,
       my=main_screen->Size().y/2-mh/2;
 
@@ -156,10 +156,10 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
 
   if (title)
   {
-    int tl=strlen(title)*font->width();
+    int tl=strlen(title)*font->Size().x;
     int tx=main_screen->Size().x/2-tl/2;
-    dark_widget(tx-2,my-font->height()-4,tx+tl+2,my-2,wm->medium_color(),wm->dark_color(),180);
-    font->put_string(main_screen,tx+1,my-font->height()-2,title,wm->bright_color());
+    dark_widget(tx-2,my-font->Size().y-4,tx+tl+2,my-2,wm->medium_color(),wm->dark_color(),180);
+    font->PutString(main_screen, vec2i(tx + 1, my-font->Size().y - 2), title,wm->bright_color());
   }
 
   dark_widget(mx,my,mx+mw-1,my+mh-1,wm->medium_color(),wm->dark_color(),200);
@@ -169,15 +169,15 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   for (c=(Cell *)args; !NILP(c); c=CDR(c))
   {
     char *ms=men_str(CAR(c));
-    font->put_string(main_screen,mx+10+1,y+1,ms,wm->black());
-    font->put_string(main_screen,mx+10,y,ms,wm->bright_color());
-    y+=font->height()+1;
+    font->PutString(main_screen, vec2i(mx + 10 + 1, y + 1), ms, wm->black());
+    font->PutString(main_screen, vec2i(mx + 10, y), ms, wm->bright_color());
+    y+=font->Size().y+1;
   }
 
   wm->flush_screen();
   Event ev;
   int choice=0,done=0;
-  int bh=font->height()+3;
+  int bh=font->Size().y+3;
   image *save = new image(vec2i(mw - 2,bh));
   int color=128,cdir=50;
 
@@ -215,7 +215,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
     if (ev.mouse_move.x>mx && ev.mouse_move.x<mx+mw && ev.mouse_move.y>my &&
         ev.mouse_move.y<my+mh)
     {
-      int msel=(ev.mouse_move.y-my)/(font->height()+1);
+      int msel=(ev.mouse_move.y-my)/(font->Size().y+1);
       if (msel>=options) msel=options-1;
       if (msel==choice)                    // clicked on already selected item, return it
         done=1;
@@ -231,15 +231,15 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
         delete last_color_time;
       last_color_time=new time_marker;
 
-      int by1=(font->height()+1)*choice+my+5-2;
+      int by1=(font->Size().y+1)*choice+my+5-2;
       int by2=by1+bh-1;
 
       save->PutPart(main_screen, vec2i(0, 0), vec2i(mx + 1, by1), vec2i(mx + mw - 1, by2 + 1));
       tint_area(mx+1,by1,mx+mw-2,by2,63,63,63,color);
 
       char *cur=men_str(nth(choice,args));
-      font->put_string(main_screen,mx+10+1,by1+3,cur,wm->black());
-      font->put_string(main_screen,mx+10,by1+2,cur,wm->bright_color());
+      font->PutString(main_screen, vec2i(mx + 10 + 1, by1 + 3), cur, wm->black());
+      font->PutString(main_screen, vec2i(mx + 10, by1 + 2), cur, wm->bright_color());
       main_screen->Rectangle(vec2i(mx + 1, by1), vec2i(mx + mw - 2, by2),
                              wm->bright_color());
 

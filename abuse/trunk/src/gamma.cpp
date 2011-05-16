@@ -140,7 +140,7 @@ void gamma_correct(palette *&pal, int force_menu)
             gray_pal->find_closest(md_r, md_g, md_b),
             gray_pal->find_closest(dr_r, dr_g, dr_b));
 
-        int sh = wm->font()->height() + 35;
+        int sh = wm->font()->Size().y + 35;
         button *but = new button(5, 5 + sh * 3, ID_GAMMA_OK, cache.img(ok_button),
             new info_field(35, 10 + sh * 3, ID_NULL, lang_string("gamma_msg"), 0));
 

@@ -29,8 +29,8 @@ class console
   void redraw();
   void put_char(char ch);
   void do_cr();
-  int screen_w() { return w*fnt->width(); }
-  int screen_h() { return h*fnt->height(); }
+  int screen_w() { return w * fnt->Size().x; }
+  int screen_h() { return h * fnt->Size().y; }
   int wx() { return con_win->x1(); }
   int wy() { return con_win->y1(); }
   void draw_cursor();

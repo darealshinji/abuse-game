@@ -34,21 +34,17 @@ void console::put_string(char const *st)
 
 void console::redraw()
 {
-  if (con_win)
-  {
+    if (!con_win)
+        return;
+
     con_win->clear();
-    char *s=screen;
-    int dx,dy,xa=fnt->width(),ya=fnt->height(),i,j;
-    for (j=0,dy=wy(); j<h; j++,dy+=ya)
-    {
-      for (i=0,dx=wx(); i<w; i++,s++,dx+=xa)
-      {
-    if (*s)
-      fnt->put_char(con_win->m_surf,dx,dy,*s);
-      }
-    }
-    fnt->put_char(con_win->m_surf,wx()+cx*xa,wy()+cy*ya,'_');
-  }
+    char *s = screen;
+    int xa = fnt->Size().x, ya = fnt->Size().y;
+    for (int j = 0, dy = wy(); j < h; j++, dy += ya)
+        for (int i = 0, dx = wx(); i < w; i++, s++, dx += xa)
+            if (*s)
+                fnt->PutChar(con_win->m_surf, vec2i(dx, dy), *s);
+    fnt->PutChar(con_win->m_surf, vec2i(wx() + cx * xa, wy() + cy * ya), '_');
 }
 
 void console::show()
@@ -97,21 +93,23 @@ console::console(JCFont *font, int width, int height, char const *Name)
 
 void console::draw_cursor()
 {
-  if (con_win)
-    fnt->put_char(con_win->m_surf,cx*fnt->width()+wx(),cy*fnt->height()+wy(),'_');
+    if (!con_win)
+        return;
+
+    fnt->PutChar(con_win->m_surf,
+                 vec2i(cx, cy) * fnt->Size() + vec2i(wx(), wy()), '_');
 }
 
 
 void console::draw_char(int x, int y, char ch)
 {
-  if (con_win)
-  {
-    int fw=fnt->width(),fh=fnt->height();
-    int dx=wx()+x*fw,dy=wy()+y*fh;
-    con_win->m_surf->Bar(vec2i(dx, dy), vec2i(dx + fw - 1, dy + fh - 1),
-                         wm->black());
-    fnt->put_char(con_win->m_surf,dx,dy,ch);
-  }
+    if (!con_win)
+        return;
+
+    vec2i fs = fnt->Size();
+    vec2i pos = vec2i(wx(), wy()) + vec2i(x, y) * fs;
+    con_win->m_surf->Bar(pos, pos + fs - vec2i(1), wm->black());
+    fnt->PutChar(con_win->m_surf, pos, ch);
 }
 
 void console::do_cr()
