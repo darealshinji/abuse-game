@@ -201,16 +201,6 @@ void WindowManager::get_event(Event &ev)
        ev.window_position.y=ev.mouse_move.y+drag_mousey;
     }
   }
-  if (ev.type == EV_REDRAW)
-  {
-    for (Jwindow *j = m_first; j; j = j->next)
-       j->m_surf->AddDirty(vec2i(ev.redraw.x1, ev.redraw.y1) - j->m_pos,
-                           vec2i(ev.redraw.x2 + 1, ev.redraw.y2 + 1) - j->m_pos.x);
-    m_surf->AddDirty(vec2i(ev.redraw.x1, ev.redraw.y1),
-                     vec2i(ev.redraw.x2 + 1, ev.redraw.y2 + 1));
-    flush_screen();
-    ev.type=EV_SPURIOUS;   // we took care of this one by ourselves.
-  }
 }
 
 void Jwindow::Resize(vec2i size)

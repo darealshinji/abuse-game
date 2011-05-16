@@ -14,7 +14,7 @@
 #define EV_MOUSE_BUTTON   2
 #define EV_KEY            4
 #define EV_KEY_SPECIAL    8
-#define EV_REDRAW        16
+/* #define EV_REDRAW        16 UNUSED */
 #define EV_SPURIOUS      32
 #define EV_RESIZE        64
 #define EV_KEYRELEASE   128
@@ -51,7 +51,6 @@ public:
     int mouse_button, key;
 
     struct { char alt, ctrl, shift; } key_special;
-    struct { int x1, y1, x2, y2; void *start; } redraw;
 
     Jwindow *window;      // NULL is root
     vec2i window_position;
@@ -73,9 +72,8 @@ public:
     void SysWarpMouse(vec2i pos);
     void SysEvent(Event &ev);
 
-  int IsPending();
-  void Get(Event &ev);
-  void add_redraw(int X1, int Y1, int X2, int Y2, void *Start);
+    int IsPending();
+    void Get(Event &ev);
   void flush_screen();
 
   int has_mouse() { return 1; }

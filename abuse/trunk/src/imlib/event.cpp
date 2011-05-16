@@ -112,20 +112,3 @@ void EventHandler::flush_screen()
     update_dirty(main_screen);
 }
 
-//
-// add_redraw()
-// Add a redraw rectangle.
-//
-void EventHandler::add_redraw(int X1, int Y1, int X2, int Y2, void *start)
-{
-    Event *ev;
-    ev = new Event;
-    ev->type = EV_REDRAW;
-    ev->redraw.x1 = X1;
-    ev->redraw.x2 = X2;
-    ev->redraw.y1 = Y1;
-    ev->redraw.y2 = Y2;
-    ev->redraw.start = start;
-    Push(ev);
-}
-
