@@ -152,7 +152,6 @@ void gamma_correct(palette *&pal, int force_menu)
 
         Event ev;
         wm->flush_screen();
-#if !defined __CELLOS_LV2__
         do
         {
             do
@@ -167,9 +166,6 @@ void gamma_correct(palette *&pal, int force_menu)
         } while(!abort && (ev.type != EV_MESSAGE || ev.message.id != ID_GAMMA_OK));
 
         dg = ((spicker *)gw->inm->get(ID_GREEN_PICKER))->first_selected() * 4;
-#else
-        /* Do not display the gamma window on the PS3 for now. */
-#endif
 
         wm->close_window(gw);
         wm->flush_screen();
