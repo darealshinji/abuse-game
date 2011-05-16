@@ -124,20 +124,17 @@ public :
   int btile_height() { return b_hi; }
 
 
-  void put_fg(int x, int y, int type);
-  void put_bg(int x, int y, int type);
+    void PutFg(vec2i pos, int type);
+    void PutBg(vec2i pos, int type);
   void draw_map(view *v, int interpolate=0);
   void dev_scroll();
-  void put_block_fg(int x, int y, TransImage *im);
-  void put_block_bg(int x, int y, image *im);
-
 
   int in_area(Event &ev, int x1, int y1, int x2, int y2);
   void load_level(char const *name);
   void set_level(level *nl);
   void show_time();
-  tile_type get_map_bg(int x, int y) { return current_level->get_bg(x,y); }
-  tile_type get_map_fg(int x, int y) { return current_level->get_fg(x,y); }
+    tile_type GetMapBg(vec2i pos) { return current_level->GetBg(pos); }
+    tile_type GetMapFg(vec2i pos) { return current_level->GetFg(pos); }
   void end_session();
   void need_refresh() { refresh=1; }       // for development mode only
   palette *current_palette() { return pal; }
@@ -155,7 +152,7 @@ public :
   void play_sound(int id, int vol, int32_t x, int32_t y);
   void request_level_load(char *name);
   void request_end();
-} ;
+};
 
 extern int playing_state(int state);
 #endif

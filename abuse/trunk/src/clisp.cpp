@@ -1667,7 +1667,7 @@ long c_caller(long number, void *args)
       if (x<0 || y<0 || x>=current_level->foreground_width() || y>=current_level->foreground_width())
         lbreak("%d %d is out of range of fg map",x,y);
       else
-        current_level->put_fg(x,y,type);
+        current_level->PutFg(vec2i(x, y), type);
     } break;
     case 193 :
     {
@@ -1675,7 +1675,7 @@ long c_caller(long number, void *args)
       int32_t y=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->foreground_width() || y>=current_level->foreground_width())
         lbreak("%d %d is out of range of fg map",x,y);
-      else return current_level->get_fg(x,y);
+      else return current_level->GetFg(vec2i(x, y));
     } break;
     case 194 :
     {
@@ -1685,7 +1685,7 @@ long c_caller(long number, void *args)
       if (x<0 || y<0 || x>=current_level->background_width() || y>=current_level->background_width())
         lbreak("%d %d is out of range of fg map",x,y);
       else
-        current_level->put_bg(x,y,type);
+        current_level->PutBg(vec2i(x, y), type);
     } break;
     case 195 :
     {
@@ -1693,7 +1693,7 @@ long c_caller(long number, void *args)
       int32_t y=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->background_width() || y>=current_level->background_width())
         lbreak("%d %d is out of range of fg map",x,y);
-      else return current_level->get_bg(x,y);
+      else return current_level->GetBg(vec2i(x, y));
     } break;
     case 196 : load_tiles(args); break;
     case 197 :
