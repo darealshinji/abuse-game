@@ -59,7 +59,7 @@ EventHandler::EventHandler(image *screen, palette *pal)
     image *im = new image(vec2i(8, 10), mouse_sprite);
     f.Apply(im);
 
-    m_sprite = new sprite(screen, im, 100, 100);
+    m_sprite = new Sprite(screen, im, vec2i(100, 100));
     m_pos = screen->Size() / 2;
     m_center = vec2i(0, 0);
     m_button = 0;

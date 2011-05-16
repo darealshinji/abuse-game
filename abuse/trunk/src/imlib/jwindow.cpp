@@ -333,10 +333,10 @@ void WindowManager::flush_screen()
     if (has_mouse())
     {
         m1 = m_pos - m_center;
-        vec2i m2 = m1 + m_sprite->visual->Size();
+        vec2i m2 = m1 + m_sprite->m_visual->Size();
 
-        m_sprite->save->PutPart(m_surf, vec2i(0, 0), m1, m2);
-        m_surf->PutImage(m_sprite->visual, m1, 1);
+        m_sprite->m_save->PutPart(m_surf, vec2i(0, 0), m1, m2);
+        m_surf->PutImage(m_sprite->m_visual, m1, 1);
     }
 
     for (Jwindow *p = m_first; p; p = p->next)
@@ -345,7 +345,7 @@ void WindowManager::flush_screen()
     update_dirty(m_surf);
 
     if (has_mouse())
-        m_surf->PutImage(m_sprite->save, m1);
+        m_surf->PutImage(m_sprite->m_save, m1);
 
     for (Jwindow *p = m_first; p; p = p->next)
     {
@@ -354,9 +354,9 @@ void WindowManager::flush_screen()
 
         if (has_mouse())
         {
-            m_sprite->save->PutPart(p->m_surf, vec2i(0, 0), m1 - p->m_pos,
-                                    m1 - p->m_pos + m_sprite->visual->Size());
-            p->m_surf->PutImage(m_sprite->visual, m1 - p->m_pos, 1);
+            m_sprite->m_save->PutPart(p->m_surf, vec2i(0, 0), m1 - p->m_pos,
+                                      m1 - p->m_pos + m_sprite->m_visual->Size());
+            p->m_surf->PutImage(m_sprite->m_visual, m1 - p->m_pos, 1);
         }
 
 //          m_surf->delete_dirty(p->m_pos.x, p->m_pos.y, p->m_pos.x+p->l, p->m_pos.y+p->h);
@@ -367,7 +367,7 @@ void WindowManager::flush_screen()
                                         q->m_pos.y + q->h - p->m_pos.y);
         update_dirty(p->m_surf, p->m_pos.x, p->m_pos.y);
         if (has_mouse())
-            p->m_surf->PutImage(m_sprite->save, m1 - p->m_pos, 0);
+            p->m_surf->PutImage(m_sprite->m_save, m1 - p->m_pos, 0);
     }
 }
 
