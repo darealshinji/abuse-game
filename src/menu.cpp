@@ -445,7 +445,7 @@ void menu_handler(Event &ev, InputManager *inm)
       the_game->set_state(RUN_STATE);
       view *v;
       for (v=player_list; v; v=v->next)
-        if (v->focus)
+        if (v->m_focus)
           v->reset_player();
 
     } break;

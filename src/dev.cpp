@@ -1015,10 +1015,10 @@ void dev_controll::do_command(char const *command, Event &ev)
 
   if (!strcmp(fword,"reload"))
   {
-    if (current_level && player_list && player_list->focus)
+    if (current_level && player_list && player_list->m_focus)
     {
       edit_object=selected_object=NULL;
-      int32_t cx=player_list->focus->x,cy=player_list->focus->y;
+      int32_t cx=player_list->m_focus->x,cy=player_list->m_focus->y;
 
       // save the old weapon array
       int32_t *w=(int32_t *)malloc(total_weapons*sizeof(int32_t));
@@ -1032,8 +1032,8 @@ void dev_controll::do_command(char const *command, Event &ev)
       if (main_screen)  // don't draw if graphics haven't been setup yet.
         the_game->draw();
       player_list->reset_player();
-      player_list->focus->x=cx;
-      player_list->focus->y=cy;
+      player_list->m_focus->x=cx;
+      player_list->m_focus->y=cy;
 
       memcpy(player_list->weapons,w,total_weapons*sizeof(int32_t));
       free(w);
@@ -2827,11 +2827,11 @@ void dev_controll::handle_event(Event &ev)
       } break;
       case 'j' :
       {
-        if (current_level && player_list && player_list->focus)
+        if (current_level && player_list && player_list->m_focus)
         {
           vec2i pos = the_game->MouseToGame(dlast);
-          player_list->focus->x = pos.x;
-          player_list->focus->y = pos.y;
+          player_list->m_focus->x = pos.x;
+          player_list->m_focus->y = pos.y;
           do_command("center",ev);
           the_game->need_refresh();
         }

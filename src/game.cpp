@@ -208,8 +208,7 @@ void make_screen_size(int w, int h)
         f->suggest.cx2 = (xres + 1) / 2 + w / 2;
         f->suggest.cy1 = (yres - 31) / 2 + 5 - h / 2;
         f->suggest.cy2 = (yres - 51) / 2 + 5 + h / 2;
-        f->suggest.shift_down = f->shift_down;
-        f->suggest.shift_right = f->shift_right;
+        f->suggest.shift = f->m_shift;
         f->suggest.pan_x = f->pan_x;
         f->suggest.pan_y = f->pan_y;
         f->suggest.send_view = 1;
@@ -229,8 +228,7 @@ void Game::grow_views(int amount)
         f->suggest.cy1 = f->m_aa.y - amount / 2;
         f->suggest.cx2=(f->m_bb.x + amount);
         f->suggest.cy2 = f->m_bb.y + amount / 2;
-        f->suggest.shift_down = f->shift_down;
-        f->suggest.shift_right = f->shift_right;
+        f->suggest.shift = f->m_shift;
         f->suggest.pan_x = f->pan_x;
         f->suggest.pan_y = f->pan_y;
 
@@ -314,10 +312,10 @@ vec2i Game::GameToMouse(vec2i pos, view *v)
 
     if (dev & EDIT_MODE)
         tmp = vec2i(map_xoff, map_yoff);
-    else if(v->focus)
-        tmp = vec2i(v->focus->x / ftile_width()
+    else if(v->m_focus)
+        tmp = vec2i(v->m_focus->x / ftile_width()
                        - (v->m_bb.x - v->m_aa.x) / AUTOTILE_WIDTH / 2,
-                    v->focus->y / ftile_height()
+                    v->m_focus->y / ftile_height()
                        - (v->m_bb.y - v->m_aa.y) / AUTOTILE_HEIGHT / 2);
     else
         tmp = vec2i(0, 0);
@@ -330,10 +328,10 @@ vec2i Game::GameToMouse(vec2i pos, view *v)
               pos.y * AUTOTILE_HEIGHT / ftile_height()
                  - tmp.y * AUTOTILE_HEIGHT + v->m_aa.y);
     if (tmp.x > 0)
-        ret.x -= (v->focus->x * AUTOTILE_WIDTH / ftile_width())
+        ret.x -= (v->m_focus->x * AUTOTILE_WIDTH / ftile_width())
                      % AUTOTILE_WIDTH;
     if(tmp.y > 0)
-        ret.y -= (v->focus->y * AUTOTILE_HEIGHT / ftile_height())
+        ret.y -= (v->m_focus->y * AUTOTILE_HEIGHT / ftile_height())
                      % AUTOTILE_HEIGHT;
 
     return ret;
@@ -384,7 +382,7 @@ void Game::set_state(int new_state)
     {
         if(player_list)
         {
-            first_view = new view(player_list->focus, NULL, -1);
+            first_view = new view(player_list->m_focus, NULL, -1);
             first_view->pan_x = player_list->xoff();
             first_view->pan_y = player_list->yoff();
         }
@@ -776,17 +774,17 @@ void Game::draw_map(view *v, int interpolate)
     y1 = map_yoff;
       } else
       {
-    if(v->focus)
+    if(v->m_focus)
     {
-      x1 = v->focus->x / ftile_width() - (v->m_bb.x - v->m_aa.x) / fw / 2;
-      y1 = v->focus->y / ftile_height() - (v->m_bb.y - v->m_aa.y) / fh / 2;
+      x1 = v->m_focus->x / ftile_width() - (v->m_bb.x - v->m_aa.x) / fw / 2;
+      y1 = v->m_focus->y / ftile_height() - (v->m_bb.y - v->m_aa.y) / fh / 2;
     } else x1 = y1 = 0;
       }
       if(x1 > 0)
-        xo = v->m_aa.x - ((v->focus->x * fw / ftile_width()) % fw);
+        xo = v->m_aa.x - ((v->m_focus->x * fw / ftile_width()) % fw);
       else xo = v->m_aa.x;
       if(y1 > 0)
-        yo = v->m_aa.y - ((v->focus->y * fh / ftile_height()) % fh);
+        yo = v->m_aa.y - ((v->m_focus->y * fh / ftile_height()) % fh);
       else yo = v->m_aa.y;
     } else
     {
@@ -1449,7 +1447,7 @@ void Game::update_screen()
       current_level->clear_active_list();
       for(; f; f = f->next)
       {
-    if(f->focus)
+    if(f->m_focus)
     {
       int w, h;
 
@@ -1761,8 +1759,7 @@ void Game::get_input()
                                         v->suggest.cy2 = 5 + h;
                                         v->suggest.pan_x = v->pan_x;
                                         v->suggest.pan_y = v->pan_y;
-                                        v->suggest.shift_down = v->shift_down;
-                                        v->suggest.shift_right = v->shift_right;
+                                        v->suggest.shift = v->m_shift;
                                     }
                                 }
                                 draw();
@@ -1826,7 +1823,7 @@ void net_send(int force = 0)
 
 
 
-      if(!player_list->focus)
+      if(!player_list->m_focus)
       {
     dprintf("Players have not been created\ncall create_players");
     exit(0);
@@ -1885,7 +1882,7 @@ void Game::step()
     total_active = 0;
     for(view *f = first_view; f; f = f->next)
     {
-      if(f->focus)
+      if(f->m_focus)
       {
     f->update_scroll();
     int w, h;
@@ -1948,7 +1945,7 @@ Game::~Game()
   while(player_list)
   {
     view *p = player_list;
-    game_object *o = p->focus;
+    game_object *o = p->m_focus;
     player_list = player_list->next;
     delete p;
     o->set_controller(NULL);

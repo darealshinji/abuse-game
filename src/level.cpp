@@ -52,13 +52,13 @@ game_object *level::attacker(game_object *who)
   view *f=the_game->first_view;
   for (; f; f=f->next)
   {
-    if (f->focus)
+    if (f->m_focus)
     {
-      int32_t tmp_d=abs(f->focus->x-who->x)+abs(f->focus->y-who->y);
+      int32_t tmp_d=abs(f->m_focus->x-who->x)+abs(f->m_focus->y-who->y);
       if (tmp_d<d)
       {
     d=tmp_d;
-    c=f->focus;
+    c=f->m_focus;
       }
     }
   }
@@ -76,7 +76,7 @@ int level::is_attacker(game_object *who)
 
 game_object *level::main_character()
 {
-  return the_game->first_view->focus;
+  return the_game->first_view->m_focus;
 }
 
 void level::load_fail()
@@ -88,8 +88,8 @@ void level::load_fail()
   first_active=NULL;
   view *f=player_list;
   for (; f; f=f->next)
-    if (f->focus)
-      current_level->remove_object(f->focus);
+    if (f->m_focus)
+      current_level->remove_object(f->m_focus);
 
   while (first)
   {
@@ -130,28 +130,28 @@ void level::restart()
   f=the_game->first_view;
   for (o=first; f && o; o=o->next)
   {
-    while (f && !f->focus) f=f->next;
+    while (f && !f->m_focus) f=f->next;
     if (f)
     {
       if (!strcmp(object_names[o->otype],"START"))
       {
     if (!found) found=o;
-    f->focus->x=o->x;
-    f->focus->y=o->y;
-    f->focus->set_hp(get_ability(f->focus->otype,start_hp));
-    f->focus->set_state(stopped);
+    f->m_focus->x=o->x;
+    f->m_focus->y=o->y;
+    f->m_focus->set_hp(get_ability(f->m_focus->otype,start_hp));
+    f->m_focus->set_state(stopped);
     f=f->next;
       }
     }
   }
   while (f)
   {
-    if (f->focus)
+    if (f->m_focus)
     {
-      f->focus->x=found->x;
-      f->focus->y=found->y;
-      f->focus->set_hp(get_ability(f->focus->otype,start_hp));
-      f->focus->set_state(stopped);
+      f->m_focus->x=found->x;
+      f->m_focus->y=found->y;
+      f->m_focus->set_hp(get_ability(f->m_focus->otype,start_hp));
+      f->m_focus->set_state(stopped);
     }
     f=f->next;
   }
@@ -162,7 +162,7 @@ void level::next_focus()
 {
 /*  int i;
   for (i=0; i<total_objs; i++)
-    if (obj[i]==the_game->first_view->focus)
+    if (obj[i]==the_game->first_view->m_focus)
     {
       int tries=total_objs;
       do
@@ -170,9 +170,9 @@ void level::next_focus()
     i++;
     if (i==total_objs)
       i=0;
-    the_game->first_view->focus=obj[i];
-      }  while ((!the_game->first_view->focus->is_playable() ||
-         the_game->first_view->focus->hp<=0) && tries--);
+    the_game->first_view->m_focus=obj[i];
+      }  while ((!the_game->first_view->m_focus->is_playable() ||
+         the_game->first_view->m_focus->hp<=0) && tries--);
       return ;
     }            */
 }
@@ -309,8 +309,8 @@ view *level::make_view_list(int nplayers)
     if (!strcmp(object_names[o->otype],"START"))
     {
       f=new view(create(use_type,o->x,o->y),f,num); num++;
-      f->focus->set_controller(f);
-      add_object_after(f->focus,o);
+      f->m_focus->set_controller(f);
+      add_object_after(f->m_focus,o);
       j++;
       last_start=o;
     }
@@ -323,9 +323,9 @@ view *level::make_view_list(int nplayers)
   {
     if (startable)
     {
-      game_object *o=create(use_type,f->focus->x,f->focus->y);
+      game_object *o=create(use_type,f->m_focus->x,f->m_focus->y);
       f=new view(o,f,num); num++;
-      f->focus->set_controller(f);
+      f->m_focus->set_controller(f);
       add_object_after(o,last_start);
     }
     else
@@ -1666,7 +1666,7 @@ void level::write_player_info(bFILE *fp, object_node *save_list)
   fp->write_uint32(t);
 
   for (v=player_list; v; v=v->next)
-    fp->write_uint32(object_to_number_in_list(v->focus,save_list));
+    fp->write_uint32(object_to_number_in_list(v->m_focus,save_list));
 
   int tv=total_view_vars();
   int i=0;
@@ -1720,11 +1720,11 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
     while (player_list)    // delete all of the views (they will get recreated)
     {
       v=player_list;
-      if (v->focus)
+      if (v->m_focus)
       {
-        if (v->focus->controller())
-         v->focus->set_controller(NULL);
-    delete v->focus;
+        if (v->m_focus->controller())
+         v->m_focus->set_controller(NULL);
+    delete v->m_focus;
       }
 
       player_list=player_list->next;
@@ -1828,9 +1828,9 @@ int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_lis
       game_object *o=current_object;
       for (f=player_list; f; f=f->next)
       {
-    if (f->focus)
+    if (f->m_focus)
     {
-      current_object = f->focus;
+      current_object = f->m_focus;
       void *m = LSpace::Tmp.Mark();
       fun->EvalFunction(NULL);
       LSpace::Tmp.Restore(m);
@@ -3093,10 +3093,10 @@ void level::insert_players()
     game_object *st=find_type(start,f->player_number);
     if (st)
     {
-      f->focus->x=st->x;
-      f->focus->y=st->y;
+      f->m_focus->x=st->x;
+      f->m_focus->y=st->y;
     }
-    add_object_after(f->focus,st);
+    add_object_after(f->m_focus,st);
   }
 
 }

@@ -172,7 +172,7 @@ void *ant_ai()
       {
     if (player_list->next)
       b=current_level->attacker(current_object);
-    else b=player_list->focus;
+    else b=player_list->m_focus;
     if (abs(b->x-o->x)<130 && (o->y<b->y))
       fall=1;
       }
@@ -204,7 +204,7 @@ void *ant_ai()
     {
       if (player_list->next)
         b=current_level->attacker(current_object);
-      else b=player_list->focus;
+      else b=player_list->m_focus;
       if (abs(b->x-o->x)<130 && (o->y<b->y))
       fall=1;
     }
@@ -223,7 +223,7 @@ void *ant_ai()
 
       if (player_list->next)
       b=current_level->attacker(current_object);
-      else b=player_list->focus;
+      else b=player_list->m_focus;
 
       scream_check(o,b);
       int ret=o->mover(0,0,0);
@@ -257,7 +257,7 @@ void *ant_ai()
     {
       if (player_list->next)
       b=current_level->attacker(current_object);
-      else b=player_list->focus;
+      else b=player_list->m_focus;
       scream_check(o,b);
 
 
@@ -349,7 +349,7 @@ void *ant_ai()
       {
         if (player_list->next)
         b=current_level->attacker(current_object);
-        else b=player_list->focus;
+        else b=player_list->m_focus;
         fire_at_player(o,b);
         o->set_state(stopped);
         o->set_aistate(ANT_RUNNING);
@@ -385,7 +385,7 @@ void *ant_ai()
     {
       if (player_list->next)
       b=current_level->attacker(current_object);
-      else b=player_list->focus;
+      else b=player_list->m_focus;
       scream_check(o,b);
       if (((jrand()%8)==0 && abs(o->x-b->x)<10 && o->y<b->y) ||
       o->lvars[ANT_need_to_dodge]==1)
@@ -424,7 +424,7 @@ void *ant_ai()
       {
     if (player_list->next)
       b=current_level->attacker(current_object);
-    else b=player_list->focus;
+    else b=player_list->m_focus;
     fire_at_player(o,b);
     o->set_state((character_state)S_top_walk);
     o->set_aistate(ANT_ROOF_WALK);

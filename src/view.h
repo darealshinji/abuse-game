@@ -21,10 +21,11 @@ class area_controller;
 
 struct suggest_struct
 {
-  int32_t cx1,cy1,cx2,cy2,shift_down,shift_right,pan_x,pan_y;
-  int32_t new_weapon;
-  uint8_t send_view,send_weapon_change;
-} ;
+    int32_t cx1,cy1,cx2,cy2,pan_x,pan_y;
+    vec2i shift;
+    int32_t new_weapon;
+    uint8_t send_view,send_weapon_change;
+};
 
 
 class view;
@@ -36,14 +37,13 @@ public:
     view(game_object *Focus, view *Next, int number);
     ~view();
 
-  int key_down(int key) { return keymap[key/8]&(1<<(key%8)); }
-  void set_key_down(int key, int x) { if (x) keymap[key/8]|=(1<<(key%8)); else keymap[key/8]&=~(1<<(key%8)); }
-  void reset_keymap() { memset(keymap,0,sizeof(keymap)); }
+  int key_down(int key) { return m_keymap[key/8]&(1<<(key%8)); }
+  void set_key_down(int key, int x) { if (x) m_keymap[key/8]|=(1<<(key%8)); else m_keymap[key/8]&=~(1<<(key%8)); }
+  void reset_keymap() { memset(m_keymap,0,sizeof(m_keymap)); }
   void add_chat_key(int key);
 
   char name[100];
   struct suggest_struct suggest;
-  int32_t shift_down,shift_right;             // shift of view
 
   int god;                                // :) if you believe in such things
   int player_number;
@@ -56,7 +56,6 @@ public:
   int32_t current_weapon;
 
 
-  game_object *focus;                     // object we are focusing on (player)
   int x_suggestion,                      // input from the player at the current time
       y_suggestion,
       b1_suggestion,
@@ -70,8 +69,7 @@ public:
 
   short ambient;                        // ambient lighting setting, used by draw
 
-  int32_t pan_x,pan_y,no_xleft,no_xright,no_ytop,no_ybottom,
-       last_x,last_y,last_last_x,last_last_y,view_percent;
+  int32_t pan_x,pan_y,no_xleft,no_xright,no_ytop,no_ybottom, view_percent;
 
   int32_t last_left,last_right,last_up,last_down,   // how many frames ago were these pressed (<=0)
        last_b1,last_b2,last_b3,last_b4,last_hp,last_ammo,last_type;
@@ -112,7 +110,7 @@ public:
   void last_weapon();
 
   void reset_player();
-  int receive_failed() { return focus==NULL; }
+  int receive_failed() { return m_focus==NULL; }
   int32_t get_view_var_value(int num);
   int32_t set_view_var_value(int num, int32_t x);
   void configure_for_area(area_controller *a);
@@ -123,10 +121,14 @@ public:
   int get_team();
 
     vec2i m_aa, m_bb; // view area to show
+    vec2i m_shift; // shift of view
+    vec2i m_lastpos, m_lastlastpos;
+
+    game_object *m_focus; // object we are focusing on (player)
 
 private:
-    uint8_t keymap[512 / 8];
-    char chat_buf[60];
+    uint8_t m_keymap[512 / 8];
+    char m_chat_buf[60];
 };
 
 extern view *player_list;

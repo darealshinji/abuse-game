@@ -614,7 +614,7 @@ void *l_caller(long number, void *args)
     case 4 :
     { if (player_list->next)
         return LPointer::Create(current_level->attacker(current_object));
-      else return LPointer::Create(player_list->focus); } break;
+      else return LPointer::Create(player_list->m_focus); } break;
     case 5 : return LPointer::Create(current_level->find_closest(current_object->x,
                                  current_object->y,
                                lnumber_value(CAR(args)->Eval()),
@@ -663,12 +663,12 @@ void *l_caller(long number, void *args)
       return LPointer::Create(o);
     } break;
 
-    case 9 : return LPointer::Create(the_game->first_view->focus); break;
+    case 9 : return LPointer::Create(the_game->first_view->m_focus); break;
     case 10 :
     {
       view *v=((game_object *)lpointer_value(CAR(args)->Eval()))->controller()->next;
       if (v)
-        return LPointer::Create(v->focus);
+        return LPointer::Create(v->m_focus);
       else return NULL;
     } break;
     case 11 :
@@ -1255,16 +1255,14 @@ long c_caller(long number, void *args)
     case 77 :
     {
       game_object *o=(game_object *)lpointer_value(CAR(args));
-      if (!o->controller())
-    printf("set shift : object is not a focus\n");
-      else o->controller()->shift_down=lnumber_value(CAR(CDR(args))); return 1;
+      if (!o->controller()) printf("set shift: object is not a focus\n");
+      else o->controller()->m_shift.y=lnumber_value(CAR(CDR(args))); return 1;
     } break;
     case 78 :
     {
       game_object *o=(game_object *)lpointer_value(CAR(args));
-      if (!o->controller())
-    printf("set shift : object is not a focus\n");
-      else o->controller()->shift_right=lnumber_value(CAR(CDR(args))); return 1;
+      if (!o->controller()) printf("set shift: object is not a focus\n");
+      else o->controller()->m_shift.x=lnumber_value(CAR(CDR(args))); return 1;
     } break;
     case 79 : current_object->set_gravity(lnumber_value(CAR(args))); return 1; break;
     case 80 : return current_object->tick(); break;
@@ -1818,9 +1816,9 @@ long c_caller(long number, void *args)
       current_object->draw_predator();
     } break;
     case 211:
-    { return lget_view(CAR(args),"shift_down")->shift_right; } break;
+    { return lget_view(CAR(args),"shift_down")->m_shift.y; } break;
     case 212:
-    { return lget_view(CAR(args),"shift_right")->shift_down; } break;
+    { return lget_view(CAR(args),"shift_right")->m_shift.x; } break;
     case 213 :
     { view *v=lget_view(CAR(args),"set_no_scroll_range"); args=CDR(args);
       v->no_xleft=lnumber_value(CAR(args)); args=CDR(args);
@@ -1869,7 +1867,7 @@ long c_caller(long number, void *args)
     {
       view *v=current_object->controller();
       if (!v) lbreak("object has no view : view_push_down");
-      else v->last_y-=lnumber_value(CAR(args));
+      else v->m_lastpos.y-=lnumber_value(CAR(args));
     } break;
     case 222 :
     {
@@ -2272,11 +2270,11 @@ long c_caller(long number, void *args)
 
         v->kills=0;
     game_object *o=current_object;
-    current_object=v->focus;
+    current_object=v->m_focus;
 
     ((LSymbol *)l_restart_player)->EvalFunction(NULL);
     v->reset_player();
-    v->focus->set_aistate(0);
+    v->m_focus->set_aistate(0);
     current_object=o;
       }
 
