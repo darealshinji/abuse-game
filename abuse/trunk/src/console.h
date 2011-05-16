@@ -35,7 +35,7 @@ class console
   int wy() { return con_win->y1(); }
   void draw_cursor();
   void put_string(char const *st);
-  void draw_char(int x, int y, char ch);
+  void DrawChar(vec2i pos, char ch);
   void toggle() { if (con_win) hide(); else show(); }
   void print_f(char const *format, ...);
   ~console();

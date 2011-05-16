@@ -102,20 +102,20 @@ void console::draw_cursor()
 }
 
 
-void console::draw_char(int x, int y, char ch)
+void console::DrawChar(vec2i pos, char ch)
 {
     if (!con_win)
         return;
 
     vec2i fs = fnt->Size();
-    vec2i pos = vec2i(wx(), wy()) + vec2i(x, y) * fs;
+    pos = vec2i(wx(), wy()) + pos * fs;
     con_win->m_surf->Bar(pos, pos + fs - vec2i(1), wm->black());
     fnt->PutChar(con_win->m_surf, pos, ch);
 }
 
 void console::do_cr()
 {
-  if (cx<w && cy<h)  draw_char(cx,cy,screen[cy*w+cx]);
+  if (cx<w && cy<h) DrawChar(vec2i(cx, cy), screen[cy*w+cx]);
   cx=0;
   cy++;
   if (cy>=h)
@@ -142,7 +142,7 @@ void console::put_char(char ch)
       if (cx)
       {
     if (con_win)
-      draw_char(cx,cy,screen[cy*w+cx]);
+      DrawChar(vec2i(cx, cy), screen[cy*w+cx]);
     cx--;
     if (con_win)
       draw_cursor();
@@ -157,7 +157,7 @@ void console::put_char(char ch)
     {
       screen[cy*w+cx]=ch;
       if (con_win)
-        draw_char(cx,cy,ch);
+        DrawChar(vec2i(cx, cy), ch);
       cx++;
       if (cx>=w) do_cr(); else
       if (con_win) draw_cursor();
