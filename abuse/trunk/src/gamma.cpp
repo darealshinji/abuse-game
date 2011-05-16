@@ -147,7 +147,8 @@ void gamma_correct(palette *&pal, int force_menu)
         gray_picker *gp = new gray_picker(2, 5 + sh, ID_GREEN_PICKER, 0, dg / 4, but);
         gp->set_pos(dg / 4);
 
-        Jwindow *gw = wm->new_window(xres / 2 - 190, yres / 2 - 90, -1, -1, gp);
+        Jwindow *gw = wm->CreateWindow(vec2i(xres / 2 - 190,
+                                             yres / 2 - 90), vec2i(-1), gp);
 
         Event ev;
         wm->flush_screen();

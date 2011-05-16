@@ -86,7 +86,7 @@ Jwindow *create_num_window(int mx, int total_saved, int lines, image **thumbnail
   for (i=0; i<total_saved-1; i++)
     buts[i]->next=buts[i+1];
 
-  return wm->new_window(mx,yres/2-(Jwindow::top_border()+maxih*5)/2,-1,-1,buts[0]);
+  return wm->CreateWindow(vec2i(mx, yres / 2 - (Jwindow::top_border() + maxih * 5) / 2), vec2i(-1), buts[0]);
 }
 
 int get_save_spot()
@@ -231,9 +231,9 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
     buts[i]->next=buts[i+1];
 */
 
-
+    // Create thumbnail window 5 pixels to the right of the list window
     Jwindow *l_win=create_num_window(0,total_saved,MAX_SAVE_LINES,thumbnails);
-    Jwindow *preview=wm->new_window(l_win->m_pos.x+l_win->l+5,l_win->m_pos.y,max_w,max_h,NULL,title);
+    Jwindow *preview=wm->CreateWindow(l_win->m_pos + vec2i(l_win->m_size.x + 5, 0), vec2i(max_w, max_h), NULL, title);
 
     preview->m_surf->PutImage(first, vec2i(preview->x1(), preview->y1()));
 

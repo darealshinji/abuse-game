@@ -168,7 +168,7 @@ int confirm_quit()
     cancel_image = cache.img(cache.reg("art/frame.spe", "cancel",
                                      SPEC_IMAGE, 1))->copy();
 
-    quitw = wm->new_window(xres / 2 + 40, yres / 2, 80, -1,
+    quitw = wm->CreateWindow(vec2i(xres / 2 + 40, yres / 2), vec2i(80, -1),
               new button(10, wm->font()->Size().y + 4, ID_QUIT_OK, ok_image,
               new button(38, wm->font()->Size().y + 4, ID_CANCEL, cancel_image,
               new info_field(2, 2, ID_NULL, symbol_str("sure?"), NULL))),
@@ -324,9 +324,9 @@ void dev_controll::make_ambient()
     if(ambw)
         return;
 
-    ambw = wm->new_window(prop->getd("ambient x", -1),
-                          prop->getd("ambient y", -1), -1, -1,
-                          new amb_cont(0, 0, NULL), "ambient");
+    ambw = wm->CreateWindow(vec2i(prop->getd("ambient x", -1),
+                                  prop->getd("ambient y", -1)),
+                            vec2i(-1), new amb_cont(0, 0, NULL), "ambient");
 }
 
 void dev_term::execute(char *st)
@@ -592,8 +592,8 @@ void dev_controll::toggle_toolbar()
                          ID_NULL,
                          5,(visual_object **)dev_mode_pict,dev_mode_ids,DEV_MODES,
                         pal,pal,NULL);
-    tbw=wm->new_window(prop->getd("toolbar x",-1),
-               prop->getd("toolbar y",-1),-1,-1,tp);
+    tbw=wm->CreateWindow(vec2i(prop->getd("toolbar x", -1),
+                               prop->getd("toolbar y", -1)), vec2i(-1), tp);
     tp->set_x(setx,tbw->m_surf);
   }
 }
@@ -633,9 +633,9 @@ void dev_controll::toggle_show_menu()
     if(dev & DRAW_FG_LAYER)
         fb->push();
 
-    show_menu = wm->new_window(prop->getd("layer x", -1),
-                               prop->getd("layer y", -1), -1, -1,
-                               fb, symbol_str(symbol_str("SHOW?")));
+    show_menu = wm->CreateWindow(vec2i(prop->getd("layer x", -1),
+                                       prop->getd("layer y", -1)), vec2i(-1),
+                                 fb, symbol_str(symbol_str("SHOW?")));
 }
 
 char **listable_objs=NULL;
@@ -672,12 +672,12 @@ void dev_controll::toggle_omenu()
             c++;
         }
 
-    omenu = wm->new_window(prop->getd("objects x", 0),
-                           prop->getd("objects y", 0), -1, -1,
-                           new pick_list(0, 0, DEV_CREATE,
-                                         yres / wm->font()->Size().y / 2,
-                                         listable_objs, total_listable, 0,
-                                         NULL, cache.img(window_texture)));
+    omenu = wm->CreateWindow(vec2i(prop->getd("objects x", 0),
+                                   prop->getd("objects y", 0)), vec2i(-1),
+                             new pick_list(0, 0, DEV_CREATE,
+                                           yres / wm->font()->Size().y / 2,
+                                           listable_objs, total_listable, 0,
+                                           NULL, cache.img(window_texture)));
 }
 
 static int get_omenu_item(int x)
@@ -713,12 +713,12 @@ void dev_controll::toggle_pmenu()
     for(int i = 0; i < total_pals; i++)
         pwin_list[i] = pal_wins[i]->name;
 
-    pmenu = wm->new_window(prop->getd("pal x",0),
-                           prop->getd("pal y",-1), -1,-1,
-                           new pick_list(0, 0, DEV_PALETTE,
-                                         yres / wm->font()->Size().y / 2,
-                                         pwin_list, total_pals, 0, NULL,
-                                         cache.img(window_texture)));
+    pmenu = wm->CreateWindow(vec2i(prop->getd("pal x", 0),
+                                   prop->getd("pal y", -1)), vec2i(-1),
+                             new pick_list(0, 0, DEV_PALETTE,
+                                           yres / wm->font()->Size().y / 2,
+                                           pwin_list, total_pals, 0, NULL,
+                                           cache.img(window_texture)));
 }
 
 
@@ -743,15 +743,16 @@ void dev_controll::toggle_fgw()
                                         fg_scale, maxh, fg_w, NULL);
     f_tp->reverse();
 
-    forew = wm->new_window(prop->getd("fore x", -30), prop->getd("fore y", 0),
-                           -1, -1, f_tp,symbol_str("l_fg"));
+    forew = wm->CreateWindow(vec2i(prop->getd("fore x", -30),
+                                   prop->getd("fore y", 0)),
+                             vec2i(-1), f_tp,symbol_str("l_fg"));
 }
 
 void dev_controll::toggle_music_window()
 {
 /*  if (!music_window)
   {
-    music_window=wm->new_window(-1,30,0,0,
+    music_window=wm->CreateWindow(vec2i(-1, 30), vec2i(0, 0),
              new pick_list(0,0,DEV_MUSIC_PICKLIST,10,song_list,total_songs,0,NULL));
     wm->fnt->put_string(music_window->m_surf,0,1,"songs");
   } else
@@ -780,8 +781,9 @@ void dev_controll::toggle_bgw()
     /* FIXME: previous code had 1 instead of 0, investigate */
     tile_picker *f_tp = new tile_picker(0, 0, DEV_BG_PICKER, SPEC_BACKTILE,
                                         bg_scale, maxh, bg_w, NULL);
-    forew = wm->new_window(prop->getd("back x", -30), prop->getd("back y", 0),
-                           -1, -1, f_tp,symbol_str("l_bg"));
+    forew = wm->CreateWindow(vec2i(prop->getd("back x", -30),
+                                   prop->getd("back y", 0)),
+                             vec2i(-1), f_tp,symbol_str("l_bg"));
 }
 
 void dev_controll::toggle_search_window()
@@ -800,8 +802,9 @@ void dev_controll::toggle_search_window()
 
     int bw = cache.img(dev_forward)->Size().x;
     /* FIXME: previous code had 1,1 instead of 0,0 -- investigate */
-    search_window = wm->new_window(prop->getd("searchw x", -30),
-                                   prop->getd("searchw y", 0), -1, -1,
+    search_window = wm->CreateWindow(vec2i(prop->getd("searchw x", -30),
+                                           prop->getd("searchw y", 0)),
+                                     vec2i(-1),
         new text_field(0, 0, ID_SEARCH_TEXT, "object name>",
                        "***************************",
                        prop->get("search name", ""),
@@ -1332,8 +1335,8 @@ void dev_controll::toggle_light_window()
 
     int bh = 16 + 6, bw = 20 + 6, th = wm->font()->Size().y + 4;
 
-    lightw = wm->new_window(prop->getd("light create x", 0),
-                            prop->getd("light create y", 0), -1, -1,
+    lightw = wm->CreateWindow(vec2i(prop->getd("light create x", 0),
+                                    prop->getd("light create y", 0)), vec2i(-1),
         new button_box(0, 0, DEV_LIGHT_BUTTON_BOX, 1,
             new button(bw * 0, bh * 0, DEV_LIGHT0, cache.img(light_buttons[0]),
             new button(bw * 1, bh * 0, DEV_LIGHT1, cache.img(light_buttons[1]),
@@ -1389,17 +1392,15 @@ void dev_controll::make_ai_window(game_object *o)
       last=p;
       wh+=th;
     }
-    aiw=wm->new_window(prop->getd("ai x",0),
-               prop->getd("ai y",0),
-               -1,-1,
+    aiw=wm->CreateWindow(vec2i(prop->getd("ai x",0), prop->getd("ai y",0)),
+                         vec2i(-1),
        new button(wl,owh-20,DEV_AI_OK,cache.img(dev_ok),first),"ai");
 
   }
   else
   {
-    aiw=wm->new_window(prop->getd("ai x",0),
-               prop->getd("ai y",0),
-               -1,-1,
+    aiw=wm->CreateWindow(vec2i(prop->getd("ai x", 0), prop->getd("ai y", 0)),
+                         vec2i(-1),
        new button(wl,wh-20,DEV_AI_OK,cache.img(dev_ok),
        new text_field(wl,wh+th*0, DEV_AI_XVEL,    symbol_str("ai_xvel"),"#####",(double)o->xvel(),
        new text_field(wl,wh+th*1, DEV_AI_YVEL,    symbol_str("ai_yvel"),"#####",(double)o->yvel(),
@@ -1572,10 +1573,8 @@ void dev_controll::pick_handle_input(Event &ev)
     {
       if (area_win) close_area_win(0);
       int wl=0,wh=0,th=wm->font()->Size().y+12,bw=cache.img(dev_ok)->Size().x+10;
-      area_win=wm->new_window(prop->getd("area_box x",0),
-                  prop->getd("area_box y",0),
-                  -1,-1,
-
+      area_win=wm->CreateWindow(vec2i(prop->getd("area_box x", 0),
+                                      prop->getd("area_box y", 0)), vec2i(-1),
                   new button(wl+bw*0,wh-8,DEV_AREA_OK,cache.img(dev_ok),
                   new button(wl+bw*1,wh-8,DEV_AREA_DELETE,cache.img(dev_del),
 
@@ -1893,25 +1892,24 @@ void dev_controll::handle_event(Event &ev)
 
         int bw=20+6,bh=16+6;
 
-        oedit=wm->new_window(prop->getd("oedit x",0),
-                 prop->getd("oedit y",0),
-                 -1,-1,new button_box(0,0,ID_NULL,1,
-        new button(bw*0,0,DEV_OEDIT_OK,cache.img(dev_ok),
-        new button(bw*1,0,DEV_OEDIT_MOVE,cache.img(dev_move),
-        new button(bw*2,0,DEV_OEDIT_FRONT,cache.img(dev_front),
-            new button(bw*3,0,DEV_OEDIT_BACK,cache.img(dev_back),
-            new button(bw*4,0,DEV_OEDIT_COPY,cache.img(dev_copy),
-        new button(bw*0,bh*1,DEV_OEDIT_DELETE,cache.img(dev_del),
-               NULL)))))),
-           new button(bw*5,bh*0,DEV_OEDIT_AI,cache.img(dev_ai),
+        oedit=wm->CreateWindow(vec2i(prop->getd("oedit x", 0),
+                                     prop->getd("oedit y", 0)), vec2i(-1),
+            new button_box(0,0,ID_NULL,1,
+                new button(bw*0,0,DEV_OEDIT_OK,cache.img(dev_ok),
+                new button(bw*1,0,DEV_OEDIT_MOVE,cache.img(dev_move),
+                new button(bw*2,0,DEV_OEDIT_FRONT,cache.img(dev_front),
+                new button(bw*3,0,DEV_OEDIT_BACK,cache.img(dev_back),
+                new button(bw*4,0,DEV_OEDIT_COPY,cache.img(dev_copy),
+                new button(bw*0,bh*1,DEV_OEDIT_DELETE,cache.img(dev_del),
+                           NULL)))))),
+            new button(bw*5,bh*0,DEV_OEDIT_AI,cache.img(dev_ai),
 
-           new button_box(bw*1,bh*1,DEV_OEDIT_CHAR_BOX,0,
-           new button(bw*1,bh*1,DEV_OEDIT_LEFT,cache.img(dev_char_left),
-           new button(bw*2,bh*1,DEV_OEDIT_RIGHT,cache.img(dev_char_right),NULL)),
-
-           new button(bw*3,bh*1,DEV_OBJECTS_DELETE,cache.img(dev_objects),
-           new button(bw*4,bh*1,DEV_LIGHTS_DELETE,cache.img(dev_lights),NULL))))),
-                 symbol_str("l_EDIT"));
+            new button_box(bw*1,bh*1,DEV_OEDIT_CHAR_BOX,0,
+                new button(bw*1,bh*1,DEV_OEDIT_LEFT,cache.img(dev_char_left),
+                new button(bw*2,bh*1,DEV_OEDIT_RIGHT,cache.img(dev_char_right),NULL)),
+                new button(bw*3,bh*1,DEV_OBJECTS_DELETE,cache.img(dev_objects),
+                new button(bw*4,bh*1,DEV_LIGHTS_DELETE,cache.img(dev_lights),NULL))))),
+            symbol_str("l_EDIT"));
 
 
         edit_object=selected_object;
@@ -1930,9 +1928,8 @@ void dev_controll::handle_event(Event &ev)
           edit_object->add_light(edit_light);
           edit_light->known=1;
         }
-        ledit=wm->new_window(prop->getd("ledit x",0),
-                 prop->getd("ledit y",0),
-                 -1,-1,
+        ledit=wm->CreateWindow(vec2i(prop->getd("ledit x", 0),
+                                     prop->getd("ledit y", 0)), vec2i(-1),
               new button_box(0,0,ID_NULL,1,
                    new button(bw*0,0,DEV_LEDIT_OK,cache.img(dev_ok),
                new button(bw*1,0,DEV_LEDIT_MOVE,cache.img(dev_move),
@@ -2099,7 +2096,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        mess_win=wm->new_window(xres/2,yres/2,-1,-1,
+        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
                new button(10,20,ID_LEVEL_NEW_OK,symbol_str("YES"),
                         new button(40,20,ID_CANCEL,symbol_str("NO"),
           new info_field(0,0,ID_NULL,symbol_str("sure?"),NULL))),symbol_str("New?"));
@@ -2118,7 +2115,7 @@ void dev_controll::handle_event(Event &ev)
       if (!mess_win)
       {
         int h=wm->font()->Size().y+8;
-        mess_win=wm->new_window(xres/2,yres/2,-1,-1,
+        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
             new text_field(0,h*0,ID_MESS_STR1,symbol_str("width_"),"****",
                    current_level ? current_level->foreground_width() : 100,
             new text_field(0,h*1,ID_MESS_STR2,symbol_str("height_"),"****",
@@ -2170,7 +2167,7 @@ void dev_controll::handle_event(Event &ev)
       if (!mess_win)
       {
         int h=wm->font()->Size().y+8;
-        mess_win=wm->new_window(xres/2,yres/2,-1,-1,
+        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
             new text_field(0,h*0,ID_RECORD_DEMO_FILENAME,
                    "demo filename","*******************",
                    "demo.dat",
@@ -2190,7 +2187,7 @@ void dev_controll::handle_event(Event &ev)
       if (!mess_win)
       {
         int h=wm->font()->Size().y+8;
-        mess_win=wm->new_window(xres/2,yres/2,-1,-1,
+        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
             new text_field(0,h*0,ID_PLAY_DEMO_FILENAME,
                    "demo filename","*******************",
                    "demo.dat",
@@ -2211,7 +2208,7 @@ void dev_controll::handle_event(Event &ev)
       if (!mess_win)
       {
         int h=wm->font()->Size().y+8;
-        mess_win=wm->new_window(xres/2,yres/2,-1,-1,
+        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
             new text_field(0,h*0,ID_MESS_STR1,symbol_str("x_mul"),"****",bg_xmul,
             new text_field(0,h*1,ID_MESS_STR2,symbol_str("x_div"),"****",bg_xdiv,
             new text_field(0,h*2,ID_MESS_STR3,symbol_str("y_mul"),"****",bg_ymul,
@@ -2232,7 +2229,8 @@ void dev_controll::handle_event(Event &ev)
       {
         int h=wm->font()->Size().y+8;
 
-        warn_win=wm->new_window(xres/2-40,yres/2-40,-1,-1,
+        warn_win=wm->CreateWindow(vec2i(xres / 2 - 40, yres / 2 - 40),
+                                  vec2i(-1),
                   new info_field(0,0,ID_NULL,
                       symbol_str("back_loss"),
                       new button(10,h*4,ID_SET_SCROLL_OK,symbol_str("ok_button"),
@@ -2276,7 +2274,7 @@ void dev_controll::handle_event(Event &ev)
       if (!mess_win)
       {
         int h=wm->font()->Size().y+8;
-        mess_win=wm->new_window(xres/2,yres/2,-1,-1,
+        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
             new text_field(0,h*0,ID_MESS_STR1,symbol_str("ap_width"),"****",2,
             new text_field(0,h*1,ID_MESS_STR2,symbol_str("ap_height"),"****",2,
             new text_field(0,h*2,ID_MESS_STR3,symbol_str("ap_name"),"***********","pal",
@@ -2957,7 +2955,8 @@ pal_win::pal_win(void *args)
 void pal_win::open_window()
 {
   if (me) close_window();
-  me=wm->new_window(x,y,w*f_wid/scale,h*f_hi/scale,NULL,name);
+  me=wm->CreateWindow(vec2i(x, y), vec2i(w * f_wid / scale,
+                                         h * f_hi / scale), NULL, name);
   draw();
 }
 

@@ -43,15 +43,6 @@ void set_frame_size(int x)
     jw_bottom = x;
 }
 
- // true if a window lies in this area
-int WindowManager::window_in_area(int x1, int y1, int x2, int y2)
-{
-  for (Jwindow *f=m_first; f; f=f->next)
-    if (f->m_pos.x<=x2 && f->m_pos.y<=y2 && f->m_pos.x+f->l-1>=x1 && f->m_pos.y+f->h-1>=y1)
-      return 1;
-  return 0;
-}
-
 void WindowManager::grab_focus(Jwindow *j)
 { m_grab=j; }
 
@@ -71,7 +62,7 @@ void WindowManager::hide_windows()
         if (!p->is_hidden())
         {
             p->hide();
-            m_surf->AddDirty(p->m_pos, p->m_pos + vec2i(p->l, p->h));
+            m_surf->AddDirty(p->m_pos, p->m_pos + p->m_size);
         }
     }
 }
@@ -93,12 +84,12 @@ void WindowManager::hide_window(Jwindow *j)
         Jwindow *k;
         for (k = m_first; k->next != j; k = k->next)
             k->m_surf->AddDirty(j->m_pos - k->m_pos,
-                                j->m_pos + vec2i(j->l, j->h) - k->m_pos);
+                                j->m_pos - k->m_pos + j->m_size);
         k->m_surf->AddDirty(j->m_pos - k->m_pos,
-                            j->m_pos + vec2i(j->l, j->h) - k->m_pos);
+                            j->m_pos - k->m_pos + j->m_size);
         k->next = j->next;
     }
-    m_surf->AddDirty(j->m_pos, j->m_pos + vec2i(j->l, j->h));
+    m_surf->AddDirty(j->m_pos, j->m_pos + j->m_size);
     j->hide();
 }
 
@@ -107,7 +98,7 @@ void WindowManager::show_window(Jwindow *j)
     if (j->is_hidden())
     {
         j->show();
-        j->m_surf->AddDirty(vec2i(0), vec2i(j->l, j->h));
+        j->m_surf->AddDirty(vec2i(0), j->m_size);
     }
 }
 
@@ -125,7 +116,7 @@ void WindowManager::get_event(Event &ev)
     Jwindow *j;
     for (ev.window=NULL,j=m_first; j; j=j->next)
       if (!j->is_hidden() && ev.mouse_move >= j->m_pos
-                          && ev.mouse_move < j->m_pos + vec2i(j->l, j->h))
+                          && ev.mouse_move < j->m_pos + j->m_size)
         ev.window=j;
 
     if (!ev.window && m_grab) ev.window=m_grab;
@@ -136,7 +127,7 @@ void WindowManager::get_event(Event &ev)
 
       if ((ev.type==EV_MOUSE_BUTTON && ev.mouse_button==1 && ev.window &&
        ev.mouse_move >= ev.window->m_pos &&
-       ev.mouse_move < ev.window->m_pos + vec2i(ev.window->l, ev.window->y1())))
+       ev.mouse_move < ev.window->m_pos + vec2i(ev.window->m_size.x, ev.window->y1())))
       {
     if (ev.mouse_move.x-ev.window->m_pos.x < 11) closew=1;
     else if (ev.window->is_moveable()) movew=1;
@@ -182,7 +173,7 @@ void WindowManager::get_event(Event &ev)
 /*      m_surf->AddDirty(j->x,j->y,j->x+j->l,j->y+j->h);
       for (p=m_first; p!=j; p=p->next)
         p->m_surf->AddDirty(j->x-p->x,j->y-p->y,j->x+j->l-p->x,j->y+j->h-p->y); */
-      j->m_surf->AddDirty(vec2i(0), vec2i(j->l, j->h));
+      j->m_surf->AddDirty(vec2i(0), j->m_size);
       flush_screen();
     }
 
@@ -222,33 +213,33 @@ void WindowManager::get_event(Event &ev)
   }
 }
 
-void Jwindow::resize(int L, int H)
+void Jwindow::Resize(vec2i size)
 {
-  m_surf->SetSize(vec2i(L,H));
-  l=L; h=H;
+    m_surf->SetSize(size);
+    m_size = size;
 }
 
 void WindowManager::resize_window(Jwindow *j, int l, int h)
 {
   Jwindow *p;
-  m_surf->AddDirty(j->m_pos, j->m_pos + vec2i(j->l, j->h));
+  m_surf->AddDirty(j->m_pos, j->m_pos + j->m_size);
   for (p=m_first; p!=j; p=p->next)
     p->m_surf->AddDirty(j->m_pos - p->m_pos,
-                        j->m_pos - p->m_pos + vec2i(j->l, j->h));
-  j->resize(l,h);
+                        j->m_pos - p->m_pos + j->m_size);
+  j->Resize(vec2i(l,h));
   if (!frame_suppress)
   j->redraw();
 }
 
 void WindowManager::move_window(Jwindow *j, int x, int y)
 {
-    m_surf->AddDirty(j->m_pos, j->m_pos + vec2i(j->l, j->h));
+    m_surf->AddDirty(j->m_pos, j->m_pos + j->m_size);
     for(Jwindow *p = m_first; p != j; p = p->next)
         p->m_surf->AddDirty(j->m_pos - p->m_pos,
-                            j->m_pos - p->m_pos + vec2i(j->l, j->h));
+                            j->m_pos - p->m_pos + j->m_size);
     j->m_pos.x = x;
     j->m_pos.y = y;
-    j->m_surf->AddDirty(vec2i(0), vec2i(j->l, j->h));
+    j->m_surf->AddDirty(vec2i(0), j->m_size);
 }
 
 WindowManager::WindowManager(image *screen, palette *pal, int Hi,
@@ -301,26 +292,24 @@ void WindowManager::remove_window(Jwindow *win)
         Jwindow * search;
         for(search = m_first; search->next != win; search = search->next)
             search->m_surf->AddDirty(win->m_pos - search->m_pos,
-                                     win->m_pos - search->m_pos
-                                                + vec2i(win->l, win->h));
+                                     win->m_pos - search->m_pos + win->m_size);
         search->m_surf->AddDirty(win->m_pos - search->m_pos,
-                                 win->m_pos - search->m_pos
-                                            + vec2i(win->l, win->h));
+                                 win->m_pos - search->m_pos + win->m_size);
         search->next = win->next;
     }
 
-    m_surf->AddDirty(win->m_pos, win->m_pos + vec2i(win->l, win->h));
+    m_surf->AddDirty(win->m_pos, win->m_pos + win->m_size);
 }
 
-Jwindow * WindowManager::new_window(int x, int y, int l, int h,
-                                     ifield * fields, char const *name)
+Jwindow * WindowManager::CreateWindow(vec2i pos, vec2i size,
+                                      ifield * fields, char const *name)
 {
-    if(x > m_surf->Size().x - 4)
-        x = m_surf->Size().x - 25;
-    if(y > m_surf->Size().y - 4)
-        y = m_surf->Size().y - 10;
+    if(pos.x > m_surf->Size().x - 4)
+        pos.x = m_surf->Size().x - 25;
+    if(pos.y > m_surf->Size().y - 4)
+        pos.y = m_surf->Size().y - 10;
 
-    Jwindow * j = new Jwindow (vec2i(x, y), l, h, fields, name);
+    Jwindow * j = new Jwindow(pos, size, fields, name);
     j->show();
 
     return j;
@@ -341,7 +330,7 @@ void WindowManager::flush_screen()
 
     for (Jwindow *p = m_first; p; p = p->next)
         if (!p->is_hidden())
-            m_surf->DeleteDirty(p->m_pos, p->m_pos + vec2i(p->l, p->h));
+            m_surf->DeleteDirty(p->m_pos, p->m_pos + p->m_size);
     update_dirty(m_surf);
 
     if (has_mouse())
@@ -359,11 +348,11 @@ void WindowManager::flush_screen()
             p->m_surf->PutImage(m_sprite->m_visual, m1 - p->m_pos, 1);
         }
 
-//      m_surf->DeleteDirty(p->m_pos, p->m_pos + vec2i(p->l, p->h));
+//      m_surf->DeleteDirty(p->m_pos, p->m_pos + p->m_size);
         for (Jwindow *q = p->next; q; q = q->next)
             if (!q->is_hidden())
                 p->m_surf->DeleteDirty(q->m_pos - p->m_pos,
-                                       q->m_pos - p->m_pos + vec2i(q->l, q->h));
+                                       q->m_pos - p->m_pos + q->m_size);
         update_dirty(p->m_surf, p->m_pos.x, p->m_pos.y);
         if (has_mouse())
             p->m_surf->PutImage(m_sprite->m_save, m1 - p->m_pos, 0);
@@ -392,10 +381,9 @@ Jwindow::Jwindow(char const *name)
     wm->add_window(this);
 }
 
-Jwindow::Jwindow(vec2i pos, int L, int H, ifield *f, char const *name)
+Jwindow::Jwindow(vec2i pos, vec2i size, ifield *f, char const *name)
 {
-    l = 0;
-    h = 0;
+    m_size = 0;
     _hidden = false;
     _moveable = true;
 
@@ -406,25 +394,22 @@ Jwindow::Jwindow(vec2i pos, int L, int H, ifield *f, char const *name)
     inm = new InputManager(m_surf, f);
     reconfigure(); /* FIXME: TODO */
 
-    l = L >= 0 ? L + left_border() : l - L;
-    h = H >= 0 ? H + top_border() : h - H;
-    m_pos.x = pos.x >= 0 ? pos.x : xres - l + pos.x - left_border() - right_border() - 1;
-    m_pos.y = pos.y >= 0 ? pos.y : yres - h + pos.y - top_border() - bottom_border() - 1;
+    m_size.x = size.x >= 0 ? size.x + left_border() : m_size.x - size.x;
+    m_size.y = size.y >= 0 ? size.y + top_border() : m_size.y - size.y;
+    m_pos.x = pos.x >= 0 ? pos.x : xres - m_size.x + pos.x - left_border() - right_border() - 1;
+    m_pos.y = pos.y >= 0 ? pos.y : yres - m_size.y + pos.y - top_border() - bottom_border() - 1;
 
     backg = wm->medium_color();
 
-    _x2 = l - 1;
-    _y2 = h - 1;
-    l += right_border();
-    h += bottom_border();
+    _x2 = m_size.x - 1;
+    _y2 = m_size.y - 1;
+    m_size += vec2i(right_border(), bottom_border());
 
-    if(L == -1)
-        if(l < 15 + left_border() + right_border())
-            l = 15 + left_border() + right_border();
-    if(H == -1)
-        if(h < top_border() + bottom_border())
-            h = top_border() + bottom_border();
-    m_surf = new image(vec2i(l, h), NULL, 2);
+    if(size.x == -1)
+        m_size.x = Max(m_size.x, 15 + left_border() + right_border());
+    if(size.y == -1)
+        m_size.y = Max(m_size.y, top_border() + bottom_border());
+    m_surf = new image(m_size, NULL, 2);
     m_surf->clear(backg);
     // Keep this from getting destroyed when image list is cleared
     image_list.unlink(m_surf);
@@ -455,16 +440,12 @@ void Jwindow::reconfigure()
 {
     int x1, y1, x2, y2;
     ifield *i;
-    l = 2;
-    h = 2;
+    m_size = vec2i(2);
     for(i = inm->m_first; i; i = i->next)
     {
         i->set_owner(this);
         i->area(x1, y1, x2, y2);
-        if ((int)y2 > (int)h)
-            h = y2;
-        if ((int)x2 > (int)l)
-            l = x2;
+        m_size = Max(m_size, vec2i(x2, y2));
     }
 }
 
@@ -484,10 +465,10 @@ void Jwindow::redraw()
     {
         if (right_border() >= 1)
         {
-            m_surf->WidgetBar(vec2i(0, 0), vec2i(l - 1, h - 1), hi, med, low);
+            m_surf->WidgetBar(vec2i(0, 0), m_size - vec2i(1), hi, med, low);
             if (right_border() >= 3)
                 m_surf->WidgetBar(vec2i(right_border() - 1, top_border() - 1),
-                                  vec2i(l - left_border(), h - bottom_border()),
+                                  m_size - vec2i(left_border(), bottom_border()),
                                   low, med, hi);
 
           else
@@ -504,10 +485,10 @@ void Jwindow::redraw()
     {
       if (right_border() >= 1)
         {
-          m_surf->WidgetBar(vec2i(0, 0), vec2i(l - 1, h - 1), hi, med, low);
+          m_surf->WidgetBar(vec2i(0, 0), m_size - vec2i(1), hi, med, low);
           if (right_border() >= 3)
             m_surf->WidgetBar(vec2i(right_border() - 1, jw_top + 4),
-                              vec2i(l - left_border(), h - bottom_border()),
+                              m_size - vec2i(left_border(), bottom_border()),
                               low, med, hi);
           else
             m_surf->Line(vec2i(left_border() - 1, jw_top + 4),

@@ -90,16 +90,16 @@ class Jwindow
 
 public:
     Jwindow *next;
-    int l, h, backg;
+    int backg;
     InputManager *inm;
     void *local_info;  // pointer to info block for local system (may support windows)
 
     Jwindow(char const *name = NULL);
-    Jwindow(vec2i pos, int L, int H, ifield *f, char const *name = NULL);
+    Jwindow(vec2i pos, vec2i size, ifield *f, char const *name = NULL);
     ~Jwindow();
 
     virtual void redraw();
-    void resize(int L, int H);
+    void Resize(vec2i size);
     void clear(int color = 0) { m_surf->Bar(vec2i(x1(), y1()),
                                             vec2i(x2(), y2()), color); }
     void show() { _hidden = false; }
@@ -113,7 +113,7 @@ public:
     int x2() { return _x2; }
     int y2() { return _y2; }
     void clip_in() { m_surf->SetClip(vec2i(x1(), y1()), vec2i(x2() + 1, y2() + 1)); }
-    void clip_out() { m_surf->SetClip(vec2i(0), vec2i(l, h)); }
+    void clip_out() { m_surf->SetClip(vec2i(0), m_size); }
     char *read(int id) { return inm->get(id)->read(); }
     void local_close();
 
@@ -122,7 +122,7 @@ public:
     static int top_border();
     static int bottom_border();
 
-    vec2i m_pos;
+    vec2i m_pos, m_size;
     image *m_surf;
 
 protected:
@@ -158,10 +158,9 @@ public:
     Jwindow *drag_window;
     JCFont *fnt, *wframe_fnt;
 
-    Jwindow *new_window(int x, int y, int l, int h,
-                        ifield *fields = NULL, char const *Name = NULL);
+    Jwindow *CreateWindow(vec2i pos, vec2i size,
+                          ifield *fields = NULL, char const *Name = NULL);
 
-    void set_frame_font(JCFont *fnt) { wframe_fnt = fnt; }
     JCFont *frame_font() { return wframe_fnt; }
     void close_window(Jwindow *j);
     void resize_window(Jwindow *j, int l, int h);
@@ -180,10 +179,8 @@ public:
     void show_windows();
     void hide_window(Jwindow *j);
     void show_window(Jwindow *j);
-    void set_frame_suppress(int x) { frame_suppress=x; }
     void grab_focus(Jwindow *j);
     void release_focus();
-    int window_in_area(int x1, int y1, int x2, int y2); // true if a window lies in this area
 
 private:
     palette *m_pal;

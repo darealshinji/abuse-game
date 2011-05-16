@@ -163,8 +163,8 @@ void automap::toggle_window()
         old_dx = -1000; // make sure the map gets drawn the first time
         old_dy = -1000;
 
-        automap_window = wm->new_window(0, 0, w * AUTOTILE_WIDTH,
-                                        h * AUTOTILE_HEIGHT, NULL, "Map");
+        automap_window = wm->CreateWindow(vec2i(0), vec2i(w * AUTOTILE_WIDTH,
+                                        h * AUTOTILE_HEIGHT), NULL, "Map");
         automap_window->m_surf->Bar(vec2i(17, 1), vec2i(17 + 8 * 6 + 3, 6),
                                     wm->medium_color());
         wm->font()->PutString(automap_window->m_surf, vec2i(20, 2), "Automap",
