@@ -22,6 +22,8 @@ void delete_panims();      // called by ~level
 void draw_panims(view *v);
 void tick_panims();
 void free_pframes();
+void ScatterLine(vec2i p1, vec2i p2, int c, int s);
+void AScatterLine(vec2i p1, vec2i p2, int c1, int c2, int s);
 
 struct part
 {
@@ -59,7 +61,5 @@ class part_animation
   { x=X; y=Y; seq=s; next=Next; frame=0; dir=Dir; }
 } ;
 
-
 #endif
-
 

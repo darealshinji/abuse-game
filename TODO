@@ -62,12 +62,10 @@ REFACTOR
 
 Jwindow::_x1 _x2
 
-console::draw_char : vec2i
 VolumeWindow::draw_vol plus grand !!
 
 x, y in game_object?
 snap_x() snap_y()
-scatter_line, ascatter_line
 xstart() / xend() etc.
 jwindow::area
 button::area

@@ -208,26 +208,29 @@ void part_frame::draw(image *screen, int x, int y, int dir)
   screen->Unlock();
 }
 
-void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
+void ScatterLine(vec2i p1, vec2i p2, int c, int s)
 {
     vec2i caa, cbb;
     main_screen->GetClip(caa, cbb);
 
-    int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
-    long xo = x1 << 16, yo = y1 << 16, dx = ( ( x2 - x1 ) << 16 ) / t, dy = ( ( y2 - y1 ) << 16 ) / t, x, y;
+    int t = 1 + Max(abs(p2.x - p1.x), abs(p2.y - p1.y));
+    int xo = p1.x << 16,
+        yo = p1.y << 16,
+        dx = ((p2.x - p1.x) << 16) / t,
+        dy = ((p2.y - p1.y) << 16) / t;
 
-    int xm = ( 1 << s );
-    int ym = ( 1 << s );
-    s = ( 15 - s );
+    int xm = (1 << s);
+    int ym = (1 << s);
+    s = (15 - s);
 
     main_screen->Lock();
-    while( t-- )
+    while(t--)
     {
-        x = ( xo >> 16 ) + ( jrand() >> s ) - xm;
-        y = ( yo >> 16 ) + ( jrand() >> s ) - ym;
-        if( !( x < caa.x || y < caa.y || x >= cbb.x || y >= cbb.y ) )
+        int x = (xo >> 16) + (jrand() >> s) - xm;
+        int y = (yo >> 16) + (jrand() >> s) - ym;
+        if(!(x < caa.x || y < caa.y || x >= cbb.x || y >= cbb.y))
         {
-            *(main_screen->scan_line( y ) + x ) = c;
+            *(main_screen->scan_line(y) + x) = c;
         }
         xo += dx;
         yo += dy;
@@ -235,34 +238,35 @@ void scatter_line(int x1, int y1, int x2, int y2, int c, int s)
     main_screen->Unlock();
 }
 
-
-
-void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s)
+void AScatterLine(vec2i p1, vec2i p2, int c1, int c2, int s)
 {
     vec2i caa, cbb;
     main_screen->GetClip(caa, cbb);
 
-    int t = abs( x2 - x1 ) > abs( y2 - y1 ) ? abs( x2 - x1 ) + 1 : abs( y2 - y1 ) + 1;
-    long xo = x1 << 16, yo = y1 << 16, dx = ( ( x2 - x1 ) << 16 ) / t, dy = ( ( y2 - y1 ) <<16 ) / t, x, y;
+    int t = 1 + Max(abs(p2.x - p1.x), abs(p2.y - p1.y));
+    int xo = p1.x << 16,
+        yo = p1.y << 16,
+        dx = ((p2.x - p1.x) << 16) / t,
+        dy = ((p2.y - p1.y) << 16) / t;
 
-    int xm = ( 1 << s );
-    int ym = ( 1 << s );
-    s = ( 15 - s );
+    int xm = (1 << s);
+    int ym = (1 << s);
+    s = (15 - s);
 
     main_screen->Lock();
 
     int w = main_screen->Size().x;
     uint8_t *addr;
 
-    while( t-- )
+    while(t--)
     {
-        x = ( xo >> 16 ) + ( jrand() >> s ) - xm;
-        y = ( yo >> 16 ) + ( jrand() >> s ) - ym;
+        int x = (xo >> 16) + (jrand() >> s) - xm;
+        int y = (yo >> 16) + (jrand() >> s) - ym;
         // FIXME: these clip values seemed wrong to me before the GetClip
         // refactoring.
-        if( !( x <= caa.x || y <= caa.y || x >= cbb.x - 1 || y >= cbb.y - 1) )
+        if(!(x <= caa.x || y <= caa.y || x >= cbb.x - 1 || y >= cbb.y - 1))
         {
-            addr = main_screen->scan_line( y ) + x;
+            addr = main_screen->scan_line(y) + x;
             *addr = c1;
             *(addr + w) = c2;
             *(addr - w) = c2;

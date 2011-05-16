@@ -85,8 +85,6 @@ void        *l_statbar_ammo_x,*l_statbar_ammo_y,
         *l_statbar_logo_x,*l_statbar_logo_y;
 uint8_t chatting_enabled=0;
 
-extern void scatter_line(int x1, int y1, int x2, int y2, int c, int s);
-extern void ascatter_line(int x1, int y1, int x2, int y2, int c1, int c2, int s);
 extern void show_end();
 
 static view *lget_view(void *arg, char const *msg)
@@ -1969,7 +1967,7 @@ long c_caller(long number, void *args)
       int32_t s = lnumber_value(CAR(args));
       vec2i pos1 = the_game->GameToMouse(vec2i(x1, y1), current_view);
       vec2i pos2 = the_game->GameToMouse(vec2i(x2, y2), current_view);
-      scatter_line(pos1.x, pos1.y, pos2.x, pos2.y, c, s);
+      ScatterLine(pos1, pos2, c, s);
       return 1;
 
     } break;
@@ -2022,7 +2020,7 @@ long c_caller(long number, void *args)
       int32_t s = lnumber_value(CAR(args));
       vec2i pos1 = the_game->GameToMouse(vec2i(x1, y1), current_view);
       vec2i pos2 = the_game->GameToMouse(vec2i(x2, y2), current_view);
-      ascatter_line(pos1.x, pos1.y, pos2.x, pos2.y, c1, c2, s);
+      AScatterLine(pos1, pos2, c1, c2, s);
       return 1;
 
     } break;
