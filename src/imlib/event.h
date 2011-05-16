@@ -25,6 +25,7 @@
 #define LEFT_BUTTON    1
 #define RIGHT_BUTTON   2
 #define MIDDLE_BUTTON  4
+
 #include "keys.h"
 #include "sprite.h"
 
@@ -80,7 +81,7 @@ public:
   int has_mouse() { return 1; }
     void SetMouseShape(image *im, vec2i center)
     {
-        m_sprite->change_visual(im, 1);
+        m_sprite->SetVisual(im, 1);
         m_center = center;
     }
     void SetMousePos(vec2i pos)
@@ -93,13 +94,12 @@ public:
 private:
     linked_list m_events;
     int m_pending, last_key;
-    sprite_controller sc;
 
     image *m_screen;
 
 protected:
     /* Mouse information */
-    sprite *m_sprite;
+    Sprite *m_sprite;
     vec2i m_pos, m_center;
     int m_button;
 };
