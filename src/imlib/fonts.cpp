@@ -18,30 +18,6 @@
 
 #include "fonts.h"
 
-texture_font::texture_font(image *letters, image *font_pattern)
-{ fntpat=font_pattern;
-  let=letters;
-  tl=(let->Size().x+1)/32;
-  th=(let->Size().y+1)/8;
-}
-
-void texture_font::put_char(image *screen,  int x, int y, char ch)
-{ if (fntpat)
-    screen->PutPartMasked(fntpat, vec2i(x, y), let,
-       vec2i(((int)ch%32)*tl,((int)ch/32)*th), vec2i(0,0), vec2i(tl,th));
-  else screen->PutPart(let, vec2i(x, y), vec2i(((int)ch%32)*tl, ((int)ch/32)*th),
-     vec2i(((int)ch%32)*tl+tl, ((int)ch/32)*th+th), 1);
-}
-
-void texture_font::put_string(image *screen, int x, int y, char const *st)
-{ while (*st)
-  { put_char(screen,x,y,*st);
-    st++;
-    x+=tl;
-  }
-}
-
-
 void JCFont::put_string(image *screen, int x, int y, char const *st, int color)
 { while (*st)
   { put_char(screen,x,y,*st,color);
@@ -49,7 +25,6 @@ void JCFont::put_string(image *screen, int x, int y, char const *st, int color)
     x+=tl;
   }
 }
-
 
 void JCFont::put_char(image *screen,  int x, int y, char ch, int color)
 {
