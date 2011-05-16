@@ -373,15 +373,15 @@ void scroller::scroll_event(int newx, image *screen)
   {
     char st[10];
     sprintf(st,"%d",i);
-    wm->font()->put_string(screen,xo,yo,st,wm->bright_color());
+    wm->font()->PutString(screen, vec2i(xo, yo), st, wm->bright_color());
     xo+=xa; yo+=ya;
   }
 }
 
 void pick_list::area_config()
 {
-  l=wid*wm->font()->width();
-  h=th*(wm->font()->height()+1);
+    l = wid * wm->font()->Size().x;
+    h = th * (wm->font()->Size().y + 1);
 }
 
 int lis_sort(void const *a, void const *b)
@@ -419,7 +419,7 @@ void pick_list::handle_inside_event(Event &ev, image *screen, InputManager *inm)
 {
   if (ev.type==EV_MOUSE_MOVE && activate_on_mouse_move())
   {
-    int sel=last_sel+(ev.mouse_move.y-m_pos.y)/(wm->font()->height()+1);
+    int sel=last_sel+(ev.mouse_move.y-m_pos.y)/(wm->font()->Size().y+1);
     if (sel!=cur_sel && sel<t && sel>=0)
     {
       cur_sel=sel;
@@ -428,7 +428,7 @@ void pick_list::handle_inside_event(Event &ev, image *screen, InputManager *inm)
   }
   else if (ev.type==EV_MOUSE_BUTTON)
   {
-    int sel=last_sel+(ev.mouse_move.y-m_pos.y)/(wm->font()->height()+1);
+    int sel=last_sel+(ev.mouse_move.y-m_pos.y)/(wm->font()->Size().y+1);
     if (sel<t && sel>=0)
     {
       if (sel==cur_sel)
@@ -508,14 +508,15 @@ void pick_list::scroll_event(int newx, image *screen)
   } else screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->black());
 
   int dy=m_pos.y;
-  for (int i=0; i<th; i++,dy+=wm->font()->height()+1)
+  for (int i=0; i<th; i++,dy+=wm->font()->Size().y+1)
   {
     if (i+newx==cur_sel)
-      screen->Bar(vec2i(m_pos.x, dy), vec2i(m_pos.x + wid * wm->font()->width() - 1,
-                                      dy + wm->font()->height()),
+      screen->Bar(vec2i(m_pos.x, dy), vec2i(m_pos.x + wid * wm->font()->Size().x - 1,
+                                      dy + wm->font()->Size().y),
                   wm->dark_color());
     if (i+newx<t)
-      wm->font()->put_string(screen,m_pos.x,dy,lis[i+newx].name,wm->bright_color());
+      wm->font()->PutString(screen, vec2i(m_pos.x, dy), lis[i+newx].name,
+                            wm->bright_color());
   }
 }
 
@@ -587,16 +588,8 @@ void spicker::draw_background(image *screen)
 
 void spicker::area_config()
 {
-  if (vert)
-    l=item_width()+4;
-  else
-    l=item_width()*c+4;
-
-  if (vert)
-    h=item_height()*r+4;
-  else
-    h=item_height()+4;
-
+    l = item_width() * (vert ? 1 : c) + 4;
+    h = item_height() * (vert ? r : 1) + 4;
 }
 
 void spicker::set_x(int x, image *screen)

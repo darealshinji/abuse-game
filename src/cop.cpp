@@ -1034,8 +1034,8 @@ void *score_draw()
       if (sorted_players[i]==local)
         strcat(msg," <<");
 
-      fnt->put_string(main_screen,x,y,msg,color);
-      y+=fnt->height();
+      fnt->PutString(main_screen, vec2i(x, y), msg, color);
+      y += fnt->Size().y;
     }
   }
   return NULL;
@@ -1058,18 +1058,18 @@ void *show_kills()
   view *v=player_list; int tp=0,i;
   for (v=player_list; v; v=v->next) tp++;
 
-  int y=(y1+y2)/2-(tp+2)*fnt->height()/2,x=x1+10;
+  int y=(y1+y2)/2-(tp+2)*fnt->Size().y/2,x=x1+10;
   char const *header_str = symbol_str("score_header");
-  fnt->put_string(main_screen,x,y,header_str,wm->bright_color());
-  y+=fnt->height();
+  fnt->PutString(main_screen, vec2i(x, y), header_str, wm->bright_color());
+  y += fnt->Size().y;
 
   main_screen->WidgetBar(vec2i(x, y + 2),
-                         vec2i(x + strlen(header_str) * fnt->width(),
-                               y + fnt->height() - 3),
+                         vec2i(x + strlen(header_str) * fnt->Size().x,
+                               y + fnt->Size().y - 3),
                          wm->bright_color(), wm->medium_color(),
                          wm->dark_color());
-  y+=fnt->height();
-  v=player_list;
+  y += fnt->Size().y;
+  v = player_list;
   for (i=0; i<tp; i++)
   {
     enum { NAME_LEN=18 } ;
@@ -1081,10 +1081,10 @@ void *show_kills()
 
 
     sprintf(msg,"%-17s %3ld  %3ld",max_name,(long)v->kills,(long)(v->tkills+v->kills));
-    fnt->put_string(main_screen,x,y,msg,color);
+    fnt->PutString(main_screen, vec2i(x, y), msg, color);
 
-    y+=fnt->height();
-    v=v->next;
+    y += fnt->Size().y;
+    v = v->next;
   }
 
   wm->flush_screen();

@@ -201,12 +201,11 @@ void button::area(int &x1, int &y1, int &x2, int &y2)
     vec2i pos2 = m_pos;
 
     if (pressed)
-        pos2 += pressed->Size() - vec2i(1, 1);
+        pos2 += pressed->Size() - vec2i(1);
     else if (text)
-        pos2 += vec2i(wm->font()->width() * strlen(text) + 6,
-                      wm->font()->height() + 6);
+        pos2 += wm->font()->Size() * vec2i(strlen(text), 1) + vec2i(6);
     else
-        pos2 += visual->Size() + vec2i(6, 6);
+        pos2 += visual->Size() + vec2i(6);
 
     x1 = pos1.x; y1 = pos1.y;
     x2 = pos2.x; y2 = pos2.y;
@@ -404,14 +403,14 @@ void button::draw(int active, image *screen)
 
 void button::draw_first(image *screen)
 {
-  if (pressed)
-    draw(0,screen);
-  else
-  {
+    if (pressed)
+    {
+        draw(0, screen);
+        return;
+    }
 
     int x1,y1,x2,y2;
     area(x1,y1,x2,y2);
-
 
     if (up)
     {
@@ -419,13 +418,8 @@ void button::draw_first(image *screen)
 //      screen->widget_bar(,wm->bright_color(),wm->medium_color(),wm->dark_color());
       screen->WidgetBar(vec2i(x1 + 1, y1 + 1), vec2i(x2 - 1, y2 - 1),
                         wm->bright_color(),wm->medium_color(),wm->dark_color());
-      if (text)
-      {
-        wm->font()->put_string(screen,m_pos.x+4,m_pos.y+5,text,wm->black());
-        wm->font()->put_string(screen,m_pos.x+3,m_pos.y+4,text);
-      }
-      else screen->PutImage(visual, m_pos + vec2i(3, 3), 1);
-    } else
+    }
+    else
     {
       screen->Line(vec2i(x1, y1), vec2i(x2, y1), wm->dark_color());
       screen->Line(vec2i(x1, y1), vec2i(x1, y2), wm->dark_color());
@@ -433,29 +427,31 @@ void button::draw_first(image *screen)
       screen->Line(vec2i(x1 + 1, y2), vec2i(x2, y2), wm->bright_color());
       screen->Bar(vec2i(x1 + 1, y1 + 1), vec2i(x2 - 1, y2 - 1),
                   wm->medium_color());
-      if (visual)
-        screen->PutImage(visual, vec2i(x1 + 3, y1 + 3), 1);
-      else
-      {
-        wm->font()->put_string(screen,m_pos.x+4,m_pos.y+5,text,wm->black());
-        wm->font()->put_string(screen,m_pos.x+3,m_pos.y+4,text);
-      }
     }
-  }
+
+    if ((up && text) || (!up && !visual))
+    {
+        wm->font()->PutString(screen, m_pos + vec2i(4, 5), text, wm->black());
+        wm->font()->PutString(screen, m_pos + vec2i(3, 4), text);
+    }
+    else if (up)
+        screen->PutImage(visual, m_pos + vec2i(3, 3), 1);
+    else
+        screen->PutImage(visual, vec2i(x1 + 3, y1 + 3), 1);
 }
 
 void text_field::draw_first(image *screen)
 {
-  wm->font()->put_string(screen,m_pos.x,m_pos.y+3,prompt);
+  wm->font()->PutString(screen, m_pos + vec2i(0, 3), prompt);
   screen->Bar(vec2i(xstart(), m_pos.y), vec2i(xend(), yend()), wm->dark_color());
-  wm->font()->put_string(screen,xstart()+1,m_pos.y+3,data);
+  wm->font()->PutString(screen, vec2i(xstart() + 1, m_pos.y + 3), data);
 }
 
 
 void text_field::draw_cur(int color, image *screen)
 {
-  screen->Bar(vec2i(xstart() + cur * wm->font()->width() + 1, yend() - 2),
-              vec2i(xstart() + (cur + 1) * wm->font()->width(), yend() - 1),
+  screen->Bar(vec2i(xstart() + cur * wm->font()->Size().x + 1, yend() - 2),
+              vec2i(xstart() + (cur + 1) * wm->font()->Size().x, yend() - 1),
               color);
 }
 
@@ -473,7 +469,7 @@ void info_field::area(int &x1, int &y1, int &x2, int &y2)
 {
   if (w==-1)     // if we haven't calculated this yet
   {
-    int fw=wm->font()->width(),fh=wm->font()->height(),maxw=0;
+    int fw = wm->font()->Size().x, fh = wm->font()->Size().y, maxw = 0;
     char *info=text;
     for (w=fw,h=fh+1; *info; info++)
     {
@@ -506,7 +502,7 @@ void info_field::put_para(image *screen, char const *st, int dx, int dy,
     }
     else
     {
-      font->put_char(screen,dx,dy,*st,color);
+      font->PutChar(screen, vec2i(dx, dy), *st, color);
       dx+=xspace;
     }
     st++;
@@ -515,10 +511,9 @@ void info_field::put_para(image *screen, char const *st, int dx, int dy,
 
 void info_field::draw_first(image *screen)
 {
-  put_para(screen,text,m_pos.x+1,m_pos.y+1,wm->font()->width(),wm->font()->height(),wm->font(),wm->black());
-  put_para(screen,text,m_pos.x,m_pos.y,wm->font()->width(),wm->font()->height(),wm->font(),wm->bright_color());
+  put_para(screen, text, m_pos.x+1, m_pos.y+1, wm->font()->Size().x,
+           wm->font()->Size().y, wm->font(), wm->black());
+  put_para(screen, text, m_pos.x, m_pos.y, wm->font()->Size().x,
+           wm->font()->Size().y, wm->font(), wm->bright_color());
 }
-
-
-
 

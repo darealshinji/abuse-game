@@ -521,10 +521,10 @@ void Jwindow::redraw()
   if (_name && _name[0])
     {
       m_surf->Bar(vec2i(top_border(), 1),
-                  vec2i(top_border() + fnt->width() * strlen (_name) + 1,
+                  vec2i(top_border() + fnt->Size().x * strlen (_name) + 1,
                         top_border() - 2),
                   med);
-      fnt->put_string(m_surf, top_border() + 1, 1, _name, low);
+      fnt->PutString(m_surf, vec2i(top_border() + 1, 1), _name, low);
     }
   // clear 'client' region
   m_surf->Bar(vec2i(x1(), y1()), vec2i(x2(), y2()), backg);
@@ -543,7 +543,7 @@ int Jwindow::right_border()
 
 int Jwindow::top_border()
 {
-    return wm->font()->height() + frame_top();
+    return wm->font()->Size().y + frame_top();
 }
 
 int Jwindow::bottom_border()

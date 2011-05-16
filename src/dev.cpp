@@ -143,14 +143,14 @@ void make_screen_size(int w, int h);
 class amb_cont : public scroller
 {
   public :
-  amb_cont(int X, int Y, ifield *Next) : scroller(X,Y,ID_NULL,100,wm->font()->height()+2,0,64,Next)
+  amb_cont(int X, int Y, ifield *Next) : scroller(X,Y,ID_NULL,100,wm->font()->Size().y+2,0,64,Next)
   { if (player_list) sx=player_list->ambient; }
   virtual void scroll_event(int newx, image *screen)
   {
     screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->dark_color());
     char st[100];
     sprintf(st,"%d",newx);
-    wm->font()->put_string(screen,m_pos.x+30,m_pos.y+1,st,wm->bright_color());
+    wm->font()->PutString(screen, m_pos + vec2i(30, 1), st, wm->bright_color());
     if (player_list)
       player_list->ambient=newx;
     the_game->need_refresh();
@@ -169,8 +169,8 @@ int confirm_quit()
                                      SPEC_IMAGE, 1))->copy();
 
     quitw = wm->new_window(xres / 2 + 40, yres / 2, 80, -1,
-              new button(10, wm->font()->height() + 4, ID_QUIT_OK, ok_image,
-              new button(38, wm->font()->height() + 4, ID_CANCEL, cancel_image,
+              new button(10, wm->font()->Size().y + 4, ID_QUIT_OK, ok_image,
+              new button(38, wm->font()->Size().y + 4, ID_CANCEL, cancel_image,
               new info_field(2, 2, ID_NULL, symbol_str("sure?"), NULL))),
               symbol_str("quit_title"));
 
@@ -509,7 +509,7 @@ void dev_controll::dev_draw(view *v)
       {
     vec2i pos = the_game->GameToMouse(vec2i(o->x, o->y), current_view);
     char *nm=object_names[o->otype];
-    console_font->put_string(main_screen, pos.x - strlen(nm) * console_font->width() / 2, pos.y + 2, nm);
+    console_font->PutString(main_screen, pos + vec2i(- strlen(nm) * console_font->Size().x / 2, 2), nm);
       }
 
     if (dev&DRAW_LINKS)
@@ -675,7 +675,7 @@ void dev_controll::toggle_omenu()
     omenu = wm->new_window(prop->getd("objects x", 0),
                            prop->getd("objects y", 0), -1, -1,
                            new pick_list(0, 0, DEV_CREATE,
-                                         yres / wm->font()->height() / 2,
+                                         yres / wm->font()->Size().y / 2,
                                          listable_objs, total_listable, 0,
                                          NULL, cache.img(window_texture)));
 }
@@ -716,7 +716,7 @@ void dev_controll::toggle_pmenu()
     pmenu = wm->new_window(prop->getd("pal x",0),
                            prop->getd("pal y",-1), -1,-1,
                            new pick_list(0, 0, DEV_PALETTE,
-                                         yres / wm->font()->height() / 2,
+                                         yres / wm->font()->Size().y / 2,
                                          pwin_list, total_pals, 0, NULL,
                                          cache.img(window_texture)));
 }
@@ -805,9 +805,9 @@ void dev_controll::toggle_search_window()
         new text_field(0, 0, ID_SEARCH_TEXT, "object name>",
                        "***************************",
                        prop->get("search name", ""),
-        new button(bw, wm->font()->height() + 5, ID_SEARCH_BACKWARD,
+        new button(bw, wm->font()->Size().y + 5, ID_SEARCH_BACKWARD,
                    cache.img(dev_backward),
-        new button(bw * 3, wm->font()->height() + 5, ID_SEARCH_FOREWARD,
+        new button(bw * 3, wm->font()->Size().y + 5, ID_SEARCH_FOREWARD,
                    cache.img(dev_forward), NULL))), "SEARCH");
 
     /* FIXME: shouldn't this be 1? */
@@ -940,7 +940,7 @@ dev_controll::dev_controll()
 
   dev_console=new dev_term(50,18,this);
   if (start_edit)
-    dev_menu=make_menu(0,yres-wm->font()->height()-5);
+    dev_menu=make_menu(0,yres-wm->font()->Size().y-5);
 
   if (get_option("-nolight"))
     dev=dev^DRAW_LIGHTS;
@@ -1330,7 +1330,7 @@ void dev_controll::toggle_light_window()
         return;
     }
 
-    int bh = 16 + 6, bw = 20 + 6, th = wm->font()->height() + 4;
+    int bh = 16 + 6, bw = 20 + 6, th = wm->font()->Size().y + 4;
 
     lightw = wm->new_window(prop->getd("light create x", 0),
                             prop->getd("light create y", 0), -1, -1,
@@ -1361,7 +1361,7 @@ void dev_controll::toggle_light_window()
 void dev_controll::make_ai_window(game_object *o)
 {
   ai_object=o;
-  int th=wm->font()->height()+4,wl = 0, wh = 20;
+  int th=wm->font()->Size().y+4,wl = 0, wh = 20;
   if (figures[o->otype]->total_fields)
   {
     int maxl=0;
@@ -1571,7 +1571,7 @@ void dev_controll::pick_handle_input(Event &ev)
     if (find && current_area && dc)
     {
       if (area_win) close_area_win(0);
-      int wl=0,wh=0,th=wm->font()->height()+12,bw=cache.img(dev_ok)->Size().x+10;
+      int wl=0,wh=0,th=wm->font()->Size().y+12,bw=cache.img(dev_ok)->Size().x+10;
       area_win=wm->new_window(prop->getd("area_box x",0),
                   prop->getd("area_box y",0),
                   -1,-1,
@@ -1923,7 +1923,7 @@ void dev_controll::handle_event(Event &ev)
           prop->setd("ledit x",ledit->m_pos.y);
           wm->close_window(ledit);
         }
-        int bw=20+6,bh=16+6,th=wm->font()->height()+4;
+        int bw=20+6,bh=16+6,th=wm->font()->Size().y+4;
         edit_light=selected_light;
         if (edit_object)
         {
@@ -2117,7 +2117,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        int h=wm->font()->height()+8;
+        int h=wm->font()->Size().y+8;
         mess_win=wm->new_window(xres/2,yres/2,-1,-1,
             new text_field(0,h*0,ID_MESS_STR1,symbol_str("width_"),"****",
                    current_level ? current_level->foreground_width() : 100,
@@ -2169,7 +2169,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        int h=wm->font()->height()+8;
+        int h=wm->font()->Size().y+8;
         mess_win=wm->new_window(xres/2,yres/2,-1,-1,
             new text_field(0,h*0,ID_RECORD_DEMO_FILENAME,
                    "demo filename","*******************",
@@ -2189,7 +2189,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        int h=wm->font()->height()+8;
+        int h=wm->font()->Size().y+8;
         mess_win=wm->new_window(xres/2,yres/2,-1,-1,
             new text_field(0,h*0,ID_PLAY_DEMO_FILENAME,
                    "demo filename","*******************",
@@ -2210,7 +2210,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        int h=wm->font()->height()+8;
+        int h=wm->font()->Size().y+8;
         mess_win=wm->new_window(xres/2,yres/2,-1,-1,
             new text_field(0,h*0,ID_MESS_STR1,symbol_str("x_mul"),"****",bg_xmul,
             new text_field(0,h*1,ID_MESS_STR2,symbol_str("x_div"),"****",bg_xdiv,
@@ -2230,7 +2230,7 @@ void dev_controll::handle_event(Event &ev)
       if ( (((float)tbg_xmul/(float)tbg_xdiv) < ((float)bg_xmul/(float)bg_xdiv)) ||
           (((float)tbg_ymul/(float)tbg_ydiv) < ((float)bg_ymul/(float)bg_ydiv)))
       {
-        int h=wm->font()->height()+8;
+        int h=wm->font()->Size().y+8;
 
         warn_win=wm->new_window(xres/2-40,yres/2-40,-1,-1,
                   new info_field(0,0,ID_NULL,
@@ -2275,7 +2275,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        int h=wm->font()->height()+8;
+        int h=wm->font()->Size().y+8;
         mess_win=wm->new_window(xres/2,yres/2,-1,-1,
             new text_field(0,h*0,ID_MESS_STR1,symbol_str("ap_width"),"****",2,
             new text_field(0,h*1,ID_MESS_STR2,symbol_str("ap_height"),"****",2,
@@ -3569,7 +3569,7 @@ void toggle_edit_mode()
   }
   if ((dev&EDIT_MODE) && !dev_menu)
   {
-    dev_menu=make_menu(0,yres-wm->font()->height()-5);
+    dev_menu=make_menu(0,yres-wm->font()->Size().y-5);
   }
   else if (!(dev&EDIT_MODE) && dev_menu)
   {

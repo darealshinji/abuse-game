@@ -2197,10 +2197,10 @@ long c_caller(long number, void *args)
       int color=-1;
       if (args)
         color=lnumber_value(CAR(args));
-      fnt->put_string(main_screen,x,y,st,color);
+      fnt->PutString(main_screen, vec2i(x, y), st, color);
     } break;
-    case 278 : return ((JCFont *)lpointer_value(CAR(args)))->width(); break;
-    case 279 : return ((JCFont *)lpointer_value(CAR(args)))->height(); break;
+    case 278 : return ((JCFont *)lpointer_value(CAR(args)))->Size().x; break;
+    case 279 : return ((JCFont *)lpointer_value(CAR(args)))->Size().y; break;
     case 280 : if (chat) chat->put_all(lstring_value(CAR(args))); break;
     case 281 :
     {

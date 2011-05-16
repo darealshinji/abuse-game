@@ -16,18 +16,18 @@
 
 class JCFont
 {
-  int tl,th;
-  TransImage *let[256];
 public:
-  JCFont(image *letters);
-  void put_char(image *screen,  int x, int y, char ch, int color=-1);
-  void put_string(image *screen, int x, int y, char const *st, int color=-1);
-  int height() { return th; }
-  int length() { return tl; }
-  int width() { return tl; }
-  ~JCFont();
-} ;
+    JCFont(image *letters);
+    ~JCFont();
+
+    void PutChar(image *screen, vec2i pos, char ch, int color = -1);
+    void PutString(image *screen, vec2i pos, char const *st, int color = -1);
+    vec2i Size() const { return m_size; }
+
+private:
+    vec2i m_size;
+    TransImage *m_data[256];
+};
 
 #endif
-
 

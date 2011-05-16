@@ -276,18 +276,18 @@ void net_configuration::error(char const *message)
   int xx = main_screen->Size().x * main_screen->Size().y;
   for (; xx; xx--,sl++) *sl=remap[*sl];
 
-  int fx=x+ns_w/2-strlen(message)*fnt->width()/2,
-    fy=y+ns_h/2-fnt->height();
+  int fx=x+ns_w/2-strlen(message)*fnt->Size().x/2,
+      fy=y+ns_h/2-fnt->Size().y;
 
-  fnt->put_string(main_screen,fx+1,fy+1,message,wm->black());
-  fnt->put_string(main_screen,fx,fy,message,wm->bright_color());
+  fnt->PutString(main_screen, vec2i(fx + 1, fy + 1), message, wm->black());
+  fnt->PutString(main_screen, vec2i(fx, fy), message, wm->bright_color());
 
 
   {
     char const *ok = symbol_str("ok_button");
 
-    int bx=x+ns_w/2-strlen(ok)*fnt->width()/2-3,
-      by=y+ns_h/2+fnt->height()*3;
+    int bx=x+ns_w/2-strlen(ok)*fnt->Size().x/2-3,
+        by=y+ns_h/2+fnt->Size().y*3;
 
     button *sb=new button(bx,by,NET_SERVER,ok,NULL);
 
@@ -405,8 +405,8 @@ int net_configuration::get_options(int server)
   }
 
 
-  list=new button(x+80-17,y+ns_h-20-fnt->height(),NET_OK,ok_image,list);
-  list=new button(x+80+17,y+ns_h-20-fnt->height(),NET_CANCEL,cancel_image,list);
+  list=new button(x+80-17,y+ns_h-20-fnt->Size().y,NET_OK,ok_image,list);
+  list=new button(x+80+17,y+ns_h-20-fnt->Size().y,NET_CANCEL,cancel_image,list);
 
   int ret=0;
 
@@ -456,15 +456,15 @@ int net_configuration::input()   // pulls up dialog box and input fileds
   JCFont *fnt=wm->font();
 
 
-  wm->font()->put_string(main_screen,x+ns_w/2-strlen(nw_s)*fnt->width()/2,y+21/2-fnt->height()/2,
+  wm->font()->PutString(main_screen, vec2i(x + ns_w / 2 - strlen(nw_s) * fnt->Size().x / 2, y + 21 / 2 - fnt->Size().y / 2),
       nw_s,wm->medium_color());
   {
 
     char const *server_str = symbol_str("server");
-    button *sb=new button(x+40,y+ns_h-23-fnt->height(),NET_SERVER,server_str,NULL);
+    button *sb=new button(x+40, y+ns_h-23-fnt->Size().y, NET_SERVER, server_str, NULL);
 
     if (main_net_cfg && (main_net_cfg->state==CLIENT || main_net_cfg->state==SERVER))
-      sb=new button(x+40,y+ns_h-9-fnt->height(),NET_SINGLE,symbol_str("single_play"),sb);
+      sb=new button(x+40, y+ns_h-9-fnt->Size().y, NET_SINGLE, symbol_str("single_play"), sb);
 
     InputManager inm(main_screen,sb);
 
@@ -524,13 +524,13 @@ int net_configuration::input()   // pulls up dialog box and input fileds
         net_address *find=prot->find_address(0x9090,name);    // was server_port
         if (find)
         {
-          int bw=strlen(name)*fnt->width();
+          int bw=strlen(name)*fnt->Size().x;
           inm.add(new button(x+ns_w/2-bw/2,y+button_y,NET_GAME+total_games,name,NULL));
           find->set_port(server_port);
           game_addr[total_games]=find;
 
           total_games++;
-          button_y+=fnt->height()+10;
+          button_y += fnt->Size().y + 10;
           inm.redraw();
         }
       }
