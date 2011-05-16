@@ -34,7 +34,7 @@
 #include "nfserver.h"
 #include "chat.h"
 
-#define SHIFT_DOWN_DEFAULT 15
+#define SHIFT_DOWN_DEFAULT 24
 #define SHIFT_RIGHT_DEFAULT 0
 
 extern int get_key_binding( char const *dir, int i );
