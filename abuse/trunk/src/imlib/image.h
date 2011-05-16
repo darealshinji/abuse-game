@@ -24,21 +24,23 @@ extern linked_list image_list;
 class dirty_rect : public linked_node
 {
 public :
-    int16_t dx1, dy1, dx2, dy2;
-    dirty_rect(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+    dirty_rect(vec2i aa, vec2i bb)
     {
-        dx1 = x1; dy1 = y1; dx2 = x2; dy2 = y2;
-        if (x2 < x1 || y2 < y1)
+        m_aa = aa;
+        m_bb = bb;
+        if (!(bb >= aa))
             printf("add incorrect dirty\n");
     }
-    virtual int compare(void *n1) { return ((dirty_rect *)n1)->dy1 > dy1; }
+    virtual int compare(void *n1)
+    {
+        return ((dirty_rect *)n1)->m_aa.y > m_aa.y;
+    }
+
+    vec2i m_aa, m_bb;
 };
 
 class image_descriptor
 {
-private:
-    vec2i m_size, m_aa, m_bb;
-
 public:
     uint8_t keep_dirt,
             static_mem; // if set, don't free memory on exit
@@ -77,14 +79,17 @@ public:
         m_bb.x = Min(x2, m_size.x); m_bb.y = Min(y2, m_size.y);
     }
     void ReduceDirties();
-    void AddDirty(int x1, int y1, int x2, int y2);
-    void delete_dirty(int x1, int y1, int x2, int y2);
+    void AddDirty(vec2i aa, vec2i bb);
+    void DeleteDirty(vec2i aa, vec2i bb);
     void Resize(vec2i size)
     {
         m_size = size;
         m_aa = vec2i(0);
         m_bb = size;
     }
+
+private:
+    vec2i m_size, m_aa, m_bb;
 };
 
 class image : public linked_node
@@ -149,13 +154,13 @@ public:
         if(m_special) m_special->keep_dirt = 1;
     }
 
-    void AddDirty(int x1, int y1, int x2, int y2)
+    void AddDirty(vec2i aa, vec2i bb)
     {
-        if (m_special) m_special->AddDirty(x1, y1, x2, y2);
+        if (m_special) m_special->AddDirty(aa, bb);
     }
-    void delete_dirty(int x1, int y1, int x2, int y2)
+    void DeleteDirty(vec2i aa, vec2i bb)
     {
-        if(m_special) m_special->delete_dirty(x1, y1, x2, y2);
+        if(m_special) m_special->DeleteDirty(aa, bb);
     }
     void ClearDirties()
     {

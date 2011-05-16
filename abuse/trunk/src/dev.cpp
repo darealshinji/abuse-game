@@ -370,7 +370,7 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
   unsigned char *sl1,*sl2;
   int32_t xstep=(im->Size().x<<16)/new_width,
        ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
-  screen->AddDirty(x, y, x + new_width, y + new_height);
+  screen->AddDirty(vec2i(x, y), vec2i(x + new_width, y + new_height));
 
   vec2i caa, cbb;
   screen->GetClip(caa, cbb);
@@ -411,7 +411,7 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
   unsigned char *sl1,*sl2;
   int32_t xstep=(im->Size().x<<16)/new_width,
        ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
-  screen->AddDirty(x, y, x + new_width, y + new_height);
+  screen->AddDirty(vec2i(x, y), vec2i(x + new_width, y + new_height));
 
   vec2i caa, cbb;
   screen->GetClip(caa, cbb);

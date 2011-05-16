@@ -139,8 +139,8 @@ uint8_t *TransImage::ClipToLine(image *screen, vec2i pos1, vec2i pos2,
         }
     }
 
-    screen->AddDirty(Max(pos.x, pos1.x), pos.y,
-                     Min(pos.x + m_size.x, pos2.x), pos.y + m_size.y);
+    screen->AddDirty(vec2i(Max(pos.x, pos1.x), pos.y),
+                     vec2i(Min(pos.x + m_size.x, pos2.x), pos.y + m_size.y));
     return parser;
 }
 

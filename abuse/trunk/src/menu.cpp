@@ -69,7 +69,7 @@ void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int
       *sl=color_table->Lookup((r)>>3,(g)>>3,(b)>>3);
     }
   }
-  main_screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
+  main_screen->AddDirty(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
   main_screen->Unlock();
 }
 
@@ -96,13 +96,13 @@ void darken_area(int x1, int y1, int x2, int y2, int amount)
       *sl=color_table->Lookup((r)>>3,(g)>>3,(b)>>3);
     }
   }
-  main_screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
+  main_screen->AddDirty(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
   main_screen->Unlock();
 }
 
 void dark_widget(int x1, int y1, int x2, int y2, int br, int dr, int amount)
 {
-  main_screen->AddDirty(x1, y1, x2 + 1, y2 + 1);
+  main_screen->AddDirty(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
   main_screen->Line(vec2i(x1, y1), vec2i(x1, y2), br);
   main_screen->Line(vec2i(x1 + 1, y1), vec2i(x2, y1), br);
   main_screen->Line(vec2i(x2, y1 + 1), vec2i(x2, y2), dr);
@@ -152,7 +152,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       my=main_screen->Size().y/2-mh/2;
 
 
-  main_screen->AddDirty(mx, my, mx + mw, my + mh);
+  main_screen->AddDirty(vec2i(mx, my), vec2i(mx + mw, my + mh));
 
   if (title)
   {
@@ -659,7 +659,7 @@ void main_menu()
     inm->allow_no_selections();
     inm->clear_current();
 
-    main_screen->AddDirty(0, 0, 320, 200);
+    main_screen->AddDirty(vec2i(0), vec2i(320, 200));
 
     Event ev;
 

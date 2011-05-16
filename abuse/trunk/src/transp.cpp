@@ -32,7 +32,7 @@ void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
 
     if (!(bb >= vec2i(0)))
         return;
-    screen->AddDirty(pos.x, pos.y, pos.x + bb.x, pos.y + bb.y);
+    screen->AddDirty(pos, pos + bb);
 
   int ye=aa.y+bb.y;
   int xe=aa.x+bb.x;

@@ -77,7 +77,7 @@ void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
       }
     }
   }
-  screen->AddDirty(x, y, x + icw, y + ich);
+  screen->AddDirty(vec2i(x, y), vec2i(x + icw, y + ich));
   screen->Unlock();
 }
 
