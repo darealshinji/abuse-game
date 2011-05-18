@@ -180,143 +180,68 @@ image *image::copy()
 //
 void image::Line(vec2i p1, vec2i p2, uint8_t color)
 {
-    int xc, yc, er, n, m, xi, yi, xcxi, ycyi, xcyi;
-    unsigned int dcy, dcx;
-
     // check to see if the line is completly clipped off
     vec2i caa, cbb;
     GetClip(caa, cbb);
-
-    if ((p1.x < caa.x && p2.x < caa.x) || (p1.x >= cbb.x && p2.x >= cbb.x) ||
-        (p1.y < caa.y && p2.y < caa.y) || (p1.y >= cbb.y && p2.y >= cbb.y))
-        return;
 
     if (p1.x > p2.x) // make sure that p1.x is to the left
     {
         vec2i tmp = p1; p1 = p2; p2 = tmp; // if not swap points
     }
 
-    // clip the left side
+    // clip the left and right sides
+    if ((p1.x < caa.x && p2.x < caa.x) || (p1.x >= cbb.x && p2.x >= cbb.x))
+        return;
     if (p1.x < caa.x)
-    {
-        vec2i m = p2 - p1;
-
-        if (!m.x)
-            return;
-        if (m.y)
-        {
-            int b = p1.y - m.y * p1.x / m.x;
-            p1.y = b + m.y * caa.x / m.x;
-        }
-        p1.x = caa.x;
-    }
-
-    // clip the right side
+        p1 = p1 + (p2 - p1) * (caa.x - p1.x) / (p2.x - p1.x);
     if (p2.x >= cbb.x)
-    {
-        vec2i m = p2 - p1;
-        if (!m.x)
-            return;
-        if (m.y)
-        {
-            int b = p1.y - m.y * p1.x / m.x;
-            p2.y = b + m.y * (cbb.x - 1) / m.x;
-        }
-        p2.x = cbb.x - 1;
-    }
+        p2 = p1 + (p2 - p1) * (cbb.x - 1 - p1.x) / (p2.x - p1.x);
 
     if (p1.y > p2.y) // make sure that p1.y is on top
     {
         vec2i tmp = p1; p1 = p2; p2 = tmp; // if not swap points
     }
 
-    // clip the bottom
+    // clip the bottom and top parts
+    if ((p1.y < caa.y && p2.y < caa.y) || (p1.y >= cbb.y && p2.y >= cbb.y))
+        return;
     if (p2.y >= cbb.y)
-    {
-        vec2i m = p2 - p1;
-        if (!m.y)
-            return;
-        if (m.x)
-        {
-            int b = p1.y - (p2.y - p1.y) * p1.x / m.x;
-            p2.x = (cbb.y - 1 - b) * m.x / m.y;
-        }
-        p2.y = cbb.y - 1;
-    }
-
-    // clip the top
+        p2 = p1 + (p2 - p1) * (cbb.y - 1 - p1.y) / (p2.y - p1.y);
     if (p1.y < caa.y)
-    {
-        vec2i m = p2 - p1;
-        if (!m.y)
-            return;
-        if (m.x)
-        {
-            int b = p1.y - m.y * p1.x / m.x;
-            p1.x = (caa.y - b) * m.x / m.y;
-        }
-        p1.y = caa.y;
-    }
+        p1 = p1 + (p2 - p1) * (caa.y - p1.y) / (p2.y - p1.y);
 
-    // see if it got cliped into the box, out out
+    // If we are still outside the clip box, bail out
     if (!(p1 >= caa && p2 >= caa && p1 < cbb && p2 < cbb))
         return;
 
-    if (p1.x > p2.x)
-    {
-        xc = p2.x;
-        xi = p1.x;
-    }
-    else
-    {
-        xi = p2.x;
-        xc = p1.x;
-    }
+    // We can now assume p1.y <= p2.y
+    AddDirty(vec2i(Min(p1.x, p2.x), p1.y),
+             vec2i(Max(p1.x, p2.x), p2.y) + vec2i(1));
 
-    // assume p1.y <= p2.y from above swap operation
-    yi = p2.y; yc = p1.y;
+    vec2i span = p2 - p1;
+    int xi = (span.x < 0) ? -1 : 1;
+    int yi = (span.y < 0) ? -1 : 1;
+    int n = abs(span.x);
+    int m = abs(span.y);
 
-    AddDirty(vec2i(xc, yc), vec2i(xi + 1, yi + 1));
-    dcx = p1.x; dcy = p1.y;
-    xc = (p2.x - p1.x);
-    yc = (p2.y - p1.y);
-    xi = (xc < 0) ? -1 : 1;
-    yi = (yc < 0) ? -1 : 1;
-    n = abs(xc);
-    m = abs(yc);
-    ycyi = abs(2 * yc * xi);
-    er = 0;
+    uint8_t *start = scan_line(p1.y) + p1.x;
+
+    int dx = (n > m) ? yi * m_size.x : xi;
+    int dy = (n > m) ? xi : yi * m_size.x;
+    int erx = 2 * Max(span.x * xi, span.y * yi);
+    int ery = 2 * Min(span.x * xi, span.y * yi);
 
     Lock();
-    if (n > m)
+    for (int i = 0, er = 0; i <= Max(n, m); i++)
     {
-        xcxi = abs(2 * xc * xi);
-        for (int i = 0; i <= n; i++)
+        *start = color;
+        if (er > 0)
         {
-            scan_line(dcy)[dcx] = color;
-            if (er > 0)
-            {
-                dcy += yi;
-                er -= xcxi;
-            }
-            er += ycyi;
-            dcx += xi;
+            start += dx;
+            er -= erx;
         }
-    }
-    else
-    {
-        xcyi = abs(2 * xc * yi);
-        for (int i = 0; i <= m; i++)
-        {
-            scan_line(dcy)[dcx] = color;
-            if (er > 0)
-            {
-                dcx += xi;
-                er -= ycyi;
-            }
-            er += xcyi;
-            dcy += yi;
-        }
+        er += ery;
+        start += dy;
     }
     Unlock();
 }

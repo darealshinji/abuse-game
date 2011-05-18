@@ -69,5 +69,3 @@ xstart() / xend() etc.
 jwindow::area
 button::area
 
-refactor image::Line to merge loops
-
