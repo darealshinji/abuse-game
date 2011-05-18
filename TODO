@@ -57,7 +57,6 @@ REFACTOR
 --------
 - move to vec2i:
   - scale_put, scale_put_trans
-  - tint_area, darken_area
   - fg_width, etc.
 
 Jwindow::_x1 _x2

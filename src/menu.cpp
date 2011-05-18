@@ -44,70 +44,44 @@ extern net_protocol *prot;
 static VolumeWindow *volume_window;
 
 //percent is 0..256
-void tint_area(int x1, int y1, int x2, int y2, int r_to, int g_to, int b_to, int percent)
+static void TintArea(vec2i aa, vec2i bb,
+                     int r_to, int g_to, int b_to, int percent)
 {
-  vec2i caa, cbb;
-  main_screen->GetClip(caa, cbb);
-  if (x1 < caa.x) x1 = caa.x;
-  if (y1 < caa.y) y1 = caa.y;
-  if (x2 > cbb.x - 1) x2 = cbb.x - 1;
-  if (y2 > cbb.y - 1) y2 = cbb.y - 1;
-  if (x2 < x1 || y2 < y1) return;
+    vec2i caa, cbb;
+    main_screen->GetClip(caa, cbb);
+    aa = Max(aa, caa);
+    bb = Min(bb, cbb);
 
-  percent=256-percent;
+    if (!(aa < bb))
+        return;
 
-  main_screen->Lock();
-  for (int y=y1; y<=y2; y++)
-  {
-    uint8_t *sl=main_screen->scan_line(y)+x1;
-    for (int x=x1; x<=x2; x++,sl++)
+    percent = 256 - percent;
+
+    main_screen->Lock();
+    for (int y = aa.y; y < bb.y; y++)
     {
-      uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
-      uint8_t r=((*(paddr++))-r_to)*percent/256+r_to;
-      uint8_t g=((*(paddr++))-g_to)*percent/256+g_to;
-      uint8_t b=((*(paddr++))-b_to)*percent/256+b_to;
-      *sl=color_table->Lookup((r)>>3,(g)>>3,(b)>>3);
+        uint8_t *sl = main_screen->scan_line(y) + aa.x;
+        for (int x = aa.x; x < bb.x; x++, sl++)
+        {
+            uint8_t *paddr = (uint8_t *)pal->addr() + (*sl) * 3;
+            uint8_t r = (((paddr[0] - r_to) * percent) >> 8) + r_to;
+            uint8_t g = (((paddr[1] - g_to) * percent) >> 8) + g_to;
+            uint8_t b = (((paddr[2] - b_to) * percent) >> 8) + b_to;
+            *sl = color_table->Lookup((r) >> 3, (g) >> 3, (b) >> 3);
+        }
     }
-  }
-  main_screen->AddDirty(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
-  main_screen->Unlock();
+    main_screen->AddDirty(aa, bb);
+    main_screen->Unlock();
 }
 
-void darken_area(int x1, int y1, int x2, int y2, int amount)
+void DarkWidget(vec2i aa, vec2i bb, int br, int dr, int amount)
 {
-  vec2i caa, cbb;
-  main_screen->GetClip(caa, cbb);
-  if (x1 < caa.x) x1 = caa.x;
-  if (y1 < caa.y) y1 = caa.y;
-  if (x2 > cbb.x - 1) x2 = cbb.x - 1;
-  if (y2 > cbb.y - 1) y2 = cbb.y - 1;
-  if (x2 < x1 || y2 < y1) return;
-
-  main_screen->Lock();
-  for (int y=y1; y<=y2; y++)
-  {
-    uint8_t *sl=main_screen->scan_line(y)+x1;
-    for (int x=x1; x<=x2; x++,sl++)
-    {
-      uint8_t *paddr=(uint8_t *)pal->addr()+(*sl)*3;
-      uint8_t r=(*(paddr++))*amount/256;
-      uint8_t g=(*(paddr++))*amount/256;
-      uint8_t b=(*(paddr++))*amount/256;
-      *sl=color_table->Lookup((r)>>3,(g)>>3,(b)>>3);
-    }
-  }
-  main_screen->AddDirty(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
-  main_screen->Unlock();
-}
-
-void dark_widget(int x1, int y1, int x2, int y2, int br, int dr, int amount)
-{
-  main_screen->AddDirty(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
-  main_screen->Line(vec2i(x1, y1), vec2i(x1, y2), br);
-  main_screen->Line(vec2i(x1 + 1, y1), vec2i(x2, y1), br);
-  main_screen->Line(vec2i(x2, y1 + 1), vec2i(x2, y2), dr);
-  main_screen->Line(vec2i(x1 + 1, y2), vec2i(x2, y2), dr);
-  darken_area(x1 + 1, y1 + 1, x2 - 1, y2 - 1, amount);
+    main_screen->AddDirty(aa, bb);
+    main_screen->Line(aa, vec2i(aa.x, bb.y - 1), br);
+    main_screen->Line(aa, vec2i(bb.x - 1, aa.y), br);
+    main_screen->Line(vec2i(bb.x - 1, aa.y + 1), bb - vec2i(1), dr);
+    main_screen->Line(vec2i(aa.x + 1, bb.y - 1), bb - vec2i(1), dr);
+    TintArea(aa + vec2i(1), bb, 0, 0, 0, amount);
 }
 
 char *men_str(void *arg)
@@ -128,6 +102,10 @@ char *men_str(void *arg)
   return NULL;
 }
 
+//
+// This method is only used by the (menu) Lisp method, which was
+// never tested.
+//
 int menu(void *args, JCFont *font)             // reurns -1 on esc
 {
   main_menu();
@@ -158,11 +136,12 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   {
     int tl=strlen(title)*font->Size().x;
     int tx=main_screen->Size().x/2-tl/2;
-    dark_widget(tx-2,my-font->Size().y-4,tx+tl+2,my-2,wm->medium_color(),wm->dark_color(),180);
-    font->PutString(main_screen, vec2i(tx + 1, my-font->Size().y - 2), title,wm->bright_color());
+    DarkWidget(vec2i(tx - 2, my-font->Size().y - 4), vec2i(tx + tl + 3, my - 1), wm->medium_color(),wm->dark_color(),180);
+    font->PutString(main_screen, vec2i(tx + 1, my-font->Size().y - 2), title, wm->bright_color());
   }
 
-  dark_widget(mx,my,mx+mw-1,my+mh-1,wm->medium_color(),wm->dark_color(),200);
+  DarkWidget(vec2i(mx, my), vec2i(mx + mw, my + mh),
+             wm->medium_color(), wm->dark_color(), 200);
 
 
   int y=my+5;
@@ -235,7 +214,8 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       int by2=by1+bh-1;
 
       save->PutPart(main_screen, vec2i(0, 0), vec2i(mx + 1, by1), vec2i(mx + mw - 1, by2 + 1));
-      tint_area(mx+1,by1,mx+mw-2,by2,63,63,63,color);
+      TintArea(vec2i(mx + 1, by1), vec2i(mx + mw - 1, by2 + 1),
+               63, 63, 63, color);
 
       char *cur=men_str(nth(choice,args));
       font->PutString(main_screen, vec2i(mx + 10 + 1, by1 + 3), cur, wm->black());
