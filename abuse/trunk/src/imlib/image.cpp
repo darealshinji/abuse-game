@@ -175,6 +175,9 @@ image *image::copy()
     return im;
 }
 
+//
+// Draw a line of the given colour on the image. Both endpoints are set.
+//
 void image::Line(vec2i p1, vec2i p2, uint8_t color)
 {
     int xc, yc, er, n, m, xi, yi, xcxi, ycyi, xcyi;
@@ -183,7 +186,9 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
     // check to see if the line is completly clipped off
     vec2i caa, cbb;
     GetClip(caa, cbb);
-    if (!(p1 >= caa && p2 >= caa && p1 < cbb && p2 < cbb))
+
+    if ((p1.x < caa.x && p2.x < caa.x) || (p1.x >= cbb.x && p2.x >= cbb.x) ||
+        (p1.y < caa.y && p2.y < caa.y) || (p1.y >= cbb.y && p2.y >= cbb.y))
         return;
 
     if (p1.x > p2.x) // make sure that p1.x is to the left
