@@ -37,7 +37,7 @@ void automap::draw()
   window_ystart=automap_window->y1();
   window_xend=automap_window->x2();
   window_yend=automap_window->y2();
-  vec2i center((window_xstart+window_xend)/2, (window_ystart+window_yend)/2);
+  ivec2 center((window_xstart+window_xend)/2, (window_ystart+window_yend)/2);
 
   sx=x/f_wid-w/2;                // start drawing with this foretile
   sy=y/f_hi-h/2;
@@ -63,7 +63,7 @@ void automap::draw()
   if (draw_xstart==old_dx && draw_ystart==old_dy)
   {
    automap_window->m_surf->Lock();
-   automap_window->m_surf->AddDirty(center, center + vec2i(1));
+   automap_window->m_surf->AddDirty(center, center + ivec2(1));
     if ((tick++)&4)
       automap_window->m_surf->PutPixel(center, 255);
     else
@@ -82,10 +82,10 @@ void automap::draw()
     ey=cur_lev->foreground_height()-1;
 
 
-  screen->Bar(vec2i(window_xstart, window_ystart),
-              vec2i(draw_xstart, window_yend), 0);
-  screen->Bar(vec2i(window_xstart, window_ystart),
-              vec2i(window_xend, draw_ystart), 0);
+  screen->Bar(ivec2(window_xstart, window_ystart),
+              ivec2(draw_xstart, window_yend), 0);
+  screen->Bar(ivec2(window_xstart, window_ystart),
+              ivec2(window_xend, draw_ystart), 0);
 
 
 /*  if (ex>=cur_lev->foreground_width())
@@ -95,27 +95,27 @@ void automap::draw()
 
   // we are going to redraw the whole map, so make the dirty rect work
   // easier by marking everything dirty
-  screen->AddDirty(vec2i(window_xstart, window_ystart),
-                   vec2i(window_xend + 1, window_yend + 1));
+  screen->AddDirty(ivec2(window_xstart, window_ystart),
+                   ivec2(window_xend + 1, window_yend + 1));
 
   // draw the tiles that will be around the border of the automap with PutImage
   // because it handles clipping, but for ths reason is slower, the rest
   // we will slam on as fast as possible
 
-  screen->SetClip(vec2i(window_xstart, window_ystart),
-                  vec2i(window_xend + 1, window_yend + 1));
+  screen->SetClip(ivec2(window_xstart, window_ystart),
+                  ivec2(window_xend + 1, window_yend + 1));
 #if 0
   for (i=draw_xstart,j=draw_ystart,x=sx,y=sy; y<=ey; j+=AUTOTILE_HEIGHT,y++)
-    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, vec2i(i, j), 0);
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, ivec2(i, j), 0);
 
   for (i=draw_xstart+ex*AUTOTILE_WIDTH,j=draw_ystart,y=sy,x=ex; y<=ey; j+=AUTOTILE_HEIGHT,y++)
-    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, vec2i(i, j), 0);
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, ivec2(i, j), 0);
 
   for (i=draw_xstart,j=draw_ystart,x=sx,y=sy; x<=ex; i+=AUTOTILE_WIDTH,x++)
-    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, vec2i(i, j), 0);
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, ivec2(i, j), 0);
 
   for (i=draw_xstart,j=draw_ystart+ey*AUTOTILE_HEIGHT,x=sx,y=ex; x<=ex; i+=AUTOTILE_WIDTH,x++)
-    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, vec2i(i, j), 0);
+    screen->PutImage(foretiles[cur_lev->get_fg(x, y)]->micro_image, ivec2(i, j), 0);
 #endif
 
   unsigned short *fgline;
@@ -128,13 +128,13 @@ void automap::draw()
       {
     int id=foretiles[ (*fgline)&0x7fff];
     if (id>=0)
-          screen->PutImage(cache.foret(id)->micro_image, vec2i(i, j), 0);
+          screen->PutImage(cache.foret(id)->micro_image, ivec2(i, j), 0);
     else
-          screen->PutImage(cache.foret(foretiles[0])->micro_image, vec2i(i, j), 0);
+          screen->PutImage(cache.foret(foretiles[0])->micro_image, ivec2(i, j), 0);
       }
       else
-        screen->Bar(vec2i(i, j),
-                    vec2i(i + AUTOTILE_WIDTH - 1, j + AUTOTILE_HEIGHT - 1), 0);
+        screen->Bar(ivec2(i, j),
+                    ivec2(i + AUTOTILE_WIDTH - 1, j + AUTOTILE_HEIGHT - 1), 0);
     }
   }
 
@@ -148,7 +148,7 @@ void automap::draw()
   automap_window->m_surf->Unlock();
 
   // set the clip back to full window size because soemthing else could mess with the area
-  automap_window->m_surf->SetClip(vec2i(0), screen->Size());
+  automap_window->m_surf->SetClip(ivec2(0), screen->Size());
 }
 
 void automap::toggle_window()
@@ -163,11 +163,11 @@ void automap::toggle_window()
         old_dx = -1000; // make sure the map gets drawn the first time
         old_dy = -1000;
 
-        automap_window = wm->CreateWindow(vec2i(0), vec2i(w * AUTOTILE_WIDTH,
+        automap_window = wm->CreateWindow(ivec2(0), ivec2(w * AUTOTILE_WIDTH,
                                         h * AUTOTILE_HEIGHT), NULL, "Map");
-        automap_window->m_surf->Bar(vec2i(17, 1), vec2i(17 + 8 * 6 + 3, 6),
+        automap_window->m_surf->Bar(ivec2(17, 1), ivec2(17 + 8 * 6 + 3, 6),
                                     wm->medium_color());
-        wm->font()->PutString(automap_window->m_surf, vec2i(20, 2), "Automap",
+        wm->font()->PutString(automap_window->m_surf, ivec2(20, 2), "Automap",
                               wm->dark_color());
         draw();
     }

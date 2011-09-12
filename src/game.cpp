@@ -117,7 +117,7 @@ void handle_no_space()
     info_field *inf = new info_field(0, wm->font()->Size().y * 2, ID_NULL,
                                      no_space_msg, NULL);
     button *b = new button(0, 0, ID_QUIT_OK, "Quit", inf);
-    Jwindow *no_space = wm->CreateWindow(vec2i(0), vec2i(-1), b, "ERROR");
+    Jwindow *no_space = wm->CreateWindow(ivec2(0), ivec2(-1), b, "ERROR");
 
     Event ev;
     do
@@ -257,7 +257,7 @@ void Game::pan(int xv, int yv)
     first_view->pan_y += yv;
 }
 
-view *Game::GetView(vec2i pos)
+view *Game::GetView(ivec2 pos)
 {
     for(view *f = first_view; f; f = f->next)
         if(f->drawable() && pos >= f->m_aa && pos <= f->m_bb)
@@ -270,60 +270,60 @@ int playing_state(int state)
     return state == RUN_STATE || state == PAUSE_STATE;
 }
 
-vec2i Game::GetFgTile(vec2i pos)
+ivec2 Game::GetFgTile(ivec2 pos)
 {
-    return MouseToGame(pos) / vec2i(ftile_width(), ftile_height());
+    return MouseToGame(pos) / ivec2(ftile_width(), ftile_height());
 }
 
-vec2i Game::GetBgTile(vec2i pos)
+ivec2 Game::GetBgTile(ivec2 pos)
 {
     view *f = GetView(pos);
     if(!f)
-        return vec2i(-1, -1);
+        return ivec2(-1, -1);
 
-    return vec2i((pos.x - f->m_aa.x + f->xoff() * bg_xmul / bg_xdiv) / b_wid,
+    return ivec2((pos.x - f->m_aa.x + f->xoff() * bg_xmul / bg_xdiv) / b_wid,
                  (pos.y - f->m_aa.y + f->yoff() * bg_ymul / bg_ydiv) / b_hi);
 }
 
-vec2i Game::MouseToGame(vec2i pos, view *v)
+ivec2 Game::MouseToGame(ivec2 pos, view *v)
 {
     if (!v)
         v = GetView(pos);
     if (!v)
         v = player_list;  // if not in a view use the first one
     if (!v)
-        return vec2i(-1, -1);
+        return ivec2(-1, -1);
 
     if(dev & MAP_MODE)
-        return vec2i((pos.x - v->m_aa.x) * ftile_width()
+        return ivec2((pos.x - v->m_aa.x) * ftile_width()
                            / AUTOTILE_WIDTH + map_xoff * ftile_width(),
                      (pos.y - v->m_aa.y) * ftile_height()
                            / AUTOTILE_HEIGHT + map_yoff * ftile_height());
 
-    return pos - v->m_aa + vec2i(v->xoff(), v->yoff());
+    return pos - v->m_aa + ivec2(v->xoff(), v->yoff());
 }
 
-vec2i Game::GameToMouse(vec2i pos, view *v)
+ivec2 Game::GameToMouse(ivec2 pos, view *v)
 {
     if (!(dev & MAP_MODE))
-        return pos + v->m_aa - vec2i(v->xoff(), v->yoff());
+        return pos + v->m_aa - ivec2(v->xoff(), v->yoff());
 
-    vec2i tmp;
+    ivec2 tmp;
 
     if (dev & EDIT_MODE)
-        tmp = vec2i(map_xoff, map_yoff);
+        tmp = ivec2(map_xoff, map_yoff);
     else if(v->m_focus)
-        tmp = vec2i(v->m_focus->x / ftile_width()
+        tmp = ivec2(v->m_focus->x / ftile_width()
                        - (v->m_bb.x - v->m_aa.x) / AUTOTILE_WIDTH / 2,
                     v->m_focus->y / ftile_height()
                        - (v->m_bb.y - v->m_aa.y) / AUTOTILE_HEIGHT / 2);
     else
-        tmp = vec2i(0, 0);
+        tmp = ivec2(0, 0);
 
     tmp.x = Max(tmp.x, 0);
     tmp.y = Max(tmp.y, 0);
 
-    vec2i ret(pos.x * AUTOTILE_WIDTH / ftile_width()
+    ivec2 ret(pos.x * AUTOTILE_WIDTH / ftile_width()
                  - tmp.x * AUTOTILE_WIDTH + v->m_aa.x,
               pos.y * AUTOTILE_HEIGHT / ftile_height()
                  - tmp.y * AUTOTILE_HEIGHT + v->m_aa.y);
@@ -408,9 +408,9 @@ void Game::set_state(int new_state)
     pal->load();    // restore old palette
 
     if(playing_state(state) &&  !(dev & EDIT_MODE))
-        wm->SetMouseShape(cache.img(c_target)->copy(), vec2i(8));
+        wm->SetMouseShape(cache.img(c_target)->copy(), ivec2(8));
     else
-        wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1));
+        wm->SetMouseShape(cache.img(c_normal)->copy(), ivec2(1));
 
     if(old_state == SCENE_STATE && new_state != SCENE_STATE)
     {
@@ -441,10 +441,10 @@ void Game::joy_calb(Event &ev)
         if(but) but = 1;
         int dx = 20, dy = 5;
         image *jim = cache.img(joy_picts[but * 9+(y + 1)*3 + x + 1]);
-        joy_win->m_surf->Bar(vec2i(dx, dy), vec2i(dx + jim->Size().x + 6,
+        joy_win->m_surf->Bar(ivec2(dx, dy), ivec2(dx + jim->Size().x + 6,
                                                   dy + jim->Size().y + 6),
                              wm->black());
-        joy_win->m_surf->PutImage(jim, vec2i(dx + 3, dy + 3));
+        joy_win->m_surf->PutImage(jim, ivec2(dx + 3, dy + 3));
 
         if(but)
             joy_calibrate();
@@ -481,8 +481,8 @@ void Game::show_help(char const *st)
 void Game::draw_value(image *screen, int x, int y, int w, int h,
                       int val, int max)
 {
-    screen->Bar(vec2i(x, y), vec2i(x + w - 1, y + h), wm->dark_color());
-    screen->Bar(vec2i(x, y + 1), vec2i(x + w * val / max, y + h - 1),
+    screen->Bar(ivec2(x, y), ivec2(x + w - 1, y + h), wm->dark_color());
+    screen->Bar(ivec2(x, y + 1), ivec2(x + w * val / max, y + h - 1),
                 wm->bright_color());
 }
 
@@ -635,7 +635,7 @@ void Game::draw_map(view *v, int interpolate)
 {
   backtile *bt;
   int x1, y1, x2, y2, x, y, xo, yo, nxoff, nyoff;
-  vec2i caa, cbb;
+  ivec2 caa, cbb;
   main_screen->GetClip(caa, cbb);
 
   if(!current_level || state == MENU_STATE)
@@ -643,7 +643,7 @@ void Game::draw_map(view *v, int interpolate)
     if(title_screen >= 0)
     {
       if(state == SCENE_STATE)
-        main_screen->SetClip(v->m_aa, v->m_bb + vec2i(1));
+        main_screen->SetClip(v->m_aa, v->m_bb + ivec2(1));
       image *tit = cache.img(title_screen);
       main_screen->PutImage(tit, main_screen->Size() / 2 - tit->Size() / 2);
       if(state == SCENE_STATE)
@@ -660,9 +660,9 @@ void Game::draw_map(view *v, int interpolate)
   // view area dirty alreadt
 
   if(small_render)
-    main_screen->AddDirty(v->m_aa, (v->m_bb - v->m_aa + vec2i(1)) * 2 + vec2i(v->m_aa.x, 0) + vec2i(1));
+    main_screen->AddDirty(v->m_aa, (v->m_bb - v->m_aa + ivec2(1)) * 2 + ivec2(v->m_aa.x, 0) + ivec2(1));
   else
-    main_screen->AddDirty(v->m_aa, v->m_bb + vec2i(1));
+    main_screen->AddDirty(v->m_aa, v->m_bb + ivec2(1));
 
   if(v->draw_solid != -1)      // fill the screen and exit..
   {
@@ -676,7 +676,7 @@ void Game::draw_map(view *v, int interpolate)
   }
 
     // if we do a small render, we need to restore these
-    vec2i old_aa(0), old_bb(0);
+    ivec2 old_aa(0), old_bb(0);
     image *old_screen = NULL;
 
   if(small_render && (dev & DRAW_LIGHTS))  // cannot do this if we skip lighting
@@ -684,8 +684,8 @@ void Game::draw_map(view *v, int interpolate)
     old_aa = v->m_aa;
     old_bb = v->m_bb;
 
-    v->m_aa = vec2i(0);
-    v->m_bb = small_render->Size() - vec2i(1);
+    v->m_aa = ivec2(0);
+    v->m_bb = small_render->Size() - ivec2(1);
 
     old_screen = main_screen;
     main_screen = small_render;
@@ -710,7 +710,7 @@ void Game::draw_map(view *v, int interpolate)
   current_vxadd = xoff - v->m_aa.x;
   current_vyadd = yoff - v->m_aa.y;
 
-  main_screen->SetClip(v->m_aa, v->m_bb + vec2i(1));
+  main_screen->SetClip(v->m_aa, v->m_bb + ivec2(1));
 
   nxoff = xoff * bg_xmul / bg_xdiv;
   nyoff = yoff * bg_ymul / bg_ydiv;
@@ -750,7 +750,7 @@ void Game::draw_map(view *v, int interpolate)
     }
     else bt = get_bg(0);
 
-        main_screen->PutImage(bt->im, vec2i(draw_x, draw_y));
+        main_screen->PutImage(bt->im, ivec2(draw_x, draw_y));
 //        if(!(dev & EDIT_MODE) && bt->next)
 //      current_level->put_bg(x, y, bt->next);
       }
@@ -809,7 +809,7 @@ void Game::draw_map(view *v, int interpolate)
 
   if(dev & DRAW_FG_LAYER)
   {
-    vec2i ncaa, ncbb;
+    ivec2 ncaa, ncbb;
     main_screen->GetClip(ncaa, ncbb);
 
     int scr_w = main_screen->Size().x;
@@ -872,7 +872,7 @@ void Game::draw_map(view *v, int interpolate)
           int fort_num = fgvalue(*cl);
           if(fort_num != BLACK)
           {
-            get_fg(fort_num)->im->PutImage(main_screen, vec2i(draw_x, draw_y));
+            get_fg(fort_num)->im->PutImage(main_screen, ivec2(draw_x, draw_y));
 
         if(!(dev & EDIT_MODE))
             *cl|=0x8000;      // mark as has - been - seen
@@ -914,16 +914,16 @@ void Game::draw_map(view *v, int interpolate)
         if(fort_num != BLACK)
         {
           if(dev & DRAW_BG_LAYER)
-          get_fg(fort_num)->im->PutImage(main_screen, vec2i(draw_x, draw_y));
+          get_fg(fort_num)->im->PutImage(main_screen, ivec2(draw_x, draw_y));
           else
-          get_fg(fort_num)->im->PutFilled(main_screen, vec2i(draw_x, draw_y), 0);
+          get_fg(fort_num)->im->PutFilled(main_screen, ivec2(draw_x, draw_y), 0);
 
           if(!(dev & EDIT_MODE))
           current_level->mark_seen(x, y);
           else
           {
-        main_screen->Line(vec2i(draw_x, draw_y), vec2i(draw_x + xinc, draw_y + yinc), wm->bright_color());
-        main_screen->Line(vec2i(draw_x + xinc, draw_y), vec2i(draw_x, draw_y + yinc), wm->bright_color());
+        main_screen->Line(ivec2(draw_x, draw_y), ivec2(draw_x + xinc, draw_y + yinc), wm->bright_color());
+        main_screen->Line(ivec2(draw_x + xinc, draw_y), ivec2(draw_x, draw_y + yinc), wm->bright_color());
           }
         }
       }
@@ -957,11 +957,11 @@ void Game::draw_map(view *v, int interpolate)
         for(int i = 1; i < p->tot; i++)
         {
           d += 2;
-          main_screen->Line(vec2i(draw_x + *(d - 2), draw_y + *(d - 1)),
-                            vec2i(draw_x + *d, draw_y + *(d + 1)), b);
+          main_screen->Line(ivec2(draw_x + *(d - 2), draw_y + *(d - 1)),
+                            ivec2(draw_x + *d, draw_y + *(d + 1)), b);
         }
-        main_screen->Line(vec2i(draw_x + *d, draw_y + *(d - 1)),
-                          vec2i(draw_x + p->data[0], draw_y + p->data[1]), b);
+        main_screen->Line(ivec2(draw_x + *d, draw_y + *(d - 1)),
+                          ivec2(draw_x + p->data[0], draw_y + p->data[1]), b);
           }
         }
       }
@@ -978,14 +978,14 @@ void Game::draw_map(view *v, int interpolate)
       {
     int color = 2 + Max(0, help_text_frames - 10);
 
-    vec2i aa = v->m_aa;
-    vec2i bb(v->m_bb.x, v->m_aa.y + wm->font()->Size().y + 10);
+    ivec2 aa = v->m_aa;
+    ivec2 bb(v->m_bb.x, v->m_aa.y + wm->font()->Size().y + 10);
 
     remap_area(main_screen, aa.x, aa.y, bb.x, bb.y, white_light + 40 * 256);
-    main_screen->Bar(aa, vec2i(bb.x, aa.y), color);
-    main_screen->Bar(vec2i(aa.x, bb.y), bb, color);
+    main_screen->Bar(aa, ivec2(bb.x, aa.y), color);
+    main_screen->Bar(ivec2(aa.x, bb.y), bb, color);
 
-    wm->font()->PutString(main_screen, aa + vec2i(5), help_text, color);
+    wm->font()->PutString(main_screen, aa + ivec2(5), help_text, color);
     if(color > 30)
         help_text_frames = -1;
     else help_text_frames++;
@@ -996,7 +996,7 @@ void Game::draw_map(view *v, int interpolate)
     if(dev_cont)
     dev_cont->dev_draw(v);
     if(cache.in_use())
-    main_screen->PutImage(cache.img(vmm_image), vec2i(v->m_aa.x, v->m_bb.y - cache.img(vmm_image)->Size().y+1));
+    main_screen->PutImage(cache.img(vmm_image), ivec2(v->m_aa.x, v->m_bb.y - cache.img(vmm_image)->Size().y+1));
 
     if(dev & DRAW_LIGHTS)
     {
@@ -1040,7 +1040,7 @@ void Game::draw_map(view *v, int interpolate)
   sbar.draw_update();
 }
 
-void Game::PutFg(vec2i pos, int type)
+void Game::PutFg(ivec2 pos, int type)
 {
     if (current_level->GetFg(pos) == type)
         return;
@@ -1051,7 +1051,7 @@ void Game::PutFg(vec2i pos, int type)
             draw_map(f);
 }
 
-void Game::PutBg(vec2i pos, int type)
+void Game::PutBg(ivec2 pos, int type)
 {
     if (current_level->GetBg(pos) == type)
         return;
@@ -1085,7 +1085,7 @@ template<int N> static void Fade(image *im, int steps)
     if (im)
     {
         main_screen->clear();
-        main_screen->PutImage(im, vec2i(xres + 1, yres + 1) / 2
+        main_screen->PutImage(im, ivec2(xres + 1, yres + 1) / 2
                                    - im->Size() / 2);
     }
 
@@ -1152,9 +1152,9 @@ void do_title()
     // is not and the window gets closed during do_title, then
     // exit() will try to delete (through the desctructor of
     // image_list in image.cpp) the image on the stack -> boom.
-    image *blank = new image(vec2i(2, 2));
+    image *blank = new image(ivec2(2, 2));
     blank->clear();
-    wm->SetMouseShape(blank->copy(), vec2i(0, 0)); // hide mouse
+    wm->SetMouseShape(blank->copy(), ivec2(0, 0)); // hide mouse
     delete blank;
     fade_in(cache.img(cdc_logo), 32);
     Timer tmp; tmp.WaitMs(400);
@@ -1185,8 +1185,8 @@ void do_title()
         pal->load();
 
         int dx = (xres + 1) / 2 - gray->Size().x / 2, dy = (yres + 1) / 2 - gray->Size().y / 2;
-        main_screen->PutImage(gray, vec2i(dx, dy));
-        main_screen->PutImage(smoke[0], vec2i(dx + 24, dy + 5));
+        main_screen->PutImage(gray, ivec2(dx, dy));
+        main_screen->PutImage(smoke[0], ivec2(dx + 24, dy + 5));
 
         fade_in(NULL, 16);
         uint8_t cmap[32];
@@ -1206,8 +1206,8 @@ void do_title()
             if (i >= 400)
                 break;
 
-            main_screen->PutImage(gray, vec2i(dx, dy));
-            main_screen->PutImage(smoke[i % 5], vec2i(dx + 24, dy + 5));
+            main_screen->PutImage(gray, ivec2(dx, dy));
+            main_screen->PutImage(smoke[i % 5], ivec2(dx + 24, dy + 5));
             text_draw(205 - i, dx + 15, dy, dx + 320 - 15, dy + 199, str, wm->font(), cmap, wm->bright_color());
             wm->flush_screen();
             time_marker now;
@@ -1324,13 +1324,13 @@ Game::Game(int argc, char **argv)
 
   recalc_local_view_space();   // now that we know what size the screen is...
 
-  dark_color = get_color(cache.img(window_colors)->Pixel(vec2i(2, 0)));
-  bright_color = get_color(cache.img(window_colors)->Pixel(vec2i(0, 0)));
-  med_color = get_color(cache.img(window_colors)->Pixel(vec2i(1, 0)));
+  dark_color = get_color(cache.img(window_colors)->Pixel(ivec2(2, 0)));
+  bright_color = get_color(cache.img(window_colors)->Pixel(ivec2(0, 0)));
+  med_color = get_color(cache.img(window_colors)->Pixel(ivec2(1, 0)));
 
-  morph_dark_color = get_color(cache.img(window_colors)->Pixel(vec2i(2, 1)));
-  morph_bright_color = get_color(cache.img(window_colors)->Pixel(vec2i(0, 1)));
-  morph_med_color = get_color(cache.img(window_colors)->Pixel(vec2i(1, 1)));
+  morph_dark_color = get_color(cache.img(window_colors)->Pixel(ivec2(2, 1)));
+  morph_bright_color = get_color(cache.img(window_colors)->Pixel(ivec2(0, 1)));
+  morph_med_color = get_color(cache.img(window_colors)->Pixel(ivec2(1, 1)));
   morph_sel_frame_color = pal->find_closest(255, 255, 0);
   light_connection_color = morph_sel_frame_color;
 
@@ -1432,7 +1432,7 @@ void Game::show_time()
     console_font->PutString(main_screen, first_view->m_aa, str);
 
     sprintf(str, "%d", total_active);
-    console_font->PutString(main_screen, first_view->m_aa + vec2i(0, 10), str);
+    console_font->PutString(main_screen, first_view->m_aa + ivec2(0, 10), str);
 }
 
 void Game::update_screen()
@@ -1478,7 +1478,7 @@ void Game::update_screen()
     if(state == PAUSE_STATE)
     {
       for(view *f = first_view; f; f = f->next)
-        main_screen->PutImage(cache.img(pause_image), vec2i((f->m_aa.x + f->m_bb.x) / 2 - cache.img(pause_image)->Size().x/2, f->m_aa.y + 5), 1);
+        main_screen->PutImage(cache.img(pause_image), ivec2((f->m_aa.x + f->m_bb.x) / 2 - cache.img(pause_image)->Size().x/2, f->m_aa.y + 5), 1);
     }
 
     show_time();
@@ -1635,7 +1635,7 @@ void Game::get_input()
                     {
                         if(!joy_win)
                         {
-                            joy_win = wm->CreateWindow(vec2i(80, 50), vec2i(-1),
+                            joy_win = wm->CreateWindow(ivec2(80, 50), ivec2(-1),
                                     new button(70, 9, JOY_OK, "OK",
                                     new info_field(0, 30, DEV_NULL,
                                     " Center joystick and\n"
@@ -2024,16 +2024,16 @@ Game::~Game()
 
 void Game::draw(int scene_mode)
 {
-    main_screen->AddDirty(vec2i(0), vec2i(xres, yres));
+    main_screen->AddDirty(ivec2(0), ivec2(xres, yres));
 
     main_screen->clear();
 
     if(scene_mode)
     {
         char const *helpstr = "ARROW KEYS CHANGE TEXT SPEED";
-        vec2i span = wm->font()->Size() * vec2i(strlen(helpstr), 1);
-        vec2i pos = (main_screen->Size() - span) / vec2i(2, 1);
-        wm->font()->PutString(main_screen, pos + vec2i(1),
+        ivec2 span = wm->font()->Size() * ivec2(strlen(helpstr), 1);
+        ivec2 pos = (main_screen->Size() - span) / ivec2(2, 1);
+        wm->font()->PutString(main_screen, pos + ivec2(1),
                               helpstr, wm->dark_color());
         wm->font()->PutString(main_screen, pos, helpstr, wm->bright_color());
     }

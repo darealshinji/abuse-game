@@ -42,7 +42,7 @@ extern demo_manager demo_man;
 extern void get_event(Event &ev);
 extern int event_waiting();
 
-extern vec2i last_demo_mpos;
+extern ivec2 last_demo_mpos;
 extern int last_demo_mbut;
 
 //extern ulong demo_tick_on;

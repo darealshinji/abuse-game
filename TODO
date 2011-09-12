@@ -55,7 +55,7 @@ There may be interesting code in there:
 
 REFACTOR
 --------
-- move to vec2i:
+- move to ivec2:
   - scale_put, scale_put_trans
   - fg_width, etc.
 

@@ -21,10 +21,10 @@
 
 linked_list image_list; // FIXME: only jwindow.cpp needs this
 
-image_descriptor::image_descriptor(vec2i size,
+image_descriptor::image_descriptor(ivec2 size,
                                    int keep_dirties, int static_memory)
 {
-    m_aa = vec2i(0);
+    m_aa = ivec2(0);
     m_bb = size;
     m_size = size;
 
@@ -32,14 +32,14 @@ image_descriptor::image_descriptor(vec2i size,
     static_mem = static_memory;
 }
 
-void image::SetSize(vec2i new_size, uint8_t *page)
+void image::SetSize(ivec2 new_size, uint8_t *page)
 {
     DeletePage();
     m_size = new_size;
     MakePage(new_size, page);
 }
 
-void image::MakePage(vec2i size, uint8_t *page_buffer)
+void image::MakePage(ivec2 size, uint8_t *page_buffer)
 {
     m_data = page_buffer ? page_buffer : (uint8_t *)malloc(size.x * size.y);
 }
@@ -63,14 +63,14 @@ image::~image()
     delete m_special;
 }
 
-uint8_t image::Pixel(vec2i pos)
+uint8_t image::Pixel(ivec2 pos)
 {
     CONDITION(pos.x >= 0 && pos.x < m_size.x && pos.y >= 0 && pos.y < m_size.y,
               "image::Pixel Bad pixel xy");
     return scan_line(pos.y)[pos.x];
 }
 
-void image::PutPixel(vec2i pos, uint8_t color)
+void image::PutPixel(ivec2 pos, uint8_t color)
 {
     CONDITION(pos.x >= 0 && pos.x < m_size.x && pos.y >= 0 && pos.y < m_size.y,
               "image::PutPixel Bad pixel xy");
@@ -84,7 +84,7 @@ void image::PutPixel(vec2i pos, uint8_t color)
 }
 
 
-image::image(vec2i size, uint8_t *page_buffer, int create_descriptor)
+image::image(ivec2 size, uint8_t *page_buffer, int create_descriptor)
 {
     m_size = size;
     m_special = NULL;
@@ -159,7 +159,7 @@ void image::clear(int16_t color)
     else
         for(int j = 0; j < m_size.y; j++)
             memset(scan_line(j), color, m_size.x);
-    AddDirty(vec2i(0), m_size);
+    AddDirty(ivec2(0), m_size);
     Unlock();
 }
 
@@ -178,15 +178,15 @@ image *image::copy()
 //
 // Draw a line of the given colour on the image. Both endpoints are set.
 //
-void image::Line(vec2i p1, vec2i p2, uint8_t color)
+void image::Line(ivec2 p1, ivec2 p2, uint8_t color)
 {
     // check to see if the line is completly clipped off
-    vec2i caa, cbb;
+    ivec2 caa, cbb;
     GetClip(caa, cbb);
 
     if (p1.x > p2.x) // make sure that p1.x is to the left
     {
-        vec2i tmp = p1; p1 = p2; p2 = tmp; // if not swap points
+        ivec2 tmp = p1; p1 = p2; p2 = tmp; // if not swap points
     }
 
     // clip the left and right sides
@@ -199,7 +199,7 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
 
     if (p1.y > p2.y) // make sure that p1.y is on top
     {
-        vec2i tmp = p1; p1 = p2; p2 = tmp; // if not swap points
+        ivec2 tmp = p1; p1 = p2; p2 = tmp; // if not swap points
     }
 
     // clip the bottom and top parts
@@ -215,10 +215,10 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
         return;
 
     // We can now assume p1.y <= p2.y
-    AddDirty(vec2i(Min(p1.x, p2.x), p1.y),
-             vec2i(Max(p1.x, p2.x), p2.y) + vec2i(1));
+    AddDirty(ivec2(Min(p1.x, p2.x), p1.y),
+             ivec2(Max(p1.x, p2.x), p2.y) + ivec2(1));
 
-    vec2i span = p2 - p1;
+    ivec2 span = p2 - p1;
     int xi = (span.x < 0) ? -1 : 1;
     int yi = (span.y < 0) ? -1 : 1;
     int n = abs(span.x);
@@ -247,22 +247,22 @@ void image::Line(vec2i p1, vec2i p2, uint8_t color)
 }
 
 
-void image::PutImage(image *im, vec2i pos, int transparent)
+void image::PutImage(image *im, ivec2 pos, int transparent)
 {
-    PutPart(im, pos, vec2i(0), im->m_size, transparent);
+    PutPart(im, pos, ivec2(0), im->m_size, transparent);
 }
 
-void image::PutPart(image *im, vec2i pos, vec2i aa, vec2i bb, int transparent)
+void image::PutPart(image *im, ivec2 pos, ivec2 aa, ivec2 bb, int transparent)
 {
     CHECK(aa < bb);
 
-    vec2i caa, cbb;
+    ivec2 caa, cbb;
     GetClip(caa, cbb);
 
     // see if the are to be put is outside of actual image, if so adjust
     // to fit in the image
-    pos += Min(aa, vec2i(0));
-    aa += Min(aa, vec2i(0));
+    pos += Min(aa, ivec2(0));
+    aa += Min(aa, ivec2(0));
     bb = Min(bb, im->m_size);
     // return if it was adjusted so that nothing will be put
     if (!(aa < bb))
@@ -272,13 +272,13 @@ void image::PutPart(image *im, vec2i pos, vec2i aa, vec2i bb, int transparent)
     if (!(pos < cbb && pos + (bb - aa) > caa))
         return;
 
-    aa += Max(caa - pos, vec2i(0));
-    pos += Max(caa - pos, vec2i(0));
+    aa += Max(caa - pos, ivec2(0));
+    pos += Max(caa - pos, ivec2(0));
     bb = Min(bb, cbb - pos + aa);
     if (!(aa < bb))
         return;
 
-    vec2i span = bb - aa;
+    ivec2 span = bb - aa;
 
     AddDirty(pos, pos + span);
 
@@ -303,15 +303,15 @@ void image::PutPart(image *im, vec2i pos, vec2i aa, vec2i bb, int transparent)
     Unlock();
 }
 
-void image::Rectangle(vec2i p1, vec2i p2, uint8_t color)
+void image::Rectangle(ivec2 p1, ivec2 p2, uint8_t color)
 {
-    Line(p1, vec2i(p2.x, p1.y), color);
-    Line(vec2i(p2.x, p1.y), p2, color);
-    Line(vec2i(p1.x, p2.y), p2, color);
-    Line(p1, vec2i(p1.x, p2.y), color);
+    Line(p1, ivec2(p2.x, p1.y), color);
+    Line(ivec2(p2.x, p1.y), p2, color);
+    Line(ivec2(p1.x, p2.y), p2, color);
+    Line(p1, ivec2(p1.x, p2.y), color);
 }
 
-void image::SetClip(vec2i aa, vec2i bb)
+void image::SetClip(ivec2 aa, ivec2 bb)
 {
     // If the image does not already have an Image descriptor, allocate one
     // with no dirty rectangle keeping.
@@ -323,23 +323,23 @@ void image::SetClip(vec2i aa, vec2i bb)
     m_special->SetClip(aa, bb);
 }
 
-void image::GetClip(vec2i &aa, vec2i &bb)
+void image::GetClip(ivec2 &aa, ivec2 &bb)
 {
     if (m_special)
         m_special->GetClip(aa, bb);
     else
     {
-        aa = vec2i(0);
+        aa = ivec2(0);
         bb = m_size;
     }
 }
 
-void image::InClip(vec2i aa, vec2i bb)
+void image::InClip(ivec2 aa, ivec2 bb)
 {
     if (m_special)
     {
-        aa = Min(aa, vec2i(m_special->x1_clip(), m_special->y1_clip()));
-        bb = Max(bb, vec2i(m_special->x2_clip(), m_special->y2_clip()));
+        aa = Min(aa, ivec2(m_special->x1_clip(), m_special->y1_clip()));
+        bb = Max(bb, ivec2(m_special->x2_clip(), m_special->y2_clip()));
     }
 
     SetClip(aa, bb);
@@ -386,7 +386,7 @@ void image::InClip(int x1, int y1, int x2, int y2)
 //
 void image_descriptor::ReduceDirties()
 {
-    vec2i aa(6000), bb(-1);
+    ivec2 aa(6000), bb(-1);
 
     for (dirty_rect *p = (dirty_rect *)dirties.first(); p; )
     {
@@ -400,7 +400,7 @@ void image_descriptor::ReduceDirties()
     dirties.add_front(new dirty_rect(aa, bb));
 }
 
-void image_descriptor::DeleteDirty(vec2i aa, vec2i bb)
+void image_descriptor::DeleteDirty(ivec2 aa, ivec2 bb)
 {
     int ax1, ay1, ax2, ay2;
     dirty_rect *p, *next;
@@ -408,7 +408,7 @@ void image_descriptor::DeleteDirty(vec2i aa, vec2i bb)
     if (!keep_dirt)
         return;
 
-    aa = Max(aa, vec2i(0));
+    aa = Max(aa, ivec2(0));
     bb = Min(bb, m_size);
 
     if (!(aa < bb))
@@ -440,7 +440,7 @@ void image_descriptor::DeleteDirty(vec2i aa, vec2i bb)
                 p->m_aa.y = bb.y;
             else
             {
-                dirties.add_front(new dirty_rect(p->m_aa, vec2i(p->m_bb.x, aa.y - 1)));
+                dirties.add_front(new dirty_rect(p->m_aa, ivec2(p->m_bb.x, aa.y - 1)));
                 p->m_aa.y = bb.y;
             }
         }
@@ -453,7 +453,7 @@ void image_descriptor::DeleteDirty(vec2i aa, vec2i bb)
                 p->m_aa.x = bb.x;
             else
             {
-                dirties.add_front(new dirty_rect(p->m_aa, vec2i(aa.x - 1, p->m_bb.y)));
+                dirties.add_front(new dirty_rect(p->m_aa, ivec2(aa.x - 1, p->m_bb.y)));
                 p->m_aa.x = bb.x;
             }
         }
@@ -468,7 +468,7 @@ void image_descriptor::DeleteDirty(vec2i aa, vec2i bb)
             else if (aa.y<=p->m_aa.y) { ay1=p->m_aa.y; ay2=bb.y; }
             else { ay1=aa.y; ay2=bb.y; }
 
-            dirties.add_front(new dirty_rect(vec2i(ax1, ay1), vec2i(ax2 - 1, ay2 - 1)));
+            dirties.add_front(new dirty_rect(ivec2(ax1, ay1), ivec2(ax2 - 1, ay2 - 1)));
 
             if (bb.x - 1>=p->m_bb.x || aa.x<=p->m_aa.x)  { ax1=p->m_aa.x; ax2=p->m_bb.x+1; }
             else { ax1=bb.x; ax2=p->m_bb.x+1; }
@@ -480,22 +480,22 @@ void image_descriptor::DeleteDirty(vec2i aa, vec2i bb)
                                         else  { ay1=p->m_aa.y; ay2=bb.y; } }
             else { if (ax1==p->m_aa.x) { ay1=p->m_aa.y; ay2=aa.y; }
                    else { ay1=aa.y; ay2=bb.y; } }
-            dirties.add_front(new dirty_rect(vec2i(ax1, ay1), vec2i(ax2 - 1, ay2 - 1)));
+            dirties.add_front(new dirty_rect(ivec2(ax1, ay1), ivec2(ax2 - 1, ay2 - 1)));
 
             if (aa.x > p->m_aa.x && bb.x - 1 < p->m_bb.x)
             {
                 if (aa.y > p->m_aa.y && bb.y - 1 < p->m_bb.y)
                 {
-                    dirties.add_front(new dirty_rect(p->m_aa, vec2i(p->m_bb.x, aa.y - 1)));
-                    dirties.add_front(new dirty_rect(vec2i(p->m_aa.x, bb.y), p->m_bb));
+                    dirties.add_front(new dirty_rect(p->m_aa, ivec2(p->m_bb.x, aa.y - 1)));
+                    dirties.add_front(new dirty_rect(ivec2(p->m_aa.x, bb.y), p->m_bb));
                 }
                 else if (aa.y <= p->m_aa.y)
-                    dirties.add_front(new dirty_rect(vec2i(p->m_aa.x, bb.y), p->m_bb));
+                    dirties.add_front(new dirty_rect(ivec2(p->m_aa.x, bb.y), p->m_bb));
                 else
-                    dirties.add_front(new dirty_rect(p->m_aa, vec2i(p->m_bb.x, aa.y - 1)));
+                    dirties.add_front(new dirty_rect(p->m_aa, ivec2(p->m_bb.x, aa.y - 1)));
             }
             else if (aa.y > p->m_aa.y && bb.y - 1 < p->m_bb.y)
-                dirties.add_front(new dirty_rect(vec2i(p->m_aa.x, bb.y), p->m_bb));
+                dirties.add_front(new dirty_rect(ivec2(p->m_aa.x, bb.y), p->m_bb));
             dirties.unlink(p);
             delete p;
         }
@@ -503,13 +503,13 @@ void image_descriptor::DeleteDirty(vec2i aa, vec2i bb)
 }
 
 // specifies that an area is a dirty
-void image_descriptor::AddDirty(vec2i aa, vec2i bb)
+void image_descriptor::AddDirty(ivec2 aa, ivec2 bb)
 {
     dirty_rect *p;
     if (!keep_dirt)
         return;
 
-    aa = Max(aa, vec2i(0));
+    aa = Max(aa, ivec2(0));
     bb = Min(bb, m_size);
 
     if (!(aa < bb))
@@ -517,10 +517,10 @@ void image_descriptor::AddDirty(vec2i aa, vec2i bb)
 
     int i = dirties.Count();
     if (!i)
-        dirties.add_front(new dirty_rect(aa, bb - vec2i(1)));
+        dirties.add_front(new dirty_rect(aa, bb - ivec2(1)));
     else if (i >= MAX_DIRTY)
     {
-        dirties.add_front(new dirty_rect(aa, bb - vec2i(1)));
+        dirties.add_front(new dirty_rect(aa, bb - ivec2(1)));
         ReduceDirties();  // reduce to one dirty rectangle, we have to many
     }
     else
@@ -558,15 +558,15 @@ void image_descriptor::AddDirty(vec2i aa, vec2i bb)
       else */
             {
               if (aa.x < p->m_aa.x)
-                AddDirty(vec2i(aa.x, Max(aa.y, p->m_aa.y)),
-                         vec2i(p->m_aa.x, Min(bb.y, p->m_bb.y + 1)));
+                AddDirty(ivec2(aa.x, Max(aa.y, p->m_aa.y)),
+                         ivec2(p->m_aa.x, Min(bb.y, p->m_bb.y + 1)));
               if (bb.x > p->m_bb.x + 1)
-                AddDirty(vec2i(p->m_bb.x + 1, Max(aa.y, p->m_aa.y)),
-                         vec2i(bb.x, Min(bb.y, p->m_bb.y + 1)));
+                AddDirty(ivec2(p->m_bb.x + 1, Max(aa.y, p->m_aa.y)),
+                         ivec2(bb.x, Min(bb.y, p->m_bb.y + 1)));
               if (aa.y < p->m_aa.y)
-                AddDirty(aa, vec2i(bb.x, p->m_aa.y));
+                AddDirty(aa, ivec2(bb.x, p->m_aa.y));
               if (bb.y - 1 > p->m_bb.y)
-                AddDirty(vec2i(aa.x, p->m_bb.y + 1), bb);
+                AddDirty(ivec2(aa.x, p->m_bb.y + 1), bb);
               return ;
             }
             p = (dirty_rect *)p->Next();
@@ -574,11 +574,11 @@ void image_descriptor::AddDirty(vec2i aa, vec2i bb)
 
       }
       CHECK(aa < bb);
-      dirties.add_end(new dirty_rect(aa, bb - vec2i(1)));
+      dirties.add_end(new dirty_rect(aa, bb - ivec2(1)));
     }
 }
 
-void image::Bar(vec2i p1, vec2i p2, uint8_t color)
+void image::Bar(ivec2 p1, ivec2 p2, uint8_t color)
 {
     if (p1.x > p2.x || p1.y > p2.y)
         return;
@@ -604,7 +604,7 @@ void image::Bar(vec2i p1, vec2i p2, uint8_t color)
     for (int y = p1.y; y <= p2.y; y++)
         memset(scan_line(y) + p1.x, color, (p2.x - p1.x + 1));
     Unlock();
-    AddDirty(p1, p2 + vec2i(1));
+    AddDirty(p1, p2 + ivec2(1));
 }
 
 void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
@@ -637,7 +637,7 @@ void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t co
   }
   Unlock();
 
-  AddDirty(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
+  AddDirty(ivec2(x1, y1), ivec2(x2 + 1, y2 + 1));
 }
 
 
@@ -694,9 +694,9 @@ void image_descriptor::ClearDirties()
     }
 }
 
-void image::Scale(vec2i new_size)
+void image::Scale(ivec2 new_size)
 {
-    vec2i old_size = m_size;
+    ivec2 old_size = m_size;
     uint8_t *im = (uint8_t *)malloc(old_size.x * old_size.y);
     Lock();
     memcpy(im, scan_line(0), old_size.x * old_size.y);
@@ -730,7 +730,7 @@ void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, i
   CHECK(x1>=0 && y1>=0 && x1<x2 && y1<y2 && x2<m_size.x && y2<m_size.y);
   if (m_special)
   {
-    vec2i caa, cbb;
+    ivec2 caa, cbb;
     m_special->GetClip(caa, cbb);
     x1=Max(x1, caa.x); y1=Max(caa.y, y1); x2=Min(x2, cbb.x - 1); y2=Min(y2, cbb.y - 1);
   }
@@ -748,7 +748,7 @@ void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, i
         *dst-- = *src--;
     if (yd<0) { ysrc++; ydst++; } else { ysrc--; ydst--; }
   }
-  AddDirty(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
+  AddDirty(ivec2(x1, y1), ivec2(x2 + 1, y2 + 1));
 }
 
 
@@ -767,21 +767,21 @@ image *image::create_smooth(int16_t smoothness)
       for (t=0, k=-smoothness; k<=smoothness; k++)
     for (l=-smoothness; l<=smoothness; l++)
       if (i+k>smoothness && i+k<m_size.x-smoothness && j+l<m_size.y-smoothness && j+l>smoothness)
-        t+=Pixel(vec2i(i+k, j+l));
-      else t+=Pixel(vec2i(i, j));
-      im->PutPixel(vec2i(i, j), t/d);
+        t+=Pixel(ivec2(i+k, j+l));
+      else t+=Pixel(ivec2(i, j));
+      im->PutPixel(ivec2(i, j), t/d);
     }
   return im;
 }
 
-void image::WidgetBar(vec2i p1, vec2i p2,
+void image::WidgetBar(ivec2 p1, ivec2 p2,
                       uint8_t light, uint8_t med, uint8_t dark)
 {
-    Line(p1, vec2i(p2.x, p1.y), light);
-    Line(p1, vec2i(p1.x, p2.y), light);
-    Line(vec2i(p2.x, p1.y + 1), p2, dark);
-    Line(vec2i(p1.x + 1, p2.y), vec2i(p2.x - 1, p2.y - 1), dark);
-    Bar(p1 + vec2i(1, 1), p2 - vec2i(1, 1), med);
+    Line(p1, ivec2(p2.x, p1.y), light);
+    Line(p1, ivec2(p1.x, p2.y), light);
+    Line(ivec2(p2.x, p1.y + 1), p2, dark);
+    Line(ivec2(p1.x + 1, p2.y), ivec2(p2.x - 1, p2.y - 1), dark);
+    Bar(p1 + ivec2(1, 1), p2 - ivec2(1, 1), med);
 }
 
 class fill_rec
@@ -898,8 +898,8 @@ void image::burn_led(int16_t x, int16_t y, int32_t num, int16_t color, int16_t s
     zz=st[xx]-'0';
       for (yy=0; yy<7; yy++)
     if ((1<<yy)&dig[zz])
-      Line(vec2i(x+ledx[yy*2]*scale, y+ledy[yy*2]*scale),
-           vec2i(x+ledx[yy*2+1]*scale, y+ledy[yy*2+1]*scale), color);
+      Line(ivec2(x+ledx[yy*2]*scale, y+ledy[yy*2]*scale),
+           ivec2(x+ledx[yy*2+1]*scale, y+ledy[yy*2+1]*scale), color);
     }
     x+=6*scale;
   }
@@ -915,7 +915,7 @@ image *image::copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2
   int x, y, ry, rx, bo, dity, ditx;
   image *ret;
   uint8_t *sl1, *sl2;
-  vec2i caa, cbb;
+  ivec2 caa, cbb;
   GetClip(caa, cbb);
   if (y1<caa.y) y1=caa.y;
   if (x1<caa.x) x1=caa.x;
@@ -923,7 +923,7 @@ image *image::copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2
   if (x2>cbb.x - 1) x2=cbb.x - 1;
   CHECK(x2>=x1 && y2>=y1);
   if (x2<x1 || y2<y1) return NULL;
-  ret=new image(vec2i((x2-x1+8)/8, (y2-y1+1)));
+  ret=new image(ivec2((x2-x1+8)/8, (y2-y1+1)));
   if (!last_loaded())
     ret->clear();
   else

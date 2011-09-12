@@ -86,7 +86,7 @@ Jwindow *create_num_window(int mx, int total_saved, int lines, image **thumbnail
   for (i=0; i<total_saved-1; i++)
     buts[i]->next=buts[i+1];
 
-  return wm->CreateWindow(vec2i(mx, yres / 2 - (Jwindow::top_border() + maxih * 5) / 2), vec2i(-1), buts[0]);
+  return wm->CreateWindow(ivec2(mx, yres / 2 - (Jwindow::top_border() + maxih * 5) / 2), ivec2(-1), buts[0]);
 }
 
 int get_save_spot()
@@ -201,9 +201,9 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         }
         if (fail && show_all)
         {
-            thumbnails[start_num] = new image(vec2i(160, 100));
+            thumbnails[start_num] = new image(ivec2(160, 100));
             thumbnails[start_num]->clear();
-            console_font->PutString(thumbnails[start_num], vec2i(0), symbol_str("no_saved"));
+            console_font->PutString(thumbnails[start_num], ivec2(0), symbol_str("no_saved"));
             total_saved++;
             if (!first) first=thumbnails[start_num];
         }
@@ -233,9 +233,9 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 
     // Create thumbnail window 5 pixels to the right of the list window
     Jwindow *l_win=create_num_window(0,total_saved,MAX_SAVE_LINES,thumbnails);
-    Jwindow *preview=wm->CreateWindow(l_win->m_pos + vec2i(l_win->m_size.x + 5, 0), vec2i(max_w, max_h), NULL, title);
+    Jwindow *preview=wm->CreateWindow(l_win->m_pos + ivec2(l_win->m_size.x + 5, 0), ivec2(max_w, max_h), NULL, title);
 
-    preview->m_surf->PutImage(first, vec2i(preview->x1(), preview->y1()));
+    preview->m_surf->PutImage(first, ivec2(preview->x1(), preview->y1()));
 
     Event ev;
     int got_level=0;
@@ -251,7 +251,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         {
             int draw_num=ev.message.id-ID_LOAD_GAME_PREVIEW;
             preview->clear();
-            preview->m_surf->PutImage(thumbnails[draw_num], vec2i(preview->x1(), preview->y1()));
+            preview->m_surf->PutImage(thumbnails[draw_num], ivec2(preview->x1(), preview->y1()));
         }
 
         if ((ev.type==EV_CLOSE_WINDOW) || (ev.type==EV_KEY && ev.key==JK_ESC))

@@ -774,7 +774,7 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
   else min_light_level=(int)ambient+ambient_ramp;
 
   if (ambient==63) return ;
-  vec2i caa, cbb;
+  ivec2 caa, cbb;
   sc->GetClip(caa, cbb);
 
   light_patch *first = make_patch_list(cbb.x - caa.x, cbb.y - caa.y, screenx, screeny);
@@ -924,7 +924,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
     min_light_level=63;
   else min_light_level=(int)ambient+ambient_ramp;
 
-  vec2i caa, cbb;
+  ivec2 caa, cbb;
   sc->GetClip(caa, cbb);
 
 

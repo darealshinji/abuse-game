@@ -37,11 +37,11 @@ public:
     {
         long x2 = x + item_width() - 1;
         long y2 = y + item_height() - 1;
-        screen->Bar(vec2i(x, y), vec2i(x2, y2), 0);
-        screen->Bar(vec2i(x, y), vec2i(x2 - 3, y2), sc + num);
+        screen->Bar(ivec2(x, y), ivec2(x2, y2), 0);
+        screen->Bar(ivec2(x, y), ivec2(x2 - 3, y2), sc + num);
         if(active)
         {
-            screen->Rectangle(vec2i(x, y), vec2i(x2, y2), 255);
+            screen->Rectangle(ivec2(x, y), ivec2(x2, y2), 255);
         }
     }
     void set_pos(int x) { cur_sel = x; }
@@ -147,8 +147,8 @@ void gamma_correct(palette *&pal, int force_menu)
         gray_picker *gp = new gray_picker(2, 5 + sh, ID_GREEN_PICKER, 0, dg / 4, but);
         gp->set_pos(dg / 4);
 
-        Jwindow *gw = wm->CreateWindow(vec2i(xres / 2 - 190,
-                                             yres / 2 - 90), vec2i(-1), gp);
+        Jwindow *gw = wm->CreateWindow(ivec2(xres / 2 - 190,
+                                             yres / 2 - 90), ivec2(-1), gp);
 
         Event ev;
         wm->flush_screen();

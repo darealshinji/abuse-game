@@ -20,12 +20,12 @@ public:
     JCFont(image *letters);
     ~JCFont();
 
-    void PutChar(image *screen, vec2i pos, char ch, int color = -1);
-    void PutString(image *screen, vec2i pos, char const *st, int color = -1);
-    vec2i Size() const { return m_size; }
+    void PutChar(image *screen, ivec2 pos, char ch, int color = -1);
+    void PutString(image *screen, ivec2 pos, char const *st, int color = -1);
+    ivec2 Size() const { return m_size; }
 
 private:
-    vec2i m_size;
+    ivec2 m_size;
     TransImage *m_data[256];
 };
 

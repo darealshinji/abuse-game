@@ -122,7 +122,7 @@ void set_mode(int mode, int argc, char **argv)
     }
 
     // Create the screen image
-    main_screen = new image(vec2i(xres, yres), NULL, 2);
+    main_screen = new image(ivec2(xres, yres), NULL, 2);
     if(main_screen == NULL)
     {
         // Our screen image is no good, we have to bail.

@@ -829,7 +829,7 @@ void *bottom_draw()
     player_draw(just_fired,o->get_tint());
     if (o->controller() && o->controller()->local_player())
       main_screen->PutImage(cache.img(S_health_image),
-                            vec2i(o->controller()->m_bb.x - 20,
+                            ivec2(o->controller()->m_bb.x - 20,
                                   o->controller()->m_aa.y + 5), 1);
       } break;
       case FAST_POWER :
@@ -851,7 +851,7 @@ void *bottom_draw()
     o->state=(character_state)old_state;
     if (o->controller() && o->controller()->local_player())
       main_screen->PutImage(cache.img(S_fast_image),
-                            vec2i(o->controller()->m_bb.x - 20,
+                            ivec2(o->controller()->m_bb.x - 20,
                                   o->controller()->m_aa.y + 5), 1);
       } break;
       case FLY_POWER :
@@ -873,7 +873,7 @@ void *bottom_draw()
 
     if (o->controller() && o->controller()->local_player())
       main_screen->PutImage(cache.img(S_fly_image),
-                            vec2i(o->controller()->m_bb.x - 20,
+                            ivec2(o->controller()->m_bb.x - 20,
                                   o->controller()->m_aa.y + 5), 1);
       } break;
       case SNEAKY_POWER :
@@ -887,7 +887,7 @@ void *bottom_draw()
 
     if (o->controller() && o->controller()->local_player())
       main_screen->PutImage(cache.img(S_sneaky_image),
-                            vec2i(o->controller()->m_bb.x - 20,
+                            ivec2(o->controller()->m_bb.x - 20,
                                   o->controller()->m_aa.y + 5), 1);
       } break;
     }
@@ -1022,7 +1022,7 @@ void *score_draw()
   {
     qsort(sorted_players,tp,sizeof(view *),compare_players);
 
-    vec2i pos = local->m_aa;
+    ivec2 pos = local->m_aa;
     char msg[100];
 
     int i;
@@ -1047,10 +1047,10 @@ extern void fade_out(int steps);
 void *show_kills()
 {
   fade_out(8);
-  wm->SetMousePos(vec2i(0, 0));
+  wm->SetMousePos(ivec2(0, 0));
   main_screen->clear();
   image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
-  main_screen->PutImage(im, vec2i(0, 0));
+  main_screen->PutImage(im, ivec2(0, 0));
   int x1=im->Size().x+1,y1=0,y2=main_screen->Size().y;
   JCFont *fnt=wm->font();
 
@@ -1059,11 +1059,11 @@ void *show_kills()
 
   int y=(y1+y2)/2-(tp+2)*fnt->Size().y/2,x=x1+10;
   char const *header_str = symbol_str("score_header");
-  fnt->PutString(main_screen, vec2i(x, y), header_str, wm->bright_color());
+  fnt->PutString(main_screen, ivec2(x, y), header_str, wm->bright_color());
   y += fnt->Size().y;
 
-  main_screen->WidgetBar(vec2i(x, y + 2),
-                         vec2i(x + strlen(header_str) * fnt->Size().x,
+  main_screen->WidgetBar(ivec2(x, y + 2),
+                         ivec2(x + strlen(header_str) * fnt->Size().x,
                                y + fnt->Size().y - 3),
                          wm->bright_color(), wm->medium_color(),
                          wm->dark_color());
@@ -1080,7 +1080,7 @@ void *show_kills()
 
 
     sprintf(msg,"%-17s %3ld  %3ld",max_name,(long)v->kills,(long)(v->tkills+v->kills));
-    fnt->PutString(main_screen, vec2i(x, y), msg, color);
+    fnt->PutString(main_screen, ivec2(x, y), msg, color);
 
     y += fnt->Size().y;
     v = v->next;

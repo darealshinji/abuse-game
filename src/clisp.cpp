@@ -906,7 +906,7 @@ void *l_caller(long number, void *args)
       int x = lnumber_value(CAR(args)->Eval()); args = CDR(args);
       int y = lnumber_value(CAR(args)->Eval()); args = CDR(args);
 
-      vec2i pos = the_game->MouseToGame(vec2i(x, y));
+      ivec2 pos = the_game->MouseToGame(ivec2(x, y));
       void *ret = NULL;
       {
           PtrRef r1(ret);
@@ -920,7 +920,7 @@ void *l_caller(long number, void *args)
       int x = lnumber_value(CAR(args)->Eval()); args=CDR(args);
       int y = lnumber_value(CAR(args)->Eval()); args=CDR(args);
 
-      vec2i pos = the_game->GameToMouse(vec2i(x, y), current_view);
+      ivec2 pos = the_game->GameToMouse(ivec2(x, y), current_view);
       void *ret = NULL;
       {
         PtrRef r1(ret);
@@ -1285,8 +1285,8 @@ long c_caller(long number, void *args)
       int32_t x2 = lnumber_value(CAR(args)); args = lcdr(args);
       int32_t y2 = lnumber_value(CAR(args)); args = lcdr(args);
       int32_t c = lnumber_value(CAR(args));
-      vec2i pos1 = the_game->GameToMouse(vec2i(x1, y1), current_view);
-      vec2i pos2 = the_game->GameToMouse(vec2i(x2, y2), current_view);
+      ivec2 pos1 = the_game->GameToMouse(ivec2(x1, y1), current_view);
+      ivec2 pos2 = the_game->GameToMouse(ivec2(x2, y2), current_view);
       main_screen->Line(pos1, pos2, c);
       return 1;
     } break;
@@ -1663,7 +1663,7 @@ long c_caller(long number, void *args)
       if (x<0 || y<0 || x>=current_level->foreground_width() || y>=current_level->foreground_width())
         lbreak("%d %d is out of range of fg map",x,y);
       else
-        current_level->PutFg(vec2i(x, y), type);
+        current_level->PutFg(ivec2(x, y), type);
     } break;
     case 193 :
     {
@@ -1671,7 +1671,7 @@ long c_caller(long number, void *args)
       int32_t y=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->foreground_width() || y>=current_level->foreground_width())
         lbreak("%d %d is out of range of fg map",x,y);
-      else return current_level->GetFg(vec2i(x, y));
+      else return current_level->GetFg(ivec2(x, y));
     } break;
     case 194 :
     {
@@ -1681,7 +1681,7 @@ long c_caller(long number, void *args)
       if (x<0 || y<0 || x>=current_level->background_width() || y>=current_level->background_width())
         lbreak("%d %d is out of range of fg map",x,y);
       else
-        current_level->PutBg(vec2i(x, y), type);
+        current_level->PutBg(ivec2(x, y), type);
     } break;
     case 195 :
     {
@@ -1689,7 +1689,7 @@ long c_caller(long number, void *args)
       int32_t y=lnumber_value(CAR(args));
       if (x<0 || y<0 || x>=current_level->background_width() || y>=current_level->background_width())
         lbreak("%d %d is out of range of fg map",x,y);
-      else return current_level->GetBg(vec2i(x, y));
+      else return current_level->GetBg(ivec2(x, y));
     } break;
     case 196 : load_tiles(args); break;
     case 197 :
@@ -1837,7 +1837,7 @@ long c_caller(long number, void *args)
       int32_t x1=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t y1=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t id=lnumber_value(CAR(args));
-      main_screen->PutImage(cache.img(id), vec2i(x1, y1), 1);
+      main_screen->PutImage(cache.img(id), ivec2(x1, y1), 1);
     } break;
     case 217 :
     {
@@ -1963,8 +1963,8 @@ long c_caller(long number, void *args)
       int32_t y2 = lnumber_value(CAR(args)); args = lcdr(args);
       int32_t c = lnumber_value(CAR(args)); args = lcdr(args);
       int32_t s = lnumber_value(CAR(args));
-      vec2i pos1 = the_game->GameToMouse(vec2i(x1, y1), current_view);
-      vec2i pos2 = the_game->GameToMouse(vec2i(x2, y2), current_view);
+      ivec2 pos1 = the_game->GameToMouse(ivec2(x1, y1), current_view);
+      ivec2 pos2 = the_game->GameToMouse(ivec2(x2, y2), current_view);
       ScatterLine(pos1, pos2, c, s);
       return 1;
 
@@ -2016,8 +2016,8 @@ long c_caller(long number, void *args)
       int32_t c1 = lnumber_value(CAR(args)); args = lcdr(args);
       int32_t c2 = lnumber_value(CAR(args)); args = lcdr(args);
       int32_t s = lnumber_value(CAR(args));
-      vec2i pos1 = the_game->GameToMouse(vec2i(x1, y1), current_view);
-      vec2i pos2 = the_game->GameToMouse(vec2i(x2, y2), current_view);
+      ivec2 pos1 = the_game->GameToMouse(ivec2(x1, y1), current_view);
+      ivec2 pos2 = the_game->GameToMouse(ivec2(x2, y2), current_view);
       AScatterLine(pos1, pos2, c1, c2, s);
       return 1;
 
@@ -2037,7 +2037,7 @@ long c_caller(long number, void *args)
       int32_t cx2=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t cy2=lnumber_value(CAR(args)); args=lcdr(args);
       int32_t c1=lnumber_value(CAR(args)); args=lcdr(args);
-      main_screen->Bar(vec2i(cx1, cy1), vec2i(cx2, cy2), c1);
+      main_screen->Bar(ivec2(cx1, cy1), ivec2(cx2, cy2), c1);
     } break;
     case 248 :
     {
@@ -2177,7 +2177,7 @@ long c_caller(long number, void *args)
       int y=lnumber_value(CAR(args));
       c_target=id;
       if (main_screen)
-        wm->SetMouseShape(cache.img(c_target)->copy(), vec2i(x, y));
+        wm->SetMouseShape(cache.img(c_target)->copy(), ivec2(x, y));
     } break;
     case 276 :
     {
@@ -2193,7 +2193,7 @@ long c_caller(long number, void *args)
       int color=-1;
       if (args)
         color=lnumber_value(CAR(args));
-      fnt->PutString(main_screen, vec2i(x, y), st, color);
+      fnt->PutString(main_screen, ivec2(x, y), st, color);
     } break;
     case 278 : return ((JCFont *)lpointer_value(CAR(args)))->Size().x; break;
     case 279 : return ((JCFont *)lpointer_value(CAR(args)))->Size().y; break;
@@ -2211,7 +2211,7 @@ long c_caller(long number, void *args)
       int32_t x2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t y2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t c=lnumber_value(CAR(args));
-      main_screen->Bar(vec2i(x1, y1), vec2i(x2, y2), c);
+      main_screen->Bar(ivec2(x1, y1), ivec2(x2, y2), c);
     } break;
     case 283 :
     {
@@ -2220,7 +2220,7 @@ long c_caller(long number, void *args)
       int32_t x2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t y2=lnumber_value(CAR(args));   args=CDR(args);
       int32_t c=lnumber_value(CAR(args));
-      main_screen->Rectangle(vec2i(x1, y1), vec2i(x2, y2), c);
+      main_screen->Rectangle(ivec2(x1, y1), ivec2(x2, y2), c);
     } break;
     case 284 :
     {

@@ -59,9 +59,9 @@ void profile_init()
   profile_reset();
 
 
-  prof_win=wm->CreateWindow(vec2i(prop->getd("profile x", -1),
+  prof_win=wm->CreateWindow(ivec2(prop->getd("profile x", -1),
                                   prop->getd("profile y", -1)),
-                            vec2i(20, prof_height + 1) * console_font->Size(),
+                            ivec2(20, prof_height + 1) * console_font->Size(),
                             NULL, "PROFILE");
 }
 
@@ -119,15 +119,15 @@ void profile_update()
 
   float time_scaler=(float)max_bar_length/prof_list[0].total_time;
 
-  prof_win->m_surf->Bar(vec2i(0, prof_win->y1()),
-                        vec2i(prof_win->m_surf->Size().x - 1,
+  prof_win->m_surf->Bar(ivec2(0, prof_win->y1()),
+                        ivec2(prof_win->m_surf->Size().x - 1,
                               prof_win->m_surf->Size().y), 0);
   int dy = 0;
   for (; i<prof_height; i++)
   {
-    console_font->PutString(prof_win->m_surf, vec2i(spliter + 1, dy), object_names[prof_list[i].otype]);
-    prof_win->m_surf->Bar(vec2i(spliter - 1 - (int)(prof_list[i].total_time * time_scaler), dy + 1),
-                          vec2i(spliter - 1, dy + console_font->Size().y - 1),
+    console_font->PutString(prof_win->m_surf, ivec2(spliter + 1, dy), object_names[prof_list[i].otype]);
+    prof_win->m_surf->Bar(ivec2(spliter - 1 - (int)(prof_list[i].total_time * time_scaler), dy + 1),
+                          ivec2(spliter - 1, dy + console_font->Size().y - 1),
                           wm->bright_color());
     dy+=console_font->Size().y+1;
   }

@@ -44,10 +44,10 @@ extern net_protocol *prot;
 static VolumeWindow *volume_window;
 
 //percent is 0..256
-static void TintArea(vec2i aa, vec2i bb,
+static void TintArea(ivec2 aa, ivec2 bb,
                      int r_to, int g_to, int b_to, int percent)
 {
-    vec2i caa, cbb;
+    ivec2 caa, cbb;
     main_screen->GetClip(caa, cbb);
     aa = Max(aa, caa);
     bb = Min(bb, cbb);
@@ -74,14 +74,14 @@ static void TintArea(vec2i aa, vec2i bb,
     main_screen->Unlock();
 }
 
-void DarkWidget(vec2i aa, vec2i bb, int br, int dr, int amount)
+void DarkWidget(ivec2 aa, ivec2 bb, int br, int dr, int amount)
 {
     main_screen->AddDirty(aa, bb);
-    main_screen->Line(aa, vec2i(aa.x, bb.y - 1), br);
-    main_screen->Line(aa, vec2i(bb.x - 1, aa.y), br);
-    main_screen->Line(vec2i(bb.x - 1, aa.y + 1), bb - vec2i(1), dr);
-    main_screen->Line(vec2i(aa.x + 1, bb.y - 1), bb - vec2i(1), dr);
-    TintArea(aa + vec2i(1), bb, 0, 0, 0, amount);
+    main_screen->Line(aa, ivec2(aa.x, bb.y - 1), br);
+    main_screen->Line(aa, ivec2(bb.x - 1, aa.y), br);
+    main_screen->Line(ivec2(bb.x - 1, aa.y + 1), bb - ivec2(1), dr);
+    main_screen->Line(ivec2(aa.x + 1, bb.y - 1), bb - ivec2(1), dr);
+    TintArea(aa + ivec2(1), bb, 0, 0, 0, amount);
 }
 
 char *men_str(void *arg)
@@ -130,17 +130,17 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       my=main_screen->Size().y/2-mh/2;
 
 
-  main_screen->AddDirty(vec2i(mx, my), vec2i(mx + mw, my + mh));
+  main_screen->AddDirty(ivec2(mx, my), ivec2(mx + mw, my + mh));
 
   if (title)
   {
     int tl=strlen(title)*font->Size().x;
     int tx=main_screen->Size().x/2-tl/2;
-    DarkWidget(vec2i(tx - 2, my-font->Size().y - 4), vec2i(tx + tl + 3, my - 1), wm->medium_color(),wm->dark_color(),180);
-    font->PutString(main_screen, vec2i(tx + 1, my-font->Size().y - 2), title, wm->bright_color());
+    DarkWidget(ivec2(tx - 2, my-font->Size().y - 4), ivec2(tx + tl + 3, my - 1), wm->medium_color(),wm->dark_color(),180);
+    font->PutString(main_screen, ivec2(tx + 1, my-font->Size().y - 2), title, wm->bright_color());
   }
 
-  DarkWidget(vec2i(mx, my), vec2i(mx + mw, my + mh),
+  DarkWidget(ivec2(mx, my), ivec2(mx + mw, my + mh),
              wm->medium_color(), wm->dark_color(), 200);
 
 
@@ -148,8 +148,8 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   for (c=(Cell *)args; !NILP(c); c=CDR(c))
   {
     char *ms=men_str(CAR(c));
-    font->PutString(main_screen, vec2i(mx + 10 + 1, y + 1), ms, wm->black());
-    font->PutString(main_screen, vec2i(mx + 10, y), ms, wm->bright_color());
+    font->PutString(main_screen, ivec2(mx + 10 + 1, y + 1), ms, wm->black());
+    font->PutString(main_screen, ivec2(mx + 10, y), ms, wm->bright_color());
     y+=font->Size().y+1;
   }
 
@@ -157,7 +157,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   Event ev;
   int choice=0,done=0;
   int bh=font->Size().y+3;
-  image *save = new image(vec2i(mw - 2,bh));
+  image *save = new image(ivec2(mw - 2,bh));
   int color=128,cdir=50;
 
   time_marker *last_color_time=NULL;
@@ -213,14 +213,14 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       int by1=(font->Size().y+1)*choice+my+5-2;
       int by2=by1+bh-1;
 
-      save->PutPart(main_screen, vec2i(0, 0), vec2i(mx + 1, by1), vec2i(mx + mw - 1, by2 + 1));
-      TintArea(vec2i(mx + 1, by1), vec2i(mx + mw - 1, by2 + 1),
+      save->PutPart(main_screen, ivec2(0, 0), ivec2(mx + 1, by1), ivec2(mx + mw - 1, by2 + 1));
+      TintArea(ivec2(mx + 1, by1), ivec2(mx + mw - 1, by2 + 1),
                63, 63, 63, color);
 
       char *cur=men_str(nth(choice,args));
-      font->PutString(main_screen, vec2i(mx + 10 + 1, by1 + 3), cur, wm->black());
-      font->PutString(main_screen, vec2i(mx + 10, by1 + 2), cur, wm->bright_color());
-      main_screen->Rectangle(vec2i(mx + 1, by1), vec2i(mx + mw - 2, by2),
+      font->PutString(main_screen, ivec2(mx + 10 + 1, by1 + 3), cur, wm->black());
+      font->PutString(main_screen, ivec2(mx + 10, by1 + 2), cur, wm->bright_color());
+      main_screen->Rectangle(ivec2(mx + 1, by1), ivec2(mx + mw - 2, by2),
                              wm->bright_color());
 
       color+=cdir;
@@ -231,7 +231,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
     color+=cdir;
       }
       wm->flush_screen();
-      main_screen->PutImage(save, vec2i(mx + 1, by1));
+      main_screen->PutImage(save, ivec2(mx + 1, by1));
     } else { Timer tmp; tmp.WaitMs(10); }
 
   } while (!done);
@@ -375,8 +375,8 @@ void show_sell(int abortable)
 
   if (DEFINEDP(ss->GetValue()))
   {
-    image blank(vec2i(2, 2)); blank.clear();
-    wm->SetMouseShape(blank.copy(), vec2i(0, 0));      // don't show mouse
+    image blank(ivec2(2, 2)); blank.clear();
+    wm->SetMouseShape(blank.copy(), ivec2(0, 0));      // don't show mouse
 
     LObject *tmp = (LObject *)ss->GetValue();
     int quit=0;
@@ -395,7 +395,7 @@ void show_sell(int abortable)
       fade_out(16);
       tmp = (LObject *)CDR(tmp);
     }
-    wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1, 1));
+    wm->SetMouseShape(cache.img(c_normal)->copy(), ivec2(1, 1));
   }
 }
 
@@ -639,7 +639,7 @@ void main_menu()
     inm->allow_no_selections();
     inm->clear_current();
 
-    main_screen->AddDirty(vec2i(0), vec2i(320, 200));
+    main_screen->AddDirty(ivec2(0), ivec2(320, 200));
 
     Event ev;
 

@@ -94,7 +94,7 @@ game_object *edit_object;
 dev_controll *dev_cont=NULL;
 image *small_render=NULL;
 
-vec2i dlast;
+ivec2 dlast;
 int scale_mult,scale_div;
 int last_created_type=-1;
 char level_file[100]="levels/level00.spe";
@@ -108,9 +108,9 @@ class cached_image : public visual_object
   virtual void draw(image *screen, int x, int y, Filter *f)
   {
     if (f)
-      f->PutImage(screen, cache.img(id), vec2i(x, y));
+      f->PutImage(screen, cache.img(id), ivec2(x, y));
     else
-      screen->PutImage(cache.img(id), vec2i(x, y));
+      screen->PutImage(cache.img(id), ivec2(x, y));
   }
   virtual int width() { return cache.img(id)->Size().x; }
   virtual int height() { return cache.img(id)->Size().y; }
@@ -147,10 +147,10 @@ class amb_cont : public scroller
   { if (player_list) sx=player_list->ambient; }
   virtual void scroll_event(int newx, image *screen)
   {
-    screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->dark_color());
+    screen->Bar(m_pos, m_pos + ivec2(l - 1, h - 1), wm->dark_color());
     char st[100];
     sprintf(st,"%d",newx);
-    wm->font()->PutString(screen, m_pos + vec2i(30, 1), st, wm->bright_color());
+    wm->font()->PutString(screen, m_pos + ivec2(30, 1), st, wm->bright_color());
     if (player_list)
       player_list->ambient=newx;
     the_game->need_refresh();
@@ -168,7 +168,7 @@ int confirm_quit()
     cancel_image = cache.img(cache.reg("art/frame.spe", "cancel",
                                      SPEC_IMAGE, 1))->copy();
 
-    quitw = wm->CreateWindow(vec2i(xres / 2 + 40, yres / 2), vec2i(80, -1),
+    quitw = wm->CreateWindow(ivec2(xres / 2 + 40, yres / 2), ivec2(80, -1),
               new button(10, wm->font()->Size().y + 4, ID_QUIT_OK, ok_image,
               new button(38, wm->font()->Size().y + 4, ID_CANCEL, cancel_image,
               new info_field(2, 2, ID_NULL, symbol_str("sure?"), NULL))),
@@ -231,7 +231,7 @@ static void single_render()
 {
     // enlarge clip area
     view *v = the_game->first_view;
-    v->m_bb = v->m_aa + 2 * (v->m_bb - v->m_aa + vec2i(1));
+    v->m_bb = v->m_aa + 2 * (v->m_bb - v->m_aa + ivec2(1));
     delete small_render;
     small_render = NULL;
     small_render_on = 0;
@@ -241,8 +241,8 @@ static void double_render()
 {
     // reduce clip area
     view *v = the_game->first_view;
-    v->m_bb = v->m_aa + (v->m_bb - v->m_aa + vec2i(1)) / 2;
-    small_render = new image(v->m_bb - v->m_aa + vec2i(1), NULL, 2);
+    v->m_bb = v->m_aa + (v->m_bb - v->m_aa + ivec2(1)) / 2;
+    small_render = new image(v->m_bb - v->m_aa + ivec2(1), NULL, 2);
     small_render_on = 1;
 }
 
@@ -319,9 +319,9 @@ void dev_controll::make_ambient()
     if(ambw)
         return;
 
-    ambw = wm->CreateWindow(vec2i(prop->getd("ambient x", -1),
+    ambw = wm->CreateWindow(ivec2(prop->getd("ambient x", -1),
                                   prop->getd("ambient y", -1)),
-                            vec2i(-1), new amb_cont(0, 0, NULL), "ambient");
+                            ivec2(-1), new amb_cont(0, 0, NULL), "ambient");
 }
 
 void dev_term::execute(char *st)
@@ -365,9 +365,9 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
   unsigned char *sl1,*sl2;
   int32_t xstep=(im->Size().x<<16)/new_width,
        ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
-  screen->AddDirty(vec2i(x, y), vec2i(x + new_width, y + new_height));
+  screen->AddDirty(ivec2(x, y), ivec2(x + new_width, y + new_height));
 
-  vec2i caa, cbb;
+  ivec2 caa, cbb;
   screen->GetClip(caa, cbb);
   if (caa.x > cbb.x || caa.y > cbb.y || x>=cbb.x || y>=cbb.y || x+new_width<=caa.x || y+new_height<=caa.y) return ;
   if (x<caa.x)
@@ -406,9 +406,9 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
   unsigned char *sl1,*sl2;
   int32_t xstep=(im->Size().x<<16)/new_width,
        ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
-  screen->AddDirty(vec2i(x, y), vec2i(x + new_width, y + new_height));
+  screen->AddDirty(ivec2(x, y), ivec2(x + new_width, y + new_height));
 
-  vec2i caa, cbb;
+  ivec2 caa, cbb;
   screen->GetClip(caa, cbb);
   if (caa.x > cbb.x || caa.y > cbb.y || x >= cbb.x || y >= cbb.y || x+new_width<=caa.x || y+new_height<=caa.y) return ;
   if (x<caa.x)
@@ -475,10 +475,10 @@ void dev_controll::dev_draw(view *v)
     if (f->x-vx>=0 && f->x-vx<=(v->m_bb.x-v->m_aa.x+1) && f->y-vy>=0 && f->y-vy<=(v->m_bb.y-v->m_aa.y+1))
     {
       image *im = cache.img(light_buttons[f->type]);
-      main_screen->PutImage(im, vec2i(f->x - vx, f->y - vy)
+      main_screen->PutImage(im, ivec2(f->x - vx, f->y - vy)
                                   + v->m_aa - im->Size() / 2);
-      main_screen->Rectangle(vec2i(f->x1 - vx, f->y1 - vy) + v->m_aa,
-                             vec2i(f->x2 - vx, f->y2 - vy) + v->m_aa,
+      main_screen->Rectangle(ivec2(f->x1 - vx, f->y1 - vy) + v->m_aa,
+                             ivec2(f->x2 - vx, f->y2 - vy) + v->m_aa,
                              wm->medium_color());
     }
       }
@@ -486,14 +486,14 @@ void dev_controll::dev_draw(view *v)
 
     if (link_object)
     {
-      vec2i pos = the_game->GameToMouse(vec2i(link_object->x, link_object->y), v);
+      ivec2 pos = the_game->GameToMouse(ivec2(link_object->x, link_object->y), v);
       main_screen->Line(pos, dlast, yellow);
     }
 
     if (selected_light)
     {
       image *im = cache.img(light_buttons[0]);
-      vec2i pos = the_game->GameToMouse(vec2i(selected_light->x, selected_light->y), v);
+      ivec2 pos = the_game->GameToMouse(ivec2(selected_light->x, selected_light->y), v);
       main_screen->Rectangle(pos - im->Size() / 2, pos + im->Size() / 2,
                              wm->bright_color());
     }
@@ -502,9 +502,9 @@ void dev_controll::dev_draw(view *v)
     if (show_names)
       for (o=current_level->first_object(); o; o=o->next)
       {
-    vec2i pos = the_game->GameToMouse(vec2i(o->x, o->y), current_view);
+    ivec2 pos = the_game->GameToMouse(ivec2(o->x, o->y), current_view);
     char *nm=object_names[o->otype];
-    console_font->PutString(main_screen, pos + vec2i(- strlen(nm) * console_font->Size().x / 2, 2), nm);
+    console_font->PutString(main_screen, pos + ivec2(- strlen(nm) * console_font->Size().x / 2, 2), nm);
       }
 
     if (dev&DRAW_LINKS)
@@ -512,20 +512,20 @@ void dev_controll::dev_draw(view *v)
       // draw connections between objects
       for (o=current_level->first_object(); o; o=o->next)
       {
-    vec2i pos1 = the_game->GameToMouse(vec2i(o->x, o->y), current_view);
+    ivec2 pos1 = the_game->GameToMouse(ivec2(o->x, o->y), current_view);
 
     int i=0;
     for (; i<o->total_objects(); i++)
     {
       game_object *other=o->get_object(i);
-      vec2i pos2 = the_game->GameToMouse(vec2i(other->x, other->y), current_view);
+      ivec2 pos2 = the_game->GameToMouse(ivec2(other->x, other->y), current_view);
       main_screen->Line(pos1, pos2, wm->bright_color());
     }
 
     for (i=0; i<o->total_lights(); i++)
     {
       light_source *l=o->get_light(i);
-      vec2i pos2 = the_game->GameToMouse(vec2i(l->x, l->y), current_view);
+      ivec2 pos2 = the_game->GameToMouse(ivec2(l->x, l->y), current_view);
       main_screen->Line(pos1, pos2, light_connection_color);
     }
 
@@ -535,15 +535,15 @@ void dev_controll::dev_draw(view *v)
     if (selected_object)
     {
       selected_object->picture_space(x1,y1,x2,y2);
-      vec2i pos1 = the_game->GameToMouse(vec2i(x1, y1), v);
-      vec2i pos2 = the_game->GameToMouse(vec2i(x2, y2), v);
+      ivec2 pos1 = the_game->GameToMouse(ivec2(x1, y1), v);
+      ivec2 pos2 = the_game->GameToMouse(ivec2(x2, y2), v);
       main_screen->Rectangle(pos1, pos2, wm->bright_color());
 
-      pos1 = the_game->GameToMouse(vec2i(selected_object->x, selected_object->y), current_view);
+      pos1 = the_game->GameToMouse(ivec2(selected_object->x, selected_object->y), current_view);
       for (int i=0; i<selected_object->total_objects(); i++)
       {
         game_object *other = selected_object->get_object(i);
-        pos2 = the_game->GameToMouse(vec2i(other->x, other->y), current_view);
+        pos2 = the_game->GameToMouse(ivec2(other->x, other->y), current_view);
         main_screen->Line(pos1, pos2, light_connection_color);
       }
     }
@@ -587,8 +587,8 @@ void dev_controll::toggle_toolbar()
                          ID_NULL,
                          5,(visual_object **)dev_mode_pict,dev_mode_ids,DEV_MODES,
                         pal,pal,NULL);
-    tbw=wm->CreateWindow(vec2i(prop->getd("toolbar x", -1),
-                               prop->getd("toolbar y", -1)), vec2i(-1), tp);
+    tbw=wm->CreateWindow(ivec2(prop->getd("toolbar x", -1),
+                               prop->getd("toolbar y", -1)), ivec2(-1), tp);
     tp->set_x(setx,tbw->m_surf);
   }
 }
@@ -628,8 +628,8 @@ void dev_controll::toggle_show_menu()
     if(dev & DRAW_FG_LAYER)
         fb->push();
 
-    show_menu = wm->CreateWindow(vec2i(prop->getd("layer x", -1),
-                                       prop->getd("layer y", -1)), vec2i(-1),
+    show_menu = wm->CreateWindow(ivec2(prop->getd("layer x", -1),
+                                       prop->getd("layer y", -1)), ivec2(-1),
                                  fb, symbol_str(symbol_str("SHOW?")));
 }
 
@@ -667,8 +667,8 @@ void dev_controll::toggle_omenu()
             c++;
         }
 
-    omenu = wm->CreateWindow(vec2i(prop->getd("objects x", 0),
-                                   prop->getd("objects y", 0)), vec2i(-1),
+    omenu = wm->CreateWindow(ivec2(prop->getd("objects x", 0),
+                                   prop->getd("objects y", 0)), ivec2(-1),
                              new pick_list(0, 0, DEV_CREATE,
                                            yres / wm->font()->Size().y / 2,
                                            listable_objs, total_listable, 0,
@@ -708,8 +708,8 @@ void dev_controll::toggle_pmenu()
     for(int i = 0; i < total_pals; i++)
         pwin_list[i] = pal_wins[i]->name;
 
-    pmenu = wm->CreateWindow(vec2i(prop->getd("pal x", 0),
-                                   prop->getd("pal y", -1)), vec2i(-1),
+    pmenu = wm->CreateWindow(ivec2(prop->getd("pal x", 0),
+                                   prop->getd("pal y", -1)), ivec2(-1),
                              new pick_list(0, 0, DEV_PALETTE,
                                            yres / wm->font()->Size().y / 2,
                                            pwin_list, total_pals, 0, NULL,
@@ -738,16 +738,16 @@ void dev_controll::toggle_fgw()
                                         fg_scale, maxh, fg_w, NULL);
     f_tp->reverse();
 
-    forew = wm->CreateWindow(vec2i(prop->getd("fore x", -30),
+    forew = wm->CreateWindow(ivec2(prop->getd("fore x", -30),
                                    prop->getd("fore y", 0)),
-                             vec2i(-1), f_tp,symbol_str("l_fg"));
+                             ivec2(-1), f_tp,symbol_str("l_fg"));
 }
 
 void dev_controll::toggle_music_window()
 {
 /*  if (!music_window)
   {
-    music_window=wm->CreateWindow(vec2i(-1, 30), vec2i(0, 0),
+    music_window=wm->CreateWindow(ivec2(-1, 30), ivec2(0, 0),
              new pick_list(0,0,DEV_MUSIC_PICKLIST,10,song_list,total_songs,0,NULL));
     wm->fnt->put_string(music_window->m_surf,0,1,"songs");
   } else
@@ -776,9 +776,9 @@ void dev_controll::toggle_bgw()
     /* FIXME: previous code had 1 instead of 0, investigate */
     tile_picker *f_tp = new tile_picker(0, 0, DEV_BG_PICKER, SPEC_BACKTILE,
                                         bg_scale, maxh, bg_w, NULL);
-    forew = wm->CreateWindow(vec2i(prop->getd("back x", -30),
+    forew = wm->CreateWindow(ivec2(prop->getd("back x", -30),
                                    prop->getd("back y", 0)),
-                             vec2i(-1), f_tp,symbol_str("l_bg"));
+                             ivec2(-1), f_tp,symbol_str("l_bg"));
 }
 
 void dev_controll::toggle_search_window()
@@ -797,9 +797,9 @@ void dev_controll::toggle_search_window()
 
     int bw = cache.img(dev_forward)->Size().x;
     /* FIXME: previous code had 1,1 instead of 0,0 -- investigate */
-    search_window = wm->CreateWindow(vec2i(prop->getd("searchw x", -30),
+    search_window = wm->CreateWindow(ivec2(prop->getd("searchw x", -30),
                                            prop->getd("searchw y", 0)),
-                                     vec2i(-1),
+                                     ivec2(-1),
         new text_field(0, 0, ID_SEARCH_TEXT, "object name>",
                        "***************************",
                        prop->get("search name", ""),
@@ -1044,7 +1044,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
   if (!strcmp(fword,"unchop"))
   {
-    vec2i tile = the_game->GetBgTile(dlast);
+    ivec2 tile = the_game->GetBgTile(dlast);
     if (tile.x>=0 && tile.y>=0)
     {
       if (sscanf(command,"%s%d%d",fword,&l,&h)==3)
@@ -1054,7 +1054,7 @@ void dev_controll::do_command(char const *command, Event &ev)
     h=(h+the_game->btile_height()-1)/the_game->btile_height();
     for (y=0,i=cur_bg; y<h; y++)
           for (x=0; x<l; x++)
-            the_game->PutBg(tile + vec2i(x, y), i++);
+            the_game->PutBg(tile + ivec2(x, y), i++);
     dprintf("%dx%d\n",l,h);
       } else dprintf(symbol_str("unchop1"));
 
@@ -1165,7 +1165,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
     if (t>=0)                                 // did we find it?
     {
-      vec2i pos = the_game->MouseToGame(dlast);
+      ivec2 pos = the_game->MouseToGame(dlast);
       edit_object=create(t, pos.x, pos.y);
       current_level->add_object(edit_object);
       the_game->need_refresh();
@@ -1209,7 +1209,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
   if (!strcmp(fword,"fg_select"))
   {
-    vec2i tile = the_game->GetFgTile(dlast);
+    ivec2 tile = the_game->GetFgTile(dlast);
     if (tile.x >= 0 && tile.y >= 0 &&
         tile.x < current_level->foreground_width() &&
         tile.y < current_level->foreground_height())
@@ -1223,7 +1223,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
   if (!strcmp(fword,"toggle_fg_raise"))
   {
-    vec2i tile = the_game->GetFgTile(dlast);
+    ivec2 tile = the_game->GetFgTile(dlast);
     if (tile.x >= 0 && tile.y >= 0 &&
         tile.x < current_level->foreground_width() &&
         tile.y < current_level->foreground_height())
@@ -1330,8 +1330,8 @@ void dev_controll::toggle_light_window()
 
     int bh = 16 + 6, bw = 20 + 6, th = wm->font()->Size().y + 4;
 
-    lightw = wm->CreateWindow(vec2i(prop->getd("light create x", 0),
-                                    prop->getd("light create y", 0)), vec2i(-1),
+    lightw = wm->CreateWindow(ivec2(prop->getd("light create x", 0),
+                                    prop->getd("light create y", 0)), ivec2(-1),
         new button_box(0, 0, DEV_LIGHT_BUTTON_BOX, 1,
             new button(bw * 0, bh * 0, DEV_LIGHT0, cache.img(light_buttons[0]),
             new button(bw * 1, bh * 0, DEV_LIGHT1, cache.img(light_buttons[1]),
@@ -1387,15 +1387,15 @@ void dev_controll::make_ai_window(game_object *o)
       last=p;
       wh+=th;
     }
-    aiw=wm->CreateWindow(vec2i(prop->getd("ai x",0), prop->getd("ai y",0)),
-                         vec2i(-1),
+    aiw=wm->CreateWindow(ivec2(prop->getd("ai x",0), prop->getd("ai y",0)),
+                         ivec2(-1),
        new button(wl,owh-20,DEV_AI_OK,cache.img(dev_ok),first),"ai");
 
   }
   else
   {
-    aiw=wm->CreateWindow(vec2i(prop->getd("ai x", 0), prop->getd("ai y", 0)),
-                         vec2i(-1),
+    aiw=wm->CreateWindow(ivec2(prop->getd("ai x", 0), prop->getd("ai y", 0)),
+                         ivec2(-1),
        new button(wl,wh-20,DEV_AI_OK,cache.img(dev_ok),
        new text_field(wl,wh+th*0, DEV_AI_XVEL,    symbol_str("ai_xvel"),"#####",(double)o->xvel(),
        new text_field(wl,wh+th*1, DEV_AI_YVEL,    symbol_str("ai_yvel"),"#####",(double)o->yvel(),
@@ -1510,7 +1510,7 @@ void dev_controll::area_handle_input(Event &ev)
 
   if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
   {
-    vec2i pos = the_game->MouseToGame(last_demo_mpos);
+    ivec2 pos = the_game->MouseToGame(last_demo_mpos);
     if (!current_level) return ;
     current_area=current_level->area_list=new area_controller(pos.x, pos.y,
                                   the_game->ftile_width(),
@@ -1549,12 +1549,12 @@ void dev_controll::pick_handle_input(Event &ev)
   if (!current_level) return;
   if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
   {
-    vec2i m = last_demo_mpos;
+    ivec2 m = last_demo_mpos;
     view *v = the_game->GetView(m);
     for (area_controller *a=current_level->area_list; a; a=a->next)
     {
-      vec2i pos1 = the_game->GameToMouse(vec2i(a->x, a->y), v);
-      vec2i pos2 = the_game->GameToMouse(vec2i(a->x + a->w, a->y + a->h), v);
+      ivec2 pos1 = the_game->GameToMouse(ivec2(a->x, a->y), v);
+      ivec2 pos2 = the_game->GameToMouse(ivec2(a->x + a->w, a->y + a->h), v);
       if (abs(pos1.x - m.x) < 2 && abs(pos1.y - m.y) < 2)
       { find = a; find_top = 1; }
       else if (abs(pos2.x - m.x) < 2 && abs(pos2.y - m.y) < 2)
@@ -1568,8 +1568,8 @@ void dev_controll::pick_handle_input(Event &ev)
     {
       if (area_win) close_area_win(0);
       int wl=0,wh=0,th=wm->font()->Size().y+12,bw=cache.img(dev_ok)->Size().x+10;
-      area_win=wm->CreateWindow(vec2i(prop->getd("area_box x", 0),
-                                      prop->getd("area_box y", 0)), vec2i(-1),
+      area_win=wm->CreateWindow(ivec2(prop->getd("area_box x", 0),
+                                      prop->getd("area_box y", 0)), ivec2(-1),
                   new button(wl+bw*0,wh-8,DEV_AREA_OK,cache.img(dev_ok),
                   new button(wl+bw*1,wh-8,DEV_AREA_DELETE,cache.img(dev_del),
 
@@ -1677,7 +1677,7 @@ void dev_controll::handle_event(Event &ev)
       {
     if (ev.type==EV_MOUSE_MOVE)
     {
-      vec2i pos = the_game->MouseToGame(last_demo_mpos);
+      ivec2 pos = the_game->MouseToGame(last_demo_mpos);
       edit_object->x = snap_x(pos.x);
       edit_object->y = snap_y(pos.y);
       the_game->need_refresh();
@@ -1705,7 +1705,7 @@ void dev_controll::handle_event(Event &ev)
       {
     if (ev.type==EV_MOUSE_MOVE)
     {
-      vec2i pos = the_game->MouseToGame(last_demo_mpos);
+      ivec2 pos = the_game->MouseToGame(last_demo_mpos);
       edit_light->x = snap_x(pos.x);
       edit_light->y = snap_y(pos.y);
 
@@ -1787,7 +1787,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (current_area)
       {
-    vec2i pos = the_game->MouseToGame(last_demo_mpos);
+    ivec2 pos = the_game->MouseToGame(last_demo_mpos);
     if (pos.x>current_area->x && pos.y>current_area->y)
     {
       if (pos.x-current_area->x!=current_area->w || pos.y-current_area->y!=current_area->h)
@@ -1809,7 +1809,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (current_area)
       {
-    vec2i pos = the_game->MouseToGame(last_demo_mpos);
+    ivec2 pos = the_game->MouseToGame(last_demo_mpos);
     if (pos.x<current_area->x+current_area->w && pos.y<current_area->y+current_area->h)
     {
       if (pos.x!=current_area->x || pos.y!=current_area->y)
@@ -1835,7 +1835,7 @@ void dev_controll::handle_event(Event &ev)
     selected_object=NULL;
     if (ev.window==NULL)
     {
-      vec2i pos = the_game->MouseToGame(last_demo_mpos);
+      ivec2 pos = the_game->MouseToGame(last_demo_mpos);
 
       if (!(dev & MAP_MODE))
       {
@@ -1852,14 +1852,14 @@ void dev_controll::handle_event(Event &ev)
         // FIXME: there is a bug here, the two if conditionals are the same
         if (ev.mouse_button==1 && !selected_object && !selected_light)
         {
-          vec2i tile = the_game->GetFgTile(last_demo_mpos);
+          ivec2 tile = the_game->GetFgTile(last_demo_mpos);
           if (tile.x>=0 && tile.y>=0 && tile.x<current_level->foreground_width() &&
           tile.y<current_level->foreground_height())
           current_level->PutFg(tile, raise_all ? make_above_tile(cur_fg) : cur_fg);
           the_game->need_refresh();
         } else if (ev.mouse_button==1 && !selected_object && !selected_light)
         {
-          vec2i tile = the_game->GetBgTile(last_demo_mpos);
+          ivec2 tile = the_game->GetBgTile(last_demo_mpos);
           if (tile.x>=0 && tile.y>=0 && tile.x<current_level->background_width() &&
           tile.y<current_level->background_height())
           current_level->PutBg(tile, cur_fg);
@@ -1887,8 +1887,8 @@ void dev_controll::handle_event(Event &ev)
 
         int bw=20+6,bh=16+6;
 
-        oedit=wm->CreateWindow(vec2i(prop->getd("oedit x", 0),
-                                     prop->getd("oedit y", 0)), vec2i(-1),
+        oedit=wm->CreateWindow(ivec2(prop->getd("oedit x", 0),
+                                     prop->getd("oedit y", 0)), ivec2(-1),
             new button_box(0,0,ID_NULL,1,
                 new button(bw*0,0,DEV_OEDIT_OK,cache.img(dev_ok),
                 new button(bw*1,0,DEV_OEDIT_MOVE,cache.img(dev_move),
@@ -1923,8 +1923,8 @@ void dev_controll::handle_event(Event &ev)
           edit_object->add_light(edit_light);
           edit_light->known=1;
         }
-        ledit=wm->CreateWindow(vec2i(prop->getd("ledit x", 0),
-                                     prop->getd("ledit y", 0)), vec2i(-1),
+        ledit=wm->CreateWindow(ivec2(prop->getd("ledit x", 0),
+                                     prop->getd("ledit y", 0)), ivec2(-1),
               new button_box(0,0,ID_NULL,1,
                    new button(bw*0,0,DEV_LEDIT_OK,cache.img(dev_ok),
                new button(bw*1,0,DEV_LEDIT_MOVE,cache.img(dev_move),
@@ -1942,14 +1942,14 @@ void dev_controll::handle_event(Event &ev)
         {
           if ((dev & DRAW_FG_LAYER) && ev.mouse_button==1)
           {
-        vec2i tile = the_game->GetFgTile(last_demo_mpos);
+        ivec2 tile = the_game->GetFgTile(last_demo_mpos);
         if (tile.x>=0 && tile.y>=0 && tile.x<current_level->foreground_width() &&
             tile.y<current_level->foreground_height())
         the_game->PutFg(tile, raise_all ? make_above_tile(cur_fg) : cur_fg);
           }
           if ((dev & DRAW_BG_LAYER) && ev.mouse_button==2)
           {
-        vec2i tile = the_game->GetBgTile(last_demo_mpos);
+        ivec2 tile = the_game->GetBgTile(last_demo_mpos);
         if (tile.x>=0 && tile.y>=0 && tile.x<current_level->background_width() &&
             tile.y<current_level->background_height())
         the_game->PutBg(tile, cur_bg);
@@ -2091,7 +2091,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
+        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
                new button(10,20,ID_LEVEL_NEW_OK,symbol_str("YES"),
                         new button(40,20,ID_CANCEL,symbol_str("NO"),
           new info_field(0,0,ID_NULL,symbol_str("sure?"),NULL))),symbol_str("New?"));
@@ -2110,7 +2110,7 @@ void dev_controll::handle_event(Event &ev)
       if (!mess_win)
       {
         int h=wm->font()->Size().y+8;
-        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
+        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
             new text_field(0,h*0,ID_MESS_STR1,symbol_str("width_"),"****",
                    current_level ? current_level->foreground_width() : 100,
             new text_field(0,h*1,ID_MESS_STR2,symbol_str("height_"),"****",
@@ -2162,7 +2162,7 @@ void dev_controll::handle_event(Event &ev)
       if (!mess_win)
       {
         int h=wm->font()->Size().y+8;
-        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
+        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
             new text_field(0,h*0,ID_RECORD_DEMO_FILENAME,
                    "demo filename","*******************",
                    "demo.dat",
@@ -2182,7 +2182,7 @@ void dev_controll::handle_event(Event &ev)
       if (!mess_win)
       {
         int h=wm->font()->Size().y+8;
-        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
+        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
             new text_field(0,h*0,ID_PLAY_DEMO_FILENAME,
                    "demo filename","*******************",
                    "demo.dat",
@@ -2203,7 +2203,7 @@ void dev_controll::handle_event(Event &ev)
       if (!mess_win)
       {
         int h=wm->font()->Size().y+8;
-        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
+        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
             new text_field(0,h*0,ID_MESS_STR1,symbol_str("x_mul"),"****",bg_xmul,
             new text_field(0,h*1,ID_MESS_STR2,symbol_str("x_div"),"****",bg_xdiv,
             new text_field(0,h*2,ID_MESS_STR3,symbol_str("y_mul"),"****",bg_ymul,
@@ -2224,8 +2224,8 @@ void dev_controll::handle_event(Event &ev)
       {
         int h=wm->font()->Size().y+8;
 
-        warn_win=wm->CreateWindow(vec2i(xres / 2 - 40, yres / 2 - 40),
-                                  vec2i(-1),
+        warn_win=wm->CreateWindow(ivec2(xres / 2 - 40, yres / 2 - 40),
+                                  ivec2(-1),
                   new info_field(0,0,ID_NULL,
                       symbol_str("back_loss"),
                       new button(10,h*4,ID_SET_SCROLL_OK,symbol_str("ok_button"),
@@ -2269,7 +2269,7 @@ void dev_controll::handle_event(Event &ev)
       if (!mess_win)
       {
         int h=wm->font()->Size().y+8;
-        mess_win=wm->CreateWindow(vec2i(xres / 2, yres / 2), vec2i(-1),
+        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
             new text_field(0,h*0,ID_MESS_STR1,symbol_str("ap_width"),"****",2,
             new text_field(0,h*1,ID_MESS_STR2,symbol_str("ap_height"),"****",2,
             new text_field(0,h*2,ID_MESS_STR3,symbol_str("ap_name"),"***********","pal",
@@ -2475,7 +2475,7 @@ void dev_controll::handle_event(Event &ev)
     case DEV_LIGHT8 :
     case DEV_LIGHT9 :
     {
-      vec2i pos = the_game->MouseToGame(last_demo_mpos);
+      ivec2 pos = the_game->MouseToGame(last_demo_mpos);
       edit_light = add_light_source(ev.message.id - DEV_LIGHT0,
                                     snap_x(pos.x), snap_y(pos.y),
                                     atoi(lightw->read(DEV_LIGHTR1)),
@@ -2722,7 +2722,7 @@ void dev_controll::handle_event(Event &ev)
       {
         if (ev.window==NULL || ev.window==forew)
         {
-          vec2i tile = the_game->GetFgTile(last_demo_mpos);
+          ivec2 tile = the_game->GetFgTile(last_demo_mpos);
           fg_fill(cur_fg, tile.x, tile.y, NULL);
         }
       } break;
@@ -2808,7 +2808,7 @@ void dev_controll::handle_event(Event &ev)
       case 'R' : do_command("reload",ev); break;
       case 'w' :
       {
-        vec2i pos = the_game->MouseToGame(dlast);
+        ivec2 pos = the_game->MouseToGame(dlast);
         char msg[100]; sprintf(msg, symbol_str("mouse_at"), pos.x, pos.y);
         the_game->show_help(msg);
         the_game->need_refresh();
@@ -2829,7 +2829,7 @@ void dev_controll::handle_event(Event &ev)
       {
         if (current_level && player_list && player_list->m_focus)
         {
-          vec2i pos = the_game->MouseToGame(dlast);
+          ivec2 pos = the_game->MouseToGame(dlast);
           player_list->m_focus->x = pos.x;
           player_list->m_focus->y = pos.y;
           do_command("center",ev);
@@ -2950,7 +2950,7 @@ pal_win::pal_win(void *args)
 void pal_win::open_window()
 {
   if (me) close_window();
-  me=wm->CreateWindow(vec2i(x, y), vec2i(w * f_wid / scale,
+  me=wm->CreateWindow(ivec2(x, y), ivec2(w * f_wid / scale,
                                          h * f_hi / scale), NULL, name);
   draw();
 }
@@ -2974,20 +2974,20 @@ void pal_win::draw()
   if (me)
   {
     me->clear();
-    image *im=new image(vec2i(the_game->ftile_width(),the_game->ftile_height()));
+    image *im=new image(ivec2(the_game->ftile_width(),the_game->ftile_height()));
     int th=the_game->ftile_height()/scale,tw=the_game->ftile_width()/scale;
 
     for (i=0; i<w*h; i++)
     {
       im->clear();
-      the_game->get_fg(pat[i])->im->PutImage(im, vec2i(0,0));
+      the_game->get_fg(pat[i])->im->PutImage(im, ivec2(0,0));
       scale_put(im,me->m_surf,me->x1()+(i%w)*tw,
         me->y1()+(i/w)*th,tw,th);
       if (d==pat[i])
       {
-    me->m_surf->Rectangle(vec2i(me->x1() + (i % w) * tw,
+    me->m_surf->Rectangle(ivec2(me->x1() + (i % w) * tw,
                                 me->y1() + (i / w) * th),
-                          vec2i(me->x1() + (i % w) * tw + tw - 1,
+                          ivec2(me->x1() + (i % w) * tw + tw - 1,
                                 me->y1() + (i / w) * th + th - 1),
                           wm->bright_color());
       }
@@ -3094,7 +3094,7 @@ void pal_win::handle_event(Event &ev)
       case ' ' :
       {
         int32_t xx, yy;
-        vec2i tile = the_game->GetFgTile(me->m_pos);
+        ivec2 tile = the_game->GetFgTile(me->m_pos);
 
         for (xx=tile.x; xx<tile.x+w; xx++)
         {
@@ -3102,13 +3102,13 @@ void pal_win::handle_event(Event &ev)
           {
         if (xx>=0 && yy>=0 && xx<current_level->foreground_width() &&
             yy<current_level->foreground_height())
-          the_game->PutFg(vec2i(xx, yy), raise_all ? make_above_tile(pat[xx-tile.x+(yy-tile.y)*w]) : pat[xx-tile.x+(yy-tile.y)*w] );
+          the_game->PutFg(ivec2(xx, yy), raise_all ? make_above_tile(pat[xx-tile.x+(yy-tile.y)*w]) : pat[xx-tile.x+(yy-tile.y)*w] );
           }
         }
       } break;
       case 't' :
       {
-        vec2i tile = the_game->GetFgTile(me->m_pos);
+        ivec2 tile = the_game->GetFgTile(me->m_pos);
         dev_cont->fg_fill(-1, tile.x, tile.y, this);
       } break;
 
@@ -3553,13 +3553,13 @@ void toggle_edit_mode()
   dev=dev^EDIT_MODE;
   if (dev&EDIT_MODE)
   {
-    wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1, 1));
+    wm->SetMouseShape(cache.img(c_normal)->copy(), ivec2(1, 1));
     pal->load();
   }
   else
   {
     if (dev&MAP_MODE) dev-=MAP_MODE;                        // no map mode while playing!
-    wm->SetMouseShape(cache.img(c_target)->copy(), vec2i(8, 8));
+    wm->SetMouseShape(cache.img(c_target)->copy(), ivec2(8, 8));
   }
   if ((dev&EDIT_MODE) && !dev_menu)
   {

@@ -18,19 +18,19 @@
 
 void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
 {
-    vec2i caa, cbb;
+    ivec2 caa, cbb;
     screen->GetClip(caa, cbb);
 
-    vec2i aa(0), bb = im->Size();
-    vec2i pos(x, y);
+    ivec2 aa(0), bb = im->Size();
+    ivec2 pos(x, y);
 
-    aa += Max(caa - pos, vec2i(0));
-    bb -= Max(caa - pos, vec2i(0));
+    aa += Max(caa - pos, ivec2(0));
+    bb -= Max(caa - pos, ivec2(0));
     pos = Max(caa, pos);
 
-    bb = Min(bb, cbb - vec2i(1) - pos);
+    bb = Min(bb, cbb - ivec2(1) - pos);
 
-    if (!(bb >= vec2i(0)))
+    if (!(bb >= ivec2(0)))
         return;
     screen->AddDirty(pos, pos + bb);
 

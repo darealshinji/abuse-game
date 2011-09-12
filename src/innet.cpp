@@ -549,8 +549,8 @@ void net_reload()
                 current_level->add_object(o);
 
                 view *v = f->next;
-                v->m_aa = vec2i(5);
-                v->m_bb = vec2i(319, 199) - vec2i(5);
+                v->m_aa = ivec2(5);
+                v->m_bb = ivec2(319, 199) - ivec2(5);
                 join_list = join_list->next;
       }
       base->join_list=NULL;
@@ -558,7 +558,7 @@ void net_reload()
       base->mem_lock=0;
 
 
-      Jwindow *j=wm->CreateWindow(vec2i(0, yres / 2), vec2i(-1), new info_field(0, 0, 0, symbol_str("resync"),
+      Jwindow *j=wm->CreateWindow(ivec2(0, yres / 2), ivec2(-1), new info_field(0, 0, 0, symbol_str("resync"),
                           new button(0, wm->font()->Size().y + 5, ID_NET_DISCONNECT,
                              symbol_str("slack"),NULL)),symbol_str("hold!"))
 ;
@@ -663,7 +663,7 @@ int get_inputs_from_server(unsigned char *buf)
     total_retry++;
     if (total_retry==12000)    // 2 minutes and nothing
     {
-      abort=wm->CreateWindow(vec2i(0, yres / 2), vec2i(-1, wm->font()->Size().y*4),
+      abort=wm->CreateWindow(ivec2(0, yres / 2), ivec2(-1, wm->font()->Size().y*4),
                    new info_field(0, 0, 0, symbol_str("waiting"),
                           new button(0, wm->font()->Size().y + 5, ID_NET_DISCONNECT,
                              symbol_str("slack"),NULL)),symbol_str("Error"));

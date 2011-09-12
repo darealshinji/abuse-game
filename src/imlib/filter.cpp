@@ -78,9 +78,9 @@ void Filter::Apply(image *im)
 
 /* This is only ever used in the editor, when showing the toolbar. It
  * does not look like it's very useful. */
-void Filter::PutImage(image *screen, image *im, vec2i pos)
+void Filter::PutImage(image *screen, image *im, ivec2 pos)
 {
-    vec2i aa = vec2i(0), bb = im->Size(), caa, cbb;
+    ivec2 aa = ivec2(0), bb = im->Size(), caa, cbb;
     screen->GetClip(caa, cbb);
 
     // See if the image gets clipped off the screen
@@ -94,7 +94,7 @@ void Filter::PutImage(image *screen, image *im, vec2i pos)
     if (!(aa < bb))
         return;
 
-    vec2i span = bb - aa;
+    ivec2 span = bb - aa;
 
     screen->AddDirty(pos, pos + span);
 

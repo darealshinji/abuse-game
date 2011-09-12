@@ -48,7 +48,7 @@ VolumeWindow::VolumeWindow() : Jwindow("Volume")
 
 void VolumeWindow::redraw()
 {
-    m_surf->PutImage(cache.img(bg), vec2i(0, 0));
+    m_surf->PutImage(cache.img(bg), ivec2(0, 0));
     draw_music_vol();
     draw_sfx_vol();
     inm->redraw();
@@ -60,14 +60,14 @@ void VolumeWindow::draw_vol(int x1, int y1, int x2, int y2, int t,
     int dx = x1 + t * (x2 - x1) / max;
     if(t != 0)
     {
-        m_surf->PutImage(cache.img(slider), vec2i(x1, y1));
+        m_surf->PutImage(cache.img(slider), ivec2(x1, y1));
 //      m_surf->bar(x1,y1,dx,y2,c1);
     }
     else
         dx--;
 
     if(dx < x2)
-        m_surf->Bar(vec2i(dx + 1, y1), vec2i(x2, y2), c2);
+        m_surf->Bar(ivec2(dx + 1, y1), ivec2(x2, y2), c2);
 }
 
 void VolumeWindow::draw_sfx_vol()

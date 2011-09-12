@@ -17,7 +17,7 @@
 class Sprite : public linked_node
 {
 public:
-    Sprite(image *screen, image *visual, vec2i pos);
+    Sprite(image *screen, image *visual, ivec2 pos);
     ~Sprite();
 
     void SetVisual(image *visual, int delete_old = 0);
@@ -25,7 +25,7 @@ public:
     image *m_visual, *m_screen, *m_save;
 
 private:
-    vec2i m_pos;
+    ivec2 m_pos;
 };
 
 #endif

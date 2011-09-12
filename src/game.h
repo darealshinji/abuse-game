@@ -106,15 +106,15 @@ public :
                            return cache.foret(foretiles[BLACK]); else
                return cache.foret(foretiles[x]); }
 
-    vec2i GetFgTile(vec2i pos);
-    vec2i GetBgTile(vec2i pos);
+    ivec2 GetFgTile(ivec2 pos);
+    ivec2 GetBgTile(ivec2 pos);
   void toggle_delay();
   void set_delay(int on) { no_delay=!on; }
   void pan(int xv, int yv);
 
-    vec2i MouseToGame(vec2i pos, view *v = NULL);
-    vec2i GameToMouse(vec2i pos, view *v);
-    view *GetView(vec2i pos);
+    ivec2 MouseToGame(ivec2 pos, view *v = NULL);
+    ivec2 GameToMouse(ivec2 pos, view *v);
+    view *GetView(ivec2 pos);
 
   int calc_speed();
   int ftile_width()  { return f_wid; }
@@ -124,8 +124,8 @@ public :
   int btile_height() { return b_hi; }
 
 
-    void PutFg(vec2i pos, int type);
-    void PutBg(vec2i pos, int type);
+    void PutFg(ivec2 pos, int type);
+    void PutBg(ivec2 pos, int type);
   void draw_map(view *v, int interpolate=0);
   void dev_scroll();
 
@@ -133,8 +133,8 @@ public :
   void load_level(char const *name);
   void set_level(level *nl);
   void show_time();
-    tile_type GetMapBg(vec2i pos) { return current_level->GetBg(pos); }
-    tile_type GetMapFg(vec2i pos) { return current_level->GetFg(pos); }
+    tile_type GetMapBg(ivec2 pos) { return current_level->GetBg(pos); }
+    tile_type GetMapFg(ivec2 pos) { return current_level->GetFg(pos); }
   void end_session();
   void need_refresh() { refresh=1; }       // for development mode only
   palette *current_palette() { return pal; }

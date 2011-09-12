@@ -170,7 +170,7 @@ void draw_panims(view *v)
 
 void part_frame::draw(image *screen, int x, int y, int dir)
 {
-    vec2i caa, cbb;
+    ivec2 caa, cbb;
     screen->GetClip(caa, cbb);
 
     if (x + x1 >= cbb.x || x + x2 < caa.x || y + y1 >= cbb.y || y + y2 < caa.y)
@@ -208,9 +208,9 @@ void part_frame::draw(image *screen, int x, int y, int dir)
   screen->Unlock();
 }
 
-void ScatterLine(vec2i p1, vec2i p2, int c, int s)
+void ScatterLine(ivec2 p1, ivec2 p2, int c, int s)
 {
-    vec2i caa, cbb;
+    ivec2 caa, cbb;
     main_screen->GetClip(caa, cbb);
 
     int t = 1 + Max(abs(p2.x - p1.x), abs(p2.y - p1.y));
@@ -238,9 +238,9 @@ void ScatterLine(vec2i p1, vec2i p2, int c, int s)
     main_screen->Unlock();
 }
 
-void AScatterLine(vec2i p1, vec2i p2, int c1, int c2, int s)
+void AScatterLine(ivec2 p1, ivec2 p2, int c1, int c2, int s)
 {
-    vec2i caa, cbb;
+    ivec2 caa, cbb;
     main_screen->GetClip(caa, cbb);
 
     int t = 1 + Max(abs(p2.x - p1.x), abs(p2.y - p1.y));

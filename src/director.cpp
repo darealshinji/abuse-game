@@ -42,9 +42,9 @@ extern unsigned char *white_light;
 
 int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *font, uint8_t *cmap, char color)
 {
-    vec2i caa, cbb;
+    ivec2 caa, cbb;
     main_screen->GetClip(caa, cbb);
-    main_screen->InClip(vec2i(x1, y1), vec2i(x2 + 1, y2 + 1));
+    main_screen->InClip(ivec2(x1, y1), ivec2(x2 + 1, y2 + 1));
 
   int h=font->Size().y+2,w=font->Size().x,x=x1,dist;
   y+=y1;
@@ -108,8 +108,8 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *fo
     {
       while (word_len--)
       {
-    font->PutChar(main_screen, vec2i(x + 1, y + 1), *word_start, 0);
-    font->PutChar(main_screen, vec2i(x, y), *word_start, c);
+    font->PutChar(main_screen, ivec2(x + 1, y + 1), *word_start, 0);
+    font->PutChar(main_screen, ivec2(x, y), *word_start, c);
     word_start++;
     x+=w;
       }

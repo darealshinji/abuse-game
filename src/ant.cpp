@@ -447,10 +447,10 @@ void show_stats()
   if (current_level)
   {
     fade_out(8);
-    wm->SetMousePos(vec2i(0, 0));
+    wm->SetMousePos(ivec2(0, 0));
     main_screen->clear();
     image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
-    main_screen->PutImage(im, vec2i(0, 0));
+    main_screen->PutImage(im, ivec2(0, 0));
 
 
     int x1=im->Size().x+1,y1=0,x2=xres,y2=main_screen->Size().y;
@@ -475,13 +475,13 @@ void show_stats()
     int w = wm->font()->Size().x * strlen(msg),
         h = wm->font()->Size().y;
     int x=(x1+x2)/2-w/2,y=(y1+y2)/2-h/2;
-    main_screen->Bar(vec2i(x - 10, y - 10), vec2i(x + w + 10, y + h + 10),
+    main_screen->Bar(ivec2(x - 10, y - 10), ivec2(x + w + 10, y + h + 10),
                      wm->bright_color());
-    main_screen->Bar(vec2i(x - 9, y - 9), vec2i(x + w + 9, y + h + 9),
+    main_screen->Bar(ivec2(x - 9, y - 9), ivec2(x + w + 9, y + h + 9),
                      wm->medium_color());
 
-    wm->font()->PutString(main_screen, vec2i(x + 1, y + 1), msg, wm->dark_color());
-    wm->font()->PutString(main_screen, vec2i(x, y), msg, wm->bright_color());
+    wm->font()->PutString(main_screen, ivec2(x + 1, y + 1), msg, wm->dark_color());
+    wm->font()->PutString(main_screen, ivec2(x, y), msg, wm->bright_color());
     wm->flush_screen();
     Timer now; now.WaitMs(500);
   }

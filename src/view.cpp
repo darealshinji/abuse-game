@@ -196,7 +196,7 @@ view::view(game_object *focus, view *Next, int number)
   no_xright=0;
   no_ytop=0;
   no_ybottom=0;
-    m_lastlastpos = m_lastpos = focus ? vec2i(focus->x, focus->y) : vec2i(0);
+    m_lastlastpos = m_lastpos = focus ? ivec2(focus->x, focus->y) : ivec2(0);
   last_hp=last_ammo=-1;
   last_type=-1;
   tsecrets=secrets=0;
@@ -215,11 +215,11 @@ view::view(game_object *focus, view *Next, int number)
   god=0;
 
   player_number=number;
-    m_aa = vec2i(0);
-    m_bb = vec2i(100);
+    m_aa = ivec2(0);
+    m_bb = ivec2(100);
     m_focus = focus;
   next=Next;
-    m_shift = vec2i(SHIFT_RIGHT_DEFAULT, SHIFT_DOWN_DEFAULT);
+    m_shift = ivec2(SHIFT_RIGHT_DEFAULT, SHIFT_DOWN_DEFAULT);
   x_suggestion=0;
   y_suggestion=0;
   b1_suggestion=0;
@@ -304,7 +304,7 @@ uint16_t make_sync()
 void view::get_input()
 {
     int sug_x,sug_y,sug_b1,sug_b2,sug_b3,sug_b4;
-    vec2i sug_p(0, 0);
+    ivec2 sug_p(0, 0);
 
 // NOTE:(AK) I have commented this out so we don't use the lisp
 //        file "input.lsp" to get our key mappings.
@@ -463,14 +463,14 @@ int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went 
     {
       int32_t x[8];
       memcpy(x,pk,8*4);  pk+=8*4;
-      m_aa = vec2i(lltl(x[0]), lltl(x[1]));
-      m_bb = vec2i(lltl(x[2]), lltl(x[3]));
+      m_aa = ivec2(lltl(x[0]), lltl(x[1]));
+      m_bb = ivec2(lltl(x[2]), lltl(x[3]));
 
       pan_x=lltl(x[4]);
       pan_y=lltl(x[5]);
-      m_shift = vec2i(lltl(x[7]), lltl(x[6]));
+      m_shift = ivec2(lltl(x[7]), lltl(x[6]));
       if (small_render)
-          small_render->Scale(m_bb - m_aa + vec2i(1));
+          small_render->Scale(m_bb - m_aa + ivec2(1));
 
       suggest.send_view=0;
       if (local_player())
@@ -717,8 +717,8 @@ void recalc_local_view_space()   // calculates view areas for local players, sho
 
     if (!player_list->next)
     {
-      f->m_aa = vec2i(f->suggest.cx1, f->suggest.cy1);
-      f->m_bb = vec2i(f->suggest.cx2, f->suggest.cy2);
+      f->m_aa = ivec2(f->suggest.cx1, f->suggest.cy1);
+      f->m_bb = ivec2(f->suggest.cx2, f->suggest.cy2);
       f->suggest.send_view = 0;
     }
     y+=h;
@@ -772,8 +772,8 @@ void set_local_players(int total)
       f->next=new view(o,NULL,f->player_number+1);
       v=f->next;
     }
-    v->m_aa = vec2i(320 / 2 - 155, 200 / 2 - 95);
-    v->m_bb = vec2i(320 / 2 + 155, 200 / 2 + total_weapons ? 60 : 95);
+    v->m_aa = ivec2(320 / 2 - 155, 200 / 2 - 95);
+    v->m_bb = ivec2(320 / 2 + 155, 200 / 2 + total_weapons ? 60 : 95);
     v->m_focus->set_controller(v);
     total--;
     rdw=1;
@@ -824,7 +824,7 @@ void view::reset_player()
     memset(weapons,0xff,total_weapons*sizeof(int32_t));
     memset(last_weapons,0xff,total_weapons*sizeof(int32_t));
 
-    m_shift = vec2i(SHIFT_RIGHT_DEFAULT, SHIFT_DOWN_DEFAULT);
+    m_shift = ivec2(SHIFT_RIGHT_DEFAULT, SHIFT_DOWN_DEFAULT);
 
     if (total_weapons)
       weapons[0]=0;  // give him the first weapon

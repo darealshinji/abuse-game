@@ -44,7 +44,7 @@ void EventHandler::SysInit()
     SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
 }
 
-void EventHandler::SysWarpMouse(vec2i pos)
+void EventHandler::SysWarpMouse(ivec2 pos)
 {
     SDL_WarpMouse(pos.x, pos.y);
 }
@@ -132,7 +132,7 @@ void EventHandler::SysEvent(Event &ev)
         mouse_buttons[3] = !mouse_buttons[3];
         ev.mouse_button &= (0xff - RIGHT_BUTTON);
     }
-    m_pos = vec2i(ev.mouse_move.x, ev.mouse_move.y);
+    m_pos = ivec2(ev.mouse_move.x, ev.mouse_move.y);
     m_button = ev.mouse_button;
 
     // Sort out other kinds of events
