@@ -28,7 +28,7 @@
 
 
 demo_manager demo_man;
-vec2i last_demo_mpos;
+ivec2 last_demo_mpos;
 int last_demo_mbut;
 extern base_memory_struct *base;   // points to shm_addr
 extern int idle_ticks;
@@ -120,7 +120,7 @@ void demo_manager::do_inputs()
       if (get_packet(buf,size))              // get starting inputs
       {
         process_packet_commands(buf, size);
-        vec2i mouse = the_game->GameToMouse(vec2i(player_list->pointer_x,
+        ivec2 mouse = the_game->GameToMouse(ivec2(player_list->pointer_x,
                                                   player_list->pointer_y),
                                             player_list);
         wm->SetMousePos((small_render ? 2 : 1) * mouse);
@@ -145,7 +145,7 @@ void demo_manager::reset_game()
   view *v=player_list;
   for (; v; v=v->next) { if (v->m_focus) v->reset_player(); }
 
-  last_demo_mpos = vec2i(0, 0);
+  last_demo_mpos = ivec2(0, 0);
   last_demo_mbut = 0;
   current_level->set_tick_counter(0);
 

@@ -98,7 +98,7 @@ void WindowManager::show_window(Jwindow *j)
     if (j->is_hidden())
     {
         j->show();
-        j->m_surf->AddDirty(vec2i(0), j->m_size);
+        j->m_surf->AddDirty(ivec2(0), j->m_size);
     }
 }
 
@@ -127,7 +127,7 @@ void WindowManager::get_event(Event &ev)
 
       if ((ev.type==EV_MOUSE_BUTTON && ev.mouse_button==1 && ev.window &&
        ev.mouse_move >= ev.window->m_pos &&
-       ev.mouse_move < ev.window->m_pos + vec2i(ev.window->m_size.x, ev.window->y1())))
+       ev.mouse_move < ev.window->m_pos + ivec2(ev.window->m_size.x, ev.window->y1())))
       {
     if (ev.mouse_move.x-ev.window->m_pos.x < 11) closew=1;
     else if (ev.window->is_moveable()) movew=1;
@@ -173,7 +173,7 @@ void WindowManager::get_event(Event &ev)
 /*      m_surf->AddDirty(j->x,j->y,j->x+j->l,j->y+j->h);
       for (p=m_first; p!=j; p=p->next)
         p->m_surf->AddDirty(j->x-p->x,j->y-p->y,j->x+j->l-p->x,j->y+j->h-p->y); */
-      j->m_surf->AddDirty(vec2i(0), j->m_size);
+      j->m_surf->AddDirty(ivec2(0), j->m_size);
       flush_screen();
     }
 
@@ -203,7 +203,7 @@ void WindowManager::get_event(Event &ev)
   }
 }
 
-void Jwindow::Resize(vec2i size)
+void Jwindow::Resize(ivec2 size)
 {
     m_surf->SetSize(size);
     m_size = size;
@@ -216,7 +216,7 @@ void WindowManager::resize_window(Jwindow *j, int l, int h)
   for (p=m_first; p!=j; p=p->next)
     p->m_surf->AddDirty(j->m_pos - p->m_pos,
                         j->m_pos - p->m_pos + j->m_size);
-  j->Resize(vec2i(l,h));
+  j->Resize(ivec2(l,h));
   if (!frame_suppress)
   j->redraw();
 }
@@ -229,7 +229,7 @@ void WindowManager::move_window(Jwindow *j, int x, int y)
                             j->m_pos - p->m_pos + j->m_size);
     j->m_pos.x = x;
     j->m_pos.y = y;
-    j->m_surf->AddDirty(vec2i(0), j->m_size);
+    j->m_surf->AddDirty(ivec2(0), j->m_size);
 }
 
 WindowManager::WindowManager(image *screen, palette *pal, int Hi,
@@ -291,7 +291,7 @@ void WindowManager::remove_window(Jwindow *win)
     m_surf->AddDirty(win->m_pos, win->m_pos + win->m_size);
 }
 
-Jwindow * WindowManager::CreateWindow(vec2i pos, vec2i size,
+Jwindow * WindowManager::CreateWindow(ivec2 pos, ivec2 size,
                                       ifield * fields, char const *name)
 {
     if(pos.x > m_surf->Size().x - 4)
@@ -307,14 +307,14 @@ Jwindow * WindowManager::CreateWindow(vec2i pos, vec2i size,
 
 void WindowManager::flush_screen()
 {
-    vec2i m1(0, 0);
+    ivec2 m1(0, 0);
 
     if (has_mouse())
     {
         m1 = m_pos - m_center;
-        vec2i m2 = m1 + m_sprite->m_visual->Size();
+        ivec2 m2 = m1 + m_sprite->m_visual->Size();
 
-        m_sprite->m_save->PutPart(m_surf, vec2i(0, 0), m1, m2);
+        m_sprite->m_save->PutPart(m_surf, ivec2(0, 0), m1, m2);
         m_surf->PutImage(m_sprite->m_visual, m1, 1);
     }
 
@@ -333,7 +333,7 @@ void WindowManager::flush_screen()
 
         if (has_mouse())
         {
-            m_sprite->m_save->PutPart(p->m_surf, vec2i(0, 0), m1 - p->m_pos,
+            m_sprite->m_save->PutPart(p->m_surf, ivec2(0, 0), m1 - p->m_pos,
                                       m1 - p->m_pos + m_sprite->m_visual->Size());
             p->m_surf->PutImage(m_sprite->m_visual, m1 - p->m_pos, 1);
         }
@@ -371,7 +371,7 @@ Jwindow::Jwindow(char const *name)
     wm->add_window(this);
 }
 
-Jwindow::Jwindow(vec2i pos, vec2i size, ifield *f, char const *name)
+Jwindow::Jwindow(ivec2 pos, ivec2 size, ifield *f, char const *name)
 {
     m_size = 0;
     _hidden = false;
@@ -393,7 +393,7 @@ Jwindow::Jwindow(vec2i pos, vec2i size, ifield *f, char const *name)
 
     _x2 = m_size.x - 1;
     _y2 = m_size.y - 1;
-    m_size += vec2i(right_border(), bottom_border());
+    m_size += ivec2(right_border(), bottom_border());
 
     if(size.x == -1)
         m_size.x = Max(m_size.x, 15 + left_border() + right_border());
@@ -430,12 +430,12 @@ void Jwindow::reconfigure()
 {
     int x1, y1, x2, y2;
     ifield *i;
-    m_size = vec2i(2);
+    m_size = ivec2(2);
     for(i = inm->m_first; i; i = i->next)
     {
         i->set_owner(this);
         i->area(x1, y1, x2, y2);
-        m_size = Max(m_size, vec2i(x2, y2));
+        m_size = Max(m_size, ivec2(x2, y2));
     }
 }
 
@@ -455,19 +455,19 @@ void Jwindow::redraw()
     {
         if (right_border() >= 1)
         {
-            m_surf->WidgetBar(vec2i(0, 0), m_size - vec2i(1), hi, med, low);
+            m_surf->WidgetBar(ivec2(0, 0), m_size - ivec2(1), hi, med, low);
             if (right_border() >= 3)
-                m_surf->WidgetBar(vec2i(right_border() - 1, top_border() - 1),
-                                  m_size - vec2i(left_border(), bottom_border()),
+                m_surf->WidgetBar(ivec2(right_border() - 1, top_border() - 1),
+                                  m_size - ivec2(left_border(), bottom_border()),
                                   low, med, hi);
 
           else
-            m_surf->Line(vec2i(left_border() - 1, top_border() - 1),
-                         vec2i(right_border() - 1, top_border() - 1), low);
+            m_surf->Line(ivec2(left_border() - 1, top_border() - 1),
+                         ivec2(right_border() - 1, top_border() - 1), low);
         }
-      m_surf->Rectangle(vec2i(2, 2), vec2i(top_border() - 2, top_border() - 3),
+      m_surf->Rectangle(ivec2(2, 2), ivec2(top_border() - 2, top_border() - 3),
                         wm->black());
-      m_surf->WidgetBar(vec2i(3, 3), vec2i(top_border() - 3, top_border() - 4),
+      m_surf->WidgetBar(ivec2(3, 3), ivec2(top_border() - 3, top_border() - 4),
                         hi, med, low); // draws the 'close' button
     }
 
@@ -475,29 +475,29 @@ void Jwindow::redraw()
     {
       if (right_border() >= 1)
         {
-          m_surf->WidgetBar(vec2i(0, 0), m_size - vec2i(1), hi, med, low);
+          m_surf->WidgetBar(ivec2(0, 0), m_size - ivec2(1), hi, med, low);
           if (right_border() >= 3)
-            m_surf->WidgetBar(vec2i(right_border() - 1, jw_top + 4),
-                              m_size - vec2i(left_border(), bottom_border()),
+            m_surf->WidgetBar(ivec2(right_border() - 1, jw_top + 4),
+                              m_size - ivec2(left_border(), bottom_border()),
                               low, med, hi);
           else
-            m_surf->Line(vec2i(left_border() - 1, jw_top + 4),
-                         vec2i(right_border() - 1, jw_top + 4), low);
+            m_surf->Line(ivec2(left_border() - 1, jw_top + 4),
+                         ivec2(right_border() - 1, jw_top + 4), low);
         }
       // Draw the 'close' button
-      m_surf->Rectangle(vec2i(1, 1), vec2i(4, 4), wm->black ());
-      m_surf->WidgetBar(vec2i(2, 2), vec2i(3, 3), hi, med, low);
+      m_surf->Rectangle(ivec2(1, 1), ivec2(4, 4), wm->black ());
+      m_surf->WidgetBar(ivec2(2, 2), ivec2(3, 3), hi, med, low);
     }
   if (_name && _name[0])
     {
-      m_surf->Bar(vec2i(top_border(), 1),
-                  vec2i(top_border() + fnt->Size().x * strlen (_name) + 1,
+      m_surf->Bar(ivec2(top_border(), 1),
+                  ivec2(top_border() + fnt->Size().x * strlen (_name) + 1,
                         top_border() - 2),
                   med);
-      fnt->PutString(m_surf, vec2i(top_border() + 1, 1), _name, low);
+      fnt->PutString(m_surf, ivec2(top_border() + 1, 1), _name, low);
     }
   // clear 'client' region
-  m_surf->Bar(vec2i(x1(), y1()), vec2i(x2(), y2()), backg);
+  m_surf->Bar(ivec2(x1(), y1()), ivec2(x2(), y2()), backg);
   inm->redraw ();
 }
 
@@ -721,7 +721,7 @@ ifield *InputManager::get(int id)
 ifield::ifield()
 {
     owner = NULL;
-    m_pos = vec2i(0, 0);
+    m_pos = ivec2(0, 0);
     next = NULL;
     id = 0;
 }
@@ -735,9 +735,9 @@ ifield::~ifield()
 void ifield::set_owner(Jwindow * newowner)
 {
     if(owner)
-        Move(m_pos - vec2i(owner->x1(), owner->y1()));
+        Move(m_pos - ivec2(owner->x1(), owner->y1()));
     owner = newowner;
     if(owner)
-        Move(m_pos + vec2i(owner->x1(), owner->y1()));
+        Move(m_pos + ivec2(owner->x1(), owner->y1()));
 }
 

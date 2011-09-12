@@ -56,7 +56,7 @@ uint8_t vs_down_arrow[8*10]={
 
 void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
 {
-  vec2i caa, cbb;
+  ivec2 caa, cbb;
   screen->GetClip(caa, cbb);
 
   uint8_t remap[3];
@@ -77,12 +77,12 @@ void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
       }
     }
   }
-  screen->AddDirty(vec2i(x, y), vec2i(x + icw, y + ich));
+  screen->AddDirty(ivec2(x, y), ivec2(x + icw, y + ich));
   screen->Unlock();
 }
 
 scroller::scroller(int X, int Y, int ID, int L, int H, int Vert, int Total_items, ifield *Next)
-{  m_pos = vec2i(X, Y); id=ID; next=Next;  l=L; h=H;  sx=0;  t=Total_items;  drag=-1; vert=Vert;
+{  m_pos = ivec2(X, Y); id=ID; next=Next;  l=L; h=H;  sx=0;  t=Total_items;  drag=-1; vert=Vert;
 }
 
 
@@ -123,19 +123,19 @@ void scroller::draw_first(image *screen)
 {
   if (sx>=t) sx=t-1;
   draw(0,screen);
-  screen->WidgetBar(vec2i(b1x(), b1y()),
-                    vec2i(b1x() + bw() - 1, b1y() + bh() - 1),
+  screen->WidgetBar(ivec2(b1x(), b1y()),
+                    ivec2(b1x() + bw() - 1, b1y() + bh() - 1),
                     wm->bright_color(), wm->medium_color(), wm->dark_color());
-  screen->WidgetBar(vec2i(b2x(), b2y()),
-                    vec2i(b2x() + bw() - 1, b2y() + bh() - 1),
+  screen->WidgetBar(ivec2(b2x(), b2y()),
+                    ivec2(b2x() + bw() - 1, b2y() + bh() - 1),
                     wm->bright_color(), wm->medium_color(), wm->dark_color());
   show_icon(screen,b1x()+2,b1y()+2,bw()-4,bh()-4,b1());
   show_icon(screen,b2x()+2,b2y()+2,bw()-4,bh()-4,b2());
 
   int x1,y1,x2,y2;
   dragger_area(x1,y1,x2,y2);
-  screen->Bar(vec2i(x1, y1), vec2i(x2, y2), wm->black());
-  screen->Bar(vec2i(x1 + 1, y1 + 1), vec2i(x2 - 1, y2 - 1), wm->medium_color());
+  screen->Bar(ivec2(x1, y1), ivec2(x2, y2), wm->black());
+  screen->Bar(ivec2(x1 + 1, y1 + 1), ivec2(x2 - 1, y2 - 1), wm->medium_color());
   draw_widget(screen,0);
   scroll_event(sx,screen);
 }
@@ -167,9 +167,9 @@ void scroller::draw_widget(image *screen, int erase)
   int x1,y1,x2,y2;
   wig_area(x1,y1,x2,y2);
   if (erase)
-    screen->Bar(vec2i(x1, y1), vec2i(x2, y2), wm->medium_color());
+    screen->Bar(ivec2(x1, y1), ivec2(x2, y2), wm->medium_color());
   else
-    screen->WidgetBar(vec2i(x1, y1), vec2i(x2, y2), wm->bright_color(),
+    screen->WidgetBar(ivec2(x1, y1), ivec2(x2, y2), wm->bright_color(),
                       wm->medium_color(), wm->dark_color());
 }
 
@@ -177,7 +177,7 @@ void scroller::draw(int active, image *screen)
 {
   int x1,y1,x2,y2;
   area(x1,y1,x2,y2);
-  screen->Rectangle(vec2i(x1, y1), vec2i(x2, y2),
+  screen->Rectangle(ivec2(x1, y1), ivec2(x2, y2),
                     active ? wm->bright_color() : wm->dark_color());
 }
 
@@ -366,14 +366,14 @@ int scroller::mouse_to_drag(int mx,int my)
 
 void scroller::scroll_event(int newx, image *screen)
 {
-  screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->black());
+  screen->Bar(m_pos, m_pos + ivec2(l - 1, h - 1), wm->black());
   int xa,ya,xo=0,yo;
   if (vert) { xa=0; ya=30; yo=m_pos.x+5; yo=m_pos.y+5; } else { xa=30; ya=0; xo=m_pos.x+5; yo=m_pos.y+5; }
   for (int i=newx,c=0; c<30 && i<100; i++,c++)
   {
     char st[10];
     sprintf(st,"%d",i);
-    wm->font()->PutString(screen, vec2i(xo, yo), st, wm->bright_color());
+    wm->font()->PutString(screen, ivec2(xo, yo), st, wm->bright_color());
     xo+=xa; yo+=ya;
   }
 }
@@ -494,28 +494,28 @@ void pick_list::scroll_event(int newx, image *screen)
   last_sel=newx;
   if (tex)
   {
-    vec2i caa, cbb;
+    ivec2 caa, cbb;
     screen->GetClip(caa, cbb);
-    screen->SetClip(m_pos, m_pos + vec2i(l, h));
+    screen->SetClip(m_pos, m_pos + ivec2(l, h));
     int tw=(l+tex->Size().x-1)/tex->Size().x;
     int th=(h+tex->Size().y-1)/tex->Size().y;
     int dy=m_pos.y;
     for (int j=0; j<th; j++,dy+=tex->Size().y)
       for (int i=0,dx=m_pos.x; i<tw; i++,dx+=tex->Size().x)
-        screen->PutImage(tex, vec2i(dx, dy));
+        screen->PutImage(tex, ivec2(dx, dy));
 
     screen->SetClip(caa, cbb);
-  } else screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->black());
+  } else screen->Bar(m_pos, m_pos + ivec2(l - 1, h - 1), wm->black());
 
   int dy=m_pos.y;
   for (int i=0; i<th; i++,dy+=wm->font()->Size().y+1)
   {
     if (i+newx==cur_sel)
-      screen->Bar(vec2i(m_pos.x, dy), vec2i(m_pos.x + wid * wm->font()->Size().x - 1,
+      screen->Bar(ivec2(m_pos.x, dy), ivec2(m_pos.x + wid * wm->font()->Size().x - 1,
                                       dy + wm->font()->Size().y),
                   wm->dark_color());
     if (i+newx<t)
-      wm->font()->PutString(screen, vec2i(m_pos.x, dy), lis[i+newx].name,
+      wm->font()->PutString(screen, ivec2(m_pos.x, dy), lis[i+newx].name,
                             wm->bright_color());
   }
 }
@@ -582,7 +582,7 @@ void spicker::reconfigure()
 
 void spicker::draw_background(image *screen)
 {
-    screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->dark_color());
+    screen->Bar(m_pos, m_pos + ivec2(l - 1, h - 1), wm->dark_color());
 }
 
 

@@ -93,13 +93,13 @@ tile_picker::tile_picker(int X, int Y, int ID, int spec_type,
 void tile_picker::scroll_event(int newx, image *screen)
 {
   int ya = pich(), xw = picw(), c = get_current();
-  image im(vec2i(xw, ya));
+  image im(ivec2(xw, ya));
   last_sel=newx;
 
-  screen->Bar(m_pos, m_pos + vec2i(l - 1, h - 1), wm->black());
+  screen->Bar(m_pos, m_pos + ivec2(l - 1, h - 1), wm->black());
   for (int i=newx; i<newx+th*wid; i++)
   {
-    vec2i xyo = m_pos + vec2i(((i - newx) % wid) * xw, ((i - newx) / wid) * ya);
+    ivec2 xyo = m_pos + ivec2(((i - newx) % wid) * xw, ((i - newx) / wid) * ya);
 
       int blank=0;
       if (i<t)
@@ -112,11 +112,11 @@ void tile_picker::scroll_event(int newx, image *screen)
         else
         {
           im.clear();
-          the_game->get_fg(i)->im->PutImage(&im,vec2i(0,0));
+          the_game->get_fg(i)->im->PutImage(&im,ivec2(0,0));
 
           if (rev)
           {
-        screen->Bar(xyo, xyo + vec2i(xw - 1, ya - 1), wm->bright_color());
+        screen->Bar(xyo, xyo + ivec2(xw - 1, ya - 1), wm->bright_color());
         scale_put_trans(&im,screen,xyo.x,xyo.y,xw,ya);
           }
           else scale_put(&im,screen,xyo.x,xyo.y,xw,ya);
@@ -131,14 +131,14 @@ void tile_picker::scroll_event(int newx, image *screen)
       } break;
       case SPEC_CHARACTER :
       {
-        figures[i]->get_sequence(stopped)->get_figure(0)->forward->PutImage(&im,vec2i(0,0));
+        figures[i]->get_sequence(stopped)->get_figure(0)->forward->PutImage(&im,ivec2(0,0));
         scale_put(&im,screen,m_pos.x,m_pos.y,xw,ya);
       } break;
     }
       } else blank=1;
 
       if (i==c)
-        screen->Rectangle(m_pos, m_pos + vec2i(xw - 1, ya - 1),
+        screen->Rectangle(m_pos, m_pos + ivec2(xw - 1, ya - 1),
                           wm->bright_color());
 
 

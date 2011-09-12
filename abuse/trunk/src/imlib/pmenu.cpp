@@ -28,15 +28,15 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
   top=first;
   active=NULL;
 
-  vec2i caa, cbb;
+  ivec2 caa, cbb;
   screen->GetClip(caa, cbb);
   if (caa.x<X) caa.x=X;
   int w = cbb.x - caa.x - Jwindow::left_border() - Jwindow::right_border();
   int h = Jwindow::top_border() + Jwindow::bottom_border();
 
-  bar = wm->CreateWindow(vec2i(X, Y), vec2i(w, 0), NULL);
+  bar = wm->CreateWindow(ivec2(X, Y), ivec2(w, 0), NULL);
   bar->freeze();  // can't drag this window
-  bar->m_surf->WidgetBar(vec2i(0, 0), vec2i(w - 1, h - 1),
+  bar->m_surf->WidgetBar(ivec2(0, 0), ivec2(w - 1, h - 1),
                          wm->bright_color(), wm->medium_color(),
                          wm->dark_color());
 
@@ -145,7 +145,7 @@ void psub_menu::hide(Jwindow *parent, int x, int y)
 {
   int w,h;
   calc_size(w,h);
-  vec2i caa, cbb;
+  ivec2 caa, cbb;
   main_screen->GetClip(caa, cbb);
   // FIXME: is this correct? it looks like it used to be incorrect
   // before the GetClip refactoring...
@@ -167,7 +167,7 @@ void psub_menu::hide(Jwindow *parent, int x, int y)
 
 void psub_menu::calc_size(int &w, int &h)
 {
-    vec2i ts = wm->font()->Size();
+    ivec2 ts = wm->font()->Size();
   w=h=0;
   for (pmenu_item *p=first; p; p=p->next)
   {
@@ -188,7 +188,7 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
 
   int w,h,i=0;
   calc_size(w,h);
-  vec2i caa, cbb;
+  ivec2 caa, cbb;
   main_screen->GetClip(caa, cbb);
   if (parent->m_pos.x + w + x >= cbb.x)
     x=cbb.x-1-w-parent->m_pos.x;
@@ -200,12 +200,12 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
   }
 
 
-  win=wm->CreateWindow(parent->m_pos + vec2i(x, y),
-             vec2i(w - Jwindow::left_border() - Jwindow::right_border(),
+  win=wm->CreateWindow(parent->m_pos + ivec2(x, y),
+             ivec2(w - Jwindow::left_border() - Jwindow::right_border(),
                    h - Jwindow::top_border() - Jwindow::bottom_border()),
              NULL);
   win->freeze();
-  win->m_surf->WidgetBar(vec2i(0, 0), vec2i(w - 1, h - 1),
+  win->m_surf->WidgetBar(ivec2(0, 0), ivec2(w - 1, h - 1),
                          wm->bright_color(), wm->medium_color(),
                          wm->dark_color());
 
@@ -228,8 +228,8 @@ void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int ac
   if (!n)
   {
     int h=wm->font()->Size().y;
-    parent->m_surf->WidgetBar(vec2i(x, y + h / 2 - 1),
-                              vec2i(x + w - 1, y + h / 2), wm->dark_color(),
+    parent->m_surf->WidgetBar(ivec2(x, y + h / 2 - 1),
+                              ivec2(x + w - 1, y + h / 2), wm->dark_color(),
                               wm->medium_color(), wm->bright_color());
   } else
   {
@@ -239,11 +239,11 @@ void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int ac
         parent->m_surf->xor_bar(bx,y,x+w-1,y+wm->font()->Size().y+1,wm->dark_color());
       else
       {
-    parent->m_surf->Bar(vec2i(bx, y),
-                        vec2i(x + w - 1, y + wm->font()->Size().y + 1),
+    parent->m_surf->Bar(ivec2(bx, y),
+                        ivec2(x + w - 1, y + wm->font()->Size().y + 1),
                         wm->dark_color());
-    wm->font()->PutString(parent->m_surf, vec2i(x+1, y+1), n, wm->medium_color());
-    if (on_off && *on_off) wm->font()->PutString(parent->m_surf, vec2i(bx+1, y+1), "*", wm->medium_color());
+    wm->font()->PutString(parent->m_surf, ivec2(x+1, y+1), n, wm->medium_color());
+    if (on_off && *on_off) wm->font()->PutString(parent->m_surf, ivec2(bx+1, y+1), "*", wm->medium_color());
       }
     } else
     {
@@ -251,11 +251,11 @@ void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int ac
         parent->m_surf->xor_bar(bx,y,x+w-1,y+wm->font()->Size().y+1,wm->dark_color());
       else
       {
-    parent->m_surf->Bar(vec2i(bx, y),
-                        vec2i(x + w - 1, y + wm->font()->Size().y + 1),
+    parent->m_surf->Bar(ivec2(bx, y),
+                        ivec2(x + w - 1, y + wm->font()->Size().y + 1),
                         wm->medium_color());
-    wm->font()->PutString(parent->m_surf, vec2i(x + 1, y + 1), n, wm->bright_color());
-    if (on_off && *on_off) wm->font()->PutString(parent->m_surf, vec2i(bx + 1, y + 1), "*", wm->bright_color());
+    wm->font()->PutString(parent->m_surf, ivec2(x + 1, y + 1), n, wm->bright_color());
+    if (on_off && *on_off) wm->font()->PutString(parent->m_surf, ivec2(bx + 1, y + 1), "*", wm->bright_color());
       }
     }
   }

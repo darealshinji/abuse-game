@@ -22,7 +22,7 @@ class area_controller;
 struct suggest_struct
 {
     int32_t cx1,cy1,cx2,cy2,pan_x,pan_y;
-    vec2i shift;
+    ivec2 shift;
     int32_t new_weapon;
     uint8_t send_view,send_weapon_change;
 };
@@ -120,9 +120,9 @@ public:
   void set_team(int);
   int get_team();
 
-    vec2i m_aa, m_bb; // view area to show
-    vec2i m_shift; // shift of view
-    vec2i m_lastpos, m_lastlastpos;
+    ivec2 m_aa, m_bb; // view area to show
+    ivec2 m_shift; // shift of view
+    ivec2 m_lastpos, m_lastlastpos;
 
     game_object *m_focus; // object we are focusing on (player)
 

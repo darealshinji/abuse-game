@@ -18,13 +18,13 @@
 
 #include "fonts.h"
 
-void JCFont::PutString(image *screen, vec2i pos, char const *st, int color)
+void JCFont::PutString(image *screen, ivec2 pos, char const *st, int color)
 {
     for ( ; *st; st++, pos.x += m_size.x)
         PutChar(screen, pos, *st, color);
 }
 
-void JCFont::PutChar(image *screen, vec2i pos, char ch, int color)
+void JCFont::PutChar(image *screen, ivec2 pos, char ch, int color)
 {
     if (!m_data[(int)ch])
         return;
@@ -37,16 +37,16 @@ void JCFont::PutChar(image *screen, vec2i pos, char ch, int color)
 
 JCFont::JCFont(image *letters)
 {
-    m_size = (letters->Size() + vec2i(1)) / vec2i(32, 8);
+    m_size = (letters->Size() + ivec2(1)) / ivec2(32, 8);
 
     image tmp(m_size);
 
     for (int ch = 0; ch < 256; ch++)
     {
         tmp.clear();
-        tmp.PutPart(letters, vec2i(0),
-                    vec2i(ch % 32, ch / 32) * m_size,
-                    vec2i(ch % 32 + 1, ch / 32 + 1) * m_size, 1);
+        tmp.PutPart(letters, ivec2(0),
+                    ivec2(ch % 32, ch / 32) * m_size,
+                    ivec2(ch % 32 + 1, ch / 32 + 1) * m_size, 1);
         m_data[ch] = new TransImage(&tmp, "JCfont");
     }
 }

@@ -789,11 +789,11 @@ void level::draw_areas(view *v)
         int c1 = a->active ? morph_sel_frame_color : wm->bright_color();
         int c2 = a->active ? wm->bright_color() : morph_sel_frame_color;
 
-        vec2i pos1 = the_game->GameToMouse(vec2i(a->x, a->y), v);
-        vec2i pos2 = the_game->GameToMouse(vec2i(a->x + a->w, a->y + a->h), v);
+        ivec2 pos1 = the_game->GameToMouse(ivec2(a->x, a->y), v);
+        ivec2 pos2 = the_game->GameToMouse(ivec2(a->x + a->w, a->y + a->h), v);
         main_screen->Rectangle(pos1, pos2, c1);
-        main_screen->Bar(pos1 - vec2i(1, 1), pos1 + vec2i(1, 1), c2);
-        main_screen->Bar(pos2 - vec2i(1, 1), pos2 + vec2i(1, 1), c2);
+        main_screen->Bar(pos1 - ivec2(1, 1), pos1 + ivec2(1, 1), c2);
+        main_screen->Bar(pos2 - ivec2(1, 1), pos2 + ivec2(1, 1), c2);
     }
 }
 
@@ -843,14 +843,14 @@ void level::set_size(int w, int h)
 
   for (y=0; y<miny; y++)
     for (x=0; x<minx; x++)
-      new_fg[x+y*w]=GetFg(vec2i(x, y));
+      new_fg[x+y*w]=GetFg(ivec2(x, y));
 
   miny=(nbh<bg_height) ? nbh : bg_height;
   minx=(nbw<bg_width) ? nbw : bg_width;
 
   for (y=0; y<miny; y++)
     for (x=0; x<minx; x++)
-      new_bg[x+y*nbw]=GetBg(vec2i(x, y));
+      new_bg[x+y*nbw]=GetBg(ivec2(x, y));
 
   free(map_fg);
   free(map_bg);
@@ -1634,18 +1634,18 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
 
 void level::write_thumb_nail(bFILE *fp, image *im)
 {
-  image *i = new image(vec2i(160, 100 + wm->font()->Size().y * 2));
+  image *i = new image(ivec2(160, 100 + wm->font()->Size().y * 2));
   i->clear();
   scale_put(im,i,0,0,160,100);
   if (first_name)
-    wm->font()->PutString(i, vec2i(80 - strlen(first_name) * wm->font()->Size().x / 2, 100), first_name);
+    wm->font()->PutString(i, ivec2(80 - strlen(first_name) * wm->font()->Size().x / 2, 100), first_name);
 
   time_t t;
   t=time(NULL);
   char buf[80];
 
   strftime(buf,80,"%T %A %B %d",localtime(&t));
-  wm->font()->PutString(i, vec2i(80, 100) + vec2i(-strlen(buf), 2) * wm->font()->Size() / vec2i(2),buf);
+  wm->font()->PutString(i, ivec2(80, 100) + ivec2(-strlen(buf), 2) * wm->font()->Size() / ivec2(2),buf);
 
   fp->write_uint16(i->Size().x);
   fp->write_uint16(i->Size().y);
@@ -2637,7 +2637,7 @@ void level::foreground_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y
   {
     for (by=blocky1; by<=blocky2; by++)
     {
-      block=the_game->GetMapFg(vec2i(bx, by));
+      block=the_game->GetMapFg(ivec2(bx, by));
       if (block>BLACK)        // don't check BLACK, should be no points in it
       {
         // now check the all the line segments in the block
@@ -2711,7 +2711,7 @@ void level::vforeground_intersect(int32_t x1, int32_t y1, int32_t &y2)
 
   for (by=blocky1; by<=blocky2; by++,y1-=f_hi,y2-=f_hi,y_addback+=f_hi)
   {
-    block=the_game->GetMapFg(vec2i(bx, by));
+    block=the_game->GetMapFg(ivec2(bx, by));
 
     // now check the all the line segments in the block
     foretile *f=the_game->get_fg(block);

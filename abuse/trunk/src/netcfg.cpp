@@ -56,7 +56,7 @@ enum { NET_OK=1, NET_CANCEL, NET_SERVER_NAME, NET_NAME, NET_PORT, NET_SERVER_POR
 
 void net_configuration::cfg_error(char const *msg)
 {
-  Jwindow *j=wm->CreateWindow(vec2i(-1, 0), vec2i(-1), new info_field(0, 0, 0, msg,
+  Jwindow *j=wm->CreateWindow(ivec2(-1, 0), ivec2(-1), new info_field(0, 0, 0, msg,
       new button(0, 30,CFG_ERR_OK,symbol_str("ok_button"),NULL)),symbol_str("input_error"));
   Event ev;
   do
@@ -267,7 +267,7 @@ void net_configuration::error(char const *message)
   image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
   int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
-  main_screen->PutImage(ns, vec2i(x, y));
+  main_screen->PutImage(ns, ivec2(x, y));
   JCFont *fnt=wm->font();
 
   uint8_t *remap=white_light+30*256;
@@ -279,8 +279,8 @@ void net_configuration::error(char const *message)
   int fx=x+ns_w/2-strlen(message)*fnt->Size().x/2,
       fy=y+ns_h/2-fnt->Size().y;
 
-  fnt->PutString(main_screen, vec2i(fx + 1, fy + 1), message, wm->black());
-  fnt->PutString(main_screen, vec2i(fx, fy), message, wm->bright_color());
+  fnt->PutString(main_screen, ivec2(fx + 1, fy + 1), message, wm->black());
+  fnt->PutString(main_screen, ivec2(fx, fy), message, wm->bright_color());
 
 
   {
@@ -307,7 +307,7 @@ void net_configuration::error(char const *message)
     } while (!done);
   }
 
-  main_screen->PutImage(screen_backup, vec2i(0, 0));
+  main_screen->PutImage(screen_backup, ivec2(0, 0));
   wm->flush_screen();
   delete screen_backup;
 }
@@ -332,7 +332,7 @@ int net_configuration::get_options(int server)
   image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
   int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
-  main_screen->PutImage(ns, vec2i(x, y));
+  main_screen->PutImage(ns, ivec2(x, y));
   JCFont *fnt=wm->font();
   image *ok_image=cache.img(cache.reg("art/frame.spe","dev_ok",SPEC_IMAGE,1))->copy(),
     *cancel_image=cache.img(cache.reg("art/frame.spe","cancel",SPEC_IMAGE,1))->copy();
@@ -451,12 +451,12 @@ int net_configuration::input()   // pulls up dialog box and input fileds
   image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
   int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
-  main_screen->PutImage(ns, vec2i(x, y));
+  main_screen->PutImage(ns, ivec2(x, y));
   char const *nw_s = symbol_str("Networking");
   JCFont *fnt=wm->font();
 
 
-  wm->font()->PutString(main_screen, vec2i(x + ns_w / 2 - strlen(nw_s) * fnt->Size().x / 2, y + 21 / 2 - fnt->Size().y / 2),
+  wm->font()->PutString(main_screen, ivec2(x + ns_w / 2 - strlen(nw_s) * fnt->Size().x / 2, y + 21 / 2 - fnt->Size().y / 2),
       nw_s,wm->medium_color());
   {
 

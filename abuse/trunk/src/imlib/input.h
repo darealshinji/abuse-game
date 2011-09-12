@@ -48,7 +48,7 @@ public :
   void add_button(button *b);
   void press_button(int id);      // if button box doesn't contain id, nothing happens
   virtual void remap(Filter *f);
-  virtual void Move(vec2i pos);
+  virtual void Move(ivec2 pos);
   virtual void area(int &x1, int &y1, int &x2, int &y2);
   virtual void draw_first(image *screen);
   virtual void draw(int active, image *screen);
@@ -71,9 +71,9 @@ class text_field : public ifield
   int last_spot() { int x=strlen(data); while (x && data[x-1]==' ') x--; return x; }
   void draw_text(image *screen)
   {
-    screen->Bar(vec2i(xstart() + 1, m_pos.y + 1), vec2i(xend() - 1, yend() - 1),
+    screen->Bar(ivec2(xstart() + 1, m_pos.y + 1), ivec2(xend() - 1, yend() - 1),
                 wm->dark_color());
-    wm->font()->PutString(screen, vec2i(xstart() + 1, m_pos.y + 3), data);
+    wm->font()->PutString(screen, ivec2(xstart() + 1, m_pos.y + 3), data);
   }
 public :
   text_field(int X, int Y, int ID, char const *Prompt, char const *Format,

@@ -57,7 +57,7 @@ void file_picker::note_selection(image *screen, InputManager *inm, int x)
     {
       int x1,y1,x2,y2;
       area(x1,y1,x2,y2);
-      screen->Bar(vec2i(x1, y1), vec2i(x2, y2), wm->medium_color());
+      screen->Bar(ivec2(x1, y1), ivec2(x2, y2), wm->medium_color());
 
       char st[200],curdir[200];
       sprintf(st,"%s/%s",cd,d[x]);
@@ -95,8 +95,8 @@ void file_picker::note_selection(image *screen, InputManager *inm, int x)
 void file_picker::draw_item(image *screen, int x, int y, int num, int active)
 {
     if (active)
-        screen->Bar(vec2i(x, y),
-                    vec2i(x + item_width() - 1, y + item_height() - 1),
+        screen->Bar(ivec2(x, y),
+                    ivec2(x + item_width() - 1, y + item_height() - 1),
                     wm->black());
 
     char st[100], *dest;
@@ -105,7 +105,7 @@ void file_picker::draw_item(image *screen, int x, int y, int num, int active)
     else
         sprintf(dest = st, "<%s>", d[num]);
 
-    wm->font()->PutString(screen, vec2i(x, y), dest, wm->bright_color());
+    wm->font()->PutString(screen, ivec2(x, y), dest, wm->bright_color());
 }
 
 file_picker::file_picker(int X, int Y, int ID, int Rows, ifield *Next)
@@ -133,7 +133,7 @@ Jwindow *file_dialog(char const *prompt, char const *def,
 {
   int wh2 = 5 + wm->font()->Size().y + 5;
   int wh3 = wh2 + wm->font()->Size().y + 12;
-  Jwindow *j=wm->CreateWindow(vec2i(0), vec2i(-1),
+  Jwindow *j=wm->CreateWindow(ivec2(0), ivec2(-1),
                 new info_field(5, 5, 0, prompt,
                             new text_field(0, wh2, filename_id,
                        ">","****************************************",def,

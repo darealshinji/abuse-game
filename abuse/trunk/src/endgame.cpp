@@ -128,7 +128,7 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
     if (sx+n->x+x>x2) x2=sx+n->x+x;
 
   }
-  screen->AddDirty(vec2i(x1, sy), vec2i(x2 + 1, sy + mask_height));
+  screen->AddDirty(ivec2(x1, sy), ivec2(x2 + 1, sy + mask_height));
 }
 
 
@@ -180,8 +180,8 @@ void show_end2()
   int ey=yres/2-cache.img(mask)->Size().y/2;
   fade_out(16);
 
-  image blank(vec2i(2)); blank.clear();
-  wm->SetMouseShape(blank.copy(), vec2i(0, 0));      // don't show mouse
+  image blank(ivec2(2)); blank.clear();
+  wm->SetMouseShape(blank.copy(), ivec2(0, 0));      // don't show mouse
 
 
   main_screen->clear();
@@ -196,7 +196,7 @@ void show_end2()
     *(si++)=jrand()%320;
     *(si++)=jrand()%200;
     *(si++)=c[jrand()%4];
-    main_screen->PutPixel(vec2i(si[-3],si[-2]),si[-1]);
+    main_screen->PutPixel(ivec2(si[-3],si[-2]),si[-1]);
   }
   int32_t paddr[256];
   if (old_pal)
@@ -233,12 +233,12 @@ void show_end2()
       main_screen->clear();
       int j;
       for (si=sinfo,j=0; j<800; j++,si+=3)
-        main_screen->PutPixel(vec2i(dx+si[0],dy+si[1]),si[2]);
+        main_screen->PutPixel(ivec2(dx+si[0],dy+si[1]),si[2]);
 
       if (i>=30 && i<=37)
       {
-    tcopy->PutImage(cache.img(planet), vec2i(0, 0));
-    cache.fig(explo_frames1[i-30])->forward->PutImage(tcopy,vec2i(100,50));
+    tcopy->PutImage(cache.img(planet), ivec2(0, 0));
+    cache.fig(explo_frames1[i-30])->forward->PutImage(tcopy,ivec2(100,50));
         scan_map(main_screen,ex,ey,tcopy,
            cache.img(planet2),
            0,paddr,
@@ -285,7 +285,7 @@ void show_end2()
       main_screen->clear();
       int j;
       for (si=sinfo,j=0; j<800; j++,si+=3)
-        main_screen->PutPixel(vec2i(dx+si[0],dy+si[1]),si[2]);
+        main_screen->PutPixel(ivec2(dx+si[0],dy+si[1]),si[2]);
 
 
       scan_map(main_screen,ex,ey,cache.img(planet),
@@ -321,7 +321,7 @@ void show_end2()
     {
       last=c;
       if (c->char_num)
-        cache.fig(explo_frames2[c->frame])->forward->PutImage(main_screen,vec2i(c->x,c->y));
+        cache.fig(explo_frames2[c->frame])->forward->PutImage(main_screen,ivec2(c->x,c->y));
 
       c->x-=3;
       c=c->next;
@@ -339,7 +339,7 @@ void show_end2()
   main_screen->clear();
   int j;
   for (si=sinfo,j=0; j<800; j++,si+=3)
-    main_screen->PutPixel(vec2i(si[0],si[1]),si[2]);
+    main_screen->PutPixel(ivec2(si[0],si[1]),si[2]);
 
   Event ev;
   i=0;
@@ -383,7 +383,7 @@ void show_end2()
     main_screen->clear();
     int j;
     for (si=sinfo,j=0; j<800; j++,si+=3)
-      main_screen->PutPixel(vec2i(dx+si[0],dy+si[1]),si[2]);
+      main_screen->PutPixel(ivec2(dx+si[0],dy+si[1]),si[2]);
 
     scan_map(main_screen,ex,ey,cache.img(planet),
          cache.img(planet2),
@@ -413,7 +413,7 @@ void show_end2()
   fade_out(16);
   main_screen->clear();
 
-  wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1, 1));
+  wm->SetMouseShape(cache.img(c_normal)->copy(), ivec2(1, 1));
   the_game->set_state(MENU_STATE);
 }
 
@@ -422,8 +422,8 @@ void show_sell(int abortable);
 void share_end()
 {
   fade_out(16);
-  image blank(vec2i(2, 2)); blank.clear();
-  wm->SetMouseShape(blank.copy(), vec2i(0, 0)); // don't show mouse
+  image blank(ivec2(2, 2)); blank.clear();
+  wm->SetMouseShape(blank.copy(), ivec2(0, 0)); // don't show mouse
   main_screen->clear();
 
   image *im=cache.img(cache.reg("art/fore/endgame.spe","tbc",SPEC_IMAGE,1));
@@ -435,8 +435,8 @@ void share_end()
   PtrRef r2(mid_plot);
 
   int dx=(xres+1)/2-im->Size().x/2,dy=(yres+1)/2-im->Size().y/2;
-  main_screen->PutImage(im, vec2i(dx, dy));
-  console_font->PutString(main_screen, vec2i(xres / 2 + 35, yres / 2 + 100 - console_font->Size().y - 2),
+  main_screen->PutImage(im, ivec2(dx, dy));
+  console_font->PutString(main_screen, ivec2(xres / 2 + 35, yres / 2 + 100 - console_font->Size().y - 2),
                lstring_value(to_be));
   fade_in(NULL,32);
 
@@ -449,8 +449,8 @@ void share_end()
   time_marker start;
   for (i=0; i<320 && ev.type!=EV_KEY; i++)
   {
-    main_screen->PutImage(im, vec2i(dx, dy));
-    console_font->PutString(main_screen, vec2i(xres / 2 + 35, yres / 2 + 100 - console_font->Size().y - 2),
+    main_screen->PutImage(im, ivec2(dx, dy));
+    console_font->PutString(main_screen, ivec2(xres / 2 + 35, yres / 2 + 100 - console_font->Size().y - 2),
                lstring_value(to_be));
 
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(mid_plot),wm->font(),cmap,wm->bright_color());
@@ -469,7 +469,7 @@ void share_end()
   }
 
   fade_out(16);
-  wm->SetMouseShape(blank.copy(), vec2i(0, 0)); // don't show mouse
+  wm->SetMouseShape(blank.copy(), ivec2(0, 0)); // don't show mouse
   show_sell(1);
   wm->Push(new Event(ID_SHOW_SELL,NULL));
 }
@@ -478,8 +478,8 @@ void share_end()
 void show_end()
 {
   fade_out(16);
-  image blank(vec2i(2, 2)); blank.clear();
-  wm->SetMouseShape(blank.copy(), vec2i(0, 0));      // don't show mouse
+  image blank(ivec2(2, 2)); blank.clear();
+  wm->SetMouseShape(blank.copy(), ivec2(0, 0));      // don't show mouse
   main_screen->clear();
 
   image *im=cache.img(cache.reg("art/fore/endgame.spe","end.pcx",SPEC_IMAGE,1));
@@ -501,7 +501,7 @@ void show_end()
   time_marker start;
   for (i=0; i<320 && ev.type!=EV_KEY; i++)
   {
-    main_screen->PutImage(im, vec2i(dx, dy));
+    main_screen->PutImage(im, ivec2(dx, dy));
 
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),wm->font(),cmap,wm->bright_color());
     wm->flush_screen();
@@ -526,7 +526,7 @@ void show_end()
 
   show_sell(1);
 
-  wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1, 1));
+  wm->SetMouseShape(cache.img(c_normal)->copy(), ivec2(1, 1));
   the_game->set_state(MENU_STATE);
 }
 

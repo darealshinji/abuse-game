@@ -43,19 +43,19 @@ void console::redraw()
     for (int j = 0, dy = wy(); j < h; j++, dy += ya)
         for (int i = 0, dx = wx(); i < w; i++, s++, dx += xa)
             if (*s)
-                fnt->PutChar(con_win->m_surf, vec2i(dx, dy), *s);
-    fnt->PutChar(con_win->m_surf, vec2i(wx() + cx * xa, wy() + cy * ya), '_');
+                fnt->PutChar(con_win->m_surf, ivec2(dx, dy), *s);
+    fnt->PutChar(con_win->m_surf, ivec2(wx() + cx * xa, wy() + cy * ya), '_');
 }
 
 void console::show()
 {
   if (!con_win)
   {
-    con_win=wm->CreateWindow(vec2i(lastx, lasty),
-                             vec2i(screen_w(), screen_h()), NULL, name);
+    con_win=wm->CreateWindow(ivec2(lastx, lasty),
+                             ivec2(screen_w(), screen_h()), NULL, name);
     redraw();
-    con_win->m_surf->SetClip(vec2i(con_win->x1(), con_win->y1()),
-                             vec2i(con_win->x2() + 1, con_win->y2() + 1));
+    con_win->m_surf->SetClip(ivec2(con_win->x1(), con_win->y1()),
+                             ivec2(con_win->x2() + 1, con_win->y2() + 1));
   }
 }
 
@@ -98,24 +98,24 @@ void console::draw_cursor()
         return;
 
     fnt->PutChar(con_win->m_surf,
-                 vec2i(cx, cy) * fnt->Size() + vec2i(wx(), wy()), '_');
+                 ivec2(cx, cy) * fnt->Size() + ivec2(wx(), wy()), '_');
 }
 
 
-void console::DrawChar(vec2i pos, char ch)
+void console::DrawChar(ivec2 pos, char ch)
 {
     if (!con_win)
         return;
 
-    vec2i fs = fnt->Size();
-    pos = vec2i(wx(), wy()) + pos * fs;
-    con_win->m_surf->Bar(pos, pos + fs - vec2i(1), wm->black());
+    ivec2 fs = fnt->Size();
+    pos = ivec2(wx(), wy()) + pos * fs;
+    con_win->m_surf->Bar(pos, pos + fs - ivec2(1), wm->black());
     fnt->PutChar(con_win->m_surf, pos, ch);
 }
 
 void console::do_cr()
 {
-  if (cx<w && cy<h) DrawChar(vec2i(cx, cy), screen[cy*w+cx]);
+  if (cx<w && cy<h) DrawChar(ivec2(cx, cy), screen[cy*w+cx]);
   cx=0;
   cy++;
   if (cy>=h)
@@ -142,7 +142,7 @@ void console::put_char(char ch)
       if (cx)
       {
     if (con_win)
-      DrawChar(vec2i(cx, cy), screen[cy*w+cx]);
+      DrawChar(ivec2(cx, cy), screen[cy*w+cx]);
     cx--;
     if (con_win)
       draw_cursor();
@@ -157,7 +157,7 @@ void console::put_char(char ch)
     {
       screen[cy*w+cx]=ch;
       if (con_win)
-        DrawChar(vec2i(cx, cy), ch);
+        DrawChar(ivec2(cx, cy), ch);
       cx++;
       if (cx>=w) do_cr(); else
       if (con_win) draw_cursor();

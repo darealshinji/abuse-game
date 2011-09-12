@@ -265,9 +265,9 @@ int smorph_player::show(image *screen, int x, int y, ColorFilter *fil, palette *
         return 0;
 
     int i,px,py,ix,iy;
-    vec2i caa, cbb;
+    ivec2 caa, cbb;
     screen->GetClip(caa, cbb);
-    screen->AddDirty(vec2i(x, y), vec2i(x + w, y + h));
+    screen->AddDirty(ivec2(x, y), ivec2(x + w, y + h));
     stepper *ss;
     memset(hole,0,w*h);
     unsigned char *paddr=(unsigned char *)pal->addr();

@@ -47,13 +47,13 @@ public:
     }
 
     int type;
-    vec2i mouse_move;
+    ivec2 mouse_move;
     int mouse_button, key;
 
     struct { char alt, ctrl, shift; } key_special;
 
     Jwindow *window;      // NULL is root
-    vec2i window_position;
+    ivec2 window_position;
     struct { int id; char *data; } message;
 };
 
@@ -69,7 +69,7 @@ public:
     }
 
     void SysInit();
-    void SysWarpMouse(vec2i pos);
+    void SysWarpMouse(ivec2 pos);
     void SysEvent(Event &ev);
 
     int IsPending();
@@ -77,14 +77,14 @@ public:
   void flush_screen();
 
   int has_mouse() { return 1; }
-    void SetMouseShape(image *im, vec2i center)
+    void SetMouseShape(image *im, ivec2 center)
     {
         m_sprite->SetVisual(im, 1);
         m_center = center;
     }
-    void SetMousePos(vec2i pos)
+    void SetMousePos(ivec2 pos)
     {
-        m_pos = vec2i(Min(Max(pos.x, 0), m_screen->Size().x - 1),
+        m_pos = ivec2(Min(Max(pos.x, 0), m_screen->Size().x - 1),
                       Min(Max(pos.y, 0), m_screen->Size().y - 1));
         SysWarpMouse(m_pos);
     }
@@ -98,7 +98,7 @@ private:
 protected:
     /* Mouse information */
     Sprite *m_sprite;
-    vec2i m_pos, m_center;
+    ivec2 m_pos, m_center;
     int m_button;
 };
 

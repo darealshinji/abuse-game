@@ -365,7 +365,7 @@ void load_data(int argc, char **argv)
   }
 
 
-  image *tmp_image = new image(vec2i(192, 104), fnt6x13);
+  image *tmp_image = new image(ivec2(192, 104), fnt6x13);
   big_font=new JCFont(tmp_image);
   delete tmp_image;
 

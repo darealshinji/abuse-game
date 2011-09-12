@@ -250,15 +250,15 @@ void status_bar::draw_update()
     mouse_in_area())
     {
       if ((current_level->tick_counter()&4)==0)
-        wm->SetMouseShape(cache.img(c_mouse1)->copy(), vec2i(4, 4));
-      else wm->SetMouseShape(cache.img(c_mouse2)->copy(), vec2i(4, 4));
+        wm->SetMouseShape(cache.img(c_mouse1)->copy(), ivec2(4, 4));
+      else wm->SetMouseShape(cache.img(c_mouse2)->copy(), ivec2(4, 4));
       changed_cursor=1;
     } else if (changed_cursor)
     {
       if (!(dev&EDIT_MODE))
-        wm->SetMouseShape(cache.img(c_target)->copy(), vec2i(8, 8));
+        wm->SetMouseShape(cache.img(c_target)->copy(), ivec2(8, 8));
       else
-        wm->SetMouseShape(cache.img(c_normal)->copy(), vec2i(1, 1));
+        wm->SetMouseShape(cache.img(c_normal)->copy(), ivec2(1, 1));
       changed_cursor=0;
     }
 

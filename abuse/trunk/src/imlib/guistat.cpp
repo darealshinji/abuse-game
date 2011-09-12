@@ -58,20 +58,20 @@ void gui_status_manager::draw_bar(gui_status_node *whom, int perc)
     long l = whom->stat_win->x2() - whom->stat_win->x1() - 6;
     long h = wm->font()->Size().y;
 
-    whom->stat_win->m_surf->Bar(vec2i(whom->stat_win->x1() + 1,
+    whom->stat_win->m_surf->Bar(ivec2(whom->stat_win->x1() + 1,
                                       whom->stat_win->y2() - h - 1),
-                                vec2i(whom->stat_win->x2() - 1,
+                                ivec2(whom->stat_win->x2() - 1,
                                       whom->stat_win->y2() - 1),
                                 wm->black());
-    whom->stat_win->m_surf->Bar(vec2i(whom->stat_win->x1() + 2,
+    whom->stat_win->m_surf->Bar(ivec2(whom->stat_win->x1() + 2,
                                       whom->stat_win->y2() - h),
-                                vec2i(whom->stat_win->x2() - 2,
+                                ivec2(whom->stat_win->x2() - 2,
                                       whom->stat_win->y2() - 2),
                                 wm->dark_color());
     if (perc)
-        whom->stat_win->m_surf->Bar(vec2i(whom->stat_win->x1() + 3,
+        whom->stat_win->m_surf->Bar(ivec2(whom->stat_win->x1() + 3,
                                           whom->stat_win->y2() - h + 1),
-                                    vec2i(whom->stat_win->x1() + l * perc / 100,
+                                    ivec2(whom->stat_win->x1() + l * perc / 100,
                                           whom->stat_win->y2() - 3),
                                     wm->bright_color());
 }
@@ -112,9 +112,9 @@ void gui_status_manager::update(int percentage)
 
     int mx = first->stat_win->x1() + 1;
     int my = first->stat_win->y1() + wm->font()->Size().y / 2;
-    first->stat_win=wm->CreateWindow(vec2i(wx, wy), vec2i(len3, h1*2+h2), NULL, "status");
-    wm->font()->PutString(first->stat_win->m_surf, vec2i(mx, my), first->name, wm->black());
-    wm->font()->PutString(first->stat_win->m_surf, vec2i(mx, my), first->name, wm->bright_color());
+    first->stat_win=wm->CreateWindow(ivec2(wx, wy), ivec2(len3, h1*2+h2), NULL, "status");
+    wm->font()->PutString(first->stat_win->m_surf, ivec2(mx, my), first->name, wm->black());
+    wm->font()->PutString(first->stat_win->m_surf, ivec2(mx, my), first->name, wm->bright_color());
     if (first->show)
       first->show->draw(first->stat_win->m_surf, (first->stat_win->x2()-first->stat_win->x1())/2-
                 first->show->width()/2, my+h1, NULL);

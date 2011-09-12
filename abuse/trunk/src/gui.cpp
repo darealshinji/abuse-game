@@ -26,7 +26,7 @@ void ico_button::set_act_id(int id)
 
 ico_switch_button::ico_switch_button(int X, int Y, int ID, int start_on, ifield *butts, ifield *Next)
 {
-  m_pos = vec2i(X, Y); id=ID;
+  m_pos = ivec2(X, Y); id=ID;
   next=Next;
   blist=cur_but=butts;
   act=0;
@@ -96,7 +96,7 @@ void ico_button::draw(int active, image *screen)
 
     screen->PutImage(cache.img((up && !active) ? u :
                                (up && active) ? ua :
-                               (!up && !active) ? d : da), vec2i(x1, y1));
+                               (!up && !active) ? d : da), ivec2(x1, y1));
 
     if (act != active && active && activate_id != -1)
         wm->Push(new Event(activate_id, NULL));
@@ -105,13 +105,13 @@ void ico_button::draw(int active, image *screen)
     if (active && key[0])
     {
         int g=80;
-        screen->Bar(vec2i(0, 0), vec2i(144, 20), 0);
-        wm->font()->PutString(screen, vec2i(0), symbol_str(key),
+        screen->Bar(ivec2(0, 0), ivec2(144, 20), 0);
+        wm->font()->PutString(screen, ivec2(0), symbol_str(key),
                               color_table->Lookup(g>>3, g>>3, g>>3));
     }
     else if (!active && key[0])
     {
-        screen->Bar(vec2i(0, 0), vec2i(144, 20), 0);
+        screen->Bar(ivec2(0, 0), ivec2(144, 20), 0);
     }
 }
 
@@ -150,7 +150,7 @@ ico_button::ico_button(int X, int Y, int ID, int Up, int down, int upa, int down
   else key[0]=0;
 
   up=1;
-  m_pos = vec2i(X, Y); id=ID;
+  m_pos = ivec2(X, Y); id=ID;
   u=Up; d=down;
   ua=upa; da=downa;
   next=Next;

@@ -56,12 +56,12 @@ EventHandler::EventHandler(image *screen, palette *pal)
     Filter f;
     f.Set(1, pal->brightest(1));
     f.Set(2, pal->darkest(1));
-    image *im = new image(vec2i(8, 10), mouse_sprite);
+    image *im = new image(ivec2(8, 10), mouse_sprite);
     f.Apply(im);
 
-    m_sprite = new Sprite(screen, im, vec2i(100, 100));
+    m_sprite = new Sprite(screen, im, ivec2(100, 100));
     m_pos = screen->Size() / 2;
-    m_center = vec2i(0, 0);
+    m_center = ivec2(0, 0);
     m_button = 0;
 
     // Platform-specific stuff
