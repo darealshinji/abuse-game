@@ -107,7 +107,7 @@ int CharacterType::add_state(LObject *symbol) // returns index into seq to use
     }
     else
     {
-        num = Max(ts, MAX_STATE);
+        num = lol::max(ts, MAX_STATE);
         LSpace *sp = LSpace::Current;
         LSpace::Current = &LSpace::Perm;
         ((LSymbol *)symbol)->SetNumber(num);

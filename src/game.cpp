@@ -320,8 +320,8 @@ ivec2 Game::GameToMouse(ivec2 pos, view *v)
     else
         tmp = ivec2(0, 0);
 
-    tmp.x = Max(tmp.x, 0);
-    tmp.y = Max(tmp.y, 0);
+    tmp.x = lol::max(tmp.x, 0);
+    tmp.y = lol::max(tmp.y, 0);
 
     ivec2 ret(pos.x * AUTOTILE_WIDTH / ftile_width()
                  - tmp.x * AUTOTILE_WIDTH + v->m_aa.x,
@@ -801,8 +801,8 @@ void Game::draw_map(view *v, int interpolate)
 
       x2 = x1 + (v->m_bb.x - v->m_aa.x + fw) / fw;
       y2 = y1 + (v->m_bb.y - v->m_aa.y + fh) / fh;
-      x2 = Min(x2, current_level->foreground_width() - 1);
-      y2 = Min(y2, current_level->foreground_height() - 1);
+      x2 = lol::min(x2, current_level->foreground_width() - 1);
+      y2 = lol::min(y2, current_level->foreground_height() - 1);
 
     xinc = fw;
     yinc = fh;
@@ -976,7 +976,7 @@ void Game::draw_map(view *v, int interpolate)
     {
       if(help_text_frames >= 0)
       {
-    int color = 2 + Max(0, help_text_frames - 10);
+    int color = 2 + lol::max(0, help_text_frames - 10);
 
     ivec2 aa = v->m_aa;
     ivec2 bb(v->m_bb.x, v->m_aa.y + wm->font()->Size().y + 10);
@@ -1509,13 +1509,13 @@ int Game::calc_speed()
     }
 
     // Find average fps for last 10 frames
-    float deltatime = Max(0.001f, frame_timer.Poll());
+    float deltatime = lol::max(0.001f, frame_timer.Poll());
 
     avg_time = 0.9f * avg_time + 0.1f * deltatime;
     possible_time = 0.9f * possible_time + 0.1f * deltatime;
 
     if (avg_time < 1.0f / 14)
-        massive_frame_panic = Max(0, Min(20, massive_frame_panic - 1));
+        massive_frame_panic = lol::max(0, lol::min(20, massive_frame_panic - 1));
 
     int ret = 0;
 
@@ -1774,19 +1774,19 @@ void Game::get_input()
                                     case LOWER_MUSIC:
                                     {
                                         if(ev.message.id == RAISE_SFX && sfx_volume != 127)
-                                            sfx_volume = Min(127, sfx_volume + 16);
+                                            sfx_volume = lol::min(127, sfx_volume + 16);
                                         if(ev.message.id == LOWER_SFX && sfx_volume != 0)
-                                            sfx_volume = Max(sfx_volume - 16, 0);
+                                            sfx_volume = lol::max(sfx_volume - 16, 0);
                                         if(ev.message.id == RAISE_MUSIC && music_volume != 126)
                                         {
-                                            music_volume = Min(music_volume + 16, 127);
+                                            music_volume = lol::min(music_volume + 16, 127);
                                             if(current_song && (sound_avail & MUSIC_INITIALIZED))
                                                 current_song->set_volume(music_volume);
                                         }
 
                                         if(ev.message.id == LOWER_MUSIC && music_volume != 0)
                                         {
-                                            music_volume = Max(music_volume - 16, 0);
+                                            music_volume = lol::max(music_volume - 16, 0);
                                             if(current_song && (sound_avail & MUSIC_INITIALIZED))
                                                 current_song->set_volume(music_volume);
                                         }

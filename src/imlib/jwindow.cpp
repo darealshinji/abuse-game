@@ -396,9 +396,9 @@ Jwindow::Jwindow(ivec2 pos, ivec2 size, ifield *f, char const *name)
     m_size += ivec2(right_border(), bottom_border());
 
     if(size.x == -1)
-        m_size.x = Max(m_size.x, 15 + left_border() + right_border());
+        m_size.x = lol::max(m_size.x, 15 + left_border() + right_border());
     if(size.y == -1)
-        m_size.y = Max(m_size.y, top_border() + bottom_border());
+        m_size.y = lol::max(m_size.y, top_border() + bottom_border());
     m_surf = new image(m_size, NULL, 2);
     m_surf->clear(backg);
     // Keep this from getting destroyed when image list is cleared
@@ -435,7 +435,7 @@ void Jwindow::reconfigure()
     {
         i->set_owner(this);
         i->area(x1, y1, x2, y2);
-        m_size = Max(m_size, ivec2(x2, y2));
+        m_size = lol::max(m_size, ivec2(x2, y2));
     }
 }
 

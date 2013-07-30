@@ -49,8 +49,8 @@ static void TintArea(ivec2 aa, ivec2 bb,
 {
     ivec2 caa, cbb;
     main_screen->GetClip(caa, cbb);
-    aa = Max(aa, caa);
-    bb = Min(bb, cbb);
+    aa = lol::max(aa, caa);
+    bb = lol::min(bb, cbb);
 
     if (!(aa < bb))
         return;

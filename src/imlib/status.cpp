@@ -74,7 +74,7 @@ void text_status_manager::update(int percentage)
 
 void text_status_manager::pop()
 {
-  CONDITION(first,"No status's to pop!");
+  ASSERT(first, "no status to pop!");
   if (level==1) dprintf("\n");
   level--;
   text_status_node *p=first; first=first->next;

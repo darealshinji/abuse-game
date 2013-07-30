@@ -191,8 +191,8 @@ void button_box::arrange_up_down()
 
 void button::change_visual(image *new_visual)
 {
-  CHECK(visual);
-  visual=new_visual;
+    ASSERT(visual);
+    visual = new_visual;
 }
 
 void button::area(int &x1, int &y1, int &x2, int &y2)

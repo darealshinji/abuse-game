@@ -120,8 +120,9 @@ void palette::make_black_white()
 
 void palette::set_rgbs()
 {
-  int i,v;
-  CHECK(ncolors==256);
+  ASSERT(ncolors == 256);
+
+  int i, v;
   for (i=0; i<64; i++)
   {
     if (i==0) v=0;
@@ -169,29 +170,32 @@ palette *palette::copy()
 
 void palette::set_used(int color_num)
 {
-  int x,b;
-  CHECK(color_num>=0 && color_num<ncolors);
-  x=color_num/8;
-  b=color_num%8;
-  usd[x]|=(128>>b);
+    ASSERT(color_num >= 0);
+    ASSERT(color_num < ncolors);
+
+    int x = color_num / 8;
+    int b = color_num % 8;
+    usd[x] |= 128 >> b;
 }
 
 void palette::set_unused(int color_num)
 {
-  int x,b;
-  CHECK(color_num>=0 && color_num<ncolors);
-  x=color_num/8;
-  b=color_num%8;
-  usd[x]&=(0xff^(128>>b));
+    ASSERT(color_num >= 0);
+    ASSERT(color_num < ncolors);
+
+    int x = color_num / 8;
+    int b = color_num % 8;
+    usd[x] &= 0xff ^ (128 >> b);
 }
 
 int palette::used(int color_num)
 {
-  int x,b;
-  CHECK(color_num>=0 && color_num<ncolors);
-  x=color_num/8;
-  b=color_num%8;
-  return (usd[x]&(128>>b));
+    ASSERT(color_num >= 0);
+    ASSERT(color_num < ncolors);
+
+    int x = color_num / 8;
+    int b = color_num % 8;
+    return usd[x] & (128 >> b);
 }
 
 void palette::defaults()
@@ -234,29 +238,40 @@ void palette::shift(int amount)
 
 
 void palette::set(int x, unsigned char red, char unsigned green, char unsigned blue)
-{ CONDITION(x>=0 && x<ncolors,"Pallete::set passed bad x");
-  CONDITION((int)red<=ncolors && (int)green<=ncolors && (int)blue<=ncolors,
-        "pallette::set color values bigger than palette");
-  pal[x].red=red; pal[x].green=green; pal[x].blue=blue;
+{
+    ASSERT(x >= 0 && x < ncolors, "palete::set passed bad x");
+    ASSERT((int)red <= ncolors && (int)green <= ncolors && (int)blue <= ncolors,
+           "palette::set color values bigger than palette");
+
+    pal[x].red = red;
+    pal[x].green = green;
+    pal[x].blue = blue;
 }
 
 void palette::get(int x, unsigned char &red, unsigned char &green, unsigned char &blue)
-{ CONDITION(x>=0 && x<ncolors,"Pallete::get passed bad x");
-  red=pal[x].red; green=pal[x].green; blue=pal[x].blue;
+{
+    ASSERT(x >= 0 && x < ncolors, "palete::get passed bad x");
+
+    red = pal[x].red;
+    green = pal[x].green;
+    blue = pal[x].blue;
 }
+
 palette::~palette()
-{ if (pal) free(pal);
-  if (usd) free(usd);
+{
+    free(pal);
+    free(usd);
 }
 
 palette::palette(int number_colors)
 {
-  CONDITION(number_colors>0,"palette::constructor - need at least one color!");
-  ncolors=number_colors;
-  bg=0;
-  pal=(color *)malloc(ncolors*3);
-  usd=(unsigned char *)malloc(ncolors/8+1);
-  defaults();
+    ASSERT(number_colors > 0, "palette::constructor - need at least one color!");
+
+    ncolors = number_colors;
+    bg = 0;
+    pal = (color *)malloc(ncolors*3);
+    usd = (unsigned char *)malloc(ncolors / 8 + 1);
+    defaults();
 }
 
 
@@ -276,7 +291,7 @@ quant_node::~quant_node()
 /*void quant_node::prune()
 {
   int t,r,g,b;
-  CONDITION(!is_leaf(),"Cannot prune a leaf!");
+  ASSERT(!is_leaf(),"Cannot prune a leaf!");
   total(t,r,g,b);
   red=r/t;
   green=g/t;
@@ -303,15 +318,16 @@ void quant_node::total(int &tnodes, int &tr, int &tg, int &tb)
 quant_node::quant_node(int level, quant_node *dad,
     unsigned char r, unsigned char g, unsigned char b)
 {
-  int i;
-  CONDITION(level<=8,"Tree cannot have more than eight levels");
-  if (level==8)
-    be_childish();
-  else
-    for (i=0; i<8; i++) children[i]=NULL;
-  padre=dad;
-  red=r; green=g; blue=b;
-  tot=0;
+    int i;
+    ASSERT(level <= 8, "Tree cannot have more than eight levels");
+
+    if (level == 8)
+        be_childish();
+    else
+        for (i=0; i<8; i++) children[i]=NULL;
+    padre = dad;
+    red = r; green = g; blue = b;
+    tot = 0;
 }
 
 quant_palette::quant_palette(int max_colors)
@@ -325,7 +341,7 @@ void quant_palette::re_delete(quant_node *who, int lev)  // removes all children
     { for (x=0; x<8; x++)
     if (who->children[x])
     {
-      CONDITION(lev<8,"Levl > 7");
+      ASSERT(lev < 8, "Levl > 7");
       re_delete(who->children[x],lev+1);
       level[lev].unlink(who->children[x]);
       delete who->children[x];
@@ -353,7 +369,7 @@ void quant_palette::prune()
       } while (p != level[lev-1].first() && !pruned);
     }
   }
-  CONDITION(lev>0,"could not prune!");
+  ASSERT(lev > 0, "could not prune!");
   t=0; r=0; g=0; b=0;
   f->total(t,r,g,b);
   if (t<=1)
@@ -361,7 +377,7 @@ void quant_palette::prune()
     t=0; r=0; g=0; b=0;
     f->total(t,r,g,b);
   }
-  CONDITION(t>1,"Should be more colors\n");
+  ASSERT(t > 1, "Should be more colors");
   printf("%d Pruned at level %d, r=%d, g=%d, b=%d, total nodes off = %d\n",nc,
     lev,r/t,g/t,b/t,t);
   f->set(r/t,g/t,b/t);

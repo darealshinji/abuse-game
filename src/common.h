@@ -24,23 +24,6 @@
 using namespace lol;
 
 //
-// Custom utility functions
-//
-static inline int Min(int a, int b) { return a < b ? a : b; }
-static inline int Max(int a, int b) { return a > b ? a : b; }
-static inline unsigned int Min(unsigned int a, unsigned int b) { return a < b ? a : b; }
-static inline unsigned int Max(unsigned int a, unsigned int b) { return a > b ? a : b; }
-static inline long Min(long a, long b) { return a < b ? a : b; }
-static inline long Max(long a, long b) { return a > b ? a : b; }
-static inline unsigned long Min(unsigned long a, unsigned long b) { return a < b ? a : b; }
-static inline unsigned long Max(unsigned long a, unsigned long b) { return a > b ? a : b; }
-static inline float Min(float a, float b) { return a < b ? a : b; }
-static inline float Max(float a, float b) { return a > b ? a : b; }
-
-static inline ivec2 Min(ivec2 a, ivec2 b) { return ivec2(Min(a.x, b.x), Min(a.y, b.y)); }
-static inline ivec2 Max(ivec2 a, ivec2 b) { return ivec2(Max(a.x, b.x), Max(a.y, b.y)); }
-
-//
 // Byte swapping
 //
 static inline int BigEndian()
@@ -63,19 +46,6 @@ static inline uint32_t lltl(uint32_t x)
              | (((uint32_t)x & 0x0000ff00) << 8) | ((uint32_t)x << 24);
     return x;
 }
-
-#define ERROR(x,st) { if (!(x)) \
-   { printf("Error on line %d of %s : %s\n", \
-     __LINE__,__FILE__,st); exit(1); } }
-
-// These macros should be removed for the non-debugging version
-#ifdef NO_CHECK
-#   define CONDITION(x,st)
-#   define CHECK(x)
-#else
-#   define CONDITION(x,st) ERROR(x,st)
-#   define CHECK(x) CONDITION(x,"Check stop");
-#endif
 
 #endif // __COMMON_H__
 

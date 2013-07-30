@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
               {
                 /* Try to print a representation of the item */
                 int has_binary = 0;
-                for (int i = 0; i < Min(20, (int)se->size); i++)
+                for (int i = 0; i < lol::min(20, (int)se->size); i++)
                 {
                     uint8_t ch = ((uint8_t *)se->data)[i];
                     if (ch < 0x20 || ch >= 0x7f)
@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
                 if (!has_binary)
                     putchar('\"');
 
-                size_t max = Min(has_binary ? 15 : 30, (int)se->size);
+                size_t max = lol::min(has_binary ? 15 : 30, (int)se->size);
                 for (size_t i = 0; i < max; i++)
                 {
                     uint8_t ch = ((uint8_t *)se->data)[i];
@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
         for (size_t todo = se->size; todo > 0; )
         {
             uint8_t buf[1024];
-            int step = Min((int)todo, 1024);
+            int step = lol::min((int)todo, 1024);
             fp.read(buf, step);
             fwrite(buf, step, 1, stdout);
             todo -= step;

@@ -65,15 +65,15 @@ image::~image()
 
 uint8_t image::Pixel(ivec2 pos)
 {
-    CONDITION(pos.x >= 0 && pos.x < m_size.x && pos.y >= 0 && pos.y < m_size.y,
-              "image::Pixel Bad pixel xy");
+    ASSERT(pos.x >= 0 && pos.x < m_size.x && pos.y >= 0 && pos.y < m_size.y,
+           "image::Pixel Bad pixel xy");
     return scan_line(pos.y)[pos.x];
 }
 
 void image::PutPixel(ivec2 pos, uint8_t color)
 {
-    CONDITION(pos.x >= 0 && pos.x < m_size.x && pos.y >= 0 && pos.y < m_size.y,
-              "image::PutPixel Bad pixel xy");
+    ASSERT(pos.x >= 0 && pos.x < m_size.x && pos.y >= 0 && pos.y < m_size.y,
+           "image::PutPixel Bad pixel xy");
 
     if (m_special &&
          pos.x >= m_special->x1_clip() && pos.x < m_special->x2_clip() &&
@@ -215,8 +215,8 @@ void image::Line(ivec2 p1, ivec2 p2, uint8_t color)
         return;
 
     // We can now assume p1.y <= p2.y
-    AddDirty(ivec2(Min(p1.x, p2.x), p1.y),
-             ivec2(Max(p1.x, p2.x), p2.y) + ivec2(1));
+    AddDirty(ivec2(lol::min(p1.x, p2.x), p1.y),
+             ivec2(lol::max(p1.x, p2.x), p2.y) + ivec2(1));
 
     ivec2 span = p2 - p1;
     int xi = (span.x < 0) ? -1 : 1;
@@ -228,11 +228,11 @@ void image::Line(ivec2 p1, ivec2 p2, uint8_t color)
 
     int dx = (n > m) ? yi * m_size.x : xi;
     int dy = (n > m) ? xi : yi * m_size.x;
-    int erx = 2 * Max(span.x * xi, span.y * yi);
-    int ery = 2 * Min(span.x * xi, span.y * yi);
+    int erx = 2 * lol::max(span.x * xi, span.y * yi);
+    int ery = 2 * lol::min(span.x * xi, span.y * yi);
 
     Lock();
-    for (int i = 0, er = 0; i <= Max(n, m); i++)
+    for (int i = 0, er = 0; i <= lol::max(n, m); i++)
     {
         *start = color;
         if (er > 0)
@@ -254,16 +254,16 @@ void image::PutImage(image *im, ivec2 pos, int transparent)
 
 void image::PutPart(image *im, ivec2 pos, ivec2 aa, ivec2 bb, int transparent)
 {
-    CHECK(aa < bb);
+    ASSERT(aa < bb);
 
     ivec2 caa, cbb;
     GetClip(caa, cbb);
 
     // see if the are to be put is outside of actual image, if so adjust
     // to fit in the image
-    pos += Min(aa, ivec2(0));
-    aa += Min(aa, ivec2(0));
-    bb = Min(bb, im->m_size);
+    pos += lol::min(aa, ivec2(0));
+    aa += lol::min(aa, ivec2(0));
+    bb = lol::min(bb, im->m_size);
     // return if it was adjusted so that nothing will be put
     if (!(aa < bb))
         return;
@@ -272,9 +272,9 @@ void image::PutPart(image *im, ivec2 pos, ivec2 aa, ivec2 bb, int transparent)
     if (!(pos < cbb && pos + (bb - aa) > caa))
         return;
 
-    aa += Max(caa - pos, ivec2(0));
-    pos += Max(caa - pos, ivec2(0));
-    bb = Min(bb, cbb - pos + aa);
+    aa += lol::max(caa - pos, ivec2(0));
+    pos += lol::max(caa - pos, ivec2(0));
+    bb = lol::min(bb, cbb - pos + aa);
     if (!(aa < bb))
         return;
 
@@ -338,8 +338,8 @@ void image::InClip(ivec2 aa, ivec2 bb)
 {
     if (m_special)
     {
-        aa = Min(aa, ivec2(m_special->x1_clip(), m_special->y1_clip()));
-        bb = Max(bb, ivec2(m_special->x2_clip(), m_special->y2_clip()));
+        aa = lol::min(aa, ivec2(m_special->x1_clip(), m_special->y1_clip()));
+        bb = lol::max(bb, ivec2(m_special->x2_clip(), m_special->y2_clip()));
     }
 
     SetClip(aa, bb);
@@ -371,10 +371,10 @@ void image::InClip(int x1, int y1, int x2, int y2)
 {
     if (m_special)
     {
-        x1 = Min(x1, m_special->x1_clip());
-        y1 = Min(y1, m_special->y1_clip());
-        x2 = Max(x2, m_special->x2_clip());
-        y2 = Max(y2, m_special->y2_clip());
+        x1 = lol::min(x1, m_special->x1_clip());
+        y1 = lol::min(y1, m_special->y1_clip());
+        x2 = lol::max(x2, m_special->x2_clip());
+        y2 = lol::max(y2, m_special->y2_clip());
     }
 
     SetClip(x1, y1, x2, y2);
@@ -390,8 +390,8 @@ void image_descriptor::ReduceDirties()
 
     for (dirty_rect *p = (dirty_rect *)dirties.first(); p; )
     {
-        aa = Min(aa, p->m_aa);
-        bb = Max(bb, p->m_bb);
+        aa = lol::min(aa, p->m_aa);
+        bb = lol::max(bb, p->m_bb);
         dirty_rect *tmp = (dirty_rect *)p->Next();
         dirties.unlink(p);
         delete p;
@@ -408,8 +408,8 @@ void image_descriptor::DeleteDirty(ivec2 aa, ivec2 bb)
     if (!keep_dirt)
         return;
 
-    aa = Max(aa, ivec2(0));
-    bb = Min(bb, m_size);
+    aa = lol::max(aa, ivec2(0));
+    bb = lol::min(bb, m_size);
 
     if (!(aa < bb))
         return;
@@ -509,8 +509,8 @@ void image_descriptor::AddDirty(ivec2 aa, ivec2 bb)
     if (!keep_dirt)
         return;
 
-    aa = Max(aa, ivec2(0));
-    bb = Min(bb, m_size);
+    aa = lol::max(aa, ivec2(0));
+    bb = lol::min(bb, m_size);
 
     if (!(aa < bb))
         return;
@@ -558,11 +558,11 @@ void image_descriptor::AddDirty(ivec2 aa, ivec2 bb)
       else */
             {
               if (aa.x < p->m_aa.x)
-                AddDirty(ivec2(aa.x, Max(aa.y, p->m_aa.y)),
-                         ivec2(p->m_aa.x, Min(bb.y, p->m_bb.y + 1)));
+                AddDirty(ivec2(aa.x, lol::max(aa.y, p->m_aa.y)),
+                         ivec2(p->m_aa.x, lol::min(bb.y, p->m_bb.y + 1)));
               if (bb.x > p->m_bb.x + 1)
-                AddDirty(ivec2(p->m_bb.x + 1, Max(aa.y, p->m_aa.y)),
-                         ivec2(bb.x, Min(bb.y, p->m_bb.y + 1)));
+                AddDirty(ivec2(p->m_bb.x + 1, lol::max(aa.y, p->m_aa.y)),
+                         ivec2(bb.x, lol::min(bb.y, p->m_bb.y + 1)));
               if (aa.y < p->m_aa.y)
                 AddDirty(aa, ivec2(bb.x, p->m_aa.y));
               if (bb.y - 1 > p->m_bb.y)
@@ -573,7 +573,7 @@ void image_descriptor::AddDirty(ivec2 aa, ivec2 bb)
           } else p = (dirty_rect *)p->Next();
 
       }
-      CHECK(aa < bb);
+      ASSERT(aa < bb);
       dirties.add_end(new dirty_rect(aa, bb - ivec2(1)));
     }
 }
@@ -591,10 +591,10 @@ void image::Bar(ivec2 p1, ivec2 p2, uint8_t color)
     }
     else
     {
-        p1.x = Max(p1.x, 0);
-        p1.y = Max(p1.y, 0);
-        p2.x = Min(p2.x, m_size.x - 1);
-        p2.y = Min(p2.y, m_size.y - 1);
+        p1.x = lol::max(p1.x, 0);
+        p1.y = lol::max(p1.y, 0);
+        p2.x = lol::min(p2.x, m_size.x - 1);
+        p2.y = lol::min(p2.y, m_size.y - 1);
     }
     if (p2.x < 0 || p2.y < 0 || p1.x >= m_size.x || p1.y >= m_size.y
          || p2.x < p1.x || p2.y < p1.y)
@@ -727,12 +727,21 @@ void image::Scale(ivec2 new_size)
 
 void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, int16_t yd)
 {
-  CHECK(x1>=0 && y1>=0 && x1<x2 && y1<y2 && x2<m_size.x && y2<m_size.y);
+  ASSERT(x1 >= 0);
+  ASSERT(y1 >= 0);
+  ASSERT(x1 < x2);
+  ASSERT(y1 < y2);
+  ASSERT(x2 < m_size.x);
+  ASSERT(y2 < m_size.y);
+
   if (m_special)
   {
     ivec2 caa, cbb;
     m_special->GetClip(caa, cbb);
-    x1=Max(x1, caa.x); y1=Max(caa.y, y1); x2=Min(x2, cbb.x - 1); y2=Min(y2, cbb.y - 1);
+    x1=lol::max(x1, caa.x);
+    y1=lol::max(caa.y, y1);
+    x2=lol::min(x2, cbb.x - 1);
+    y2=lol::min(y2, cbb.y - 1);
   }
   int16_t xsrc, ysrc, xdst, ydst, xtot=x2-x1-lol::abs(xd)+1, ytot, xt;
   uint8_t *src, *dst;
@@ -754,10 +763,12 @@ void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, i
 
 image *image::create_smooth(int16_t smoothness)
 {
+  ASSERT(smoothness >= 0);
+
   int16_t i, j, k, l, t, d;
   image *im;
-  CHECK(smoothness>=0);
-  if (!smoothness) return NULL;
+  if (!smoothness)
+    return NULL;
   d=smoothness*2+1;
   d=d*d;
   im=new image(m_size);
@@ -921,7 +932,10 @@ image *image::copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2
   if (x1<caa.x) x1=caa.x;
   if (y2>cbb.y - 1) y2=cbb.y - 1;
   if (x2>cbb.x - 1) x2=cbb.x - 1;
-  CHECK(x2>=x1 && y2>=y1);
+
+  ASSERT(x2 >= x1);
+  ASSERT(y2 >= y1);
+
   if (x2<x1 || y2<y1) return NULL;
   ret=new image(ivec2((x2-x1+8)/8, (y2-y1+1)));
   if (!last_loaded())

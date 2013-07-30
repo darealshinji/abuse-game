@@ -22,7 +22,7 @@
 void update_dirty(image *im, int xoff, int yoff)
 {
     // make sure the image has the ability to contain dirty areas
-    CHECK(im->m_special);
+    ASSERT(im->m_special);
 
     if (im->m_special->keep_dirt == 0)
     {

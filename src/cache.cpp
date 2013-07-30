@@ -164,26 +164,29 @@ int CrcManager::get_filenumber(char const *filename)
 
 char *CrcManager::get_filename(int filenumber)
 {
-  CHECK(filenumber>=0 && filenumber<total_files);
+  ASSERT(filenumber >= 0);
+  ASSERT(filenumber < total_files);
   return files[filenumber]->filename;
 }
 
 uint32_t CrcManager::get_crc(int filenumber, int &failed)
 {
-  CHECK(filenumber>=0 && filenumber<total_files);
+  ASSERT(filenumber >= 0);
+  ASSERT(filenumber < total_files);
   if (files[filenumber]->crc_calculated)
   {
-    failed=0;
+    failed = 0;
     return files[filenumber]->crc;
   }
-  failed=1;
+  failed = 1;
   return 0;
 }
 
 void CrcManager::set_crc(int filenumber, uint32_t crc)
 {
-  CHECK(filenumber>=0 && filenumber<total_files);
-  files[filenumber]->crc_calculated=1;
+  ASSERT(filenumber >= 0);
+  ASSERT(filenumber < total_files);
+  files[filenumber]->crc_calculated = 1;
   files[filenumber]->crc=crc;
 }
 
@@ -881,7 +884,8 @@ int CacheList::reg(char const *filename, char const *name, int type, int rm_dups
 
     int id = AllocId();
 
-    CHECK(id < total && list[id].file_number < 0);
+    ASSERT(id < total);
+    ASSERT(list[id].file_number < 0);
 
     list[id].file_number = fn;
     list[id].last_access = -1;
@@ -910,8 +914,9 @@ void CacheList::normalize()
 
 backtile *CacheList::backt(int id)
 {
-  CacheItem *me=list+id;
-  CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
+  CacheItem *me = list + id;
+
+  ASSERT(id < total && id >= 0 && me->file_number >= 0, "bad id");
 
   if (me->last_access>=0)
   {
@@ -931,8 +936,9 @@ backtile *CacheList::backt(int id)
 
 foretile *CacheList::foret(int id)
 {
-  CacheItem *me=list+id;
-  CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
+  CacheItem *me = list + id;
+
+  ASSERT(id < total && id >= 0 && me->file_number >= 0, "bad id");
 
   if (me->last_access>=0)
   {
@@ -951,8 +957,10 @@ foretile *CacheList::foret(int id)
 
 figure *CacheList::fig(int id)
 {
-  CacheItem *me=list+id;
-//  CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
+  CacheItem *me = list + id;
+
+  //ASSERT(id < total && id >= 0 && me->file_number >= 0, "bad id");
+
   if (me->last_access>=0)
   {
     touch(me);
@@ -970,8 +978,10 @@ figure *CacheList::fig(int id)
 
 image *CacheList::img(int id)
 {
-  CacheItem *me=list+id;
-  CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
+  CacheItem *me = list + id;
+
+  ASSERT(id < total && id >= 0 && me->file_number >= 0, "bad id");
+
   if (me->last_access>=0)
   {
     touch(me);
@@ -991,8 +1001,10 @@ image *CacheList::img(int id)
 
 sound_effect *CacheList::sfx(int id)
 {
-  CacheItem *me=list+id;
-  CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
+  CacheItem *me = list + id;
+
+  ASSERT(id < total && id >= 0 && me->file_number >= 0, "bad id");
+
   if (me->last_access>=0)
   {
     touch(me);                                           // hold me, feel me, be me!
@@ -1010,8 +1022,10 @@ sound_effect *CacheList::sfx(int id)
 
 part_frame *CacheList::part(int id)
 {
-  CacheItem *me=list+id;
-  CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
+  CacheItem *me = list + id;
+
+  ASSERT(id < total && id >= 0 && me->file_number >= 0, "bad id");
+
   if (me->last_access>=0)
   {
     touch(me);                                           // hold me, feel me, be me!
@@ -1030,8 +1044,10 @@ part_frame *CacheList::part(int id)
 
 LObject *CacheList::lblock(int id)
 {
-  CacheItem *me=list+id;
-  CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
+  CacheItem *me = list + id;
+
+  ASSERT(id < total && id >= 0 && me->file_number >= 0, "bad id");
+
   return (LObject *)me->data;
 }
 
@@ -1096,8 +1112,10 @@ void CacheList::show_accessed()
 
 int CacheList::loaded(int id)
 {
-  CacheItem *me=list+id;
-  CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id");
+  CacheItem *me = list + id;
+
+  ASSERT(id < total && id >= 0 && me->file_number >= 0, "bad id");
+
   if (me->last_access>=0)
     return 1;
   else return 0;
@@ -1105,8 +1123,11 @@ int CacheList::loaded(int id)
 
 char_tint *CacheList::ctint(int id)
 {
-  CacheItem *me=list+id;
-  CONDITION(id<total && id>=0 && me->file_number>=0,"Bad id" && me->type==SPEC_PALETTE);
+  CacheItem *me = list + id;
+
+  ASSERT(id < total && id >= 0 && me->file_number >= 0, "bad id");
+  ASSERT(me->type == SPEC_PALETTE);
+
   if (me->last_access>=0)
   {
     touch(me);
