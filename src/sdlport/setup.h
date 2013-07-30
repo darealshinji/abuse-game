@@ -14,7 +14,6 @@
 struct flags_struct
 {
     short fullscreen;
-    short doublebuf;
     short mono;
     short nosound;
     short grabmouse;
@@ -22,7 +21,6 @@ struct flags_struct
     short xres;
     short yres;
     short overlay;
-    short gl;
     int antialias;
 };
 

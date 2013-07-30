@@ -61,18 +61,19 @@ abuse_SOURCES = \
     ui/volumewindow.cpp ui/volumewindow.h \
     $(NULL)
 
-abuse_CPPFLAGS = $(AM_CPPFLAGS) -DHAVE_OPENGL \
-    -I$(srcdir) -I$(srcdir)/lisp -I$(srcdir)/imlib -I$(srcdir)/net
-abuse_LDFLAGS = lisp/liblisp.a sdlport/libsdlport.a imlib/libimlib.a net/libnet.a $(AM_LDFLAGS)
+EXTRALIBS = lisp/liblisp.a sdlport/libsdlport.a imlib/libimlib.a net/libnet.a
+EXTRAINCLUDES = -I$(srcdir) -I$(srcdir)/lisp -I$(srcdir)/imlib -I$(srcdir)/net
+
+abuse_CPPFLAGS = $(EXTRAINCLUDES) $(AM_CPPFLAGS)
+abuse_LDFLAGS = $(EXTRALIBS) $(AM_LDFLAGS)
 abuse_LDADD = @LOL_LIBS@
-abuse_DEPENDENCIES = @LOL_DEPS@
+abuse_DEPENDENCIES = $(EXTRALIBS) @LOL_DEPS@
 
 abuse_tool_SOURCES = \
     tool/abuse-tool.cpp \
     crc.cpp crc.h
-abuse_tool_CPPFLAGS = $(AM_CPPFLAGS) -DHAVE_OPENGL \
-    -I$(srcdir) -I$(srcdir)/lisp -I$(srcdir)/imlib -I$(srcdir)/net
-abuse_tool_LDFLAGS = imlib/libimlib.a $(AM_LDFLAGS)
+abuse_tool_CPPFLAGS = $(EXTRAINCLUDES) $(AM_CPPFLAGS)
+abuse_tool_LDFLAGS = $(EXTRALIBS) $(AM_LDFLAGS)
 abuse_tool_LDADD = @LOL_LIBS@
-abuse_tool_DEPENDENCIES = @LOL_DEPS@
+abuse_tool_DEPENDENCIES = $(EXTRALIBS) @LOL_DEPS@
 

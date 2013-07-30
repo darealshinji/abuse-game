@@ -24,15 +24,13 @@
 
 #include <SDL.h>
 
-#ifdef HAVE_OPENGL
-#   ifdef __APPLE__
-#       include <OpenGL/gl.h>
-#       include <OpenGL/glu.h>
-#   else
-#       include <GL/gl.h>
-#       include <GL/glu.h>
-#   endif    /* __APPLE__ */
-#endif    /* HAVE_OPENGL */
+#ifdef __APPLE__
+#   include <OpenGL/gl.h>
+#   include <OpenGL/glu.h>
+#else
+#   include <GL/gl.h>
+#   include <GL/glu.h>
+#endif    /* __APPLE__ */
 
 #include "common.h"
 
@@ -48,13 +46,9 @@ int xres, yres;
 
 extern palette *lastl;
 extern flags_struct flags;
-#ifdef HAVE_OPENGL
 GLfloat texcoord[4];
 GLuint texid;
 SDL_Surface *texture = NULL;
-#endif
-
-static void update_window_part(SDL_Rect *rect);
 
 //
 // power_of_two()
@@ -86,29 +80,18 @@ void set_mode(int mode, int argc, char **argv)
     if(flags.fullscreen)
         vidFlags |= SDL_FULLSCREEN;
 
-    if(flags.doublebuf)
-        vidFlags |= SDL_DOUBLEBUF;
+    vidFlags |= SDL_DOUBLEBUF;
 
     // Calculate the window scale
     win_xscale = mouse_xscale = (flags.xres << 16) / xres;
     win_yscale = mouse_yscale = (flags.yres << 16) / yres;
 
-    // Try using opengl hw accell
-    if(flags.gl) {
-#ifdef HAVE_OPENGL
-        printf("Video : OpenGL enabled\n");
-        // allow doublebuffering in with gl too
-        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, flags.doublebuf);
-        // set video gl capability
-        vidFlags |= SDL_OPENGL;
-        // force no scaling, let the hw do it
-        win_xscale = win_yscale = 1 << 16;
-#else
-        // ignore the option if not available
-        printf("Video : OpenGL disabled (Support missing in executable)\n");
-        flags.gl = 0;
-#endif
-    }
+    // allow doublebuffering in with gl too
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, GL_TRUE);
+    // set video gl capability
+    vidFlags |= SDL_OPENGL;
+    // force no scaling, let the hw do it
+    win_xscale = win_yscale = 1 << 16;
 
     // Set the icon for this window.  Looks nice on taskbars etc.
     SDL_WM_SetIcon(SDL_LoadBMP("abuse.bmp"), NULL);
@@ -131,57 +114,50 @@ void set_mode(int mode, int argc, char **argv)
     }
     main_screen->clear();
 
-    if (flags.gl)
-    {
-#ifdef HAVE_OPENGL
-        int w, h;
+    // texture width/height should be power of 2
+    // FIXME: we can use GL_ARB_texture_non_power_of_two or
+    // GL_ARB_texture_rectangle to avoid the extra memory allocation
+    int w = power_of_two(xres);
+    int h = power_of_two(yres);
 
-        // texture width/height should be power of 2
-        // FIXME: we can use GL_ARB_texture_non_power_of_two or
-        // GL_ARB_texture_rectangle to avoid the extra memory allocation
-        w = power_of_two(xres);
-        h = power_of_two(yres);
-
-        // create texture surface
-        texture = SDL_CreateRGBSurface(SDL_SWSURFACE, w , h , 32,
+    // create texture surface
+    texture = SDL_CreateRGBSurface(SDL_SWSURFACE, w , h , 32,
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
                 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 #else
                 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
 #endif
 
-        // setup 2D gl environment
-        glPushAttrib(GL_ENABLE_BIT);
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-        glEnable(GL_TEXTURE_2D);
+    // setup 2D gl environment
+    glPushAttrib(GL_ENABLE_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
 
-        glViewport(0, 0, window->w, window->h);
+    glViewport(0, 0, window->w, window->h);
 
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
 
-        glOrtho(0.0, (GLdouble)window->w, (GLdouble)window->h, 0.0, 0.0, 1.0);
+    glOrtho(0.0, (GLdouble)window->w, (GLdouble)window->h, 0.0, 0.0, 1.0);
 
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
 
-        // texture coordinates
-        texcoord[0] = 0.0f;
-        texcoord[1] = 0.0f;
-        texcoord[2] = (GLfloat)xres / texture->w;
-        texcoord[3] = (GLfloat)yres / texture->h;
+    // texture coordinates
+    texcoord[0] = 0.0f;
+    texcoord[1] = 0.0f;
+    texcoord[2] = (GLfloat)xres / texture->w;
+    texcoord[3] = (GLfloat)yres / texture->h;
 
-        // create an RGBA texture for the texture surface
-        glGenTextures(1, &texid);
-        glBindTexture(GL_TEXTURE_2D, texid);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, flags.antialias);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, flags.antialias);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->pixels);
-#endif
-    }
+    // create an RGBA texture for the texture surface
+    glGenTextures(1, &texid);
+    glBindTexture(GL_TEXTURE_2D, texid);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, flags.antialias);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, flags.antialias);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->w, texture->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->pixels);
 
     // Create our 8-bit surface
     surface = SDL_CreateRGBSurface(SDL_SWSURFACE, window->w, window->h, 8, 0xff, 0xff, 0xff, 0xff);
@@ -217,11 +193,9 @@ void close_graphics()
     // Free our 8-bit surface
     if(surface)
         SDL_FreeSurface(surface);
-
-#ifdef HAVE_OPENGL
     if (texture)
         SDL_FreeSurface(texture);
-#endif
+
     delete main_screen;
 }
 
@@ -234,8 +208,8 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
     SDL_Rect srcrect, dstrect;
     int ii, jj;
     int srcx, srcy, xstep, ystep;
-    Uint8 *dpixel;
-    Uint16 dinset;
+    uint8_t *dpixel;
+    uint16_t dinset;
 
     if(y > yres || x > xres)
         return;
@@ -289,14 +263,14 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
     if(SDL_MUSTLOCK(surface))
         SDL_LockSurface(surface);
 
-    dpixel = (Uint8 *)surface->pixels;
+    dpixel = (uint8_t *)surface->pixels;
     dpixel += (dstrect.x + ((dstrect.y) * surface->w)) * surface->format->BytesPerPixel;
 
     // Update surface part
     if ((win_xscale==1<<16) && (win_yscale==1<<16)) // no scaling or hw scaling
     {
         srcy = srcrect.y;
-        dpixel = ((Uint8 *)surface->pixels) + y * surface->w + x ;
+        dpixel = ((uint8_t *)surface->pixels) + y * surface->w + x ;
         for(ii=0 ; ii < srcrect.h; ii++)
         {
             memcpy(dpixel, im->scan_line(srcy) + srcrect.x , srcrect.w);
@@ -312,7 +286,7 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
         srcy = ((srcrect.y) << 16);
         dinset = ((surface->w - dstrect.w)) * surface->format->BytesPerPixel;
 
-        dpixel = (Uint8 *)surface->pixels + (dstrect.x + ((dstrect.y) * surface->w)) * surface->format->BytesPerPixel;
+        dpixel = (uint8_t *)surface->pixels + (dstrect.x + ((dstrect.y) * surface->w)) * surface->format->BytesPerPixel;
 
         for(ii = 0; ii < dstrect.h; ii++)
         {
@@ -333,9 +307,6 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
     // Unlock the surface if we locked it.
     if(SDL_MUSTLOCK(surface))
         SDL_UnlockSurface(surface);
-
-    // Now blit the surface
-    update_window_part(&dstrect);
 }
 
 //
@@ -365,7 +336,6 @@ void palette::load()
         SDL_SetColors(window, colors, 0, ncolors);
 
     // Now redraw the surface
-    update_window_part(NULL);
     update_window_done();
 }
 
@@ -381,52 +351,25 @@ void palette::load_nice()
 
 void update_window_done()
 {
-#ifdef HAVE_OPENGL
-    // opengl blit complete surface to window
-    if(flags.gl)
-    {
-        // convert color-indexed surface to RGB texture
-        SDL_BlitSurface(surface, NULL, texture, NULL);
+    // convert color-indexed surface to RGB texture
+    SDL_BlitSurface(surface, NULL, texture, NULL);
 
-        // Texturemap complete texture to surface so we have free scaling
-        // and antialiasing
-        glTexSubImage2D(GL_TEXTURE_2D, 0,
-                        0, 0, texture->w, texture->h,
-                        GL_RGBA, GL_UNSIGNED_BYTE, texture->pixels);
-        glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f(texcoord[0], texcoord[1]); glVertex3i(0, 0, 0);
-        glTexCoord2f(texcoord[2], texcoord[1]); glVertex3i(window->w, 0, 0);
-        glTexCoord2f(texcoord[0], texcoord[3]); glVertex3i(0, window->h, 0);
-        glTexCoord2f(texcoord[2], texcoord[3]); glVertex3i(window->w, window->h, 0);
-        glEnd();
+    // Texturemap complete texture to surface so we have free scaling
+    // and antialiasing
+    glTexSubImage2D(GL_TEXTURE_2D, 0,
+                    0, 0, texture->w, texture->h,
+                    GL_RGBA, GL_UNSIGNED_BYTE, texture->pixels);
+    glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2f(texcoord[0], texcoord[1]);
+        glVertex3i(0, 0, 0);
+        glTexCoord2f(texcoord[2], texcoord[1]);
+        glVertex3i(window->w, 0, 0);
+        glTexCoord2f(texcoord[0], texcoord[3]);
+        glVertex3i(0, window->h, 0);
+        glTexCoord2f(texcoord[2], texcoord[3]);
+        glVertex3i(window->w, window->h, 0);
+    glEnd();
 
-        if(flags.doublebuf)
-            SDL_GL_SwapBuffers();
-    }
-#else
-    // swap buffers in case of double buffering
-    // do nothing in case of single buffering
-    if(flags.doublebuf)
-        SDL_Flip(window);
-#endif
+    SDL_GL_SwapBuffers();
 }
 
-static void update_window_part(SDL_Rect *rect)
-{
-    // no partial blit's in case of opengl
-    // complete blit + scaling just before flip
-    if (flags.gl)
-        return;
-
-    SDL_BlitSurface(surface, rect, window, rect);
-
-    // no window update needed until end of run
-    if(flags.doublebuf)
-        return;
-
-    // update window part for single buffer
-    if(rect == NULL)
-        SDL_UpdateRect(window, 0, 0, 0, 0);
-    else
-        SDL_UpdateRect(window, rect->x, rect->y, rect->w, rect->h);
-}
