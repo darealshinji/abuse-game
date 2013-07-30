@@ -27,16 +27,14 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <SDL.h>
-#ifdef HAVE_OPENGL
 #ifdef __APPLE__
-#include <Carbon/Carbon.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+#   include <Carbon/Carbon.h>
+#   include <OpenGL/gl.h>
+#   include <OpenGL/glu.h>
 #else
-#include <GL/gl.h>
-#include <GL/glu.h>
+#   include <GL/gl.h>
+#   include <GL/glu.h>
 #endif    /* __APPLE__ */
-#endif    /* HAVE_OPENGL */
 
 #include "specs.h"
 #include "keys.h"
@@ -66,12 +64,8 @@ void showHelp()
     printf( "\n" );
     printf( "** Abuse-SDL Options **\n" );
     printf( "  -datadir <arg>    Set the location of the game data to <arg>\n" );
-    printf( "  -doublebuf        Enable double buffering\n" );
     printf( "  -fullscreen       Enable fullscreen mode\n" );
-#ifdef HAVE_OPENGL
-    printf( "  -gl               Enable OpenGL\n" );
-    printf( "  -antialias        Enable anti-aliasing (with -gl only)\n" );
-#endif
+    printf( "  -antialias        Enable anti-aliasing\n" );
     printf( "  -h, --help        Display this text\n" );
     printf( "  -mono             Disable stereo sound\n" );
     printf( "  -nosound          Disable sound\n" );
@@ -95,18 +89,14 @@ void createRCFile( char *rcfile )
         fputs( "; Abuse-SDL Configuration file\n\n", fd );
         fputs( "; Startup fullscreen\nfullscreen=0\n\n", fd );
         #ifdef __APPLE__
-        fputs( "; Use DoubleBuffering\ndoublebuf=1\n\n", fd );
-        fputs( "; Use OpenGL\ngl=1\n\n", fd );
         #else
-        fputs( "; Use DoubleBuffering\ndoublebuf=0\n\n", fd );
-        fputs( "; Use OpenGL\ngl=0\n\n", fd );
         fputs( "; Location of the datafiles\ndatadir=", fd );
         fputs( ASSETDIR "\n\n", fd );
         #endif
         fputs( "; Use mono audio only\nmono=0\n\n", fd );
         fputs( "; Grab the mouse to the window\ngrabmouse=0\n\n", fd );
         fputs( "; Set the scale factor\nscale=2\n\n", fd );
-        fputs( "; Use anti-aliasing (with gl=1 only)\nantialias=1\n\n", fd );
+        fputs( "; Use anti-aliasing\nantialias=1\n\n", fd );
 //        fputs( "; Set the width of the window\nx=320\n\n", fd );
 //        fputs( "; Set the height of the window\ny=200\n\n", fd );
         fputs( "; Disable the SDL parachute in the case of a crash\nnosdlparachute=0\n\n", fd );
@@ -143,11 +133,6 @@ void readRCFile()
                 result = strtok( NULL, "\n" );
                 flags.fullscreen = atoi( result );
             }
-            else if( strcasecmp( result, "doublebuf" ) == 0 )
-            {
-                result = strtok( NULL, "\n" );
-                flags.doublebuf = atoi( result );
-            }
             else if( strcasecmp( result, "mono" ) == 0 )
             {
                 result = strtok( NULL, "\n" );
@@ -175,14 +160,6 @@ void readRCFile()
                 result = strtok( NULL, "\n" );
                 flags.yres = atoi( result );
             }*/
-            else if( strcasecmp( result, "gl" ) == 0 )
-            {
-                // We leave this in even if we don't have OpenGL so we can
-                // at least inform the user.
-                result = strtok( NULL, "\n" );
-                flags.gl = atoi( result );
-            }
-#ifdef HAVE_OPENGL
             else if( strcasecmp( result, "antialias" ) == 0 )
             {
                 result = strtok( NULL, "\n" );
@@ -191,7 +168,6 @@ void readRCFile()
                     flags.antialias = GL_LINEAR;
                 }
             }
-#endif
             else if( strcasecmp( result, "nosdlparachute" ) == 0 )
             {
                 result = strtok( NULL, "\n" );
@@ -264,10 +240,6 @@ void parseCommandLine( int argc, char **argv )
         {
             flags.fullscreen = 1;
         }
-        else if( !strcasecmp( argv[ii], "-doublebuf" ) )
-        {
-            flags.doublebuf = 1;
-        }
         else if( !strcasecmp( argv[ii], "-size" ) )
         {
             if( ii + 1 < argc && !sscanf( argv[++ii], "%d", &xres ) )
@@ -309,18 +281,10 @@ void parseCommandLine( int argc, char **argv )
         {
             flags.nosound = 1;
         }
-        else if( !strcasecmp( argv[ii], "-gl" ) )
-        {
-            // We leave this in even if we don't have OpenGL so we can
-            // at least inform the user.
-            flags.gl = 1;
-        }
-#ifdef HAVE_OPENGL
         else if( !strcasecmp( argv[ii], "-antialias" ) )
         {
             flags.antialias = GL_LINEAR;
         }
-#endif
         else if( !strcasecmp( argv[ii], "-mono" ) )
         {
             flags.mono = 1;
@@ -354,16 +318,7 @@ void setup( int argc, char **argv )
     flags.nosdlparachute    = 0;            // SDL error handling
     flags.xres = xres        = 320;            // Default window width
     flags.yres = yres        = 200;            // Default window height
-#ifdef __APPLE__
-    flags.gl                = 1;            // Use opengl
-    flags.doublebuf            = 1;            // Do double buffering
-#else
-    flags.gl                = 0;            // Don't use opengl
-    flags.doublebuf            = 0;            // No double buffering
-    #endif
-#ifdef HAVE_OPENGL
     flags.antialias            = GL_NEAREST;    // Don't anti-alias
-#endif
     keys.up                    = key_value( "UP" );
     keys.down                = key_value( "DOWN" );
     keys.left                = key_value( "LEFT" );
