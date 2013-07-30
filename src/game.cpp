@@ -487,24 +487,24 @@ void Game::draw_value(image *screen, int x, int y, int w, int h,
 }
 
 
-void Game::set_level(level *nl)
+void Game::set_level(Level *nl)
 {
-    if(current_level)
-        delete current_level;
-    current_level = nl;
+    if(g_current_level)
+        delete g_current_level;
+    g_current_level = nl;
 }
 
 void Game::load_level(char const *name)
 {
-    if(current_level)
-      delete current_level;
+    if(g_current_level)
+      delete g_current_level;
 
     bFILE *fp = open_file(name, "rb");
 
     if(fp->open_failure())
     {
         delete fp;
-        current_level = new level(100, 100, name);
+        g_current_level = new Level(100, 100, name);
         char msg[100];
         sprintf(msg, symbol_str("no_file"), name);
         show_help(msg);
@@ -512,13 +512,13 @@ void Game::load_level(char const *name)
     else
     {
         SpecDir sd(fp);
-        current_level = new level(&sd, fp, name);
+        g_current_level = new Level(&sd, fp, name);
         delete fp;
     }
 
-    base->current_tick=(current_level->tick_counter()&0xff);
+    base->current_tick=(g_current_level->tick_counter()&0xff);
 
-    current_level->level_loaded_notify();
+    g_current_level->level_loaded_notify();
     the_game->help_text_frames = 0;
 }
 
@@ -638,7 +638,7 @@ void Game::draw_map(view *v, int interpolate)
   ivec2 caa, cbb;
   main_screen->GetClip(caa, cbb);
 
-  if(!current_level || state == MENU_STATE)
+  if(!g_current_level || state == MENU_STATE)
   {
     if(title_screen >= 0)
     {
@@ -732,14 +732,14 @@ void Game::draw_map(view *v, int interpolate)
     xinc = btile_width();
     yinc = btile_height();
 
-    int bh = current_level->background_height(), bw = current_level->background_width();
+    int bh = g_current_level->background_height(), bw = g_current_level->background_width();
     uint16_t *bl;
     for(draw_y = yo, y = y1; y <= y2; y++, draw_y += yinc)
     {
       if(y >= bh)
         bl = NULL;
       else
-        bl = current_level->get_bgline(y)+x1;
+        bl = g_current_level->get_bgline(y)+x1;
 
       for(x = x1, draw_x = xo; x <= x2; x++, draw_x += xinc)
       {
@@ -752,7 +752,7 @@ void Game::draw_map(view *v, int interpolate)
 
         main_screen->PutImage(bt->im, ivec2(draw_x, draw_y));
 //        if(!(dev & EDIT_MODE) && bt->next)
-//      current_level->put_bg(x, y, bt->next);
+//      g_current_level->put_bg(x, y, bt->next);
       }
     }
   }
@@ -801,8 +801,8 @@ void Game::draw_map(view *v, int interpolate)
 
       x2 = x1 + (v->m_bb.x - v->m_aa.x + fw) / fw;
       y2 = y1 + (v->m_bb.y - v->m_aa.y + fh) / fh;
-      x2 = lol::min(x2, current_level->foreground_width() - 1);
-      y2 = lol::min(y2, current_level->foreground_height() - 1);
+      x2 = lol::min(x2, g_current_level->foreground_width() - 1);
+      y2 = lol::min(y2, g_current_level->foreground_height() - 1);
 
     xinc = fw;
     yinc = fh;
@@ -824,7 +824,7 @@ void Game::draw_map(view *v, int interpolate)
       {
     if (!(draw_y < ncaa.y || draw_y + yinc > ncbb.y))
     {
-      uint16_t *cl = current_level->get_fgline(y)+x1;
+      uint16_t *cl = g_current_level->get_fgline(y)+x1;
       uint8_t *sl1 = main_screen->scan_line(draw_y)+xo;
       for(x = x1, draw_x = xo; x <= x2; x++, cl++, sl1 += xinc, draw_x += xinc)
       {
@@ -847,18 +847,18 @@ void Game::draw_map(view *v, int interpolate)
       main_screen->Unlock();
 
       if(dev & EDIT_MODE)
-        current_level->draw_areas(v);
+        g_current_level->draw_areas(v);
     } else
     {
 
-      int fg_h = current_level->foreground_height(), fg_w = current_level->foreground_width();
+      int fg_h = g_current_level->foreground_height(), fg_w = g_current_level->foreground_width();
 
       for(y = y1, draw_y = yo; y <= y2; y++, draw_y += yinc)
       {
 
     uint16_t *cl;
     if(y < fg_h)
-      cl = current_level->get_fgline(y)+x1;
+      cl = g_current_level->get_fgline(y)+x1;
     else cl = NULL;
 
     for(x = x1, draw_x = xo; x <= x2; x++, draw_x += xinc, cl++)
@@ -888,9 +888,9 @@ void Game::draw_map(view *v, int interpolate)
   if(dev & DRAW_PEOPLE_LAYER)
   {
     if(interpolate)
-      current_level->interpolate_draw_objects(v);
+      g_current_level->interpolate_draw_objects(v);
     else
-      current_level->draw_objects(v);
+      g_current_level->draw_objects(v);
   }
 
 //  if(!(dev & EDIT_MODE))
@@ -905,7 +905,7 @@ void Game::draw_map(view *v, int interpolate)
     {
       for(y = y1, draw_y = yo; y <= y2; y++, draw_y += yinc)
       {
-    uint16_t *cl = current_level->get_fgline(y)+x1;
+    uint16_t *cl = g_current_level->get_fgline(y)+x1;
     for(x = x1, draw_x = xo; x <= x2; x++, draw_x += xinc, cl++)
     {
       if(above_tile(*cl))
@@ -919,7 +919,7 @@ void Game::draw_map(view *v, int interpolate)
           get_fg(fort_num)->im->PutFilled(main_screen, ivec2(draw_x, draw_y), 0);
 
           if(!(dev & EDIT_MODE))
-          current_level->mark_seen(x, y);
+          g_current_level->mark_seen(x, y);
           else
           {
         main_screen->Line(ivec2(draw_x, draw_y), ivec2(draw_x + xinc, draw_y + yinc), wm->bright_color());
@@ -935,13 +935,13 @@ void Game::draw_map(view *v, int interpolate)
     if(dev & DRAW_FG_BOUND_LAYER)
     {
       int b = wm->bright_color();
-      int fg_h = current_level->foreground_height(), fg_w = current_level->foreground_width();
+      int fg_h = g_current_level->foreground_height(), fg_w = g_current_level->foreground_width();
 
       for(y = y1, draw_y = yo; y <= y2; y++, draw_y += yinc)
       {
     uint16_t *cl;
     if(y < fg_h)
-      cl = current_level->get_fgline(y)+x1;
+      cl = g_current_level->get_fgline(y)+x1;
     else cl = NULL;
     for(x = x1, draw_x = xo; x <= x2; x++, draw_x += xinc, cl++)
     {
@@ -1042,10 +1042,10 @@ void Game::draw_map(view *v, int interpolate)
 
 void Game::PutFg(ivec2 pos, int type)
 {
-    if (current_level->GetFg(pos) == type)
+    if (g_current_level->GetFg(pos) == type)
         return;
 
-    current_level->PutFg(pos, type);
+    g_current_level->PutFg(pos, type);
     for(view *f = first_view; f; f = f->next)
         if(f->drawable())
             draw_map(f);
@@ -1053,10 +1053,10 @@ void Game::PutFg(ivec2 pos, int type)
 
 void Game::PutBg(ivec2 pos, int type)
 {
-    if (current_level->GetBg(pos) == type)
+    if (g_current_level->GetBg(pos) == type)
         return;
 
-    current_level->PutBg(pos, type);
+    g_current_level->PutBg(pos, type);
     for(view *f = first_view; f; f = f->next)
         if(f->drawable())
             draw_map(f);
@@ -1253,7 +1253,7 @@ Game::Game(int argc, char **argv)
   bg_xdiv = bg_ydiv = 8;
   last_input = NULL;
   current_automap = NULL;
-  current_level = NULL;
+  g_current_level = NULL;
   refresh = 1;
   the_game = this;
   top_menu = joy_win = NULL;
@@ -1303,7 +1303,7 @@ Game::Game(int argc, char **argv)
 
   calc_light_table(pal);
 
-  if(current_level == NULL && net_start())  // if we joined a net game get level from server
+  if(g_current_level == NULL && net_start())  // if we joined a net game get level from server
   {
     if(!request_server_entry())
     {
@@ -1439,12 +1439,12 @@ void Game::update_screen()
 {
   if(state == HELP_STATE)
     draw_help();
-  else if(current_level)
+  else if(g_current_level)
   {
     if(!(dev & EDIT_MODE) || refresh)
     {
       view *f = first_view;
-      current_level->clear_active_list();
+      g_current_level->clear_active_list();
       for(; f; f = f->next)
       {
     if(f->m_focus)
@@ -1454,7 +1454,7 @@ void Game::update_screen()
       w = (f->m_bb.x - f->m_aa.x + 1);
       h = (f->m_bb.y - f->m_aa.y + 1);
 
-      total_active += current_level->add_drawables(f->xoff()-w / 4, f->yoff()-h / 4,
+      total_active += g_current_level->add_drawables(f->xoff()-w / 4, f->yoff()-h / 4,
                              f->xoff()+w + w / 4, f->yoff()+h + h / 4);
 
     }
@@ -1846,7 +1846,7 @@ void net_send(int force = 0)
       if(base->join_list)
       base->packet.write_uint8(SCMD_RELOAD);
 
-      //      printf("save tick %d, pk size=%d, rand_on=%d, sync=%d\n", current_level->tick_counter(),
+      //      printf("save tick %d, pk size=%d, rand_on=%d, sync=%d\n", g_current_level->tick_counter(),
       //         base->packet.packet_size(), rand_on, make_sync());
       send_local_request();
     }
@@ -1855,7 +1855,7 @@ void net_send(int force = 0)
 
 void net_receive()
 {
-  if(!(dev & EDIT_MODE) && current_level)
+  if(!(dev & EDIT_MODE) && g_current_level)
   {
     uint8_t buf[PACKET_MAX_SIZE + 1];
     int size;
@@ -1880,9 +1880,9 @@ void net_receive()
 void Game::step()
 {
   LSpace::Tmp.Clear();
-  if(current_level)
+  if(g_current_level)
   {
-    current_level->unactivate_all();
+    g_current_level->unactivate_all();
     total_active = 0;
     for(view *f = first_view; f; f = f->next)
     {
@@ -1893,7 +1893,7 @@ void Game::step()
 
     w = (f->m_bb.x - f->m_aa.x + 1);
     h = (f->m_bb.y - f->m_aa.y + 1);
-        total_active += current_level->add_actives(f->xoff()-w / 4, f->yoff()-h / 4,
+        total_active += g_current_level->add_actives(f->xoff()-w / 4, f->yoff()-h / 4,
                          f->xoff()+w + w / 4, f->yoff()+h + h / 4);
       }
     }
@@ -1923,7 +1923,7 @@ void Game::step()
         v->update_scroll();
 
       cache.prof_poll_start();
-      current_level->tick();
+      g_current_level->tick();
       sbar.step();
     } else
       dev_scroll();
@@ -1949,16 +1949,16 @@ Game::~Game()
   while(player_list)
   {
     view *p = player_list;
-    game_object *o = p->m_focus;
+    GameObject *o = p->m_focus;
     player_list = player_list->next;
     delete p;
     o->set_controller(NULL);
-    if(current_level && o)
-      current_level->delete_object(o);
+    if(g_current_level && o)
+      g_current_level->delete_object(o);
     else delete o;
   }
 
-  if(current_level) { delete current_level; current_level = NULL; }
+  if(g_current_level) { delete g_current_level; g_current_level = NULL; }
 
   if(first_view != player_list)
   {
@@ -2393,7 +2393,7 @@ int main(int argc, char *argv[])
 
             if (req_end)
             {
-                delete current_level; current_level = NULL;
+                delete g_current_level; g_current_level = NULL;
 
                 show_end();
 

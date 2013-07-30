@@ -31,19 +31,19 @@ enum {  ANT_need_to_dodge,     // ant vars
     ANT_no_see_time,
     ANT_hide_flag };
 
-int can_see(game_object *o, int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+int can_see(GameObject *o, int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 {
   int32_t nx2=x2,ny2=y2;
-  current_level->foreground_intersect(x1,y1,x2,y2);
+  g_current_level->foreground_intersect(x1,y1,x2,y2);
   if (x2!=nx2 || y2!=ny2) return 0;
 
-  current_level->boundary_setback(o,x1,y1,x2,y2);
+  g_current_level->boundary_setback(o,x1,y1,x2,y2);
   return (x2==nx2 && y2==ny2);
 }
 
 
 // if we first saw the player or it's been a while since we've seen the player then do a scream
-static void scream_check(game_object *o, game_object *b)
+static void scream_check(GameObject *o, GameObject *b)
 {
   if (can_see(o,o->x,o->y,b->x,b->y))
   {
@@ -53,16 +53,16 @@ static void scream_check(game_object *o, game_object *b)
   } else o->lvars[ANT_no_see_time]++;
 }
 
-static int ant_congestion(game_object *o)
+static int ant_congestion(GameObject *o)
 {
-  for (game_object *d=current_level->first_active_object(); d; d=d->next_active)
+  for (GameObject *d=g_current_level->first_active_object(); d; d=d->next_active)
   {
     if (d->otype==o->otype && lol::abs(o->x-d->x)<30 && lol::abs(o->x-d->y)<20) return 1;
   }
   return 0;
 }
 
-static int ant_dodge(game_object *o)
+static int ant_dodge(GameObject *o)
 {
   if (o->lvars[ANT_need_to_dodge]==1)
   {
@@ -102,12 +102,12 @@ static int alien_wait_time()
   else return 1;
 }
 
-static int can_hit_player(game_object *o, game_object *b)
+static int can_hit_player(GameObject *o, GameObject *b)
 {
   return can_see(o,o->x+(o->direction>0?15:-15),o->y-15,b->x,b->y-15);
 }
 
-static void fire_at_player(game_object *o, game_object *b)
+static void fire_at_player(GameObject *o, GameObject *b)
 {
   int32_t firex=o->x+(o->direction>0?15:-15),firey=o->y-15,
           playerx=b->x+b->xvel()*8,playery=b->y-15+b->yvel()*2;
@@ -129,7 +129,7 @@ static void fire_at_player(game_object *o, game_object *b)
 
 void *ant_ai()
 {
-  game_object *o=current_object,*b;
+  GameObject *o=current_object,*b;
 
   if (o->hp()==0)    // if we are dead return NULL and get deleted
   {
@@ -171,7 +171,7 @@ void *ant_ai()
       if (o->total_objects()==0)
       {
     if (player_list->next)
-      b=current_level->attacker(current_object);
+      b=g_current_level->attacker(current_object);
     else b=player_list->m_focus;
     if (lol::abs(b->x-o->x)<130 && (o->y<b->y))
       fall=1;
@@ -203,7 +203,7 @@ void *ant_ai()
     } else
     {
       if (player_list->next)
-        b=current_level->attacker(current_object);
+        b=g_current_level->attacker(current_object);
       else b=player_list->m_focus;
       if (lol::abs(b->x-o->x)<130 && (o->y<b->y))
       fall=1;
@@ -222,7 +222,7 @@ void *ant_ai()
       o->set_state((character_state)S_falling);
 
       if (player_list->next)
-      b=current_level->attacker(current_object);
+      b=g_current_level->attacker(current_object);
       else b=player_list->m_focus;
 
       scream_check(o,b);
@@ -256,7 +256,7 @@ void *ant_ai()
     case ANT_RUNNING :
     {
       if (player_list->next)
-      b=current_level->attacker(current_object);
+      b=g_current_level->attacker(current_object);
       else b=player_list->m_focus;
       scream_check(o,b);
 
@@ -348,7 +348,7 @@ void *ant_ai()
       if (!o->next_picture() || symbol_value(l_difficulty)==l_extreme)
       {
         if (player_list->next)
-        b=current_level->attacker(current_object);
+        b=g_current_level->attacker(current_object);
         else b=player_list->m_focus;
         fire_at_player(o,b);
         o->set_state(stopped);
@@ -384,7 +384,7 @@ void *ant_ai()
     case ANT_ROOF_WALK :
     {
       if (player_list->next)
-      b=current_level->attacker(current_object);
+      b=g_current_level->attacker(current_object);
       else b=player_list->m_focus;
       scream_check(o,b);
       if (((jrand()%8)==0 && lol::abs(o->x-b->x)<10 && o->y<b->y) ||
@@ -423,7 +423,7 @@ void *ant_ai()
       if (!o->next_picture())
       {
     if (player_list->next)
-      b=current_level->attacker(current_object);
+      b=g_current_level->attacker(current_object);
     else b=player_list->m_focus;
     fire_at_player(o,b);
     o->set_state((character_state)S_top_walk);
@@ -444,7 +444,7 @@ void fade_out(int steps);
 
 void show_stats()
 {
-  if (current_level)
+  if (g_current_level)
   {
     fade_out(8);
     wm->SetMousePos(ivec2(0, 0));
@@ -457,7 +457,7 @@ void show_stats()
     fade_in(NULL,16);
 
     char name[50];
-    strcpy(name,current_level->original_name());
+    strcpy(name,g_current_level->original_name());
     char dig1=name[strlen(name)-strlen(".spe")-2];
     char dig2=name[strlen(name)-strlen(".spe")-1];
 
@@ -470,7 +470,7 @@ void show_stats()
         sprintf(msg,"%s : %c%c",symbol_str("lev_complete"),dig1,dig2);
       else
         sprintf(msg,"%s : %c",symbol_str("lev_complete"),dig2);
-    } else sprintf(msg,"%s : %s",symbol_str("lev_complete"),current_level->original_name());
+    } else sprintf(msg,"%s : %s",symbol_str("lev_complete"),g_current_level->original_name());
 
     int w = wm->font()->Size().x * strlen(msg),
         h = wm->font()->Size().y;

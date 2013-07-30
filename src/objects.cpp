@@ -31,12 +31,12 @@
 
 char **object_names;
 int total_objects;
-game_object *current_object;
+GameObject *current_object;
 view *current_view;
 
-game_object *game_object::copy()
+GameObject *GameObject::copy()
 {
-  game_object *o=create(otype,x,y);
+  GameObject *o=create(otype,x,y);
   o->state=state;
   int i=0;
   for (; i<TOTAL_OBJECT_VARS; i++)
@@ -49,7 +49,7 @@ game_object *game_object::copy()
   return o;
 }
 
-int simple_object::total_vars() { return TOTAL_OBJECT_VARS; }
+int SimpleObject::total_vars() { return TOTAL_OBJECT_VARS; }
 
 
 obj_desc object_descriptions[TOTAL_OBJECT_VARS] =
@@ -89,7 +89,7 @@ obj_desc object_descriptions[TOTAL_OBJECT_VARS] =
     { "targetable",    RC_8 }
 };
 
-int32_t game_object::get_var_by_name(char *name, int &error)
+int32_t GameObject::get_var_by_name(char *name, int &error)
 {
   error=0;
   int i=0;
@@ -119,7 +119,7 @@ int32_t game_object::get_var_by_name(char *name, int &error)
   return 0;
 }
 
-int game_object::set_var_by_name(char *name, int32_t value)
+int GameObject::set_var_by_name(char *name, int32_t value)
 {
   int i=0;
   for (; i<TOTAL_OBJECT_VARS; i++)
@@ -140,18 +140,18 @@ int game_object::set_var_by_name(char *name, int32_t value)
 }
 
 
-char const *simple_object::var_name(int x)
+char const *SimpleObject::var_name(int x)
 {
   return object_descriptions[x].name;
 }
 
-int simple_object::var_type(int x)
+int SimpleObject::var_type(int x)
 {
   return object_descriptions[x].type;
 }
 
 
-void simple_object::set_var(int xx, uint32_t v)
+void SimpleObject::set_var(int xx, uint32_t v)
 {
   switch (xx)
   {
@@ -191,7 +191,7 @@ void simple_object::set_var(int xx, uint32_t v)
   }
 }
 
-int32_t simple_object::get_var(int xx)
+int32_t SimpleObject::get_var(int xx)
 {
   switch (xx)
   {
@@ -249,12 +249,12 @@ int RC_type_size(int type)
     return 1;
 }
 
-void game_object::reload_notify()
+void GameObject::reload_notify()
 {
   void *ns=figures[otype]->get_fun(OFUN_RELOAD);
   if (ns)
   {
-    game_object *o=current_object;
+    GameObject *o=current_object;
     current_object=this;
 
     void *m = LSpace::Tmp.Mark();
@@ -265,7 +265,7 @@ void game_object::reload_notify()
   }
 }
 
-void game_object::next_sequence()
+void GameObject::next_sequence()
 {
     void *ns = figures[otype]->get_fun( OFUN_NEXT_STATE );
     if( ns )
@@ -332,13 +332,13 @@ void game_object::next_sequence()
 
 
 
-game_object::~game_object()
+GameObject::~GameObject()
 {
   if (lvars) free(lvars);
   clean_up();
 }
 
-void game_object::add_power(int amount)
+void GameObject::add_power(int amount)
 {
   int max_power=lnumber_value(symbol_value(l_max_power));
   int n=mp()+amount;
@@ -347,7 +347,7 @@ void game_object::add_power(int amount)
   set_mp(n);
 }
 
-void game_object::add_hp(int amount)
+void GameObject::add_hp(int amount)
 {
   if (controller() && controller()->god) return ;
   int max_hp=lnumber_value(symbol_value(l_max_hp));
@@ -358,21 +358,21 @@ void game_object::add_hp(int amount)
   set_hp(n);
 }
 
-int game_object::can_morph_into(int type)
+int GameObject::can_morph_into(int type)
 {
   if (type!=otype && mp()>=figures[type]->morph_power)
     return 1;
   else return 0;
 }
 
-void game_object::morph_into(int type, void (*stat_fun)(int), int anneal, int frames)
+void GameObject::morph_into(int type, void (*stat_fun)(int), int anneal, int frames)
 {
   set_morph_status(new morph_char(this,type,stat_fun,anneal,frames));
   otype=type;
   set_state(stopped);
 }
 
-void game_object::draw_above(view *v)
+void GameObject::draw_above(view *v)
 {
   int32_t x1, y1, x2, y2;
   picture_space(x1,y1,x2,y2);
@@ -381,7 +381,7 @@ void game_object::draw_above(view *v)
   if (pos1.y >= v->m_aa.y)
   {
     int32_t draw_to = y1 - (pos1.y - v->m_aa.y), tmp = x;
-    current_level->foreground_intersect(x, y1, tmp, draw_to);
+    g_current_level->foreground_intersect(x, y1, tmp, draw_to);
     // calculate pos2.y
     ivec2 pos2 = the_game->GameToMouse(ivec2(x1, draw_to), v);
 
@@ -394,12 +394,12 @@ void game_object::draw_above(view *v)
   }
 }
 
-int game_object::push_range()
+int GameObject::push_range()
 {
   return get_ability(otype,push_xrange);
 }
 
-int game_object::decide()
+int GameObject::decide()
 {
   if (figures[otype]->get_fun(OFUN_AI))
   {
@@ -437,9 +437,9 @@ int game_object::decide()
 }
 
 // collision checking will ask first to see if you
-int game_object::can_hurt(game_object *who)
+int GameObject::can_hurt(GameObject *who)
 {
-    int is_attacker = current_level->is_attacker(this);
+    int is_attacker = g_current_level->is_attacker(this);
 
     // it's you against them!  Damage only if it you are attacking or they are
     // attacking you, ie. don't let them hurt themselves. This can change if
@@ -447,18 +447,18 @@ int game_object::can_hurt(game_object *who)
 
     if(who->hurtable()
         && ((_team == -1) || (_team != who->get_team()))
-        && (is_attacker || current_level->is_attacker(who) || hurt_all()))
+        && (is_attacker || g_current_level->is_attacker(who) || hurt_all()))
         return 1;
 
     return 0;
 }
 
-void game_object::note_attack(game_object *whom)
+void GameObject::note_attack(GameObject *whom)
 {
     return; // nevermind
 }
 
-void game_object::do_flinch(game_object *from)
+void GameObject::do_flinch(GameObject *from)
 {
   if (jrandom(2) && has_sequence(flinch_down))
     set_state(flinch_down);
@@ -467,7 +467,7 @@ void game_object::do_flinch(game_object *from)
 }
 
 
-void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t hity,
+void GameObject::do_damage(int amount, GameObject *from, int32_t hitx, int32_t hity,
                 int32_t push_xvel, int32_t push_yvel)
 {
   // No friendly fire
@@ -478,7 +478,7 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
   if (d)
   {
     LList *am, *frm, *hx, *hy, *px, *py;
-    game_object *o = current_object;
+    GameObject *o = current_object;
     current_object = this;
 
     void *m = LSpace::Tmp.Mark();
@@ -531,7 +531,7 @@ void game_object::do_damage(int amount, game_object *from, int32_t hitx, int32_t
   } else damage_fun(amount,from,hitx,hity,push_xvel,push_yvel);
 }
 
-void game_object::damage_fun(int amount, game_object *from, int32_t hitx, int32_t hity,
+void GameObject::damage_fun(int amount, GameObject *from, int32_t hitx, int32_t hity,
                 int32_t push_xvel, int32_t push_yvel)
 {
   if (!hurtable() || !alive()) return ;
@@ -566,14 +566,14 @@ void game_object::damage_fun(int amount, game_object *from, int32_t hitx, int32_
 
 
 
-int game_object::facing_attacker(int attackerx)
+int GameObject::facing_attacker(int attackerx)
 {
   return ((attackerx<x && direction<0) || (attackerx>=x && direction>0));
 
 }
 
 
-void game_object::picture_space(int32_t &x1, int32_t &y1,int32_t &x2, int32_t &y2)
+void GameObject::picture_space(int32_t &x1, int32_t &y1,int32_t &x2, int32_t &y2)
 {
   int xc=x_center(),w=picture()->Size().x,h=picture()->Size().y;
   if (direction>0)
@@ -585,7 +585,7 @@ void game_object::picture_space(int32_t &x1, int32_t &y1,int32_t &x2, int32_t &y
 }
 
 
-int game_object::next_picture()
+int GameObject::next_picture()
 {
   int ret=1;
   if (frame_dir()>0)
@@ -609,13 +609,13 @@ int game_object::next_picture()
 }
 
 
-int32_t game_object::x_center()
+int32_t GameObject::x_center()
 {
   return current_sequence()->x_center(current_frame);
 }
 
 
-void game_object::draw()
+void GameObject::draw()
 {
   if (figures[otype]->get_fun(OFUN_DRAW))
   {
@@ -640,7 +640,7 @@ void game_object::draw()
 }
 
 
-void game_object::map_draw()
+void GameObject::map_draw()
 {
   if (figures[otype]->get_fun(OFUN_MAP_DRAW))
   {
@@ -663,7 +663,7 @@ void game_object::map_draw()
   }
 }
 
-void game_object::draw_trans(int count, int max)
+void GameObject::draw_trans(int count, int max)
 {
   TransImage *cpict=picture();
   cpict->PutFade(main_screen,
@@ -674,7 +674,7 @@ void game_object::draw_trans(int count, int max)
 }
 
 
-void game_object::draw_tint(int tint_id)
+void GameObject::draw_tint(int tint_id)
 {
   TransImage *cpict=picture();
   if (fade_count())
@@ -694,7 +694,7 @@ void game_object::draw_tint(int tint_id)
 }
 
 
-void game_object::draw_double_tint(int tint_id, int tint2)
+void GameObject::draw_double_tint(int tint_id, int tint2)
 {
   TransImage *cpict=picture();
   if (fade_count())
@@ -716,7 +716,7 @@ void game_object::draw_double_tint(int tint_id, int tint2)
 
 
 
-void game_object::draw_predator()
+void GameObject::draw_predator()
 {
   TransImage *cpict=picture();
   cpict->PutPredator(main_screen,
@@ -725,7 +725,7 @@ void game_object::draw_predator()
 
 }
 
-void game_object::drawer()
+void GameObject::drawer()
 {
   if (morph_status())
   {
@@ -749,22 +749,22 @@ void game_object::drawer()
   }
 }
 
-game_object *game_object::try_move(int32_t x, int32_t y, int32_t &xv, int32_t &yv, int checks)
+GameObject *GameObject::try_move(int32_t x, int32_t y, int32_t &xv, int32_t &yv, int checks)
 {
   if (xv || yv)  // make sure they are suggesting movement
   {
-    game_object *who1=NULL,*who2=NULL;      // who did we intersect?
+    GameObject *who1=NULL,*who2=NULL;      // who did we intersect?
     int32_t x2,y2,h;
 
     if (checks&1)
     {
       x2=x+xv;
       y2=y+yv;
-      current_level->foreground_intersect(x,y,x2,y2);
+      g_current_level->foreground_intersect(x,y,x2,y2);
       if (!stoppable())
-        who1=current_level->boundary_setback(this,x,y,x2,y2);
+        who1=g_current_level->boundary_setback(this,x,y,x2,y2);
       else
-        who1=current_level->all_boundary_setback(this,x,y,x2,y2);
+        who1=g_current_level->all_boundary_setback(this,x,y,x2,y2);
       xv=x2-x;
       yv=y2-y;
     }
@@ -775,11 +775,11 @@ game_object *game_object::try_move(int32_t x, int32_t y, int32_t &xv, int32_t &y
       h=picture()->Size().y;
       x2=x+xv;
       y2=y-h+1+yv;
-      current_level->foreground_intersect(x,y-h+1,x2,y2);
+      g_current_level->foreground_intersect(x,y-h+1,x2,y2);
       if (!stoppable())
-        who2=current_level->all_boundary_setback(this,x,y-h+1,x2,y2);
+        who2=g_current_level->all_boundary_setback(this,x,y-h+1,x2,y2);
       else
-        who2=current_level->boundary_setback(this,x,y-h+1,x2,y2);
+        who2=g_current_level->boundary_setback(this,x,y-h+1,x2,y2);
       xv=x2-x;
       yv=y2-y+h-1;
     }
@@ -790,7 +790,7 @@ game_object *game_object::try_move(int32_t x, int32_t y, int32_t &xv, int32_t &y
   else return NULL;
 }
 
-void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
+void *GameObject::float_tick()  // returns 1 if you hit something, 0 otherwise
 {
   int32_t ret=0;
   if (hp()<=0)
@@ -842,11 +842,11 @@ void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
     set_fy(ffy&0xff);
 
     int32_t old_nxv=nxv,old_nyv=nyv;
-    game_object *hit_object=try_move(x,y,nxv,nyv,3);   // now find out what velocity is safe to use
+    GameObject *hit_object=try_move(x,y,nxv,nyv,3);   // now find out what velocity is safe to use
 
 /*    if (get_cflag(CFLAG_STOPPABLE))
     {
-      game_object *r=current_level->boundary_setback(exclude,x,y,nxv,nyv,1);
+      GameObject *r=g_current_level->boundary_setback(exclude,x,y,nxv,nyv,1);
       if (r) hit_object=r;
     }*/
 
@@ -903,7 +903,7 @@ void *game_object::float_tick()  // returns 1 if you hit something, 0 otherwise
   return true_symbol;
 }
 
-int game_object::tick()      // returns blocked status
+int GameObject::tick()      // returns blocked status
 {
   int blocked=0;
 
@@ -948,7 +948,7 @@ int game_object::tick()      // returns blocked status
     if (yvel()<=0)  // if we are going up or a strait across check up and down
     up=2;
     int32_t xv=xvel(),yv=yvel();
-    game_object *h=try_move(x,y,xv,yv,1|up);       // now find out what velocity is safe to use
+    GameObject *h=try_move(x,y,xv,yv,1|up);       // now find out what velocity is safe to use
     set_xvel(xv);
     set_yvel(yv);
     x+=xv;
@@ -1102,21 +1102,21 @@ int game_object::tick()      // returns blocked status
   return blocked;
 }
 
-void game_object::defaults()
+void GameObject::defaults()
 {
   set_state(state);
   if (otype!=0xffff)
   {
     int s=get_ability(otype,start_hp);
-    if (s!=default_simple.hp())
+    if (s!=g_default_simple.hp())
       set_hp(s);
   }
 }
 
-void game_object::frame_advance()
+void GameObject::frame_advance()
 {
   int ad=current_sequence()->get_advance(current_frame);
-  if (ad && current_level)
+  if (ad && g_current_level)
   {
     int32_t xv;
     if (direction>0) xv=ad; else xv=-ad;
@@ -1126,7 +1126,7 @@ void game_object::frame_advance()
   }
 }
 
-void game_object::set_state(character_state s, int frame_direction)
+void GameObject::set_state(character_state s, int frame_direction)
 {
   if (has_sequence(s))
     state=s;
@@ -1140,15 +1140,15 @@ void game_object::set_state(character_state s, int frame_direction)
 }
 
 
-game_object *create(int type, int32_t x, int32_t y, int skip_constructor, int aitype)
+GameObject *create(int type, int32_t x, int32_t y, int skip_constructor, int aitype)
 {
-  game_object *g=new game_object(type,skip_constructor);
+  GameObject *g=new GameObject(type,skip_constructor);
   g->x=x; g->y=y; g->last_x=x; g->last_y=y;
   if (aitype)
     g->set_aitype(aitype);
   if (figures[type]->get_fun(OFUN_CONSTRUCTOR) && !skip_constructor)
   {
-    game_object *o=current_object;
+    GameObject *o=current_object;
     current_object=g;
 
     void *m = LSpace::Tmp.Mark();
@@ -1179,14 +1179,14 @@ int base_size()
      4*7;
 }
 
-int game_object::size()
+int GameObject::size()
 {
   return base_size();
 }
 
 
 
-int game_object::move(int cx, int cy, int button)
+int GameObject::move(int cx, int cy, int button)
 {
   int ret=0;
 
@@ -1194,7 +1194,7 @@ int game_object::move(int cx, int cy, int button)
   {
     LList *lcx, *lcy, *lb;
 
-    game_object *o=current_object;
+    GameObject *o=current_object;
     current_object=this;
 
     // make a list of the parameters, and call the lisp function
@@ -1244,7 +1244,7 @@ int game_object::move(int cx, int cy, int button)
   return ret;
 }
 
-int game_object::mover(int cx, int cy, int button)  // return false if the route is blocked
+int GameObject::mover(int cx, int cy, int button)  // return false if the route is blocked
 {
   if (hp()<=0)
     return tick();
@@ -1440,7 +1440,7 @@ int game_object::mover(int cx, int cy, int button)  // return false if the route
 
 
 
-game_object *game_object::bmove(int &whit, game_object *exclude)
+GameObject *GameObject::bmove(int &whit, GameObject *exclude)
 {
 
   // first let's move the guy acording to his physics
@@ -1467,8 +1467,8 @@ game_object *game_object::bmove(int &whit, game_object *exclude)
   ox2=nx;
   oy2=ny;  // save the correct veloicties
 
-  current_level->foreground_intersect(x,y,nx,ny);  // first see how far we can travel
-  game_object *ret=current_level->all_boundary_setback(exclude,x,y,nx,ny);
+  g_current_level->foreground_intersect(x,y,nx,ny);  // first see how far we can travel
+  GameObject *ret=g_current_level->all_boundary_setback(exclude,x,y,nx,ny);
   x=nx;
   y=ny;
   set_fx(nfx&0xff);
@@ -1490,7 +1490,7 @@ game_object *game_object::bmove(int &whit, game_object *exclude)
 
 
 
-int object_to_number_in_list(game_object *who, object_node *list)
+int object_to_number_in_list(GameObject *who, object_node *list)
 {
   int x=1;
   while (list)
@@ -1502,7 +1502,7 @@ int object_to_number_in_list(game_object *who, object_node *list)
   return 0;
 }
 
-game_object *number_to_object_in_list(int32_t x, object_node *list)
+GameObject *number_to_object_in_list(int32_t x, object_node *list)
 {
   if (!x) return NULL; x--;
   while (x && list) { list=list->next; x--; }
@@ -1532,7 +1532,7 @@ int32_t object_list_length(object_node *list)
 
 
 
-game_object::game_object(int Type, int load)
+GameObject::GameObject(int Type, int load)
 {
   lvars = NULL;
 
@@ -1551,7 +1551,7 @@ game_object::game_object(int Type, int load)
 }
 
 
-int game_object::reduced_state()
+int GameObject::reduced_state()
 {
   int32_t x=0;
   for (int i=0; i<figures[otype]->ts; i++)
@@ -1564,7 +1564,7 @@ int game_object::reduced_state()
 }
 
 
-void game_object::change_aitype(int new_type)
+void GameObject::change_aitype(int new_type)
 {
   set_aitype(new_type);
   if (otype<0xffff)
@@ -1572,8 +1572,8 @@ void game_object::change_aitype(int new_type)
     void *f=figures[otype]->get_fun(OFUN_CHANGE_TYPE);
     if (f)
     {
-      game_object *o=current_object;
-      current_object=(game_object *)this;
+      GameObject *o=current_object;
+      current_object=(GameObject *)this;
 
       time_marker *prof1=NULL;
       if (profiling())
@@ -1595,7 +1595,7 @@ void game_object::change_aitype(int new_type)
 }
 
 
-void game_object::change_type(int new_type)
+void GameObject::change_type(int new_type)
 {
   free(lvars);     // free old variable
   lvars = NULL;
@@ -1614,7 +1614,7 @@ void game_object::change_type(int new_type)
 
   if (figures[new_type]->get_fun(OFUN_CONSTRUCTOR))
   {
-    game_object *o=current_object;
+    GameObject *o=current_object;
     current_object=this;
 
     void *m = LSpace::Tmp.Mark();

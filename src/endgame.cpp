@@ -407,8 +407,8 @@ void show_end2()
   free(p);
 
 
-  delete current_level;
-  current_level=NULL;
+  delete g_current_level;
+  g_current_level=NULL;
 
   fade_out(16);
   main_screen->clear();
@@ -518,8 +518,8 @@ void show_end()
     } while (ev.type!=EV_KEY && ev.type!=EV_MOUSE_BUTTON);
   }
 
-  delete current_level;
-  current_level=NULL;
+  delete g_current_level;
+  g_current_level=NULL;
 
   fade_out(16);
   main_screen->clear();

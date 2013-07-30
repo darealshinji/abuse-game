@@ -89,7 +89,7 @@ extern void show_end();
 
 static view *lget_view(void *arg, char const *msg)
 {
-  game_object *o=(game_object *)lpointer_value(arg);
+  GameObject *o=(GameObject *)lpointer_value(arg);
   view *c=o->controller();
   if (!c)
   {
@@ -588,8 +588,8 @@ void *l_caller(long number, void *args)
     } break;
     case 1 :
     {
-      game_object *old_cur=current_object;
-      current_object=(game_object *)lpointer_value(CAR(args)->Eval());
+      GameObject *old_cur=current_object;
+      current_object=(GameObject *)lpointer_value(CAR(args)->Eval());
       void *ret=eval_block(CDR(args));
       current_object=old_cur;
       return ret;
@@ -599,11 +599,11 @@ void *l_caller(long number, void *args)
     case 2 :
     {
       int whit;
-      game_object *o;
+      GameObject *o;
       if (args)
-        o=(game_object *)lpointer_value(CAR(args)->Eval());
+        o=(GameObject *)lpointer_value(CAR(args)->Eval());
       else o=current_object;
-      game_object *hit=current_object->bmove(whit,o);
+      GameObject *hit=current_object->bmove(whit,o);
       if (hit)
         return LPointer::Create(hit);
       else if (whit) return NULL;
@@ -613,13 +613,13 @@ void *l_caller(long number, void *args)
     case 3 : return LPointer::Create(current_object); break;
     case 4 :
     { if (player_list->next)
-        return LPointer::Create(current_level->attacker(current_object));
+        return LPointer::Create(g_current_level->attacker(current_object));
       else return LPointer::Create(player_list->m_focus); } break;
-    case 5 : return LPointer::Create(current_level->find_closest(current_object->x,
+    case 5 : return LPointer::Create(g_current_level->find_closest(current_object->x,
                                  current_object->y,
                                lnumber_value(CAR(args)->Eval()),
                                        current_object)); break;
-    case 6 : return LPointer::Create(current_level->find_xclosest(current_object->x,
+    case 6 : return LPointer::Create(g_current_level->find_xclosest(current_object->x,
                                   current_object->y,
                                   lnumber_value(CAR(args)->Eval()),
                                   current_object
@@ -628,7 +628,7 @@ void *l_caller(long number, void *args)
     {
       long n1=lnumber_value(CAR(args)->Eval());
       long n2=lnumber_value(CAR(CDR(args))->Eval());
-      return LPointer::Create(current_level->find_xrange(current_object->x,
+      return LPointer::Create(g_current_level->find_xrange(current_object->x,
                              current_object->y,
                              n1,
                              n2
@@ -639,13 +639,13 @@ void *l_caller(long number, void *args)
       int type=lnumber_value(CAR(args)->Eval()); args=CDR(args);
       long x=lnumber_value(CAR(args)->Eval()); args=CDR(args);
       long y=lnumber_value(CAR(args)->Eval()); args=CDR(args);
-      game_object *o;
+      GameObject *o;
       if (args)
         o=create(type,x,y,0,lnumber_value(CAR(args)->Eval()));
       else
         o=create(type,x,y);
-      if (current_level)
-        current_level->add_object(o);
+      if (g_current_level)
+        g_current_level->add_object(o);
       return LPointer::Create(o);
     } break;
     case 22 :
@@ -653,20 +653,20 @@ void *l_caller(long number, void *args)
       int type=lnumber_value(CAR(args)->Eval()); args=CDR(args);
       long x=lnumber_value(CAR(args)->Eval()); args=CDR(args);
       long y=lnumber_value(CAR(args)->Eval()); args=CDR(args);
-      game_object *o;
+      GameObject *o;
       if (args)
         o=create(type,x,y,0,lnumber_value(CAR(args)->Eval()));
       else
         o=create(type,x,y);
-      if (current_level)
-        current_level->add_object_after(o,current_object);
+      if (g_current_level)
+        g_current_level->add_object_after(o,current_object);
       return LPointer::Create(o);
     } break;
 
     case 9 : return LPointer::Create(the_game->first_view->m_focus); break;
     case 10 :
     {
-      view *v=((game_object *)lpointer_value(CAR(args)->Eval()))->controller()->next;
+      view *v=((GameObject *)lpointer_value(CAR(args)->Eval()))->controller()->next;
       if (v)
         return LPointer::Create(v->m_focus);
       else return NULL;
@@ -683,7 +683,7 @@ void *l_caller(long number, void *args)
     } break;
     case 13 :
     {
-      game_object *old_cur=current_object;
+      GameObject *old_cur=current_object;
       void *ret=NULL;
       for (int i=0; i<old_cur->total_objects(); i++)
       {
@@ -739,7 +739,7 @@ void *l_caller(long number, void *args)
       long y2=lnumber_value(CAR(args)->Eval()); args=CDR(args);
 
       void *list = CAR(args)->Eval();
-      game_object *find=current_level->find_object_in_area(current_object->x,
+      GameObject *find=g_current_level->find_object_in_area(current_object->x,
                           current_object->y,
                           x1,y1,x2,y2,list,current_object);
       if (find) return LPointer::Create(find);
@@ -753,7 +753,7 @@ void *l_caller(long number, void *args)
 
       void *list = CAR(args)->Eval();
       PtrRef r1(list);
-      game_object *find=current_level->find_object_in_angle(current_object->x,
+      GameObject *find=g_current_level->find_object_in_angle(current_object->x,
                             current_object->y,
                             a1,a2,list,current_object);
       if (find) return LPointer::Create(find);
@@ -793,7 +793,7 @@ void *l_caller(long number, void *args)
       int32_t y1=lnumber_value(CAR(args)->Eval()); args=CDR(args);
       int32_t x2=lnumber_value(CAR(args)->Eval()); args=CDR(args);
       int32_t y2=lnumber_value(CAR(args)->Eval());
-      current_level->foreground_intersect(x1,y1,x2,y2);
+      g_current_level->foreground_intersect(x1,y1,x2,y2);
       void *ret=NULL;
       push_onto_list(LNumber::Create(y2),ret);
       push_onto_list(LNumber::Create(x2),ret);
@@ -813,7 +813,7 @@ void *l_caller(long number, void *args)
     } break;
     case 26 :
     {
-      return LString::Create(current_level->name());
+      return LString::Create(g_current_level->name());
     } break;
     case 27 : return ant_ai(); break;
     case 28 : return sensor_ai(); break;
@@ -836,7 +836,7 @@ void *l_caller(long number, void *args)
     case 37 : return ladder_ai(); break;
     case 38 :
     {
-      game_object *old_cur=current_object;
+      GameObject *old_cur=current_object;
       current_object=current_object->get_object(0);
       void *ret=eval_block(args);
       current_object=old_cur;
@@ -1048,11 +1048,11 @@ long c_caller(long number, void *args)
     {
         case 1:
         {
-            return lol::abs(current_object->x-current_level->attacker(current_object)->x);
+            return lol::abs(current_object->x-g_current_level->attacker(current_object)->x);
         } break;
         case 2:
         {
-            return lol::abs(current_object->y-current_level->attacker(current_object)->y);
+            return lol::abs(current_object->y-g_current_level->attacker(current_object)->y);
         } break;
         case 3:
         {
@@ -1071,7 +1071,7 @@ long c_caller(long number, void *args)
         } break;
         case 5:
         {
-            return current_level->attacker(current_object)->state;
+            return g_current_level->attacker(current_object)->state;
         } break;
         case 6:
         {
@@ -1094,7 +1094,7 @@ long c_caller(long number, void *args)
 /*      if (rcheck_lp)
       {
     char str[100];
-    sprintf(str,"\n\nTick %d, Rand_on %d\n",current_level->tick_counter(),rand_on);
+    sprintf(str,"\n\nTick %d, Rand_on %d\n",g_current_level->tick_counter(),rand_on);
     rcheck_lp->write(str,strlen(str)+1);
     current_print_file=rcheck_lp;
     print_trace_stack(6);
@@ -1107,7 +1107,7 @@ long c_caller(long number, void *args)
         case 11 : return current_object->state; break;
         case 12:
         {
-            if (current_level->attacker(current_object)->x>current_object->x)
+            if (g_current_level->attacker(current_object)->x>current_object->x)
                 return 1;
             else
                 return -1;
@@ -1141,7 +1141,7 @@ long c_caller(long number, void *args)
     case 22 :
     {
       int32_t x1,y1,x2,y2,xp1,yp1,xp2,yp2;
-      current_level->attacker(current_object)->picture_space(x1,y1,x2,y2);
+      g_current_level->attacker(current_object)->picture_space(x1,y1,x2,y2);
       current_object->picture_space(xp1,yp1,xp2,yp2);
       if (xp1>x2 || xp2<x1 || yp1>y2 || yp2<y1) return 0;
       else return 1;
@@ -1170,7 +1170,7 @@ long c_caller(long number, void *args)
       return 1;
     } break;
 
-    case 34 : { return current_level->push_characters(current_object,lnumber_value(CAR(args)),
+    case 34 : { return g_current_level->push_characters(current_object,lnumber_value(CAR(args)),
                         lnumber_value(CAR(CDR(args))));
           } break;
 
@@ -1181,15 +1181,15 @@ long c_caller(long number, void *args)
       return (s==current_object->state);
     } break;
 
-    case 38 : return current_level->attacker(current_object)->x; break;
-    case 39 : return current_level->attacker(current_object)->y; break;
+    case 38 : return g_current_level->attacker(current_object)->x; break;
+    case 39 : return g_current_level->attacker(current_object)->y; break;
     case 40 : current_object->change_aitype(lnumber_value(CAR(args))); return 1; break;
 
     case 42 : return current_object->xvel(); break;
     case 43 : return current_object->yvel(); break;
     case 44 : current_object->set_xvel(lnumber_value(CAR(args))); return 1; break;
     case 45 : current_object->set_yvel(lnumber_value(CAR(args))); return 1; break;
-    case 46 : if (current_level->attacker(current_object)->x>current_object->x) return -1;
+    case 46 : if (g_current_level->attacker(current_object)->x>current_object->x) return -1;
               else return 1; break;
     case 47 : return lnumber_value(CAR(args))&BLOCKED_LEFT; break;
     case 48 : return lnumber_value(CAR(args))&BLOCKED_RIGHT; break;
@@ -1232,17 +1232,17 @@ long c_caller(long number, void *args)
     case 68 : scene_director.wait(CAR(args)); break;
 
 
-    case 73 : the_game->set_level(new level(lnumber_value(CAR(args)),
+    case 73 : the_game->set_level(new Level(lnumber_value(CAR(args)),
                         lnumber_value(CAR(CDR(args))),
                         lstring_value(CAR(CDR(CDR(args)))))); break;
     case 74 :
-    { if (current_level) delete current_level;
-      current_level=new level(100,100,"new_level");
+    { if (g_current_level) delete g_current_level;
+      g_current_level=new Level(100,100,"new_level");
     } break;
     case 75 :
     {
       int amount=lnumber_value(CAR(args)); args=CDR(args);
-      game_object *o=((game_object *)lpointer_value(CAR(args))); args=CDR(args);
+      GameObject *o=((GameObject *)lpointer_value(CAR(args))); args=CDR(args);
       int xv=0,yv=0;
       if (args)
       {
@@ -1254,13 +1254,13 @@ long c_caller(long number, void *args)
     case 76 : return current_object->hp(); break;
     case 77 :
     {
-      game_object *o=(game_object *)lpointer_value(CAR(args));
+      GameObject *o=(GameObject *)lpointer_value(CAR(args));
       if (!o->controller()) printf("set shift: object is not a focus\n");
       else o->controller()->m_shift.y=lnumber_value(CAR(CDR(args))); return 1;
     } break;
     case 78 :
     {
-      game_object *o=(game_object *)lpointer_value(CAR(args));
+      GameObject *o=(GameObject *)lpointer_value(CAR(args));
       if (!o->controller()) printf("set shift: object is not a focus\n");
       else o->controller()->m_shift.x=lnumber_value(CAR(CDR(args))); return 1;
     } break;
@@ -1277,7 +1277,7 @@ long c_caller(long number, void *args)
     case 90 : current_object->morph_into(lnumber_value(CAR(args)),NULL,
                      lnumber_value(CAR(CDR(args))),
                      lnumber_value(CAR(CDR(CDR(args))))); return 1; break;
-    case 91 : current_object->add_object((game_object *)lpointer_value(CAR(args))); return 1; break;
+    case 91 : current_object->add_object((GameObject *)lpointer_value(CAR(args))); return 1; break;
     case 92 :
     {
       int32_t x1 = lnumber_value(CAR(args)); args = lcdr(args);
@@ -1294,14 +1294,14 @@ long c_caller(long number, void *args)
     case 94 : return wm->medium_color(); break;
     case 95 : return wm->bright_color(); break;
 
-    case 99 : current_object->remove_object((game_object *)lpointer_value(CAR(args))); return 1; break;
-    case 100 : current_object->add_light((light_source *)lpointer_value(CAR(args))); return 1; break;
-    case 101 : current_object->remove_light((light_source *)lpointer_value(CAR(args))); return 1; break;
+    case 99 : current_object->remove_object((GameObject *)lpointer_value(CAR(args))); return 1; break;
+    case 100 : current_object->add_light((LightSource *)lpointer_value(CAR(args))); return 1; break;
+    case 101 : current_object->remove_light((LightSource *)lpointer_value(CAR(args))); return 1; break;
     case 102 : return current_object->total_objects(); break;
     case 103 : return current_object->total_lights(); break;
 
     case 104 :
-    { light_source *l=(light_source *)lpointer_value(CAR(args));
+    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
       int32_t x=lnumber_value(CAR(CDR(args)));
       if (x>=1)
         l->inner_radius=x;
@@ -1309,7 +1309,7 @@ long c_caller(long number, void *args)
       return 1;
     } break;
     case 105 :
-    { light_source *l=(light_source *)lpointer_value(CAR(args));
+    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
       int32_t x=lnumber_value(CAR(CDR(args)));
       if (x>l->inner_radius)
         l->outer_radius=x;
@@ -1317,38 +1317,38 @@ long c_caller(long number, void *args)
       return 1;
     } break;
     case 106 :
-    { light_source *l=(light_source *)lpointer_value(CAR(args));
+    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
       l->x=lnumber_value(CAR(CDR(args)));
       l->calc_range();
       return 1;
     } break;
     case 107 :
-    { light_source *l=(light_source *)lpointer_value(CAR(args));
+    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
       l->y=lnumber_value(CAR(CDR(args)));
       l->calc_range();
       return 1;
     } break;
     case 108 :
-    { light_source *l=(light_source *)lpointer_value(CAR(args));
+    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
       l->xshift=lnumber_value(CAR(CDR(args)));
       l->calc_range();
       return 1;
     } break;
     case 109 :
-    { light_source *l=(light_source *)lpointer_value(CAR(args));
+    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
       l->yshift=lnumber_value(CAR(CDR(args)));
       l->calc_range();
       return 1;
     } break;
-    case 110 : return ((light_source *)lpointer_value(CAR(args)))->inner_radius; break;
-    case 111 : return ((light_source *)lpointer_value(CAR(args)))->outer_radius; break;
-    case 112 : return ((light_source *)lpointer_value(CAR(args)))->x; break;
-    case 113 : return ((light_source *)lpointer_value(CAR(args)))->y; break;
-    case 114 : return ((light_source *)lpointer_value(CAR(args)))->xshift; break;
-    case 115 : return ((light_source *)lpointer_value(CAR(args)))->yshift; break;
+    case 110 : return ((LightSource *)lpointer_value(CAR(args)))->inner_radius; break;
+    case 111 : return ((LightSource *)lpointer_value(CAR(args)))->outer_radius; break;
+    case 112 : return ((LightSource *)lpointer_value(CAR(args)))->x; break;
+    case 113 : return ((LightSource *)lpointer_value(CAR(args)))->y; break;
+    case 114 : return ((LightSource *)lpointer_value(CAR(args)))->xshift; break;
+    case 115 : return ((LightSource *)lpointer_value(CAR(args)))->yshift; break;
     case 116 : return current_object->xacel(); break;
     case 117 : return current_object->yacel(); break;
-    case 118 : current_level->remove_light((light_source *)lpointer_value(CAR(args))); break;
+    case 118 : g_current_level->remove_light((LightSource *)lpointer_value(CAR(args))); break;
     case 119 : current_object->set_fx(lnumber_value(CAR(args))); break;
     case 120 : current_object->set_fy(lnumber_value(CAR(args))); break;
     case 121 : current_object->set_fxvel(lnumber_value(CAR(args))); break;
@@ -1358,7 +1358,7 @@ long c_caller(long number, void *args)
     case 125 : return current_object->picture()->Size().x; break;
     case 126 : return current_object->picture()->Size().y; break;
     case 127 : { dprintf("trap\n"); } break;   // I use this to set gdb break points
-    case 128 : { return current_level->platform_push(current_object,lnumber_value(CAR(args)),
+    case 128 : { return g_current_level->platform_push(current_object,lnumber_value(CAR(args)),
                         lnumber_value(CAR(CDR(args))));
                         } break;
     case 133 :  // def_sound
@@ -1435,9 +1435,9 @@ long c_caller(long number, void *args)
       int32_t y=lnumber_value(CAR(args)); args=CDR(args);
       int32_t r=lnumber_value(CAR(args)); args=CDR(args);
       int32_t m=lnumber_value(CAR(args)); args=CDR(args);
-      game_object *o=(game_object *)lpointer_value(CAR(args)); args=CDR(args);
+      GameObject *o=(GameObject *)lpointer_value(CAR(args)); args=CDR(args);
       int32_t mp=lnumber_value(CAR(args));
-      current_level->hurt_radius(x,y,r,m,current_object,o,mp);
+      g_current_level->hurt_radius(x,y,r,m,current_object,o,mp);
     } break;
 
     case 144 :
@@ -1502,7 +1502,7 @@ long c_caller(long number, void *args)
     } break;
     case 153 :
     {
-      game_object *o=(game_object *)lpointer_value(CAR(args));
+      GameObject *o=(GameObject *)lpointer_value(CAR(args));
       int32_t x=o->x-current_object->x,
         y=-(o->y-o->picture()->Size().y/2-(current_object->y-(current_object->picture()->Size().y/2)));
       return lisp_atan2(y,x);
@@ -1558,7 +1558,7 @@ long c_caller(long number, void *args)
     case 169 :
     {
       int32_t am=lnumber_value(CAR(args)); args=CDR(args);
-      game_object *from=(game_object *)lpointer_value(CAR(args)); args=CDR(args);
+      GameObject *from=(GameObject *)lpointer_value(CAR(args)); args=CDR(args);
       int32_t hitx=lnumber_value(CAR(args)); args=CDR(args);
       int32_t hity=lnumber_value(CAR(args)); args=CDR(args);
       int32_t px=lnumber_value(CAR(args)); args=CDR(args);
@@ -1636,7 +1636,7 @@ long c_caller(long number, void *args)
     case 181 :
     {
       int x=current_object->total_objects();
-      game_object *who=(game_object *)lpointer_value(CAR(args));
+      GameObject *who=(GameObject *)lpointer_value(CAR(args));
       for (int i=0; i<x; i++)
         if (current_object->get_object(i)==who) return 1;
       return 0;
@@ -1660,36 +1660,36 @@ long c_caller(long number, void *args)
       int32_t x=lnumber_value(CAR(args)); args=CDR(args);
       int32_t y=lnumber_value(CAR(args)); args=CDR(args);
       int32_t type=lnumber_value(CAR(args));
-      if (x<0 || y<0 || x>=current_level->foreground_width() || y>=current_level->foreground_width())
+      if (x<0 || y<0 || x>=g_current_level->foreground_width() || y>=g_current_level->foreground_width())
         lbreak("%d %d is out of range of fg map",x,y);
       else
-        current_level->PutFg(ivec2(x, y), type);
+        g_current_level->PutFg(ivec2(x, y), type);
     } break;
     case 193 :
     {
       int32_t x=lnumber_value(CAR(args)); args=CDR(args);
       int32_t y=lnumber_value(CAR(args));
-      if (x<0 || y<0 || x>=current_level->foreground_width() || y>=current_level->foreground_width())
+      if (x<0 || y<0 || x>=g_current_level->foreground_width() || y>=g_current_level->foreground_width())
         lbreak("%d %d is out of range of fg map",x,y);
-      else return current_level->GetFg(ivec2(x, y));
+      else return g_current_level->GetFg(ivec2(x, y));
     } break;
     case 194 :
     {
       int32_t x=lnumber_value(CAR(args)); args=CDR(args);
       int32_t y=lnumber_value(CAR(args)); args=CDR(args);
       int32_t type=lnumber_value(CAR(args));
-      if (x<0 || y<0 || x>=current_level->background_width() || y>=current_level->background_width())
+      if (x<0 || y<0 || x>=g_current_level->background_width() || y>=g_current_level->background_width())
         lbreak("%d %d is out of range of fg map",x,y);
       else
-        current_level->PutBg(ivec2(x, y), type);
+        g_current_level->PutBg(ivec2(x, y), type);
     } break;
     case 195 :
     {
       int32_t x=lnumber_value(CAR(args)); args=CDR(args);
       int32_t y=lnumber_value(CAR(args));
-      if (x<0 || y<0 || x>=current_level->background_width() || y>=current_level->background_width())
+      if (x<0 || y<0 || x>=g_current_level->background_width() || y>=g_current_level->background_width())
         lbreak("%d %d is out of range of fg map",x,y);
-      else return current_level->GetBg(ivec2(x, y));
+      else return g_current_level->GetBg(ivec2(x, y));
     } break;
     case 196 : load_tiles(args); break;
     case 197 :
@@ -1766,13 +1766,13 @@ long c_caller(long number, void *args)
       int32_t y2=lnumber_value(CAR(args)); args=CDR(args);
       void *block_all=CAR(args);
       int32_t nx2=x2,ny2=y2;
-      current_level->foreground_intersect(x1,y1,x2,y2);
+      g_current_level->foreground_intersect(x1,y1,x2,y2);
       if (x2!=nx2 || y2!=ny2) return 0;
 
       if (block_all)
-        current_level->all_boundary_setback(current_object,x1,y1,x2,y2);
+        g_current_level->all_boundary_setback(current_object,x1,y1,x2,y2);
       else
-        current_level->boundary_setback(current_object,x1,y1,x2,y2);
+        g_current_level->boundary_setback(current_object,x1,y1,x2,y2);
       return (x2==nx2 && y2==ny2);
 
     } break;
@@ -1878,7 +1878,7 @@ long c_caller(long number, void *args)
     case 223 :
     {
       char *fn=lstring_value(CAR(args));
-      current_level->save(fn,1);
+      g_current_level->save(fn,1);
     } break;
     case 224 :
     {
@@ -1970,7 +1970,7 @@ long c_caller(long number, void *args)
 
     } break;
     case 235 :
-    { if (current_level) return current_level->tick_counter();
+    { if (g_current_level) return g_current_level->tick_counter();
       else return 0; } break;
     case 236 :
     {
@@ -1985,9 +1985,9 @@ long c_caller(long number, void *args)
       return current_object->total_frames();
     } break;
     case 239 :
-    { current_level->to_front(current_object); } break;
+    { g_current_level->to_front(current_object); } break;
     case 240 :
-    { current_level->to_back(current_object); } break;
+    { g_current_level->to_back(current_object); } break;
     case 241 :
     {
       view *v=current_object->controller();
@@ -2152,19 +2152,19 @@ long c_caller(long number, void *args)
     } break;
     case 270 :
     {
-      return current_level->foreground_width();
+      return g_current_level->foreground_width();
     } break;
     case 271 :
     {
-      return current_level->foreground_height();
+      return g_current_level->foreground_height();
     } break;
     case 272 :
     {
-      return current_level->background_width();
+      return g_current_level->background_width();
     } break;
     case 273 :
     {
-      return current_level->background_height();
+      return g_current_level->background_height();
     } break;
     case 274 :
     {
@@ -2269,7 +2269,7 @@ long c_caller(long number, void *args)
     v->tkills+=v->kills;
 
         v->kills=0;
-    game_object *o=current_object;
+    GameObject *o=current_object;
     current_object=v->m_focus;
 
     ((LSymbol *)l_restart_player)->EvalFunction(NULL);

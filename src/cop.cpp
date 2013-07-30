@@ -137,10 +137,10 @@ inline int angle_diff(int a1, int a2)
 
 void *top_ai()
 {
-  game_object *o=current_object;
+  GameObject *o=current_object;
   if (o->total_objects())            // make sure we are linked to the main character
   {
-    game_object *q=o->get_object(0);
+    GameObject *q=o->get_object(0);
 
     view *v=q->controller();
     if (v)
@@ -201,11 +201,11 @@ void *top_ai()
 }
 
 
-static int player_fire_weapon(game_object *o, int type, game_object *target, int angle, signed char *fire_off)
+static int player_fire_weapon(GameObject *o, int type, GameObject *target, int angle, signed char *fire_off)
 {
 
   if (!o->total_objects()) return 0;
-  game_object *other=o->get_object(0);
+  GameObject *other=o->get_object(0);
   int ox=other->x,oy=other->y;
   if (other->direction<0) other->x+=4;
 
@@ -217,15 +217,15 @@ static int player_fire_weapon(game_object *o, int type, game_object *target, int
   // fire try to move up to gun level
 
   int32_t x2=o->x,y2=firey;
-//  current_level->foreground_intersect(other->x,other->y,x2,y2);      // find first location we can actuall "see"
-//  current_level->all_boundary_setback(o,other->x,other->y,x2,y2);       // to make we don't fire through walls
+//  g_current_level->foreground_intersect(other->x,other->y,x2,y2);      // find first location we can actuall "see"
+//  g_current_level->all_boundary_setback(o,other->x,other->y,x2,y2);       // to make we don't fire through walls
   other->y=y2;
 
   if (other->y==firey)             // now try to move out to end of gun if we were not blocked above
   {
     x2=firex;
-    current_level->foreground_intersect(other->x,other->y,x2,y2);      // find first location we can actuall "see"
-    current_level->all_boundary_setback(other,other->x,other->y,x2,y2);       // to make we don't fire through walls
+    g_current_level->foreground_intersect(other->x,other->y,x2,y2);      // find first location we can actuall "see"
+    g_current_level->all_boundary_setback(other,other->x,other->y,x2,y2);       // to make we don't fire through walls
     o->x=x2;
   }
 
@@ -250,7 +250,7 @@ static int player_fire_weapon(game_object *o, int type, game_object *target, int
 
 void *laser_ufun(void *args)
 {
-  game_object *o=current_object;
+  GameObject *o=current_object;
   PtrRef r1(args);
   void *signal=CAR(args);  args=CDR(args);
   void *ret=NULL;
@@ -292,7 +292,7 @@ static int ammo_type(int otype)
 
 void *top_ufun(void *args)                       // generic top character ai GRENADE && FIREBOMB
 {
-  game_object *o=current_object;
+  GameObject *o=current_object;
   PtrRef r1(args);
   void *signal=CAR(args);  args=CDR(args);
   void *ret=NULL;
@@ -315,11 +315,11 @@ void *top_ufun(void *args)                       // generic top character ai GRE
   return ret;
 }
 
-static int climb_handler(game_object *, int xm, int ym, int but);
+static int climb_handler(GameObject *, int xm, int ym, int but);
 
 void *plaser_ufun(void *args)
 {
-  game_object *o=current_object;
+  GameObject *o=current_object;
   PtrRef r1(args);
   void *signal=CAR(args);  args=CDR(args);
   void *ret=NULL;
@@ -343,7 +343,7 @@ void *plaser_ufun(void *args)
 
 void *lsaber_ufun(void *args)
 {
-  game_object *o=current_object;
+  GameObject *o=current_object;
   PtrRef r1(args);
   void *signal=CAR(args);  args=CDR(args);
   void *ret=NULL;
@@ -356,7 +356,7 @@ void *lsaber_ufun(void *args)
       if (value)                                   // do we have ammo ?
       {
     o->lvars[fire_delay1]=1;
-    if (player_fire_weapon(o,LSABER,NULL,o->lvars[point_angle]+(current_level->tick_counter()&7)-8,
+    if (player_fire_weapon(o,LSABER,NULL,o->lvars[point_angle]+(g_current_level->tick_counter()&7)-8,
                    small_fire_off))
           ret=LNumber::Create(-1);
     else ret=LNumber::Create(0);
@@ -370,7 +370,7 @@ void *lsaber_ufun(void *args)
 
 void *player_rocket_ufun(void *args)
 {
-  game_object *o=current_object;
+  GameObject *o=current_object;
   PtrRef r1(args);
   void *signal=CAR(args);  args=CDR(args);
   void *ret=NULL;
@@ -383,11 +383,11 @@ void *player_rocket_ufun(void *args)
       if (value)                                   // do we have ammo ?
       {
     o->lvars[fire_delay1]=6;
-    game_object *target=NULL,*p,*bot=o->total_objects() ? o->get_object(0) : 0;
+    GameObject *target=NULL,*p,*bot=o->total_objects() ? o->get_object(0) : 0;
     if (bad_guy_array)
     {
-      game_object *other=current_object->total_objects() ? current_object->get_object(0) : 0;
-      for (p=current_level->first_active_object(); p; p=p->next_active)
+      GameObject *other=current_object->total_objects() ? current_object->get_object(0) : 0;
+      for (p=g_current_level->first_active_object(); p; p=p->next_active)
       {
         xd=lol::abs(p->x-o->x);
         yd=lol::abs(p->y-o->y);
@@ -416,7 +416,7 @@ void *player_rocket_ufun(void *args)
   return ret;
 }
 
-static int player_move(game_object *o, int xm, int ym, int but)
+static int player_move(GameObject *o, int xm, int ym, int but)
 {
   if (!o->lvars[in_climbing_area])
   {
@@ -432,7 +432,7 @@ static int player_move(game_object *o, int xm, int ym, int but)
 }
 
 
-static void undo_special_power(game_object *o)
+static void undo_special_power(GameObject *o)
 {
   switch (o->lvars[special_power])
   {
@@ -448,15 +448,15 @@ static void undo_special_power(game_object *o)
   }
 }
 
-static void do_special_power(game_object *o, int xm, int ym, int but, game_object *top)
+static void do_special_power(GameObject *o, int xm, int ym, int but, GameObject *top)
 {
   switch (o->lvars[special_power])
   {
     case FLY_POWER :
     {
-      game_object *cloud=create(S_CLOUD,o->x+o->direction*-10,o->y+jrand()%5);
-      if (current_level)
-        current_level->add_object(cloud);
+      GameObject *cloud=create(S_CLOUD,o->x+o->direction*-10,o->y+jrand()%5);
+      if (g_current_level)
+        g_current_level->add_object(cloud);
       o->set_state(run_jump);
       o->set_gravity(1);
       o->set_yacel(0);
@@ -469,7 +469,7 @@ static void do_special_power(game_object *o, int xm, int ym, int but, game_objec
     } break;
     case FAST_POWER :
     {
-      if ((current_level->tick_counter()%16)==0)
+      if ((g_current_level->tick_counter()%16)==0)
       the_game->play_sound(S_SPEED_SND,100,o->x,o->y);
 
       o->lvars[used_special_power]=1;
@@ -494,7 +494,7 @@ static void do_special_power(game_object *o, int xm, int ym, int but, game_objec
   }
 }
 
-static int climb_off_handler(game_object *o)
+static int climb_off_handler(GameObject *o)
 {
   if (o->next_picture())
     o->controller()->pan_y-=4;
@@ -509,7 +509,7 @@ static int climb_off_handler(game_object *o)
 }
 
 
-static int climb_on_handler(game_object *o)
+static int climb_on_handler(GameObject *o)
 {
   if (o->next_picture())
     o->controller()->pan_y+=4;
@@ -518,7 +518,7 @@ static int climb_on_handler(game_object *o)
   return 0;
 }
 
-static int climb_handler(game_object *o, int xm, int ym, int but)
+static int climb_handler(GameObject *o, int xm, int ym, int but)
 {
   int yd=o->lvars[in_climbing_area];  // see how from the top we are
   o->lvars[in_climbing_area]=0;          // set 0, ladders will set back to proper if still in area
@@ -606,7 +606,7 @@ void *cop_mover(int xm, int ym, int but)
 {
 
   int ret=0;
-  game_object *o=current_object,*top;
+  GameObject *o=current_object,*top;
   if (o->controller() && o->controller()->freeze_time)
   {
     o->controller()->freeze_time--;
@@ -618,7 +618,7 @@ void *cop_mover(int xm, int ym, int but)
     if (!o->total_objects())                  // if no top create one
     {
       top=create(S_MGUN_TOP,o->x,o->y,0,0);
-      current_level->add_object_after(top,o);
+      g_current_level->add_object_after(top,o);
       o->add_object(top);
       top->add_object(o);
     } else top=o->get_object(0);
@@ -641,11 +641,11 @@ void *cop_mover(int xm, int ym, int but)
       }
       else
       {
-    if (o->hp()<40 && (current_level->tick_counter()%16)==0) // if low on health play heart beat
+    if (o->hp()<40 && (g_current_level->tick_counter()%16)==0) // if low on health play heart beat
       the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
-    else if (o->hp()<15 && (current_level->tick_counter()%8)==0) // if low on health play heart beat
+    else if (o->hp()<15 && (g_current_level->tick_counter()%8)==0) // if low on health play heart beat
       the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
-    else if (o->hp()<7 && (current_level->tick_counter()%4)==0) // if low on health play heart beat
+    else if (o->hp()<7 && (g_current_level->tick_counter()%4)==0) // if low on health play heart beat
       the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
 
     if (but&1)
@@ -693,10 +693,10 @@ void *cop_mover(int xm, int ym, int but)
 void *ladder_ai()
 {
   view *f=player_list;
-  game_object *o=current_object;
+  GameObject *o=current_object;
   if (o->total_objects())
   {
-    game_object *other=o->get_object(0);
+    GameObject *other=o->get_object(0);
     for (; f; f=f->next)
     {
       int mex=f->m_focus->x;
@@ -717,7 +717,7 @@ void *ladder_ai()
 
 void *player_draw(int just_fired_var, int num)
 {
-  game_object *o=current_object;
+  GameObject *o=current_object;
   if (num==0)
   {
     if (o->lvars[just_fired_var])
@@ -742,10 +742,10 @@ void *player_draw(int just_fired_var, int num)
 
 void *top_draw()
 {
-  game_object *o=current_object;
+  GameObject *o=current_object;
   if (o->total_objects())
   {
-    game_object *bot=o->get_object(0);
+    GameObject *bot=o->get_object(0);
     if (bot->state==stopped  || bot->state==running ||
     bot->state==run_jump || bot->state==run_jump_fall ||
     bot->state==end_run_jump)
@@ -784,7 +784,7 @@ void *top_draw()
 
 void *bottom_draw()
 {
-  game_object *o=current_object;
+  GameObject *o=current_object;
 
   if (o->lvars[r_ramp] || o->lvars[g_ramp] || o->lvars[b_ramp])
   {
@@ -899,7 +899,7 @@ void *bottom_draw()
 
 void *sgun_ai()
 {
-  game_object *o=current_object;
+  GameObject *o=current_object;
 
   if (o->lvars[sgb_lifetime]==0)
     return NULL;
@@ -921,19 +921,19 @@ void *sgun_ai()
 
 
   int whit=0;
-  game_object *who=o->bmove(whit, o->total_objects() ? o->get_object(0) : 0);
+  GameObject *who=o->bmove(whit, o->total_objects() ? o->get_object(0) : 0);
 
   if (whit || (who && figures[who->otype]->get_cflag(CFLAG_UNACTIVE_SHIELD) && who->total_objects() &&
            who->get_object(0)->aistate()==0))
   {
     o->lvars[sgb_lifetime]=0;
-    game_object *n=create(S_EXPLODE5,o->x+jrand()%4,o->y+jrand()%4);
-    current_level->add_object(n);
+    GameObject *n=create(S_EXPLODE5,o->x+jrand()%4,o->y+jrand()%4);
+    g_current_level->add_object(n);
   } else if (who && figures[who->otype]->get_cflag(CFLAG_HURTABLE))
   {
     o->lvars[sgb_lifetime]=0;
-    game_object *n=create(S_EXPLODE3,o->x+jrand()%4,o->y+jrand()%4);
-    current_level->add_object(n);
+    GameObject *n=create(S_EXPLODE3,o->x+jrand()%4,o->y+jrand()%4);
+    g_current_level->add_object(n);
      who->do_damage(5,o,o->x,o->y,(lisp_cos(ang)*10)>>16,(lisp_sin(ang)*10)>>16);
   }
   return true_symbol;
@@ -943,21 +943,21 @@ void *sgun_ai()
 
 void *mover_ai()
 {
-  game_object *o=current_object;
+  GameObject *o=current_object;
   if (o->total_objects()==2)
   {
     if (o->aistate()<2)
     {
-      game_object *obj=o->get_object(1);
+      GameObject *obj=o->get_object(1);
       o->remove_object(obj);
-      game_object *d=o->get_object(0);
+      GameObject *d=o->get_object(0);
       d->add_object(obj);
       d->set_aistate(d->aitype());
     } else
     {
       o->set_aistate(o->aistate()-1);
-      game_object *d=o->get_object(0);
-      game_object *obj=o->get_object(1);
+      GameObject *d=o->get_object(0);
+      GameObject *obj=o->get_object(1);
 
       obj->x=d->x-(d->x-o->x)*o->aistate()/o->aitype();
       obj->y=d->y-(d->y-o->y)*o->aistate()/o->aitype();
@@ -969,11 +969,11 @@ void *mover_ai()
 
 void *respawn_ai()
 {
- game_object *o=current_object;
+ GameObject *o=current_object;
  int x=o->total_objects();
  if (x)
  {
-   game_object *last=o->get_object(x-1);
+   GameObject *last=o->get_object(x-1);
    if (last->x==o->x && last->y==o->y)
    {
      if (last->fade_count())
@@ -982,8 +982,8 @@ void *respawn_ai()
    } else if (o->aistate_time()>o->xvel())
    {
      int type=o->get_object(jrandom(x))->otype;
-     game_object *n=create(type,o->x,o->y);
-     current_level->add_object(n);
+     GameObject *n=create(type,o->x,o->y);
+     g_current_level->add_object(n);
      o->add_object(n);
      n->set_fade_count(15);
      o->set_aistate_time(0);

@@ -43,14 +43,14 @@
 #include "nfserver.h"
 #include "lisp_gc.h"
 
-level *current_level;
+Level *g_current_level;
 
-game_object *level::attacker(game_object *who)
+GameObject *Level::attacker(GameObject *who)
 {
-  int32_t d=0x7fffffff;
-  game_object *c=NULL;
-  view *f=the_game->first_view;
-  for (; f; f=f->next)
+  int32_t d = 0x7fffffff;
+  GameObject *c = NULL;
+
+  for (view *f = the_game->first_view; f; f=f->next)
   {
     if (f->m_focus)
     {
@@ -68,28 +68,27 @@ game_object *level::attacker(game_object *who)
 
 
 
-int level::is_attacker(game_object *who)
+int Level::is_attacker(GameObject *who)
 {
   return who->controller()!=NULL;
 }
 
 
-game_object *level::main_character()
+GameObject *Level::main_character()
 {
   return the_game->first_view->m_focus;
 }
 
-void level::load_fail()
+void Level::load_fail()
 {
   if (map_fg)    free(map_fg);   map_fg=NULL;
   if (map_bg)    free(map_bg);   map_bg=NULL;
   if (Name)      free(Name);     Name=NULL;
 
   first_active=NULL;
-  view *f=player_list;
-  for (; f; f=f->next)
+  for (view * f = player_list; f; f = f->next)
     if (f->m_focus)
-      current_level->remove_object(f->m_focus);
+      g_current_level->remove_object(f->m_focus);
 
   while (first)
   {
@@ -113,7 +112,7 @@ void level::load_fail()
 
 }
 
-level::~level()
+Level::~Level()
 {
   load_fail();
   if (attack_list) free(attack_list);
@@ -123,10 +122,10 @@ level::~level()
   if (first_name) free(first_name);
 }
 
-void level::restart()
+void Level::restart()
 {
   view *f;
-  game_object *found=NULL,*o;
+  GameObject *found=NULL,*o;
   f=the_game->first_view;
   for (o=first; f && o; o=o->next)
   {
@@ -158,10 +157,10 @@ void level::restart()
 }
 
 
-void level::next_focus()
+void Level::next_focus()
 {
-/*  int i;
-  for (i=0; i<total_objs; i++)
+/*
+  for (int i = 0; i < total_objs; i++)
     if (obj[i]==the_game->first_view->m_focus)
     {
       int tries=total_objs;
@@ -177,26 +176,24 @@ void level::next_focus()
     }            */
 }
 
-void level::unactivate_all()
+void Level::unactivate_all()
 {
-  first_active=NULL;
-  game_object *o=first;
-  attack_total=0;  // reset the attack list
-  target_total=0;
-  block_total=0;
-  all_block_total=0;
+    first_active = NULL;
+    attack_total = 0;  // reset the attack list
+    target_total = 0;
+    block_total = 0;
+    all_block_total = 0;
 
-  for (; o; o=o->next)
-    o->active=0;
+    for (GameObject *o = first; o; o = o->next)
+        o->active = 0;
 }
 
 
-void level::pull_actives(game_object *o, game_object *&last_active, int &t)
+void Level::pull_actives(GameObject *o, GameObject *&last_active, int &t)
 {
-  int i=o->total_objects();
-  for (; i; i--)        // pull any linked object into active list
+  for (int i = o->total_objects(); i; i--)        // pull any linked object into active list
   {
-    game_object *other=o->get_object(i-1);
+    GameObject *other=o->get_object(i-1);
     if (!other->active)
     {
       other->active=1;
@@ -215,15 +212,14 @@ void level::pull_actives(game_object *o, game_object *&last_active, int &t)
   }
 }
 
-int level::add_actives(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+int Level::add_actives(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 {
   int t=0;
-  game_object *last_active=NULL;
+  GameObject *last_active=NULL;
   if (first_active)
     for (last_active=first_active; last_active->next_active; last_active=last_active->next_active);
 
-  game_object *o=first;
-  for (; o; o=o->next)
+  for (GameObject *o = first; o; o = o->next)
   {
     if (!o->active)
     {
@@ -259,17 +255,16 @@ int level::add_actives(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 }
 
 
-int level::add_drawables(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+int Level::add_drawables(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 {
   int t=0,ft=0;
-  game_object *last_active=NULL;
+  GameObject *last_active=NULL;
   if (first_active)
   {
     for (last_active=first_active; last_active->next_active; last_active=last_active->next_active);
   } else ft=1;
 
-  game_object *o=first;
-  for (; o; o=o->next)
+  for (GameObject *o = first; o; o = o->next)
   {
     if (ft || !o->active)
     {
@@ -294,14 +289,14 @@ int level::add_drawables(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 }
 
 
-view *level::make_view_list(int nplayers)
+view *Level::make_view_list(int nplayers)
 {
   int startable;
   ASSERT(nplayers > 0, "make_view_list with <=0 players!");
   view *f=NULL;
   int j,use_type=current_start_type;
   figures[use_type]->cache_in();
-  game_object *o,*last_start=NULL;
+  GameObject *o,*last_start=NULL;
   int num=0;
 
   for (j=0,o=first; o && j<nplayers; o=o->next)
@@ -323,7 +318,7 @@ view *level::make_view_list(int nplayers)
   {
     if (startable)
     {
-      game_object *o=create(use_type,f->m_focus->x,f->m_focus->y);
+      GameObject *o=create(use_type,f->m_focus->x,f->m_focus->y);
       f=new view(o,f,num); num++;
       f->m_focus->set_controller(f);
       add_object_after(o,last_start);
@@ -337,11 +332,10 @@ view *level::make_view_list(int nplayers)
   return f;
 }
 
-void level::wall_push()
+void Level::wall_push()
 {
   int32_t sx1,sy1,sx2,sy2,xv,yv;
-  game_object *o=first_active;
-  for (; o; o=o->next_active)
+  for (GameObject *o = first; o; o = o->next_active)
   {
     if (o->pushable())
     {
@@ -370,7 +364,7 @@ void level::wall_push()
 }
 
 
-void level::try_pushback(game_object *subject,game_object *target)
+void Level::try_pushback(GameObject *subject,GameObject *target)
 {
   if (subject->pushable() && target->pushable() &&
       subject->state!=dead && target->state!=dead &&
@@ -396,13 +390,13 @@ void level::try_pushback(game_object *subject,game_object *target)
 }
 
 /*
-void level::check_collisions()
+void Level::check_collisions()
 {
-  game_object *target,*receiver=NULL;
+  GameObject *target,*receiver=NULL;
   int32_t sx1,sy1,sx2,sy2,tx1,ty1,tx2,ty2,hitx,hity,
       s_centerx,t_centerx;
 
-  for (game_object *subject=first_active; subject; subject=subject->next_active)
+  for (GameObject *subject=first_active; subject; subject=subject->next_active)
   {
     subject->picture_space(sx1,sy1,sx2,sy2);
     s_centerx=subject->x_center();
@@ -428,10 +422,10 @@ void level::check_collisions()
 
         unsigned char *s_dat=s_hit->data,
         *t_dat;
-        int i,j;
-        for (i=(int)s_hit->tot-1; i>0 && !hit; i--)
+        for (int i = (int)s_hit->tot - 1; i > 0 && !hit; i--)
         {
-          for (t_dat=t_damage->data,j=(int)t_damage->tot-1; j>0 && !hit; j--)
+          t_dat=t_damage->data;
+          for (int j = (int)t_damage->tot - 1; j > 0 && !hit; j--)
           {
         int32_t x1,y1,x2,y2,          // define the two line segments to check
         xp1,yp1,xp2,yp2;
@@ -476,14 +470,14 @@ void level::check_collisions()
 }
 */
 
-game_object *level::boundary_setback(game_object *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2)
+GameObject *Level::boundary_setback(GameObject *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2)
 {
-  game_object *l=NULL;
+  GameObject *l=NULL;
   int32_t tx1,ty1,tx2,ty2,t_centerx;
-  game_object *target=first_active;
-  game_object **blist=block_list;
-  int t=block_total;
-  for (; t; t--,blist++)
+  GameObject *target=first_active;
+  GameObject **blist=block_list;
+
+  for (int t = block_total; t; t--, blist++)
   {
     target=*blist;
     if (target!=subject && (target->total_objects()==0 || target->get_object(0)!=subject))
@@ -528,14 +522,14 @@ game_object *level::boundary_setback(game_object *subject, int32_t x1, int32_t y
 }
 
 
-game_object *level::all_boundary_setback(game_object *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2)
+GameObject *Level::all_boundary_setback(GameObject *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2)
 {
-  game_object *l=NULL;
+  GameObject *l=NULL;
   int32_t tx1,ty1,tx2,ty2,t_centerx;
-  game_object *target=first_active;
-  game_object **blist=all_block_list;
-  int t=all_block_total;
-  for (; t; t--,blist++)
+  GameObject *target=first_active;
+  GameObject **blist=all_block_list;
+
+  for (int t = all_block_total; t; t--, blist++)
   {
     target=*blist;
     if (target!=subject && (target->total_objects()==0 || target->get_object(0)!=subject))
@@ -581,39 +575,38 @@ game_object *level::all_boundary_setback(game_object *subject, int32_t x1, int32
 
 //bFILE *rcheck=NULL,*rcheck_lp=NULL;
 
-void level::interpolate_draw_objects(view *v)
+void Level::interpolate_draw_objects(view *v)
 {
-  int32_t old_x,old_y;
-  current_view=v;
+    int32_t old_x, old_y;
+    current_view = v;
 
-  game_object *o=first_active;
-  for (; o; o=o->next_active)
-  {
-    old_x=o->x;
-    old_y=o->y;
-    o->x=(o->last_x+o->x)/2;
-    o->y=(o->last_y+o->y)/2;
-    o->last_x=old_x;
-    o->last_y=old_y;
-  }
+    for (GameObject *o = first_active; o; o = o->next_active)
+    {
+        old_x = o->x;
+        old_y = o->y;
+        o->x = (o->last_x + o->x) / 2;
+        o->y = (o->last_y + o->y) / 2;
+        o->last_x = old_x;
+        o->last_y = old_y;
+    }
 
-  for (o=first_active; o; o=o->next_active)
-    o->draw();
+    for (GameObject *o = first_active; o; o = o->next_active)
+        o->draw();
 
-  for (o=first_active; o; o=o->next_active)
-  {
-    o->x=o->last_x;
-    o->y=o->last_y;
-  }
+    for (GameObject *o = first_active; o; o = o->next_active)
+    {
+        o->x = o->last_x;
+        o->y = o->last_y;
+    }
 }
 
 bFILE *rcheck=NULL,*rcheck_lp=NULL;
 
 extern int sshot_fcount,screen_shot_on;
 
-int level::tick()
+int Level::tick()
 {
-  game_object *o,*l=NULL,  // l is last, used for delete
+  GameObject *o,*l=NULL,  // l is last, used for delete
               *cur;        // cur is current object, NULL if object deletes it's self
   int ret=1;
 
@@ -727,7 +720,7 @@ int level::tick()
       }
       else if (!o->decide())      // if object returns 0, delete it... I don't like 0's :)
       {
-    game_object *p=o;
+    GameObject *p=o;
     o=o->next_active;
     delete_object(p);
     cur=NULL;
@@ -777,12 +770,12 @@ int level::tick()
   return ret;
 }
 
-void level::set_tick_counter(uint32_t x)
+void Level::set_tick_counter(uint32_t x)
 {
   ctick=x;
 }
 
-void level::draw_areas(view *v)
+void Level::draw_areas(view *v)
 {
     for (area_controller *a = area_list; a; a = a->next)
     {
@@ -797,21 +790,17 @@ void level::draw_areas(view *v)
     }
 }
 
-void level::draw_objects(view *v)
+void Level::draw_objects(view *v)
 {
-  current_view=v;
-  game_object *o=first_active;
-  if (dev&MAP_MODE)
-  {
-    for (; o; o=o->next_active)
-      o->map_draw();
-  } else
-  {
-    for (; o; o=o->next_active)
-      o->draw();
-  }
+    current_view = v;
 
-  LSpace::Tmp.Clear();
+    for (GameObject *o = first_active; o; o = o->next_active)
+        if (dev & MAP_MODE)
+            o->map_draw();
+        else
+            o->draw();
+
+    LSpace::Tmp.Clear();
 }
 
 void calc_bgsize(uint16_t fgw, uint16_t  fgh, uint16_t  &bgw, uint16_t  &bgh)
@@ -821,7 +810,7 @@ void calc_bgsize(uint16_t fgw, uint16_t  fgh, uint16_t  &bgw, uint16_t  &bgh)
 }
 
 
-void level::set_size(int w, int h)
+void Level::set_size(int w, int h)
 {
   if (w*h>200000)
   {
@@ -882,12 +871,11 @@ int locate_var(bFILE *fp, SpecDir *sd, char *str, int size)
 
 
 // load objects assumes current objects have already been disposed of
-void level::old_load_objects(SpecDir *sd, bFILE *fp)
+void Level::old_load_objects(SpecDir *sd, bFILE *fp)
 {
   SpecEntry *se=sd->find("objects");
   total_objs=0;
   first=last=first_active=NULL;
-  int i,j;
   if (se)
   {
     fp->seek(se->offset,0);
@@ -895,10 +883,11 @@ void level::old_load_objects(SpecDir *sd, bFILE *fp)
     int16_t old_tot=fp->read_uint16();
     uint16_t *o_remap=(uint16_t *)malloc(old_tot * 2);
     char old_name[150];
-    for (i=0; i<old_tot; i++)
+    for (int i = 0; i < old_tot; i++)
     {
       fp->read(old_name,fp->read_uint8());    // read the name
-      for (o_remap[i]=0xffff,j=0; j<total_objects; j++)  // check for matching current name
+      o_remap[i]=0xffff;
+      for (int j = 0; j < total_objects; j++)  // check for matching current name
       {
     if (!strcmp(old_name,object_names[j]))
           o_remap[i]=j;
@@ -909,11 +898,11 @@ void level::old_load_objects(SpecDir *sd, bFILE *fp)
     /***************************** Read state names *********************************/
     int old_stot=fp->read_uint16();
     unsigned char *s_remap=(unsigned char *)malloc(old_stot);
-    for (i=0; i<old_stot; i++)
+    for (int i = 0; i < old_stot; i++)
     {
       fp->read(old_name,fp->read_uint8());
       s_remap[i]=stopped;           // non exsitant states get mapped into stopped state
-      for (j=0; j<MAX_STATE; j++)                  // see if old state exist now
+      for (int j = 0; j < MAX_STATE; j++)                  // see if old state exist now
     if (!strcmp(state_names[j],old_name))
          s_remap[i]=j;
     }
@@ -926,10 +915,10 @@ void level::old_load_objects(SpecDir *sd, bFILE *fp)
       last=NULL;
       if (fp->read_uint8()==RC_16)    //  read type array, this should be type RC_16
       {
-    for (i=0; i<total_objs; i++)
+    for (int i = 0; i < total_objs; i++)
     {
       uint16_t t=fp->read_uint16();
-      game_object *p=new game_object(o_remap[t],1);
+      GameObject *p=new GameObject(o_remap[t],1);
       LSpace::Tmp.Clear();
       if (!first) first=p; else last->next=p;
       last=p; p->next=NULL;
@@ -942,8 +931,8 @@ void level::old_load_objects(SpecDir *sd, bFILE *fp)
       fp->seek(se->offset,0);
       if (fp->read_uint8()==RC_16)    //  read state array, this should be type RC_16
       {
-        game_object *l=first;
-        for (i=0; i<total_objs; i++,l=l->next)
+        GameObject *l=first;
+        for (int i = 0; i < total_objs; i++, l = l->next)
         {
           character_state s=(character_state)s_remap[fp->read_uint16()];
           if (l->otype!=0xffff)
@@ -957,14 +946,12 @@ void level::old_load_objects(SpecDir *sd, bFILE *fp)
       }
     }
 
-    int frame_var=0;
-    int i=0;
-    for (; i<TOTAL_OBJECT_VARS; i++)
+    int frame_var = 0;
+    for (int i = 0; i < TOTAL_OBJECT_VARS; i++)
       if (!strcmp(object_descriptions[i].name,"cur_frame"))
         frame_var=i;
 
-    int j=0;
-    for (; j<default_simple.total_vars(); j++)
+    for (int j = 0; j < g_default_simple.total_vars(); j++)
     {
       SpecEntry *se=sd->find(object_descriptions[j].name);
       if (se)
@@ -975,8 +962,7 @@ void level::old_load_objects(SpecDir *sd, bFILE *fp)
           dprintf("Warning : load level -> var '%s' size changed\n");
         else
         {
-          game_object *f=first;
-          for (; f; f=f->next)
+          for (GameObject * f = first; f; f = f->next)
           {
         switch (t)
         {
@@ -995,7 +981,7 @@ void level::old_load_objects(SpecDir *sd, bFILE *fp)
         }
           }
         }
-      } else dprintf("Warning : load level -> no previous var %s\n",default_simple.var_name(j));
+      } else dprintf("Warning : load level -> no previous var %s\n", g_default_simple.var_name(j));
     }
       }
     }
@@ -1008,12 +994,11 @@ void level::old_load_objects(SpecDir *sd, bFILE *fp)
 
 
 // load objects assumes current objects have already been disposed of
-void level::load_objects(SpecDir *sd, bFILE *fp)
+void Level::load_objects(SpecDir *sd, bFILE *fp)
 {
   SpecEntry *se=sd->find("object_descripitions");
   total_objs=0;
   first=last=first_active=NULL;
-  int i,j;
   if (!se)
   {
     old_load_objects(sd,fp);
@@ -1031,10 +1016,11 @@ void level::load_objects(SpecDir *sd, bFILE *fp)
     uint16_t *o_backmap=(uint16_t *)malloc(total_objects * 2);
     memset(o_backmap,0xff,total_objects*2);
     char old_name[150];
-    for (i=0; i<old_tot; i++)
+    for (int i = 0; i < old_tot; i++)
     {
       fp->read(old_name,fp->read_uint8());    // read the name
-      for (o_remap[i]=0xffff,j=0; j<total_objects; j++)  // check for matching current name
+      o_remap[i] = 0xffff;
+      for (int j = 0; j < total_objects; j++)  // check for matching current name
       {
     if (!strcmp(old_name,object_names[j]))
     {
@@ -1049,29 +1035,26 @@ void level::load_objects(SpecDir *sd, bFILE *fp)
     int16_t **s_remap=(int16_t **)malloc(old_tot*sizeof(int16_t *));
     int16_t *s_remap_totals=(int16_t *)malloc(old_tot*sizeof(int16_t));
     fp->seek(se->offset,0);
-    int i=0;
-    for (; i<old_tot; i++)
+
+    for (int i = 0; i < old_tot; i++)
     {
       int16_t t=fp->read_uint16();
       s_remap_totals[i]=t;
       if (t)
       {
         s_remap[i]=(int16_t *)malloc(t*sizeof(int16_t));
-    int j=0;
-    for (; j<t; j++)
+    for (int j = 0; j < t; j++)
       *(s_remap[i]+j)=stopped;    // if no remap found, then go to stopped state
       }
       else s_remap[i]=0;
 
-      int j=0;
-      for (; j<t; j++)
+      for (int j = 0; j < t; j++)
       {
     fp->read(old_name,fp->read_uint8());
     int new_type=o_remap[i];
     if (new_type<total_objects)     // make sure old object still exists
     {
-      int k=0;
-      for (; k<figures[new_type]->ts; k++)
+      for (int k = 0; k < figures[new_type]->ts; k++)
       {
         if (figures[new_type]->seq[k] &&
            !strcmp(lstring_value(((LSymbol *)figures[new_type]->seq_syms[k])->GetName()),old_name))
@@ -1091,8 +1074,7 @@ void level::load_objects(SpecDir *sd, bFILE *fp)
       v_remap_totals=(int16_t *)malloc(old_tot*sizeof(int16_t));
 
       fp->seek(se->offset,0);
-      int i=0;
-      for (; i<old_tot; i++)
+      for (int i = 0; i < old_tot; i++)
       {
     int16_t t=fp->read_uint16();
     v_remap_totals[i]=t;
@@ -1101,15 +1083,14 @@ void level::load_objects(SpecDir *sd, bFILE *fp)
       v_remap[i]=(int16_t *)malloc(t*sizeof(int16_t));
       memset(v_remap[i],0xff,t*sizeof(int16_t));
     } else { v_remap[i]=NULL; }
-    int j=0;
-    for (; j<t; j++)
+
+    for (int j = 0; j < t; j++)
     {
       fp->read(old_name,fp->read_uint8());
       int new_type=o_remap[i];
       if (new_type!=0xffff)        // make sure old object still exists
       {
-        int k=0;
-        for (; k<figures[new_type]->tiv; k++)
+        for (int k = 0; k < figures[new_type]->tiv; k++)
         {
           if (figures[new_type]->vars[k])
           {
@@ -1135,11 +1116,10 @@ void level::load_objects(SpecDir *sd, bFILE *fp)
     last=NULL;
     if (fp->read_uint8()==RC_16)    //  read type array, this should be type RC_16
     {
-      int i=0;
-      for (; i<total_objs; i++)
+      for (int i = 0; i < total_objs; i++)
       {
         uint16_t t=fp->read_uint16();
-        game_object *p=new game_object(o_remap[t],1);
+        GameObject *p=new GameObject(o_remap[t],1);
         LSpace::Tmp.Clear();
         if (!first) first=p; else last->next=p;
         last=p; p->next=NULL;
@@ -1151,8 +1131,8 @@ void level::load_objects(SpecDir *sd, bFILE *fp)
         fp->seek(se->offset,0);
         if (fp->read_uint8()==RC_16)    //  read state array, this should be type RC_16
         {
-          game_object *l=first;
-          for (i=0; i<total_objs; i++,l=l->next)
+          GameObject *l=first;
+          for (int i = 0; i < total_objs; i++, l = l->next)
           {
         int st=fp->read_uint16();
         if (l->otype==0xffff)
@@ -1174,12 +1154,10 @@ void level::load_objects(SpecDir *sd, bFILE *fp)
       {
         fp->seek(se->offset,0);
         int abort=0;
-        game_object *o=first;
-        for (; o && !abort; o=o->next)
+        for (GameObject *o = first; o && !abort; o = o->next)
         {
           int16_t ot=fp->read_uint16();
-          int k=0;
-          for (; k<ot; k++)
+          for (int k = 0; k < ot; k++)
           {
         if (fp->read_uint8()!=RC_32) abort=1;
         else
@@ -1199,13 +1177,12 @@ void level::load_objects(SpecDir *sd, bFILE *fp)
       }
 
       int frame_var=0;
-      for (i=0; i<TOTAL_OBJECT_VARS; i++)
+      for (int i = 0; i < TOTAL_OBJECT_VARS; i++)
         if (!strcmp(object_descriptions[i].name,"cur_frame"))
-          frame_var=i;
+          frame_var = i;
 
 
-      int j=0;
-      for (; j<default_simple.total_vars(); j++)
+      for (int j = 0; j < g_default_simple.total_vars(); j++)
       {
         SpecEntry *se=sd->find(object_descriptions[j].name);
         if (se)
@@ -1216,8 +1193,7 @@ void level::load_objects(SpecDir *sd, bFILE *fp)
             dprintf("Warning : load level -> var '%s' size changed\n");
           else
           {
-        game_object *f=first;
-        for (; f; f=f->next)
+        for (GameObject * f = first; f; f = f->next)
         {
           switch (t)
           {
@@ -1239,21 +1215,19 @@ void level::load_objects(SpecDir *sd, bFILE *fp)
           }
         }
           }
-        } else dprintf("Warning : load level -> no previous var %s\n",default_simple.var_name(j));
+        } else dprintf("Warning : load level -> no previous var %s\n", g_default_simple.var_name(j));
       }
     }
       }
     }
 
-    int k=0;
-    for (; k<old_tot; k++)
+    for (int k = 0; k < old_tot; k++)
     {
       if (s_remap_totals[k])
         free(s_remap[k]);
     }
 
-    int l=0;
-    for (; l<old_tot; l++)
+    for (int l = 0; l < old_tot; l++)
     {
       if (v_remap_totals[l])
         free(v_remap[l]);
@@ -1268,7 +1242,7 @@ void level::load_objects(SpecDir *sd, bFILE *fp)
 
 }
 
-level::level(SpecDir *sd, bFILE *fp, char const *lev_name)
+Level::Level(SpecDir *sd, bFILE *fp, char const *lev_name)
 {
   SpecEntry *e;
   area_list=NULL;
@@ -1360,10 +1334,10 @@ level::level(SpecDir *sd, bFILE *fp, char const *lev_name)
   stat_man->update(10);
 
   /***************** Check map for non existsant tiles **************************/
-  int32_t i,w;
   uint16_t *m;
   SpecEntry *load_all=sd->find("player_info");
-  for (i=0,w=fg_width*fg_height,m=map_fg; i<w; i++,m++)
+  m = map_fg;
+  for (int i = 0, w = fg_width * fg_height; i < w; i++, m++)
   {
     if (!load_all)
       (*m)=(*m)&(~0x8000);    // clear the has-seen bit on the tile
@@ -1372,7 +1346,8 @@ level::level(SpecDir *sd, bFILE *fp, char const *lev_name)
       *m=0;
   }
 
-  for (i=0,w=bg_width*bg_height,m=map_bg; i<w; i++,m++)
+  m = map_bg;
+  for (int i = 0, w = bg_width * bg_height; i < w; i++,m++)
   {
     if ( (bgvalue(*m)>=nbacktiles) || backtiles[bgvalue(*m)]<0)
        *m=0;
@@ -1395,12 +1370,10 @@ level::level(SpecDir *sd, bFILE *fp, char const *lev_name)
   load_links(fp,sd,objs,players);
   int players_got_loaded=load_player_info(fp,sd,objs);
 
-
-  game_object *l=first;
-  for (; l; )
+  for (GameObject * l = first; l; )
   {
-    game_object *p=l;
-    l=l->next;
+    GameObject *p = l;
+    l = l->next;
     if (p->otype==0xffff || p->x<0 || p->y<0)
       delete_object(p);
   }
@@ -1409,18 +1382,17 @@ level::level(SpecDir *sd, bFILE *fp, char const *lev_name)
 
   if (!players_got_loaded)
   {
-    level *old=current_level;
-    current_level=this;
+    Level *old = g_current_level;
+    g_current_level = this;
 
     object_node *list=NULL;
     list=make_not_list(list);     // create a list of the object list in case objects change positions
 
-    object_node *ln=list;
-    for (; ln; ln=ln->next)
+    for (object_node *ln = list; ln; ln = ln->next)
       ln->me->reload_notify();
     delete_object_list(list);
 
-    current_level=old;
+    g_current_level=old;
 
     insert_players();
   }
@@ -1471,7 +1443,7 @@ void get_prof_assoc_filename(char *filename, char *prof_filename)
   *s2=0;
 }
 
-void level::level_loaded_notify()
+void Level::level_loaded_notify()
 {
   char *n;
   if (first_name)
@@ -1512,7 +1484,7 @@ void level::level_loaded_notify()
 }
 
 
-bFILE *level::create_dir(char *filename, int save_all,
+bFILE *Level::create_dir(char *filename, int save_all,
              object_node *save_list, object_node *exclude_list)
 {
   SpecDir sd;
@@ -1527,8 +1499,8 @@ bFILE *level::create_dir(char *filename, int save_all,
   sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"bg_scroll_rate",NULL,1+4*4,0));
 
   int ta=0;
-  area_controller *a=area_list;
-  for (; a; a=a->next) ta++;
+  for (area_controller *a = area_list; a; a = a->next)
+    ta++;
 
   sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"area_list.v1",NULL,1+ta*(4*11)+4,0));
 
@@ -1541,14 +1513,13 @@ bFILE *level::create_dir(char *filename, int save_all,
 
 
   int size=0;
-  int i=0;
-  for (; i<total_objects; i++)       // now save the names of the objects so if ordering
+  for (int i = 0; i < total_objects; i++)       // now save the names of the objects so if ordering
     size+=1+strlen(object_names[i])+1;    // changes in future versions we can adjust in load
   sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"describe_names",NULL,size,0));
 
 
   size=0;
-  for (i=0; i<total_objects; i++)
+  for (int i = 0; i < total_objects; i++)
   {
     size+=2;  // total number of states
     int j=0;
@@ -1561,11 +1532,10 @@ bFILE *level::create_dir(char *filename, int save_all,
 
 
   size=0;
-  for (i=0; i<total_objects; i++)
+  for (int i = 0; i < total_objects; i++)
   {
     size+=2;  // total number of variables
-    int j=0;
-    for (; j<figures[i]->tiv; j++)
+    for (int j = 0; j < figures[i]->tiv; j++)
       if (figures[i]->vars[j])
         size+=1+strlen(lstring_value(((LSymbol *)figures[i]->vars[j])->GetName()))+1;
   }
@@ -1576,9 +1546,8 @@ bFILE *level::create_dir(char *filename, int save_all,
   // how many objects are we goint to save, use a int32_t to specify how many
   sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"object_list",NULL,4,0));
 
-  int32_t t=0;
-  object_node *o=save_list;
-  for (; o; o=o->next)
+  int32_t t = 0;
+  for (object_node *o = save_list; o; o = o->next)
     t++;
 
   // type and state aren't normal records because they will be remapped on loading
@@ -1587,12 +1556,13 @@ bFILE *level::create_dir(char *filename, int save_all,
 
 
   // now save all the lvars for each object
-  for (size=0,o=save_list; o; o=o->next)
+  size = 0;
+  for (object_node *o = save_list; o; o = o->next)
     size+=figures[o->me->otype]->tv*5+2;
   sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"lvars",NULL,size,0));
 
 
-  for (i=0; i<TOTAL_OBJECT_VARS; i++)
+  for (int i = 0; i < TOTAL_OBJECT_VARS; i++)
     sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,object_descriptions[i].name,NULL,1+
               RC_type_size(object_descriptions[i].type)*t,0));
 
@@ -1604,21 +1574,20 @@ bFILE *level::create_dir(char *filename, int save_all,
 
   if (save_all)
   {
-    t=0;
-    view *v=player_list;
-    for (; v; v=v->next) t++;
+    t = 0;
+    for (view * v = player_list; v; v = v->next)
+        t++;
     sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"player_info",NULL,t*4+4,0));
 
-    int tv=total_view_vars();
-    int i=0;
-    for (; i<tv; i++)
+    int tv = total_view_vars();
+    for (int i = 0; i < tv; i++)
       sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,get_view_var_name(i),NULL,1+4*t,0));
     sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"random_start",NULL,5,0));
 
     sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"weapon_array",NULL,1+4+total_weapons*4*t,0));
 
-    int name_len=0;
-    for (v=player_list; v; v=v->next)
+    int name_len = 0;
+    for (view *v = player_list; v; v = v->next)
       name_len+=strlen(v->name)+2;
     sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"player_names",NULL,name_len,0));
 
@@ -1632,7 +1601,7 @@ bFILE *level::create_dir(char *filename, int save_all,
 
 void scale_put(image *im, image *screen, int x, int y, short new_width, short new_height);
 
-void level::write_thumb_nail(bFILE *fp, image *im)
+void Level::write_thumb_nail(bFILE *fp, image *im)
 {
   image *i = new image(ivec2(160, 100 + wm->font()->Size().y * 2));
   i->clear();
@@ -1658,22 +1627,21 @@ void level::write_thumb_nail(bFILE *fp, image *im)
   delete i;
 }
 
-void level::write_player_info(bFILE *fp, object_node *save_list)
+void Level::write_player_info(bFILE *fp, object_node *save_list)
 {
-  int32_t t=0;
-  view *v=player_list;
-  for (; v; v=v->next) t++;
+  int32_t t = 0;
+  for (view *v = player_list; v; v = v->next)
+    t++;
   fp->write_uint32(t);
 
-  for (v=player_list; v; v=v->next)
+  for (view *v = player_list; v; v = v->next)
     fp->write_uint32(object_to_number_in_list(v->m_focus,save_list));
 
-  int tv=total_view_vars();
-  int i=0;
-  for (; i<tv; i++)
+  int tv = total_view_vars();
+  for (int i = 0; i < tv; i++)
   {
     fp->write_uint8(RC_32);
-    for (v=player_list; v; v=v->next)
+    for (view *v = player_list; v; v = v->next)
       fp->write_uint32(v->get_view_var_value(i));
   }
 
@@ -1682,11 +1650,11 @@ void level::write_player_info(bFILE *fp, object_node *save_list)
 
   fp->write_uint8(RC_32);
   fp->write_uint32(total_weapons);
-  for (v=player_list; v; v=v->next)
-    for (i=0; i<total_weapons; i++)
+  for (view *v = player_list; v; v = v->next)
+    for (int i = 0; i < total_weapons; i++)
       fp->write_uint32(v->weapons[i]);
 
-  for (v=player_list; v; v=v->next)
+  for (view *v = player_list; v; v = v->next)
   {
     int len=strlen(v->name)+1;
     fp->write_uint8(len);
@@ -1695,7 +1663,7 @@ void level::write_player_info(bFILE *fp, object_node *save_list)
 }
 
 
-int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
+int Level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
 {
   int ret;
   SpecEntry *se=sd->find("player_info");
@@ -1707,19 +1675,19 @@ int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
     if (the_game->first_view==player_list) set_first_view=1;
     int my_player_number=-1;
 
-    view *v=player_list;
-    for (; v; v=v->next)
-    { v->suggest.send_view=0;
+    for (view *v = player_list; v; v = v->next)
+    {
+      v->suggest.send_view=0;
       v->suggest.send_weapon_change=0;
     }
 
-    for (v=player_list; v; v=v->next)
+    for (view *v = player_list; v; v = v->next)
       if (v->local_player())
          my_player_number=v->player_number;
 
     while (player_list)    // delete all of the views (they will get recreated)
     {
-      v=player_list;
+      view *v = player_list;
       if (v->m_focus)
       {
         if (v->m_focus->controller())
@@ -1733,11 +1701,10 @@ int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
 
     int32_t total_players=fp->read_uint32();
     view *last=NULL;
-    int i=0;
-    for (; i<total_players; i++)
+    for (int i = 0; i < total_players; i++)
     {
-      game_object *o=number_to_object_in_list(fp->read_uint32(),save_list);
-      v=new view(o,NULL,0);
+      GameObject *o=number_to_object_in_list(fp->read_uint32(),save_list);
+      view *v = new view(o,NULL,0);
       if (o) o->set_controller(v);
       if (player_list)
         last->next=v;
@@ -1747,7 +1714,7 @@ int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
     if (set_first_view)
       the_game->first_view=player_list;
 
-    for (i=0; i<total_view_vars(); i++)
+    for (int i = 0; i < total_view_vars(); i++)
     {
       char const *find_name = get_view_var_name(i);
       se=sd->find(find_name);
@@ -1757,13 +1724,13 @@ int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
     fp->seek(se->offset,0);
     if (fp->read_uint8()==RC_32)
     {
-      for (v=player_list; v; v=v->next)
+      for (view *v = player_list; v; v = v->next)
             v->set_view_var_value(i,fp->read_uint32());
     }
       } else
       {
-    for (v=player_list; v; v=v->next)
-        v->set_view_var_value(i,0);
+    for (view *v = player_list; v; v = v->next)
+        v->set_view_var_value(i, 0);
       }
     }
 
@@ -1782,10 +1749,9 @@ int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
       if (fp->read_uint8()==RC_32)
       {
     int32_t m=fp->read_uint32();  // read how many weapons existsed when last saved
-    int i;
-    for (v=player_list; v; v=v->next)
+    for (view *v = player_list; v; v = v->next)
     {
-      for (i=0; i<m; i++)
+      for (int i = 0; i < m; i++)
       {
         int32_t x=fp->read_uint32();
         if (i<total_weapons)
@@ -1798,7 +1764,7 @@ int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
       }
     }  else
     {
-      for (v=player_list; v; v=v->next)
+      for (view *v = player_list; v; v = v->next)
       {
     memset(v->last_weapons,0xff,total_weapons*sizeof(int32_t));
     memset(v->weapons,0xff,total_weapons*sizeof(int32_t));
@@ -1809,7 +1775,7 @@ int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
     if (se)
     {
       fp->seek(se->offset,0);
-      for (v=player_list; v; v=v->next)
+      for (view *v = player_list; v; v = v->next)
       {
     uint8_t len=fp->read_uint8();
     fp->read(v->name,len);
@@ -1824,9 +1790,8 @@ int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
     LSymbol *fun = LSymbol::FindOrCreate("set_player_defaults");
     if (DEFINEDP(fun->GetFunction()))
     {
-      view *f;
-      game_object *o=current_object;
-      for (f=player_list; f; f=f->next)
+      GameObject *o=current_object;
+      for (view *f = player_list; f; f = f->next)
       {
     if (f->m_focus)
     {
@@ -1841,13 +1806,12 @@ int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
     ret=0;
   }
 
-  view *vw;
-  for (vw=player_list; vw; vw=vw->next)
+  for (view *v = player_list; v; v = v->next)
   {
-    if (total_weapons && !vw->has_weapon(vw->current_weapon))
+    if (total_weapons && !v->has_weapon(v->current_weapon))
     {
-      vw->suggest.send_weapon_change=1;
-      vw->suggest.new_weapon=0;
+      v->suggest.send_weapon_change = 1;
+      v->suggest.new_weapon = 0;
     }
   }
 
@@ -1855,14 +1819,13 @@ int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
 }
 
 
-void level::write_objects(bFILE *fp, object_node *save_list)
+void Level::write_objects(bFILE *fp, object_node *save_list)
 {
   // record information in the file about what the data structures look like
   // right now, so if they change later, they don't get get screwed up
   fp->write_uint16(total_objects);   // mark how many objects we know about right now
 
-  int i=0;
-  for (; i<total_objects; i++)   // loop through all the object types we know of
+  for (int i = 0; i < total_objects; i++)   // loop through all the object types we know of
   {
     fp->write_uint8(strlen(object_names[i])+1);                    // sizeof name
     fp->write(object_names[i],strlen(object_names[i])+1);      // write object name
@@ -1870,15 +1833,15 @@ void level::write_objects(bFILE *fp, object_node *save_list)
 
 
   // write state numbers and names for each object
-  for (i=0; i<total_objects; i++)
+  for (int i = 0; i < total_objects; i++)
   {
-    int total=0;
-    int j=0;
-    for (; j<figures[i]->ts; j++)
-      if (figures[i]->seq[j]) total++;
+    int total = 0;
+    for (int j = 0; j < figures[i]->ts; j++)
+      if (figures[i]->seq[j])
+        total++;
     fp->write_uint16(total);
 
-    for (j=0; j<figures[i]->ts; j++)
+    for (int j = 0; j < figures[i]->ts; j++)
       if (figures[i]->seq[j])
       {
     char *state_name=lstring_value(((LSymbol *)figures[i]->seq_syms[j])->GetName());
@@ -1889,14 +1852,13 @@ void level::write_objects(bFILE *fp, object_node *save_list)
 
 
   // write object lvar names
-  for (i=0; i<total_objects; i++)
+  for (int i = 0; i < total_objects; i++)
   {
     fp->write_uint16(figures[i]->tv);
-    int j,x;
 
-    for (x=0; x<figures[i]->tv; x++)
+    for (int x = 0; x < figures[i]->tv; x++)
     {
-      for (j=0; j<figures[i]->tiv; j++)
+      for (int j = 0; j < figures[i]->tiv; j++)
       {
         if (figures[i]->vars[j] && figures[i]->var_index[j]==x)
     {
@@ -1908,33 +1870,36 @@ void level::write_objects(bFILE *fp, object_node *save_list)
     }
   }
 
-  int32_t t=0;
-  object_node *o=save_list;
-  for (; o; o=o->next) t++;
+  int32_t t = 0;
+  for (object_node *o = save_list; o; o = o->next)
+    t++;
   fp->write_uint32(t);
 
 
   fp->write_uint8(RC_16);                                    // save type info for each record
-  for (o=save_list; o; o=o->next) fp->write_uint16(o->me->type());
+  for (object_node *o = save_list; o; o = o->next)
+    fp->write_uint16(o->me->type());
 
   fp->write_uint8(RC_16);                                    // save state info for each record
-  for (o=save_list; o; o=o->next) fp->write_uint16(o->me->reduced_state());
+  for (object_node *o = save_list; o; o = o->next)
+    fp->write_uint16(o->me->reduced_state());
 
-  for (o=save_list; o; o=o->next)                            // save lvars
+  for (object_node *o = save_list; o; o = o->next)                            // save lvars
   {
     fp->write_uint16(figures[o->me->otype]->tv);
-    for (i=0; i<figures[o->me->otype]->tv; i++)
+    for (int i = 0; i < figures[o->me->otype]->tv; i++)
     {
       fp->write_uint8(RC_32);                           // for now the only type allowed is int32_t
       fp->write_uint32(o->me->lvars[i]);
     }
   }
 
-  for (i=0; i<default_simple.total_vars(); i++)
+  for (int i = 0; i < g_default_simple.total_vars(); i++)
   {
-    int t=object_descriptions[i].type;
+    int t = object_descriptions[i].type;
     fp->write_uint8(t);
-    for (o=save_list; o; o=o->next)
+
+    for (object_node *o = save_list; o; o = o->next)
     {
       switch (t)
       {
@@ -1950,40 +1915,38 @@ void level::write_objects(bFILE *fp, object_node *save_list)
 }
 
 
-int32_t level::total_object_links(object_node *list)
+int32_t Level::total_object_links(object_node *list)
 {
-  int32_t tl=0;
-  for (object_node *o=list; o; o=o->next)
-    tl+=o->me->total_objects();
+  int32_t tl = 0;
+  for (object_node *o = list; o; o = o->next)
+    tl += o->me->total_objects();
   return tl;
 }
 
-int32_t level::total_light_links(object_node *list)
+int32_t Level::total_light_links(object_node *list)
 {
-  int32_t tl=0;
-  for (object_node *o=list; o; o=o->next)
-    tl+=o->me->total_lights();
+  int32_t tl = 0;
+  for (object_node *o = list; o; o = o->next)
+    tl += o->me->total_lights();
   return tl;
 }
 
-void level::write_links(bFILE *fp, object_node *save_list, object_node *exclude_list)
+void Level::write_links(bFILE *fp, object_node *save_list, object_node *exclude_list)
 {
   fp->write_uint8(RC_32);
   fp->write_uint32(total_object_links(save_list));
 
   int x=1;
-  object_node *o=save_list;
 
-  for (; o; o=o->next,x++)
+  for (object_node *o = save_list; o; o = o->next, x++)
   {
-    int i=0;
-    for (; i<o->me->total_objects(); i++)
+    for (int i = 0; i < o->me->total_objects(); i++)
     {
       fp->write_uint32(x);
-      int32_t x=object_to_number_in_list(o->me->get_object(i),save_list);
-      if (x)
-        fp->write_uint32(x);
-      else                            // save links to excluded items as negative
+      int32_t n = object_to_number_in_list(o->me->get_object(i),save_list);
+      if (n)
+        fp->write_uint32(n);
+      else // save links to excluded items as negative
         fp->write_uint32((int32_t)(-(object_to_number_in_list(o->me,exclude_list))));
     }
   }
@@ -1991,11 +1954,10 @@ void level::write_links(bFILE *fp, object_node *save_list, object_node *exclude_
   fp->write_uint8(RC_32);
   fp->write_uint32(total_light_links(save_list));
 
-  x=1;
-  for (o=save_list; o; o=o->next,x++)
+  x = 1;
+  for (object_node *o = save_list; o; o = o->next,x++)
   {
-    int i=0;
-    for (; i<o->me->total_lights(); i++)
+    for (int i = 0; i < o->me->total_lights(); i++)
     {
       fp->write_uint32(x);
       fp->write_uint32(light_to_number(o->me->get_light(i)));
@@ -2005,7 +1967,7 @@ void level::write_links(bFILE *fp, object_node *save_list, object_node *exclude_
 }
 
 
-void level::load_links(bFILE *fp, SpecDir *sd,
+void Level::load_links(bFILE *fp, SpecDir *sd,
                object_node *save_list, object_node *exclude_list)
 {
   SpecEntry *se=sd->find("object_links");
@@ -2020,7 +1982,7 @@ void level::load_links(bFILE *fp, SpecDir *sd,
     int32_t x1=fp->read_uint32();
     ASSERT(x1 >= 0, "expected x1 for object link to be > 0");
     int32_t x2=fp->read_uint32();
-    game_object *p,*q=number_to_object_in_list(x1,save_list);
+    GameObject *p,*q=number_to_object_in_list(x1,save_list);
     if (x2>0)
       p=number_to_object_in_list(x2,save_list);
     else p=number_to_object_in_list(-x2,exclude_list);
@@ -2044,7 +2006,7 @@ void level::load_links(bFILE *fp, SpecDir *sd,
       {
     int32_t x1=fp->read_uint32();
     int32_t x2=fp->read_uint32();
-    game_object *p=number_to_object_in_list(x1,save_list);
+    GameObject *p=number_to_object_in_list(x1,save_list);
     if (p)
       p->add_light(number_to_light(x2));
     else dprintf("bad object/light link\n");
@@ -2056,7 +2018,7 @@ void level::load_links(bFILE *fp, SpecDir *sd,
 }
 
 
-void level::write_options(bFILE *fp)
+void Level::write_options(bFILE *fp)
 {
   // save background scroll rate
   fp->write_uint8(RC_32);
@@ -2066,11 +2028,12 @@ void level::write_options(bFILE *fp)
   fp->write_uint32(bg_ydiv);
 
   fp->write_uint8(RC_32);
-  int ta=0;
-  area_controller *a=area_list;
-  for (; a; a=a->next) ta++;
+  int ta = 0;
+  for (area_controller *a = area_list; a; a = a->next)
+    ta++;
   fp->write_uint32(ta);
-  for (a=area_list; a; a=a->next)
+
+  for (area_controller *a = area_list; a; a = a->next)
   {
     fp->write_uint32(a->x);
     fp->write_uint32(a->y);
@@ -2089,7 +2052,7 @@ void level::write_options(bFILE *fp)
   fp->write_uint32(tick_counter());
 }
 
-void level::load_options(SpecDir *sd, bFILE *fp)
+void Level::load_options(SpecDir *sd, bFILE *fp)
 {
   SpecEntry *se=sd->find("bg_scroll_rate");
   if (se)
@@ -2148,7 +2111,7 @@ void level::load_options(SpecDir *sd, bFILE *fp)
 }
 
 
-void level::write_cache_prof_info()
+void Level::write_cache_prof_info()
 {
   if (cache.prof_is_on())
   {
@@ -2175,7 +2138,7 @@ void level::write_cache_prof_info()
 
 }
 
-void level::load_cache_info(SpecDir *sd, bFILE *fp)
+void Level::load_cache_info(SpecDir *sd, bFILE *fp)
 {
   if (!DEFINEDP(symbol_value(l_empty_cache)) || !symbol_value(l_empty_cache))
   {
@@ -2191,7 +2154,7 @@ void level::load_cache_info(SpecDir *sd, bFILE *fp)
 }
 
 
-int level::save(char const *filename, int save_all)
+int Level::save(char const *filename, int save_all)
 {
     char name[255], bkname[255];
 
@@ -2211,11 +2174,11 @@ int level::save(char const *filename, int save_all)
             {
                 uint8_t buf[0x1000];
                 int32_t size = fp->file_size();
-                int tr = 1;
-                while( size && tr )
+                while (size)
                 {
                     int tr = fp->read(buf,0x1000);
-                    if( tr )
+                    if(!tr)
+                        break;
                     tr = bk->write(buf,tr);
                     size -= tr;
                 }
@@ -2263,9 +2226,8 @@ int level::save(char const *filename, int save_all)
             fp->write_uint32( fg_width );
             fp->write_uint32( fg_height );
 
-            int t  = fg_width * fg_height;
             uint16_t *rm = map_fg;
-            for (; t; t--,rm++)
+            for (int t = fg_width * fg_height; t; t--, rm++)
             {
                 uint16_t x = *rm;
                 x = lstl(x);            // convert to intel endianess
@@ -2273,9 +2235,8 @@ int level::save(char const *filename, int save_all)
             }
 
             fp->write( (char *)map_fg, 2 * fg_width * fg_height );
-            t = fg_width * fg_height;
             rm = map_fg;
-            for (; t; t--,rm++)
+            for (int t = fg_width * fg_height; t; t--, rm++)
             {
                 uint16_t x = *rm;
                 x = lstl( x );            // convert to intel endianess
@@ -2284,10 +2245,9 @@ int level::save(char const *filename, int save_all)
 
             fp->write_uint32( bg_width );
             fp->write_uint32( bg_height );
-            t = bg_width * bg_height;
             rm = map_bg;
 
-            for (; t; t--,rm++)
+            for (int t = bg_width * bg_height; t; t--, rm++)
             {
                 uint16_t x=*rm;
                 x = lstl( x );        // convert to intel endianess
@@ -2296,9 +2256,8 @@ int level::save(char const *filename, int save_all)
 
             fp->write( (char *)map_bg, 2 * bg_width * bg_height );
             rm = map_bg;
-            t = bg_width*bg_height;
 
-            for (; t; t--,rm++)
+            for (int t = bg_width * bg_height; t; t--, rm++)
             {
                 uint16_t x = *rm;
                 x = lstl( x );        // convert to intel endianess
@@ -2343,7 +2302,7 @@ int level::save(char const *filename, int save_all)
     return 1;
 }
 
-level::level(int width, int height, char const *name)
+Level::Level(int width, int height, char const *name)
 {
   the_game->need_refresh();
   area_list=NULL;
@@ -2379,13 +2338,12 @@ level::level(int width, int height, char const *name)
   memset(map_bg,0,sizeof(int16_t)*bg_width*bg_height);
   memset(map_fg,0,sizeof(int16_t)*fg_width*fg_height);
 
-  int i;
-  for (i=0; i<fg_width; i++)
+  for (int i = 0; i < fg_width; i++)
   {
     map_fg[i]=1;
     map_fg[fg_width*(fg_height-1)+i]=1;
   }
-  for (i=0; i<fg_height; i++)
+  for (int i = 0; i < fg_height; i++)
   {
     map_fg[fg_width*i]=1;
     map_fg[fg_width*i+fg_width-1]=1;
@@ -2396,7 +2354,7 @@ level::level(int width, int height, char const *name)
 }
 
 
-void level::add_object(game_object *new_guy)
+void Level::add_object(GameObject *new_guy)
 {
   total_objs++;
   new_guy->next=NULL;
@@ -2419,7 +2377,7 @@ void level::add_object(game_object *new_guy)
   }
 }
 
-void level::add_object_after(game_object *new_guy,game_object *who)
+void Level::add_object_after(GameObject *new_guy,GameObject *who)
 {
   if (!who) add_object(new_guy);
   else
@@ -2431,47 +2389,43 @@ void level::add_object_after(game_object *new_guy,game_object *who)
   }
 }
 
-void level::delete_object(game_object *who)
+void Level::delete_object(GameObject *who)
 {
   remove_object(who);
   delete who;
 }
 
-void level::remove_block(game_object *who)
+void Level::remove_block(GameObject *who)
 {
-  int i=0,j;
-  game_object **o=block_list;
-  for (; i<block_total; i++)
-  {
-    if (*o==who)        // is this object in the block list?
+    GameObject **o = block_list;
+    for (int i = 0; i < block_total; ++i, ++o)
     {
-      block_total--;    // squish the block list in
-      o++;
-      for (j=i; j<block_total; j++)
-        block_list[j]=block_list[j+1];
-    } else o++;
-  }
+        if (*o == who) // is this object in the block list?
+        {
+            block_total--; // squish the block list in
+            for (int j = i; j < block_total; j++)
+                block_list[j] = block_list[j + 1];
+        }
+    }
 }
 
 
 // searches through the all_block list for who and if it finds it deletes it
-void level::remove_all_block(game_object *who)
+void Level::remove_all_block(GameObject *who)
 {
-  int i=0,j;
-  game_object **o=all_block_list;
-  for (; i<all_block_total; i++)
-  {
-    if (*o==who)        // is this object in the block list?
+    GameObject **o = all_block_list;
+    for (int i = 0; i < all_block_total; ++i, ++o)
     {
-      all_block_total--;    // squish the block list in
-      o++;
-      for (j=i; j<all_block_total; j++)
-        all_block_list[j]=all_block_list[j+1];
-    } else o++;
-  }
+        if (*o == who) // is this object in the block list?
+        {
+            all_block_total--; // squish the block list in
+            for (int j = i; j < all_block_total; j++)
+                all_block_list[j]=all_block_list[j+1];
+        }
+    }
 }
 
-void level::remove_object(game_object *who)
+void Level::remove_object(GameObject *who)
 {
   if (dev_cont)
     dev_cont->notify_deleted_object(who);
@@ -2483,14 +2437,15 @@ void level::remove_object(game_object *who)
   }
   else
   {
-    game_object *o=first;
-    for (; o && o->next!=who; o=o->next);
+    GameObject *o=first;
+    for (; o && o->next!=who; o=o->next)
+      ;
     if (o)
     {
       o->next=who->next;
       if (!o->next) last=o;
     }
-    else return ;     // if object is not in level, don't try to do anything else
+    else return; // if object is not in level, don't try to do anything else
   }
   total_objs--;
 
@@ -2499,20 +2454,20 @@ void level::remove_object(game_object *who)
     first_active=who->next_active;
   else
   {
-    game_object *o=first_active;
-    for (; o && o->next_active!=who; o=o->next_active);
+    GameObject *o=first_active;
+    for (; o && o->next_active!=who; o=o->next_active)
+      ;
     if (o)
       o->next_active=who->next_active;
   }
 
   if (who->flags()&KNOWN_FLAG)
   {
-    game_object *o=first;
+    GameObject *o=first;
     for (; o; o=o->next)
     {
       int t=o->total_objects();
-      int i=0;
-      for (; i<t; i++)
+      for (int i = 0; i < t; i++)
         if (o->get_object(i)==who)
     {
       o->remove_object(who);
@@ -2532,14 +2487,14 @@ void level::remove_object(game_object *who)
   }
 
 
-  int t=who->total_objects();
-  while (t) { who->remove_object(who->get_object(0)); t--; }
+  for (int t = who->total_objects(); t; --t)
+    who->remove_object(who->get_object(0));
 
-  t=who->total_lights();
-  while (t) { who->remove_light(who->get_light(0)); t--; }
+  for (int t = who->total_lights(); t; --t)
+    who->remove_light(who->get_light(0));
 }
 
-void level::to_front(game_object *o)  // move to end of list, so we are drawn last, therefore top
+void Level::to_front(GameObject *o)  // move to end of list, so we are drawn last, therefore top
 {
   if (o==last) return ;
   first_active=NULL;     // make sure nothing goes screwy with the active list
@@ -2548,9 +2503,11 @@ void level::to_front(game_object *o)  // move to end of list, so we are drawn la
     first=first->next;
   else
   {
-    game_object *w=first;
-    for (; w && w->next!=o; w=w->next);
-    if (!w) return ;
+    GameObject *w=first;
+    for (; w && w->next!=o; w=w->next)
+      ;
+    if (!w)
+      return;
     w->next=o->next;
   }
 
@@ -2559,13 +2516,14 @@ void level::to_front(game_object *o)  // move to end of list, so we are drawn la
   last=o;
 }
 
-void level::to_back(game_object *o)   // to make the character drawn in back, put at front of list
+void Level::to_back(GameObject *o)   // to make the character drawn in back, put at front of list
 {
   if (o==first) return;
   first_active=NULL;     // make sure nothing goes screwy with the active list
 
-  game_object *w=first;
-  for (; w && w->next!=o; w=w->next);
+  GameObject *w = first;
+  for (; w && w->next != o; w = w->next)
+    ;
   if (!w) return;
   if (last==o)
     last=w;
@@ -2575,30 +2533,29 @@ void level::to_back(game_object *o)   // to make the character drawn in back, pu
 }
 
 
-game_object *level::find_self(game_object *me)
+GameObject *Level::find_self(GameObject *me)
 {
   return me;
 }
 
-game_object *level::find_object(int32_t x, int32_t y)
+GameObject *Level::find_object(int32_t x, int32_t y)
 {
-  int32_t x1,y1,x2,y2;
-  game_object *o=first;
-  for (; o; o=o->next)
+  for (GameObject *o = first; o; o = o->next)
   {
-    o->picture_space(x1,y1,x2,y2);
-    if (x<x2 && x>=x1 && y<y2 && y>=y1)
+    int32_t x1, y1, x2, y2;
+    o->picture_space(x1, y1, x2, y2);
+    if (x < x2 && x >= x1 && y < y2 && y >= y1)
       return o;
   }
   return NULL;
 }
 
-int32_t last_tile_hit_x,last_tile_hit_y;
+int32_t last_tile_hit_x, last_tile_hit_y;
 
 #define remapx(x) (x==0 ? -1 : x==tl-1 ? tl+1 : x)
 #define remapy(y) (y==0 ? -1 : y==th-1 ? th+1 : y)
 
-void level::foreground_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y2)
+void Level::foreground_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y2)
 {
 /*  if (x1==x2)
   { vforeground_intersect(x1,y1,y2);
@@ -2678,7 +2635,7 @@ void level::foreground_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y
 }
 
 
-void level::vforeground_intersect(int32_t x1, int32_t y1, int32_t &y2)
+void Level::vforeground_intersect(int32_t x1, int32_t y1, int32_t &y2)
 {
   int32_t tl=f_wid,th=f_hi,
     j,
@@ -2752,21 +2709,21 @@ void level::vforeground_intersect(int32_t x1, int32_t y1, int32_t &y2)
 
 
 
-void level::send_signal(int32_t signal)
+void Level::send_signal(int32_t signal)
 {
   if (signal)   // signal 0 is never sent!
   {
-    game_object *o=first_active;
+    GameObject *o=first_active;
     for (; o; o=o->next_active)
       o->receive_signal(signal);
   }
 }
 
 
-int level::crush(game_object *by_who, int xamount, int yamount)
+int Level::crush(GameObject *by_who, int xamount, int yamount)
 {
   int32_t xv,yv,crushed=0;
-  game_object *o=first_active;
+  GameObject *o=first_active;
   for (; o; o=o->next_active)
   {
     if (o->hurtable() && o!=by_who)
@@ -2799,11 +2756,11 @@ int level::crush(game_object *by_who, int xamount, int yamount)
 }
 
 
-int level::platform_push(game_object *by_who, int xamount, int yamount)
+int Level::platform_push(GameObject *by_who, int xamount, int yamount)
 {
   int failed=0;
   int32_t xv,yv;
-  game_object *o=first_active;
+  GameObject *o=first_active;
   for (; o; o=o->next_active)
   {
     if (o->is_playable() && o->state!=dieing && o->state!=dead)
@@ -2850,11 +2807,11 @@ int level::platform_push(game_object *by_who, int xamount, int yamount)
   return !failed;
 }
 
-int level::push_characters(game_object *by_who, int xamount, int yamount)
+int Level::push_characters(GameObject *by_who, int xamount, int yamount)
 {
   int32_t xv,yv;
   int failed=0;
-  game_object *o=first_active;
+  GameObject *o=first_active;
   for (; o; o=o->next_active)
   {
     if ((o->is_playable() || o->pushable()) && o->state!=dieing && o->state!=dead)
@@ -2879,11 +2836,11 @@ int level::push_characters(game_object *by_who, int xamount, int yamount)
   return !failed;
 }
 
-game_object *level::find_xrange(int x, int y, int type, int xd)
+GameObject *Level::find_xrange(int x, int y, int type, int xd)
 {
   int32_t find_ydist=100000;
-  game_object *find=NULL;
-  game_object *o=first_active;
+  GameObject *find=NULL;
+  GameObject *o=first_active;
   for (; o; o=o->next_active)
   {
     if (o->otype==type)
@@ -2902,11 +2859,11 @@ game_object *level::find_xrange(int x, int y, int type, int xd)
 }
 
 
-game_object *level::find_xclosest(int x, int y, int type, game_object *who)
+GameObject *Level::find_xclosest(int x, int y, int type, GameObject *who)
 {
   int32_t find_ydist=100000,find_xdist=0xffffff;
-  game_object *find=NULL;
-  game_object *o=first_active;
+  GameObject *find=NULL;
+  GameObject *o=first_active;
   for (; o; o=o->next_active)
   {
     if (o->otype==type && o!=who)
@@ -2932,11 +2889,11 @@ game_object *level::find_xclosest(int x, int y, int type, game_object *who)
   return find;
 }
 
-game_object *level::find_closest(int x, int y, int type, game_object *who)
+GameObject *Level::find_closest(int x, int y, int type, GameObject *who)
 {
   int32_t find_dist=100000;
-  game_object *find=NULL;
-  game_object *o=first_active;
+  GameObject *find=NULL;
+  GameObject *o=first_active;
   for (; o; o=o->next_active)
   {
     if (o->otype==type && o!=who)
@@ -2954,11 +2911,11 @@ game_object *level::find_closest(int x, int y, int type, game_object *who)
 
 
 
-void level::remove_light(light_source *which)
+void Level::remove_light(LightSource *which)
 {
   if (which->known)
   {
-    game_object *o=first;
+    GameObject *o=first;
     for (; o; o=o->next)
     {
       int t=o->total_lights();
@@ -2972,10 +2929,10 @@ void level::remove_light(light_source *which)
 }
 
 
-game_object *level::find_type(int type, int skip)
+GameObject *Level::find_type(int type, int skip)
 {
-  game_object *l=NULL;
-  game_object *o=first;
+  GameObject *l=NULL;
+  GameObject *o=first;
   for (; o; o=o->next)
   {
     if (o->otype==type)
@@ -2989,11 +2946,11 @@ game_object *level::find_type(int type, int skip)
   return l;
 }
 
-void level::hurt_radius(int32_t x, int32_t y,int32_t r, int32_t m, game_object *from, game_object *exclude,
+void Level::hurt_radius(int32_t x, int32_t y,int32_t r, int32_t m, GameObject *from, GameObject *exclude,
             int max_push)
 {
   if (r<1) return ;   // avoid dev vy zero
-  game_object *o=first_active;
+  GameObject *o=first_active;
   for (; o; o=o->next_active)
   {
     if (o!=exclude && o->hurtable())
@@ -3031,10 +2988,10 @@ void level::hurt_radius(int32_t x, int32_t y,int32_t r, int32_t m, game_object *
 
 
 
-game_object *level::get_random_start(int min_player_dist, view *exclude)
+GameObject *Level::get_random_start(int min_player_dist, view *exclude)
 {
   int t=0;
-  game_object *o=first;
+  GameObject *o=first;
   for (; o; o=o->next)
     if (o->otype==start_position_type) t++;    // count how many starts there are in the level
 
@@ -3044,7 +3001,7 @@ game_object *level::get_random_start(int min_player_dist, view *exclude)
   do
   {
     int ctry=jrandom(t)+1;
-    game_object *n=first;
+    GameObject *n=first;
     for (n=first; ctry && n; n=n->next)
     {
       if (n->otype==start_position_type)
@@ -3078,7 +3035,7 @@ game_object *level::get_random_start(int min_player_dist, view *exclude)
 
 
 
-void level::insert_players()
+void Level::insert_players()
 {
 
   int start=0;
@@ -3090,7 +3047,7 @@ void level::insert_players()
   view *f=player_list;
   for (; f; f=f->next)
   {
-    game_object *st=find_type(start,f->player_number);
+    GameObject *st=find_type(start,f->player_number);
     if (st)
     {
       f->m_focus->x=st->x;
@@ -3102,12 +3059,12 @@ void level::insert_players()
 }
 
 
-void level::add_attacker(game_object *who)
+void Level::add_attacker(GameObject *who)
 {
   if (attack_total>=attack_list_size)  // see if we need to grow the list size..
   {
     attack_list_size++;
-    attack_list=(game_object **)realloc(attack_list,sizeof(game_object *)*attack_list_size);
+    attack_list=(GameObject **)realloc(attack_list,sizeof(GameObject *)*attack_list_size);
   }
   attack_list[attack_total]=who;
   attack_total++;
@@ -3115,12 +3072,12 @@ void level::add_attacker(game_object *who)
 
 
 
-void level::add_target(game_object *who)
+void Level::add_target(GameObject *who)
 {
   if (target_total>=target_list_size)  // see if we need to grow the list size..
   {
     target_list_size++;
-    target_list=(game_object **)realloc(target_list,sizeof(game_object *)*target_list_size);
+    target_list=(GameObject **)realloc(target_list,sizeof(GameObject *)*target_list_size);
   }
   target_list[target_total]=who;
   target_total++;
@@ -3128,36 +3085,36 @@ void level::add_target(game_object *who)
 
 
 
-void level::add_block(game_object *who)
+void Level::add_block(GameObject *who)
 {
   if (block_total>=block_list_size)  // see if we need to grow the list size..
   {
     block_list_size++;
-    block_list=(game_object **)realloc(block_list,sizeof(game_object *)*block_list_size);
+    block_list=(GameObject **)realloc(block_list,sizeof(GameObject *)*block_list_size);
   }
   block_list[block_total]=who;
   block_total++;
 }
 
 
-void level::add_all_block(game_object *who)
+void Level::add_all_block(GameObject *who)
 {
   if (all_block_total>=all_block_list_size)  // see if we need to grow the list size..
   {
     all_block_list_size++;
-    all_block_list=(game_object **)realloc(all_block_list,sizeof(game_object *)*all_block_list_size);
+    all_block_list=(GameObject **)realloc(all_block_list,sizeof(GameObject *)*all_block_list_size);
   }
   all_block_list[all_block_total]=who;
   all_block_total++;
 }
 
 
-game_object *level::find_object_in_area(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
-                     Cell *list, game_object *exclude)
+GameObject *Level::find_object_in_area(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
+                     Cell *list, GameObject *exclude)
 {
-  game_object *closest=NULL;
+  GameObject *closest=NULL;
   int32_t closest_distance=0xfffffff,distance,xo,yo;
-  game_object *o=first_active;
+  GameObject *o=first_active;
   for (; o; o=o->next_active)
   {
     int32_t xp1,yp1,xp2,yp2;
@@ -3188,12 +3145,12 @@ game_object *level::find_object_in_area(int32_t x, int32_t y, int32_t x1, int32_
 
 
 
-game_object *level::find_object_in_angle(int32_t x, int32_t y, int32_t start_angle, int32_t end_angle,
-                    void *list, game_object *exclude)
+GameObject *Level::find_object_in_angle(int32_t x, int32_t y, int32_t start_angle, int32_t end_angle,
+                    void *list, GameObject *exclude)
 {
-  game_object *closest=NULL;
+  GameObject *closest=NULL;
   int32_t closest_distance=0xfffffff,distance,xo,yo;
-  game_object *o=first_active;
+  GameObject *o=first_active;
   for (; o; o=o->next_active)
   {
     int32_t angle=lisp_atan2(o->y-y,o->x-x);
@@ -3221,10 +3178,10 @@ game_object *level::find_object_in_angle(int32_t x, int32_t y, int32_t start_ang
 }
 
 
-object_node *level::make_not_list(object_node *list)
+object_node *Level::make_not_list(object_node *list)
 {
   object_node *f=NULL,*l=NULL;
-  game_object *o=first;
+  GameObject *o=first;
   for (; o; o=o->next)
   {
     if (!object_to_number_in_list(o,list))
@@ -3239,13 +3196,13 @@ object_node *level::make_not_list(object_node *list)
   return f;
 }
 
-void level::write_object_info(char *filename)
+void Level::write_object_info(char *filename)
 {
   FILE *fp=open_FILE(filename,"wb");
   if (fp)
   {
     int i=0;
-    game_object *o=first;
+    GameObject *o=first;
     for (; o; o=o->next)
     {
       fprintf(fp,"%3d %s %4ld %4ld %4ld %4ld %04d\n",i++,object_names[o->otype],(long)o->x,(long)o->y,

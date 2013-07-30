@@ -174,7 +174,7 @@ void automap::toggle_window()
 }
 
 
-automap::automap(level *l, int width, int height)
+automap::automap(Level *l, int width, int height)
 {
   w=width;
   h=height;

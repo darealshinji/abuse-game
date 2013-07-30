@@ -17,7 +17,7 @@ extern int morph_detail;
 
 class view;
 
-class game_object;
+class GameObject;
 
 class morph_char
 {
@@ -25,8 +25,8 @@ class morph_char
   smorph_player *mor;
   int end_type,fleft;
 public :
-  morph_char(game_object *who, int to_type, void (*stat_fun)(int), int anneal, int frames);
-  void draw(game_object *who, view *v);
+  morph_char(GameObject *who, int to_type, void (*stat_fun)(int), int anneal, int frames);
+  void draw(GameObject *who, view *v);
   int frames_left() { return fleft; }
   virtual ~morph_char() { if (mor) delete mor; }
 } ;

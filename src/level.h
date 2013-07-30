@@ -44,7 +44,7 @@ class area_controller
 
 extern int32_t last_tile_hit_x,last_tile_hit_y;
 extern int dev;
-class level        // contain map info and objects
+class Level        // contain map info and objects
 {
   uint16_t *map_fg,        // just big 2d arrays
            *map_bg,
@@ -52,26 +52,26 @@ class level        // contain map info and objects
        fg_width,fg_height;
   char *Name,*first_name;
   int32_t total_objs;
-  game_object *first,*first_active,*last;
+  GameObject *first,*first_active,*last;
 
-  game_object **attack_list;                // list of characters for tick which can attack someone
+  GameObject **attack_list;                // list of characters for tick which can attack someone
   int attack_list_size,attack_total;
-  void add_attacker(game_object *who);
+  void add_attacker(GameObject *who);
 
-  game_object **target_list;                // list of characters for tick which can be attacked
+  GameObject **target_list;                // list of characters for tick which can be attacked
   int target_list_size,target_total;
-  void add_target(game_object *who);
+  void add_target(GameObject *who);
 
-  game_object **block_list;                // list of characters who can block a character
+  GameObject **block_list;                // list of characters who can block a character
   int block_list_size,block_total;
-  void add_block(game_object *who);
+  void add_block(GameObject *who);
 
-  void remove_block(game_object *who);
-  void remove_all_block(game_object *who);
+  void remove_block(GameObject *who);
+  void remove_all_block(GameObject *who);
 
-  game_object **all_block_list;            // list of characters who can block a character or can be hurt
+  GameObject **all_block_list;            // list of characters who can block a character or can be hurt
   int all_block_list_size,all_block_total;
-  void add_all_block(game_object *who);
+  void add_all_block(GameObject *who);
   uint32_t ctick;
 
 public :
@@ -82,26 +82,26 @@ public :
 
   void clear_active_list() { first_active=NULL; }
   char *name() { return Name; }
-  game_object *attacker(game_object *who);
-  int is_attacker(game_object *who);
-  game_object *main_character();
+  GameObject *attacker(GameObject *who);
+  int is_attacker(GameObject *who);
+  GameObject *main_character();
 
-  game_object *first_object() { return first; }
-  game_object *first_active_object() { return first_active; }
+  GameObject *first_object() { return first; }
+  GameObject *first_active_object() { return first_active; }
   uint16_t foreground_width() { return fg_width; }
   uint16_t foreground_height() { return fg_height; }
   uint16_t background_width() { return bg_width; }
   uint16_t background_height() { return bg_height; }
   int load_failed() { return map_fg==NULL; }
-  level(SpecDir *sd, bFILE *fp, char const *lev_name);
+  Level(SpecDir *sd, bFILE *fp, char const *lev_name);
   void load_fail();
-  level(int width, int height, char const *name);
+  Level(int width, int height, char const *name);
   int save(char const *filename, int save_all);  // save_all includes player and view information (1 = success)
   void set_name(char const *name) { Name=strcpy((char *)realloc(Name,strlen(name)+1),name); }
   void set_size(int w, int h);
-  void remove_light(light_source *which);
-  void try_pushback(game_object *subject,game_object *target);
-  ~level();
+  void remove_light(LightSource *which);
+  void try_pushback(GameObject *subject,GameObject *target);
+  ~Level();
 
   int fg_raised(int x, int y) { ASSERT(x>=0 && y>=0 && x<fg_width && y<fg_height);
                  return (*(map_fg+x+y*fg_width))&0x4000; }
@@ -132,10 +132,10 @@ public :
   int tick();                                // returns false if character is dead
   void check_collisions();
   void wall_push();
-  void add_object(game_object *new_guy);
-  void add_object_after(game_object *new_guy, game_object *who);
-  void delete_object(game_object *who);
-  void remove_object(game_object *who);      // unlinks the object from level, but doesn't delete it
+  void add_object(GameObject *new_guy);
+  void add_object_after(GameObject *new_guy, GameObject *who);
+  void delete_object(GameObject *who);
+  void remove_object(GameObject *who);      // unlinks the object from level, but doesn't delete it
   void load_objects(SpecDir *sd, bFILE *fp);
   void load_cache_info(SpecDir *sd, bFILE *fp);
   void old_load_objects(SpecDir *sd, bFILE *fp);
@@ -150,52 +150,52 @@ public :
   void unactivate_all();
   // forms all the objects in processing range into a linked list
   int add_actives(int32_t x1, int32_t y1, int32_t x2, int32_t y2);  //returns total added
-  void pull_actives(game_object *o, game_object *&last_active, int &t);
+  void pull_actives(GameObject *o, GameObject *&last_active, int &t);
   int add_drawables(int32_t x1, int32_t y1, int32_t x2, int32_t y2);  //returns total added
 
-  game_object *find_object(int32_t x, int32_t y);
+  GameObject *find_object(int32_t x, int32_t y);
 
-  game_object *damage_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y2, game_object *exclude);
-  game_object *boundary_setback(game_object *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2);
-  game_object *all_boundary_setback(game_object *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2);
-  int crush(game_object *by_who, int xamount, int yamount);
-  int push_characters(game_object *by_who, int xamount, int yamount);  // return 0 if fail on any.
-  int platform_push(game_object *by_who, int xamount, int yamount);
+  GameObject *damage_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y2, GameObject *exclude);
+  GameObject *boundary_setback(GameObject *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2);
+  GameObject *all_boundary_setback(GameObject *subject, int32_t x1, int32_t y1, int32_t &x2, int32_t &y2);
+  int crush(GameObject *by_who, int xamount, int yamount);
+  int push_characters(GameObject *by_who, int xamount, int yamount);  // return 0 if fail on any.
+  int platform_push(GameObject *by_who, int xamount, int yamount);
   void foreground_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y2);
   void vforeground_intersect(int32_t x1, int32_t y1, int32_t &y2);
 
-  void hurt_radius(int32_t x, int32_t y,int32_t r, int32_t m, game_object *from, game_object *exclude,
+  void hurt_radius(int32_t x, int32_t y,int32_t r, int32_t m, GameObject *from, GameObject *exclude,
            int max_push);
   void send_signal(int32_t signal);
   void next_focus();
-  void to_front(game_object *o);
-  void to_back(game_object *o);
-  game_object *find_closest(int x, int y, int type, game_object *who);
-  game_object *find_xclosest(int x, int y, int type, game_object *who);
-  game_object *find_xrange(int x, int y, int type, int xd);
-  game_object *find_self(game_object *me);
+  void to_front(GameObject *o);
+  void to_back(GameObject *o);
+  GameObject *find_closest(int x, int y, int type, GameObject *who);
+  GameObject *find_xclosest(int x, int y, int type, GameObject *who);
+  GameObject *find_xrange(int x, int y, int type, int xd);
+  GameObject *find_self(GameObject *me);
 
 
   void write_links(bFILE *fp, object_node *save_list, object_node *exclude_list);
   void load_links(bFILE *fp, SpecDir *sd, object_node *save_list, object_node *exclude_list);
 
 
-  game_object *find_type(int type, int skip);
+  GameObject *find_type(int type, int skip);
   void insert_players();   // inserts the players into the level
 
 
-  game_object *get_random_start(int min_player_dist, view *exclude);
-//  game_object *find_enemy(game_object *exclude1, game_object *exclude2);
+  GameObject *get_random_start(int min_player_dist, view *exclude);
+//  GameObject *find_enemy(GameObject *exclude1, GameObject *exclude2);
 
   bFILE *create_dir(char *filename, int save_all,
             object_node *save_list, object_node *exclude_list);
   view *make_view_list(int nplayers);
   int32_t total_light_links(object_node *list);
   int32_t total_object_links(object_node *save_list);
-  game_object *find_object_in_area(int32_t x, int32_t y, int32_t x1, int32_t y1,
-                   int32_t x2, int32_t y2, Cell *list, game_object *exclude);
-  game_object *find_object_in_angle(int32_t x, int32_t y, int32_t start_angle, int32_t end_angle,
-                    void *list, game_object *exclude);
+  GameObject *find_object_in_area(int32_t x, int32_t y, int32_t x1, int32_t y1,
+                   int32_t x2, int32_t y2, Cell *list, GameObject *exclude);
+  GameObject *find_object_in_angle(int32_t x, int32_t y, int32_t start_angle, int32_t end_angle,
+                    void *list, GameObject *exclude);
   object_node *make_not_list(object_node *list);
   int load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list);
   void write_player_info(bFILE *fp, object_node *save_list);
@@ -203,8 +203,8 @@ public :
   void level_loaded_notify();
 } ;
 
-extern level *current_level;
-void pull_actives(game_object *o, game_object *&last_active, int &t);
+extern Level *g_current_level;
+void pull_actives(GameObject *o, GameObject *&last_active, int &t);
 
 
 

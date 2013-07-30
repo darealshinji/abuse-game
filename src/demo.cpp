@@ -65,13 +65,13 @@ int event_waiting()
 
 int demo_manager::start_recording(char *filename)
 {
-  if (!current_level) return 0;
+  if (!g_current_level) return 0;
 
   record_file=open_file(filename,"wb");
   if (record_file->open_failure()) { delete record_file; return 0; }
 
   char name[100];
-  strcpy(name,current_level->name());
+  strcpy(name,g_current_level->name());
 
   the_game->load_level(name);
   record_file->write((void *)"DEMO,VERSION:2",14);
@@ -147,7 +147,7 @@ void demo_manager::reset_game()
 
   last_demo_mpos = ivec2(0, 0);
   last_demo_mbut = 0;
-  current_level->set_tick_counter(0);
+  g_current_level->set_tick_counter(0);
 
 }
 
@@ -215,8 +215,8 @@ int demo_manager::set_state(demo_state new_state, char *filename)
       view *v=player_list;
       for (; v; v=v->next)  // reset all the players
       { if (v->m_focus) { v->reset_player(); v->m_focus->set_aistate(0); } }
-      delete current_level;
-      current_level=NULL;
+      delete g_current_level;
+      g_current_level=NULL;
       the_game->reset_keymap();
       base->input_state=INPUT_PROCESSING;
 

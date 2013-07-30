@@ -24,7 +24,7 @@ extern int16_t ambient_ramp;
 
 extern int16_t shutdown_lighting_value,shutdown_lighting;
 
-class light_source
+class LightSource
 {
   public :
   int32_t type,x,xshift,y,yshift;
@@ -32,20 +32,20 @@ class light_source
 
   int32_t x1,y1,x2,y2;
   char known;
-  light_source *next;
+  LightSource *next;
 
   void calc_range();
-  light_source(char Type, int32_t X, int32_t Y, int32_t Inner_radius, int32_t Outer_radius,
+  LightSource(char Type, int32_t X, int32_t Y, int32_t Inner_radius, int32_t Outer_radius,
            int32_t Xshift, int32_t Yshift,
-           light_source *Next);
-  light_source *copy();
+           LightSource *Next);
+  LightSource *copy();
 } ;
 
 class light_patch
 {
   public :
   int32_t total,x1,y1,x2,y2;
-  light_source **lights;
+  LightSource **lights;
   light_patch *next;
   light_patch(int32_t X1, int32_t Y1, int32_t X2, int32_t Y2, light_patch *Next)
   {
@@ -54,14 +54,14 @@ class light_patch
     total=0;
     lights=NULL;
   }
-  void add_light(int32_t X1, int32_t Y1, int32_t X2, int32_t Y2, light_source *who);
+  void add_light(int32_t X1, int32_t Y1, int32_t X2, int32_t Y2, LightSource *who);
   light_patch *copy(light_patch *Next);
   ~light_patch() { if (total) free(lights); }
 } ;
 
 void delete_all_lights();
-void delete_light(light_source *which);
-light_source *add_light_source(char type, int32_t x, int32_t y,
+void delete_light(LightSource *which);
+LightSource *add_light_source(char type, int32_t x, int32_t y,
                    int32_t inner, int32_t outer, int32_t xshift, int32_t yshift);
 
 void add_light_spec(SpecDir *sd, char const *level_name);
@@ -77,10 +77,10 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
              image *out, int32_t out_x, int32_t out_y);
 
 void calc_light_table(palette *pal);
-extern light_source *first_light_source;
+extern LightSource *first_light_source;
 extern int light_detail;
 
-extern int32_t light_to_number(light_source *l);
-extern light_source *number_to_light(int32_t x);
+extern int32_t light_to_number(LightSource *l);
+extern LightSource *number_to_light(int32_t x);
 
 #endif

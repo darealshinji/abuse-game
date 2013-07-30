@@ -18,7 +18,7 @@ class view;
 
 int defun_pseq(void *args);
 void add_panim(int id, long x, long y, int dir);
-void delete_panims();      // called by ~level
+void delete_panims();      // called by ~Level
 void draw_panims(view *v);
 void tick_panims();
 void free_pframes();

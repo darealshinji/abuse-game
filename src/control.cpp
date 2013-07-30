@@ -24,7 +24,7 @@
 sequence *morph_table[MORPH_TABLE_WIDTH*MORPH_TABLE_WIDTH];
 
 
-void controlled_character::note_hp_change(int new_hp, game_object *who)
+void controlled_character::note_hp_change(int new_hp, GameObject *who)
 {
   if (cur_char==who)
     the_game->set_hit_points(hp);
@@ -49,7 +49,7 @@ void controlled_character::change_character(int char_type)
 
 
 
-controlled_character::controlled_character(game_object *who)
+controlled_character::controlled_character(GameObject *who)
 {
   cur_char=who;
   abilities=0;

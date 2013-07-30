@@ -19,7 +19,7 @@
 #include "objects.h"
 #include "view.h"
 
-void morph_char::draw(game_object *who, view *v)
+void morph_char::draw(GameObject *who, view *v)
 {
     if (fleft)
     {
@@ -34,7 +34,7 @@ void morph_char::draw(game_object *who, view *v)
 
 
 
-morph_char::morph_char(game_object *who, int to_type, void (*stat_fun)(int), int anneal, int frames)
+morph_char::morph_char(GameObject *who, int to_type, void (*stat_fun)(int), int anneal, int frames)
 {
   mor=NULL;
   CharacterType *t1=figures[who->otype],*t2=figures[to_type];

@@ -187,7 +187,7 @@ void set_login(char const *name)
     strncpy(cur_user_name, name, 20);
 }
 
-view::view(game_object *focus, view *Next, int number)
+view::view(GameObject *focus, view *Next, int number)
 {
     m_chat_buf[0] = 0;
 
@@ -281,8 +281,8 @@ void view::draw_character_damage()
 uint16_t make_sync()
 {
   uint16_t x=0;
-  if (!current_level) return 0;
-  if (current_level)
+  if (!g_current_level) return 0;
+  if (g_current_level)
   {
     view *f=player_list;
     for (; f; f=f->next)
@@ -429,7 +429,7 @@ void view::add_chat_key(int key)  // return string if buf is complete
   {
     if (DEFINEDP(l_chat_input->GetFunction()))
     {
-      game_object *o=current_object;
+      GameObject *o=current_object;
       current_object=m_focus;
 
       void *m = LSpace::Tmp.Mark();
@@ -758,7 +758,7 @@ void set_local_players(int total)
 
   while (total)   // see if we need to add new players
   {
-    game_object *o=create(current_start_type,50,50);
+    GameObject *o=create(current_start_type,50,50);
     view *v;
     if (!player_list)
     {
@@ -810,7 +810,7 @@ void view::reset_player()
   if (m_focus)
   {
 
-    game_object *start=current_level ? current_level->get_random_start(320,m_focus->controller()) : 0;
+    GameObject *start=g_current_level ? g_current_level->get_random_start(320,m_focus->controller()) : 0;
     m_focus->defaults();
     if (start)
     {
@@ -834,7 +834,7 @@ void view::reset_player()
     m_focus->set_aistate(0);
     if (figures[m_focus->otype]->get_fun(OFUN_CONSTRUCTOR))
     {
-      game_object *o=current_object;
+      GameObject *o=current_object;
       current_object=m_focus;
       ((LSymbol *)figures[m_focus->otype]->get_fun(OFUN_CONSTRUCTOR))->EvalUserFunction(NULL);
       current_object=o;
@@ -844,7 +844,7 @@ void view::reset_player()
     int i;
     for (i=0; i<m_focus->total_objects(); i++)   // reset the vars for the attached objects
     {
-      game_object *o=m_focus->get_object(i);
+      GameObject *o=m_focus->get_object(i);
       memset(o->lvars,0,figures[o->otype]->tv*4);
     }
 
@@ -872,7 +872,7 @@ object_node *make_player_onodes(int player_num)
       }
       for (int i=0; i<o->m_focus->total_objects(); i++)
       {
-    game_object *p=o->m_focus->get_object(i);
+    GameObject *p=o->m_focus->get_object(i);
 
     if (!object_to_number_in_list(p,first))
     {
@@ -1169,7 +1169,7 @@ void process_packet_commands(uint8_t *pk, int size)
     sync_uint16=x;
     else if (x!=sync_uint16 && !already_reloaded)
     {
-      dprintf("out of sync %d (packet=%d, calced=%d)\n",current_level->tick_counter(),x,sync_uint16);
+      dprintf("out of sync %d (packet=%d, calced=%d)\n",g_current_level->tick_counter(),x,sync_uint16);
       if (demo_man.current_state()==demo_manager::NORMAL)
         net_reload();
       already_reloaded=1;
@@ -1190,7 +1190,7 @@ void process_packet_commands(uint8_t *pk, int size)
       object_node *on=make_player_onodes(player_num);
       while (on)
       {
-        current_level->delete_object(on->me);
+        g_current_level->delete_object(on->me);
         object_node *last=on;
         on=on->next;
         delete last;

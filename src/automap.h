@@ -17,11 +17,11 @@
 class automap
 {
   Jwindow *automap_window;
-  level *cur_lev;
+  Level *cur_lev;
   int tick,w,h;                // used to draw your position as a blinking spot
   long old_dx,old_dy;
 public :
-  automap(level *l, int width, int height);
+  automap(Level *l, int width, int height);
   void toggle_window();
   void handle_event(Event &ev);
   void draw();

@@ -488,15 +488,15 @@ void server::check_for_new_players()
       if (!strcmp(object_names[i],"START"))
         st=i;
 
-    game_object *o=create(current_start_type,0,0);
-    game_object *start=current_level->get_random_start(320,NULL);
+    GameObject *o=create(current_start_type,0,0);
+    GameObject *start=g_current_level->get_random_start(320,NULL);
     if (start) { o->x=start->x; o->y=start->y; }
     else { o->x=100; o->y=100; }
 
     f->next=new view(o,NULL,f->player_number+1);
     o->set_controller(f->next);
 
-    current_level->add_object(o);
+    g_current_level->add_object(o);
     view *v=f->next;
     v->cx1=cx1;
     v->cy1=cy1;
@@ -506,7 +506,7 @@ void server::check_for_new_players()
     strcpy(v->name,name);
 
 
-    if (current_level->send(nd))
+    if (g_current_level->send(nd))
     {
       uint8_t cmd=SCMD_ADD_VIEW;
       next_out.write((uint8_t *)&cmd,1);
@@ -580,16 +580,16 @@ int server::join_game(out_socket *os, char *name, char *server_name)
   }
 
 
-  if (current_level)
-    delete current_level;
+  if (g_current_level)
+    delete g_current_level;
 
   int32_t vs[4]={ lltl(320/2-155),lltl(200/2-95),lltl(320/2+155),lltl(200/2+70)};
   pk.write((uint8_t *)vs,4*4);
   if (!send_pkt(os,pk))   { printf("Unable to write to server\n"); exit(0);  }
 
 
-  current_level=new level(os);
-  if (current_level->load_failed())
+  g_current_level=new Level(os);
+  if (g_current_level->load_failed())
   {
     printf("Error occurred while downloading level\n");
     exit(1);
@@ -705,11 +705,11 @@ view *server::add_view(packet &pk)
   }
   else
   {
-    game_object *o=current_level->number_to_object(x[24]);
+    GameObject *o=g_current_level->number_to_object(x[24]);
     if (!o)
     {
       o=create(x[25],x[26],x[27]);
-      current_level->add_object(o);
+      g_current_level->add_object(o);
     }
     view *v=new view(o,NULL,x[0]);
     o->set_controller(v);

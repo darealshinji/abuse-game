@@ -66,9 +66,9 @@ extern char backw_on,forew_on,show_menu_on,ledit_on,pmenu_on,omenu_on,commandw_o
 
 class dev_controll
 {
-  game_object *edit_object,*selected_object,*ai_object,*search_object,
+  GameObject *edit_object,*selected_object,*ai_object,*search_object,
               *link_object;
-  light_source *edit_light,*selected_light;
+  LightSource *edit_light,*selected_light;
   pal_win **pal_wins;
   char **pwin_list;
   int total_pals;
@@ -108,7 +108,7 @@ public :
   int repeat_key_mode();
   int need_plus_minus();
   int need_arrows();
-  void make_ai_window(game_object *o);
+  void make_ai_window(GameObject *o);
   void close_ai_window();
   void make_ambient();
   int ok_to_scroll();
@@ -117,8 +117,8 @@ public :
   void area_handle_input(Event &ev);
   void pick_handle_input(Event &ev);
   void close_area_win(int read_values);
-  void notify_deleted_object(game_object *o);
-  void notify_deleted_light(light_source *l);
+  void notify_deleted_object(GameObject *o);
+  void notify_deleted_light(LightSource *l);
   void set_state(int new_state);
   ~dev_controll();
 } ;

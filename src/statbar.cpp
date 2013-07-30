@@ -249,7 +249,7 @@ void status_bar::draw_update()
     if (DEFINEDP(symbol_value(l_mouse_can_switch)) && symbol_value(l_mouse_can_switch) &&
     mouse_in_area())
     {
-      if ((current_level->tick_counter()&4)==0)
+      if ((g_current_level->tick_counter()&4)==0)
         wm->SetMouseShape(cache.img(c_mouse1)->copy(), ivec2(4, 4));
       else wm->SetMouseShape(cache.img(c_mouse2)->copy(), ivec2(4, 4));
       changed_cursor=1;

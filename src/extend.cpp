@@ -52,17 +52,17 @@
 
 */
 
-void simple_object::add_light(light_source *ls)
+void SimpleObject::add_light(LightSource *ls)
 {
   if (!ls) return ;
   ls->known=1;
   for (int i=0; i<tlights; i++) if (lights[i]==ls) return;
   tlights++;
-  lights=(light_source **)realloc(lights,sizeof(light_source *)*tlights);
+  lights=(LightSource **)realloc(lights,sizeof(LightSource *)*tlights);
   lights[tlights-1]=ls;
 }
 
-void simple_object::add_object(game_object *o)
+void SimpleObject::add_object(GameObject *o)
 {
   if (!o) return ;
   for (int i=0; i<tobjs; i++) if (objs[i]==o) return;
@@ -72,12 +72,12 @@ void simple_object::add_object(game_object *o)
   if(_tint != -1)
     o->set_tint(_tint);
   tobjs++;
-  objs=(game_object **)realloc(objs,sizeof(game_object *)*tobjs);
+  objs=(GameObject **)realloc(objs,sizeof(GameObject *)*tobjs);
   objs[tobjs-1]=o;
 }
 
 
-void simple_object::remove_light(light_source *ls)
+void SimpleObject::remove_light(LightSource *ls)
 {
   for (int i=0; i<tlights; i++)
   {
@@ -86,13 +86,13 @@ void simple_object::remove_light(light_source *ls)
       tlights--;
       for (int j=i; j<tlights; j++)     // don't even think about it :)
         lights[j]=lights[j+1];
-      lights=(light_source **)realloc(lights,sizeof(light_source *)*tlights);
+      lights=(LightSource **)realloc(lights,sizeof(LightSource *)*tlights);
       return ;
     }
   }
 }
 
-void simple_object::remove_object(game_object *o)
+void SimpleObject::remove_object(GameObject *o)
 {
   for (int i=0; i<tobjs; i++)
   {
@@ -101,14 +101,14 @@ void simple_object::remove_object(game_object *o)
       tobjs--;
       for (int j=i; j<tobjs; j++)     // don't even think about it :)
         objs[j]=objs[j+1];
-      objs=(game_object **)realloc(objs,sizeof(game_object *)*tobjs);
+      objs=(GameObject **)realloc(objs,sizeof(GameObject *)*tobjs);
       return ;
     }
   }
 }
 
 
-simple_object::simple_object()
+SimpleObject::SimpleObject()
 {
 
   x=y=0;
@@ -142,12 +142,12 @@ simple_object::simple_object()
 
 
 
-void simple_object::set_morph_status(morph_char *Mc)
+void SimpleObject::set_morph_status(morph_char *Mc)
 {
   mc=Mc;
 }
 
-void simple_object::clean_up()
+void SimpleObject::clean_up()
 {
   if (tlights) free(lights);
   if (tobjs)   free(objs);
@@ -156,6 +156,6 @@ void simple_object::clean_up()
 }
 
 
-simple_object default_simple;
+SimpleObject g_default_simple;
 
 

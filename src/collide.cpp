@@ -21,7 +21,7 @@ class collide_patch
 {
   public :
   int32_t total,x1,y1,x2,y2;
-  game_object **touch;
+  GameObject **touch;
   collide_patch *next;
   collide_patch(int32_t X1, int32_t Y1, int32_t X2, int32_t Y2, collide_patch *Next)
   {
@@ -30,7 +30,7 @@ class collide_patch
     total=0;
     touch=NULL;
   }
-  void add_collide(int32_t X1, int32_t Y1, int32_t X2, int32_t Y2, game_object *who);
+  void add_collide(int32_t X1, int32_t Y1, int32_t X2, int32_t Y2, GameObject *who);
   collide_patch *copy(collide_patch *Next);
   ~collide_patch() { if (total) free(touch); }
 } ;
@@ -42,8 +42,8 @@ collide_patch *collide_patch::copy(collide_patch *Next)
   p->total=total;
   if (total)
   {
-    p->touch=(game_object **)malloc(total*sizeof(game_object *));
-    memcpy(p->touch,touch,total*(sizeof(game_object *)));
+    p->touch=(GameObject **)malloc(total*sizeof(GameObject *));
+    memcpy(p->touch,touch,total*(sizeof(GameObject *)));
   }
   else
     p->touch=NULL;
@@ -52,7 +52,7 @@ collide_patch *collide_patch::copy(collide_patch *Next)
 
 
 void add_collide(collide_patch *&first, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
-                game_object *who)
+                GameObject *who)
 {
   collide_patch *next;
   for (collide_patch *p=first; p; p=next)
@@ -88,7 +88,7 @@ void add_collide(collide_patch *&first, int32_t x1, int32_t y1, int32_t x2, int3
       p->x1=x1; p->y1=y1; p->x2=x2; p->y2=y2;
 
       p->total++;
-      p->touch=(game_object **)realloc(p->touch,sizeof(game_object *)*p->total);
+      p->touch=(GameObject **)realloc(p->touch,sizeof(GameObject *)*p->total);
       p->touch[p->total-1]=who;
       return ;
     }
@@ -105,7 +105,7 @@ void add_collide(collide_patch *&first, int32_t x1, int32_t y1, int32_t x2, int3
       if (y2>p->y2)
         add_collide(first,p->x1,p->y2+1,p->x2,y2,who);
       p->total++;
-      p->touch=(game_object **)realloc(p->touch,sizeof(game_object *)*p->total);
+      p->touch=(GameObject **)realloc(p->touch,sizeof(GameObject *)*p->total);
       p->touch[p->total-1]=who;
       return ;
     }
@@ -153,16 +153,16 @@ void add_collide(collide_patch *&first, int32_t x1, int32_t y1, int32_t x2, int3
 
   first=new collide_patch(x1,y1,x2,y2,first);
   first->total=1;
-  first->touch=(game_object **)malloc(sizeof(game_object *)*1);
+  first->touch=(GameObject **)malloc(sizeof(GameObject *)*1);
   first->touch[0]=who;
 }
 
 
 
 
-void level::check_collisions()
+void Level::check_collisions()
 {
-  game_object *target,*rec,*subject;
+  GameObject *target,*rec,*subject;
   int32_t sx1,sy1,sx2,sy2,tx1,ty1,tx2,ty2,hitx=0,hity=0,t_centerx;
 
   for (int l=0; l<attack_total; l++)
