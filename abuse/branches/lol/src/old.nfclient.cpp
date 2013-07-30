@@ -101,7 +101,7 @@ nfs_file::nfs_file(char *filename, char *mode)
     pk.write_uint8(NFS_CRC_OPEN);
     int fail;
     uint32_t crc=crc_manager.get_crc(crc_manager.get_filenumber(filename),fail); // skip crc calc if we can
-    if (fail) crc=crc_file(local_test);
+    if (fail) crc = Crc::FromFile(local_test);
     pk.write_uint32(crc);
       }
 

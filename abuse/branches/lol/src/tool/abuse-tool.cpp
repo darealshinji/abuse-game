@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 
             /* Print basic information */
             printf("% 5i   % 3i % 8i  %04x  %s", i, se->type, (int)se->size,
-                   calc_crc(se->data, se->size), se->name);
+                   Crc::FromData(se->data, se->size), se->name);
 
             /* Is there anything special to say? */
             switch (se->type)

@@ -65,7 +65,7 @@ int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
       jFILE *fp=new jFILE(get_filename(i),"rb");
       if (!fp->open_failure())
       {
-    set_crc(i,crc_file(fp));
+    set_crc(i, Crc::FromFile(fp));
     total++;
       }
       delete fp;

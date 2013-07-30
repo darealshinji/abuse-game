@@ -133,7 +133,7 @@ int nfs_server::process_packet(packet &pk, nfs_server_client_node *c)
       return 1;
     } else
     {
-      my_crc=crc_file(fp);
+      my_crc = Crc::FromFile(fp);
       crc_manager.set_crc(crc_manager.get_filenumber(fn),my_crc);
       delete fp;
     }
