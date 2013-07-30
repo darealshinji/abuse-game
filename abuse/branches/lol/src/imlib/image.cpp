@@ -96,7 +96,7 @@ image::image(ivec2 size, uint8_t *page_buffer, int create_descriptor)
     m_locked = false;
 }
 
-image::image(bFILE *fp, spec_entry *e /* = NULL */)
+image::image(bFILE *fp, SpecEntry *e /* = NULL */)
 {
     if (e)
         fp->seek(e->offset, 0);

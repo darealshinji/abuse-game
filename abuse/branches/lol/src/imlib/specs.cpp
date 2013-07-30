@@ -67,7 +67,7 @@ static char *save_spec_prefix=NULL;
 static jFILE spec_main_jfile((FILE*)0);
 static int spec_main_fd = -1;
 static long spec_main_offset = -1;
-static spec_directory spec_main_sd;
+static SpecDir spec_main_sd;
 
 void set_filename_prefix(char const *prefix)
 {
@@ -375,7 +375,7 @@ void jFILE::open_internal(char const *filename, char const *mode, int flags)
     if (fd>=0)                    // if we were able to open the main file, see if it's in there
     {
       start_offset=0;
-      spec_entry *se=spec_main_sd.find(filename);
+      SpecEntry *se=spec_main_sd.find(filename);
       if (se)
       {
     start_offset=se->offset;
@@ -554,7 +554,7 @@ double bFILE::read_double()
   return (double)b+a/(double)(1<<31);
 }
 
-spec_directory::~spec_directory()
+SpecDir::~SpecDir()
 {
 
   if (total)
@@ -564,11 +564,11 @@ spec_directory::~spec_directory()
   }
 }
 
-void spec_directory::FullyLoad(bFILE *fp)
+void SpecDir::FullyLoad(bFILE *fp)
 {
     for (int i = 0; i < total; i++)
     {
-        spec_entry *se = entries[i];
+        SpecEntry *se = entries[i];
         free(se->data);
         se->data = malloc(se->size);
         fp->seek(se->offset, SEEK_SET);
@@ -576,9 +576,9 @@ void spec_directory::FullyLoad(bFILE *fp)
     }
 }
 
-spec_entry::spec_entry(uint8_t spec_type, char const *object_name,
-                       char const *link_filename,
-                       unsigned long data_size, unsigned long data_offset)
+SpecEntry::SpecEntry(uint8_t spec_type, char const *object_name,
+                     char const *link_filename,
+                     unsigned long data_size, unsigned long data_offset)
 {
     type = spec_type;
     name = strdup(object_name);
@@ -587,18 +587,18 @@ spec_entry::spec_entry(uint8_t spec_type, char const *object_name,
     offset = data_offset;
 }
 
-spec_entry::~spec_entry()
+SpecEntry::~SpecEntry()
 {
     free(name);
     free(data);
 }
 
-void spec_entry::Print()
+void SpecEntry::Print()
 {
     printf("%15s%25s%8ld%8ld\n", spec_types[type], name, size, offset);
 }
 
-void spec_directory::calc_offsets()
+void SpecDir::calc_offsets()
 {
     size_t o = SPEC_SIG_SIZE + 2;
 
@@ -614,68 +614,68 @@ void spec_directory::calc_offsets()
     }
 }
 
-spec_entry *spec_directory::find(char const *name, int type)
+SpecEntry *SpecDir::find(char const *name, int type)
 {
   int i;
-  spec_entry **e;
+  SpecEntry **e;
   for (i=0,e=entries; i<total; i++,e++)
     if (!strcmp((*e)->name,name) && (*e)->type==type)
       return (*e);
   return NULL;
 }
 
-spec_entry *spec_directory::find(char const *name)
+SpecEntry *SpecDir::find(char const *name)
 {
   int i;
-  spec_entry **e;
+  SpecEntry **e;
   for (i=0,e=entries; i<total; i++,e++)
     if (!strcmp((*e)->name,name))
       return (*e);
   return NULL;
 }
 
-long spec_directory::find_number(char const *name)
+long SpecDir::find_number(char const *name)
 {
   int i;
-  spec_entry **e;
+  SpecEntry **e;
   for (i=0,e=entries; i<total; i++,e++)
     if (!strcmp((*e)->name,name))
       return i;
   return -1;
 }
 
-spec_entry *spec_directory::find(int type)
+SpecEntry *SpecDir::find(int type)
 {
   int i;
-  spec_entry **e;
+  SpecEntry **e;
   for (i=0,e=entries; i<total; i++,e++)
     if ((*e)->type==type)
       return (*e);
   return NULL;
 }
 
-long spec_directory::type_total(int type)
+long SpecDir::type_total(int type)
 {
   int i,x=0;
-  spec_entry **e;
+  SpecEntry **e;
   for (i=0,e=entries; i<total; i++,e++)
     if ((*e)->type==type) x++;
   return x;
 }
 
-long spec_directory::find_number(int type)
+long SpecDir::find_number(int type)
 {
   int i;
-  spec_entry **e;
+  SpecEntry **e;
   for (i=0,e=entries; i<total; i++,e++)
     if ((*e)->type==type)
       return i;
   return -1;
 }
 
-void spec_directory::print()
+void SpecDir::print()
 {
-  spec_entry **se;
+  SpecEntry **se;
   int i;
   printf("[   Entry type   ][   Entry name   ][  Size  ][ Offset ]\n");
   for (i=0,se=entries; i<total; i++,se++)
@@ -683,7 +683,7 @@ void spec_directory::print()
 }
 
 
-void spec_directory::startup(bFILE *fp)
+void SpecDir::startup(bFILE *fp)
 {
   char buf[256];
   memset(buf,0,256);
@@ -693,14 +693,14 @@ void spec_directory::startup(bFILE *fp)
   if (!strcmp(buf,SPEC_SIGNATURE))
   {
     total=fp->read_uint16();
-    entries=(spec_entry **)malloc(sizeof(spec_entry *)*total);
+    entries=(SpecEntry **)malloc(sizeof(SpecEntry *)*total);
     long start=fp->tell();
 
     int i;
     for (i=0; i<total; i++)
     {
       fp->read(buf,2);
-      long entry_size=sizeof(spec_entry)+(unsigned char)buf[1];
+      long entry_size=sizeof(SpecEntry)+(unsigned char)buf[1];
       entry_size=(entry_size+3)&(~3);
       fp->read(buf,(unsigned char)buf[1]);
       fp->read(buf,9);
@@ -712,7 +712,7 @@ void spec_directory::startup(bFILE *fp)
     fp->seek(start,SEEK_SET);
     for (i=0; i<total; i++)
     {
-      spec_entry *se=(spec_entry *)dp;
+      SpecEntry *se=(SpecEntry *)dp;
       entries[i]=se;
 
       unsigned char len,flags,type;
@@ -720,13 +720,13 @@ void spec_directory::startup(bFILE *fp)
       fp->read(&len,1);
       se->type=type;
       se->data = NULL;
-      se->name=dp+sizeof(spec_entry);
+      se->name=dp+sizeof(SpecEntry);
       fp->read(se->name,len);
       fp->read(&flags,1);
 
       se->size=fp->read_uint32();
       se->offset=fp->read_uint32();
-      dp+=((sizeof(spec_entry)+len)+3)&(~3);
+      dp+=((sizeof(SpecEntry)+len)+3)&(~3);
     }
   }
   else
@@ -738,16 +738,16 @@ void spec_directory::startup(bFILE *fp)
 }
 
 
-spec_directory::spec_directory(bFILE *fp)
+SpecDir::SpecDir(bFILE *fp)
 { startup(fp); }
 
-spec_directory::spec_directory(FILE *fp)
+SpecDir::SpecDir(FILE *fp)
 {
   jFILE jfp(fp);
   startup(&jfp);
 }
 
-spec_directory::spec_directory()
+SpecDir::SpecDir()
 {
   size=0;
   total=0;
@@ -756,7 +756,7 @@ spec_directory::spec_directory()
 }
 
 /*
-spec_directory::spec_directory(char *filename)
+SpecDir::SpecDir(char *filename)
 {
   jFILE *fp;
   if (filename)
@@ -770,7 +770,7 @@ spec_directory::spec_directory(char *filename)
       entries=NULL;
     }
     delete fp;
-  } else printf("NULL filename to spec_directory::spec_directory\n");
+  } else printf("NULL filename to SpecDir::SpecDir\n");
 }*/
 
 int write_string(bFILE *fp, char const *st)
@@ -781,7 +781,7 @@ int write_string(bFILE *fp, char const *st)
   return 1;
 }
 
-long spec_directory::data_start_offset()
+long SpecDir::data_start_offset()
 {
     /* FIXME: no need for a for loop here! */
     long i;
@@ -792,10 +792,10 @@ long spec_directory::data_start_offset()
     return SPEC_SIG_SIZE + 2;
 }
 
-long spec_directory::data_end_offset()
+long SpecDir::data_end_offset()
 {
     /* FIXME: no need for a for loop here! */
-  spec_entry **e;
+  SpecEntry **e;
   long i;
   for (i=total-1,e=entries; i>=0; i--,e++)
     return (*e)->offset+(*e)->size;
@@ -803,13 +803,13 @@ long spec_directory::data_end_offset()
   return SPEC_SIG_SIZE+2;
 }
 
-int spec_directory::write(bFILE *fp)
+int SpecDir::write(bFILE *fp)
 {
 
   char sig[SPEC_SIG_SIZE];
   unsigned char flags=0;
   unsigned long offset,data_size;
-  spec_entry **e;
+  SpecEntry **e;
   strcpy(sig,SPEC_SIGNATURE);
 
   if (fp->write(sig,sizeof(sig))!=sizeof(sig))    return 0;
@@ -833,7 +833,7 @@ int spec_directory::write(bFILE *fp)
   return 1;
 }
 
-jFILE *spec_directory::write(char const *filename)
+jFILE *SpecDir::write(char const *filename)
 {
   jFILE *fp;
   fp=new jFILE(filename,"wb");
@@ -874,7 +874,7 @@ void write_uint32(FILE *fp, uint32_t x)
 uint8_t read_uint8(FILE *fp) { return fgetc(fp)&0xff; }
 void write_uint8(FILE *fp, uint8_t x) { fputc((unsigned char)x,fp); }
 
-void spec_directory::remove(spec_entry *e)
+void SpecDir::remove(SpecEntry *e)
 {
   int i;
   for (i=0; i<total && entries[i]!=e; i++);            // find the entry in the array first
@@ -885,7 +885,7 @@ void spec_directory::remove(spec_entry *e)
     total--;
     for (; i<total; i++)                               // compact the pointer array
       entries[i]=entries[i+1];
-    entries=(spec_entry **)realloc(entries,sizeof(spec_entry *)*total);
+    entries=(SpecEntry **)realloc(entries,sizeof(SpecEntry *)*total);
   }
   else
     printf("Spec_directory::remove bad entry pointer\n");
@@ -893,14 +893,14 @@ void spec_directory::remove(spec_entry *e)
 
 
 
-void spec_directory::add_by_hand(spec_entry *e)
+void SpecDir::add_by_hand(SpecEntry *e)
 {
   total++;
-  entries=(spec_entry **)realloc(entries,sizeof(spec_entry *)*total);
+  entries=(SpecEntry **)realloc(entries,sizeof(SpecEntry *)*total);
   entries[total-1]=e;
 }
 
-void spec_directory::delete_entries()   // if the directory was created by hand instead of by file
+void SpecDir::delete_entries()   // if the directory was created by hand instead of by file
 {
   int i;
   for (i=0; i<total; i++)

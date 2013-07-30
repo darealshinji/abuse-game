@@ -186,8 +186,8 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         }
         else
         {
-            spec_directory sd(fp);
-            spec_entry *se=sd.find("thumb nail");
+            SpecDir sd(fp);
+            SpecEntry *se=sd.find("thumb nail");
             if (se && se->type==SPEC_IMAGE)
             {
                 thumbnails[start_num] = new image(fp, se);

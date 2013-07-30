@@ -74,7 +74,7 @@ char mouse_scrolling=0,palettes_locked=1,view_shift_disabled=0;
 int light_connection_color;
 
 
-image *load_image(spec_entry *e, bFILE *fp)
+image *load_image(SpecEntry *e, bFILE *fp)
 {
     image *im = new image(fp, e);
     if (scale_mult != 1 || scale_div != 1)
@@ -90,7 +90,7 @@ image *load_image(bFILE *fp)
     return im;
 }
 
-void use_file(char *filename, bFILE *&fp, spec_directory *&sd)
+void use_file(char *filename, bFILE *&fp, SpecDir *&sd)
 {
   char fn[100];
   fp=open_file(filename,"rb");
@@ -106,10 +106,10 @@ void use_file(char *filename, bFILE *&fp, spec_directory *&sd)
       exit(1);
     }
   }
-  sd=new spec_directory(fp);
+  sd=new SpecDir(fp);
 }
 
-void done_file(bFILE *&fp, spec_directory *&sd)
+void done_file(bFILE *&fp, SpecDir *&sd)
 {
   delete fp;
   delete sd;
@@ -121,12 +121,12 @@ void insert_tiles(char *filename)
   if (!fp->open_failure())
   {
     int ft=0,bt=0;
-    spec_directory sd(fp);
+    SpecDir sd(fp);
     delete fp;
     int i=0;
     for (; i<sd.total; i++)
     {
-      spec_entry *se=sd.entries[i];
+      SpecEntry *se=sd.entries[i];
       if (se->type==SPEC_FORETILE)
         ft++;
       else if (se->type==SPEC_BACKTILE)
@@ -171,8 +171,8 @@ void insert_tiles(char *filename)
 void load_tiles(Cell *file_list)
 {
   bFILE *fp;
-  spec_directory *sd;
-  spec_entry *spe;
+  SpecDir *sd;
+  SpecEntry *spe;
 
 
   int num;
@@ -193,7 +193,7 @@ void load_tiles(Cell *file_list)
     }
     else
     {
-      sd=new spec_directory(fp);
+      sd=new SpecDir(fp);
       delete fp;
       int i;
       for (i=0; i<sd->total; i++)
@@ -239,7 +239,7 @@ void load_tiles(Cell *file_list)
     fp=open_file(fn,"rb");
     if (!fp->open_failure())
     {
-      sd=new spec_directory(fp);
+      sd=new SpecDir(fp);
       delete fp;
 
       int i;
@@ -305,7 +305,7 @@ void load_data(int argc, char **argv)
     bFILE *load = open_file( cachepath, "rb" );
     if( !load->open_failure() )
     {
-        sd_cache.load( load );
+        g_sd_cache.Load( load );
     }
     else
     {
@@ -468,13 +468,13 @@ void load_data(int argc, char **argv)
         bFILE *save = open_file( cachepath, "wb" );
         if( !save->open_failure() )
         {
-            sd_cache.save( save );
+            g_sd_cache.Save( save );
         }
         delete save;
     }
 #endif
 
-    sd_cache.clear();
+    g_sd_cache.Clear();
     past_startup = 1;
 #if 0
     free( cachepath );

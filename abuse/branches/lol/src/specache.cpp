@@ -14,102 +14,102 @@
 
 #include "specache.h"
 
-spec_directory_cache sd_cache;
+SpecDirCache g_sd_cache;
 
-void spec_directory_cache::load(bFILE *fp)
+void SpecDirCache::Load(bFILE *fp)
 {
-  short tfn=fp->read_uint16();
-  int i;
-  unsigned char len;
-  char fn[256];
-  size=0;
-  for (i=0; i<tfn; i++)
-  {
-    fp->read(&len,1);
-    fp->read(fn,len);
-    get_spec_directory(fn,fp);
-  }
+    uint16_t tfn = fp->read_uint16();
+    m_size = 0;
+    for (int i = 0; i < tfn; i++)
+    {
+        char fn[256];
+        uint8_t len;
+        fp->read(&len, 1);
+        fp->read(fn, len);
+        GetSpecDir(fn, fp);
+    }
 }
 
-void spec_directory_cache::save(bFILE *fp)
+void SpecDirCache::Save(bFILE *fp)
 {
-  int total = 0;
-  filename_node *f=fn_list;
-  for (; f; f=f->next)
-    total++;
-  fp->write_uint16(total);
-  for (f=fn_list; f; f=f->next)
-  {
-    unsigned char len=strlen(f->filename())+1;
-    fp->write(&len,1);
-    fp->write(f->filename(),len);
-    f->sd->write(fp);
-  }
+    uint16_t total = 0;
+    for (FileNode *f = m_list; f; f = f->m_next)
+        total++;
+    fp->write_uint16(total);
+    for (FileNode *f = m_list; f; f = f->m_next)
+    {
+        uint8_t len = f->m_name.Count() + 1;
+        fp->write(&len, 1);
+        fp->write(f->m_name.C(), len);
+        f->m_sd->write(fp);
+    }
 }
 
-
-spec_directory *spec_directory_cache::get_spec_directory(char const *filename, bFILE *fp)
+SpecDir *SpecDirCache::GetSpecDir(String const filename, bFILE *fp)
 {
-  filename_node **parent=0,*p=fn_root;
-  while (p)
-  {
-    int cmp=strcmp(p->filename(),filename);
-    if (cmp<0)
-      parent=&p->left;
-    else if (cmp>0)
-      parent=&p->right;
+    FileNode **parent = 0, *p = m_root;
+    while (p)
+    {
+        int cmp = strcmp(p->m_name.C(), filename.C());
+        if (cmp == 0)
+            return p->m_sd;
+        parent = cmp < 0 ? &p->m_left : &p->m_right;
+        p = *parent;
+    }
+
+    bool need_close = false;
+    if (!fp)
+    {
+        fp = open_file(filename.C(), "rb");
+        if (fp->open_failure())
+        {
+            delete fp;
+            return 0;
+        }
+        need_close = true;
+    }
+
+    FileNode *f = new FileNode(filename, new SpecDir(fp));
+    f->m_next = m_list;
+    m_list = f;
+
+    m_size += f->m_sd->size;
+    if (parent)
+        *parent = f;
     else
-      return p->sd;
-    p=*parent;
-  }
+        m_root = f;
 
-  int need_close=0;
-  if (!fp)
-  {
-    fp=open_file(filename,"rb");
-    if (fp->open_failure())
-    {
-      delete fp;
-      return 0;
-    }
-    need_close=1;
-  }
-
-  filename_node *f=new filename_node(filename,new spec_directory(fp));
-  f->next=fn_list;
-  fn_list=f;
-
-  size+=f->sd->size;
-  if (parent)
-    *parent=f;
-  else
-    fn_root=f;
-
-  if (need_close)
-    delete fp;
-  return f->sd;
+    if (need_close)
+        delete fp;
+    return f->m_sd;
 }
 
-void spec_directory_cache::clear()
+SpecDirCache::~SpecDirCache()
 {
-  size=0;
-  clear(fn_root);
-  fn_root=0;
+    ClearNode(m_root);
 }
 
-void spec_directory_cache::clear(filename_node *f)
+void SpecDirCache::Clear()
 {
-  if (f)
-  {
-    if (f->left)
-    {
-      clear(f->left);
-      delete f->left;
-    }
-    if (f->right)
-    {
-      clear(f->right);
-      delete f->right;
-    }
-  }
+    ClearNode(m_root);
+    m_root = nullptr;
+    m_size = 0;
 }
+
+void SpecDirCache::ClearNode(FileNode *f)
+{
+    if (f)
+    {
+        if (f->m_left)
+        {
+            ClearNode(f->m_left);
+            delete f->m_left;
+        }
+        if (f->m_right)
+        {
+            ClearNode(f->m_right);
+            delete f->m_right;
+        }
+    }
+}
+

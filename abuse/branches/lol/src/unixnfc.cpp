@@ -420,10 +420,10 @@ void net_reload()
     if (fp->open_failure()) { delete fp; fp=NULL; }
       } while (!fp);
 
-      spec_directory sd(fp);
+      SpecDir sd(fp);
 
 #if 0
-      spec_entry *e=sd.find("Copyright 1995 Crack dot Com, All Rights reserved");
+      SpecEntry *e=sd.find("Copyright 1995 Crack dot Com, All Rights reserved");
       if (!e)
       {
     the_game->show_help("This level is missing copyright information, cannot load\n");

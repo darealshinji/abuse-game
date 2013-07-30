@@ -511,7 +511,7 @@ void Game::load_level(char const *name)
     }
     else
     {
-        spec_directory sd(fp);
+        SpecDir sd(fp);
         current_level = new level(&sd, fp, name);
         delete fp;
     }
@@ -1166,7 +1166,7 @@ void do_title()
     bFILE *fp = open_file("art/smoke.spe", "rb");
     if(!fp->open_failure())
     {
-        spec_directory sd(fp);
+        SpecDir sd(fp);
         palette *old_pal = pal;
         pal = new palette(sd.find(SPEC_PALETTE), fp);
         pal->shift(1);

@@ -35,7 +35,7 @@ private:
 class ColorFilter
 {
 public:
-    ColorFilter(spec_entry *e, bFILE *fp);
+    ColorFilter(SpecEntry *e, bFILE *fp);
     ColorFilter(palette *pal, int color_bits);
     ~ColorFilter();
 

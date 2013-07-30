@@ -1702,8 +1702,8 @@ long c_caller(long number, void *args)
     exit(1);
       } else
       {
-    spec_directory sd(fp);
-    spec_entry *se=sd.find(SPEC_PALETTE);
+    SpecDir sd(fp);
+    SpecEntry *se=sd.find(SPEC_PALETTE);
     if (!se) lbreak("File %s has no palette!\n",lstring_value(CAR(args)));
     else
     {
@@ -1723,8 +1723,8 @@ long c_caller(long number, void *args)
     exit(1);
       } else
       {
-    spec_directory sd(fp);
-    spec_entry *se=sd.find(SPEC_COLOR_TABLE);
+    SpecDir sd(fp);
+    SpecEntry *se=sd.find(SPEC_COLOR_TABLE);
     if (!se) lbreak("File %s has no color filter!",lstring_value(CAR(args)));
     else
     {

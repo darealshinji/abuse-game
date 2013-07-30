@@ -150,7 +150,7 @@ ColorFilter::ColorFilter(palette *pal, int color_bits)
     }
 }
 
-ColorFilter::ColorFilter(spec_entry *e, bFILE *fp)
+ColorFilter::ColorFilter(SpecEntry *e, bFILE *fp)
 {
     fp->seek(e->offset, 0);
     m_size = fp->read_uint16();

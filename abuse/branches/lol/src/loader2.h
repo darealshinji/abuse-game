@@ -78,7 +78,7 @@ extern int edit_mode;
 extern int start_running;
 
 
-image *load_image(spec_entry *e, bFILE *fp);      // preforms scaling
+image *load_image(SpecEntry *e, bFILE *fp);      // preforms scaling
 image *load_image(bFILE *fp);
 void load_data(int argc, char **argv);
 char *load_script(char *name);

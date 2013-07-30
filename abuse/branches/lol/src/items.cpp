@@ -204,7 +204,7 @@ backtile::backtile(bFILE *fp)
   next=fp->read_uint16();
 }
 
-backtile::backtile(spec_entry *e, bFILE *fp)
+backtile::backtile(SpecEntry *e, bFILE *fp)
 {
   im=load_image(e,fp);
   next=fp->read_uint16();

@@ -762,12 +762,12 @@ void light_screen(image *sc, long screenx, long screeny, uchar *light_lookup)
 
 
 
-void add_light_spec(spec_directory *sd, char *level_name)
+void add_light_spec(SpecDir *sd, char *level_name)
 {
   long size=4+4;  // number of lights and minimum light levels
   for (light_source *f=first_light_source; f; f=f->next)
     size+=6*4+1;
-  sd->add(new spec_entry(SPEC_LIGHT_LIST,"lights",NULL,size,0));
+  sd->add(new SpecEntry(SPEC_LIGHT_LIST,"lights",NULL,size,0));
 }
 
 void write_lights(jFILE *fp)
@@ -813,10 +813,10 @@ int send_lights(net_descriptor *os)
 }
 
 
-void read_lights(spec_directory *sd, jFILE *fp, char const *level_name)
+void read_lights(SpecDir *sd, jFILE *fp, char const *level_name)
 {
   delete_all_lights();
-  spec_entry *se=sd->find("lights");
+  SpecEntry *se=sd->find("lights");
   if (se)
   {
     fp->seek(se->offset,SEEK_SET);

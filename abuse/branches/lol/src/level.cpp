@@ -867,9 +867,9 @@ void level::set_size(int w, int h)
 }
 
 
-int locate_var(bFILE *fp, spec_directory *sd, char *str, int size)
+int locate_var(bFILE *fp, SpecDir *sd, char *str, int size)
 {
-  spec_entry *se=sd->find(str);
+  SpecEntry *se=sd->find(str);
   if (se)
   {
     fp->seek(se->offset,0);
@@ -882,9 +882,9 @@ int locate_var(bFILE *fp, spec_directory *sd, char *str, int size)
 
 
 // load objects assumes current objects have already been disposed of
-void level::old_load_objects(spec_directory *sd, bFILE *fp)
+void level::old_load_objects(SpecDir *sd, bFILE *fp)
 {
-  spec_entry *se=sd->find("objects");
+  SpecEntry *se=sd->find("objects");
   total_objs=0;
   first=last=first_active=NULL;
   int i,j;
@@ -966,7 +966,7 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
     int j=0;
     for (; j<default_simple.total_vars(); j++)
     {
-      spec_entry *se=sd->find(object_descriptions[j].name);
+      SpecEntry *se=sd->find(object_descriptions[j].name);
       if (se)
       {
         fp->seek(se->offset,0);
@@ -1008,9 +1008,9 @@ void level::old_load_objects(spec_directory *sd, bFILE *fp)
 
 
 // load objects assumes current objects have already been disposed of
-void level::load_objects(spec_directory *sd, bFILE *fp)
+void level::load_objects(SpecDir *sd, bFILE *fp)
 {
-  spec_entry *se=sd->find("object_descripitions");
+  SpecEntry *se=sd->find("object_descripitions");
   total_objs=0;
   first=last=first_active=NULL;
   int i,j;
@@ -1207,7 +1207,7 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
       int j=0;
       for (; j<default_simple.total_vars(); j++)
       {
-        spec_entry *se=sd->find(object_descriptions[j].name);
+        SpecEntry *se=sd->find(object_descriptions[j].name);
         if (se)
         {
           fp->seek(se->offset,0);
@@ -1268,9 +1268,9 @@ void level::load_objects(spec_directory *sd, bFILE *fp)
 
 }
 
-level::level(spec_directory *sd, bFILE *fp, char const *lev_name)
+level::level(SpecDir *sd, bFILE *fp, char const *lev_name)
 {
-  spec_entry *e;
+  SpecEntry *e;
   area_list=NULL;
 
   attack_list=NULL;
@@ -1362,7 +1362,7 @@ level::level(spec_directory *sd, bFILE *fp, char const *lev_name)
   /***************** Check map for non existsant tiles **************************/
   int32_t i,w;
   uint16_t *m;
-  spec_entry *load_all=sd->find("player_info");
+  SpecEntry *load_all=sd->find("player_info");
   for (i=0,w=fg_width*fg_height,m=map_fg; i<w; i++,m++)
   {
     if (!load_all)
@@ -1515,36 +1515,36 @@ void level::level_loaded_notify()
 bFILE *level::create_dir(char *filename, int save_all,
              object_node *save_list, object_node *exclude_list)
 {
-  spec_directory sd;
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"Copyright 1995 Crack dot Com, All Rights reserved",NULL,0,0));
+  SpecDir sd;
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"Copyright 1995 Crack dot Com, All Rights reserved",NULL,0,0));
   if (first_name)
-    sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"first name",NULL,strlen(first_name)+2,0));
+    sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"first name",NULL,strlen(first_name)+2,0));
 
 
 
-  sd.add_by_hand(new spec_entry(SPEC_GRUE_FGMAP,"fgmap",NULL,4+4+fg_width*fg_height*2,0));
-  sd.add_by_hand(new spec_entry(SPEC_GRUE_BGMAP,"bgmap",NULL,4+4+bg_width*bg_height*2,0));
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"bg_scroll_rate",NULL,1+4*4,0));
+  sd.add_by_hand(new SpecEntry(SPEC_GRUE_FGMAP,"fgmap",NULL,4+4+fg_width*fg_height*2,0));
+  sd.add_by_hand(new SpecEntry(SPEC_GRUE_BGMAP,"bgmap",NULL,4+4+bg_width*bg_height*2,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"bg_scroll_rate",NULL,1+4*4,0));
 
   int ta=0;
   area_controller *a=area_list;
   for (; a; a=a->next) ta++;
 
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"area_list.v1",NULL,1+ta*(4*11)+4,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"area_list.v1",NULL,1+ta*(4*11)+4,0));
 
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"tick_counter",NULL,1+4,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"tick_counter",NULL,1+4,0));
 
 
 
   // how many object types are we goint to save, use a short to specify how many
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"object_descripitions",NULL,2,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"object_descripitions",NULL,2,0));
 
 
   int size=0;
   int i=0;
   for (; i<total_objects; i++)       // now save the names of the objects so if ordering
     size+=1+strlen(object_names[i])+1;    // changes in future versions we can adjust in load
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"describe_names",NULL,size,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"describe_names",NULL,size,0));
 
 
   size=0;
@@ -1556,7 +1556,7 @@ bFILE *level::create_dir(char *filename, int save_all,
       if (figures[i]->seq[j])
         size+=1+strlen(lstring_value(((LSymbol *)figures[i]->seq_syms[j])->GetName()))+1;
   }
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"describe_states",NULL,size,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"describe_states",NULL,size,0));
 
 
 
@@ -1569,12 +1569,12 @@ bFILE *level::create_dir(char *filename, int save_all,
       if (figures[i]->vars[j])
         size+=1+strlen(lstring_value(((LSymbol *)figures[i]->vars[j])->GetName()))+1;
   }
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"describe_lvars",NULL,size,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"describe_lvars",NULL,size,0));
 
 
 
   // how many objects are we goint to save, use a int32_t to specify how many
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"object_list",NULL,4,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"object_list",NULL,4,0));
 
   int32_t t=0;
   object_node *o=save_list;
@@ -1582,47 +1582,47 @@ bFILE *level::create_dir(char *filename, int save_all,
     t++;
 
   // type and state aren't normal records because they will be remapped on loading
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"type",NULL,1+2*t,0));
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"state",NULL,1+2*t,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"type",NULL,1+2*t,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"state",NULL,1+2*t,0));
 
 
   // now save all the lvars for each object
   for (size=0,o=save_list; o; o=o->next)
     size+=figures[o->me->otype]->tv*5+2;
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"lvars",NULL,size,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"lvars",NULL,size,0));
 
 
   for (i=0; i<TOTAL_OBJECT_VARS; i++)
-    sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,object_descriptions[i].name,NULL,1+
+    sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,object_descriptions[i].name,NULL,1+
               RC_type_size(object_descriptions[i].type)*t,0));
 
   add_light_spec(&sd,Name);
 
 
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"object_links",NULL,1+4+total_object_links(save_list)*8,0));
-  sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"light_links",NULL,1+4+total_light_links(save_list)*8,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"object_links",NULL,1+4+total_object_links(save_list)*8,0));
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"light_links",NULL,1+4+total_light_links(save_list)*8,0));
 
   if (save_all)
   {
     t=0;
     view *v=player_list;
     for (; v; v=v->next) t++;
-    sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"player_info",NULL,t*4+4,0));
+    sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"player_info",NULL,t*4+4,0));
 
     int tv=total_view_vars();
     int i=0;
     for (; i<tv; i++)
-      sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,get_view_var_name(i),NULL,1+4*t,0));
-    sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"random_start",NULL,5,0));
+      sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,get_view_var_name(i),NULL,1+4*t,0));
+    sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"random_start",NULL,5,0));
 
-    sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"weapon_array",NULL,1+4+total_weapons*4*t,0));
+    sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"weapon_array",NULL,1+4+total_weapons*4*t,0));
 
     int name_len=0;
     for (v=player_list; v; v=v->next)
       name_len+=strlen(v->name)+2;
-    sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"player_names",NULL,name_len,0));
+    sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"player_names",NULL,name_len,0));
 
-    sd.add_by_hand(new spec_entry(SPEC_IMAGE,"thumb nail",NULL,4+160*(100+wm->font()->Size().y*2),0));
+    sd.add_by_hand(new SpecEntry(SPEC_IMAGE,"thumb nail",NULL,4+160*(100+wm->font()->Size().y*2),0));
   }
 
   sd.calc_offsets();
@@ -1695,10 +1695,10 @@ void level::write_player_info(bFILE *fp, object_node *save_list)
 }
 
 
-int level::load_player_info(bFILE *fp, spec_directory *sd, object_node *save_list)
+int level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
 {
   int ret;
-  spec_entry *se=sd->find("player_info");
+  SpecEntry *se=sd->find("player_info");
   if (se)
   {
     fp->seek(se->offset,0);
@@ -2005,10 +2005,10 @@ void level::write_links(bFILE *fp, object_node *save_list, object_node *exclude_
 }
 
 
-void level::load_links(bFILE *fp, spec_directory *sd,
+void level::load_links(bFILE *fp, SpecDir *sd,
                object_node *save_list, object_node *exclude_list)
 {
-  spec_entry *se=sd->find("object_links");
+  SpecEntry *se=sd->find("object_links");
   if (se)
   {
     fp->seek(se->offset,0);
@@ -2089,9 +2089,9 @@ void level::write_options(bFILE *fp)
   fp->write_uint32(tick_counter());
 }
 
-void level::load_options(spec_directory *sd, bFILE *fp)
+void level::load_options(SpecDir *sd, bFILE *fp)
 {
-  spec_entry *se=sd->find("bg_scroll_rate");
+  SpecEntry *se=sd->find("bg_scroll_rate");
   if (se)
   {
     fp->seek(se->offset,0);
@@ -2159,8 +2159,8 @@ void level::write_cache_prof_info()
       get_prof_assoc_filename(Name,pf_name);
 
 
-    spec_directory sd;
-    sd.add_by_hand(new spec_entry(SPEC_DATA_ARRAY,"cache profile info",NULL,cache.prof_size(),0));
+    SpecDir sd;
+    sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"cache profile info",NULL,cache.prof_size(),0));
     sd.calc_offsets();
     jFILE *fp2=sd.write(pf_name);
     if (!fp2)
@@ -2175,7 +2175,7 @@ void level::write_cache_prof_info()
 
 }
 
-void level::load_cache_info(spec_directory *sd, bFILE *fp)
+void level::load_cache_info(SpecDir *sd, bFILE *fp)
 {
   if (!DEFINEDP(symbol_value(l_empty_cache)) || !symbol_value(l_empty_cache))
   {
