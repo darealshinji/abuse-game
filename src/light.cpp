@@ -1111,12 +1111,12 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 
 
 
-void add_light_spec(spec_directory *sd, char const *level_name)
+void add_light_spec(SpecDir *sd, char const *level_name)
 {
   int32_t size=4+4;  // number of lights and minimum light levels
   for (light_source *f=first_light_source; f; f=f->next)
     size+=6*4+1;
-  sd->add_by_hand(new spec_entry(SPEC_LIGHT_LIST,"lights",NULL,size,0));
+  sd->add_by_hand(new SpecEntry(SPEC_LIGHT_LIST,"lights",NULL,size,0));
 }
 
 void write_lights(bFILE *fp)
@@ -1139,10 +1139,10 @@ void write_lights(bFILE *fp)
 }
 
 
-void read_lights(spec_directory *sd, bFILE *fp, char const *level_name)
+void read_lights(SpecDir *sd, bFILE *fp, char const *level_name)
 {
   delete_all_lights();
-  spec_entry *se=sd->find("lights");
+  SpecEntry *se=sd->find("lights");
   if (se)
   {
     fp->seek(se->offset,SEEK_SET);

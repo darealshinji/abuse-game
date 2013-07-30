@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    spec_directory dir(&fp);
+    SpecDir dir(&fp);
 
     /* Now really execute commands */
     if (cmd == CMD_LIST)
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 
         for (int i = 0; i < dir.total; i++)
         {
-            spec_entry *se = dir.entries[i];
+            SpecEntry *se = dir.entries[i];
 
             /* Print basic information */
             printf("% 5i   % 3i % 8i  %04x  %s", i, se->type, (int)se->size,
@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
 
-        spec_entry *se = dir.entries[id];
+        SpecEntry *se = dir.entries[id];
         fp.seek(se->offset, SEEK_SET);
 
         for (size_t todo = se->size; todo > 0; )
@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
 
         dir.FullyLoad(&fp);
 
-        spec_entry *tmp = dir.entries[src];
+        SpecEntry *tmp = dir.entries[src];
         for (int d = src < dst ? 1 : -1; src != dst; src += d)
             dir.entries[src] = dir.entries[src + d];
         dir.entries[dst] = tmp;
@@ -313,8 +313,8 @@ int main(int argc, char *argv[])
 
         dir.FullyLoad(&fp);
         dir.total++;
-        dir.entries = (spec_entry **)realloc(dir.entries,
-                                             dir.total * sizeof(spec_entry *));
+        dir.entries = (SpecEntry **)realloc(dir.entries,
+                                            dir.total * sizeof(SpecEntry *));
         for (int i = dir.total - 1; i-- > id; )
             dir.entries[i + 1] = dir.entries[i];
 
@@ -355,7 +355,7 @@ int main(int argc, char *argv[])
             memcpy(data + 2, &y, sizeof(y));
             memcpy(data + 4, im->scan_line(0), size.x * size.y);
         }
-        dir.entries[id] = new spec_entry(type, name, NULL, len, 0);
+        dir.entries[id] = new SpecEntry(type, name, NULL, len, 0);
         dir.entries[id]->data = data;
     }
     else

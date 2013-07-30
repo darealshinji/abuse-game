@@ -33,7 +33,7 @@ protected:
     int crc_calculated;
     uint32_t crc;
     char *filename;
-} ;
+};
 
 // stores crc for each file open to avoid redundant calculations
 class CrcManager
@@ -84,7 +84,7 @@ private:
     int16_t last_file; // for speed leave the last file accessed open
 
     bFILE *fp;
-    spec_directory *last_dir;
+    SpecDir *last_dir;
     int32_t last_offset; // store the last offset so we don't have to seek if
                          // we don't need to
 

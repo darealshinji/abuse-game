@@ -155,13 +155,13 @@ public :
   virtual ~jFILE();
 } ;
 
-class spec_entry
+class SpecEntry
 {
 public:
-    spec_entry(uint8_t spec_type, char const *object_name,
-               char const *link_filename,
-               unsigned long data_size, unsigned long data_offset);
-    ~spec_entry();
+    SpecEntry(uint8_t spec_type, char const *object_name,
+              char const *link_filename,
+              unsigned long data_size, unsigned long data_offset);
+    ~SpecEntry();
 
     void Print();
 
@@ -172,25 +172,24 @@ public:
 };
 
 
-class spec_directory
+class SpecDir
 {
 public :
-    spec_directory(FILE *fp);
-    spec_directory(bFILE *fp);
-    spec_directory();
-    ~spec_directory();
+    SpecDir(FILE *fp);
+    SpecDir(bFILE *fp);
+    SpecDir();
+    ~SpecDir();
 
     void startup(bFILE *fp);
     void FullyLoad(bFILE *fp);
 
-//  spec_directory(char *filename);  ; ; not allowed anymore, user must construct file first!
-  spec_entry *find(char const *name);
-  spec_entry *find(char const *name, int type);
-  spec_entry *find(int type);
+  SpecEntry *find(char const *name);
+  SpecEntry *find(char const *name, int type);
+  SpecEntry *find(int type);
   long find_number(char const *name);
   long find_number(int type);
-  void remove(spec_entry *e);
-  void add_by_hand(spec_entry *e);
+  void remove(SpecEntry *e);
+  void add_by_hand(SpecEntry *e);
   void calc_offsets();
   long data_start_offset();  // returns the first offset past directory items
   long data_end_offset();    // this should be the end of the file
@@ -201,7 +200,7 @@ public :
   void delete_entries();   // if the directory was created by hand instead of by file
 
     int total;
-    spec_entry **entries;
+    SpecEntry **entries;
     void *data;
     size_t size;
 };

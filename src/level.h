@@ -93,7 +93,7 @@ public :
   uint16_t background_width() { return bg_width; }
   uint16_t background_height() { return bg_height; }
   int load_failed() { return map_fg==NULL; }
-  level(spec_directory *sd, bFILE *fp, char const *lev_name);
+  level(SpecDir *sd, bFILE *fp, char const *lev_name);
   void load_fail();
   level(int width, int height, char const *name);
   int save(char const *filename, int save_all);  // save_all includes player and view information (1 = success)
@@ -136,10 +136,10 @@ public :
   void add_object_after(game_object *new_guy, game_object *who);
   void delete_object(game_object *who);
   void remove_object(game_object *who);      // unlinks the object from level, but doesn't delete it
-  void load_objects(spec_directory *sd, bFILE *fp);
-  void load_cache_info(spec_directory *sd, bFILE *fp);
-  void old_load_objects(spec_directory *sd, bFILE *fp);
-  void load_options(spec_directory *sd, bFILE *fp);
+  void load_objects(SpecDir *sd, bFILE *fp);
+  void load_cache_info(SpecDir *sd, bFILE *fp);
+  void old_load_objects(SpecDir *sd, bFILE *fp);
+  void load_options(SpecDir *sd, bFILE *fp);
   void write_objects(bFILE *fp, object_node *save_list);
   void write_options(bFILE *fp);
   void write_thumb_nail(bFILE *fp, image *im);
@@ -177,7 +177,7 @@ public :
 
 
   void write_links(bFILE *fp, object_node *save_list, object_node *exclude_list);
-  void load_links(bFILE *fp, spec_directory *sd, object_node *save_list, object_node *exclude_list);
+  void load_links(bFILE *fp, SpecDir *sd, object_node *save_list, object_node *exclude_list);
 
 
   game_object *find_type(int type, int skip);
@@ -197,7 +197,7 @@ public :
   game_object *find_object_in_angle(int32_t x, int32_t y, int32_t start_angle, int32_t end_angle,
                     void *list, game_object *exclude);
   object_node *make_not_list(object_node *list);
-  int load_player_info(bFILE *fp, spec_directory *sd, object_node *save_list);
+  int load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list);
   void write_player_info(bFILE *fp, object_node *save_list);
   void write_object_info(char *filename);
   void level_loaded_notify();

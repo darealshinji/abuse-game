@@ -105,7 +105,7 @@ private:
 public:
     image_descriptor *m_special;
 
-    image(bFILE *fp, spec_entry *e = NULL);
+    image(bFILE *fp, SpecEntry *e = NULL);
     image(ivec2 size, uint8_t *page_buffer = NULL, int create_descriptor = 0);
     ~image();
 

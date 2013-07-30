@@ -33,7 +33,7 @@ palette::palette(bFILE *fp)
   bg=0;
 }
 
-palette::palette(spec_entry *e, bFILE *fp)
+palette::palette(SpecEntry *e, bFILE *fp)
 {
   fp->seek(e->offset,0);
   ncolors=fp->read_uint16();

@@ -102,7 +102,7 @@ part_sequence::part_sequence(void *args)
   }
 
   // count how many frames are in the file
-  spec_directory sd(fp);
+  SpecDir sd(fp);
   delete fp;
   tframes=0;
   int i=0;

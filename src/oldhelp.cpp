@@ -72,7 +72,7 @@ void make_help_page(int page, image *s)
     return ;
 
   }
-  spec_directory sd(fp);
+  SpecDir sd(fp);
   image *im;
 
 

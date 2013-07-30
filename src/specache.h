@@ -11,38 +11,47 @@
 #ifndef __SPECACHE_HPP_
 #define __SPECACHE_HPP_
 
+#include "common.h"
+
 #include "specs.h"
 
-#include <string.h>
-
-class spec_directory_cache
+class SpecDirCache
 {
-  class filename_node
-  {
-    public :
-    filename_node *left,*right,*next;
-    char *fn;
-    spec_directory *sd;
-    char *filename() { return fn; }
-    filename_node(char const *filename, spec_directory *dir)
+    class FileNode
     {
-      fn = strdup(filename);
-      sd = dir;
-      next = left = right = 0;
-    }
-    long size;
-  } *fn_root,*fn_list;
-  void clear(filename_node *f); // private recursive member
-  long size;
-  public :
-  spec_directory *get_spec_directory(char const *filename, bFILE *fp=NULL);
-  spec_directory_cache() { fn_root=0; size=0; }
-  void clear();                             // frees up all allocated memory
-  void load(bFILE *fp);
-  void save(bFILE *fp);
-  ~spec_directory_cache() { clear(); }
-} ;
+        friend class SpecDirCache;
 
-extern spec_directory_cache sd_cache;
+    public:
+        FileNode(String const filename, SpecDir *dir)
+        {
+            m_name = filename;
+            m_sd = dir;
+            m_next = m_left = m_right = nullptr;
+        }
+
+    private:
+        FileNode *m_left, *m_right, *m_next;
+        SpecDir *m_sd;
+        String m_name;
+        uint16_t m_size;
+    }
+    *m_root, *m_list;
+
+public:
+    SpecDirCache() : m_root(nullptr), m_size(0) { }
+    ~SpecDirCache();
+
+    SpecDir *GetSpecDir(String const filename, bFILE *fp = nullptr);
+    void Load(bFILE *fp);
+    void Save(bFILE *fp);
+    void Clear();
+
+private:
+    void ClearNode(FileNode *f);
+
+    uint16_t m_size;
+};
+
+extern SpecDirCache g_sd_cache;
 
 #endif

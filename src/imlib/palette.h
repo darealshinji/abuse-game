@@ -33,7 +33,7 @@ class palette : public linked_node
   int bg;
 public :
   palette(int number_colors=256);
-  palette(spec_entry *e, bFILE *fp);
+  palette(SpecEntry *e, bFILE *fp);
   palette(bFILE *fp);
   void set(int x, unsigned char red, unsigned char green, unsigned char blue);
   void get(int x, unsigned char &red, unsigned char &green, unsigned char &blue);

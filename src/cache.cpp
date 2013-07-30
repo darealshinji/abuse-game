@@ -488,8 +488,8 @@ void CacheList::load_cache_prof_info(char *filename, level *lev)
   bFILE *fp=open_file(filename,"rb");
   if (!fp->open_failure())
   {
-    spec_directory sd(fp);
-    spec_entry *se=sd.find("cache profile info");   // see if the cache profile info is in the file
+    SpecDir sd(fp);
+    SpecEntry *se=sd.find("cache profile info");   // see if the cache profile info is in the file
     if (se)
     {
       fp->seek(se->offset,0);
@@ -738,7 +738,7 @@ void CacheList::locate(CacheItem *i, int local_only)
     }
 
     last_offset=-1;
-    last_dir=new spec_directory(fp);
+    last_dir=new SpecDir(fp);
     last_file=i->file_number;
   }
   if (i->offset!=last_offset)
@@ -841,7 +841,7 @@ int CacheList::reg(char const *filename, char const *name, int type, int rm_dups
     else
     {
         // If a classic spec item, look for it in the archive.
-        spec_directory *sd = sd_cache.get_spec_directory(filename);
+        SpecDir *sd = g_sd_cache.GetSpecDir(filename);
 
         if (!sd)
         {
@@ -849,7 +849,7 @@ int CacheList::reg(char const *filename, char const *name, int type, int rm_dups
             exit(0);
         }
 
-        spec_entry *se = NULL;
+        SpecEntry *se = NULL;
         if (type != -1)
             se = sd->find(name, type);
         if (!se)

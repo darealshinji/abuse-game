@@ -64,9 +64,9 @@ void delete_light(light_source *which);
 light_source *add_light_source(char type, int32_t x, int32_t y,
                    int32_t inner, int32_t outer, int32_t xshift, int32_t yshift);
 
-void add_light_spec(spec_directory *sd, char const *level_name);
+void add_light_spec(SpecDir *sd, char const *level_name);
 void write_lights(bFILE *fp);
-void read_lights(spec_directory *sd, bFILE *fp, char const *level_name);
+void read_lights(SpecDir *sd, bFILE *fp, char const *level_name);
 
 
 void delete_patch_list(light_patch *first);

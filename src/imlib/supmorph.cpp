@@ -347,7 +347,7 @@ main(int argc, char **argv)
   image_init();
   jrand_init();
   FILE *fp=fopen("art/mrphmask.spe","rb");
-  spec_directory sd(fp);
+  SpecDir sd(fp);
   image *h1=new image(sd.find("20 h"),fp),
         *h2=new image(sd.find("1h"),fp),
         *i1=new image(sd.find("20"),fp),

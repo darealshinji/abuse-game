@@ -34,7 +34,7 @@ class backtile
 public :
   uint16_t next;
   image *im;
-  backtile(spec_entry *e, bFILE *fp);
+  backtile(SpecEntry *e, bFILE *fp);
   backtile(bFILE *fp);
   int32_t size() { ivec2 s = im->Size(); return 2 + 4 + s.x * s.y; }
   ~backtile() { delete im; }
