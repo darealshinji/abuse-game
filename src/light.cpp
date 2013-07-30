@@ -229,7 +229,7 @@ void calc_light_table(palette *pal)
     }
     else
     {
-        if (fp->read_uint16()!=calc_crc((uint8_t *)pal->addr(),768))
+        if (fp->read_uint16() != Crc::FromData((uint8_t *)pal->addr(), 768))
             recalc=1;
         else
         {
@@ -359,7 +359,7 @@ void calc_light_table(palette *pal)
             dprintf( "Unable to open file light.tbl for writing\n" );
         else
         {
-            f->write_uint16(calc_crc((uint8_t *)pal->addr(),768));
+            f->write_uint16(Crc::FromData((uint8_t *)pal->addr(),768));
             f->write(white_light,256*64);
 //      f->write(green_light,256*64);
             for (int i=0; i<TTINTS; i++)

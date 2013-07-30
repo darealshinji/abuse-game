@@ -98,7 +98,7 @@ nfs_file::nfs_file(char const *filename, char const *mode)
     bFILE *fp=new jFILE(local_filename,"rb");
     if (!fp->open_failure())
     {
-      local_crc=crc_file(fp);
+      local_crc = Crc::FromFile(fp);
       crc_manager.set_crc(local_file_num,local_crc);
     } else fail3=1;
     delete fp;

@@ -196,7 +196,7 @@ void calc_light_table(palette *pal)
   if (fp.open_failure()) recalc=1;
   else
   {
-    if (fp.read_uint16()!=calc_crc((unsigned char *)pal->addr(),768))
+    if (fp.read_uint16() != Crc::FromData((unsigned char *)pal->addr(), 768))
       recalc=1;
     else
     {
@@ -286,7 +286,7 @@ void calc_light_table(palette *pal)
 
 
     jFILE f("light.tbl","wb");
-    f.write_uint16(calc_crc((unsigned char *)pal->addr(),768));
+    f.write_uint16(Crc::FromData((unsigned char *)pal->addr(), 768));
     f.write(white_light,256*64);
     f.write(green_light,256*64);
     for (int i=0; i<TTINTS; i++)

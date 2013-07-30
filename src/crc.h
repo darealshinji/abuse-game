@@ -13,8 +13,12 @@
 
 #include "specs.h"
 
-uint16_t calc_crc(void *buf, size_t len);
-uint32_t crc_file(bFILE *fp);
+class Crc
+{
+public:
+    static uint16_t FromData(void const *buf, size_t len);
+    static uint32_t FromFile(bFILE *fp);
+};
 
 #endif
 
