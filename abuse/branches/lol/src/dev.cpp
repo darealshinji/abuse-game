@@ -85,12 +85,12 @@ char const *symbol_str(char const *name)
 }
 
 
-static game_object *copy_object=NULL;
+static GameObject *copy_object=NULL;
 
 pmenu *dev_menu=NULL;
 Jwindow *mess_win=NULL,*warn_win=NULL;
 
-game_object *edit_object;
+GameObject *edit_object;
 dev_controll *dev_cont=NULL;
 image *small_render=NULL;
 
@@ -208,11 +208,11 @@ int confirm_quit()
     return quit;
 }
 
-static void show_object_number (game_object *who)
+static void show_object_number (GameObject *who)
 {
   int total=0,number=0;
-  game_object *c;
-  for (c=current_level->first_object(); c; c=c->next)
+  GameObject *c;
+  for (c=g_current_level->first_object(); c; c=c->next)
   {
     if (c->otype==who->otype)
       total++;
@@ -265,9 +265,9 @@ void dev_controll::search_forward()
       the_game->need_refresh();
     } else
     {
-      game_object *first,*find=NULL;
+      GameObject *first,*find=NULL;
       if (!search_object || search_object->otype!=type)
-        first=current_level->first_object();
+        first=g_current_level->first_object();
       else
         first=search_object->next;
       for (; !find && first; first=first->next)
@@ -275,7 +275,7 @@ void dev_controll::search_forward()
       find=first;
       if (!find)
       {
-    for (first=current_level->first_object(); first && !find; first=first->next)
+    for (first=g_current_level->first_object(); first && !find; first=first->next)
     {
       if (first->otype==type)
         find=first;
@@ -470,7 +470,7 @@ void dev_controll::dev_draw(view *v)
 
     if (dev&DRAW_LINKS)
     {
-      for (light_source *f=first_light_source; f; f=f->next)
+      for (LightSource *f=first_light_source; f; f=f->next)
       {
     if (f->x-vx>=0 && f->x-vx<=(v->m_bb.x-v->m_aa.x+1) && f->y-vy>=0 && f->y-vy<=(v->m_bb.y-v->m_aa.y+1))
     {
@@ -498,9 +498,9 @@ void dev_controll::dev_draw(view *v)
                              wm->bright_color());
     }
 
-    game_object *o;
+    GameObject *o;
     if (show_names)
-      for (o=current_level->first_object(); o; o=o->next)
+      for (o=g_current_level->first_object(); o; o=o->next)
       {
     ivec2 pos = the_game->GameToMouse(ivec2(o->x, o->y), current_view);
     char *nm=object_names[o->otype];
@@ -510,21 +510,21 @@ void dev_controll::dev_draw(view *v)
     if (dev&DRAW_LINKS)
     {
       // draw connections between objects
-      for (o=current_level->first_object(); o; o=o->next)
+      for (o=g_current_level->first_object(); o; o=o->next)
       {
     ivec2 pos1 = the_game->GameToMouse(ivec2(o->x, o->y), current_view);
 
     int i=0;
     for (; i<o->total_objects(); i++)
     {
-      game_object *other=o->get_object(i);
+      GameObject *other=o->get_object(i);
       ivec2 pos2 = the_game->GameToMouse(ivec2(other->x, other->y), current_view);
       main_screen->Line(pos1, pos2, wm->bright_color());
     }
 
     for (i=0; i<o->total_lights(); i++)
     {
-      light_source *l=o->get_light(i);
+      LightSource *l=o->get_light(i);
       ivec2 pos2 = the_game->GameToMouse(ivec2(l->x, l->y), current_view);
       main_screen->Line(pos1, pos2, light_connection_color);
     }
@@ -542,7 +542,7 @@ void dev_controll::dev_draw(view *v)
       pos1 = the_game->GameToMouse(ivec2(selected_object->x, selected_object->y), current_view);
       for (int i=0; i<selected_object->total_objects(); i++)
       {
-        game_object *other = selected_object->get_object(i);
+        GameObject *other = selected_object->get_object(i);
         pos2 = the_game->GameToMouse(ivec2(other->x, other->y), current_view);
         main_screen->Line(pos1, pos2, light_connection_color);
       }
@@ -550,11 +550,11 @@ void dev_controll::dev_draw(view *v)
   }
 }
 
-static light_source *find_light(int32_t x, int32_t y)
+static LightSource *find_light(int32_t x, int32_t y)
 {
   image *i=cache.img(light_buttons[0]);
   int l=i->Size().x/2,h=i->Size().y/2;
-  for (light_source *f=first_light_source; f; f=f->next)
+  for (LightSource *f=first_light_source; f; f=f->next)
   {
     if (x>=f->x-l && x<=f->x+l && y>=f->y-h && y<=f->y+h)
       return f;
@@ -985,9 +985,9 @@ void dev_controll::do_command(char const *command, Event &ev)
   if (*st) st++;
   if (!strcmp(fword,"active"))
   {
-    if (current_level && current_level->first_active_object())
+    if (g_current_level && g_current_level->first_active_object())
     {
-      game_object *o=current_level->first_active_object();
+      GameObject *o=g_current_level->first_active_object();
       while (o)
       {
     dprintf("%s %d %d %d %d\n",object_names[o->otype],o->x,o->y,
@@ -1015,7 +1015,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
   if (!strcmp(fword,"reload"))
   {
-    if (current_level && player_list && player_list->m_focus)
+    if (g_current_level && player_list && player_list->m_focus)
     {
       edit_object=selected_object=NULL;
       int32_t cx=player_list->m_focus->x,cy=player_list->m_focus->y;
@@ -1025,9 +1025,9 @@ void dev_controll::do_command(char const *command, Event &ev)
       memcpy(w,player_list->weapons,total_weapons*sizeof(int32_t));
 
       char tmp[100];
-      strcpy(tmp,current_level->name());
+      strcpy(tmp,g_current_level->name());
       the_game->load_level(tmp);
-      current_level->unactivate_all();
+      g_current_level->unactivate_all();
 
       if (main_screen)  // don't draw if graphics haven't been setup yet.
         the_game->draw();
@@ -1076,7 +1076,7 @@ void dev_controll::do_command(char const *command, Event &ev)
     int l,w;
     if (sscanf(command,"%s%d%d",fword,&l,&w)==3)
     {
-      current_level->set_size(l,w);
+      g_current_level->set_size(l,w);
       dprintf("level is now %dx%d\n",l,w);
     } else dprintf(symbol_str("size1"));
 
@@ -1086,8 +1086,8 @@ void dev_controll::do_command(char const *command, Event &ev)
   {
     while (*command && *command!=' ') command++;
     if (*command)
-      current_level->set_name(command+1);
-    dprintf(symbol_str("name_now"),current_level->name());
+      g_current_level->set_name(command+1);
+    dprintf(symbol_str("name_now"),g_current_level->name());
   }
   if (!strcmp(fword,"set_first_level"))
   {
@@ -1102,7 +1102,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
     dprintf("loading '%s'\n",st);
     the_game->load_level(st);
-    current_level->unactivate_all();
+    g_current_level->unactivate_all();
 
     the_game->need_refresh();
   }
@@ -1124,7 +1124,7 @@ void dev_controll::do_command(char const *command, Event &ev)
   {
     if (selected_object)
     {
-      if (!(dev&EDIT_MODE) && current_level->is_attacker(selected_object))
+      if (!(dev&EDIT_MODE) && g_current_level->is_attacker(selected_object))
         the_game->show_help(symbol_str("nd_player"));
       else
       {
@@ -1132,7 +1132,7 @@ void dev_controll::do_command(char const *command, Event &ev)
       the_game->show_help(symbol_str("nd_player"));
     else
     {
-      current_level->delete_object(selected_object);
+      g_current_level->delete_object(selected_object);
       if (S_DELETE_SND>0) cache.sfx(S_DELETE_SND)->play(sfx_volume/2);
       selected_object=NULL;
     }
@@ -1141,9 +1141,9 @@ void dev_controll::do_command(char const *command, Event &ev)
     {
       if (!edit_light)
       {
-    if (current_level)
+    if (g_current_level)
     {
-          current_level->remove_light(selected_light);
+          g_current_level->remove_light(selected_light);
       if (S_DELETE_SND>0) cache.sfx(S_DELETE_SND)->play(sfx_volume/2);
     }
     else
@@ -1167,7 +1167,7 @@ void dev_controll::do_command(char const *command, Event &ev)
     {
       ivec2 pos = the_game->MouseToGame(dlast);
       edit_object=create(t, pos.x, pos.y);
-      current_level->add_object(edit_object);
+      g_current_level->add_object(edit_object);
       the_game->need_refresh();
       last_created_type=t;
     } else
@@ -1202,19 +1202,19 @@ void dev_controll::do_command(char const *command, Event &ev)
   if (!strcmp(fword,"clear_auto"))
   {
     int32_t i,j;
-    for (i=0; i<current_level->foreground_width(); i++)
-      for (j=0; j<current_level->foreground_height(); j++)
-        current_level->clear_fg(i,j);
+    for (i=0; i<g_current_level->foreground_width(); i++)
+      for (j=0; j<g_current_level->foreground_height(); j++)
+        g_current_level->clear_fg(i,j);
   }
 
   if (!strcmp(fword,"fg_select"))
   {
     ivec2 tile = the_game->GetFgTile(dlast);
     if (tile.x >= 0 && tile.y >= 0 &&
-        tile.x < current_level->foreground_width() &&
-        tile.y < current_level->foreground_height())
+        tile.x < g_current_level->foreground_width() &&
+        tile.y < g_current_level->foreground_height())
     {
-      cur_fg=current_level->GetFg(tile);
+      cur_fg=g_current_level->GetFg(tile);
       if (forew)
     ((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->m_surf);
       the_game->need_refresh();
@@ -1225,9 +1225,9 @@ void dev_controll::do_command(char const *command, Event &ev)
   {
     ivec2 tile = the_game->GetFgTile(dlast);
     if (tile.x >= 0 && tile.y >= 0 &&
-        tile.x < current_level->foreground_width() &&
-        tile.y < current_level->foreground_height())
-      current_level->fg_set_raised(tile.x, tile.y,!current_level->fg_raised(tile.x,tile.y));
+        tile.x < g_current_level->foreground_width() &&
+        tile.y < g_current_level->foreground_height())
+      g_current_level->fg_set_raised(tile.x, tile.y,!g_current_level->fg_raised(tile.x,tile.y));
   }
 
   if (!strcmp(fword,"fg_add"))
@@ -1246,7 +1246,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
   if (!strcmp(fword,"restart"))
   {
-    current_level->restart();
+    g_current_level->restart();
   }
   if (!strcmp(fword,"quit"))
   {
@@ -1255,25 +1255,25 @@ void dev_controll::do_command(char const *command, Event &ev)
 
   if (!strcmp(fword,"to_front"))
   {
-    game_object *which=selected_object;
+    GameObject *which=selected_object;
     if (!selected_object) which=edit_object;
     if (which)
-      current_level->to_front(which);
+      g_current_level->to_front(which);
     else the_game->show_help(symbol_str("forward?"));
   }
 
   if (!strcmp(fword,"to_back"))
   {
-    game_object *which=selected_object;
+    GameObject *which=selected_object;
     if (!selected_object) which=edit_object;
     if (which)
-      current_level->to_back(which);
+      g_current_level->to_back(which);
     else the_game->show_help(symbol_str("back?"));
   }
 
   if (!strcmp(fword,"set_aitype"))
   {
-    game_object *which=selected_object;
+    GameObject *which=selected_object;
     if (!selected_object) which=edit_object;
     if (which)
     {
@@ -1356,7 +1356,7 @@ void dev_controll::toggle_light_window()
         symbol_str("l_light"));
 }
 
-void dev_controll::make_ai_window(game_object *o)
+void dev_controll::make_ai_window(GameObject *o)
 {
   ai_object=o;
   int th=wm->font()->Size().y+4,wl = 0, wh = 20;
@@ -1414,7 +1414,7 @@ void dev_controll::make_ai_window(game_object *o)
   wm->grab_focus(aiw);
 }
 
-void dev_controll::notify_deleted_light(light_source *l)
+void dev_controll::notify_deleted_light(LightSource *l)
 {
   if (l==edit_light)
   {
@@ -1430,7 +1430,7 @@ void dev_controll::notify_deleted_light(light_source *l)
     selected_light=NULL;
 }
 
-void dev_controll::notify_deleted_object(game_object *o)
+void dev_controll::notify_deleted_object(GameObject *o)
 {
   if (o==edit_object)
   {
@@ -1459,7 +1459,7 @@ void dev_controll::close_ai_window()
 {
   if (aiw)
   {
-    game_object *o=ai_object;
+    GameObject *o=ai_object;
     int32_t x;
     if (o)
     {
@@ -1511,11 +1511,11 @@ void dev_controll::area_handle_input(Event &ev)
   if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
   {
     ivec2 pos = the_game->MouseToGame(last_demo_mpos);
-    if (!current_level) return ;
-    current_area=current_level->area_list=new area_controller(pos.x, pos.y,
+    if (!g_current_level) return ;
+    current_area=g_current_level->area_list=new area_controller(pos.x, pos.y,
                                   the_game->ftile_width(),
                                   the_game->ftile_height(),
-                                  current_level->area_list);
+                                  g_current_level->area_list);
     the_game->need_refresh();
     state=DEV_DRAG_AREA_BOTTOM;
   }
@@ -1546,12 +1546,12 @@ void dev_controll::pick_handle_input(Event &ev)
 {
   area_controller *find=NULL;
   int find_top=0;
-  if (!current_level) return;
+  if (!g_current_level) return;
   if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
   {
     ivec2 m = last_demo_mpos;
     view *v = the_game->GetView(m);
-    for (area_controller *a=current_level->area_list; a; a=a->next)
+    for (area_controller *a=g_current_level->area_list; a; a=a->next)
     {
       ivec2 pos1 = the_game->GameToMouse(ivec2(a->x, a->y), v);
       ivec2 pos2 = the_game->GameToMouse(ivec2(a->x + a->w, a->y + a->h), v);
@@ -1624,7 +1624,7 @@ void dev_controll::handle_event(Event &ev)
 
   if (dev_menu && dev_menu->handle_event(ev,main_screen)) return ;
 
-  if (!current_level) return ;
+  if (!g_current_level) return ;
 
   for (x=0; x<total_pals; x++)
     pal_wins[x]->handle_event(ev);
@@ -1831,7 +1831,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (dev&EDIT_MODE)
       {
-    game_object *old=selected_object;
+    GameObject *old=selected_object;
     selected_object=NULL;
     if (ev.window==NULL)
     {
@@ -1840,8 +1840,8 @@ void dev_controll::handle_event(Event &ev)
       if (!(dev & MAP_MODE))
       {
         if (dev&DRAW_PEOPLE_LAYER)
-              selected_object=current_level->find_object(pos.x, pos.y);
-        light_source *old_light=selected_light;
+              selected_object=g_current_level->find_object(pos.x, pos.y);
+        LightSource *old_light=selected_light;
         selected_light = selected_object ? NULL : find_light(pos.x, pos.y);
         if (selected_light!=old_light)
           the_game->need_refresh();
@@ -1853,16 +1853,16 @@ void dev_controll::handle_event(Event &ev)
         if (ev.mouse_button==1 && !selected_object && !selected_light)
         {
           ivec2 tile = the_game->GetFgTile(last_demo_mpos);
-          if (tile.x>=0 && tile.y>=0 && tile.x<current_level->foreground_width() &&
-          tile.y<current_level->foreground_height())
-          current_level->PutFg(tile, raise_all ? make_above_tile(cur_fg) : cur_fg);
+          if (tile.x>=0 && tile.y>=0 && tile.x<g_current_level->foreground_width() &&
+          tile.y<g_current_level->foreground_height())
+          g_current_level->PutFg(tile, raise_all ? make_above_tile(cur_fg) : cur_fg);
           the_game->need_refresh();
         } else if (ev.mouse_button==1 && !selected_object && !selected_light)
         {
           ivec2 tile = the_game->GetBgTile(last_demo_mpos);
-          if (tile.x>=0 && tile.y>=0 && tile.x<current_level->background_width() &&
-          tile.y<current_level->background_height())
-          current_level->PutBg(tile, cur_fg);
+          if (tile.x>=0 && tile.y>=0 && tile.x<g_current_level->background_width() &&
+          tile.y<g_current_level->background_height())
+          g_current_level->PutBg(tile, cur_fg);
           the_game->need_refresh();
         }
       } else if (edit_mode==ID_DMODE_AREA)
@@ -1943,15 +1943,15 @@ void dev_controll::handle_event(Event &ev)
           if ((dev & DRAW_FG_LAYER) && ev.mouse_button==1)
           {
         ivec2 tile = the_game->GetFgTile(last_demo_mpos);
-        if (tile.x>=0 && tile.y>=0 && tile.x<current_level->foreground_width() &&
-            tile.y<current_level->foreground_height())
+        if (tile.x>=0 && tile.y>=0 && tile.x<g_current_level->foreground_width() &&
+            tile.y<g_current_level->foreground_height())
         the_game->PutFg(tile, raise_all ? make_above_tile(cur_fg) : cur_fg);
           }
           if ((dev & DRAW_BG_LAYER) && ev.mouse_button==2)
           {
         ivec2 tile = the_game->GetBgTile(last_demo_mpos);
-        if (tile.x>=0 && tile.y>=0 && tile.x<current_level->background_width() &&
-            tile.y<current_level->background_height())
+        if (tile.x>=0 && tile.y>=0 && tile.x<g_current_level->background_width() &&
+            tile.y<g_current_level->background_height())
         the_game->PutBg(tile, cur_bg);
           }
         }
@@ -2011,7 +2011,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        mess_win=file_dialog(symbol_str("level_name"),current_level ? current_level->name() : "",
+        mess_win=file_dialog(symbol_str("level_name"),g_current_level ? g_current_level->name() : "",
                  ID_LEVEL_LOAD_OK,symbol_str("ok_button"),ID_CANCEL,symbol_str("cancel_button"),
                  symbol_str("FILENAME"),ID_MESS_STR1);
         wm->grab_focus(mess_win);
@@ -2026,17 +2026,17 @@ void dev_controll::handle_event(Event &ev)
     } break;
     case ID_GAME_SAVE :
     {
-      current_level->save("savegame.spe",1);
+      g_current_level->save("savegame.spe",1);
       the_game->show_help(symbol_str("saved_game"));
       the_game->need_refresh();
     } break;
     case ID_LEVEL_SAVE :
-    { if (current_level)
+    { if (g_current_level)
       {
-        if (current_level->save(current_level->name(),0))
+        if (g_current_level->save(g_current_level->name(),0))
         {
           char msg[100];
-          sprintf(msg,symbol_str("saved_level"),current_level->name());
+          sprintf(msg,symbol_str("saved_level"),g_current_level->name());
           the_game->show_help(msg);
           the_game->need_refresh();
         }
@@ -2047,7 +2047,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        mess_win=file_dialog(symbol_str("saveas_name"),current_level ? current_level->name() : "untitled.spe",
+        mess_win=file_dialog(symbol_str("saveas_name"),g_current_level ? g_current_level->name() : "untitled.spe",
                    ID_LEVEL_SAVEAS_OK,symbol_str("ok_button"),
                  ID_CANCEL,symbol_str("cancel_button"),
                  symbol_str("FILENAME"),ID_MESS_STR1);
@@ -2056,9 +2056,9 @@ void dev_controll::handle_event(Event &ev)
     } break;
     case ID_LEVEL_SAVEAS_OK :
     {
-      if (current_level)
+      if (g_current_level)
       {
-        current_level->set_name(mess_win->read(ID_MESS_STR1));
+        g_current_level->set_name(mess_win->read(ID_MESS_STR1));
         wm->Push(new Event(ID_CANCEL,NULL));        // close window after save
         wm->Push(new Event(ID_LEVEL_SAVE,NULL));
       }
@@ -2070,7 +2070,7 @@ void dev_controll::handle_event(Event &ev)
     } break;
     case ID_CACHE_PROFILE :
     {
-      if (current_level && !cache.prof_is_on())
+      if (g_current_level && !cache.prof_is_on())
       {
         cache.prof_init();
         the_game->show_help("Cache profiling is now on.");
@@ -2101,9 +2101,9 @@ void dev_controll::handle_event(Event &ev)
     case ID_LEVEL_NEW_OK :
     {
       wm->Push(new Event(ID_CANCEL,NULL));  // close_window
-      if (current_level)
-        delete current_level;
-      current_level=new level(100,100,"untitled.spe");
+      if (g_current_level)
+        delete g_current_level;
+      g_current_level=new Level(100,100,"untitled.spe");
     } break;
     case ID_LEVEL_RESIZE :
     {
@@ -2112,18 +2112,18 @@ void dev_controll::handle_event(Event &ev)
         int h=wm->font()->Size().y+8;
         mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
             new text_field(0,h*0,ID_MESS_STR1,symbol_str("width_"),"****",
-                   current_level ? current_level->foreground_width() : 100,
+                   g_current_level ? g_current_level->foreground_width() : 100,
             new text_field(0,h*1,ID_MESS_STR2,symbol_str("height_"),"****",
-                   current_level ? current_level->foreground_height() : 100,
+                   g_current_level ? g_current_level->foreground_height() : 100,
                    new button(10,h*4,ID_LEVEL_RESIZE_OK,symbol_str("ok_button"),
                    new button(40,h*4,ID_CANCEL,symbol_str("cancel_button"),NULL)))),symbol_str("_scroll"));
       }
     } break;
     case ID_LEVEL_RESIZE_OK :
     {
-      if (current_level)
+      if (g_current_level)
       {
-        current_level->set_size(atoi(mess_win->read(ID_MESS_STR1)),
+        g_current_level->set_size(atoi(mess_win->read(ID_MESS_STR1)),
                     atoi(mess_win->read(ID_MESS_STR2)));
       } else the_game->show_help("Create a level first!");
       wm->Push(new Event(ID_CANCEL,NULL));  // close_window
@@ -2373,13 +2373,13 @@ void dev_controll::handle_event(Event &ev)
     { close_area_win(1); } break;
     case DEV_AREA_DELETE :
     { close_area_win(0);
-      if (current_area && current_level)
+      if (current_area && g_current_level)
       {
-        if (current_level->area_list==current_area)
-          current_level->area_list=current_level->area_list->next;
+        if (g_current_level->area_list==current_area)
+          g_current_level->area_list=g_current_level->area_list->next;
         else
         {
-          area_controller *a=current_level->area_list,*l=NULL;
+          area_controller *a=g_current_level->area_list,*l=NULL;
           for (; a!=current_area && a; a=a->next) { l=a; }
           l->next=a->next;
           delete a;
@@ -2417,8 +2417,8 @@ void dev_controll::handle_event(Event &ev)
       prop->setd("ledit x",ledit->m_pos.x);
       prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
-      if (current_level)
-        current_level->remove_light(edit_light);
+      if (g_current_level)
+        g_current_level->remove_light(edit_light);
       else
         delete_light(edit_light);
       edit_light=NULL;
@@ -2495,11 +2495,11 @@ void dev_controll::handle_event(Event &ev)
     } break;
     case DEV_OEDIT_COPY :
     {
-      game_object *use=copy_object;
+      GameObject *use=copy_object;
       if (!use) use=edit_object;
       if (use)
       {
-        game_object *old=use;
+        GameObject *old=use;
         close_oedit_window();
         if (use->controller())
           the_game->show_help(symbol_str("no_clone"));
@@ -2507,7 +2507,7 @@ void dev_controll::handle_event(Event &ev)
         {
           edit_object=old->copy();
 
-          current_level->add_object(edit_object);
+          g_current_level->add_object(edit_object);
           the_game->need_refresh();
           state=DEV_MOVE_OBJECT;
 
@@ -2625,7 +2625,7 @@ void dev_controll::handle_event(Event &ev)
 
     case DEV_OEDIT_MOVE :
     {
-      game_object *o=edit_object;
+      GameObject *o=edit_object;
       close_oedit_window();
       edit_object=o;
       do_command("move",ev);
@@ -2716,7 +2716,7 @@ void dev_controll::handle_event(Event &ev)
     switch (ev.key)
     {
       case JK_CTRL_L : if (!edit_object && !link_object) { link_object=selected_object; }
-      case 'n' : current_level->next_focus(); break;
+      case 'n' : g_current_level->next_focus(); break;
 //      case '/' : if (dev_console) dev_console->toggle(); break;
       case 't' :
       {
@@ -2827,7 +2827,7 @@ void dev_controll::handle_event(Event &ev)
       } break;
       case 'j' :
       {
-        if (current_level && player_list && player_list->m_focus)
+        if (g_current_level && player_list && player_list->m_focus)
         {
           ivec2 pos = the_game->MouseToGame(dlast);
           player_list->m_focus->x = pos.x;
@@ -3100,8 +3100,8 @@ void pal_win::handle_event(Event &ev)
         {
           for (yy=tile.y; yy<tile.y+h; yy++)
           {
-        if (xx>=0 && yy>=0 && xx<current_level->foreground_width() &&
-            yy<current_level->foreground_height())
+        if (xx>=0 && yy>=0 && xx<g_current_level->foreground_width() &&
+            yy<g_current_level->foreground_height())
           the_game->PutFg(ivec2(xx, yy), raise_all ? make_above_tile(pat[xx-tile.x+(yy-tile.y)*w]) : pat[xx-tile.x+(yy-tile.y)*w] );
           }
         }
@@ -3215,7 +3215,7 @@ void dev_controll::fg_fill(int color, int x, int y, pal_win *p)
   unsigned short *sl,*above,*below;
   fill_rec *recs=NULL,*r;
   unsigned short fcolor;
-  sl=current_level->get_fgline(y);
+  sl=g_current_level->get_fgline(y);
   fcolor=fgvalue(sl[x]);
   int startx=x,starty=y;
   if (fcolor==color) return ;
@@ -3227,22 +3227,22 @@ void dev_controll::fg_fill(int color, int x, int y, pal_win *p)
       x=r->x; y=r->y;
       delete r;
     }
-    sl=current_level->get_fgline(y);
+    sl=g_current_level->get_fgline(y);
     if (fgvalue(sl[x])==fcolor)
     {
       while (x>0 && fgvalue(sl[x])==fcolor) x--;
-      if (fgvalue(sl[x])!=fgvalue(fcolor) && x<current_level->foreground_width()-1) x++;
+      if (fgvalue(sl[x])!=fgvalue(fcolor) && x<g_current_level->foreground_width()-1) x++;
       if (y>0)
       {
-        above=current_level->get_fgline(y-1);
+        above=g_current_level->get_fgline(y-1);
         if (fgvalue(above[x])==fcolor)
         { r=new fill_rec(x,y-1,recs);
           recs=r;
         }
       }
-      if (y<current_level->foreground_height()-1)
+      if (y<g_current_level->foreground_height()-1)
       {
-        above=current_level->get_fgline(y+1);
+        above=g_current_level->get_fgline(y+1);
         if (above[x]==fcolor)
         { r=new fill_rec(x,y+1,recs);
           recs=r;
@@ -3255,33 +3255,33 @@ void dev_controll::fg_fill(int color, int x, int y, pal_win *p)
       {
         sl[x]=get_color(color,x-startx,y-starty,p);
         if (y>0)
-        { above=current_level->get_fgline(y-1);
+        { above=g_current_level->get_fgline(y-1);
           if (x>0 && fgvalue(above[x-1])!=fgvalue(fcolor) && fgvalue(above[x])==fgvalue(fcolor))
           { r=new fill_rec(x,y-1,recs);
             recs=r;
           }
         }
-        if (y<current_level->foreground_height()-1)
-        { below=current_level->get_fgline(y+1);
+        if (y<g_current_level->foreground_height()-1)
+        { below=g_current_level->get_fgline(y+1);
           if (x>0 && fgvalue(below[x-1])!=fgvalue(fcolor) && fgvalue(below[x])==fgvalue(fcolor))
           { r=new fill_rec(x,y+1,recs);
             recs=r;
           }
         }
         x++;
-      } while (fgvalue(sl[x])==fgvalue(fcolor) && x<current_level->foreground_width());
+      } while (fgvalue(sl[x])==fgvalue(fcolor) && x<g_current_level->foreground_width());
       x--;
       if (y>0)
       {
-        above=current_level->get_fgline(y-1);
+        above=g_current_level->get_fgline(y-1);
         if (fgvalue(above[x])==fgvalue(fcolor))
         { r=new fill_rec(x,y-1,recs);
           recs=r;
         }
       }
-      if (y<current_level->foreground_height()-1)
+      if (y<g_current_level->foreground_height()-1)
       {
-        above=current_level->get_fgline(y+1);
+        above=g_current_level->get_fgline(y+1);
         if (fgvalue(above[x])==fgvalue(fcolor))
         { r=new fill_rec(x,y+1,recs);
           recs=r;

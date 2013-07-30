@@ -27,7 +27,7 @@
 void elcontrol::draw()
 {
   if (dev & EDIT_MODE)
-    game_object::draw();
+    GameObject::draw();
 
 }
 
@@ -80,7 +80,7 @@ elcontrol::elcontrol(FILE *fp, unsigned char *state_remap)
 
 
 
-int elevator::can_block(game_object *who)
+int elevator::can_block(GameObject *who)
 {
   if (who!=this)
     return 1;
@@ -91,7 +91,7 @@ int elevator::can_block(game_object *who)
 
 void elevator::draw()  // draw cables above the elevator
 {
-  game_object::draw();
+  GameObject::draw();
   long x1,y1,x2,y2,sy1,sy2,sx,i;
   picture_space(x1,y1,x2,y2);
 
@@ -101,7 +101,7 @@ void elevator::draw()  // draw cables above the elevator
   if (sy2>=the_game->viewy1)
   {
     long draw_to=y1-(sy2-the_game->viewy1),tmp=x;
-    current_level->foreground_intersect(x,y1,tmp,draw_to);
+    g_current_level->foreground_intersect(x,y1,tmp,draw_to);
     sy1=the_game->screeny(draw_to);
     sy1=max(the_game->viewy1,sy1);
     sy2=min(the_game->viewy2,sy2);
@@ -124,7 +124,7 @@ elevator::elevator(long X, long Y)
 
 int elevator::size()
 {
-  return game_object::size()+4;
+  return GameObject::size()+4;
 }
 
 
@@ -137,7 +137,7 @@ elevator::elevator(FILE *fp, unsigned char *state_remap)
 
 void elevator::save(FILE *fp)
 {
-  game_object::save(fp);
+  GameObject::save(fp);
   write_uint16(fp,dir);
   write_uint16(fp,speed);
 }
@@ -148,8 +148,8 @@ elcontrol *elevator::find_stop()
   long x1,y1,x2,y2;
   picture_space(x1,y1,x2,y2);
   int i;
-  game_object **o=current_level->obj;
-  for (i=current_level->first_object(); i>=0; i=o[i]->next_active)
+  GameObject **o=g_current_level->obj;
+  for (i=g_current_level->first_object(); i>=0; i=o[i]->next_active)
   {
     if (o[i]->type()==O_elcontrol)
     {
@@ -176,7 +176,7 @@ int elevator::decide()
     picture_space(x1,y1,x2,y2);
 
 
-    game_object *a=current_level->attacker(this);
+    GameObject *a=g_current_level->attacker(this);
                   // are we in the elevator?, if not wait for someone to get in
     if (a->x>x1+3 && a->x<x2-3 && a->y<y2 && a->y>y1+8)
     {
@@ -242,10 +242,10 @@ int elevator::decide()
 
     if (dir)                                   // make sure move, wasn't canceled by a stop
     {
-      if (!current_level->crush(this,0,adder)) // see if we can crush anyone (I hope so! :) )
+      if (!g_current_level->crush(this,0,adder)) // see if we can crush anyone (I hope so! :) )
       {
     y+=adder;
-    current_level->push_characters(this,0,adder);
+    g_current_level->push_characters(this,0,adder);
       } else dir=0;                           // we crushed, stop the elevator and wait on user
     }
   }
@@ -275,12 +275,12 @@ void sensor::get_activate(char *name)
 
 int sensor::size()
 {
-  return game_object::size()+2*3+(strlen(aname())+2);
+  return GameObject::size()+2*3+(strlen(aname())+2);
 }
 
 
 void sensor::save(FILE *fp)
-{ game_object::save(fp);
+{ GameObject::save(fp);
   write_uint16(fp,xrange);
   write_uint16(fp,yrange);
   write_uint16(fp,signal);
@@ -304,17 +304,17 @@ sensor::sensor(FILE *fp, unsigned char *state_remap)
 int sensor::decide()
 {
   int i;
-  game_object **o=current_level->obj;
+  GameObject **o=g_current_level->obj;
   long x1,y1,x2,y2;
   if (activate==-1)
   {
-    current_level->attacker(this)->picture_space(x1,y1,x2,y2);
+    g_current_level->attacker(this)->picture_space(x1,y1,x2,y2);
     if (x+xrange>=x1 && x-xrange<=x2 && y+yrange>=y1 && y-yrange<=y2)
-      current_level->send_signal(signal);
+      g_current_level->send_signal(signal);
   }
   else
   {
-    for (i=current_level->first_object(); i>=0; i=o[i]->next_active)
+    for (i=g_current_level->first_object(); i>=0; i=o[i]->next_active)
     {
       long x1,y1,x2,y2;
       if (o[i]->type()==activate)
@@ -322,7 +322,7 @@ int sensor::decide()
     o[i]->picture_space(x1,y1,x2,y2);
     if (x+xrange>=x1 && x-xrange<=x2 && y+yrange>=y1 && y-yrange<=y2)
     {
-          current_level->send_signal(signal);
+          g_current_level->send_signal(signal);
       return 1;          // only send one signal!
     }
       }
@@ -338,7 +338,7 @@ void sensor::draw()
 {
   if (dev & EDIT_MODE)
   {
-    game_object::draw();
+    GameObject::draw();
     int sx=the_game->screenx(x),sy=the_game->screeny(y);
     screen->rectangle(sx-xrange,sy-yrange,sx+xrange,sy+yrange,wm->bright_color());
   }

@@ -27,9 +27,9 @@
 
 extern sequence *morph_table[MORPH_TABLE_WIDTH*MORPH_TABLE_WIDTH];
 
-class controlled_character : public game_object
+class controlled_character : public GameObject
 {
-  game_object *cur_char;
+  GameObject *cur_char;
   signed char morphing_to;  // who you are right now
   unsigned long abilities;  // if 1<<character bit is set then you have that ability
   void change_character(int char_type);
@@ -42,7 +42,7 @@ public :
   virtual void save(FILE *fp);
   virtual int decide();
 
-  void do_damage(int amount, game_object *who, game_object *from);
+  void do_damage(int amount, GameObject *who, GameObject *from);
 } ;
 
 

@@ -497,16 +497,16 @@ CharacterType::CharacterType(LList *args, LSymbol *name)
     while (!NILP(mf))
     {
       char *name=lstring_value(lcar(lcar(mf)));
-      int t=default_simple.total_vars(),find=-1;
+      int t = g_default_simple.total_vars(),find=-1;
       for (int i=0; find<0 && i<t; i++)
-        if (!strcmp(default_simple.var_name(i),name))
+        if (!strcmp(g_default_simple.var_name(i),name))
       find=i;
       if (find<0)
       {
     lprint(desc->Assoc(l_fields));
     printf("fields : no such var name \"%s\"\n",name);
     printf("current possiblities are : \n");
-    for (int i=0; i<t; i++) printf("\"%s\" ",default_simple.var_name(i));
+    for (int i=0; i<t; i++) printf("\"%s\" ",g_default_simple.var_name(i));
     printf("\n");
     exit(0);
       }

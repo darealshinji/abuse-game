@@ -612,7 +612,7 @@ ico_button *make_conditional_buttons(int x,int &y)
 {
   ico_button *start_list=NULL;
   int h;
-  if (current_level)       // should we include a return icon?
+  if (g_current_level)       // should we include a return icon?
   {
     start_list=load_icon(7,ID_RETURN,x,y,h,NULL,"ic_return");                       y+=h;
   }

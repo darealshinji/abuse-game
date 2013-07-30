@@ -192,8 +192,8 @@ void game_server::join_new_players()
         if (!strcmp(object_names[i],"START"))
       st=i;
 
-      game_object *o=create(current_start_type,0,0);
-      game_object *start=current_level->get_random_start(320,NULL);
+      GameObject *o=create(current_start_type,0,0);
+      GameObject *start=g_current_level->get_random_start(320,NULL);
       if (start) { o->x=start->x; o->y=start->y; }
       else { o->x=100; o->y=100; }
 
@@ -201,9 +201,9 @@ void game_server::join_new_players()
       o->set_controller(f->next);
 
       if (start)
-        current_level->add_object_after(o,start);
+        g_current_level->add_object_after(o,start);
       else
-        current_level->add_object(o);
+        g_current_level->add_object(o);
 
       view *v=f->next;
 
@@ -222,7 +222,7 @@ void game_server::join_new_players()
   if (wait)  // wait for acknowedgement from everone then delete net file
   {
     packet pk;
-    current_level->save("netstart.spe",1);
+    g_current_level->save("netstart.spe",1);
     printf("%d sync for save\n",make_sync_uint32());
 
     client_descriptor *last=NULL;

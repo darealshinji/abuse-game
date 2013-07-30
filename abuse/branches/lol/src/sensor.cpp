@@ -27,11 +27,11 @@ enum { un_offable };     // vars
 
 void *sensor_ai()
 {
-  game_object *o=current_object,*b;
+  GameObject *o=current_object,*b;
   if (o->aistate()==0)                     // turned off, what for player to enter
   {
     if (player_list->next)                 // find closest player
-      b=current_level->attacker(current_object);
+      b=g_current_level->attacker(current_object);
     else b=player_list->m_focus;
     if (lol::abs(b->x-o->x)<o->xvel() && lol::abs(b->y-o->y)<o->yvel())  // inside area?
     {
@@ -47,7 +47,7 @@ void *sensor_ai()
     if (!o->hp())
     {
       if (player_list->next)
-        b=current_level->attacker(current_object);
+        b=g_current_level->attacker(current_object);
       else b=player_list->m_focus;
       if (lol::abs(o->x-b->x)>o->xacel() || lol::abs(o->y-b->y)>o->yacel())
         o->set_aistate(0);

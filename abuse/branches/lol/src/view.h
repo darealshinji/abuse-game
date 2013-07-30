@@ -16,7 +16,7 @@
 
 
 class object_node;
-class game_object;
+class GameObject;
 class area_controller;
 
 struct suggest_struct
@@ -34,7 +34,7 @@ class view;
 class view
 {
 public:
-    view(game_object *Focus, view *Next, int number);
+    view(GameObject *Focus, view *Next, int number);
     ~view();
 
   int key_down(int key) { return m_keymap[key/8]&(1<<(key%8)); }
@@ -124,7 +124,7 @@ public:
     ivec2 m_shift; // shift of view
     ivec2 m_lastpos, m_lastlastpos;
 
-    game_object *m_focus; // object we are focusing on (player)
+    GameObject *m_focus; // object we are focusing on (player)
 
 private:
     uint8_t m_keymap[512 / 8];

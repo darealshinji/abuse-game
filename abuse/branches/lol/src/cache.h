@@ -20,7 +20,7 @@
 #include "items.h"
 #include "particle.h"
 
-class level;
+class Level;
 
 class CrcedFile
 {
@@ -96,7 +96,7 @@ private:
         ful;  // set when stuff has to be thrown out
     int *prof_data; // holds counts for each id
     void preload_cache_object(int type);
-    void preload_cache(level *lev);
+    void preload_cache(Level *lev);
 
 public:
     CacheList();
@@ -128,11 +128,11 @@ public:
     int  prof_size(); // sizeof of spec entry that will be saved
     void prof_poll_start();
     void prof_poll_end();
-    int  prof_is_on() { return prof_data != NULL; }   // so level knows weither to save prof info or not
+    int  prof_is_on() { return prof_data != NULL; }   // so Level knows weither to save prof info or not
     int compare(int a, int b); // compares usage count (used by qsort)
     int offset_compare(int a, int b);
 
-    void load_cache_prof_info(char *filename, level *lev);
+    void load_cache_prof_info(char *filename, Level *lev);
     // sarray is a index table sorted by offset/filenum
     int search(int *sarray, uint16_t filenum, int32_t offset);
 

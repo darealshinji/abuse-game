@@ -489,8 +489,8 @@ void net_reload()
   {
     if (net_server)
     {
-      if (current_level)
-        delete current_level;
+      if (g_current_level)
+        delete g_current_level;
       bFILE *fp;
 
       if (!reload_start()) return ;
@@ -507,18 +507,18 @@ void net_reload()
       if (!e)
       {
                 the_game->show_help("This level is missing copyright information, cannot load\n");
-                current_level=new level(100,100,"untitled");
+                g_current_level=new Level(100,100,"untitled");
                 the_game->need_refresh();
       }
       else
 #endif
-        current_level=new level(&sd,fp,NET_STARTFILE);
+        g_current_level = new Level(&sd, fp, NET_STARTFILE);
 
       delete fp;
-      base->current_tick=(current_level->tick_counter()&0xff);
+      base->current_tick=(g_current_level->tick_counter()&0xff);
 
       reload_end();
-    } else if (current_level)
+    } else if (g_current_level)
     {
 
       join_struct *join_list=base->join_list;
@@ -534,8 +534,8 @@ void net_reload()
                 if (!strcmp(object_names[i],"START"))
                 st=i;
 
-                game_object *o=create(current_start_type,0,0);
-                game_object *start=current_level->get_random_start(320,NULL);
+                GameObject *o=create(current_start_type,0,0);
+                GameObject *start=g_current_level->get_random_start(320,NULL);
                 if (start) { o->x=start->x; o->y=start->y; }
                 else { o->x=100; o->y=100; }
 
@@ -544,9 +544,9 @@ void net_reload()
                 o->set_controller(f->next);
                 f->next->set_tint(f->next->player_number);
                 if (start)
-                current_level->add_object_after(o,start);
+                g_current_level->add_object_after(o,start);
                 else
-                current_level->add_object(o);
+                g_current_level->add_object(o);
 
                 view *v = f->next;
                 v->m_aa = ivec2(5);
@@ -554,7 +554,7 @@ void net_reload()
                 join_list = join_list->next;
       }
       base->join_list=NULL;
-      current_level->save(NET_STARTFILE,1);
+      g_current_level->save(NET_STARTFILE,1);
       base->mem_lock=0;
 
 
@@ -611,8 +611,8 @@ void send_local_request()
 {
   if (prot)
   {
-    if (current_level)
-      base->current_tick=(current_level->tick_counter()&0xff);
+    if (g_current_level)
+      base->current_tick=(g_current_level->tick_counter()&0xff);
     game_face->add_engine_input();
   } else base->input_state=INPUT_PROCESSING;
 

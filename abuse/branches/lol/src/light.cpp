@@ -27,7 +27,7 @@
 #include "status.h"
 #include "dev.h"
 
-light_source *first_light_source=NULL;
+LightSource *first_light_source=NULL;
 uint8_t *white_light,*white_light_initial,*green_light,*trans_table;
 short ambient_ramp=0;
 short shutdown_lighting_value,shutdown_lighting=0;
@@ -35,29 +35,29 @@ extern char disable_autolight;   // defined in dev.h
 
 int light_detail=MEDIUM_DETAIL;
 
-int32_t light_to_number(light_source *l)
+int32_t light_to_number(LightSource *l)
 {
 
   if (!l) return 0;
   int x=1;
-  for (light_source *s=first_light_source; s; s=s->next,x++)
+  for (LightSource *s=first_light_source; s; s=s->next,x++)
     if (s==l) return x;
   return 0;
 }
 
 
-light_source *number_to_light(int32_t x)
+LightSource *number_to_light(int32_t x)
 {
   if (x==0) return NULL;
   x--;
-  light_source *s=first_light_source;
+  LightSource *s=first_light_source;
   for (; x && s; x--,s=s->next);
   return s;
 }
 
-light_source *light_source::copy()
+LightSource *LightSource::copy()
 {
-  next=new light_source(type,x,y,inner_radius,outer_radius,xshift,yshift,next);
+  next=new LightSource(type,x,y,inner_radius,outer_radius,xshift,yshift,next);
   return next;
 }
 
@@ -68,13 +68,13 @@ void delete_all_lights()
     if (dev_cont)
       dev_cont->notify_deleted_light(first_light_source);
 
-    light_source *p=first_light_source;
+    LightSource *p=first_light_source;
     first_light_source=first_light_source->next;
     delete p;
   }
 }
 
-void delete_light(light_source *which)
+void delete_light(LightSource *which)
 {
   if (dev_cont)
     dev_cont->notify_deleted_light(which);
@@ -86,7 +86,7 @@ void delete_light(light_source *which)
   }
   else
   {
-    light_source *f=first_light_source;
+    LightSource *f=first_light_source;
     for (; f->next!=which && f; f=f->next);
     if (f)
     {
@@ -96,7 +96,7 @@ void delete_light(light_source *which)
   }
 }
 
-void light_source::calc_range()
+void LightSource::calc_range()
 {
   switch (type)
   {
@@ -150,8 +150,8 @@ void light_source::calc_range()
   mul_div=(1<<16)/(outer_radius-inner_radius)*64;
 }
 
-light_source::light_source(char Type, int32_t X, int32_t Y, int32_t Inner_radius,
-               int32_t Outer_radius, int32_t Xshift,  int32_t Yshift, light_source *Next)
+LightSource::LightSource(char Type, int32_t X, int32_t Y, int32_t Inner_radius,
+               int32_t Outer_radius, int32_t Xshift,  int32_t Yshift, LightSource *Next)
 {
   type=Type;
   x=X; y=Y;
@@ -168,15 +168,15 @@ light_source::light_source(char Type, int32_t X, int32_t Y, int32_t Inner_radius
 int count_lights()
 {
   int t=0;
-  for (light_source *s=first_light_source; s; s=s->next)
+  for (LightSource *s=first_light_source; s; s=s->next)
     t++;
   return t;
 }
 
-light_source *add_light_source(char type, int32_t x, int32_t y,
+LightSource *add_light_source(char type, int32_t x, int32_t y,
                    int32_t inner, int32_t outer, int32_t xshift, int32_t yshift)
 {
-  first_light_source=new light_source(type,x,y,inner,outer,xshift,yshift,first_light_source);
+  first_light_source=new LightSource(type,x,y,inner,outer,xshift,yshift,first_light_source);
   return first_light_source;
 }
 
@@ -379,8 +379,8 @@ light_patch *light_patch::copy(light_patch *Next)
   p->total=total;
   if (total)
   {
-    p->lights=(light_source **)malloc(total*sizeof(light_source *));
-    memcpy(p->lights,lights,total*(sizeof(light_source *)));
+    p->lights=(LightSource **)malloc(total*sizeof(LightSource *));
+    memcpy(p->lights,lights,total*(sizeof(LightSource *)));
   }
   else
     p->lights=NULL;
@@ -408,7 +408,7 @@ void insert_light(light_patch *&first, light_patch *l)
 }
 
 void add_light(light_patch *&first, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
-                light_source *who)
+                LightSource *who)
 {
   light_patch *next;
   light_patch *p=first;
@@ -463,7 +463,7 @@ void add_light(light_patch *&first, int32_t x1, int32_t y1, int32_t x2, int32_t 
 
 
       p->total++;
-      p->lights=(light_source **)realloc(p->lights,sizeof(light_source *)*p->total);
+      p->lights=(LightSource **)realloc(p->lights,sizeof(LightSource *)*p->total);
       p->lights[p->total-1]=who;
       return ;
     }
@@ -481,7 +481,7 @@ void add_light(light_patch *&first, int32_t x1, int32_t y1, int32_t x2, int32_t 
         add_light(first,p->x1,p->y2+1,p->x2,y2,who);
       if (p->total==MAX_LP)  return ;
       p->total++;
-      p->lights=(light_source **)realloc(p->lights,sizeof(light_source *)*p->total);
+      p->lights=(LightSource **)realloc(p->lights,sizeof(LightSource *)*p->total);
       p->lights[p->total-1]=who;
       return ;
     }
@@ -544,7 +544,7 @@ int calc_light_value(light_patch *which, int32_t x, int32_t y)
   int t=which->total;
   for (register int i=t-1; i>=0; i--)
   {
-    light_source *fn=which->lights[i];
+    LightSource *fn=which->lights[i];
     if (fn->type==9)
     {
       lv=fn->inner_radius;
@@ -583,7 +583,7 @@ light_patch *make_patch_list(int width, int height, int32_t screenx, int32_t scr
 {
   light_patch *first=new light_patch(0,0,width-1,height-1,NULL);
 
-  for (light_source *f=first_light_source; f; f=f->next)   // determine which lights will have effect
+  for (LightSource *f=first_light_source; f; f=f->next)   // determine which lights will have effect
   {
     int32_t x1=f->x1-screenx,y1=f->y1-screeny,
         x2=f->x2-screenx,y2=f->y2-screeny;
@@ -642,11 +642,11 @@ inline int calc_light_value(light_patch *lp,   // light patch to look at
   int lv=min_light_level,r2,light_count;
   register int dx,dy;           // x and y distances
 
-  light_source **lon_p=lp->lights;
+  LightSource **lon_p=lp->lights;
 
   for (light_count=lp->total; light_count>0; light_count--)
   {
-    light_source *fn=*lon_p;
+    LightSource *fn=*lon_p;
     register int32_t *dt=&(*lon_p)->type;
                                      // note we are accessing structure members by bypassing the compiler
                                      // for speed, this may not work on all compilers, but don't
@@ -1114,7 +1114,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 void add_light_spec(SpecDir *sd, char const *level_name)
 {
   int32_t size=4+4;  // number of lights and minimum light levels
-  for (light_source *f=first_light_source; f; f=f->next)
+  for (LightSource *f=first_light_source; f; f=f->next)
     size+=6*4+1;
   sd->add_by_hand(new SpecEntry(SPEC_LIGHT_LIST,"lights",NULL,size,0));
 }
@@ -1122,7 +1122,7 @@ void add_light_spec(SpecDir *sd, char const *level_name)
 void write_lights(bFILE *fp)
 {
   int t=0;
-  light_source *f=first_light_source;
+  LightSource *f=first_light_source;
   for (; f; f=f->next) t++;
   fp->write_uint32(t);
   fp->write_uint32(min_light_level);
@@ -1148,7 +1148,7 @@ void read_lights(SpecDir *sd, bFILE *fp, char const *level_name)
     fp->seek(se->offset,SEEK_SET);
     int32_t t=fp->read_uint32();
     min_light_level=fp->read_uint32();
-    light_source *last=NULL;
+    LightSource *last=NULL;
     while (t)
     {
       t--;
@@ -1160,7 +1160,7 @@ void read_lights(SpecDir *sd, bFILE *fp, char const *level_name)
       int32_t ora=fp->read_uint32();
       int32_t ty=fp->read_uint8();
 
-      light_source *p=new light_source(ty,x,y,ir,ora,xshift,yshift,NULL);
+      LightSource *p=new LightSource(ty,x,y,ir,ora,xshift,yshift,NULL);
 
       if (first_light_source)
         last->next=p;

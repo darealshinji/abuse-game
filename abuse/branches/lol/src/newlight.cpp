@@ -24,36 +24,36 @@
 #include "filter.h"
 #include "video.h"
 
-light_source *first_light_source=NULL;
+LightSource *first_light_source=NULL;
 unsigned char *white_light,*green_light;
 unsigned short min_light_level=0;
 extern int vmode;
 
 int light_detail=MEDIUM_DETAIL;
 
-long light_to_number(light_source *l)
+long light_to_number(LightSource *l)
 {
     if( !l ) return 0;
     int x = 1;
-    light_source *s;
+    LightSource *s;
     for (s = first_light_source; s; s = s->next, x++)
         if (s == l) return x;
     return 0;
 }
 
 
-light_source *number_to_light(long x)
+LightSource *number_to_light(long x)
 {
     if (x == 0) return NULL;
     x--;
-    light_source *s;
+    LightSource *s;
     for (s = first_light_source; x && s; x--, s = s->next);
     return s;
 }
 
-light_source *light_source::copy()
+LightSource *LightSource::copy()
 {
-    next = new light_source(type,x,y,inner_radius,outer_radius,xshift,yshift,next);
+    next = new LightSource(type,x,y,inner_radius,outer_radius,xshift,yshift,next);
     return next;
 }
 
@@ -61,13 +61,13 @@ void delete_all_lights()
 {
     while (first_light_source)
     {
-        light_source *p = first_light_source;
+        LightSource *p = first_light_source;
         first_light_source = first_light_source->next;
         delete p;
     }
 }
 
-void delete_light(light_source *which)
+void delete_light(LightSource *which)
 {
   if (which==first_light_source)
   {
@@ -76,7 +76,7 @@ void delete_light(light_source *which)
   }
   else
   {
-    for (light_source *f=first_light_source; f->next!=which && f; f=f->next);
+    for (LightSource *f=first_light_source; f->next!=which && f; f=f->next);
     if (f)
     {
       f->next=which->next;
@@ -85,7 +85,7 @@ void delete_light(light_source *which)
   }
 }
 
-void light_source::calc_range()
+void LightSource::calc_range()
 {
   switch (type)
   {
@@ -139,8 +139,8 @@ void light_source::calc_range()
   mul_div=(1<<16)/(outer_radius-inner_radius)*64;
 }
 
-light_source::light_source(char Type, long X, long Y, long Inner_radius,
-               long Outer_radius, long Xshift,  long Yshift, light_source *Next)
+LightSource::LightSource(char Type, long X, long Y, long Inner_radius,
+               long Outer_radius, long Xshift,  long Yshift, LightSource *Next)
 {
   type=Type;
   x=X; y=Y;
@@ -153,10 +153,10 @@ light_source::light_source(char Type, long X, long Y, long Inner_radius,
   calc_range();
 }
 
-light_source *add_light_source(char type, long x, long y,
+LightSource *add_light_source(char type, long x, long y,
                    long inner, long outer, long xshift, long yshift)
 {
-    first_light_source = new light_source(type,x,y,inner,outer,xshift,yshift,first_light_source);
+    first_light_source = new LightSource(type,x,y,inner,outer,xshift,yshift,first_light_source);
     return first_light_source;
 }
 
@@ -301,8 +301,8 @@ light_patch *light_patch::copy(light_patch *Next)
   p->total=total;
   if (total)
   {
-    p->lights=(light_source **)malloc(total*sizeof(light_source *));
-    memcpy(p->lights,lights,total*(sizeof(light_source *)));
+    p->lights=(LightSource **)malloc(total*sizeof(LightSource *));
+    memcpy(p->lights,lights,total*(sizeof(LightSource *)));
   }
   else
     p->lights=NULL;
@@ -313,7 +313,7 @@ light_patch *light_patch::copy(light_patch *Next)
 
 
 void add_light(light_patch *&first, long x1, long y1, long x2, long y2,
-                light_source *who)
+                LightSource *who)
 {
   light_patch *last=NULL;
   for (light_patch *p=first; p; p=p->next)
@@ -349,7 +349,7 @@ void add_light(light_patch *&first, long x1, long y1, long x2, long y2,
       }
       p->x1=x1; p->y1=y1; p->x2=x2; p->y2=y2;
       p->total++;
-      p->lights=(light_source **)realloc(p->lights,sizeof(light_source *)*p->total);
+      p->lights=(LightSource **)realloc(p->lights,sizeof(LightSource *)*p->total);
       p->lights[p->total-1]=who;
       return ;
     }
@@ -367,7 +367,7 @@ void add_light(light_patch *&first, long x1, long y1, long x2, long y2,
         add_light(first,p->x1,p->y2+1,p->x2,y2,who);
       if (p->total==MAX_LP)  return ;
       p->total++;
-      p->lights=(light_source **)realloc(p->lights,sizeof(light_source *)*p->total);
+      p->lights=(LightSource **)realloc(p->lights,sizeof(LightSource *)*p->total);
       p->lights[p->total-1]=who;
       return ;
     }
@@ -429,7 +429,7 @@ int calc_light_value(long x, long y, light_patch *which)
   int t=which->total;
   for (register int i=t-1; i>=0; i--)
   {
-    light_source *fn=which->lights[i];
+    LightSource *fn=which->lights[i];
     if (fn->type==9)
     {
       lv=fn->inner_radius;
@@ -468,7 +468,7 @@ light_patch *make_patch_list(int cx1,int cy1,int cx2,int cy2, long screenx, long
 {
   light_patch *first=new light_patch(cx1,cy1,cx2,cy2,NULL);
 
-  for (light_source *f=first_light_source; f; f=f->next)   // determine which lights will have effect
+  for (LightSource *f=first_light_source; f; f=f->next)   // determine which lights will have effect
   {
     long x1=f->x1-screenx,y1=f->y1-screeny,x2=f->x2-screenx,y2=f->y2-screeny;
     if (x1<cx1) x1=cx1;
@@ -516,12 +516,12 @@ inline long MAP_PUT2(long dest_addr, long screen_addr, long remap, long w)
 
 inline long calc_lv(light_patch *lp, long sx, long sy)
 {
-  light_source **lon_p=lp->lights;
+  LightSource **lon_p=lp->lights;
   long lv=min_light_level;
   int light_on;
   for (light_on=lp->total-1; light_on>=0; light_on--)
   {
-    light_source *fn=*lon_p;
+    LightSource *fn=*lon_p;
     long *dt=&(*lon_p)->type;
     if (*dt==9)
     {
@@ -627,7 +627,7 @@ void light_screen(image *sc, long screenx, long screeny, uchar *light_lookup)
     {
       long lv=min_light_level;
       unsigned char *ct;
-      light_source *f;
+      LightSource *f;
       int todox;
       if (x+xtry>lp->x2)
         todox=lp->x2-x+1;
@@ -765,7 +765,7 @@ void light_screen(image *sc, long screenx, long screeny, uchar *light_lookup)
 void add_light_spec(SpecDir *sd, char *level_name)
 {
   long size=4+4;  // number of lights and minimum light levels
-  for (light_source *f=first_light_source; f; f=f->next)
+  for (LightSource *f=first_light_source; f; f=f->next)
     size+=6*4+1;
   sd->add(new SpecEntry(SPEC_LIGHT_LIST,"lights",NULL,size,0));
 }
@@ -773,7 +773,7 @@ void add_light_spec(SpecDir *sd, char *level_name)
 void write_lights(jFILE *fp)
 {
   int t=0;
-  for (light_source *f=first_light_source; f; f=f->next) t++;
+  for (LightSource *f=first_light_source; f; f=f->next) t++;
   fp->write_uint32(t);
   fp->write_uint32(min_light_level);
   for (f=first_light_source; f; f=f->next)
@@ -793,7 +793,7 @@ int send_lights(net_descriptor *os)
 {
   packet pk;
   int t=0;
-  for (light_source *f=first_light_source; f; f=f->next) t++;
+  for (LightSource *f=first_light_source; f; f=f->next) t++;
   pk.write_uint32(t);
   pk.write_uint16(min_light_level);
   if (!os->send(pk)) return 0;
@@ -822,7 +822,7 @@ void read_lights(SpecDir *sd, jFILE *fp, char const *level_name)
     fp->seek(se->offset,SEEK_SET);
     long t=fp->read_uint32();
     min_light_level=fp->read_uint32();
-    light_source *last;
+    LightSource *last;
     while (t)
     {
       t--;
@@ -834,7 +834,7 @@ void read_lights(SpecDir *sd, jFILE *fp, char const *level_name)
       long ora=fp->read_uint32();
       long ty=fp->read_uint8();
 
-      light_source *p=new light_source(ty,x,y,ir,ora,xshift,yshift,NULL);
+      LightSource *p=new LightSource(ty,x,y,ir,ora,xshift,yshift,NULL);
 
       if (first_light_source)
         last->next=p;
@@ -858,7 +858,7 @@ int receive_lights(net_descriptor *os)
   { printf("net error : (minl) packet incomplete\n"); return 0; }
   min_light_level=lstl(min_light_level);
 
-  light_source *last;
+  LightSource *last;
   printf("Reading %d lights\n",t);
   while (t)
   {
@@ -868,7 +868,7 @@ int receive_lights(net_descriptor *os)
     if (pk.read((uchar *)dt,7*4)!=7*4) return 0;
 
 
-    light_source *p=new light_source(lltl(dt[6]),
+    LightSource *p=new LightSource(lltl(dt[6]),
                        lltl(dt[0]),lltl(dt[1]),
                        lltl(dt[4]),lltl(dt[5]),
                        lltl(dt[2]),lltl(dt[3]),NULL);

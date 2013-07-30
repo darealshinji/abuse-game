@@ -52,11 +52,11 @@ int RC_type_size(int type);
 //void init_object_offsets();
 
 
-class game_object : public simple_object
+class GameObject : public SimpleObject
 {
   sequence *current_sequence() { return figures[otype]->get_sequence(state); }
 public :
-  game_object *next,*next_active;
+  GameObject *next,*next_active;
   int32_t *lvars;
 
   int size();
@@ -85,14 +85,14 @@ public :
 
   void drawer();
   void draw_above(view *v);
-  void do_damage(int amount, game_object *from, int32_t hitx, int32_t hity, int32_t push_xvel, int32_t push_yvel);
-  void damage_fun(int amount, game_object *from, int32_t hitx, int32_t hity, int32_t push_xvel, int32_t push_yvel);
+  void do_damage(int amount, GameObject *from, int32_t hitx, int32_t hity, int32_t push_xvel, int32_t push_yvel);
+  void damage_fun(int amount, GameObject *from, int32_t hitx, int32_t hity, int32_t push_xvel, int32_t push_yvel);
 
 
-  void note_attack(game_object *whom);
+  void note_attack(GameObject *whom);
   void receive_signal(long signal) { (void)signal; }
   int push_range();
-  int can_hurt(game_object *who);     // collision checking will ask first to see if you
+  int can_hurt(GameObject *who);     // collision checking will ask first to see if you
                               // can hurt this person before calculating weither you actually do
 
   void load(int type, bFILE *fp, unsigned char *state_remap);
@@ -107,8 +107,8 @@ public :
   void set_state(character_state s, int frame_direction=1);
   int has_sequence(character_state s) { return figures[otype]->has_sequence(s); }
 
-  game_object *try_move(int32_t x, int32_t y, int32_t &xv, int32_t &yv, int checks);  // 1=down,2=up,3=both
-  game_object *bmove(int &whit, game_object *exclude);  // ballestic move, return hit object,
+  GameObject *try_move(int32_t x, int32_t y, int32_t &xv, int32_t &yv, int checks);  // 1=down,2=up,3=both
+  GameObject *bmove(int &whit, GameObject *exclude);  // ballestic move, return hit object,
                                                         // or NULL (whit is 1 if hit wall)
   TransImage *picture() { return current_sequence()->get_frame(current_frame,direction); }
 
@@ -133,16 +133,16 @@ public :
   int ty(int y) { return y-picture()->Size().y+1; }
   void defaults();
 
-  game_object(int Type, int load=0);
-  ~game_object();
+  GameObject(int Type, int load=0);
+  ~GameObject();
 
   int is_playable() { return hurtable(); }
   void add_power(int amount);
   void add_hp(int amount);
   int can_morph_into(int type);
   void morph_into(int type, void (*stat_fun)(int), int anneal, int frames);
-  void do_flinch(game_object *from);
-  void set_aimemory(game_object *p) { add_object(p); p->set_flags(p->flags()|KNOWN_FLAG); }
+  void do_flinch(GameObject *from);
+  void set_aimemory(GameObject *p) { add_object(p); p->set_flags(p->flags()|KNOWN_FLAG); }
   int alive() { if (state==dead || hp()<=0) return 0; else return 1; }
   void frame_advance();
   object_node *make_not_list(object_node *first);
@@ -152,7 +152,7 @@ public :
   void change_type(int new_type);
   int set_var_by_name(char *name, int32_t value);
   int32_t get_var_by_name(char *name, int &error);
-  game_object *copy();
+  GameObject *copy();
   void change_aitype(int new_type);
 
   int get_tint() { return _tint; }
@@ -174,19 +174,19 @@ public :
 class object_node  // used to create various list of objects
 {
   public :
-  game_object *me;
+  GameObject *me;
   object_node *next;
-  object_node(game_object *Me, object_node *Next) { me=Me; next=Next; }
+  object_node(GameObject *Me, object_node *Next) { me=Me; next=Next; }
 } ;
 
-extern game_object *current_object;
+extern GameObject *current_object;
 extern view *current_view;
-game_object *create(int type, int32_t x, int32_t y, int skip_constructor=0, int aitype=0);
+GameObject *create(int type, int32_t x, int32_t y, int skip_constructor=0, int aitype=0);
 int base_size();
 
 void delete_object_list(object_node *first);
-int          object_to_number_in_list(game_object *who, object_node *list);
-game_object *number_to_object_in_list(int32_t x, object_node *list);
+int          object_to_number_in_list(GameObject *who, object_node *list);
+GameObject *number_to_object_in_list(int32_t x, object_node *list);
 
 
 #endif

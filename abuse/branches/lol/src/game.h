@@ -131,10 +131,10 @@ public :
 
   int in_area(Event &ev, int x1, int y1, int x2, int y2);
   void load_level(char const *name);
-  void set_level(level *nl);
+  void set_level(Level *nl);
   void show_time();
-    tile_type GetMapBg(ivec2 pos) { return current_level->GetBg(pos); }
-    tile_type GetMapFg(ivec2 pos) { return current_level->GetFg(pos); }
+    tile_type GetMapBg(ivec2 pos) { return g_current_level->GetBg(pos); }
+    tile_type GetMapFg(ivec2 pos) { return g_current_level->GetFg(pos); }
   void end_session();
   void need_refresh() { refresh=1; }       // for development mode only
   palette *current_palette() { return pal; }

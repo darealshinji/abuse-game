@@ -428,9 +428,9 @@ void CacheList::preload_cache_object(int type)
   }
 }
 
-void CacheList::preload_cache(level *lev)
+void CacheList::preload_cache(Level *lev)
 {
-  game_object *f;
+  GameObject *f;
   int i;
   for (i=0; i<total_objects; i++)                       // mark all types as not needing loading
     figures[i]->set_cflag(CFLAG_NEED_CACHE_IN,0);
@@ -475,7 +475,7 @@ void CacheList::preload_cache(level *lev)
   load_chars();
 }
 
-void CacheList::load_cache_prof_info(char *filename, level *lev)
+void CacheList::load_cache_prof_info(char *filename, Level *lev)
 {
   int j;
   for (j=0; j<this->total; j++)
