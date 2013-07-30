@@ -1,0 +1,7 @@
+update romanian, idaho mirrors with 
+index, links.
+
+Check new patch with copy of fRaBs200 dir.
+
+Then create, with updated docs folders.
+frabs210.zip f200-210.zip

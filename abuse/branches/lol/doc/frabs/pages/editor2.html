@@ -1,0 +1,262 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Justin Cassidy">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>The Free Abuse Project</title>
+</head>
+<body text="#FFFFFF" bgcolor="#000000" link="#C0C0C0" vlink="#666666" alink="#C0C0C0" background="../images/jmc.jpg" nosave>
+<font color="#FFFFFF"><u><font size=+4>fRaBs</font></u><i>&nbsp;
+advanced level editing</i></font>
+<br><a href="../readme.html">Main</a><i><font color="#FFFFFF"> - </font></i><a href="updates.html">Updates</a><i><font color="#FFFFFF">
+- </font></i><a href="single.html">Single Player</a><i><font color="#FFFFFF">
+- </font></i><a href="dm.html">Deathmatch</a><i><font color="#FFFFFF">
+- </font></i><a href="editor.html">Level Editing</a><i><font color="#FFFFFF">
+- </font></i><a href="faq.html">FAQ</a><i><font color="#FFFFFF"> - </font></i><a href="credits.html">Credits</a><i><font color="#FFFFFF">
+- </font></i><a href="links.html">Links</a>
+<p><tt>&nbsp;&nbsp;&nbsp; [1-4] <a href="editor.html">Level Editing Basics</a></tt>
+<br><tt>&nbsp;&nbsp; ---------------------------</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [5] <a href="#Addon">Adding Foreground
+and Background Art</a></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [5.a] Foreground and Background Basics</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [5.b] fRaBs Fore/Back Art Tile Listing</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [5.c] Standards For Adding Art to fRaBs</tt>
+<br><tt>&nbsp;&nbsp; -------------------------------------------</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [6] <a href="#Addon2">Adding Objects
+and Enemies</a></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [6.a] Scenery Objects</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [6.b] Objects Activated by Switches</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [6.c] Creating Enemies</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [6.d] List of Functions Referenced By Objects</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [6.e] Testing, Hints and Ideas</tt>
+<br><tt>&nbsp;&nbsp; ----------------------------------------------</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [7] Creating Unique Artwork and
+Objects</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [7.a] Creating Unique Artwork and Objects</tt>
+<br><tt>&nbsp;&nbsp; ------------------------------------------</tt>
+<br><tt>&nbsp;&nbsp; [8-10] <a href="editor3.html">Making Special Types
+of Levels</a></tt>
+<p><tt>[5]</tt>
+<br><a NAME="Addon" href="#Tips"></a><tt><a href="#Addon">Adding New Foreground
+and Background Art to Abuse and fRaBs</a></tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[5.a] Adding Foreground and Background Art</tt>
+<br><tt>------------------------------------------------------------------------</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If you want to add your
+own art and objects to Abuse, chances are</tt>
+<br><tt>the game has become a labor of love for you. Even with some of
+the editor's</tt>
+<br><tt>little inadequacies, you still are having a blast making level
+after level.</tt>
+<br><tt>It's time for you to branch out and try creating your own artwork,
+so your</tt>
+<br><tt>levels become truly original.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To understand how the
+artwork system in Abuse works, you need to</tt>
+<br><tt>first make yourself familiar with Satan Paint. Named for it's incredible</tt>
+<br><tt>ease of use and rock-solid stability (cough, cough), you can make
+nearly</tt>
+<br><tt>anything you want for Abuse in it. With fRaBs, you can find SPAINT.EXE
+in</tt>
+<br><tt>the /art directory. One of these days I'll write up an entire tutorial
+on</tt>
+<br><tt>this pain-in-the-ass program, but for now I'm just going to stick
+with it's</tt>
+<br><tt>functionality in relation to foreground and background.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Anyways, to start out,
+try loading a file in /art/fore or /art/back</tt>
+<br><tt>and see what they look like. Each one of these files has a litany
+of tiles</tt>
+<br><tt>that you see in a normal game of Abuse, and perhaps a few that
+you don't</tt>
+<br><tt>recognize. Press 'i' to see a mosiac of all the tiles in the file,
+and to</tt>
+<br><tt>navigate between the different tiles, press 'n'. Each tile has
+a 'name' and</tt>
+<br><tt>a 'type' which vary depending on the file you're looking at. For
+example,</tt>
+<br><tt>if you're browsing one of the files from art/fore, then chances
+are your</tt>
+<br><tt>tile will have a numerical name from 0-1100 and it will be a 'Fore
+Tile'</tt>
+<br><tt>type. All foreground tiles are 30*15, and all background tiles
+are 60*30.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are three big things
+you need to do to get your artwork in</tt>
+<br><tt>fRaBs. Firstly, you need to import the art into Satan Paint so
+it is</tt>
+<br><tt>corrected for the fRaBs palette. Second, each tile needs to be
+numbered</tt>
+<br><tt>correctly so that the Abuse engine picks it up right. Third, you
+need to</tt>
+<br><tt>write some LISP that calls up your artwork and puts it with the
+rest of</tt>
+<br><tt>Abuse's artwork.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Satan Paint can import
+most file formats easily... just don't use</tt>
+<br><tt>too many colors in your original bits of art and you'll be ok.
+There is a</tt>
+<br><tt>palette.bmp file in /art that should help you tune your art to
+the fRaBs</tt>
+<br><tt>color palette. Every time you import a file using the 'Import Detectable</tt>
+<br><tt>Images' command, it will follow the file you are looking at in
+Satan Paint.</tt>
+<br><tt>After you import each file individually, you save the composite
+of all the</tt>
+<br><tt>files you have imported into a .spe file. Use the File 'SaveAs'
+command</tt>
+<br><tt>just to be safe.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Once you do that, you
+need to give your tiles numbers. The</tt>
+<br><tt>following note is very important if you want to work with your
+art in</tt>
+<br><tt>fRaBs without causing conflicts.</tt>
+<p><tt><u>NUMBER YOUR TILES ACCORDING TO THE TILE LISTING IN THE FOLLOWING
+SECTION.</u></tt>
+<p><tt>There are a couple of ways to renumber your tiles. In the Image
+menu, you</tt>
+<br><tt>will find a 'Name' option. You can use it to renumber the current
+tile to</tt>
+<br><tt>whatever you like. There is also a 'renumber' option in the Commands
+menu</tt>
+<br><tt>which is probably quicker, but it's a bit confusing.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Not only do you have
+to renumber your tiles, but you also have to</tt>
+<br><tt>reformat your tiles as either 'Back Tile' or 'Fore Tile'... if
+you simply</tt>
+<br><tt>import art into Satan Paint, it will be of type 'Image' and the
+methods</tt>
+<br><tt>that Abuse uses to load foreground and background tiles will not
+work</tt>
+<br><tt>unless you format your tiles correctly. This is fairly easy...
+press '/'</tt>
+<br><tt>to bring up the Satan Paint command line and type 'with all type
+fore tile'</tt>
+<br><tt>and your tiles will all be formatted to be 'Fore Tiles'. I believe
+you can</tt>
+<br><tt>change the 'all' to the number/name of a image in your SPE file.
+After you</tt>
+<br><tt>renumber and reformat, make sure you save your file.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Now it's time to add
+your tiles to Abuse. The easy way to do this</tt>
+<br><tt>is to make a text file and copy the lines from addon/newart/newart.lsp
+into</tt>
+<br><tt>it. All newart.lsp has in it is a simple 'load_tiles' function,
+and it looks</tt>
+<br><tt>for specific files. Just change one of the filenames in quotes
+to the file</tt>
+<br><tt>where your tiles are located, and save the text file you have made
+into a</tt>
+<br><tt>subdirectory of /addon. Finally, open up abuse.lsp, copy a 'load("")'
+line</tt>
+<br><tt>and add the path to your new LISP file. You can load LISP files
+in any little</tt>
+<br><tt>text editor. I've found that Windows Wordpad is a good utility
+for working</tt>
+<br><tt>with LISP files.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Run Abuse, and look around
+in the foreground/background menus for</tt>
+<br><tt>your new art. If you number your tiles according to the guidelines
+below,</tt>
+<br><tt>then your artwork should be near the end of the foreground/background
+menu.</tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[5.b] fRaBs Fore/Back Art Tile Listing</tt>
+<br><tt>------------------------------------------------------------------------</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is the listing of
+all the tiles in fRaBs, foreground and</tt>
+<br><tt>background. DO NOT NUMBER YOUR TILES IN BETWEEN THESE ONES or OVER
+THESE</tt>
+<br><tt>ONES or Abuse will start up with some funky error messages and
+the levels</tt>
+<br><tt>won't look right. Mark these words well, for it is a knell that
+summons thee</tt>
+<br><tt>to heaven or to hell...</tt>
+<p><tt>REGULAR ABUSE FOREGROUND TILES</tt>
+<p><tt>/art/fore/foregrnd.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0</tt>
+<br><tt>/art/fore/techno.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1-99</tt>
+<br><tt>/art/fore/techno2.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 100-167</tt>
+<br><tt>/art/fore/techno3.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 200-236</tt>
+<br><tt>/art/fore/techno4.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 300-460</tt>
+<br><tt>/art/fore/cave.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+500-634</tt>
+<br><tt>/art/fore/alien.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+700-774</tt>
+<br><tt>/art/fore/trees.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+800-931</tt>
+<br><tt>/art/fore/endgame.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+950-1014</tt>
+<br><tt>/art/fore/trees2.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1100-1134</tt>
+<p><tt>NEW FOREGROUND TILES</tt>
+<br>&nbsp;
+<p><tt>/addon/leon/lnewft.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 660-671</tt>
+<br><tt>/addon/leon/lnewft2.spe&nbsp;&nbsp;&nbsp;&nbsp; 672</tt>
+<br><tt>/addon/leon/stones.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 676-694</tt>
+<br><tt>/addon/newart/mtile2.spe&nbsp;&nbsp;&nbsp; 1150-1154</tt>
+<br><tt>/addon/newart/frabs_1.spe&nbsp;&nbsp; 1200-1239</tt>
+<br><tt>/addon/newart/frabs_2.spe&nbsp;&nbsp; 1250-1285</tt>
+<br><tt>/addon/newart/final.spe&nbsp;&nbsp;&nbsp;&nbsp; 1300-1336</tt>
+<br><tt>/addon/aliens/fortiles.spe&nbsp; 2000-2077</tt>
+<br><tt>/addon/claudio/pal81f.spe&nbsp;&nbsp; 2200-2217</tt>
+<br><tt>/addon/claudio/pal82f.spe&nbsp;&nbsp; 2250-2283</tt>
+<p><tt>REGULAR ABUSE BACKGROUND TILES</tt>
+<p><tt>/art/back/backgrnd.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0</tt>
+<br><tt>/art/back/intro.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+5-37</tt>
+<br><tt>/art/back/city.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+40-70</tt>
+<br><tt>/art/back/cave.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+84-103</tt>
+<br><tt>/art/back/tech.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+110-139</tt>
+<br><tt>/art/back/alienb.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+150-179</tt>
+<br><tt>/art/back/green2.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+200-268</tt>
+<br><tt>/art/back/galien.spe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+300-320</tt>
+<p><tt>NEW BACKGROUND TILES</tt>
+<p><tt>/addon/aliens/bactiles.spe&nbsp; 340-374</tt>
+<br><tt>/addon/claudio/pal2.spe&nbsp;&nbsp;&nbsp;&nbsp; 380-387</tt>
+<br><tt>/addon/claudio/pal5.spe&nbsp;&nbsp;&nbsp;&nbsp; 430-444</tt>
+<br><tt>/addon/newart/space.spe&nbsp;&nbsp;&nbsp;&nbsp; 450-468</tt>
+<br><tt>/addon/claudio/pal90.spe&nbsp;&nbsp;&nbsp; 475-494</tt>
+<br><tt>/addon/claudio/pal21.spe&nbsp;&nbsp;&nbsp; 500-529</tt>
+<br><tt>/addon/newart/blcave.spe&nbsp;&nbsp;&nbsp; 560-574</tt>
+<br><tt>/addon/newart/frbsblue.spe&nbsp; 580-611</tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[5.c] Standards For Adding Art to fRaBs</tt>
+<br><tt>------------------------------------------------------------------------</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; As mentioned before,
+you need to number your tiles so that they do</tt>
+<br><tt>not conflict with the existing ones. If you want your artwork in
+the main</tt>
+<br><tt>version of fRaBs, check the latest <a href="http://www.abuse2.com/frabs/pages/updates.html">updates
+log</a> to make sure that I haven't</tt>
+<br><tt>added any more new art. Then, number your tiles correctly and you
+only need</tt>
+<br><tt>to <a href="mailto: messiah15@dog.com">send me</a> the SPE file
+of the artwork. I will add a line to /addon/newart/</tt>
+<br><tt>newart.lsp and place your SPE file in that directory.</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; And that's all it takes
+to make your own artwork, test it out, and</tt>
+<br><tt>get it added to the main fRaBs distribution. It's a lot easier
+than it</tt>
+<br><tt>sounds... :)</tt>
+<p><tt>[6]</tt>
+<br><a NAME="Addon2" href="#Tips"></a><tt><a href="#Addon2">Adding Objects
+and Enemies</a></tt>
+<p><tt>------------------------------------------------------------------------</tt>
+<br><tt>[6.a] Scenery Objects</tt>
+<br><tt>------------------------------------------------------------------------</tt>
+<br><tt>**Coming Soon... sections 6 and 7 will take a while to write**</tt>
+<p><font color="#FFFFFF"><a href="editor3.html">Special Types of Levels
+--></a></font>
+<p><font color="#FFFFFF">Justin Cassidy</font>
+<br><a href="mailto: messiah15@*spam-me-and-die*dog.com">messiah15@dog.com</a>
+<p><img SRC="../images/ssig.GIF" NOSAVE height=17 width=20>
+</body>
+</html>
