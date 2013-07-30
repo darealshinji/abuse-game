@@ -154,7 +154,7 @@ elcontrol *elevator::find_stop()
     if (o[i]->type()==O_elcontrol)
     {
       int yd=o[i]->y-y;
-      if (abs(yd)<=speed && o[i]->x>x1 && o[i]->x<x2)
+      if (lol::abs(yd)<=speed && o[i]->x>x1 && o[i]->x<x2)
         return (elcontrol *)(o[i]);
     }
 
@@ -166,7 +166,7 @@ elcontrol *elevator::find_stop()
 
 int elevator::decide()
 {
-  if (abs(dir)<=1)                                  // the elevator is stopped
+  if (lol::abs(dir)<=1)                                  // the elevator is stopped
   {
     switch (state)
     {
@@ -221,7 +221,7 @@ int elevator::decide()
     }
   }
 
-  if (abs(dir)>1)                     // are we moving?
+  if (lol::abs(dir)>1)                     // are we moving?
   {
     next_picture();
     int adder;
@@ -229,7 +229,7 @@ int elevator::decide()
       adder=-speed;
     else adder=speed;
 
-    if (abs(dir)==8)                   // are we checking for stops yet?
+    if (lol::abs(dir)==8)                   // are we checking for stops yet?
     {
       elcontrol *s=find_stop();
       if (s)                           // found one, stop or slow down

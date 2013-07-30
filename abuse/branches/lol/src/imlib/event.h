@@ -97,7 +97,7 @@ private:
 
 protected:
     /* Mouse information */
-    Sprite *m_sprite;
+    ASprite *m_sprite;
     ivec2 m_pos, m_center;
     int m_button;
 };

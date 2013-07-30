@@ -18,6 +18,8 @@
 #   include "config.h"
 #endif
 
+#include "common.h"
+
 #include "lisp.h"
 #include "specs.h"
 
@@ -121,7 +123,7 @@ LObject *load_block(bFILE *fp)
                 return NULL;
 
             LList *last = NULL, *first = NULL;
-            for (size_t count = abs(t); count--; )
+            for (size_t count = lol::abs(t); count--; )
             {
                 LList *c = LList::Create();
                 if (first)
@@ -133,7 +135,7 @@ LObject *load_block(bFILE *fp)
             last->m_cdr = (t < 0) ? (LObject *)load_block(fp) : NULL;
 
             last = first;
-            for (size_t count = abs(t); count--; last = (LList *)last->m_cdr)
+            for (size_t count = lol::abs(t); count--; last = (LList *)last->m_cdr)
                 last->m_car = load_block(fp);
             return first;
         }

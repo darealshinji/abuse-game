@@ -1043,10 +1043,10 @@ int game_object::tick()      // returns blocked status
     y+=climb_yvel;
 
     climb_xvel=old_vx-xvel();
-    climb_yvel=-(abs(climb_xvel));        // now try 45 degree slope
+    climb_yvel=-(lol::abs(climb_xvel));        // now try 45 degree slope
     try_move(x,y,climb_xvel,climb_yvel,3);
 
-    if (abs(climb_xvel)>0)  // see if he got further by climbing
+    if (lol::abs(climb_xvel)>0)  // see if he got further by climbing
     {
       blocked=blocked&(~(BLOCKED_LEFT|BLOCKED_RIGHT));
       x+=climb_xvel;
@@ -1057,7 +1057,7 @@ int game_object::tick()      // returns blocked status
       set_fyvel(0);
 
       // now put him back on the ground
-      climb_yvel=abs(climb_xvel)+5;               // plus one to put him back on the ground
+      climb_yvel=lol::abs(climb_xvel)+5;               // plus one to put him back on the ground
       climb_xvel=0;
       try_move(x,y,climb_xvel,climb_yvel,1);
       if (climb_yvel)
@@ -1417,7 +1417,7 @@ int game_object::mover(int cx, int cy, int button)  // return false if the route
   else top_speed=1000;
 
 
-  if (abs(xvel()+xacel())>top_speed)
+  if (lol::abs(xvel()+xacel())>top_speed)
   {
     if (xacel()<0) set_xacel(-top_speed-xvel());
     else set_xacel(top_speed-xvel());

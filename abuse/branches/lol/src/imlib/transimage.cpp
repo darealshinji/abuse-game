@@ -276,20 +276,20 @@ void TransImage::PutImageGeneric(image *screen, ivec2 pos, uint8_t color,
 
 void TransImage::PutImage(image *screen, ivec2 pos)
 {
-    PutImageGeneric<NORMAL>(screen, pos, 0, NULL, 0, NULL, NULL,
+    PutImageGeneric<NORMAL>(screen, pos, 0, NULL, ivec2(0), NULL, NULL,
                             0, 1, NULL, NULL, NULL);
 }
 
 void TransImage::PutRemap(image *screen, ivec2 pos, uint8_t *map)
 {
-    PutImageGeneric<REMAP>(screen, pos, 0, NULL, 0, map, NULL,
+    PutImageGeneric<REMAP>(screen, pos, 0, NULL, ivec2(0), map, NULL,
                            0, 1, NULL, NULL, NULL);
 }
 
 void TransImage::PutDoubleRemap(image *screen, ivec2 pos,
                             uint8_t *map, uint8_t *map2)
 {
-    PutImageGeneric<REMAP2>(screen, pos, 0, NULL, 0, map, map2,
+    PutImageGeneric<REMAP2>(screen, pos, 0, NULL, ivec2(0), map, map2,
                             0, 1, NULL, NULL, NULL);
 }
 
@@ -297,20 +297,20 @@ void TransImage::PutDoubleRemap(image *screen, ivec2 pos,
 void TransImage::PutFade(image *screen, ivec2 pos, int amount, int nframes,
                          ColorFilter *f, palette *pal)
 {
-    PutImageGeneric<FADE>(screen, pos, 0, NULL, 0, NULL, NULL,
+    PutImageGeneric<FADE>(screen, pos, 0, NULL, ivec2(0), NULL, NULL,
                           amount, nframes, NULL, f, pal);
 }
 
 void TransImage::PutFadeTint(image *screen, ivec2 pos, int amount, int nframes,
                              uint8_t *tint, ColorFilter *f, palette *pal)
 {
-    PutImageGeneric<FADE_TINT>(screen, pos, 0, NULL, 0, NULL, NULL,
+    PutImageGeneric<FADE_TINT>(screen, pos, 0, NULL, ivec2(0), NULL, NULL,
                                amount, nframes, tint, f, pal);
 }
 
 void TransImage::PutColor(image *screen, ivec2 pos, uint8_t color)
 {
-    PutImageGeneric<COLOR>(screen, pos, color, NULL, 0, NULL, NULL,
+    PutImageGeneric<COLOR>(screen, pos, color, NULL, ivec2(0), NULL, NULL,
                            0, 1, NULL, NULL, NULL);
 }
 
@@ -325,19 +325,19 @@ void TransImage::PutBlend(image *screen, ivec2 pos, image *blend, ivec2 bpos,
 
 void TransImage::PutFilled(image *screen, ivec2 pos, uint8_t color)
 {
-    PutImageGeneric<FILLED>(screen, pos, color, NULL, 0, NULL, NULL,
+    PutImageGeneric<FILLED>(screen, pos, color, NULL, ivec2(0), NULL, NULL,
                             0, 1, NULL, NULL, NULL);
 }
 
 void TransImage::PutPredator(image *screen, ivec2 pos)
 {
-    PutImageGeneric<PREDATOR>(screen, pos, 0, NULL, 0, NULL, NULL,
+    PutImageGeneric<PREDATOR>(screen, pos, 0, NULL, ivec2(0), NULL, NULL,
                               0, 1, NULL, NULL, NULL);
 }
 
 void TransImage::PutScanLine(image *screen, ivec2 pos, int line)
 {
-    PutImageGeneric<SCANLINE>(screen, pos, 0, NULL, 0, NULL, NULL,
+    PutImageGeneric<SCANLINE>(screen, pos, 0, NULL, ivec2(0), NULL, NULL,
                               line, 1, NULL, NULL, NULL);
 }
 

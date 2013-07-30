@@ -174,7 +174,7 @@ void *top_ai()
 
 
     // if the pointer is too close to the player go with the angle shown, not the angle through the pointer
-    if (abs(q->y-fb[1]-v->pointer_y)<45 && abs(v->pointer_x-q->x+fb[0])<40)
+    if (lol::abs(q->y-fb[1]-v->pointer_y)<45 && lol::abs(v->pointer_x-q->x+fb[0])<40)
       o->lvars[point_angle]=lisp_atan2(fb[1]-iy,fb[0]-ix);
     else
       o->lvars[point_angle]=lisp_atan2(q->y-fb[1]-v->pointer_y,v->pointer_x-(q->x+fb[0]));
@@ -389,8 +389,8 @@ void *player_rocket_ufun(void *args)
       game_object *other=current_object->total_objects() ? current_object->get_object(0) : 0;
       for (p=current_level->first_active_object(); p; p=p->next_active)
       {
-        xd=abs(p->x-o->x);
-        yd=abs(p->y-o->y);
+        xd=lol::abs(p->x-o->x);
+        yd=lol::abs(p->y-o->y);
         if (xd<160 && yd<130 && bad_guy_array[p->otype] && p!=other)
         {
           if (p->targetable() &&
@@ -1087,7 +1087,7 @@ void *show_kills()
   }
 
   wm->flush_screen();
-  Timer now; now.WaitMs(4000);   // wait 4 seconds
+  Timer now; now.Wait(4.f);   // wait 4 seconds
 
   return NULL;
 }

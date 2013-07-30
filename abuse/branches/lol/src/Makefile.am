@@ -7,9 +7,6 @@ bin_PROGRAMS = abuse abuse-tool
 abuse_SOURCES = \
     common.h \
     \
-    lol/matrix.cpp lol/matrix.h \
-    lol/timer.cpp lol/timer.h \
-    \
     specache.cpp specache.h \
     netcfg.cpp netcfg.h \
     innet.cpp \
@@ -65,7 +62,7 @@ abuse_SOURCES = \
     $(NULL)
 
 EXTRALIBS = lisp/liblisp.a sdlport/libsdlport.a imlib/libimlib.a net/libnet.a
-abuse_LDADD = $(EXTRALIBS)
+abuse_LDADD = $(EXTRALIBS) $(LOL_LIBS)
 abuse_DEPENDENCIES = $(EXTRALIBS)
 
 abuse_tool_SOURCES = \

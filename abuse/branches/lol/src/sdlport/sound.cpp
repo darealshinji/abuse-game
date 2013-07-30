@@ -24,6 +24,8 @@
 
 #include <cstring>
 
+#include "common.h"
+
 #include <SDL.h>
 #include <SDL/SDL_mixer.h>
 

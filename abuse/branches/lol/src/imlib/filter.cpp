@@ -87,7 +87,7 @@ void Filter::PutImage(image *screen, image *im, ivec2 pos)
     if (!(pos < cbb && pos + (bb - aa) > caa))
         return;
 
-    aa += Max(caa - pos, 0);
+    aa += Max(caa - pos, ivec2(0));
     pos = Max(pos, caa);
     bb = Min(bb, cbb - pos + aa);
 

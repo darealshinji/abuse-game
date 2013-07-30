@@ -1555,9 +1555,9 @@ void dev_controll::pick_handle_input(Event &ev)
     {
       ivec2 pos1 = the_game->GameToMouse(ivec2(a->x, a->y), v);
       ivec2 pos2 = the_game->GameToMouse(ivec2(a->x + a->w, a->y + a->h), v);
-      if (abs(pos1.x - m.x) < 2 && abs(pos1.y - m.y) < 2)
+      if (lol::abs(pos1.x - m.x) < 2 && lol::abs(pos1.y - m.y) < 2)
       { find = a; find_top = 1; }
-      else if (abs(pos2.x - m.x) < 2 && abs(pos2.y - m.y) < 2)
+      else if (lol::abs(pos2.x - m.x) < 2 && lol::abs(pos2.y - m.y) < 2)
       { find = a; find_top = 0; }
     }
 

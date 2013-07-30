@@ -221,8 +221,8 @@ void image::Line(ivec2 p1, ivec2 p2, uint8_t color)
     ivec2 span = p2 - p1;
     int xi = (span.x < 0) ? -1 : 1;
     int yi = (span.y < 0) ? -1 : 1;
-    int n = abs(span.x);
-    int m = abs(span.y);
+    int n = lol::abs(span.x);
+    int m = lol::abs(span.y);
 
     uint8_t *start = scan_line(p1.y) + p1.x;
 
@@ -316,7 +316,7 @@ void image::SetClip(ivec2 aa, ivec2 bb)
     // If the image does not already have an Image descriptor, allocate one
     // with no dirty rectangle keeping.
     if (!m_special)
-        m_special = new image_descriptor(m_size.x, m_size.y, 0);
+        m_special = new image_descriptor(m_size, 0);
 
     // set the image descriptor what the clip
     // should be it will adjust to fit within the image.
@@ -350,7 +350,7 @@ void image::SetClip(int x1, int y1, int x2, int y2)
    // If the image does not already have an Image descriptor, allocate one
    // with no dirty rectangle keeping.
    if (!m_special)
-       m_special = new image_descriptor(m_size.x, m_size.y, 0);
+       m_special = new image_descriptor(m_size, 0);
 
    // set the image descriptor what the clip
    // should be it will adjust to fit within the image.
@@ -734,11 +734,11 @@ void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, i
     m_special->GetClip(caa, cbb);
     x1=Max(x1, caa.x); y1=Max(caa.y, y1); x2=Min(x2, cbb.x - 1); y2=Min(y2, cbb.y - 1);
   }
-  int16_t xsrc, ysrc, xdst, ydst, xtot=x2-x1-abs(xd)+1, ytot, xt;
+  int16_t xsrc, ysrc, xdst, ydst, xtot=x2-x1-lol::abs(xd)+1, ytot, xt;
   uint8_t *src, *dst;
   if (xd<0) { xsrc=x1-xd; xdst=x1; } else { xsrc=x2-xd; xdst=x2; }
   if (yd<0) { ysrc=y1-yd; ydst=y1; } else { ysrc=y2-yd; ydst=y2; }
-  for (ytot=y2-y1-abs(yd)+1; ytot; ytot--)
+  for (ytot=y2-y1-lol::abs(yd)+1; ytot; ytot--)
   { src=scan_line(ysrc)+xsrc;
     dst=scan_line(ydst)+xdst;
     if (xd<0)

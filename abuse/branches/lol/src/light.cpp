@@ -552,8 +552,8 @@ int calc_light_value(light_patch *which, int32_t x, int32_t y)
     }
     else
     {
-      int32_t dx=abs(fn->x-x)<<fn->xshift;
-      int32_t dy=abs(fn->y-y)<<fn->yshift;
+      int32_t dx=lol::abs(fn->x-x)<<fn->xshift;
+      int32_t dy=lol::abs(fn->y-y)<<fn->yshift;
       int32_t  r2;
       if (dx<dy)
         r2=dx+dy-(dx>>1);
@@ -657,11 +657,11 @@ inline int calc_light_value(light_patch *lp,   // light patch to look at
     else
     {
       dt++;
-      dx=abs(*dt-sx); dt++;               // xdist between light and this block  (dt==x)
+      dx=lol::abs(*dt-sx); dt++;               // xdist between light and this block  (dt==x)
       dx<<=*dt;  dt++;                    // shift makes distance further,
                                           // making light skinner. (dt==xshift)
 
-      dy=abs(*dt-sy); dt++;                   // ydist (dt==y)
+      dy=lol::abs(*dt-sy); dt++;                   // ydist (dt==y)
       dy<<=*dt;  dt++;                        // (dt==yshift)
 
       if (dx<dy)                     // calculate approximate distance

@@ -12,6 +12,8 @@
 #   include "config.h"
 #endif
 
+#include "common.h"
+
 #include <stdlib.h>
 
 void pushback(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
@@ -120,7 +122,7 @@ void pushback(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
         }
         else
         {
-          if (abs(mx1)>abs(my1))
+          if (lol::abs(mx1)>lol::abs(my1))
           {
             int32_t ae_bd=my1*mx2-mx1*my2;
             CONDITION(ae_bd,"line intersect fuck up");
@@ -137,7 +139,7 @@ void pushback(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
         }
       }
 
-      if (abs(tx2-x1)<abs(x2-x1) || abs(ty2-y1)<abs(y2-y1))
+      if (lol::abs(tx2-x1)<lol::abs(x2-x1) || lol::abs(ty2-y1)<lol::abs(y2-y1))
       {
         x2=tx2;
         y2=ty2;
@@ -170,7 +172,7 @@ int setback_intersect(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
   }
 
   int32_t xdiff,ydiff;
-/*  int32_t xdiff=abs(xp1-xp2),ydiff=yp1-yp2;
+/*  int32_t xdiff=lol::abs(xp1-xp2),ydiff=yp1-yp2;
   if (xdiff>=ydiff)                              // increment the endpoints
     if (xp2<xp1) { xp2--; xp1++; }
     else { xp2++; xp1--; }
@@ -204,8 +206,8 @@ int setback_intersect(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
     {
       x2=(b1*c2-b2*c1)/(ae-bd);
       y2=(a1*c2-a2*c1)/(bd-ae);
-      xdiff=abs(x2-x1);
-      ydiff=abs(y2-y1);
+      xdiff=lol::abs(x2-x1);
+      ydiff=lol::abs(y2-y1);
 //      if (xdiff<=ydiff)            // push the intersection back one pixel
 //      {
         if (y2!=y1)

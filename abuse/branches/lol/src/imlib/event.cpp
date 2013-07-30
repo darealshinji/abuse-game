@@ -59,7 +59,7 @@ EventHandler::EventHandler(image *screen, palette *pal)
     image *im = new image(ivec2(8, 10), mouse_sprite);
     f.Apply(im);
 
-    m_sprite = new Sprite(screen, im, ivec2(100, 100));
+    m_sprite = new ASprite(screen, im, ivec2(100, 100));
     m_pos = screen->Size() / 2;
     m_center = ivec2(0, 0);
     m_button = 0;
@@ -85,7 +85,7 @@ void EventHandler::Get(Event &ev)
         IsPending();
 
         if (!m_pending)
-            tmp.WaitMs(1);
+            tmp.Wait(0.001);
     }
 
     // Return first queued event if applicable

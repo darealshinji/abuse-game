@@ -373,7 +373,7 @@ Jwindow::Jwindow(char const *name)
 
 Jwindow::Jwindow(ivec2 pos, ivec2 size, ifield *f, char const *name)
 {
-    m_size = 0;
+    m_size = ivec2(0);
     _hidden = false;
     _moveable = true;
 

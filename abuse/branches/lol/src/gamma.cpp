@@ -215,9 +215,9 @@ void gamma_correct(palette *&pal, int force_menu)
     {
         uint8_t oldr, oldg, oldb;
         old_pal->get(i, oldr, oldg, oldb);
-        pal->set(i, (int)(pow(oldr / 255.0, gamma) * 255),
-            (int)(pow(oldg / 255.0, gamma) * 255),
-            (int)(pow(oldb / 255.0, gamma) * 255));
+        pal->set(i, (int)(lol::pow(oldr / 255.0, gamma) * 255),
+            (int)(lol::pow(oldg / 255.0, gamma) * 255),
+            (int)(lol::pow(oldb / 255.0, gamma) * 255));
     }
 
     pal->load();

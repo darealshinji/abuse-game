@@ -147,7 +147,7 @@ void Game::play_sound(int id, int vol, int32_t x, int32_t y)
         if(!f->local_player())
             continue;
 
-        int d, cx = abs(f->x_center() - x), cy = abs(f->y_center() - y);
+        int d, cx = lol::abs(f->x_center() - x), cy = lol::abs(f->y_center() - y);
         if(cx < cy)
             d = cx + cy - (cx >> 1);
         else
@@ -1078,7 +1078,7 @@ extern int start_doubled;
 template<int N> static void Fade(image *im, int steps)
 {
     /* 25ms per step */
-    float const duration = 25.f;
+    float const duration = 0.025f;
 
     palette *old_pal = pal->copy();
 
@@ -1089,12 +1089,12 @@ template<int N> static void Fade(image *im, int steps)
                                    - im->Size() / 2);
     }
 
-    for (Timer total; total.PollMs() < duration * steps; )
+    for (Timer total; total.Poll() < duration * steps; )
     {
         Timer frame;
         uint8_t *sl1 = (uint8_t *)pal->addr();
         uint8_t *sl2 = (uint8_t *)old_pal->addr();
-        int i = (int)(total.PollMs() / duration);
+        int i = (int)(total.Poll() / duration);
         int v = (N ? i + 1 : steps - i) * 256 / steps;
 
         for (int j = 0; j < 3 * 256; j++)
@@ -1102,7 +1102,7 @@ template<int N> static void Fade(image *im, int steps)
 
         pal->load();
         wm->flush_screen();
-        frame.WaitMs(duration);
+        frame.Wait(duration);
     }
 
     if (N == 0)
@@ -1157,7 +1157,7 @@ void do_title()
     wm->SetMouseShape(blank->copy(), ivec2(0, 0)); // hide mouse
     delete blank;
     fade_in(cache.img(cdc_logo), 32);
-    Timer tmp; tmp.WaitMs(400);
+    Timer tmp; tmp.Wait(0.4f);
     fade_out(32);
 
     void *space_snd = LSymbol::FindOrCreate("SPACE_SND")->GetValue();
@@ -1202,7 +1202,7 @@ void do_title()
             Timer frame;
 
             // 120 ms per step
-            int i = (int)(total.PollMs() / 120.f);
+            int i = (int)(total.Poll() / 0.120f);
             if (i >= 400)
                 break;
 
@@ -1218,8 +1218,8 @@ void do_title()
             if((i % 5) == 0 && DEFINEDP(space_snd) && (sound_avail & SFX_INITIALIZED))
                 cache.sfx(lnumber_value(space_snd))->play(sfx_volume * 90 / 127);
 
-            frame.WaitMs(25.f);
-            frame.GetMs();
+            frame.Wait(0.025f);
+            frame.Get();
         }
 
         the_game->reset_keymap();
@@ -1413,13 +1413,13 @@ Game::Game(int argc, char **argv)
 }
 
 time_marker *led_last_time = NULL;
-static float avg_ms = 1000.0f / 15, possible_ms = 1000.0f / 15;
+static float avg_time = 1.0f / 15, possible_time = 1.0f / 15;
 
 void Game::toggle_delay()
 {
     no_delay = !no_delay;
     show_help(symbol_str(no_delay ? "delay_off" : "delay_on"));
-    avg_ms = possible_ms = 1000.0f / 15;
+    avg_time = possible_time = 1.0f / 15;
 }
 
 void Game::show_time()
@@ -1428,7 +1428,7 @@ void Game::show_time()
         return;
 
     char str[16];
-    sprintf(str, "%ld", (long)(10000.0f / avg_ms));
+    sprintf(str, "%ld", (long)(1.0f / avg_time));
     console_font->PutString(main_screen, first_view->m_aa, str);
 
     sprintf(str, "%d", total_active);
@@ -1509,12 +1509,12 @@ int Game::calc_speed()
     }
 
     // Find average fps for last 10 frames
-    float deltams = Max(1.0f, frame_timer.PollMs());
+    float deltatime = Max(0.001f, frame_timer.Poll());
 
-    avg_ms = 0.9f * avg_ms + 0.1f * deltams;
-    possible_ms = 0.9f * possible_ms + 0.1f * deltams;
+    avg_time = 0.9f * avg_time + 0.1f * deltatime;
+    possible_time = 0.9f * possible_time + 0.1f * deltatime;
 
-    if (avg_ms < 1000.0f / 14)
+    if (avg_time < 1.0f / 14)
         massive_frame_panic = Max(0, Min(20, massive_frame_panic - 1));
 
     int ret = 0;
@@ -1523,21 +1523,21 @@ int Game::calc_speed()
     {
         // ECS - Added this case and the wait.  It's a cheap hack to ensure
         // that we don't exceed 30FPS in edit mode and hog the CPU.
-        frame_timer.WaitMs(33);
+        frame_timer.Wait(0.033f);
     }
-    else if (avg_ms < 1000.0f / 15 && need_delay)
+    else if (avg_time < 1.0f / 15 && need_delay)
     {
         frame_panic = 0;
         if (!no_delay)
         {
-            frame_timer.WaitMs(1000.0f / 15);
-            avg_ms -= 0.1f * deltams;
-            avg_ms += 0.1f * 1000.0f / 15;
+            frame_timer.Wait(1.0f / 15);
+            avg_time -= 0.1f * deltatime;
+            avg_time += 0.1f * 1.0f / 15;
         }
     }
-    else if (avg_ms > 1000.0f / 14)
+    else if (avg_time > 1.0f / 14)
     {
-        if(avg_ms > 1000.0f / 10)
+        if(avg_time > 1.0f / 10)
             massive_frame_panic++;
         frame_panic++;
         // All is lost, don't sleep during this frame
@@ -1545,7 +1545,7 @@ int Game::calc_speed()
     }
 
     // Ignore our wait time, we're more interested in the frame time
-    frame_timer.GetMs();
+    frame_timer.Get();
     return ret;
 }
 
@@ -2440,7 +2440,7 @@ int main(int argc, char *argv[])
 
         delete chat;
 
-        Timer tmp; tmp.WaitMs(500);
+        Timer tmp; tmp.Wait(0.5f);
 
         delete small_render; small_render = NULL;
 
