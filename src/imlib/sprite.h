@@ -14,11 +14,11 @@
 #include "image.h"
 #include "linked.h"
 
-class Sprite : public linked_node
+class ASprite : public linked_node
 {
 public:
-    Sprite(image *screen, image *visual, ivec2 pos);
-    ~Sprite();
+    ASprite(image *screen, image *visual, ivec2 pos);
+    ~ASprite();
 
     void SetVisual(image *visual, int delete_old = 0);
 

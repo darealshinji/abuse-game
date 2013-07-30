@@ -1,8 +1,9 @@
-## Process this file with automake to produce Makefile.in
+
+include $(top_srcdir)/build/autotools/common.am
 
 SUBDIRS = src data doc
 
-EXTRA_DIST = COPYING.GPL COPYING.WTFPL PACKAGERS bootstrap
+EXTRA_DIST += COPYING.GPL COPYING.WTFPL PACKAGERS bootstrap
 
 dist-hook:
 	@echo ""

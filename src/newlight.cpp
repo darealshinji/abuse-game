@@ -437,8 +437,8 @@ int calc_light_value(long x, long y, light_patch *which)
     }
     else
     {
-      long dx=abs(fn->x-x)<<fn->xshift;
-      long dy=abs(fn->y-y)<<fn->yshift;
+      long dx=lol::abs(fn->x-x)<<fn->xshift;
+      long dy=lol::abs(fn->y-y)<<fn->yshift;
       long  r2;
       if (dx<dy)
         r2=dx+dy-(dx>>1);
@@ -530,10 +530,10 @@ inline long calc_lv(light_patch *lp, long sx, long sy)
     } else
     {
       dt++;
-      int dx=abs(*dt-sx); dt++;
+      int dx=lol::abs(*dt-sx); dt++;
       dx<<=*dt;  dt++;
 
-      int dy=abs(*dt-sy); dt++;
+      int dy=lol::abs(*dt-sy); dt++;
       dy<<=*dt;  dt++;
 
       int r2;

@@ -20,8 +20,7 @@
 //
 // Lol Engine
 //
-#include "lol/matrix.h"
-#include "lol/timer.h"
+#include "core.h"
 using namespace lol;
 
 //

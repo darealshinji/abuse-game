@@ -57,7 +57,7 @@ static int ant_congestion(game_object *o)
 {
   for (game_object *d=current_level->first_active_object(); d; d=d->next_active)
   {
-    if (d->otype==o->otype && abs(o->x-d->x)<30 && abs(o->x-d->y)<20) return 1;
+    if (d->otype==o->otype && lol::abs(o->x-d->x)<30 && lol::abs(o->x-d->y)<20) return 1;
   }
   return 0;
 }
@@ -173,7 +173,7 @@ void *ant_ai()
     if (player_list->next)
       b=current_level->attacker(current_object);
     else b=player_list->m_focus;
-    if (abs(b->x-o->x)<130 && (o->y<b->y))
+    if (lol::abs(b->x-o->x)<130 && (o->y<b->y))
       fall=1;
       }
       else if (o->get_object(0)->aistate()!=0)
@@ -205,7 +205,7 @@ void *ant_ai()
       if (player_list->next)
         b=current_level->attacker(current_object);
       else b=player_list->m_focus;
-      if (abs(b->x-o->x)<130 && (o->y<b->y))
+      if (lol::abs(b->x-o->x)<130 && (o->y<b->y))
       fall=1;
     }
     if (fall)
@@ -268,13 +268,13 @@ void *ant_ai()
     if ((o->x>b->x && o->direction==-1) || (o->x<b->x && o->direction==1))
     {
       o->next_picture();
-      if ((jrand()%4)==0 && abs(o->x-b->x)<180 && abs(o->y-b->y)<100 && can_hit_player(o,b))
+      if ((jrand()%4)==0 && lol::abs(o->x-b->x)<180 && lol::abs(o->y-b->y)<100 && can_hit_player(o,b))
       {
         o->set_state((character_state)S_weapon_fire);
         o->set_aistate(ANT_FIRE);
-      } else if (abs(o->x-b->x)<100 && abs(o->y-b->y)<10 && (jrand()%4)==0)
+      } else if (lol::abs(o->x-b->x)<100 && lol::abs(o->y-b->y)<10 && (jrand()%4)==0)
         o->set_aistate(ANT_POUNCE_WAIT);
-      else if (abs(o->x-b->x)>140 && !ant_congestion(o))
+      else if (lol::abs(o->x-b->x)>140 && !ant_congestion(o))
         o->set_aistate(ANT_JUMP);
       else
       {
@@ -286,14 +286,14 @@ void *ant_ai()
         if (new_xm!=xm)    // blocked, see if we can climb ramp
         {
           new_xm=xm;
-          ym=-abs(xm);
+          ym=-lol::abs(xm);
           o->try_move(o->x,o->y,new_xm,ym,3);
           if (new_xm==xm)
           {
         o->x+=new_xm;
         o->y+=ym;
         new_xm=0;
-        ym=abs(xm);      // now get back on the ground
+        ym=lol::abs(xm);      // now get back on the ground
         o->try_move(o->x,o->y,new_xm,ym,3);
         o->x+=new_xm;
         o->y+=ym;
@@ -387,7 +387,7 @@ void *ant_ai()
       b=current_level->attacker(current_object);
       else b=player_list->m_focus;
       scream_check(o,b);
-      if (((jrand()%8)==0 && abs(o->x-b->x)<10 && o->y<b->y) ||
+      if (((jrand()%8)==0 && lol::abs(o->x-b->x)<10 && o->y<b->y) ||
       o->lvars[ANT_need_to_dodge]==1)
       {
     o->set_gravity(1);
@@ -399,7 +399,7 @@ void *ant_ai()
       {
     if ((o->x>b->x && o->direction>0) || (o->x<b->x && o->direction<0))
     o->direction=-o->direction;
-    else if (abs(o->x-b->x)<120 && (jrand()%4)==0)
+    else if (lol::abs(o->x-b->x)<120 && (jrand()%4)==0)
     {
       o->set_state((character_state)S_ceil_fire);
       o->set_aistate(ANT_CEIL_SHOOT);
@@ -483,7 +483,7 @@ void show_stats()
     wm->font()->PutString(main_screen, ivec2(x + 1, y + 1), msg, wm->dark_color());
     wm->font()->PutString(main_screen, ivec2(x, y), msg, wm->bright_color());
     wm->flush_screen();
-    Timer now; now.WaitMs(500);
+    Timer now; now.Wait(0.5);
   }
 }
 

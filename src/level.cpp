@@ -54,7 +54,7 @@ game_object *level::attacker(game_object *who)
   {
     if (f->m_focus)
     {
-      int32_t tmp_d=abs(f->m_focus->x-who->x)+abs(f->m_focus->y-who->y);
+      int32_t tmp_d=lol::abs(f->m_focus->x-who->x)+lol::abs(f->m_focus->y-who->y);
       if (tmp_d<d)
       {
     d=tmp_d;
@@ -377,9 +377,9 @@ void level::try_pushback(game_object *subject,game_object *target)
       subject->state!=dieing && target->state!=dieing)
   {
     int b1=subject->push_range(),b2=target->push_range();
-    if (abs(subject->x-target->x)<b1+b2)
+    if (lol::abs(subject->x-target->x)<b1+b2)
     {
-      int32_t tmove=b1+b2-abs(subject->x-target->x),xv,yv=0,xv2;
+      int32_t tmove=b1+b2-lol::abs(subject->x-target->x),xv,yv=0,xv2;
       if (subject->x>target->x)
         xv=tmove/2;
       else xv=-tmove/2;
@@ -691,7 +691,7 @@ int level::tick()
         shutdown_lighting--;
       else if (shutdown_lighting_value!=c->ambient) // do we need to lower light toward real ambient?
       {
-        if (abs(shutdown_lighting_value-c->ambient)<4)
+        if (lol::abs(shutdown_lighting_value-c->ambient)<4)
           shutdown_lighting_value=c->ambient;
         else
           if (shutdown_lighting_value<c->ambient)
@@ -2888,8 +2888,8 @@ game_object *level::find_xrange(int x, int y, int type, int xd)
   {
     if (o->otype==type)
     {
-      int x_dist=abs(x-o->x);
-      int y_dist=abs(y-o->y);
+      int x_dist=lol::abs(x-o->x);
+      int y_dist=lol::abs(y-o->y);
 
       if (x_dist<xd  && y_dist<find_ydist)
       {
@@ -2911,16 +2911,16 @@ game_object *level::find_xclosest(int x, int y, int type, game_object *who)
   {
     if (o->otype==type && o!=who)
     {
-      int x_dist=abs(x-o->x);
+      int x_dist=lol::abs(x-o->x);
       if (x_dist<find_xdist)
       {
     find_xdist=x_dist;
-    find_ydist=abs(y-o->y);
+    find_ydist=lol::abs(y-o->y);
     find=o;
       }
       else if (x_dist==find_xdist)
       {
-    int y_dist=abs(y-o->y);
+    int y_dist=lol::abs(y-o->y);
     if (y_dist<find_ydist)
     {
       find_ydist=y_dist;
@@ -2999,7 +2999,7 @@ void level::hurt_radius(int32_t x, int32_t y,int32_t r, int32_t m, game_object *
     if (o!=exclude && o->hurtable())
     {
       int32_t y1=o->y,y2=o->y-o->picture()->Size().y;
-      int32_t cx=abs(o->x-x),cy1=abs(y1-y),d1,d2,cy2=abs(y2-y);
+      int32_t cx=lol::abs(o->x-x),cy1=lol::abs(y1-y),d1,d2,cy2=lol::abs(y2-y);
       if (cx<cy1)
         d1=cx+cy1-(cx>>1);
       else d1=cx+cy1-(cy1>>1);
@@ -3060,7 +3060,7 @@ game_object *level::get_random_start(int min_player_dist, view *exclude)
     {
       if (v!=exclude)
       {
-    int32_t cx=abs(v->x_center()-o->x),cy=abs(v->y_center()-o->y),d;
+    int32_t cx=lol::abs(v->x_center()-o->x),cy=lol::abs(v->y_center()-o->y),d;
     if (cx<cy)
           d=cx+cy-(cx>>1);
     else d=cx+cy-(cy>>1);
@@ -3171,8 +3171,8 @@ game_object *level::find_object_in_area(int32_t x, int32_t y, int32_t x1, int32_
       for (; !NILP(v) && lnumber_value(CAR(v))!=o->otype; v=CDR(v));
       if (!NILP(v))
       {
-    xo=abs(o->x-x);
-    yo=abs(o->y-y);
+    xo=lol::abs(o->x-x);
+    yo=lol::abs(o->y-y);
     distance=xo*xo+yo*yo;
     if (distance<closest_distance)
     {
@@ -3206,8 +3206,8 @@ game_object *level::find_object_in_angle(int32_t x, int32_t y, int32_t start_ang
       for (; !NILP(v) && lnumber_value(CAR(v))!=o->otype; v=CDR(v));
       if (!NILP(v))
       {
-    xo=abs(o->x-x);
-    yo=abs(o->y-y);
+    xo=lol::abs(o->x-x);
+    yo=lol::abs(o->y-y);
     distance=xo*xo+yo*yo;
     if (distance<closest_distance)
     {

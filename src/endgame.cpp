@@ -71,14 +71,14 @@ static mask_line *make_mask_lines(image *mask, int map_width)
     {
       *(lrem++)=*(sl_start++);
 /*      if (x==size/2 || x==size/2-1 || x==size/2+1)
-        *rem=(int)(sqrt(0.5)*map_width/2.0);
+        *rem=(int)(lol::sqrt(0.5)*map_width/2.0);
       else*/
       if (x<=size/2)
-        *rem=(int)(sqrt(x/(double)(size*2.0))*map_width/2.0);
+        *rem=(int)(lol::sqrt(x/(double)(size*2.0))*map_width/2.0);
       else
-        *rem=map_width/2-(int)(sqrt((size-x)/(double)(size*2.0))*map_width/2.0);
+        *rem=map_width/2-(int)(lol::sqrt((size-x)/(double)(size*2.0))*map_width/2.0);
 
-//      (int)(mask->Size().x-(sqrt((size-x)/(double)size)*map_width/2.0)+mask->Size().x/2);
+//      (int)(mask->Size().x-(lol::sqrt((size-x)/(double)size)*map_width/2.0)+mask->Size().x/2);
     }
   }
   return p;

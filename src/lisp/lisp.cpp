@@ -677,7 +677,7 @@ int32_t lisp_atan2(int32_t dy, int32_t dx)
     {
       if (dy>0)
       {
-    if (abs(dx)>abs(dy))
+    if (lol::abs(dx)>lol::abs(dy))
     {
       int32_t a=dx*29/dy;
       if (a>=TBS) return 0;
@@ -691,9 +691,9 @@ int32_t lisp_atan2(int32_t dy, int32_t dx)
     }
       } else
       {
-    if (abs(dx)>abs(dy))
+    if (lol::abs(dx)>lol::abs(dy))
     {
-      int32_t a=dx*29/abs(dy);
+      int32_t a=dx*29/lol::abs(dy);
       if (a>=TBS)
         return 0;
       else
@@ -701,7 +701,7 @@ int32_t lisp_atan2(int32_t dy, int32_t dx)
     }
     else
     {
-      int32_t a=abs(dy)*29/dx;
+      int32_t a=lol::abs(dy)*29/dx;
       if (a>=TBS)
         return 260;
       else
@@ -712,7 +712,7 @@ int32_t lisp_atan2(int32_t dy, int32_t dx)
     {
       if (dy>0)
       {
-    if (abs(dx)>abs(dy))
+    if (lol::abs(dx)>lol::abs(dy))
     {
       int32_t a=-dx*29/dy;
       if (a>=TBS)
@@ -730,16 +730,16 @@ int32_t lisp_atan2(int32_t dy, int32_t dx)
     }
       } else
       {
-    if (abs(dx)>abs(dy))
+    if (lol::abs(dx)>lol::abs(dy))
     {
-      int32_t a=-dx*29/abs(dy);
+      int32_t a=-dx*29/lol::abs(dy);
       if (a>=TBS)
         return 225-45;
       else return 225-atan_table[a];
     }
     else
     {
-      int32_t a=abs(dy)*29/abs(dx);
+      int32_t a=lol::abs(dy)*29/lol::abs(dx);
       if (a>=TBS)
         return 225+45;
       else return 225+atan_table[a];
@@ -2416,7 +2416,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
         break;
     }
     case SYS_FUNC_ABS:
-        ret = LNumber::Create(abs(lnumber_value(CAR(arg_list)->Eval())));
+        ret = LNumber::Create(lol::abs(lnumber_value(CAR(arg_list)->Eval())));
         break;
     case SYS_FUNC_MIN:
     {

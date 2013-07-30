@@ -127,7 +127,7 @@ void palette::set_rgbs()
     if (i==0) v=0;
     else
     {
-      v=(int) ((double)i+(double)(sqrt(63.0-i)));
+      v=(int) ((double)i+(double)(lol::sqrt(63.0-i)));
       v<<=2;
     }
 

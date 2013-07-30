@@ -1048,11 +1048,11 @@ long c_caller(long number, void *args)
     {
         case 1:
         {
-            return abs(current_object->x-current_level->attacker(current_object)->x);
+            return lol::abs(current_object->x-current_level->attacker(current_object)->x);
         } break;
         case 2:
         {
-            return abs(current_object->y-current_level->attacker(current_object)->y);
+            return lol::abs(current_object->y-current_level->attacker(current_object)->y);
         } break;
         case 3:
         {
