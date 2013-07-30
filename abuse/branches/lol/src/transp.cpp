@@ -24,11 +24,11 @@ void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
     ivec2 aa(0), bb = im->Size();
     ivec2 pos(x, y);
 
-    aa += Max(caa - pos, ivec2(0));
-    bb -= Max(caa - pos, ivec2(0));
-    pos = Max(caa, pos);
+    aa += lol::max(caa - pos, ivec2(0));
+    bb -= lol::max(caa - pos, ivec2(0));
+    pos = lol::max(caa, pos);
 
-    bb = Min(bb, cbb - ivec2(1) - pos);
+    bb = lol::min(bb, cbb - ivec2(1) - pos);
 
     if (!(bb >= ivec2(0)))
         return;

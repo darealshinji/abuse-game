@@ -217,7 +217,7 @@ int elevator::decide()
       set_state(stopped);
     break;
       default :
-    CHECK(0);
+    ASSERT(false);
     }
   }
 

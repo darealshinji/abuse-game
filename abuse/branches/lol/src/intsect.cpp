@@ -125,14 +125,14 @@ void pushback(int32_t x1,int32_t y1,int32_t &x2,int32_t &y2,
           if (lol::abs(mx1)>lol::abs(my1))
           {
             int32_t ae_bd=my1*mx2-mx1*my2;
-            CONDITION(ae_bd,"line intersect fuck up");
+            ASSERT(ae_bd,"line intersect fuck up");
             tx2=(mx1*mx2*(b2-b1))/ae_bd+xadd;
             ty2=my1*tx2/mx1+b1;
           }
           else
           {
             int32_t db_ea=(my2*mx1-mx2*my1);
-            CONDITION(db_ea,"line intersect fuck up");
+            ASSERT(db_ea,"line intersect fuck up");
             ty2=(mx1*b1*my2-my1*mx2*b2)/db_ea+yadd;
             tx2=mx1*(ty2-b1)/my1;
           }

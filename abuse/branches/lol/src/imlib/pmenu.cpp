@@ -77,7 +77,7 @@ pmenu_item::pmenu_item(char const *Name, psub_menu *Sub, pmenu_item *Next, int x
   id=0; hotkey=-1;
   next=Next;
   on_off=NULL;
-  CONDITION(Name,"Sub menu cannot have a NULL name");
+  ASSERT(Name, "Sub menu cannot have a NULL name");
   n = strdup(Name);
   sub=Sub;
 }

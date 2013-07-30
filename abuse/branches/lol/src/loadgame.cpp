@@ -69,8 +69,8 @@ Jwindow *create_num_window(int mx, int total_saved, int lines, image **thumbnail
   int n=0;
   for (i=0; i<total_saved; i++,y+=ih)
   {
-    maxih = Max(ih, maxih);
-    maxiw = Max(iw, maxiw);
+    maxih = lol::max(ih, maxih);
+    maxiw = lol::max(iw, maxiw);
     if (y >= lines * ih)
     {
         y = 0;

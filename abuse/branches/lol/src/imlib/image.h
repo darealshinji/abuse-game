@@ -49,10 +49,10 @@ public:
     void *extended_descriptor;
 
     image_descriptor(ivec2 size, int keep_dirties = 1, int static_memory = 0);
-    int bound_x1(int x1) { return Max(x1, m_aa.x); }
-    int bound_y1(int y1) { return Max(y1, m_aa.y); }
-    int bound_x2(int x2) { return Min(x2, m_bb.x); }
-    int bound_y2(int y2) { return Min(y2, m_bb.y); }
+    int bound_x1(int x1) { return lol::max(x1, m_aa.x); }
+    int bound_y1(int y1) { return lol::max(y1, m_aa.y); }
+    int bound_x2(int x2) { return lol::min(x2, m_bb.x); }
+    int bound_y2(int y2) { return lol::min(y2, m_bb.y); }
     inline int x1_clip() { return m_aa.x; }
     inline int y1_clip() { return m_aa.y; }
     inline int x2_clip() { return m_bb.x; }
@@ -64,8 +64,8 @@ public:
     }
     void SetClip(ivec2 aa, ivec2 bb)
     {
-        m_aa = Max(aa, ivec2(0));
-        m_bb = Min(Max(bb, m_aa + ivec2(1)), m_size);
+        m_aa = lol::max(aa, ivec2(0));
+        m_bb = lol::min(lol::max(bb, m_aa + ivec2(1)), m_size);
     }
     void GetClip(int &x1, int &y1, int &x2, int &y2)
     {
@@ -75,8 +75,8 @@ public:
     {
         if(x2 < x1 + 1) x2 = x1 + 1;
         if(y2 < y1 + 1) y2 = y1 + 1;
-        m_aa.x = Max(x1, 0); m_aa.y = Max(y1, 0);
-        m_bb.x = Min(x2, m_size.x); m_bb.y = Min(y2, m_size.y);
+        m_aa.x = lol::max(x1, 0); m_aa.y = lol::max(y1, 0);
+        m_bb.x = lol::min(x2, m_size.x); m_bb.y = lol::min(y2, m_size.y);
     }
     void ReduceDirties();
     void AddDirty(ivec2 aa, ivec2 bb);

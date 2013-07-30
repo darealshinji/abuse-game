@@ -19,7 +19,8 @@
 
 Filter::Filter(int colors)
 {
-    CONDITION(colors >= 0 && colors <= 256, "bad colors value");
+    ASSERT(colors >= 0 && colors <= 256, "bad colors value");
+
     m_size = colors;
     m_table = (uint8_t *)malloc(m_size);
     memset(m_table, 0, m_size * sizeof(*m_table));
@@ -28,7 +29,7 @@ Filter::Filter(int colors)
 // Creates a conversion filter from one palette to another
 Filter::Filter(palette *from, palette *to)
 {
-    m_size = Max(from->pal_size(), to->pal_size());
+    m_size = lol::max(from->pal_size(), to->pal_size());
     m_table = (uint8_t *)malloc(m_size);
 
     uint8_t *dst = m_table;
@@ -58,7 +59,8 @@ Filter::~Filter()
 
 void Filter::Set(int color_num, int change_to)
 {
-    CONDITION(color_num >= 0 && color_num < m_size, "Bad colors_num");
+    ASSERT(color_num >= 0 && color_num < m_size, "Bad colors_num");
+
     m_table[color_num] = change_to;
 }
 
@@ -69,7 +71,7 @@ void Filter::Apply(image *im)
     int npixels = im->Size().x * im->Size().y;
     while (npixels--)
     {
-        CONDITION(*dst < m_size, "not enough filter colors");
+        ASSERT(*dst < m_size, "not enough filter colors");
         *dst = m_table[*dst];
         dst++;
     }
@@ -87,9 +89,9 @@ void Filter::PutImage(image *screen, image *im, ivec2 pos)
     if (!(pos < cbb && pos + (bb - aa) > caa))
         return;
 
-    aa += Max(caa - pos, ivec2(0));
-    pos = Max(pos, caa);
-    bb = Min(bb, cbb - pos + aa);
+    aa += lol::max(caa - pos, ivec2(0));
+    pos = lol::max(pos, caa);
+    bb = lol::min(bb, cbb - pos + aa);
 
     if (!(aa < bb))
         return;

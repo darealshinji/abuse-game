@@ -54,6 +54,6 @@ void dgets(char *buf, int size)
     }
     else
     {
-        ERROR(0,"dgets called but no handler set up");
+        ASSERT(0, "dgets called but no handler set up");
     }
 }

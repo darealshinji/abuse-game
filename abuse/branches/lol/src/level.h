@@ -103,19 +103,19 @@ public :
   void try_pushback(game_object *subject,game_object *target);
   ~level();
 
-  int fg_raised(int x, int y) { CHECK(x>=0 && y>=0 && x<fg_width && y<fg_height);
+  int fg_raised(int x, int y) { ASSERT(x>=0 && y>=0 && x<fg_width && y<fg_height);
                  return (*(map_fg+x+y*fg_width))&0x4000; }
-  void fg_set_raised(int x, int y, int r) { CHECK(x>=0 && y>=0 && x<fg_width && y<fg_height);
+  void fg_set_raised(int x, int y, int r) { ASSERT(x>=0 && y>=0 && x<fg_width && y<fg_height);
                         uint16_t v=(*(map_fg+x+y*fg_width))&(0xffff-0x4000);
                         if (r) (*(map_fg+x+y*fg_width))=v|0x4000;
                         else (*(map_fg+x+y*fg_width))=v;
                       }
-  void mark_seen(int x, int y) { CHECK(x>=0 && y>=0 && x<fg_width && y<fg_height);
+  void mark_seen(int x, int y) { ASSERT(x>=0 && y>=0 && x<fg_width && y<fg_height);
                       (*(map_fg+x+y*fg_width))|=0x8000; }
   void clear_fg(int32_t x, int32_t y) { *(map_fg+x+y*fg_width)&=0x7fff; }
 
-  uint16_t *get_fgline(int y) { CHECK(y>=0 && y<fg_height); return map_fg+y*fg_width; }
-  uint16_t *get_bgline(int y) { CHECK(y>=0 && y<bg_height); return map_bg+y*bg_width; }
+  uint16_t *get_fgline(int y) { ASSERT(y>=0 && y<fg_height); return map_fg+y*fg_width; }
+  uint16_t *get_bgline(int y) { ASSERT(y>=0 && y<bg_height); return map_bg+y*bg_width; }
   uint16_t GetFg(ivec2 pos) { if (pos >= ivec2(0) && pos < ivec2(fg_width, fg_height))
                               return fgvalue(*(map_fg+pos.x+pos.y*fg_width));
                                     else return 0;

@@ -451,16 +451,16 @@ void load_data(int argc, char **argv)
   load_number_icons();
 
 
-  ERROR(nbacktiles,"No background tiles defined!");
-  ERROR(nforetiles,"No foreground tiles defined!");
-  ERROR(foretiles[0]>=0,"No black (0) foreground tile defined!");
-  ERROR(backtiles[0]>=0,"No black (0) background tile defined!");
-  ERROR(big_font_pict!=-1 || small_font_pict!=-1,
-    "No font loaded (use load_big_font or load_small_font)!");
-  f_wid=cache.foret(foretiles[0])->im->Size().x;
-  f_hi=cache.foret(foretiles[0])->im->Size().y;
-  b_wid=cache.backt(backtiles[0])->im->Size().x;
-  b_hi=cache.backt(backtiles[0])->im->Size().y;
+  ASSERT(nbacktiles, "no background tiles defined!");
+  ASSERT(nforetiles, "no foreground tiles defined!");
+  ASSERT(foretiles[0] >= 0, "no black (0) foreground tile defined!");
+  ASSERT(backtiles[0] >= 0, "no black (0) background tile defined!");
+  ASSERT(big_font_pict != -1 || small_font_pict != -1,
+         "no font loaded (use load_big_font or load_small_font)!");
+  f_wid = cache.foret(foretiles[0])->im->Size().x;
+  f_hi = cache.foret(foretiles[0])->im->Size().y;
+  b_wid = cache.backt(backtiles[0])->im->Size().x;
+  b_hi = cache.backt(backtiles[0])->im->Size().y;
 
 #if 0
     if( should_save_sd_cache )
@@ -500,7 +500,7 @@ char *load_script(char *name)
 
   long l=fp->file_size();
   s=(char *)malloc(l+1);
-  ERROR(s,"Malloc error in load_script");
+  ASSERT(s, "malloc error in load_script");
 
   fp->read(s,l);
   s[l]=0;

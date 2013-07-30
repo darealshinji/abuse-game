@@ -278,7 +278,7 @@ LArray *LArray::Create(size_t len, void *rest)
 
 LFixedPoint *LFixedPoint::Create(int32_t x)
 {
-    size_t size = Max(sizeof(LFixedPoint), sizeof(LRedirect));
+    size_t size = lol::max(sizeof(LFixedPoint), sizeof(LRedirect));
 
     LFixedPoint *p = (LFixedPoint *)LSpace::Current->Alloc(size);
     p->m_type = L_FIXED_POINT;
@@ -288,7 +288,7 @@ LFixedPoint *LFixedPoint::Create(int32_t x)
 
 LObjectVar *LObjectVar::Create(int index)
 {
-    size_t size = Max(sizeof(LObjectVar), sizeof(LRedirect));
+    size_t size = lol::max(sizeof(LObjectVar), sizeof(LRedirect));
 
     LObjectVar *p = (LObjectVar *)LSpace::Current->Alloc(size);
     p->m_type = L_OBJECT_VAR;
@@ -300,7 +300,7 @@ LPointer *LPointer::Create(void *addr)
 {
     if (addr == NULL)
         return NULL;
-    size_t size = Max(sizeof(LPointer), sizeof(LRedirect));
+    size_t size = lol::max(sizeof(LPointer), sizeof(LRedirect));
 
     LPointer *p = (LPointer *)LSpace::Current->Alloc(size);
     p->m_type = L_POINTER;
@@ -310,7 +310,7 @@ LPointer *LPointer::Create(void *addr)
 
 LChar *LChar::Create(uint16_t ch)
 {
-    size_t size = Max(sizeof(LChar), sizeof(LRedirect));
+    size_t size = lol::max(sizeof(LChar), sizeof(LRedirect));
 
     LChar *c = (LChar *)LSpace::Current->Alloc(size);
     c->m_type = L_CHARACTER;
@@ -335,7 +335,7 @@ struct LString *LString::Create(char const *string, int length)
 
 struct LString *LString::Create(int length)
 {
-    size_t size = Max(sizeof(LString) + length - 1, sizeof(LRedirect));
+    size_t size = lol::max(sizeof(LString) + length - 1, sizeof(LRedirect));
 
     LString *s = (LString *)LSpace::Current->Alloc(size);
     s->m_type = L_STRING;
@@ -347,7 +347,7 @@ LUserFunction *new_lisp_user_function(LList *arg_list, LList *block_list)
 {
     PtrRef r1(arg_list), r2(block_list);
 
-    size_t size = Max(sizeof(LUserFunction), sizeof(LRedirect));
+    size_t size = lol::max(sizeof(LUserFunction), sizeof(LRedirect));
 
     LUserFunction *lu = (LUserFunction *)LSpace::Current->Alloc(size);
     lu->m_type = L_USER_FUNCTION;
@@ -358,7 +358,7 @@ LUserFunction *new_lisp_user_function(LList *arg_list, LList *block_list)
 
 LSysFunction *new_lisp_sys_function(int min_args, int max_args, int fun_number)
 {
-    size_t size = Max(sizeof(LSysFunction), sizeof(LRedirect));
+    size_t size = lol::max(sizeof(LSysFunction), sizeof(LRedirect));
 
     // System functions should reside in permanant space
     LSysFunction *ls = LSpace::Current == &LSpace::Gc
@@ -394,7 +394,7 @@ LSysFunction *new_user_lisp_function(int min_args, int max_args, int fun_number)
 
 LSymbol *new_lisp_symbol(char *name)
 {
-    size_t size = Max(sizeof(LSymbol), sizeof(LRedirect));
+    size_t size = lol::max(sizeof(LSymbol), sizeof(LRedirect));
 
     LSymbol *s = (LSymbol *)LSpace::Current->Alloc(size);
     PtrRef ref(s);
@@ -411,7 +411,7 @@ LSymbol *new_lisp_symbol(char *name)
 
 LNumber *LNumber::Create(long num)
 {
-    size_t size = Max(sizeof(LNumber), sizeof(LRedirect));
+    size_t size = lol::max(sizeof(LNumber), sizeof(LRedirect));
 
     LNumber *n = (LNumber *)LSpace::Current->Alloc(size);
     n->m_type = L_NUMBER;
@@ -421,7 +421,7 @@ LNumber *LNumber::Create(long num)
 
 LList *LList::Create()
 {
-    size_t size = Max(sizeof(LList), sizeof(LRedirect));
+    size_t size = lol::max(sizeof(LList), sizeof(LRedirect));
 
     LList *c = (LList *)LSpace::Current->Alloc(size);
     c->m_type = L_CONS_CELL;
@@ -1061,11 +1061,11 @@ int read_ltoken(char const *&s, char *buffer)
 }
 
 
-char n[MAX_LISP_TOKEN_LEN];  // assume all tokens will be < 200 characters
+static char token_buffer[MAX_LISP_TOKEN_LEN];  // assume all tokens will be < 200 characters
 
 int end_of_program(char const *s)
 {
-  return !read_ltoken(s, n);
+  return !read_ltoken(s, token_buffer);
 }
 
 
@@ -1084,14 +1084,14 @@ LObject *LObject::Compile(char const *&code)
 {
     LObject *ret = NULL;
 
-    if (!read_ltoken(code, n))
+    if (!read_ltoken(code, token_buffer))
         lerror(NULL, "unexpected end of program");
 
-  if (!strcmp(n, "nil"))
+  if (!strcmp(token_buffer, "nil"))
     return NULL;
-  else if (toupper(n[0])=='T' && !n[1])
+  else if (toupper(token_buffer[0])=='T' && !token_buffer[1])
     return true_symbol;
-  else if (n[0]=='\'')                    // short hand for quote function
+  else if (token_buffer[0]=='\'')                    // short hand for quote function
   {
     LObject *cs = LList::Create(), *c2=NULL, *tmp;
     PtrRef r1(cs), r2(c2);
@@ -1104,7 +1104,7 @@ LObject *LObject::Compile(char const *&code)
     ((LList *)cs)->m_cdr = (LObject *)c2;
     ret=cs;
   }
-  else if (n[0]=='`')                    // short hand for backquote function
+  else if (token_buffer[0]=='`')                    // short hand for backquote function
   {
     LObject *cs = LList::Create(), *c2=NULL, *tmp;
     PtrRef r1(cs), r2(c2);
@@ -1116,7 +1116,7 @@ LObject *LObject::Compile(char const *&code)
     ((LList *)c2)->m_cdr=NULL;
     ((LList *)cs)->m_cdr = (LObject *)c2;
     ret=cs;
-  }  else if (n[0]==',')              // short hand for comma function
+  }  else if (token_buffer[0]==',')              // short hand for comma function
   {
     LObject *cs = LList::Create(), *c2=NULL, *tmp;
     PtrRef r1(cs), r2(c2);
@@ -1129,7 +1129,7 @@ LObject *LObject::Compile(char const *&code)
     ((LList *)cs)->m_cdr = (LObject *)c2;
     ret=cs;
   }
-  else if (n[0]=='(')                     // make a list of everything in ()
+  else if (token_buffer[0]=='(')                     // make a list of everything in ()
   {
     void *first=NULL, *cur=NULL, *last=NULL;
     PtrRef r1(first), r2(cur), r3(last);
@@ -1137,23 +1137,23 @@ LObject *LObject::Compile(char const *&code)
     do
     {
       char const *tmp=code;
-      if (!read_ltoken(tmp, n))           // check for the end of the list
+      if (!read_ltoken(tmp, token_buffer))           // check for the end of the list
         lerror(NULL, "unexpected end of program");
-      if (n[0]==')')
+      if (token_buffer[0]==')')
       {
                 done=1;
-                read_ltoken(code, n);                // read off the ')'
+                read_ltoken(code, token_buffer);                // read off the ')'
       }
       else
       {
-                if (n[0]=='.' && !n[1])
+                if (token_buffer[0]=='.' && !token_buffer[1])
                 {
                   if (!first)
                     lerror(code, "token '.' not allowed here\n");
                   else
                   {
                     void *tmp;
-                    read_ltoken(code, n);              // skip the '.'
+                    read_ltoken(code, token_buffer);              // skip the '.'
                     tmp=Compile(code);
                     ((LList *)last)->m_cdr = (LObject *)tmp;          // link the last cdr to
                     last=NULL;
@@ -1176,14 +1176,14 @@ LObject *LObject::Compile(char const *&code)
     } while (!done);
     ret=(LObject *)comp_optimize(first);
 
-  } else if (n[0]==')')
+  } else if (token_buffer[0]==')')
     lerror(code, "mismatched )");
-  else if (isdigit(n[0]) || (n[0]=='-' && isdigit(n[1])))
+  else if (isdigit(token_buffer[0]) || (token_buffer[0]=='-' && isdigit(token_buffer[1])))
   {
     LNumber *num = LNumber::Create(0);
-    sscanf(n, "%ld", &num->m_num);
+    sscanf(token_buffer, "%ld", &num->m_num);
     ret=num;
-  } else if (n[0]=='"')
+  } else if (token_buffer[0]=='"')
   {
     ret = LString::Create(str_token_len(code));
     char *start=lstring_value(ret);
@@ -1201,19 +1201,19 @@ LObject *LObject::Compile(char const *&code)
     }
     *start=0;
     code++;
-  } else if (n[0]=='#')
+  } else if (token_buffer[0]=='#')
   {
-    if (n[1]=='\\')
+    if (token_buffer[1]=='\\')
     {
-      read_ltoken(code, n);                   // read character name
-      if (!strcmp(n, "newline"))
+      read_ltoken(code, token_buffer);                   // read character name
+      if (!strcmp(token_buffer, "newline"))
         ret = LChar::Create('\n');
-      else if (!strcmp(n, "space"))
+      else if (!strcmp(token_buffer, "space"))
         ret = LChar::Create(' ');
       else
-        ret = LChar::Create(n[0]);
+        ret = LChar::Create(token_buffer[0]);
     }
-    else if (n[1]==0)                           // short hand for function
+    else if (token_buffer[1]==0)                           // short hand for function
     {
       LObject *cs = LList::Create(), *c2=NULL, *tmp;
       PtrRef r4(cs), r5(c2);
@@ -1227,11 +1227,11 @@ LObject *LObject::Compile(char const *&code)
     }
     else
     {
-      lbreak("Unknown #\\ notation : %s\n", n);
+      lbreak("Unknown #\\ notation : %s\n", token_buffer);
       exit(0);
     }
   } else {
-    ret = LSymbol::FindOrCreate(n);
+    ret = LSymbol::FindOrCreate(token_buffer);
   }
   return ret;
 }
@@ -3053,7 +3053,7 @@ LObject *LObject::Eval()
 {
     PtrRef ref1(this);
 
-    maxevaldepth = Max(maxevaldepth, ++evaldepth);
+    maxevaldepth = lol::max(maxevaldepth, ++evaldepth);
 
     int tstart = trace_level;
 

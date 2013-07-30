@@ -24,7 +24,9 @@
 
 ASprite::ASprite(image *screen, image *visual, ivec2 pos)
 {
-    CHECK(visual && screen);
+    ASSERT(visual);
+    ASSERT(screen);
+
     m_pos = pos;
     m_visual = visual;
     m_screen = screen;

@@ -84,8 +84,8 @@ public:
     }
     void SetMousePos(ivec2 pos)
     {
-        m_pos = ivec2(Min(Max(pos.x, 0), m_screen->Size().x - 1),
-                      Min(Max(pos.y, 0), m_screen->Size().y - 1));
+        m_pos = ivec2(lol::min(lol::max(pos.x, 0), m_screen->Size().x - 1),
+                      lol::min(lol::max(pos.y, 0), m_screen->Size().y - 1));
         SysWarpMouse(m_pos);
     }
 

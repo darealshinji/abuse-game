@@ -55,7 +55,7 @@ TransImage::TransImage(image *im, char const *name)
     if (!parser)
     {
         printf("size = %d %d (%ld bytes)\n", m_size.x, m_size.y, (long)bytes);
-        CONDITION(parser, "malloc error for TransImage::m_data");
+        ASSERT(parser, "malloc error for TransImage::m_data");
     }
 
     // Now fill the RLE transparency image
@@ -121,8 +121,8 @@ uint8_t *TransImage::ClipToLine(image *screen, ivec2 pos1, ivec2 pos2,
     uint8_t *parser = m_data;
 
     // Number of lines to skip, number of lines to draw, first line to draw
-    int skiplines = Max(pos1.y - pos.y, 0);
-    ysteps = Min(pos2.y - pos.y, m_size.y - skiplines);
+    int skiplines = lol::max(pos1.y - pos.y, 0);
+    ysteps = lol::min(pos2.y - pos.y, m_size.y - skiplines);
     pos.y += skiplines;
 
     while (skiplines--)
@@ -139,8 +139,8 @@ uint8_t *TransImage::ClipToLine(image *screen, ivec2 pos1, ivec2 pos2,
         }
     }
 
-    screen->AddDirty(ivec2(Max(pos.x, pos1.x), pos.y),
-                     ivec2(Min(pos.x + m_size.x, pos2.x), pos.y + m_size.y));
+    screen->AddDirty(ivec2(lol::max(pos.x, pos1.x), pos.y),
+                     ivec2(lol::min(pos.x + m_size.x, pos2.x), pos.y + m_size.y));
     return parser;
 }
 
@@ -157,8 +157,8 @@ void TransImage::PutImageGeneric(image *screen, ivec2 pos, uint8_t color,
 
     if (N == SCANLINE)
     {
-        pos1.y = Max(pos1.y, pos.y + amount);
-        pos2.y = Min(pos2.y, pos.y + amount + 1);
+        pos1.y = lol::max(pos1.y, pos.y + amount);
+        pos2.y = lol::min(pos2.y, pos.y + amount + 1);
         if (pos1.y >= pos2.y)
             return;
     }
@@ -168,9 +168,9 @@ void TransImage::PutImageGeneric(image *screen, ivec2 pos, uint8_t color,
     if (!datap)
         return; // if ClipToLine says nothing to draw, return
 
-    CONDITION(N != BLEND || (pos.y >= bpos.y
+    ASSERT(N != BLEND || (pos.y >= bpos.y
                               && pos.y + ysteps <= bpos.y + blend->Size().y),
-              "Blend doesn't fit on TransImage");
+           "blend doesn't fit on TransImage");
 
     if (N == FADE || N == FADE_TINT || N == BLEND)
         paddr = (uint8_t *)pal->addr();
@@ -181,7 +181,7 @@ void TransImage::PutImageGeneric(image *screen, ivec2 pos, uint8_t color,
         mul = ((16 - amount) << 16 / 16);
 
     if (N == PREDATOR)
-        ysteps = Min(ysteps, pos2.y - 1 - pos.y - 2);
+        ysteps = lol::min(ysteps, pos2.y - 1 - pos.y - 2);
 
     screen->Lock();
 
@@ -210,7 +210,7 @@ void TransImage::PutImageGeneric(image *screen, ivec2 pos, uint8_t color,
             todo = *datap++;
 
             // Chop left side if necessary, but no more than todo
-            int tochop = Min(todo, Max(pos1.x - ix, 0));
+            int tochop = lol::min(todo, lol::max(pos1.x - ix, 0));
 
             ix += tochop;
             screen_line += tochop;
@@ -218,7 +218,7 @@ void TransImage::PutImageGeneric(image *screen, ivec2 pos, uint8_t color,
             todo -= tochop;
 
             // Chop right side if necessary and process the remaining pixels
-            int count = Min(todo, Max(pos2.x - ix, 0));
+            int count = lol::min(todo, lol::max(pos2.x - ix, 0));
 
             if (N == NORMAL || N == SCANLINE)
             {

@@ -33,9 +33,10 @@
 //
 EventHandler::EventHandler(image *screen, palette *pal)
 {
-    CHECK(screen && pal);
-    m_pending = 0;
+    ASSERT(screen);
+    ASSERT(pal);
 
+    m_pending = 0;
     m_screen = screen;
 
     // Mouse stuff

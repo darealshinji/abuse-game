@@ -62,7 +62,7 @@ game_object *level::attacker(game_object *who)
       }
     }
   }
-  CONDITION(c,"no attacker found");
+  ASSERT(c, "no attacker found");
   return c;
 }
 
@@ -297,7 +297,7 @@ int level::add_drawables(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 view *level::make_view_list(int nplayers)
 {
   int startable;
-  CONDITION(nplayers>0,"make_view_list with <=0 players!\n");
+  ASSERT(nplayers > 0, "make_view_list with <=0 players!");
   view *f=NULL;
   int j,use_type=current_start_type;
   figures[use_type]->cache_in();
@@ -2018,7 +2018,7 @@ void level::load_links(bFILE *fp, spec_directory *sd,
       while (t)
       {
     int32_t x1=fp->read_uint32();
-    CONDITION(x1>=0,"expected x1 for object link to be > 0\n");
+    ASSERT(x1 >= 0, "expected x1 for object link to be > 0");
     int32_t x2=fp->read_uint32();
     game_object *p,*q=number_to_object_in_list(x1,save_list);
     if (x2>0)
@@ -2627,8 +2627,8 @@ void level::foreground_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y
 
   if (blockx2>=foreground_width()) { x2=tl*foreground_width()-1; }
   if (blocky2>=foreground_height()) { y2=th*foreground_height()-1; }
-  blockx1=Max(blockx1,0);
-  blocky1=Max(blocky1,0);
+  blockx1=lol::max(blockx1,0);
+  blocky1=lol::max(blocky1,0);
 
   if ((blockx1>blockx2) || (blocky1>blocky2)) return ;
 

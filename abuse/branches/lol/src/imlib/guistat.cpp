@@ -141,10 +141,11 @@ void gui_status_manager::force_display()
 
 void gui_status_manager::pop()
 {
-  CONDITION(first,"No status's to pop!");
-  gui_status_node *p=first;
-  first=first->next;
-  delete p;
+    ASSERT(first, "no status to pop!");
+
+    gui_status_node *p = first;
+    first = first->next;
+    delete p;
 }
 
 

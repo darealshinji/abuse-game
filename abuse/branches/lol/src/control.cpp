@@ -37,7 +37,7 @@ void controlled_character::change_character(int char_type)
   {
     case CHAR_HUMAN : my_figure=human_figure; curbreak;
     case CHAR_IGUANA : my_figure=iguana_figure; break;
-    default : CONDITION(0,"change_character, bad character type\n");
+    default : ASSERT(0, "change_character, bad character type");
   }
   cur_char=char_type;
   set_state(stopped);

@@ -240,7 +240,10 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
     if(y > yres || x > xres)
         return;
 
-    CHECK(x1 >= 0 && x2 >= x1 && y1 >= 0 && y2 >= y1);
+    ASSERT(x1 >= 0);
+    ASSERT(x2 >= x1);
+    ASSERT(y1 >= 0);
+    ASSERT(y2 >= y1);
 
     // Adjust if we are trying to draw off the screen
     if(x < 0)
