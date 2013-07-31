@@ -31,10 +31,12 @@ class LightSource;
 class SimpleObject
 {
 public:
+    SimpleObject();
+
+protected:
     int8_t Fade_dir;
     uint8_t Fade_count,Fade_max;
     uint8_t Flags,grav_on,targetable_on;
-    int32_t Xvel,Yvel,Xacel,Yacel;
     uint8_t Fx,Fy,Fxvel,Fyvel,Fxacel,Fyacel;
     uint8_t Aitype;
     uint16_t Aistate,Aistate_time;
@@ -46,18 +48,22 @@ public:
     GameObject **objs,*link;
     LightSource **lights;
 
-    view *Controller;
     morph_char *mc;
+
+public:
+    // leave these public, so I don't have monster code changes.
+    ivec2 m_pos;
+    ivec2 m_last_pos; // used for frame interpolation on fast machines
+    ivec2 m_vel, m_accel;
+
+    view *m_controller;
+
     int total_vars();
     char const *var_name(int x);
     int var_type(int x);
     void set_var(int x, uint32_t v);
     int32_t get_var(int x);
 
-    // leave these public, so I don't have monster code changes.
-    SimpleObject();
-    ivec2 m_pos;
-    ivec2 m_last_pos; // used for frame interpolation on fast machines
     int8_t direction,active;
     uint16_t otype;
     character_state state;
@@ -69,10 +75,6 @@ public:
 
     int keep_ai_info()         { return 1; }
     uint8_t flags()            { return Flags; }
-    int32_t xvel()             { return Xvel; }
-    int32_t yvel()             { return Yvel; }
-    int32_t xacel()            { return Xacel; }
-    int32_t yacel()            { return Yacel; }
 
     uint8_t fx()               { return Fx; }
     uint8_t fy()               { return Fy; }
@@ -83,10 +85,10 @@ public:
 
     uint8_t sfx()              { return Fx; }  // x & y should always be positive
     uint8_t sfy()              { return Fy; }
-    uint8_t sfxvel()           { if (Xvel>=0) return Fxvel; else return -Fxvel; }
-    uint8_t sfyvel()           { if (Yvel>=0) return Fyvel; else return -Fyvel; }
-    uint8_t sfxacel()          { if (Xacel>=0) return Fxacel; else return -Fxacel; }
-    uint8_t sfyacel()          { if (Yacel>=0) return Fyacel; else return -Fyacel; }
+    uint8_t sfxvel()           { if (m_vel.x>=0) return Fxvel; else return -Fxvel; }
+    uint8_t sfyvel()           { if (m_vel.y>=0) return Fyvel; else return -Fyvel; }
+    uint8_t sfxacel()          { if (m_accel.x>=0) return Fxacel; else return -Fxacel; }
+    uint8_t sfyacel()          { if (m_accel.y>=0) return Fyacel; else return -Fyacel; }
 
     uint8_t aitype()           { return Aitype; }
     uint16_t aistate()         { return Aistate; }
@@ -106,14 +108,9 @@ public:
     { if (x>=tlights) { lbreak("bad x for light\n"); exit(0); } return lights[x]; }
     GameObject *get_object(int x)
     { if (x>=tobjs) { lbreak("bad x for object\n"); exit(0); } return objs[x]; }
-    view *controller()             { return Controller; }
 
     void set_targetable(uint8_t x)  { targetable_on=x; }
     void set_flags(uint8_t f)       { Flags=f; }
-    void set_xvel(int32_t xv)       { Xvel=xv; }
-    void set_yvel(int32_t yv)       { Yvel=yv; }
-    void set_xacel(int32_t xa)      { Xacel=xa; }
-    void set_yacel(int32_t ya)      { Yacel=ya; }
     void set_fx(uint8_t x)          { Fx=x; }
     void set_fy(uint8_t y)          { Fy=y; }
     void set_fxvel(uint8_t xv)      { Fxvel=abs(xv); }
@@ -140,7 +137,6 @@ public:
     void remove_object(GameObject *o);
     void remove_light(LightSource *ls);
     void set_morph_status(morph_char *mc);
-    void set_controller(view *v)          { Controller=v; }
 
     void set_gravity(int x)               { grav_on=x; }
     void set_floating(int x)

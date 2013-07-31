@@ -1948,8 +1948,8 @@ Game::~Game()
     GameObject *o = p->m_focus;
     player_list = player_list->next;
     delete p;
-    o->set_controller(NULL);
-    if(g_current_level && o)
+    o->m_controller = nullptr;
+    if (g_current_level && o)
       g_current_level->delete_object(o);
     else delete o;
   }

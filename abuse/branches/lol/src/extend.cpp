@@ -109,9 +109,12 @@ void SimpleObject::remove_object(GameObject *o)
 
 
 SimpleObject::SimpleObject()
+  : m_pos(0),
+    m_last_pos(0),
+    m_vel(0),
+    m_accel(0),
+    m_controller(nullptr)
 {
-
-  m_pos = ivec2(0);
   direction=1;
   otype=0;
   state=stopped;
@@ -127,10 +130,8 @@ SimpleObject::SimpleObject()
   lights=NULL;
   Frame_dir=1;
   mc=NULL;
-  Controller=NULL;
 
   Flags=0;
-  Xvel=Yvel=Xacel=Yacel=0;
   Fx=Fy=Fxvel=Fyvel=Fxacel=Fyacel=Aitype=0;
   Aistate=Aistate_time=0;
   Hp=Mp=Fmp=0;
@@ -151,8 +152,8 @@ void SimpleObject::clean_up()
 {
   if (tlights) free(lights);
   if (tobjs)   free(objs);
-  if (Controller)
-    Controller->m_focus=NULL;
+  if (m_controller)
+    m_controller->m_focus = nullptr;
 }
 
 

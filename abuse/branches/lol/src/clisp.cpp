@@ -89,7 +89,7 @@ extern void show_end();
 static view *lget_view(void *arg, char const *msg)
 {
   GameObject *o=(GameObject *)lpointer_value(arg);
-  view *c=o->controller();
+  view *c=o->m_controller;
   if (!c)
   {
     dprintf("%s : object does not have a view\n",msg);
@@ -665,7 +665,7 @@ void *l_caller(long number, void *args)
     case 9 : return LPointer::Create(the_game->first_view->m_focus); break;
     case 10 :
     {
-      view *v=((GameObject *)lpointer_value(CAR(args)->Eval()))->controller()->next;
+      view *v=((GameObject *)lpointer_value(CAR(args)->Eval()))->m_controller->next;
       if (v)
         return LPointer::Create(v->m_focus);
       else return NULL;
@@ -931,7 +931,7 @@ void *l_caller(long number, void *args)
     case 51 :   return LPointer::Create(wm->font()); break;
     case 52 :
     {
-      view *c=current_object->controller();
+      view *c=current_object->m_controller;
       if (!c)
         lbreak("object is not a player, cannot return name");
       else
@@ -1055,13 +1055,13 @@ long c_caller(long number, void *args)
         } break;
         case 3:
         {
-            if( !current_object->controller() )
+            if( !current_object->m_controller )
             {
                 lbreak("object is not a player, cannot determine keypresses");
             }
             else
             {
-                return current_object->controller()->key_down(lnumber_value(CAR(args)));
+                return current_object->m_controller->key_down(lnumber_value(CAR(args)));
             }
         } break;
         case 4:
@@ -1184,10 +1184,10 @@ long c_caller(long number, void *args)
     case 39 : return g_current_level->attacker(current_object)->m_pos.y; break;
     case 40 : current_object->change_aitype(lnumber_value(CAR(args))); return 1; break;
 
-    case 42 : return current_object->xvel(); break;
-    case 43 : return current_object->yvel(); break;
-    case 44 : current_object->set_xvel(lnumber_value(CAR(args))); return 1; break;
-    case 45 : current_object->set_yvel(lnumber_value(CAR(args))); return 1; break;
+    case 42 : return current_object->m_vel.x; break;
+    case 43 : return current_object->m_vel.y; break;
+    case 44 : current_object->m_vel.x = lnumber_value(CAR(args)); return 1; break;
+    case 45 : current_object->m_vel.y = lnumber_value(CAR(args)); return 1; break;
     case 46 : if (g_current_level->attacker(current_object)->m_pos.x>current_object->m_pos.x) return -1;
               else return 1; break;
     case 47 : return lnumber_value(CAR(args))&BLOCKED_LEFT; break;
@@ -1204,9 +1204,9 @@ long c_caller(long number, void *args)
     case 58 :
     {
       int x1=lnumber_value(CAR(args));
-      if (!current_object->controller())
+      if (!current_object->m_controller)
       { lbreak("set_freeze_time : object is not a focus\n"); }
-      else current_object->controller()->freeze_time=x1; return 1;
+      else current_object->m_controller->freeze_time=x1; return 1;
     } break;
     case 59 : return menu(args,big_font); break;
     case 60 :
@@ -1254,19 +1254,19 @@ long c_caller(long number, void *args)
     case 77 :
     {
       GameObject *o=(GameObject *)lpointer_value(CAR(args));
-      if (!o->controller()) printf("set shift: object is not a focus\n");
-      else o->controller()->m_shift.y=lnumber_value(CAR(CDR(args))); return 1;
+      if (!o->m_controller) printf("set shift: object is not a focus\n");
+      else o->m_controller->m_shift.y=lnumber_value(CAR(CDR(args))); return 1;
     } break;
     case 78 :
     {
       GameObject *o=(GameObject *)lpointer_value(CAR(args));
-      if (!o->controller()) printf("set shift: object is not a focus\n");
-      else o->controller()->m_shift.x=lnumber_value(CAR(CDR(args))); return 1;
+      if (!o->m_controller) printf("set shift: object is not a focus\n");
+      else o->m_controller->m_shift.x=lnumber_value(CAR(CDR(args))); return 1;
     } break;
     case 79 : current_object->set_gravity(lnumber_value(CAR(args))); return 1; break;
     case 80 : return current_object->tick(); break;
-    case 81 : current_object->set_xacel((lnumber_value(CAR(args)))); return 1; break;
-    case 82 : current_object->set_yacel((lnumber_value(CAR(args)))); return 1; break;
+    case 81 : current_object->m_accel.x = lnumber_value(CAR(args)); return 1; break;
+    case 82 : current_object->m_accel.y = lnumber_value(CAR(args)); return 1; break;
     case 84 : set_local_players(lnumber_value(CAR(args))); return 1; break;
     case 85 : return total_local_players(); break;
     case 86 : light_detail=lnumber_value(CAR(args)); return 1; break;
@@ -1345,8 +1345,8 @@ long c_caller(long number, void *args)
     case 113 : return ((LightSource *)lpointer_value(CAR(args)))->m_pos.y; break;
     case 114 : return ((LightSource *)lpointer_value(CAR(args)))->xshift; break;
     case 115 : return ((LightSource *)lpointer_value(CAR(args)))->yshift; break;
-    case 116 : return current_object->xacel(); break;
-    case 117 : return current_object->yacel(); break;
+    case 116 : return current_object->m_accel.x; break;
+    case 117 : return current_object->m_accel.y; break;
     case 118 : g_current_level->remove_light((LightSource *)lpointer_value(CAR(args))); break;
     case 119 : current_object->set_fx(lnumber_value(CAR(args))); break;
     case 120 : current_object->set_fy(lnumber_value(CAR(args))); break;
@@ -1385,7 +1385,7 @@ long c_caller(long number, void *args)
     case 134 :  // play_sound
     {
       void *a=args;
-      PtrRef r1(a);
+      PtrRef r2(a);
       int id=lnumber_value(lcar(a));
       if (id<0) return 0;
       a=CDR(a);
@@ -1441,7 +1441,7 @@ long c_caller(long number, void *args)
 
     case 144 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) dprintf("Can't add weapons for non-players\n");
       else
       {
@@ -1454,18 +1454,18 @@ long c_caller(long number, void *args)
     } break;
     case 145 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) return 0;
       else return v->weapon_total(lnumber_value(CAR(args)));
     } break;
     case 146 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) return 0; else return v->current_weapon;
     } break;
     case 147 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { lbreak("current_weapon_type : object cannot hold weapons\n");
         return 0; }
       else return v->current_weapon;
@@ -1474,7 +1474,7 @@ long c_caller(long number, void *args)
     case 149 : return lnumber_value(CAR(args))&BLOCKED_DOWN; break;
     case 150 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       int x=lnumber_value(CAR(args));
       if (x<0 || x>=total_weapons)
       { lbreak("weapon out of range (%d)\n",x); exit(0); }
@@ -1494,7 +1494,7 @@ long c_caller(long number, void *args)
     } break;
     case 152 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) dprintf("Can't use reset_player on non-players\n");
       else
         v->reset_player();
@@ -1511,10 +1511,9 @@ long c_caller(long number, void *args)
       int32_t ang=lnumber_value(CAR(args)); args=CDR(args);
       int32_t mag=lfixed_point_value(CAR(args));
       int32_t xvel=(lisp_cos(ang)>>8)*(mag>>8);
-      current_object->set_xvel(xvel>>16);
-      current_object->set_fxvel((xvel&0xffff)>>8);
       int32_t yvel=-(lisp_sin(ang)>>8)*(mag>>8);
-      current_object->set_yvel(yvel>>16);
+      current_object->m_vel = ivec2(xvel >> 16, yvel >> 16);
+      current_object->set_fxvel((xvel&0xffff)>>8);
       current_object->set_fyvel((yvel&0xffff)>>8);
     } break;
     case 155 :
@@ -1567,7 +1566,7 @@ long c_caller(long number, void *args)
     case 170 : return current_object->gravity(); break;
     case 171 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) dprintf("make_view_solid : object has no view\n");
       else
         v->draw_solid=lnumber_value(CAR(args));
@@ -1588,31 +1587,31 @@ long c_caller(long number, void *args)
     } break;
     case 173 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->x_suggestion;
     } break;
     case 174 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->y_suggestion;
     } break;
     case 175 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->b1_suggestion;
     } break;
     case 176 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->b2_suggestion;
     } break;
     case 177 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->b3_suggestion;
     } break;
@@ -1840,37 +1839,37 @@ long c_caller(long number, void *args)
     } break;
     case 217 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) lbreak("object has no view : view_x1");
       else return v->m_aa.x;
     } break;
     case 218 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) lbreak("object has no view : view_x1");
       else return v->m_aa.y;
     } break;
     case 219 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) lbreak("object has no view : view_x1");
       else return v->m_bb.x;
     } break;
     case 220 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) lbreak("object has no view : view_x1");
       else return v->m_bb.y;
     } break;
     case 221 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) lbreak("object has no view : view_push_down");
       else v->m_lastpos.y-=lnumber_value(CAR(args));
     } break;
     case 222 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) lbreak("object has no view : local_player");
       else return v->local_player();
     } break;
@@ -1920,13 +1919,13 @@ long c_caller(long number, void *args)
     } break;
     case 229 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) lbreak("object has no view : local_player");
       else return v->player_number;
     } break;
     case 230 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) lbreak("object has no view : local_player");
       else
       {
@@ -1938,7 +1937,7 @@ long c_caller(long number, void *args)
     } break;
     case 231 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) lbreak("object has no view : local_player");
       else return v->has_weapon(lnumber_value(CAR(args)));
     } break;
@@ -1969,7 +1968,7 @@ long c_caller(long number, void *args)
       else return 0; } break;
     case 236 :
     {
-      return current_object->controller()!=NULL;
+      return current_object->m_controller!=NULL;
     } break;
     case 237 :
     {
@@ -1985,13 +1984,13 @@ long c_caller(long number, void *args)
     { g_current_level->to_back(current_object); } break;
     case 241 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->pointer_x;
     } break;
     case 242 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->pointer_y;
     } break;
@@ -2066,49 +2065,49 @@ long c_caller(long number, void *args)
     case 253 : show_stats(); break;
     case 254 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->kills;
     } break;
     case 255 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->tkills;
     } break;
     case 256 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->secrets;
     } break;
     case 257 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else return v->tsecrets;
     } break;
     case 258 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else v->kills=lnumber_value(CAR(args));
     } break;
     case 259 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else v->tkills=lnumber_value(CAR(args));
     } break;
     case 260 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else v->secrets=lnumber_value(CAR(args));
     } break;
     case 261 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { ((LObject *)args)->Print(); printf("get_player_inputs : object has no view!\n"); }
       else v->tsecrets=lnumber_value(CAR(args));
     } break;
@@ -2195,7 +2194,7 @@ long c_caller(long number, void *args)
     case 280 : if (chat) chat->put_all(lstring_value(CAR(args))); break;
     case 281 :
     {
-      view *v=current_object->controller();
+      view *v=current_object->m_controller;
       if (!v) { lbreak("get_player_name : object has no view!\n"); }
       else strcpy(v->name,lstring_value(CAR(args)));
     } break;
@@ -2286,26 +2285,26 @@ long c_caller(long number, void *args)
         main_net_cfg->min_players=lnumber_value(CAR(args));
     } break;
     case 1001: // (set_object_tint)
-      if(current_object->Controller)
-        current_object->Controller->set_tint(lnumber_value(CAR(args)));
+      if(current_object->m_controller)
+        current_object->m_controller->set_tint(lnumber_value(CAR(args)));
       else
         current_object->set_tint(lnumber_value(CAR(args)));
       break;
     case 1002: //(get_object_tint)
-      if(current_object->Controller)
-        return current_object->Controller->get_tint();
+      if(current_object->m_controller)
+        return current_object->m_controller->get_tint();
       else
         return current_object->get_tint();
       break;
     case 1003: //(set_object_team)
-      if(current_object->Controller)
-        current_object->Controller->set_team(lnumber_value(CAR(args)));
+      if(current_object->m_controller)
+        current_object->m_controller->set_team(lnumber_value(CAR(args)));
       else
         current_object->set_team(lnumber_value(CAR(args)));
       break;
     case 1004: //(get_object_team)
-      if(current_object->Controller)
-        return current_object->Controller->get_team();
+      if(current_object->m_controller)
+        return current_object->m_controller->get_team();
       else
         return current_object->get_team();
       break;

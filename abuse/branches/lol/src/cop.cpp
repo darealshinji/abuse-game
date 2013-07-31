@@ -141,7 +141,7 @@ void *top_ai()
   {
     GameObject *q=o->get_object(0);
 
-    view *v=q->controller();
+    view *v = q->m_controller;
     if (v)
     {
       if (!v->freeze_time)
@@ -456,12 +456,13 @@ static void do_special_power(GameObject *o, int xm, int ym, int but, GameObject 
         g_current_level->add_object(cloud);
       o->set_state(run_jump);
       o->set_gravity(1);
-      o->set_yacel(0);
-      if (o->yvel()>0) o->set_yvel(o->yvel()/2);
-      if (ym<0)
-        o->set_yvel(o->yvel()-3);
+      o->m_accel.y = 0;
+      if (o->m_vel.y > 0)
+        o->m_vel.y /= 2;
+      if (ym < 0)
+        o->m_vel.y -= 3;
       else
-        o->set_yvel(o->yvel()-2);
+        o->m_vel.y -= 2;
       the_game->play_sound(S_FLY_SND, 32, o->m_pos.x, o->m_pos.y);
     } break;
     case FAST_POWER :
@@ -472,16 +473,16 @@ static void do_special_power(GameObject *o, int xm, int ym, int but, GameObject 
       o->lvars[used_special_power]=1;
       o->lvars[last1_x] = o->m_pos.x;
       o->lvars[last1_y] = o->m_pos.y;
-      int32_t oyvel=o->yvel();
+      int32_t oyvel = o->m_vel.y;
       int in=o->lvars[in_climbing_area];
 
       player_move(o,xm,ym,but);
-      if (ym<0 && !oyvel && o->yvel()<0)             // if they just jumped, make them go higher
-      o->set_yvel(o->yvel()+o->yvel()/3);
+      if (ym < 0 && !oyvel && o->m_vel.y < 0) // if they just jumped, make them go higher
+          o->m_vel.y = o->m_vel.y * 4 / 3;
       o->lvars[in_climbing_area]=in;
 
       o->lvars[last2_x] = o->m_pos.x;
-      o->lvars[last2_x] = o->m_pos.y;
+      o->lvars[last2_y] = o->m_pos.y;
     } break;
     case SNEAKY_POWER:
     {
@@ -494,12 +495,12 @@ static void do_special_power(GameObject *o, int xm, int ym, int but, GameObject 
 static int climb_off_handler(GameObject *o)
 {
   if (o->next_picture())
-    o->controller()->pan_y -= 4;
+    o->m_controller->pan_y -= 4;
   else
   {
     o->m_pos.y -= 28;
-    o->controller()->pan_y += 28;
-    o->controller()->m_lastpos.y -= 28;
+    o->m_controller->pan_y += 28;
+    o->m_controller->m_lastpos.y -= 28;
     o->set_state(stopped);
   }
   return 0;
@@ -509,7 +510,7 @@ static int climb_off_handler(GameObject *o)
 static int climb_on_handler(GameObject *o)
 {
   if (o->next_picture())
-    o->controller()->pan_y += 4;
+    o->m_controller->pan_y += 4;
   else
     o->set_state((character_state)S_climbing);
   return 0;
@@ -568,26 +569,25 @@ static int climb_handler(GameObject *o, int xm, int ym, int but)
       if (ym>=0)
         o->set_state(run_jump_fall);
       else
-      { o->set_state(run_jump);
-        o->set_yvel(get_ability(o->otype,jump_yvel));
+      {
+        o->set_state(run_jump);
+        o->m_vel.y = get_ability(o->otype, jump_yvel);
       }
     }
       }
     }  else if (ym>0 && yd<10)
     {
       o->m_pos.y += 28;
-      o->controller()->pan_y-=28;
-      o->controller()->m_lastpos.y += 28;
+      o->m_controller->pan_y-=28;
+      o->m_controller->m_lastpos.y += 28;
       o->set_state((character_state)S_climb_on);
     }
-    else if (o->yvel()>=0 && (ym>0 || (ym<0 && yd>8)))
+    else if (o->m_vel.y >= 0 && (ym > 0 || (ym < 0 && yd > 8)))
     {
       o->set_state((character_state)S_climbing);
       o->set_gravity(0);
-      o->set_xvel(0);
-      o->set_yvel(0);
-      o->set_xacel(0);
-      o->set_yacel(0);
+      o->m_vel = ivec2(0);
+      o->m_accel = ivec2(0);
       return 0;
     } else
     {
@@ -604,11 +604,11 @@ void *cop_mover(int xm, int ym, int but)
 
   int ret=0;
   GameObject *o=current_object,*top;
-  if (o->controller() && o->controller()->freeze_time)
+  if (o->m_controller && o->m_controller->freeze_time)
   {
-    o->controller()->freeze_time--;
-    if (but || o->controller()->key_down(JK_SPACE) || o->controller()->key_down(JK_ENTER))
-      o->controller()->freeze_time=0;
+    o->m_controller->freeze_time--;
+    if (but || o->m_controller->key_down(JK_SPACE) || o->m_controller->key_down(JK_ENTER))
+      o->m_controller->freeze_time = 0;
   }
   else
   {
@@ -620,10 +620,10 @@ void *cop_mover(int xm, int ym, int but)
       top->add_object(o);
     } else top=o->get_object(0);
 
-    if (o->yvel()>10)
+    if (o->m_vel.y > 10)
     {
-      o->set_yacel(0);
-      o->set_yvel(o->yvel()-1);            // terminal velocity
+      o->m_accel.y = 0;
+      o->m_vel.y -= 1; // terminal velocity
     }
 
     if (o->aistate()==0)  // just started, wait for button
@@ -656,7 +656,7 @@ void *cop_mover(int xm, int ym, int but)
     {
       void *args=NULL;
       PtrRef r1(args);
-      view *v=o->controller();
+      view *v = o->m_controller;
 
       push_onto_list(LNumber::Create(v->weapon_total(v->current_weapon)),args);
       push_onto_list(l_FIRE,args);
@@ -669,13 +669,13 @@ void *cop_mover(int xm, int ym, int but)
       }
     } else if (o->aistate()==3)
     {
-      if (!o->controller() || o->controller()->key_down(JK_SPACE))
+      if (!o->m_controller || o->m_controller->key_down(JK_SPACE))
       {
         // call the user function to reset the player
     ((LSymbol *)l_restart_player)->EvalFunction(NULL);
-    o->controller()->reset_player();
+    o->m_controller->reset_player();
     o->set_aistate(0);
-      } else if (o->controller() && o->controller()->local_player())
+      } else if (o->m_controller && o->m_controller->local_player())
         the_game->show_help(symbol_str("space_cont"));
 
     } else o->set_aistate(o->aistate()+1);
@@ -807,10 +807,10 @@ void *bottom_draw()
       case HEALTH_POWER :
       {
     player_draw(just_fired,o->get_tint());
-    if (o->controller() && o->controller()->local_player())
+    if (o->m_controller && o->m_controller->local_player())
       main_screen->PutImage(cache.img(S_health_image),
-                            ivec2(o->controller()->m_bb.x - 20,
-                                  o->controller()->m_aa.y + 5), 1);
+                            ivec2(o->m_controller->m_bb.x - 20,
+                                  o->m_controller->m_aa.y + 5), 1);
       } break;
       case FAST_POWER :
       {
@@ -829,10 +829,10 @@ void *bottom_draw()
 
     player_draw(just_fired,o->get_tint());
     o->state=(character_state)old_state;
-    if (o->controller() && o->controller()->local_player())
+    if (o->m_controller && o->m_controller->local_player())
       main_screen->PutImage(cache.img(S_fast_image),
-                            ivec2(o->controller()->m_bb.x - 20,
-                                  o->controller()->m_aa.y + 5), 1);
+                            ivec2(o->m_controller->m_bb.x - 20,
+                                  o->m_controller->m_aa.y + 5), 1);
       } break;
       case FLY_POWER :
       {
@@ -851,10 +851,10 @@ void *bottom_draw()
     player_draw(just_fired,o->get_tint());
     o->state=(character_state)old_state;
 
-    if (o->controller() && o->controller()->local_player())
+    if (o->m_controller && o->m_controller->local_player())
       main_screen->PutImage(cache.img(S_fly_image),
-                            ivec2(o->controller()->m_bb.x - 20,
-                                  o->controller()->m_aa.y + 5), 1);
+                            ivec2(o->m_controller->m_bb.x - 20,
+                                  o->m_controller->m_aa.y + 5), 1);
       } break;
       case SNEAKY_POWER :
       {
@@ -865,10 +865,10 @@ void *bottom_draw()
     else
       o->draw_predator();
 
-    if (o->controller() && o->controller()->local_player())
+    if (o->m_controller && o->m_controller->local_player())
       main_screen->PutImage(cache.img(S_sneaky_image),
-                            ivec2(o->controller()->m_bb.x - 20,
-                                  o->controller()->m_aa.y + 5), 1);
+                            ivec2(o->m_controller->m_bb.x - 20,
+                                  o->m_controller->m_aa.y + 5), 1);
       } break;
     }
   }
@@ -892,11 +892,10 @@ void *sgun_ai()
   int32_t ang=o->lvars[sgb_angle];
   int32_t mag=o->lvars[sgb_speed];
 
-  int32_t xvel=(lisp_cos(ang))*(mag);
-  current_object->set_xvel(xvel>>16);
+  int32_t xvel = lisp_cos(ang) * mag;
+  int32_t yvel = -lisp_sin(ang) * mag;
+  current_object->m_vel = ivec2(xvel >> 16, yvel >> 16);
   current_object->set_fxvel((xvel&0xffff)>>8);
-  int32_t yvel=-(lisp_sin(ang))*(mag);
-  current_object->set_yvel(yvel>>16);
   current_object->set_fyvel((yvel&0xffff)>>8);
 
 
@@ -958,7 +957,8 @@ void *respawn_ai()
      if (last->fade_count())
        last->set_fade_count(last->fade_count()-1);
      o->set_aistate_time(0);
-   } else if (o->aistate_time()>o->xvel())
+   }
+   else if (o->aistate_time() > o->m_vel.x)
    {
      int type=o->get_object(rand(x))->otype;
      GameObject *n=create(type, o->m_pos.x, o->m_pos.y);

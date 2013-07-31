@@ -32,7 +32,7 @@ void *sensor_ai()
     if (player_list->next)                 // find closest player
       b=g_current_level->attacker(current_object);
     else b=player_list->m_focus;
-    if (lol::abs(b->m_pos.x-o->m_pos.x)<o->xvel() && lol::abs(b->m_pos.y-o->m_pos.y)<o->yvel())  // inside area?
+    if (lol::abs(b->m_pos - o->m_pos) < o->m_vel) // inside area?
     {
       if (!o->hp())
         o->set_aistate(1);
@@ -48,7 +48,7 @@ void *sensor_ai()
       if (player_list->next)
         b=g_current_level->attacker(current_object);
       else b=player_list->m_focus;
-      if (lol::abs(o->m_pos.x-b->m_pos.x)>o->xacel() || lol::abs(o->m_pos.y-b->m_pos.y)>o->yacel())
+      if (!(lol::abs(o->m_pos - b->m_pos) <= o->m_accel))
         o->set_aistate(0);
     } else o->set_aistate(o->aistate()-1);
   }
