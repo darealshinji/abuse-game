@@ -22,7 +22,6 @@
 #include "intsect.h"
 #include "ability.h"
 #include "lisp.h"
-#include "jrand.h"
 #include "light.h"
 #include "dprint.h"
 #include "clisp.h"
@@ -460,7 +459,7 @@ void GameObject::note_attack(GameObject *whom)
 
 void GameObject::do_flinch(GameObject *from)
 {
-  if (jrandom(2) && has_sequence(flinch_down))
+  if (rand(2) && has_sequence(flinch_down))
     set_state(flinch_down);
   else if (has_sequence(flinch_up))
     set_state(flinch_up);

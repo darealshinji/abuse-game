@@ -20,7 +20,6 @@
 #include "objects.h"
 #include "level.h"
 #include "game.h"
-#include "jrand.h"
 #include "clisp.h"
 #include "ant.h"
 #include "dev.h"
@@ -187,7 +186,6 @@ void *top_ai()
 
     o->m_pos = q->m_pos + ivec2(0, 29 - q->picture()->Size().y);
 
-    rand_on+=o->lvars[point_angle];
     o->current_frame=best_num;
 
 
@@ -453,7 +451,7 @@ static void do_special_power(GameObject *o, int xm, int ym, int but, GameObject 
   {
     case FLY_POWER :
     {
-      GameObject *cloud=create(S_CLOUD, o->m_pos.x + o->direction * -10, o->m_pos.y + jrand() % 5);
+      GameObject *cloud=create(S_CLOUD, o->m_pos.x + o->direction * -10, o->m_pos.y + rand(5));
       if (g_current_level)
         g_current_level->add_object(cloud);
       o->set_state(run_jump);
@@ -926,12 +924,12 @@ void *sgun_ai()
            who->get_object(0)->aistate()==0))
   {
     o->lvars[sgb_lifetime]=0;
-    GameObject *n=create(S_EXPLODE5, o->m_pos.x + jrand() % 4, o->m_pos.y + jrand() % 4);
+    GameObject *n=create(S_EXPLODE5, o->m_pos.x + rand(4), o->m_pos.y + rand(4));
     g_current_level->add_object(n);
   } else if (who && figures[who->otype]->get_cflag(CFLAG_HURTABLE))
   {
     o->lvars[sgb_lifetime]=0;
-    GameObject *n=create(S_EXPLODE3, o->m_pos.x + jrand() % 4, o->m_pos.y + jrand() % 4);
+    GameObject *n=create(S_EXPLODE3, o->m_pos.x + rand(4), o->m_pos.y + rand(4));
     g_current_level->add_object(n);
      who->do_damage(5, o, o->m_pos.x, o->m_pos.y, (lisp_cos(ang) * 10) >> 16, (lisp_sin(ang) * 10) >> 16);
   }
@@ -979,7 +977,7 @@ void *respawn_ai()
      o->set_aistate_time(0);
    } else if (o->aistate_time()>o->xvel())
    {
-     int type=o->get_object(jrandom(x))->otype;
+     int type=o->get_object(rand(x))->otype;
      GameObject *n=create(type, o->m_pos.x, o->m_pos.y);
      g_current_level->add_object(n);
      o->add_object(n);

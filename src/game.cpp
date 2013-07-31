@@ -35,7 +35,6 @@
 #include "ability.h"
 #include "cache.h"
 #include "lisp.h"
-#include "jrand.h"
 #include "configuration.h"
 #include "light.h"
 #include "scroller.h"
@@ -882,7 +881,9 @@ void Game::draw_map(view *v, int interpolate)
     }
   }
 
-  int32_t ro = rand_on;
+  /* FIXME: at this point the old engine saved the PRNG state to
+   * get a somewhat deterministic behaviour. --sam */
+
   if(dev & DRAW_PEOPLE_LAYER)
   {
     if(interpolate)
@@ -1021,8 +1022,7 @@ void Game::draw_map(view *v, int interpolate)
   }  else
     main_screen->dirt_on();
 
-  rand_on = ro;                // restore random start in case in draw funs moved it
-                               // ... not every machine will draw the same thing
+  /* FIXME: PRNG used to be restored here. */
 
   post_render();
 
@@ -2334,9 +2334,6 @@ int main(int argc, char *argv[])
     if (getenv("ABUSE_SAVE_PATH"))
         set_save_filename_prefix(getenv("ABUSE_SAVE_PATH"));
 #endif
-
-    jrand_init();
-    jrand(); // so compiler doesn't complain
 
     set_spec_main_file("abuse.spe");
     check_for_lisp(argc, argv);

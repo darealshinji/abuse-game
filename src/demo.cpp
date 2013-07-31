@@ -21,7 +21,6 @@
 #include "jwindow.h"
 #include "dprint.h"
 #include "dev.h"
-#include "jrand.h"
 #include "lisp.h"
 #include "clisp.h"
 #include "netface.h"
@@ -140,7 +139,6 @@ void demo_manager::reset_game()
 {
   if (dev&EDIT_MODE) toggle_edit_mode();
   the_game->set_state(RUN_STATE);
-  rand_on=0;
 
   view *v=player_list;
   for (; v; v=v->next) { if (v->m_focus) v->reset_player(); }

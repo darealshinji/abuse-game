@@ -13,7 +13,6 @@ libimlib_a_SOURCES = \
     specs.cpp specs.h \
     supmorph.cpp supmorph.h \
     pcxread.cpp pcxread.h \
-    jrand.cpp jrand.h \
     keys.cpp keys.h \
     dprint.cpp dprint.h \
     status.cpp status.h \

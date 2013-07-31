@@ -22,7 +22,6 @@
 #include "ant.h"
 #include "lisp.h"
 #include "game.h"
-#include "jrand.h"
 #include "dev.h"
 #include "pcxread.h"
 #include "menu.h"
@@ -1101,7 +1100,7 @@ long c_caller(long number, void *args)
     current_print_file=NULL;
       }*/
 
-            return jrandom(lnumber_value(CAR(args)));
+            return rand(lnumber_value(CAR(args)));
         } break;
         case 10 : return current_object->aistate_time(); break;
         case 11 : return current_object->state; break;
@@ -1977,7 +1976,7 @@ long c_caller(long number, void *args)
     } break;
     case 237 :
     {
-      rand_on+=lnumber_value(CAR(args)); return 1;
+      (void)lnumber_value(CAR(args)); return 1;
     } break;
     case 238 :
     {
@@ -2023,11 +2022,11 @@ long c_caller(long number, void *args)
     } break;
     case 245 :
     {
-      return rand_on;
+      return 0x0; /* deprecated */
     } break;
     case 246 :
     {
-      rand_on=lnumber_value(CAR(args));
+      (void)lnumber_value(CAR(args)); /* deprecated */
     } break;
     case 247 :
     {

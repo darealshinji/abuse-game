@@ -20,7 +20,6 @@
 #include "objects.h"
 #include "level.h"
 #include "game.h"
-#include "jrand.h"
 #include "clisp.h"
 
 enum { un_offable };     // vars

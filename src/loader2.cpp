@@ -21,7 +21,6 @@
 #include "chars.h"
 #include "specs.h"
 #include "lisp.h"
-#include "jrand.h"
 #include "menu.h"
 #include "dev.h"
 #include "director.h"

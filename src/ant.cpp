@@ -23,7 +23,6 @@
 #include "objects.h"
 #include "level.h"
 #include "game.h"
-#include "jrand.h"
 #include "clisp.h"
 #include "dev.h"
 
@@ -69,7 +68,7 @@ static int ant_dodge(GameObject *o)
   if (o->lvars[ANT_need_to_dodge]==1)
   {
     o->lvars[ANT_need_to_dodge]=0;
-    if ((jrand()%2)==0)
+    if (rand(2) == 0)
     {
       o->set_state(stopped);
       o->set_aistate(ANT_JUMP);
@@ -163,7 +162,7 @@ void *ant_ai()
     } break;
     case ANT_HIDING :
     {
-      if ((jrand()%128)==0) the_game->play_sound(S_SCARE_SND, 127, o->m_pos.x, o->m_pos.y);
+      if (rand(128) == 0) the_game->play_sound(S_SCARE_SND, 127, o->m_pos.x, o->m_pos.y);
       if (o->otype!=S_HIDDEN_ANT)
       {
     o->change_type(S_HIDDEN_ANT);      // switch types so noone hurts us.
@@ -194,7 +193,7 @@ void *ant_ai()
     case ANT_HANGING :
     {
       int fall=0;
-      if ((jrand()%128)==0) the_game->play_sound(S_SCARE_SND, 127, o->m_pos.x, o->m_pos.y);
+      if (rand(128) == 0) the_game->play_sound(S_SCARE_SND, 127, o->m_pos.x, o->m_pos.y);
       if (o->lvars[ANT_hide_flag])
         o->set_aistate(ANT_HIDING);
       else
@@ -265,18 +264,18 @@ void *ant_ai()
       scream_check(o,b);
 
 
-      if ((jrand()%16)==0)
+      if (rand(16) == 0)
       o->lvars[ANT_need_to_dodge]=1;
       if (!ant_dodge(o))
       {
     if ((o->m_pos.x > b->m_pos.x && o->direction == -1) || (o->m_pos.x < b->m_pos.x && o->direction == 1))
     {
       o->next_picture();
-      if ((jrand()%4)==0 && lol::abs(o->m_pos.x-b->m_pos.x)<180 && lol::abs(o->m_pos.y-b->m_pos.y)<100 && can_hit_player(o,b))
+      if (rand(4) == 0 && lol::abs(o->m_pos.x-b->m_pos.x)<180 && lol::abs(o->m_pos.y-b->m_pos.y)<100 && can_hit_player(o,b))
       {
         o->set_state((character_state)S_weapon_fire);
         o->set_aistate(ANT_FIRE);
-      } else if (lol::abs(o->m_pos.x-b->m_pos.x)<100 && lol::abs(o->m_pos.y-b->m_pos.y)<10 && (jrand()%4)==0)
+      } else if (lol::abs(o->m_pos.x-b->m_pos.x)<100 && lol::abs(o->m_pos.y-b->m_pos.y)<10 && rand(4) == 0)
         o->set_aistate(ANT_POUNCE_WAIT);
       else if (lol::abs(o->m_pos.x-b->m_pos.x)>140 && !ant_congestion(o))
         o->set_aistate(ANT_JUMP);
@@ -391,7 +390,7 @@ void *ant_ai()
       b=g_current_level->attacker(current_object);
       else b=player_list->m_focus;
       scream_check(o,b);
-      if (((jrand()%8)==0 && lol::abs(o->m_pos.x-b->m_pos.x)<10 && o->m_pos.y<b->m_pos.y) ||
+      if ((rand(8) == 0 && lol::abs(o->m_pos.x-b->m_pos.x)<10 && o->m_pos.y<b->m_pos.y) ||
       o->lvars[ANT_need_to_dodge]==1)
       {
     o->set_gravity(1);
@@ -403,7 +402,7 @@ void *ant_ai()
       {
     if ((o->m_pos.x>b->m_pos.x && o->direction>0) || (o->m_pos.x<b->m_pos.x && o->direction<0))
     o->direction=-o->direction;
-    else if (lol::abs(o->m_pos.x-b->m_pos.x)<120 && (jrand()%4)==0)
+    else if (lol::abs(o->m_pos.x-b->m_pos.x)<120 && rand(4) == 0)
     {
       o->set_state((character_state)S_ceil_fire);
       o->set_aistate(ANT_CEIL_SHOOT);
