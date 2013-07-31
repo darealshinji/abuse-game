@@ -155,15 +155,15 @@ void view::update_scroll()
 
     m_lastlastpos = m_lastpos;
 
-    if (m_focus->x > m_lastpos.x)
-        m_lastpos.x = lol::max(m_lastpos.x, m_focus->x - no_xright);
-    else if (m_focus->x < m_lastpos.x)
-        m_lastpos.x = lol::min(m_lastpos.x, m_focus->x + no_xleft);
+    if (m_focus->m_pos.x > m_lastpos.x)
+        m_lastpos.x = lol::max(m_lastpos.x, m_focus->m_pos.x - no_xright);
+    else if (m_focus->m_pos.x < m_lastpos.x)
+        m_lastpos.x = lol::min(m_lastpos.x, m_focus->m_pos.x + no_xleft);
 
-    if (m_focus->y > m_lastpos.y)
-        m_lastpos.y = lol::max(m_lastpos.y, m_focus->y - no_ybottom);
-    else if (m_focus->y < m_lastpos.y)
-        m_lastpos.y = lol::min(m_lastpos.y, m_focus->y + no_ytop);
+    if (m_focus->m_pos.y > m_lastpos.y)
+        m_lastpos.y = lol::max(m_lastpos.y, m_focus->m_pos.y - no_ybottom);
+    else if (m_focus->m_pos.y < m_lastpos.y)
+        m_lastpos.y = lol::min(m_lastpos.y, m_focus->m_pos.y + no_ytop);
 }
 
 static char cur_user_name[20] = { 0 };
@@ -196,7 +196,7 @@ view::view(GameObject *focus, view *Next, int number)
   no_xright=0;
   no_ytop=0;
   no_ybottom=0;
-    m_lastlastpos = m_lastpos = focus ? ivec2(focus->x, focus->y) : ivec2(0);
+    m_lastlastpos = m_lastpos = focus ? focus->m_pos : ivec2(0);
   last_hp=last_ammo=-1;
   last_type=-1;
   tsecrets=secrets=0;
@@ -253,12 +253,12 @@ view::view(GameObject *focus, view *Next, int number)
 
 int32_t view::x_center()
 {
-    return m_focus ? m_focus->x : (m_aa.x + m_bb.x) / 2;
+    return m_focus ? m_focus->m_pos.x : (m_aa.x + m_bb.x) / 2;
 }
 
 int32_t view::y_center()
 {
-    return m_focus ? m_focus->y : (m_aa.y + m_bb.y) / 2;
+    return m_focus ? m_focus->m_pos.y : (m_aa.y + m_bb.y) / 2;
 }
 
 void view::draw_character_damage()
@@ -280,25 +280,22 @@ void view::draw_character_damage()
 
 uint16_t make_sync()
 {
-  uint16_t x=0;
-  if (!g_current_level) return 0;
-  if (g_current_level)
-  {
-    view *f=player_list;
-    for (; f; f=f->next)
+    if (!g_current_level)
+        return 0;
+
+    uint16_t ret = 0;
+
+    for (view *f = player_list; f; f = f->next)
     {
-      if (f->m_focus)
-      {
-    x^=(f->m_focus->x&0xffff);
-    x^=(f->m_focus->y&0xffff);
-      }
+        if (f->m_focus)
+        {
+            ret ^= f->m_focus->m_pos.x & 0xffff;
+            ret ^= f->m_focus->m_pos.y & 0xffff;
+        }
     }
-  }
-  x^=rand_on;
 
-  return x;
+    return ret ^ rand_on;
 }
-
 
 
 void view::get_input()
@@ -814,9 +811,8 @@ void view::reset_player()
     m_focus->defaults();
     if (start)
     {
-      m_focus->x=start->x;
-      m_focus->y=start->y;
-      dprintf("reset player position to %d %d\n",start->x,start->y);
+      m_focus->m_pos = start->m_pos;
+      dprintf("reset player position to %d %d\n", start->m_pos.x, start->m_pos.y);
     }
     m_focus->set_state(stopped);
     m_focus->set_tint(_tint);

@@ -111,7 +111,7 @@ void SimpleObject::remove_object(GameObject *o)
 SimpleObject::SimpleObject()
 {
 
-  x=y=0;
+  m_pos = ivec2(0);
   direction=1;
   otype=0;
   state=stopped;

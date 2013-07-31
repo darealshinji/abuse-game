@@ -202,19 +202,19 @@ void Level::check_collisions()
           int32_t x1,y1,x2,y2,          // define the two line segments to check
           xp1,yp1,xp2,yp2;
 
-          xp1=target->x+target->tx(*t_dat);  t_dat++;
-          yp1=target->y+target->ty(*t_dat);  t_dat++;
-          xp2=target->x+target->tx(*t_dat);
-          yp2=target->y+target->ty(t_dat[1]);
+          xp1=target->m_pos.x+target->tx(*t_dat);  t_dat++;
+          yp1=target->m_pos.y+target->ty(*t_dat);  t_dat++;
+          xp2=target->m_pos.x+target->tx(*t_dat);
+          yp2=target->m_pos.y+target->ty(t_dat[1]);
 
-          x1=subject->x+subject->tx(s_dat[0]);
-          y1=subject->y+subject->ty(s_dat[1]);
-          x2=subject->x+subject->tx(s_dat[2]);
-          y2=subject->y+subject->ty(s_dat[3]);
+          x1=subject->m_pos.x+subject->tx(s_dat[0]);
+          y1=subject->m_pos.y+subject->ty(s_dat[1]);
+          x2=subject->m_pos.x+subject->tx(s_dat[2]);
+          y2=subject->m_pos.y+subject->ty(s_dat[3]);
 
 
-          // ok, now we know which line segemnts to check for intersection
-          // now check to see if (x1,y1-x2,y2) intercest with (xp1,yp1-xp2,yp2)
+          // ok, now we know which line segments to check for intersection
+          // now check to see if (x1,y1-x2,y2) intersect with (xp1,yp1-xp2,yp2)
           int32_t _x2=x2,_y2=y2;
           setback_intersect(x1, y1, x2, y2, xp1, yp1, xp2, yp2,0);
 

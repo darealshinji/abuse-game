@@ -313,10 +313,8 @@ ivec2 Game::GameToMouse(ivec2 pos, view *v)
     if (dev & EDIT_MODE)
         tmp = ivec2(map_xoff, map_yoff);
     else if(v->m_focus)
-        tmp = ivec2(v->m_focus->x / ftile_width()
-                       - (v->m_bb.x - v->m_aa.x) / AUTOTILE_WIDTH / 2,
-                    v->m_focus->y / ftile_height()
-                       - (v->m_bb.y - v->m_aa.y) / AUTOTILE_HEIGHT / 2);
+        tmp = v->m_focus->m_pos / ivec2(ftile_width(), ftile_height())
+            - (v->m_bb - v->m_aa) / ivec2(AUTOTILE_WIDTH, AUTOTILE_HEIGHT) / 2;
     else
         tmp = ivec2(0, 0);
 
@@ -328,10 +326,10 @@ ivec2 Game::GameToMouse(ivec2 pos, view *v)
               pos.y * AUTOTILE_HEIGHT / ftile_height()
                  - tmp.y * AUTOTILE_HEIGHT + v->m_aa.y);
     if (tmp.x > 0)
-        ret.x -= (v->m_focus->x * AUTOTILE_WIDTH / ftile_width())
+        ret.x -= (v->m_focus->m_pos.x * AUTOTILE_WIDTH / ftile_width())
                      % AUTOTILE_WIDTH;
     if(tmp.y > 0)
-        ret.y -= (v->m_focus->y * AUTOTILE_HEIGHT / ftile_height())
+        ret.y -= (v->m_focus->m_pos.y * AUTOTILE_HEIGHT / ftile_height())
                      % AUTOTILE_HEIGHT;
 
     return ret;
@@ -776,15 +774,15 @@ void Game::draw_map(view *v, int interpolate)
       {
     if(v->m_focus)
     {
-      x1 = v->m_focus->x / ftile_width() - (v->m_bb.x - v->m_aa.x) / fw / 2;
-      y1 = v->m_focus->y / ftile_height() - (v->m_bb.y - v->m_aa.y) / fh / 2;
+      x1 = v->m_focus->m_pos.x / ftile_width() - (v->m_bb.x - v->m_aa.x) / fw / 2;
+      y1 = v->m_focus->m_pos.y / ftile_height() - (v->m_bb.y - v->m_aa.y) / fh / 2;
     } else x1 = y1 = 0;
       }
       if(x1 > 0)
-        xo = v->m_aa.x - ((v->m_focus->x * fw / ftile_width()) % fw);
+        xo = v->m_aa.x - ((v->m_focus->m_pos.x * fw / ftile_width()) % fw);
       else xo = v->m_aa.x;
       if(y1 > 0)
-        yo = v->m_aa.y - ((v->m_focus->y * fh / ftile_height()) % fh);
+        yo = v->m_aa.y - ((v->m_focus->m_pos.y * fh / ftile_height()) % fh);
       else yo = v->m_aa.y;
     } else
     {

@@ -314,6 +314,11 @@ int32_t dev_controll::snap_y(int32_t y)
   else return y;
 }
 
+ivec2 dev_controll::snap(ivec2 pos)
+{
+    return ivec2(snap_x(pos.x), snap_y(pos.y));
+}
+
 void dev_controll::make_ambient()
 {
     if(ambw)
@@ -470,13 +475,14 @@ void dev_controll::dev_draw(view *v)
 
     if (dev&DRAW_LINKS)
     {
-      for (LightSource *f=first_light_source; f; f=f->next)
+      for (LightSource *f = first_light_source; f; f = f->next)
       {
-    if (f->x-vx>=0 && f->x-vx<=(v->m_bb.x-v->m_aa.x+1) && f->y-vy>=0 && f->y-vy<=(v->m_bb.y-v->m_aa.y+1))
+    if (f->m_pos.x - vx >= 0 && f->m_pos.x - vx <= (v->m_bb.x - v->m_aa.x + 1)
+         && f->m_pos.y - vy >= 0 && f->m_pos.y - vy <= (v->m_bb.y - v->m_aa.y + 1))
     {
       image *im = cache.img(light_buttons[f->type]);
-      main_screen->PutImage(im, ivec2(f->x - vx, f->y - vy)
-                                  + v->m_aa - im->Size() / 2);
+      main_screen->PutImage(im, f->m_pos - ivec2(vx, vy)
+                                         + v->m_aa - im->Size() / 2);
       main_screen->Rectangle(ivec2(f->x1 - vx, f->y1 - vy) + v->m_aa,
                              ivec2(f->x2 - vx, f->y2 - vy) + v->m_aa,
                              wm->medium_color());
@@ -486,23 +492,22 @@ void dev_controll::dev_draw(view *v)
 
     if (link_object)
     {
-      ivec2 pos = the_game->GameToMouse(ivec2(link_object->x, link_object->y), v);
+      ivec2 pos = the_game->GameToMouse(link_object->m_pos, v);
       main_screen->Line(pos, dlast, yellow);
     }
 
     if (selected_light)
     {
       image *im = cache.img(light_buttons[0]);
-      ivec2 pos = the_game->GameToMouse(ivec2(selected_light->x, selected_light->y), v);
+      ivec2 pos = the_game->GameToMouse(selected_light->m_pos, v);
       main_screen->Rectangle(pos - im->Size() / 2, pos + im->Size() / 2,
                              wm->bright_color());
     }
 
-    GameObject *o;
     if (show_names)
-      for (o=g_current_level->first_object(); o; o=o->next)
+      for (GameObject *o = g_current_level->first_object(); o; o = o->next)
       {
-    ivec2 pos = the_game->GameToMouse(ivec2(o->x, o->y), current_view);
+    ivec2 pos = the_game->GameToMouse(o->m_pos, current_view);
     char *nm=object_names[o->otype];
     console_font->PutString(main_screen, pos + ivec2(- strlen(nm) * console_font->Size().x / 2, 2), nm);
       }
@@ -510,40 +515,38 @@ void dev_controll::dev_draw(view *v)
     if (dev&DRAW_LINKS)
     {
       // draw connections between objects
-      for (o=g_current_level->first_object(); o; o=o->next)
+      for (GameObject *o = g_current_level->first_object(); o; o = o->next)
       {
-    ivec2 pos1 = the_game->GameToMouse(ivec2(o->x, o->y), current_view);
+        ivec2 pos1 = the_game->GameToMouse(o->m_pos, current_view);
 
-    int i=0;
-    for (; i<o->total_objects(); i++)
-    {
-      GameObject *other=o->get_object(i);
-      ivec2 pos2 = the_game->GameToMouse(ivec2(other->x, other->y), current_view);
-      main_screen->Line(pos1, pos2, wm->bright_color());
-    }
+        for (int i = 0; i < o->total_objects(); i++)
+        {
+          GameObject *other = o->get_object(i);
+          ivec2 pos2 = the_game->GameToMouse(other->m_pos, current_view);
+          main_screen->Line(pos1, pos2, wm->bright_color());
+        }
 
-    for (i=0; i<o->total_lights(); i++)
-    {
-      LightSource *l=o->get_light(i);
-      ivec2 pos2 = the_game->GameToMouse(ivec2(l->x, l->y), current_view);
-      main_screen->Line(pos1, pos2, light_connection_color);
-    }
-
+        for (int i = 0; i < o->total_lights(); i++)
+        {
+          LightSource *l = o->get_light(i);
+          ivec2 pos2 = the_game->GameToMouse(l->m_pos, current_view);
+          main_screen->Line(pos1, pos2, light_connection_color);
+        }
       }
     }
 
     if (selected_object)
     {
-      selected_object->picture_space(x1,y1,x2,y2);
+      selected_object->picture_space(x1, y1, x2, y2);
       ivec2 pos1 = the_game->GameToMouse(ivec2(x1, y1), v);
       ivec2 pos2 = the_game->GameToMouse(ivec2(x2, y2), v);
       main_screen->Rectangle(pos1, pos2, wm->bright_color());
 
-      pos1 = the_game->GameToMouse(ivec2(selected_object->x, selected_object->y), current_view);
-      for (int i=0; i<selected_object->total_objects(); i++)
+      pos1 = the_game->GameToMouse(selected_object->m_pos, current_view);
+      for (int i = 0; i < selected_object->total_objects(); i++)
       {
         GameObject *other = selected_object->get_object(i);
-        pos2 = the_game->GameToMouse(ivec2(other->x, other->y), current_view);
+        pos2 = the_game->GameToMouse(other->m_pos, current_view);
         main_screen->Line(pos1, pos2, light_connection_color);
       }
     }
@@ -552,11 +555,12 @@ void dev_controll::dev_draw(view *v)
 
 static LightSource *find_light(int32_t x, int32_t y)
 {
-  image *i=cache.img(light_buttons[0]);
-  int l=i->Size().x/2,h=i->Size().y/2;
-  for (LightSource *f=first_light_source; f; f=f->next)
+  image *i = cache.img(light_buttons[0]);
+  int l = i->Size().x / 2, h = i->Size().y / 2;
+  for (LightSource *f = first_light_source; f; f = f->next)
   {
-    if (x>=f->x-l && x<=f->x+l && y>=f->y-h && y<=f->y+h)
+    if (x >= f->m_pos.x - l && x <= f->m_pos.x + l
+         && y >= f->m_pos.y - h && y <= f->m_pos.y + h)
       return f;
   }
   return NULL;
@@ -973,7 +977,6 @@ void dev_controll::do_command(char const *command, Event &ev)
 {
   char fword[50];
   char const *st;
-  int l,h,x,y,i;
   if (command[0]=='(')            // is this a lisp command?
   {
     LObject::Compile(command)->Eval();
@@ -990,7 +993,7 @@ void dev_controll::do_command(char const *command, Event &ev)
       GameObject *o=g_current_level->first_active_object();
       while (o)
       {
-    dprintf("%s %d %d %d %d\n",object_names[o->otype],o->x,o->y,
+    dprintf("%s %d %d %d %d\n", object_names[o->otype], o->m_pos.x, o->m_pos.y,
         figures[o->otype]->rangex,
         figures[o->otype]->rangey
         );
@@ -1001,11 +1004,9 @@ void dev_controll::do_command(char const *command, Event &ev)
 
   if (!strcmp(fword,"clear_weapons"))
   {
-    view *f=NULL;
-    for (f=player_list; f; f=f->next)
+    for (view *f = player_list; f; f = f->next)
     {
-      int i;
-      for (i=0; i<total_weapons; i++)
+      for (int i = 0; i < total_weapons; i++)
     f->weapons[i]=-1;
 
       if (total_weapons)
@@ -1018,7 +1019,7 @@ void dev_controll::do_command(char const *command, Event &ev)
     if (g_current_level && player_list && player_list->m_focus)
     {
       edit_object=selected_object=NULL;
-      int32_t cx=player_list->m_focus->x,cy=player_list->m_focus->y;
+      ivec2 oldfocus = player_list->m_focus->m_pos;
 
       // save the old weapon array
       int32_t *w=(int32_t *)malloc(total_weapons*sizeof(int32_t));
@@ -1032,8 +1033,7 @@ void dev_controll::do_command(char const *command, Event &ev)
       if (main_screen)  // don't draw if graphics haven't been setup yet.
         the_game->draw();
       player_list->reset_player();
-      player_list->m_focus->x=cx;
-      player_list->m_focus->y=cy;
+      player_list->m_focus->m_pos = oldfocus;
 
       memcpy(player_list->weapons,w,total_weapons*sizeof(int32_t));
       free(w);
@@ -1047,13 +1047,14 @@ void dev_controll::do_command(char const *command, Event &ev)
     ivec2 tile = the_game->GetBgTile(dlast);
     if (tile.x>=0 && tile.y>=0)
     {
+      int l, h;
       if (sscanf(command,"%s%d%d",fword,&l,&h)==3)
       {
     dprintf("unchopped %dx%d to ",l,h);
     l=(l+the_game->btile_width()-1)/the_game->btile_width();
     h=(h+the_game->btile_height()-1)/the_game->btile_height();
-    for (y=0,i=cur_bg; y<h; y++)
-          for (x=0; x<l; x++)
+    for (int y = 0, i = cur_bg; y < h; y++)
+          for (int x = 0; x < l; x++)
             the_game->PutBg(tile + ivec2(x, y), i++);
     dprintf("%dx%d\n",l,h);
       } else dprintf(symbol_str("unchop1"));
@@ -1062,11 +1063,10 @@ void dev_controll::do_command(char const *command, Event &ev)
   }
   if (!strcmp(fword,"center"))
   {
-    view *v=the_game->first_view;
-    for (; v; v=v->next)
+    for (view *v = the_game->first_view; v; v = v->next)
     {
-      v->pan_x=0;
-      v->pan_y=0;
+      v->pan_x = 0;
+      v->pan_y = 0;
     }
     the_game->need_refresh();
   }
@@ -1614,7 +1614,6 @@ int sshot_fcount=-1;
 
 void dev_controll::handle_event(Event &ev)
 {
-  int32_t x,y;
   if (link_object && (dlast.x!=last_link_x || dlast.y!=last_link_y))
   {
     last_link_x=dlast.x;
@@ -1626,7 +1625,7 @@ void dev_controll::handle_event(Event &ev)
 
   if (!g_current_level) return ;
 
-  for (x=0; x<total_pals; x++)
+  for (int x = 0; x < total_pals; x++)
     pal_wins[x]->handle_event(ev);
   if (ev.type==EV_MOUSE_MOVE)
     dlast = last_demo_mpos;
@@ -1677,9 +1676,7 @@ void dev_controll::handle_event(Event &ev)
       {
     if (ev.type==EV_MOUSE_MOVE)
     {
-      ivec2 pos = the_game->MouseToGame(last_demo_mpos);
-      edit_object->x = snap_x(pos.x);
-      edit_object->y = snap_y(pos.y);
+      edit_object->m_pos = snap(the_game->MouseToGame(last_demo_mpos));
       the_game->need_refresh();
     }
     else if (ev.mouse_button==1 && ev.window==NULL)
@@ -1690,8 +1687,8 @@ void dev_controll::handle_event(Event &ev)
     if (ev.window==NULL && ev.type==EV_KEY && ev.key=='d')
     {
       int32_t xv=0,yv=100;
-      edit_object->try_move(edit_object->x,edit_object->y,xv,yv,1);
-      edit_object->y+=yv;
+      edit_object->try_move(edit_object->m_pos.x, edit_object->m_pos.y, xv, yv, 1);
+      edit_object->m_pos.y += yv;
       state=DEV_SELECT;
       selected_object=edit_object=NULL;
     }
@@ -1705,9 +1702,7 @@ void dev_controll::handle_event(Event &ev)
       {
     if (ev.type==EV_MOUSE_MOVE)
     {
-      ivec2 pos = the_game->MouseToGame(last_demo_mpos);
-      edit_light->x = snap_x(pos.x);
-      edit_light->y = snap_y(pos.y);
+      edit_light->m_pos = snap(the_game->MouseToGame(last_demo_mpos));
 
       edit_light->calc_range();
       the_game->need_refresh();
@@ -2298,8 +2293,8 @@ void dev_controll::handle_event(Event &ev)
     } break;
     case ID_CLEAR_WEAPONS :
     {
-      Event ev;
-      do_command("clear_weapons",ev);
+      Event tmp;
+      do_command("clear_weapons", tmp);
     } break;
     case ID_GOD_MODE :
     {
@@ -2829,10 +2824,8 @@ void dev_controll::handle_event(Event &ev)
       {
         if (g_current_level && player_list && player_list->m_focus)
         {
-          ivec2 pos = the_game->MouseToGame(dlast);
-          player_list->m_focus->x = pos.x;
-          player_list->m_focus->y = pos.y;
-          do_command("center",ev);
+          player_list->m_focus->m_pos = the_game->MouseToGame(dlast);
+          do_command("center", ev);
           the_game->need_refresh();
         }
       } break;

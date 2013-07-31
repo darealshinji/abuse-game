@@ -27,7 +27,8 @@ extern int16_t shutdown_lighting_value,shutdown_lighting;
 class LightSource
 {
   public :
-  int32_t type,x,xshift,y,yshift;
+  ivec2 m_pos;
+  int32_t type, xshift, yshift;
   int32_t outer_radius,mul_div,inner_radius;
 
   int32_t x1,y1,x2,y2;

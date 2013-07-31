@@ -45,10 +45,10 @@ int can_see(GameObject *o, int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 // if we first saw the player or it's been a while since we've seen the player then do a scream
 static void scream_check(GameObject *o, GameObject *b)
 {
-  if (can_see(o,o->x,o->y,b->x,b->y))
+  if (can_see(o,o->m_pos.x, o->m_pos.y, b->m_pos.x, b->m_pos.y))
   {
     if (o->lvars[ANT_no_see_time]==0 || o->lvars[ANT_no_see_time]>20)
-      the_game->play_sound(S_ASCREAM_SND,127,o->x,o->y);
+      the_game->play_sound(S_ASCREAM_SND, 127, o->m_pos.x, o->m_pos.y);
     o->lvars[ANT_no_see_time]=1;
   } else o->lvars[ANT_no_see_time]++;
 }
@@ -57,7 +57,9 @@ static int ant_congestion(GameObject *o)
 {
   for (GameObject *d=g_current_level->first_active_object(); d; d=d->next_active)
   {
-    if (d->otype==o->otype && lol::abs(o->x-d->x)<30 && lol::abs(o->x-d->y)<20) return 1;
+    if (d->otype == o->otype && lol::abs(o->m_pos.x - d->m_pos.x) < 30
+         && lol::abs(o->m_pos.x - d->m_pos.y) < 20)
+      return 1;
   }
   return 0;
 }
@@ -71,7 +73,7 @@ static int ant_dodge(GameObject *o)
     {
       o->set_state(stopped);
       o->set_aistate(ANT_JUMP);
-      if (!can_see(o,o->x,o->y,o->x,o->y-120))   // is there a roof above?
+      if (!can_see(o, o->m_pos.x, o->m_pos.y, o->m_pos.x, o->m_pos.y - 120))   // is there a roof above?
       {
     o->set_yvel(-17);
     o->set_xvel(0);
@@ -104,14 +106,16 @@ static int alien_wait_time()
 
 static int can_hit_player(GameObject *o, GameObject *b)
 {
-  return can_see(o,o->x+(o->direction>0?15:-15),o->y-15,b->x,b->y-15);
+  return can_see(o, o->m_pos.x + (o->direction > 0 ? 15 : -15), o->m_pos.y - 15, b->m_pos.x, b->m_pos.y - 15);
 }
 
 static void fire_at_player(GameObject *o, GameObject *b)
 {
-  int32_t firex=o->x+(o->direction>0?15:-15),firey=o->y-15,
-          playerx=b->x+b->xvel()*8,playery=b->y-15+b->yvel()*2;
-  if (can_see(o,o->x,o->y,firex,firey) && can_see(o,firex,firey,playerx,playery))
+  int32_t firex = o->m_pos.x + (o->direction > 0 ? 15 : -15),
+          firey = o->m_pos.y - 15,
+          playerx = b->m_pos.x + b->xvel() * 8,
+          playery = b->m_pos.y - 15 + b->yvel() * 2;
+  if (can_see(o, o->m_pos.x, o->m_pos.y, firex, firey) && can_see(o, firex, firey, playerx, playery))
   {
     int angle=lisp_atan2(firey-playery,playerx-firex);
     void *call_list=NULL;
@@ -159,7 +163,7 @@ void *ant_ai()
     } break;
     case ANT_HIDING :
     {
-      if ((jrand()%128)==0) the_game->play_sound(S_SCARE_SND,127,o->x,o->y);
+      if ((jrand()%128)==0) the_game->play_sound(S_SCARE_SND, 127, o->m_pos.x, o->m_pos.y);
       if (o->otype!=S_HIDDEN_ANT)
       {
     o->change_type(S_HIDDEN_ANT);      // switch types so noone hurts us.
@@ -173,7 +177,7 @@ void *ant_ai()
     if (player_list->next)
       b=g_current_level->attacker(current_object);
     else b=player_list->m_focus;
-    if (lol::abs(b->x-o->x)<130 && (o->y<b->y))
+    if (lol::abs(b->m_pos.x - o->m_pos.x) < 130 && (o->m_pos.y < b->m_pos.y))
       fall=1;
       }
       else if (o->get_object(0)->aistate()!=0)
@@ -190,7 +194,7 @@ void *ant_ai()
     case ANT_HANGING :
     {
       int fall=0;
-      if ((jrand()%128)==0) the_game->play_sound(S_SCARE_SND,127,o->x,o->y);
+      if ((jrand()%128)==0) the_game->play_sound(S_SCARE_SND, 127, o->m_pos.x, o->m_pos.y);
       if (o->lvars[ANT_hide_flag])
         o->set_aistate(ANT_HIDING);
       else
@@ -205,7 +209,7 @@ void *ant_ai()
       if (player_list->next)
         b=g_current_level->attacker(current_object);
       else b=player_list->m_focus;
-      if (lol::abs(b->x-o->x)<130 && (o->y<b->y))
+      if (lol::abs(b->m_pos.x - o->m_pos.x) < 130 && (o->m_pos.y < b->m_pos.y))
       fall=1;
     }
     if (fall)
@@ -227,10 +231,10 @@ void *ant_ai()
 
       scream_check(o,b);
       int ret=o->mover(0,0,0);
-      if ((ret&BLOCKED_DOWN) || !can_see(o,o->x,o->y,o->x,o->y+1))
+      if ((ret&BLOCKED_DOWN) || !can_see(o, o->m_pos.x, o->m_pos.y, o->m_pos.x, o->m_pos.y + 1))
       {
     o->set_state((character_state)S_landing);
-    the_game->play_sound(S_ALAND_SND,127,o->x,o->y);
+    the_game->play_sound(S_ALAND_SND, 127, o->m_pos.x, o->m_pos.y);
     o->set_aistate(ANT_LANDING);
       }
     } break;
@@ -239,7 +243,7 @@ void *ant_ai()
       if (!o->next_picture())
       {
     int32_t xv=0,yv=2;
-    o->try_move(o->x,o->y,xv,yv,1);
+    o->try_move(o->m_pos.x, o->m_pos.y, xv, yv, 1);
     if (yv!=0)
     {
       o->set_gravity(1);
@@ -265,16 +269,16 @@ void *ant_ai()
       o->lvars[ANT_need_to_dodge]=1;
       if (!ant_dodge(o))
       {
-    if ((o->x>b->x && o->direction==-1) || (o->x<b->x && o->direction==1))
+    if ((o->m_pos.x > b->m_pos.x && o->direction == -1) || (o->m_pos.x < b->m_pos.x && o->direction == 1))
     {
       o->next_picture();
-      if ((jrand()%4)==0 && lol::abs(o->x-b->x)<180 && lol::abs(o->y-b->y)<100 && can_hit_player(o,b))
+      if ((jrand()%4)==0 && lol::abs(o->m_pos.x-b->m_pos.x)<180 && lol::abs(o->m_pos.y-b->m_pos.y)<100 && can_hit_player(o,b))
       {
         o->set_state((character_state)S_weapon_fire);
         o->set_aistate(ANT_FIRE);
-      } else if (lol::abs(o->x-b->x)<100 && lol::abs(o->y-b->y)<10 && (jrand()%4)==0)
+      } else if (lol::abs(o->m_pos.x-b->m_pos.x)<100 && lol::abs(o->m_pos.y-b->m_pos.y)<10 && (jrand()%4)==0)
         o->set_aistate(ANT_POUNCE_WAIT);
-      else if (lol::abs(o->x-b->x)>140 && !ant_congestion(o))
+      else if (lol::abs(o->m_pos.x-b->m_pos.x)>140 && !ant_congestion(o))
         o->set_aistate(ANT_JUMP);
       else
       {
@@ -282,38 +286,38 @@ void *ant_ai()
         int32_t ym=0,new_xm=xm;
         if (o->state!=running) o->set_state(running);
 
-        o->try_move(o->x,o->y,new_xm,ym,3);
+        o->try_move(o->m_pos.x,o->m_pos.y,new_xm,ym,3);
         if (new_xm!=xm)    // blocked, see if we can climb ramp
         {
           new_xm=xm;
           ym=-lol::abs(xm);
-          o->try_move(o->x,o->y,new_xm,ym,3);
+          o->try_move(o->m_pos.x,o->m_pos.y,new_xm,ym,3);
           if (new_xm==xm)
           {
-        o->x+=new_xm;
-        o->y+=ym;
+        o->m_pos.x+=new_xm;
+        o->m_pos.y+=ym;
         new_xm=0;
         ym=lol::abs(xm);      // now get back on the ground
-        o->try_move(o->x,o->y,new_xm,ym,3);
-        o->x+=new_xm;
-        o->y+=ym;
+        o->try_move(o->m_pos.x,o->m_pos.y,new_xm,ym,3);
+        o->m_pos.x+=new_xm;
+        o->m_pos.y+=ym;
           } else
           {
         o->direction=0-o->direction;
         o->set_aistate(ANT_JUMP);
           }
         } else
-          o->x+=new_xm;
+          o->m_pos.x+=new_xm;
         new_xm=0;
         ym=10;       // see if we should fall
-        o->try_move(o->x,o->y,new_xm,ym,3);
+        o->try_move(o->m_pos.x,o->m_pos.y,new_xm,ym,3);
         if (ym==10)
           o->set_aistate(ANT_FALL_DOWN);
-        else o->y+=ym;
+        else o->m_pos.y+=ym;
       }
     } else
     {
-      o->direction=o->x>b->x ? -1 : 1;
+      o->direction=o->m_pos.x>b->m_pos.x ? -1 : 1;
       o->set_aistate(ANT_LANDING);
     }
       }
@@ -326,7 +330,7 @@ void *ant_ai()
     o->set_state((character_state)S_pounce_wait);
     if (o->aistate_time()>alien_wait_time())
     {
-      the_game->play_sound(S_ASLASH_SND,127,o->x,o->y);
+      the_game->play_sound(S_ASLASH_SND,127,o->m_pos.x,o->m_pos.y);
       o->set_state(stopped);
       o->set_aistate(ANT_JUMP);
     }
@@ -364,9 +368,9 @@ void *ant_ai()
 //      o->set_yvel(o->yvel()+1);
       o->set_xacel(0);
       int32_t xv=0,yv=o->yvel();
-      o->y-=31;
-      o->try_move(o->x,o->y,xv,yv,1);
-      o->y+=31+yv;
+      o->m_pos.y-=31;
+      o->try_move(o->m_pos.x,o->m_pos.y,xv,yv,1);
+      o->m_pos.y+=31+yv;
       if (yv!=o->yvel())
       {
     if (o->yvel()>0)
@@ -387,7 +391,7 @@ void *ant_ai()
       b=g_current_level->attacker(current_object);
       else b=player_list->m_focus;
       scream_check(o,b);
-      if (((jrand()%8)==0 && lol::abs(o->x-b->x)<10 && o->y<b->y) ||
+      if (((jrand()%8)==0 && lol::abs(o->m_pos.x-b->m_pos.x)<10 && o->m_pos.y<b->m_pos.y) ||
       o->lvars[ANT_need_to_dodge]==1)
       {
     o->set_gravity(1);
@@ -397,9 +401,9 @@ void *ant_ai()
       }
       else
       {
-    if ((o->x>b->x && o->direction>0) || (o->x<b->x && o->direction<0))
+    if ((o->m_pos.x>b->m_pos.x && o->direction>0) || (o->m_pos.x<b->m_pos.x && o->direction<0))
     o->direction=-o->direction;
-    else if (lol::abs(o->x-b->x)<120 && (jrand()%4)==0)
+    else if (lol::abs(o->m_pos.x-b->m_pos.x)<120 && (jrand()%4)==0)
     {
       o->set_state((character_state)S_ceil_fire);
       o->set_aistate(ANT_CEIL_SHOOT);
@@ -408,10 +412,10 @@ void *ant_ai()
     {
       int speed=o->direction>0 ? get_ability(o->otype,run_top_speed) :
                 -get_ability(o->otype,run_top_speed);
-      if (can_see(o,o->x,o->y-31,o->x+speed,o->y-31) &&
-          !can_see(o,o->x+speed,o->y-31,o->x+speed,o->y-32))
+      if (can_see(o,o->m_pos.x,o->m_pos.y-31,o->m_pos.x+speed,o->m_pos.y-31) &&
+          !can_see(o,o->m_pos.x+speed,o->m_pos.y-31,o->m_pos.x+speed,o->m_pos.y-32))
       {
-        o->x+=speed;
+        o->m_pos.x+=speed;
         if (!o->next_picture()) o->set_state((character_state)S_top_walk);
 
       } else o->set_aistate(ANT_FALL_DOWN);

@@ -536,8 +536,7 @@ void net_reload()
 
                 GameObject *o=create(current_start_type,0,0);
                 GameObject *start=g_current_level->get_random_start(320,NULL);
-                if (start) { o->x=start->x; o->y=start->y; }
-                else { o->x=100; o->y=100; }
+                o->m_pos = start ? start->m_pos : ivec2(100, 100);
 
                 f->next=new view(o,NULL,join_list->client_id);
                 strcpy(f->next->name,join_list->name);
