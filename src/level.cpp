@@ -54,8 +54,9 @@ GameObject *Level::attacker(GameObject *who)
   {
     if (f->m_focus)
     {
-      int32_t tmp_d=lol::abs(f->m_focus->x-who->x)+lol::abs(f->m_focus->y-who->y);
-      if (tmp_d<d)
+      int32_t tmp_d = lol::abs(f->m_focus->m_pos.x - who->m_pos.x)
+                    + lol::abs(f->m_focus->m_pos.y - who->m_pos.y);
+      if (tmp_d < d)
       {
     d=tmp_d;
     c=f->m_focus;
@@ -135,8 +136,7 @@ void Level::restart()
       if (!strcmp(object_names[o->otype],"START"))
       {
     if (!found) found=o;
-    f->m_focus->x=o->x;
-    f->m_focus->y=o->y;
+    f->m_focus->m_pos = o->m_pos;
     f->m_focus->set_hp(get_ability(f->m_focus->otype,start_hp));
     f->m_focus->set_state(stopped);
     f=f->next;
@@ -147,8 +147,7 @@ void Level::restart()
   {
     if (f->m_focus)
     {
-      f->m_focus->x=found->x;
-      f->m_focus->y=found->y;
+      f->m_focus->m_pos = found->m_pos;
       f->m_focus->set_hp(get_ability(f->m_focus->otype,start_hp));
       f->m_focus->set_state(stopped);
     }
@@ -226,7 +225,8 @@ int Level::add_actives(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
       int32_t xr=figures[o->otype]->rangex,
            yr=figures[o->otype]->rangey;
 
-      if (o->x+xr>=x1 && o->x-xr<=x2 && o->y+yr>=y1 && o->y-yr<=y2)
+      if (o->m_pos.x + xr >= x1 && o->m_pos.x - xr <= x2
+           && o->m_pos.y + yr >= y1 && o->m_pos.y - yr <= y2)
       {
 
     if (o->can_block())              // if object can block other player, keep a list for fast testing
@@ -271,7 +271,8 @@ int Level::add_drawables(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
       int32_t xr=figures[o->otype]->draw_rangex,
       yr=figures[o->otype]->draw_rangey;
 
-      if (o->x+xr>=x1 && o->x-xr<=x2 && o->y+yr>=y1 && o->y-yr<=y2)
+      if (o->m_pos.x + xr >= x1 && o->m_pos.x - xr <= x2
+           && o->m_pos.y + yr >= y1 && o->m_pos.y - yr <= y2)
       {
     t++;
     if (!first_active)
@@ -303,7 +304,7 @@ view *Level::make_view_list(int nplayers)
   {
     if (!strcmp(object_names[o->otype],"START"))
     {
-      f=new view(create(use_type,o->x,o->y),f,num); num++;
+      f=new view(create(use_type, o->m_pos.x, o->m_pos.y),f,num); num++;
       f->m_focus->set_controller(f);
       add_object_after(f->m_focus,o);
       j++;
@@ -318,7 +319,7 @@ view *Level::make_view_list(int nplayers)
   {
     if (startable)
     {
-      GameObject *o=create(use_type,f->m_focus->x,f->m_focus->y);
+      GameObject *o=create(use_type, f->m_focus->m_pos.x, f->m_focus->m_pos.y);
       f=new view(o,f,num); num++;
       f->m_focus->set_controller(f);
       add_object_after(o,last_start);
@@ -340,23 +341,23 @@ void Level::wall_push()
     if (o->pushable())
     {
       o->picture_space(sx1,sy1,sx2,sy2);
-      xv=sx1-o->x;
+      xv=sx1-o->m_pos.x;
       yv=0;
-      o->try_move(o->x,o->y-1,xv,yv,1);         // check for wall pushes on the left using feet
-      if (xv!=sx1-o->x)                         // is the character in the wall?
+      o->try_move(o->m_pos.x,o->m_pos.y-1,xv,yv,1);         // check for wall pushes on the left using feet
+      if (xv!=sx1-o->m_pos.x)                         // is the character in the wall?
       {
     xv=-xv;
-    o->try_move(o->x,o->y-1,xv,yv,1);       // see how far to the right we can push the character
-    o->x+=xv;
+    o->try_move(o->m_pos.x,o->m_pos.y-1,xv,yv,1);       // see how far to the right we can push the character
+    o->m_pos.x+=xv;
       } else
       {
-    xv=sx2-o->x;
-    o->try_move(o->x,o->y-1,xv,yv,1);      // now check the right of the character for a wall
-    if (xv!=sx2-o->x)
+    xv=sx2-o->m_pos.x;
+    o->try_move(o->m_pos.x,o->m_pos.y-1,xv,yv,1);      // now check the right of the character for a wall
+    if (xv!=sx2-o->m_pos.x)
     {
       xv=-xv;
-      o->try_move(o->x,o->y-1,xv,yv,1);
-      o->x+=xv;
+      o->try_move(o->m_pos.x,o->m_pos.y-1,xv,yv,1);
+      o->m_pos.x+=xv;
     }
       }
     }
@@ -370,21 +371,21 @@ void Level::try_pushback(GameObject *subject,GameObject *target)
       subject->state!=dead && target->state!=dead &&
       subject->state!=dieing && target->state!=dieing)
   {
-    int b1=subject->push_range(),b2=target->push_range();
-    if (lol::abs(subject->x-target->x)<b1+b2)
+    int b1=subject->push_range(), b2=target->push_range();
+    if (lol::abs(subject->m_pos.x-target->m_pos.x)<b1+b2)
     {
-      int32_t tmove=b1+b2-lol::abs(subject->x-target->x),xv,yv=0,xv2;
-      if (subject->x>target->x)
-        xv=tmove/2;
-      else xv=-tmove/2;
-      xv2=-xv;
+      int32_t tmove = b1 + b2 - lol::abs(subject->m_pos.x - target->m_pos.x), xv, yv=0, xv2;
+      if (subject->m_pos.x > target->m_pos.x)
+        xv = tmove/2;
+      else xv = -tmove/2;
+      xv2 = -xv;
 
-      subject->try_move(subject->x,subject->y,xv,yv,3);
-      subject->x+=xv;
+      subject->try_move(subject->m_pos.x, subject->m_pos.y, xv, yv, 3);
+      subject->m_pos.x += xv;
 
-      yv=0;
-      target->try_move(target->x,target->y,xv2,yv,3);
-      target->x+=xv2;
+      yv = 0;
+      target->try_move(target->m_pos.x, target->m_pos.y, xv2, yv, 3);
+      target->m_pos.x += xv2;
     }
   }
 }
@@ -496,10 +497,10 @@ GameObject *Level::boundary_setback(GameObject *subject, int32_t x1, int32_t y1,
     int iter=t_damage->tot-1;
     while(iter-->0)
     {
-      int32_t xp1=target->x+target->tx(*t_dat);  t_dat++;
-      int32_t yp1=target->y+target->ty(*t_dat);  t_dat++;
-      int32_t xp2=target->x+target->tx(*t_dat);
-      int32_t yp2=target->y+target->ty(t_dat[1]);
+      int32_t xp1 = target->m_pos.x + target->tx(*t_dat);  t_dat++;
+      int32_t yp1 = target->m_pos.y + target->ty(*t_dat);  t_dat++;
+      int32_t xp2 = target->m_pos.x + target->tx(*t_dat);
+      int32_t yp2 = target->m_pos.y + target->ty(t_dat[1]);
 
       // now check to see if (x1,y1-x2,y2) intercest with (xp1,yp1-xp2,yp2)
       if (*ins)
@@ -548,10 +549,10 @@ GameObject *Level::all_boundary_setback(GameObject *subject, int32_t x1, int32_t
     int iter=t_damage->tot-1;
     while(iter-->0)
     {
-      int32_t xp1=target->x+target->tx(*t_dat);  t_dat++;
-      int32_t yp1=target->y+target->ty(*t_dat);  t_dat++;
-      int32_t xp2=target->x+target->tx(*t_dat);
-      int32_t yp2=target->y+target->ty(t_dat[1]);
+      int32_t xp1 = target->m_pos.x + target->tx(*t_dat);  t_dat++;
+      int32_t yp1 = target->m_pos.y + target->ty(*t_dat);  t_dat++;
+      int32_t xp2 = target->m_pos.x + target->tx(*t_dat);
+      int32_t yp2 = target->m_pos.y + target->ty(t_dat[1]);
 
       // now check to see if (x1,y1-x2,y2) intercest with (xp1,yp1-xp2,yp2)
       if (*ins)
@@ -577,27 +578,20 @@ GameObject *Level::all_boundary_setback(GameObject *subject, int32_t x1, int32_t
 
 void Level::interpolate_draw_objects(view *v)
 {
-    int32_t old_x, old_y;
     current_view = v;
 
     for (GameObject *o = first_active; o; o = o->next_active)
     {
-        old_x = o->x;
-        old_y = o->y;
-        o->x = (o->last_x + o->x) / 2;
-        o->y = (o->last_y + o->y) / 2;
-        o->last_x = old_x;
-        o->last_y = old_y;
+        ivec2 oldpos = o->m_pos;
+        o->m_pos = (o->m_last_pos + o->m_pos) / 2;
+        o->m_last_pos = oldpos;
     }
 
     for (GameObject *o = first_active; o; o = o->next_active)
         o->draw();
 
     for (GameObject *o = first_active; o; o = o->next_active)
-    {
-        o->x = o->last_x;
-        o->y = o->last_y;
-    }
+        o->m_pos = o->m_last_pos;
 }
 
 bFILE *rcheck=NULL,*rcheck_lp=NULL;
@@ -606,7 +600,7 @@ extern int sshot_fcount,screen_shot_on;
 
 int Level::tick()
 {
-  GameObject *o,*l=NULL,  // l is last, used for delete
+  GameObject *l=NULL,  // l is last, used for delete
               *cur;        // cur is current object, NULL if object deletes it's self
   int ret=1;
 
@@ -642,24 +636,24 @@ int Level::tick()
     }
   }*/
 
-  for (o=first_active; o; )
+  for (GameObject *o = first_active; o; )
   {
-    o->last_x=o->x;
-    o->last_y=o->y;
-    cur=o;
-    view *c=o->controller();
+    o->m_last_pos = o->m_pos;
+    cur = o;
+    view *c = o->controller();
     if (!(dev&SUSPEND_MODE) || c)
     {
       o->set_flags(o->flags()&(0xff-FLAG_JUST_HIT-FLAG_JUST_BLOCKED));
 
       if (c)
       {
-    area_controller *a,*smallest=NULL;
+    area_controller *smallest = nullptr;
     int32_t smallest_size=0xffffffff;
-    for (a=area_list; a; a=a->next)
-      if (o->x>=a->x && o->y>=a->y && o->x<=a->x+a->w && o->y<=a->y+a->h)
+    for (area_controller *a = area_list; a; a = a->next)
+      if (o->m_pos.x >= a->x && o->m_pos.y >= a->y
+           && o->m_pos.x <= a->x + a->w && o->m_pos.y <= a->y + a->h)
       {
-        int32_t size=a->w*a->h;
+        int32_t size = a->w * a->h;
         if (size<smallest_size)
         {
           smallest=a;
@@ -1374,7 +1368,7 @@ Level::Level(SpecDir *sd, bFILE *fp, char const *lev_name)
   {
     GameObject *p = l;
     l = l->next;
-    if (p->otype==0xffff || p->x<0 || p->y<0)
+    if (p->otype == 0xffff || p->m_pos.x < 0 || p->m_pos.y < 0)
       delete_object(p);
   }
 
@@ -2567,7 +2561,6 @@ void Level::foreground_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y
     xp1,yp1,xp2,yp2,    // starting and ending points of block line segment
     swap;               // temp var
   int32_t blockx1,blocky1,blockx2,blocky2,block,bx,by;
-  point_list *block_list;
   unsigned char *bdat;
 
   blockx1=x1;
@@ -2599,9 +2592,9 @@ void Level::foreground_intersect(int32_t x1, int32_t y1, int32_t &x2, int32_t &y
       {
         // now check the all the line segments in the block
         foretile *f=the_game->get_fg(block);
-        block_list=f->points;
-        unsigned char total=block_list->tot;
-        bdat=block_list->data;
+        point_list *points = f->points;
+        unsigned char total = points->tot;
+        bdat = points->data;
         unsigned char *ins=f->points->inside;
     int32_t xo=bx*tl,yo=by*th;
         for (j=0; j<total-1; j++,ins++)
@@ -2641,7 +2634,6 @@ void Level::vforeground_intersect(int32_t x1, int32_t y1, int32_t &y2)
     j,
     xp1,yp1,xp2,yp2;    // starting and ending points of block line segment temp var
   int32_t blocky1,blocky2,block,bx,by,checkx;
-  point_list *block_list;
   unsigned char *bdat;
 
   int y_addback;
@@ -2672,10 +2664,10 @@ void Level::vforeground_intersect(int32_t x1, int32_t y1, int32_t &y2)
 
     // now check the all the line segments in the block
     foretile *f=the_game->get_fg(block);
-    block_list=f->points;
+    point_list *points = f->points;
 
-    unsigned char total=block_list->tot;
-    bdat=block_list->data;
+    unsigned char total = points->tot;
+    bdat = points->data;
     unsigned char *ins=f->points->inside;
 
 //    int32_t xo=bx*tl,yo=by*th;
@@ -2723,22 +2715,21 @@ void Level::send_signal(int32_t signal)
 int Level::crush(GameObject *by_who, int xamount, int yamount)
 {
   int32_t xv,yv,crushed=0;
-  GameObject *o=first_active;
-  for (; o; o=o->next_active)
+  for (GameObject *o = first_active; o; o = o->next_active)
   {
     if (o->hurtable() && o!=by_who)
     {
       xv=-xamount;
       yv=-yamount;
-      if (o->try_move(o->x,o->y,xv,yv,3)==by_who)
+      if (o->try_move(o->m_pos.x, o->m_pos.y, xv, yv, 3) == by_who)
       {
     xv=xamount;
     yv=yamount;
-    o->try_move(o->x,o->y,xv,yv,3);
+    o->try_move(o->m_pos.x, o->m_pos.y, xv, yv, 3);
     if (xv==0 && yv==0)
     {
       if (o->state!=dead && o->state!=dieing)
-        o->do_damage(by_who->current_figure()->hit_damage,by_who,o->x,o->y,0,0);
+        o->do_damage(by_who->current_figure()->hit_damage, by_who, o->m_pos.x, o->m_pos.y, 0, 0);
 
 /*      {
         if (o->has_sequence(dieing))
@@ -2760,8 +2751,7 @@ int Level::platform_push(GameObject *by_who, int xamount, int yamount)
 {
   int failed=0;
   int32_t xv,yv;
-  GameObject *o=first_active;
-  for (; o; o=o->next_active)
+  for (GameObject *o = first_active; o; o = o->next_active)
   {
     if (o->is_playable() && o->state!=dieing && o->state!=dead)
     {
@@ -2771,11 +2761,8 @@ int Level::platform_push(GameObject *by_who, int xamount, int yamount)
       {
     tvx=-xamount;
     tvy=-yamount;
-    if (o->try_move(o->x,o->y,tvx,tvy,1)==by_who)
-    {
-      o->x+=tvx;
-      o->y+=tvy;
-    }
+    if (o->try_move(o->m_pos.x, o->m_pos.y, tvx, tvy, 1) == by_who)
+      o->m_pos += ivec2(tvx, tvy);
       }
 
 /*      xv=xamount;
@@ -2791,16 +2778,16 @@ int Level::platform_push(GameObject *by_who, int xamount, int yamount)
 
       xv=0;
       yv=2;
-      if (o->try_move(o->x,o->y,xv,yv,1)==by_who)  // are we standing on the platform?
+      if (o->try_move(o->m_pos.x, o->m_pos.y, xv, yv, 1) == by_who)  // are we standing on the platform?
       {
-    by_who->x=-by_who->x;
+    by_who->m_pos.x = -by_who->m_pos.x;
     xv=xamount;
     yv=yamount;
-    o->try_move(o->x,o->y,xv,yv,3);
-    if (xv!=xamount || yv!=yamount) failed=1;
-    o->x+=xv;
-    o->y+=yv;
-    by_who->x=-by_who->x;
+    o->try_move(o->m_pos.x, o->m_pos.y, xv, yv, 3);
+    if (xv!=xamount || yv!=yamount)
+      failed=1;
+    o->m_pos += ivec2(xv, yv);
+    by_who->m_pos.x = -by_who->m_pos.x;
       }
     }
   }
@@ -2821,13 +2808,12 @@ int Level::push_characters(GameObject *by_who, int xamount, int yamount)
       int32_t tvx,tvy;
       if (xv>0) tvx=xv+1; else if (xv<0) tvx=xv-1; else tvx=0;
       if (yv>0) tvy=yv+1; else if (yv<0) tvx=yv-1; else tvy=0;
-      if (o->try_move(o->x+xamount,o->y+yamount,tvx,tvy,3)==by_who)
+      if (o->try_move(o->m_pos.x + xamount, o->m_pos.y + yamount, tvx, tvy, 3) == by_who)
       {
     xv=(xamount-tvx);
     yv=(yamount-tvy);
-    o->try_move(o->x,o->y,xv,yv,3);
-    o->x+=xv;
-    o->y+=yv;
+    o->try_move(o->m_pos.x, o->m_pos.y, xv, yv, 3);
+    o->m_pos += ivec2(xv, yv);
     if (xv!=xamount-tvx || yv!=yamount-tvy)
       failed=1;
       }
@@ -2840,13 +2826,12 @@ GameObject *Level::find_xrange(int x, int y, int type, int xd)
 {
   int32_t find_ydist=100000;
   GameObject *find=NULL;
-  GameObject *o=first_active;
-  for (; o; o=o->next_active)
+  for (GameObject *o = first_active; o; o = o->next_active)
   {
     if (o->otype==type)
     {
-      int x_dist=lol::abs(x-o->x);
-      int y_dist=lol::abs(y-o->y);
+      int x_dist=lol::abs(x - o->m_pos.x);
+      int y_dist=lol::abs(y - o->m_pos.y);
 
       if (x_dist<xd  && y_dist<find_ydist)
       {
@@ -2868,16 +2853,16 @@ GameObject *Level::find_xclosest(int x, int y, int type, GameObject *who)
   {
     if (o->otype==type && o!=who)
     {
-      int x_dist=lol::abs(x-o->x);
+      int x_dist = lol::abs(x - o->m_pos.x);
       if (x_dist<find_xdist)
       {
     find_xdist=x_dist;
-    find_ydist=lol::abs(y-o->y);
+    find_ydist=lol::abs(y - o->m_pos.y);
     find=o;
       }
       else if (x_dist==find_xdist)
       {
-    int y_dist=lol::abs(y-o->y);
+    int y_dist=lol::abs(y - o->m_pos.y);
     if (y_dist<find_ydist)
     {
       find_ydist=y_dist;
@@ -2898,7 +2883,7 @@ GameObject *Level::find_closest(int x, int y, int type, GameObject *who)
   {
     if (o->otype==type && o!=who)
     {
-      int d=(x-o->x)*(x-o->x)+(y-o->y)*(y-o->y);
+      int d = sqlength(o->m_pos - ivec2(x, y));
       if (d<find_dist)
       {
     find=o;
@@ -2955,8 +2940,11 @@ void Level::hurt_radius(int32_t x, int32_t y,int32_t r, int32_t m, GameObject *f
   {
     if (o!=exclude && o->hurtable())
     {
-      int32_t y1=o->y,y2=o->y-o->picture()->Size().y;
-      int32_t cx=lol::abs(o->x-x),cy1=lol::abs(y1-y),d1,d2,cy2=lol::abs(y2-y);
+      int32_t y1 = o->m_pos.y, y2 = o->m_pos.y - o->picture()->Size().y;
+      int32_t cx = lol::abs(o->m_pos.x - x),
+              cy1 = lol::abs(y1 - y),
+              d1, d2,
+              cy2 = lol::abs(y2 - y);
       if (cx<cy1)
         d1=cx+cy1-(cx>>1);
       else d1=cx+cy1-(cy1>>1);
@@ -2973,10 +2961,10 @@ void Level::hurt_radius(int32_t x, int32_t y,int32_t r, int32_t m, GameObject *f
       {
 
     int px=(r-cx)*max_push/r,py=(r-cy1)*max_push/r;
-    if (o->x<x)
-          px=-px;
-    if (o->y<y)
-          py=-py;
+    if (o->m_pos.x < x)
+          px = -px;
+    if (o->m_pos.y < y)
+          py = -py;
     o->do_damage((r-d1)*m/r,from,x,y1,px,py);
       }
 
@@ -3017,10 +3005,13 @@ GameObject *Level::get_random_start(int min_player_dist, view *exclude)
     {
       if (v!=exclude)
       {
-    int32_t cx=lol::abs(v->x_center()-o->x),cy=lol::abs(v->y_center()-o->y),d;
+    int32_t cx = lol::abs(v->x_center() - o->m_pos.x),
+            cy = lol::abs(v->y_center() - o->m_pos.y),
+            d;
     if (cx<cy)
-          d=cx+cy-(cx>>1);
-    else d=cx+cy-(cy>>1);
+      d = cx + cy - (cx >> 1);
+    else
+      d = cx + cy - (cy >> 1);
     if (d<min_player_dist) too_close=1;
       }
     }
@@ -3037,21 +3028,17 @@ GameObject *Level::get_random_start(int min_player_dist, view *exclude)
 
 void Level::insert_players()
 {
-
-  int start=0;
-  int i=0;
-  for (; i<total_objects; i++)
+  int start = 0;
+  for (int i = 0; i < total_objects; i++)
     if (!strcmp(object_names[i],"START"))
       start=i;
 
-  view *f=player_list;
-  for (; f; f=f->next)
+  for (view *f = player_list; f; f = f->next)
   {
     GameObject *st=find_type(start,f->player_number);
     if (st)
     {
-      f->m_focus->x=st->x;
-      f->m_focus->y=st->y;
+      f->m_focus->m_pos = st->m_pos;
     }
     add_object_after(f->m_focus,st);
   }
@@ -3113,7 +3100,7 @@ GameObject *Level::find_object_in_area(int32_t x, int32_t y, int32_t x1, int32_t
                      Cell *list, GameObject *exclude)
 {
   GameObject *closest=NULL;
-  int32_t closest_distance=0xfffffff,distance,xo,yo;
+  int32_t closest_distance=0xfffffff,distance;
   GameObject *o=first_active;
   for (; o; o=o->next_active)
   {
@@ -3128,9 +3115,7 @@ GameObject *Level::find_object_in_area(int32_t x, int32_t y, int32_t x1, int32_t
       for (; !NILP(v) && lnumber_value(CAR(v))!=o->otype; v=CDR(v));
       if (!NILP(v))
       {
-    xo=lol::abs(o->x-x);
-    yo=lol::abs(o->y-y);
-    distance=xo*xo+yo*yo;
+    distance = sqlength(o->m_pos - ivec2(x, y));
     if (distance<closest_distance)
     {
       closest_distance=distance;
@@ -3149,11 +3134,10 @@ GameObject *Level::find_object_in_angle(int32_t x, int32_t y, int32_t start_angl
                     void *list, GameObject *exclude)
 {
   GameObject *closest=NULL;
-  int32_t closest_distance=0xfffffff,distance,xo,yo;
-  GameObject *o=first_active;
-  for (; o; o=o->next_active)
+  int32_t closest_distance=0xfffffff,distance;
+  for (GameObject *o = first_active; o; o = o->next_active)
   {
-    int32_t angle=lisp_atan2(o->y-y,o->x-x);
+    int32_t angle = lisp_atan2(o->m_pos.y - y, o->m_pos.x - x);
     if (((start_angle<=end_angle && (angle>=start_angle && angle<=end_angle))
     || (start_angle>end_angle && (angle>=start_angle || angle<=end_angle)))
     && o!=exclude)
@@ -3163,9 +3147,7 @@ GameObject *Level::find_object_in_angle(int32_t x, int32_t y, int32_t start_angl
       for (; !NILP(v) && lnumber_value(CAR(v))!=o->otype; v=CDR(v));
       if (!NILP(v))
       {
-    xo=lol::abs(o->x-x);
-    yo=lol::abs(o->y-y);
-    distance=xo*xo+yo*yo;
+    distance = sqlength(o->m_pos - ivec2(x, y));
     if (distance<closest_distance)
     {
       closest_distance=distance;
@@ -3205,7 +3187,7 @@ void Level::write_object_info(char *filename)
     GameObject *o=first;
     for (; o; o=o->next)
     {
-      fprintf(fp,"%3d %s %4ld %4ld %4ld %4ld %04d\n",i++,object_names[o->otype],(long)o->x,(long)o->y,
+      fprintf(fp,"%3d %s %4ld %4ld %4ld %4ld %04d\n", i++, object_names[o->otype], (long)o->m_pos.x, (long)o->m_pos.y,
           (long)o->xvel(),(long)o->yvel(),o->current_frame);
     }
     fclose(fp);

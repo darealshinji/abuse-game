@@ -57,7 +57,7 @@ LightSource *number_to_light(int32_t x)
 
 LightSource *LightSource::copy()
 {
-  next=new LightSource(type,x,y,inner_radius,outer_radius,xshift,yshift,next);
+  next=new LightSource(type, m_pos.x, m_pos.y, inner_radius, outer_radius, xshift, yshift, next);
   return next;
 }
 
@@ -101,49 +101,49 @@ void LightSource::calc_range()
   switch (type)
   {
     case 0 :
-    { x1=x-(outer_radius>>xshift); y1=y-(outer_radius>>yshift);
-      x2=x+(outer_radius>>xshift); y2=y+(outer_radius>>yshift);
+    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y-(outer_radius>>yshift);
+      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y+(outer_radius>>yshift);
     } break;
     case 1 :
-    { x1=x-(outer_radius>>xshift); y1=y-(outer_radius>>yshift);
-      x2=x+(outer_radius>>xshift); y2=y;
+    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y-(outer_radius>>yshift);
+      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y;
     } break;
     case 2 :
-    { x1=x-(outer_radius>>xshift); y1=y;
-      x2=x+(outer_radius>>xshift); y2=y+(outer_radius>>yshift);
+    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y;
+      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y+(outer_radius>>yshift);
     } break;
     case 3 :
-    { x1=x; y1=y-(outer_radius>>yshift);
-      x2=x+(outer_radius>>xshift); y2=y+(outer_radius>>yshift);
+    { x1 = m_pos.x; y1 = m_pos.y-(outer_radius>>yshift);
+      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y+(outer_radius>>yshift);
     } break;
     case 4 :
-    { x1=x-(outer_radius>>xshift); y1=y-(outer_radius>>yshift);
-      x2=x; y2=y+(outer_radius>>yshift);
+    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y-(outer_radius>>yshift);
+      x2 = m_pos.x; y2 = m_pos.y+(outer_radius>>yshift);
     } break;
 
 
     case 5 :
-    { x1=x; y1=y-(outer_radius>>yshift);
-      x2=x+(outer_radius>>xshift); y2=y;
+    { x1 = m_pos.x; y1 = m_pos.y-(outer_radius>>yshift);
+      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y;
     } break;
     case 6 :
-    { x1=x-(outer_radius>>xshift); y1=y-(outer_radius>>yshift);
-      x2=x; y2=y;
+    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y-(outer_radius>>yshift);
+      x2 = m_pos.x; y2 = m_pos.y;
     } break;
     case 7 :
-    { x1=x-(outer_radius>>xshift); y1=y;
-      x2=x; y2=y+(outer_radius>>yshift);
+    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y;
+      x2 = m_pos.x; y2 = m_pos.y+(outer_radius>>yshift);
     } break;
     case 8 :
-    { x1=x; y1=y;
-      x2=x+(outer_radius>>xshift); y2=y+(outer_radius>>yshift);
+    { x1 = m_pos.x; y1 = m_pos.y;
+      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y+(outer_radius>>yshift);
     } break;
     case 9 :
     {
-      x1=x;
-      y1=y;
-      x2=x+xshift;
-      y2=y+yshift;
+      x1 = m_pos.x;
+      y1 = m_pos.y;
+      x2 = m_pos.x + xshift;
+      y2 = m_pos.y + yshift;
     } break;
 
   }
@@ -154,7 +154,7 @@ LightSource::LightSource(char Type, int32_t X, int32_t Y, int32_t Inner_radius,
                int32_t Outer_radius, int32_t Xshift,  int32_t Yshift, LightSource *Next)
 {
   type=Type;
-  x=X; y=Y;
+  m_pos = ivec2(X, Y);
   inner_radius=Inner_radius;
   outer_radius=Outer_radius;
   next=Next;
@@ -1128,8 +1128,8 @@ void write_lights(bFILE *fp)
   fp->write_uint32(min_light_level);
   for (f=first_light_source; f; f=f->next)
   {
-    fp->write_uint32(f->x);
-    fp->write_uint32(f->y);
+    fp->write_uint32(f->m_pos.x);
+    fp->write_uint32(f->m_pos.y);
     fp->write_uint32(f->xshift);
     fp->write_uint32(f->yshift);
     fp->write_uint32(f->inner_radius);

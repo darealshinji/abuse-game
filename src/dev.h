@@ -114,6 +114,7 @@ public :
   int ok_to_scroll();
   int32_t snap_x(int32_t x);
   int32_t snap_y(int32_t y);
+  ivec2 snap(ivec2 pos);
   void area_handle_input(Event &ev);
   void pick_handle_input(Event &ev);
   void close_area_win(int read_values);

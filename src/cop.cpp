@@ -150,7 +150,7 @@ void *top_ai()
     o->direction=1;                 // always face right
 
     if (q->direction<0)
-          q->x+=4;
+          q->m_pos.x += 4;
     int i;
     signed char *fire_off=o->otype==S_DFRIS_TOP ? large_fire_off :
                                     (o->otype==S_ROCKET_TOP ? large_fire_off :
@@ -159,7 +159,7 @@ void *top_ai()
     int best_diff=200,best_num=0;
     int iy=f[1],ix=f[6*2];
 
-    int best_angle=lisp_atan2(q->y-iy-v->pointer_y,v->pointer_x-q->x-ix);
+    int best_angle = lisp_atan2(q->m_pos.y - iy - v->pointer_y, v->pointer_x - q->m_pos.x - ix);
     for (i=0; i<24; i++,f+=2)             // check all the angles to see which would best fit animation wise
     {
       int this_angle=lisp_atan2(f[1]-iy,f[0]-ix);
@@ -174,17 +174,18 @@ void *top_ai()
 
 
     // if the pointer is too close to the player go with the angle shown, not the angle through the pointer
-    if (lol::abs(q->y-fb[1]-v->pointer_y)<45 && lol::abs(v->pointer_x-q->x+fb[0])<40)
+    if (lol::abs(q->m_pos.y - fb[1] - v->pointer_y) < 45
+         && lol::abs(v->pointer_x - q->m_pos.x + fb[0]) < 40)
       o->lvars[point_angle]=lisp_atan2(fb[1]-iy,fb[0]-ix);
     else
-      o->lvars[point_angle]=lisp_atan2(q->y-fb[1]-v->pointer_y,v->pointer_x-(q->x+fb[0]));
+      o->lvars[point_angle] = lisp_atan2(q->m_pos.y - fb[1] - v->pointer_y,
+                                         v->pointer_x - (q->m_pos.x + fb[0]));
 
 
     if (q->direction<0)
-          q->x-=4;
+          q->m_pos.x -=4 ;
 
-    o->x=q->x;
-    o->y=q->y+29-q->picture()->Size().y;
+    o->m_pos = q->m_pos + ivec2(0, 29 - q->picture()->Size().y);
 
     rand_on+=o->lvars[point_angle];
     o->current_frame=best_num;
@@ -206,27 +207,26 @@ static int player_fire_weapon(GameObject *o, int type, GameObject *target, int a
 
   if (!o->total_objects()) return 0;
   GameObject *other=o->get_object(0);
-  int ox=other->x,oy=other->y;
-  if (other->direction<0) other->x+=4;
+  ivec2 otherpos = other->m_pos;
+  if (other->direction < 0)
+    other->m_pos.x += 4;
 
-  int firex=other->x+fire_off[o->current_frame*2];
-  int firey=other->y-fire_off[o->current_frame*2+1];
-
-
+  int firex=other->m_pos.x + fire_off[o->current_frame * 2];
+  int firey=other->m_pos.y - fire_off[o->current_frame * 2 + 1];
 
   // fire try to move up to gun level
 
-  int32_t x2=o->x,y2=firey;
-//  g_current_level->foreground_intersect(other->x,other->y,x2,y2);      // find first location we can actuall "see"
-//  g_current_level->all_boundary_setback(o,other->x,other->y,x2,y2);       // to make we don't fire through walls
-  other->y=y2;
+  int32_t x2 = o->m_pos.x, y2 = firey;
+//  g_current_level->foreground_intersect(other->m_pos.x, other->m_pos.y, x2, y2);      // find first location we can actuall "see"
+//  g_current_level->all_boundary_setback(o, other->m_pos.x, other->m_pos.y, x2, y2);       // to make we don't fire through walls
+  other->m_pos.y = y2;
 
-  if (other->y==firey)             // now try to move out to end of gun if we were not blocked above
+  if (other->m_pos.y == firey)             // now try to move out to end of gun if we were not blocked above
   {
     x2=firex;
-    g_current_level->foreground_intersect(other->x,other->y,x2,y2);      // find first location we can actuall "see"
-    g_current_level->all_boundary_setback(other,other->x,other->y,x2,y2);       // to make we don't fire through walls
-    o->x=x2;
+    g_current_level->foreground_intersect(other->m_pos.x, other->m_pos.y, x2, y2);      // find first location we can actuall "see"
+    g_current_level->all_boundary_setback(other, other->m_pos.x, other->m_pos.y, x2, y2);       // to make we don't fire through walls
+    o->m_pos.x = x2;
   }
 
   void *list=NULL;
@@ -240,8 +240,7 @@ static int player_fire_weapon(GameObject *o, int type, GameObject *target, int a
   ((LSymbol *)l_fire_object)->EvalFunction(list);
   o->lvars[top_just_fired]=1;
   other->lvars[just_fired]=1;
-  other->x=ox;
-  other->y=oy;
+  other->m_pos = otherpos;
 
   return 1;
 }
@@ -389,8 +388,8 @@ void *player_rocket_ufun(void *args)
       GameObject *other=current_object->total_objects() ? current_object->get_object(0) : 0;
       for (p=g_current_level->first_active_object(); p; p=p->next_active)
       {
-        xd=lol::abs(p->x-o->x);
-        yd=lol::abs(p->y-o->y);
+        xd = lol::abs(p->m_pos.x - o->m_pos.x);
+        yd = lol::abs(p->m_pos.y - o->m_pos.y);
         if (xd<160 && yd<130 && bad_guy_array[p->otype] && p!=other)
         {
           if (p->targetable() &&
@@ -454,7 +453,7 @@ static void do_special_power(GameObject *o, int xm, int ym, int but, GameObject 
   {
     case FLY_POWER :
     {
-      GameObject *cloud=create(S_CLOUD,o->x+o->direction*-10,o->y+jrand()%5);
+      GameObject *cloud=create(S_CLOUD, o->m_pos.x + o->direction * -10, o->m_pos.y + jrand() % 5);
       if (g_current_level)
         g_current_level->add_object(cloud);
       o->set_state(run_jump);
@@ -465,16 +464,16 @@ static void do_special_power(GameObject *o, int xm, int ym, int but, GameObject 
         o->set_yvel(o->yvel()-3);
       else
         o->set_yvel(o->yvel()-2);
-      the_game->play_sound(S_FLY_SND,32,o->x,o->y);
+      the_game->play_sound(S_FLY_SND, 32, o->m_pos.x, o->m_pos.y);
     } break;
     case FAST_POWER :
     {
       if ((g_current_level->tick_counter()%16)==0)
-      the_game->play_sound(S_SPEED_SND,100,o->x,o->y);
+      the_game->play_sound(S_SPEED_SND, 100, o->m_pos.x, o->m_pos.y);
 
       o->lvars[used_special_power]=1;
-      o->lvars[last1_x]=o->x;
-      o->lvars[last1_y]=o->y;
+      o->lvars[last1_x] = o->m_pos.x;
+      o->lvars[last1_y] = o->m_pos.y;
       int32_t oyvel=o->yvel();
       int in=o->lvars[in_climbing_area];
 
@@ -483,10 +482,10 @@ static void do_special_power(GameObject *o, int xm, int ym, int but, GameObject 
       o->set_yvel(o->yvel()+o->yvel()/3);
       o->lvars[in_climbing_area]=in;
 
-      o->lvars[last2_x]=o->x;
-      o->lvars[last2_x]=o->y;
+      o->lvars[last2_x] = o->m_pos.x;
+      o->lvars[last2_x] = o->m_pos.y;
     } break;
-    case SNEAKY_POWER :
+    case SNEAKY_POWER:
     {
       if (o->lvars[used_special_power]<15)
         o->lvars[used_special_power]++;
@@ -497,10 +496,10 @@ static void do_special_power(GameObject *o, int xm, int ym, int but, GameObject 
 static int climb_off_handler(GameObject *o)
 {
   if (o->next_picture())
-    o->controller()->pan_y-=4;
+    o->controller()->pan_y -= 4;
   else
   {
-    o->y-=28;
+    o->m_pos.y -= 28;
     o->controller()->pan_y += 28;
     o->controller()->m_lastpos.y -= 28;
     o->set_state(stopped);
@@ -512,7 +511,7 @@ static int climb_off_handler(GameObject *o)
 static int climb_on_handler(GameObject *o)
 {
   if (o->next_picture())
-    o->controller()->pan_y+=4;
+    o->controller()->pan_y += 4;
   else
     o->set_state((character_state)S_climbing);
   return 0;
@@ -539,16 +538,16 @@ static int climb_handler(GameObject *o, int xm, int ym, int but)
 /*    if (o->lvars[special_power]==FAST_POWER)
     {
       int32_t xv=0,yv=4;
-      o->try_move(o->x,o->y,xv,yv,1);
+      o->try_move(o->m_pos.x, o->m_pos.y, xv, yv, 1);
       if (yv==4)
-        o->y+=3;
+        o->m_pos.y += 3;
       else
       {
         o->set_gravity(1);
           o->set_state(run_jump_fall);
       }
     }
-    else */ o->y+=3;
+    else */ o->m_pos.y += 3;
 
 
       } else if (ym<0)
@@ -558,13 +557,13 @@ static int climb_handler(GameObject *o, int xm, int ym, int but)
     else
     {
       if (!o->next_picture()) o->set_state((character_state)S_climbing);
-      o->y-=3;
+      o->m_pos.y -= 3;
     }
       }
       if (xm)                     // trying to get off the ladder, check to see if that's ok
       {
     int32_t x2=0,y2=-20;
-    o->try_move(o->x,o->y,x2,y2,3);
+    o->try_move(o->m_pos.x, o->m_pos.y, x2, y2, 3);
     if (y2==-20)
     {
       o->set_gravity(1);
@@ -578,7 +577,7 @@ static int climb_handler(GameObject *o, int xm, int ym, int but)
       }
     }  else if (ym>0 && yd<10)
     {
-      o->y+=28;
+      o->m_pos.y += 28;
       o->controller()->pan_y-=28;
       o->controller()->m_lastpos.y += 28;
       o->set_state((character_state)S_climb_on);
@@ -617,7 +616,7 @@ void *cop_mover(int xm, int ym, int but)
   {
     if (!o->total_objects())                  // if no top create one
     {
-      top=create(S_MGUN_TOP,o->x,o->y,0,0);
+      top=create(S_MGUN_TOP, o->m_pos.x, o->m_pos.y, 0, 0);
       g_current_level->add_object_after(top,o);
       o->add_object(top);
       top->add_object(o);
@@ -642,19 +641,18 @@ void *cop_mover(int xm, int ym, int but)
       else
       {
     if (o->hp()<40 && (g_current_level->tick_counter()%16)==0) // if low on health play heart beat
-      the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
+      the_game->play_sound(S_LOW_HEALTH_SND, 127, o->m_pos.x, o->m_pos.y);
     else if (o->hp()<15 && (g_current_level->tick_counter()%8)==0) // if low on health play heart beat
-      the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
+      the_game->play_sound(S_LOW_HEALTH_SND, 127, o->m_pos.x, o->m_pos.y);
     else if (o->hp()<7 && (g_current_level->tick_counter()%4)==0) // if low on health play heart beat
-      the_game->play_sound(S_LOW_HEALTH_SND,127,o->x,o->y);
+      the_game->play_sound(S_LOW_HEALTH_SND, 127, o->m_pos.x, o->m_pos.y);
 
     if (but&1)
         do_special_power(o,xm,ym,but,top);
     else
     undo_special_power(o);
     ret=player_move(o,xm,ym,but);
-    top->x=o->x;
-    top->y=o->y+29-top->picture()->Size().y;
+    top->m_pos = o->m_pos + ivec2(0, 29 - top->picture()->Size().y);
 
     if ((but&2) && !o->lvars[is_teleporting] && o->state!=S_climbing && o->state!=S_climb_off)
     {
@@ -699,14 +697,15 @@ void *ladder_ai()
     GameObject *other=o->get_object(0);
     for (; f; f=f->next)
     {
-      int mex=f->m_focus->x;
-      int mey=f->m_focus->y;
+      int mex = f->m_focus->m_pos.x;
+      int mey = f->m_focus->m_pos.y;
 
-      if (o->x<=mex && o->y<=mey && other->x>=mex && other->y>=mey)
+      if (o->m_pos.x <= mex && o->m_pos.y <= mey
+           && other->m_pos.x >= mex && other->m_pos.y >= mey)
       {
     if (f->m_focus->state==S_climbing)
-      f->m_focus->x=(o->x+other->x)/2;
-        f->m_focus->lvars[in_climbing_area]=mey-o->y;
+      f->m_focus->m_pos.x = (o->m_pos.x + other->m_pos.x) / 2;
+        f->m_focus->lvars[in_climbing_area] = mey - o->m_pos.y;
       }
     }
   }
@@ -750,11 +749,11 @@ void *top_draw()
     bot->state==run_jump || bot->state==run_jump_fall ||
     bot->state==end_run_jump)
     {
-      int oldy=o->y;
-      o->x=bot->x;
+      int oldy = o->m_pos.y;
+      o->m_pos.x = bot->m_pos.x;
       if (bot->direction<0)
-        o->x+=4;
-      o->y=bot->y+29-bot->picture()->Size().y;
+        o->m_pos.x += 4;
+      o->m_pos.y = bot->m_pos.y + 29 - bot->picture()->Size().y;
 
       void *ret=NULL;
       PtrRef r1(ret);
@@ -772,9 +771,9 @@ void *top_draw()
       } else
         ((LSymbol *)l_player_draw)->EvalFunction(ret);
 
-      o->y=oldy;
-      if (bot->direction<0)
-        o->x-=4;
+      o->m_pos.y = oldy;
+      if (bot->direction < 0)
+        o->m_pos.x -= 4;
     }
   }
   return NULL;
@@ -905,9 +904,9 @@ void *sgun_ai()
     return NULL;
   o->lvars[sgb_lifetime]--;
 
-  o->lvars[sgb_lastx]=o->x;
-  o->lvars[sgb_lasty]=o->y;
-  o->lvars[sgb_speed]=o->lvars[sgb_speed]*6/5;
+  o->lvars[sgb_lastx] = o->m_pos.x;
+  o->lvars[sgb_lasty] = o->m_pos.y;
+  o->lvars[sgb_speed] = o->lvars[sgb_speed] * 6 / 5;
 
   int32_t ang=o->lvars[sgb_angle];
   int32_t mag=o->lvars[sgb_speed];
@@ -927,14 +926,14 @@ void *sgun_ai()
            who->get_object(0)->aistate()==0))
   {
     o->lvars[sgb_lifetime]=0;
-    GameObject *n=create(S_EXPLODE5,o->x+jrand()%4,o->y+jrand()%4);
+    GameObject *n=create(S_EXPLODE5, o->m_pos.x + jrand() % 4, o->m_pos.y + jrand() % 4);
     g_current_level->add_object(n);
   } else if (who && figures[who->otype]->get_cflag(CFLAG_HURTABLE))
   {
     o->lvars[sgb_lifetime]=0;
-    GameObject *n=create(S_EXPLODE3,o->x+jrand()%4,o->y+jrand()%4);
+    GameObject *n=create(S_EXPLODE3, o->m_pos.x + jrand() % 4, o->m_pos.y + jrand() % 4);
     g_current_level->add_object(n);
-     who->do_damage(5,o,o->x,o->y,(lisp_cos(ang)*10)>>16,(lisp_sin(ang)*10)>>16);
+     who->do_damage(5, o, o->m_pos.x, o->m_pos.y, (lisp_cos(ang) * 10) >> 16, (lisp_sin(ang) * 10) >> 16);
   }
   return true_symbol;
 }
@@ -959,8 +958,7 @@ void *mover_ai()
       GameObject *d=o->get_object(0);
       GameObject *obj=o->get_object(1);
 
-      obj->x=d->x-(d->x-o->x)*o->aistate()/o->aitype();
-      obj->y=d->y-(d->y-o->y)*o->aistate()/o->aitype();
+      obj->m_pos = d->m_pos - (d->m_pos - o->m_pos) * (int)o->aistate() / (int)o->aitype();
     }
   }
   return true_symbol;
@@ -974,7 +972,7 @@ void *respawn_ai()
  if (x)
  {
    GameObject *last=o->get_object(x-1);
-   if (last->x==o->x && last->y==o->y)
+   if (last->m_pos == o->m_pos)
    {
      if (last->fade_count())
        last->set_fade_count(last->fade_count()-1);
@@ -982,7 +980,7 @@ void *respawn_ai()
    } else if (o->aistate_time()>o->xvel())
    {
      int type=o->get_object(jrandom(x))->otype;
-     GameObject *n=create(type,o->x,o->y);
+     GameObject *n=create(type, o->m_pos.x, o->m_pos.y);
      g_current_level->add_object(n);
      o->add_object(n);
      n->set_fade_count(15);
