@@ -156,22 +156,22 @@ void SimpleObject::set_var(int xx, uint32_t v)
   {
     case 0 : set_fade_dir(v); break;
     case 1 : set_frame_dir(v); break;
-    case 2 : direction=v; break;
+    case 2 : direction = v; break;
     case 3 : set_gravity(v); break;
     case 4 : set_fade_count(v); break;
     case 5 : set_fade_max(v); break;
     case 6 : active=v; break;
     case 7 : set_flags(v); break;
     case 8 : set_aitype(v); break;
-    case 9 : set_xvel(v); break;
+    case 9 : m_vel.x = v; break;
 
     case 10 : set_fxvel(v); break;
-    case 11 : set_yvel(v); break;
+    case 11 : m_vel.y = v; break;
     case 12 : set_fyvel(v); break;
-    case 13 : set_xacel(v); break;
+    case 13 : m_accel.x = v; break;
     case 14 : set_fxacel(v); break;
 
-    case 15 : set_yacel(v); break;
+    case 15 : m_accel.y = v; break;
     case 16 : set_fyacel(v); break;
     case 17 : m_pos.x = v; break;
     case 18 : set_fx(v); break;
@@ -203,16 +203,16 @@ int32_t SimpleObject::get_var(int xx)
     case 6 : return active; break;
     case 7 : return flags(); break;
     case 8 : return aitype(); break;
-    case 9 : return xvel(); break;
+    case 9 : return m_vel.x; break;
     case 10 : return fxvel(); break;
 
-    case 11 : return yvel(); break;
+    case 11 : return m_vel.y; break;
     case 12 : return fyvel(); break;
 
-    case 13 : return xacel(); break;
+    case 13 : return m_accel.x; break;
     case 14 : return fxacel(); break;
 
-    case 15 : return yacel(); break;
+    case 15 : return m_accel.y; break;
     case 16 : return fyacel(); break;
 
     case 17 : return m_pos.x; break;
@@ -295,12 +295,12 @@ void GameObject::next_sequence()
             } break;
             case start_run_jump:
             {
-                set_yvel(get_ability(type(),jump_yvel));
-                if( xvel() > 0 )
-                    set_xvel(get_ability(type(),jump_xvel));
-                else if( xvel() < 0 )
-                    set_xvel(-get_ability(type(),jump_xvel));
-                set_xacel(0);
+                m_vel.y = get_ability(type(), jump_yvel);
+                if (m_vel.x > 0)
+                    m_vel.x = get_ability(type(), jump_xvel);
+                else if (m_vel.x < 0)
+                    m_vel.x = -get_ability(type(), jump_xvel);
+                m_accel.x = 0;
                 set_fxacel(0);
                 set_gravity(1);
                 set_state(run_jump);
@@ -348,7 +348,7 @@ void GameObject::add_power(int amount)
 
 void GameObject::add_hp(int amount)
 {
-  if (controller() && controller()->god) return ;
+  if (m_controller && m_controller->god) return ;
   int max_hp=lnumber_value(symbol_value(l_max_hp));
   int n=hp()+amount;
   if (n<0) n=0;
@@ -366,7 +366,7 @@ int GameObject::can_morph_into(int type)
 
 void GameObject::morph_into(int type, void (*stat_fun)(int), int anneal, int frames)
 {
-  set_morph_status(new morph_char(this,type,stat_fun,anneal,frames));
+  set_morph_status(new morph_char(this,type, stat_fun,anneal,frames));
   otype=type;
   set_state(stopped);
 }
@@ -540,19 +540,19 @@ void GameObject::damage_fun(int amount, GameObject *from, int32_t hitx, int32_t 
   do_flinch(from);
 
 
-  set_xvel(xvel()+push_xvel);
-  if (push_yvel<0 && !gravity())
+  m_vel.x += push_xvel;
+  if (push_yvel < 0 && !gravity())
     set_gravity(1);
-  set_yvel(yvel()+push_yvel);
+  m_vel.y += push_yvel;
 
-  view *c=controller();
+  view *c=m_controller;
   if (c && hp()<=0)
   {
-    view *v=from->controller();
+    view *v=from->m_controller;
     if (v) v->kills++;                       // attack from another player?
     else if (from->total_objects()>0)
     {
-      v=from->get_object(0)->controller();   // weapon from another player?
+      v=from->get_object(0)->m_controller;   // weapon from another player?
       if (v && v!=c) v->kills++;
       else
       {
@@ -569,7 +569,6 @@ int GameObject::facing_attacker(int attackerx)
 {
   return (attackerx < m_pos.x && direction < 0)
            || (attackerx >= m_pos.x && direction > 0);
-
 }
 
 
@@ -736,7 +735,7 @@ void GameObject::drawer()
   }
   else
   {
-    //view *v=controller();
+    //view *v=m_controller;
 
     if (fade_count())
       draw_trans(fade_count(),fade_max());
@@ -798,34 +797,34 @@ void *GameObject::float_tick()  // returns 1 if you hit something, 0 otherwise
   {
     if (state!=dead)
     {
-      set_xacel(0);
+      m_accel.x = 0;
       set_fxacel(0);
 
       if (has_sequence(dieing))
       {
-    if (state!=dieing)
-    {
-      set_state(dieing);
-      set_xvel(0);
-    }
-      } else
-      { set_xvel(0);
-    set_fxvel(0);
-    if (has_sequence(dead))
-          set_state(dead);
-    else return 0;
+        if (state!=dieing)
+        {
+          set_state(dieing);
+          m_vel.x = 0;
+        }
+      }
+      else
+      {
+        m_vel.x = 0;
+        set_fxvel(0);
+        if (has_sequence(dead))
+            set_state(dead);
+        else
+            return 0;
       }
     }
   }
 
   int32_t fxv=sfxvel()+sfxacel(),fyv=sfyvel()+sfyacel();
-  int32_t xv=xvel()+xacel()+(fxv>>8),yv=yvel()+yacel()+(fyv>>8);
+  int32_t xv = m_vel.x + m_accel.x + (fxv >> 8),
+          yv = m_vel.y + m_accel.y + (fyv >> 8);
 
-  if (xv!=xvel() || yv!=yvel())   // only store vel's if changed so we don't increase object size
-  {
-    set_xvel(xv);
-    set_yvel(yv);
-  }
+  m_vel = ivec2(xv, yv);
 
   if (fxv!=sfxvel() || fyv!=sfyvel())
   {
@@ -833,12 +832,11 @@ void *GameObject::float_tick()  // returns 1 if you hit something, 0 otherwise
     set_fyvel(fyv&0xff);
   }
 
-
   if (fxv || fyv || xv || yv)   // don't even try if there is no velocity
   {
     int32_t ffx=fx()+sfxvel(),ffy=fy()+sfyvel();
-    int32_t nxv=xvel()+(ffx>>8);
-    int32_t nyv=yvel()+(ffy>>8);
+    int32_t nxv = m_vel.x + (ffx >> 8);
+    int32_t nyv = m_vel.y + (ffy >> 8);
     set_fx(ffx&0xff);
     set_fy(ffy&0xff);
 
@@ -917,41 +915,39 @@ int GameObject::tick()      // returns blocked status
   if (gravity() && !floating())
   {
     int fya;
-    if (yacel()>=0)
+    if (m_accel.y >= 0)
       fya=sfyacel()+200;
     else
       fya=sfyacel()-200;
 
-    set_yacel(yacel()+(fya>>8));
+    m_accel.y += (fya >> 8);
     set_fyacel(fya&255);
   }
 
   // first let's move the guy acording to his physics
-  int32_t xa=xacel(),ya=yacel(),fxa=sfxacel(),fya=sfyacel();
+  int32_t xa = m_accel.x, ya = m_accel.y, fxa = sfxacel(), fya = sfyacel();
   if (xa || ya || fxa || fya)
   {
     int fxv=sfxvel(),fyv=sfyvel();
     fxv+=fxa;  fyv+=fya;
-    //int32_t xv=xvel()+xa+(fxv>>8);
-    set_xvel(xvel()+xa+(fxv>>8));
-    set_yvel(yvel()+ya+(fyv>>8));
+    //int32_t xv=m_vel.x+xa+(fxv>>8);
+    m_vel += ivec2(xa + (fxv >> 8), ya + (fyv >> 8));
     set_fxvel(fxv&0xff);
     set_fyvel(fyv&0xff);
   }
 
   // check to see if this advancement causes him to collide with objects
-  int32_t old_vy=yvel(),old_vx=xvel();  // save the correct veloicties
+  int32_t old_vy = m_vel.y, old_vx = m_vel.x;  // save the correct veloicties
 
   if (old_vx || old_vy)
   {
     int up=0;
-    if (yvel()<=0)  // if we are going up or a strait across check up and down
+    if (m_vel.y <= 0)  // if we are going up or a strait across check up and down
     up=2;
-    int32_t xv=xvel(),yv=yvel();
+    int32_t xv = m_vel.x, yv = m_vel.y;
     GameObject *h = try_move(m_pos.x, m_pos.y, xv, yv, 1 | up);       // now find out what velocity is safe to use
-    set_xvel(xv);
-    set_yvel(yv);
-    m_pos += ivec2(xv, yv);
+    m_vel = ivec2(xv, yv);
+    m_pos += m_vel;
 
     if (h && stoppable()) return BLOCKED_LEFT|BLOCKED_RIGHT;
 
@@ -960,7 +956,7 @@ int GameObject::tick()      // returns blocked status
       if (gravity())                         // was he going up or down?
       {
     int32_t fall_xv=0,old_fall_vy,fall_vy;
-    old_fall_vy=fall_vy=old_vy-yvel();             // make sure he gets all of his yvel
+    old_fall_vy = fall_vy = old_vy - m_vel.y; // make sure he gets all of his yvel
     try_move(m_pos.x, m_pos.y, fall_xv, fall_vy, 1 | up);
     if (old_vy>0 && fall_vy<old_fall_vy)       // he was trying to fall, but he hit the ground
     {
@@ -968,9 +964,9 @@ int GameObject::tick()      // returns blocked status
       {
         blocked|=BLOCKED_DOWN;
 
-        if (!xvel() && has_sequence(end_run_jump))
+        if (!m_vel.x && has_sequence(end_run_jump))
         {
-          set_xvel(old_vx);
+          m_vel.x = old_vx;
           set_state(end_run_jump);
         }
         else set_state(stopped);
@@ -990,9 +986,9 @@ int GameObject::tick()      // returns blocked status
       }
       else
       {
-        set_yacel(0);
+        m_accel.y = 0;
         set_fyacel(0);
-        set_yvel(0);
+        m_vel.y = 0;
         set_fyvel(0);
         set_gravity(0);
       }
@@ -1021,12 +1017,9 @@ int GameObject::tick()      // returns blocked status
       else
             blocked|=BLOCKED_RIGHT;
 
-      set_xvel(0);
+      m_vel.x = 0;
       set_fxvel(0);
-      if (old_vy<0 && fall_vy>0)
-      {
-        set_yvel(yvel()+fall_vy);
-      } else set_yvel(yvel()+fall_vy);
+      m_vel.y += fall_vy;
     }
     m_pos.y += fall_vy;
       }
@@ -1038,8 +1031,8 @@ int GameObject::tick()      // returns blocked status
     try_move(m_pos.x, m_pos.y, climb_xvel, climb_yvel, 3);  // jutting polygon line
     m_pos.y += climb_yvel;
 
-    climb_xvel=old_vx-xvel();
-    climb_yvel=-(lol::abs(climb_xvel));        // now try 45 degree slope
+    climb_xvel = old_vx - m_vel.x;
+    climb_yvel = -lol::abs(climb_xvel); // now try 45 degree slope
     try_move(m_pos.x, m_pos.y, climb_xvel, climb_yvel, 3);
 
     if (lol::abs(climb_xvel)>0)  // see if he got further by climbing
@@ -1047,8 +1040,8 @@ int GameObject::tick()      // returns blocked status
       blocked=blocked&(~(BLOCKED_LEFT|BLOCKED_RIGHT));
       m_pos += ivec2(climb_xvel, climb_yvel);
 
-      set_xvel(xvel()+climb_xvel);
-      set_yvel(0);
+      m_vel.x += climb_xvel;
+      m_vel.y = 0;
       set_fyvel(0);
 
       // now put him back on the ground
@@ -1069,17 +1062,17 @@ int GameObject::tick()      // returns blocked status
 
       }
 
-      if (xvel()!=old_vx && state!=run_jump_fall && state!=end_run_jump)
+      if (m_vel.x != old_vx && state != run_jump_fall && state != end_run_jump)
       {
-    set_xacel(0);
-    set_fxacel(0);
+        m_accel.x = 0;
+        set_fxacel(0);
       }
     }
   }
 
-  if (yacel()==0 && !gravity())       // he is not falling, make sure he can't
+  if (m_accel.y == 0 && !gravity())       // he is not falling, make sure he can't
   {
-    int32_t nvx=0,nvy=yvel()+12;  // check three pixels below for ground
+    int32_t nvx = 0, nvy = m_vel.y + 12; // check three pixels below for ground
     try_move(m_pos.x, m_pos.y, nvx, nvy, 1);
     if (nvy>11)                    // if he falls more than 2 pixels, then he falls
     {
@@ -1103,7 +1096,7 @@ void GameObject::defaults()
   set_state(state);
   if (otype!=0xffff)
   {
-    int s=get_ability(otype,start_hp);
+    int s=get_ability(otype, start_hp);
     if (s!=g_default_simple.hp())
       set_hp(s);
   }
@@ -1257,62 +1250,48 @@ int GameObject::mover(int cx, int cy, int button)  // return false if the route 
     {
       if (has_sequence(running))
       {
-    if (cx>0)
-    {
-      direction=1;
-          set_xvel(get_ability(type(),run_top_speed));
-    }
-    else
-    {
-      direction=-1;
-      set_xacel(-get_ability(type(),run_top_speed));
-    }
-    set_state(running);
+        direction = cx > 0 ? 1 : -1;
+        m_vel.x = direction * get_ability(type(), run_top_speed);
+        set_state(running);
       }
-    } else if (state==run_jump || state==run_jump_fall)
+    }
+    else if (state==run_jump || state==run_jump_fall)
     {
-      if (cx>0)
-      {
-    direction=1;
-    set_xacel(get_ability(type(),start_accel));           // set the appropriate accel
-      } else
-      {
-    direction=-1;
-    set_xacel(-get_ability(type(),start_accel));           // set the appropriate accel
-      }
+      direction = cx > 0 ? 1 : -1;
+      m_accel.x = direction * get_ability(type(), start_accel); // set the appropriate accel
     }
     else
     {
       // turn him around if he pressed the other way, he is not walking so a fast turn
       // is needed, don't go through the turn sequence
-      if ((cx>0  && direction<0) || (cx<0 && direction>0))
-        direction=-direction;
+      if (cx * direction < 0)
+        direction = -direction;
     }
   }         // not pressing left or right, so slow down or stop
   else if (!gravity() && state!=start_run_jump)
   {
     int32_t stop_acel;
-    if (xvel()<0)                                    // he was going left
+    if (m_vel.x < 0) // he was going left
     {
-      stop_acel=get_ability(type(),stop_accel);    // find out how fast he can slow down
-      if (xvel()+stop_acel>=0)                       // if this acceleration is enough to stop him
+      stop_acel=get_ability(type(), stop_accel);    // find out how fast he can slow down
+      if (m_vel.x + stop_acel >= 0) // if this acceleration is enough to stop him
       {
     stop_x();
     if (!gravity())
       set_state(stopped);
-      } else { set_xacel(stop_acel); }
-    } else if (xvel()>0)
+      } else { m_accel.x = stop_acel; }
+    } else if (m_vel.x > 0)
     {
-      stop_acel=-get_ability(type(),stop_accel);
-      if (xvel()+stop_acel<=0)
+      stop_acel=-get_ability(type(), stop_accel);
+      if (m_vel.x + stop_acel <= 0)
       {
     stop_x();
     if (!gravity())
       set_state(stopped);
-      } else set_xacel(stop_acel);
+      } else m_accel.x = stop_acel;
     } else if (!gravity())                // don't stop in the air
     {
-      set_xacel(0);
+      m_accel.x = 0;
       set_fxacel(0);
       // Check to see if we should go to stop state
       if (state==running)
@@ -1323,33 +1302,26 @@ int GameObject::mover(int cx, int cy, int button)  // return false if the route 
 
 /*  if (state==still_jump || state==still_jump_fall || state==end_still_jump)
   {
-    set_xacel(0);
+    m_accel.x = 0;
     set_fxacel(0);
-    if (xvel()>0) set_xvel(get_ability(type(),jump_top_speed));
-    else if (xvel()<0) set_xvel(-get_ability(type(),jump_top_speed));
+    m_vel.x = (m_vel.x > 0 ? 1 : -1) * get_ability(type(), jump_top_speed);
   } else if (state==run_jump || state==run_jump_fall || state==end_run_jump)
   {
-    set_xacel(0);
+    m_accel.x = 0;
     set_fxacel(0);
-    if (xvel()>0) set_xvel(get_ability(type(),jump_top_speed));
-    else if (xvel()<0) set_xvel(-get_ability(type(),jump_top_speed));
+    m_vel.x = (m_vel.x > 0 ? 1 : -1) * get_ability(type(), jump_top_speed);
   } */
 
   // see if the user said to jump
   if (cy<0 && !floating() && !gravity())
   {
     set_gravity(1);
-    set_yvel(get_ability(type(),jump_yvel));
+    m_vel.y = get_ability(type(), jump_yvel);
 //    if (cx && has_sequence(run_jump))
       set_state(run_jump);
-    if (xvel()!=0)
-    {
-      if (direction>0)
-        set_xvel(get_ability(type(),jump_top_speed));
-      else
-        set_xvel(-get_ability(type(),jump_top_speed));
-    }
-    set_xacel(0);
+    if (m_vel.x != 0)
+      m_vel.x = (direction > 0 ? 1 : -1) * get_ability(type(), jump_top_speed);
+    m_accel.x = 0;
 
 
 /*    if (state==stopped)
@@ -1366,7 +1338,7 @@ int GameObject::mover(int cx, int cy, int button)  // return false if the route 
     else if (state==running && has_sequence(run_jump))
     {
       set_state(run_jump);
-      set_yvel(get_ability(type(),jump_yvel));
+      m_vel.y = get_ability(type(), jump_yvel);
       set_gravity(1);
     }
     else if (state==walking || state==turn_around)  // if walking check to see if has a
@@ -1375,7 +1347,7 @@ int GameObject::mover(int cx, int cy, int button)  // return false if the route 
         set_state(start_still_jump);
       else
       {
-        set_yvel(get_ability(type(),jump_yvel));
+        m_vel.y = get_ability(type(), jump_yvel);
         set_gravity(1);
         if (has_sequence(run_jump))
           set_state(run_jump);
@@ -1385,17 +1357,17 @@ int GameObject::mover(int cx, int cy, int button)  // return false if the route 
 
 
 
-  if (state==run_jump && yvel()>0)
+  if (state==run_jump && m_vel.y > 0)
     set_state(run_jump_fall);
 
 
 
 //  if (state!=end_still_jump && state!=end_run_jump)
   {
-    if (cx>0)
-      set_xacel(get_ability(type(),start_accel));
-    else if (cx<0)
-      set_xacel(-get_ability(type(),start_accel));
+    if (cx > 0)
+      m_accel.x = get_ability(type(), start_accel);
+    else if (cx < 0)
+      m_accel.x = -get_ability(type(), start_accel);
   }
 
   // make sure they are not going faster than their maximum speed
@@ -1412,11 +1384,8 @@ int GameObject::mover(int cx, int cy, int button)  // return false if the route 
   else top_speed=1000;
 
 
-  if (lol::abs(xvel()+xacel())>top_speed)
-  {
-    if (xacel()<0) set_xacel(-top_speed-xvel());
-    else set_xacel(top_speed-xvel());
-  }
+  if (lol::abs(m_vel.x + m_accel.x) > top_speed)
+    m_accel.x = (m_accel.x < 0 ? -top_speed : top_speed) - m_vel.x;
 
   character_state old_state=state;
   int old_frame=current_frame;
@@ -1442,23 +1411,22 @@ GameObject *GameObject::bmove(int &whit, GameObject *exclude)
 {
 
   // first let's move the guy acording to his physics
-  int32_t xa=xacel(),ya=yacel(),fxa=sfxacel(),fya=sfyacel();
+  int32_t xa = m_accel.x, ya = m_accel.y, fxa = sfxacel(), fya = sfyacel();
   if (xa || ya || fxa || fya)
   {
     int fxv=sfxvel(),fyv=sfyvel();
     fxv+=fxa;  fyv+=fya;
-    //int32_t xv=xvel()+xa+(fxv>>8);
-    set_xvel(xvel()+xa+(fxv>>8));
-    set_yvel(yvel()+ya+(fyv>>8));
+    //int32_t xv = m_vel.x + xa + (fxv >> 8);
+    m_vel += ivec2(xa + (fxv >> 8), ya + (fyv >> 8));
     set_fxvel(fxv&0xff);
     set_fyvel(fyv&0xff);
   }
 
   int32_t ox2,oy2;
 
-  int32_t nx = m_pos.x + xvel(),
+  int32_t nx = m_pos.x + m_vel.x,
           nfx = fx() + fxvel(),
-          ny = m_pos.y + yvel(),
+          ny = m_pos.y + m_vel.y,
           nfy = fy() + fyvel();
   nx += nfx >> 8;
   ny += nfy >> 8;

@@ -770,7 +770,7 @@ void set_local_players(int total)
     }
     v->m_aa = ivec2(320 / 2 - 155, 200 / 2 - 95);
     v->m_bb = ivec2(320 / 2 + 155, 200 / 2 + total_weapons ? 60 : 95);
-    v->m_focus->set_controller(v);
+    v->m_focus->m_controller = v;
     total--;
     rdw=1;
   }
@@ -806,7 +806,7 @@ void view::reset_player()
   if (m_focus)
   {
 
-    GameObject *start=g_current_level ? g_current_level->get_random_start(320,m_focus->controller()) : 0;
+    GameObject *start=g_current_level ? g_current_level->get_random_start(320,m_focus->m_controller) : 0;
     m_focus->defaults();
     if (start)
     {

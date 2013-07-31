@@ -1164,7 +1164,7 @@ LObject *LObject::Compile(char const *&code)
                 {
                   void *tmp;
                   cur = LList::Create();
-                  PtrRef r1(cur);
+                  PtrRef r4(cur);
                   if (!first) first=cur;
                   tmp=Compile(code);
                   ((LList *)cur)->m_car = (LObject *)tmp;
@@ -1980,7 +1980,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
             {
 #endif
                 LArray *a = (LArray *)CAR(CDR(i))->Eval();
-                PtrRef r1(a);
+                PtrRef r3(a);
 #ifdef TYPE_CHECKING
                 if (item_type(a) != L_1D_ARRAY)
                 {
@@ -2485,7 +2485,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
             case L_CONS_CELL:
             {
                 LObject *s = CAR(sym)->Eval();
-                PtrRef r1(s);
+                PtrRef r2(s);
 #ifdef TYPE_CHECKING
                 if (item_type(s) != L_SYMBOL)
                 {

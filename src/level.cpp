@@ -70,7 +70,7 @@ GameObject *Level::attacker(GameObject *who)
 
 int Level::is_attacker(GameObject *who)
 {
-  return who->controller()!=NULL;
+    return !!who->m_controller;
 }
 
 
@@ -304,7 +304,7 @@ view *Level::make_view_list(int nplayers)
     if (!strcmp(object_names[o->otype],"START"))
     {
       f=new view(create(use_type, o->m_pos.x, o->m_pos.y),f,num); num++;
-      f->m_focus->set_controller(f);
+      f->m_focus->m_controller = f;
       add_object_after(f->m_focus,o);
       j++;
       last_start=o;
@@ -320,7 +320,7 @@ view *Level::make_view_list(int nplayers)
     {
       GameObject *o=create(use_type, f->m_focus->m_pos.x, f->m_focus->m_pos.y);
       f=new view(o,f,num); num++;
-      f->m_focus->set_controller(f);
+      f->m_focus->m_controller = f;
       add_object_after(o,last_start);
     }
     else
@@ -639,7 +639,7 @@ int Level::tick()
   {
     o->m_last_pos = o->m_pos;
     cur = o;
-    view *c = o->controller();
+    view *c = o->m_controller;
     if (!(dev&SUSPEND_MODE) || c)
     {
       o->set_flags(o->flags()&(0xff-FLAG_JUST_HIT-FLAG_JUST_BLOCKED));
@@ -1683,9 +1683,8 @@ int Level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
       view *v = player_list;
       if (v->m_focus)
       {
-        if (v->m_focus->controller())
-         v->m_focus->set_controller(NULL);
-    delete v->m_focus;
+        v->m_focus->m_controller = nullptr;
+        delete v->m_focus;
       }
 
       player_list=player_list->next;
@@ -1698,7 +1697,7 @@ int Level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
     {
       GameObject *o=number_to_object_in_list(fp->read_uint32(),save_list);
       view *v = new view(o,NULL,0);
-      if (o) o->set_controller(v);
+      if (o) o->m_controller = v;
       if (player_list)
         last->next=v;
       else player_list=v;
@@ -3187,7 +3186,7 @@ void Level::write_object_info(char *filename)
     for (; o; o=o->next)
     {
       fprintf(fp,"%3d %s %4ld %4ld %4ld %4ld %04d\n", i++, object_names[o->otype], (long)o->m_pos.x, (long)o->m_pos.y,
-          (long)o->xvel(),(long)o->yvel(),o->current_frame);
+          (long)o->m_vel.x, (long)o->m_vel.y, o->current_frame);
     }
     fclose(fp);
   }

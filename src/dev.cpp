@@ -1128,7 +1128,7 @@ void dev_controll::do_command(char const *command, Event &ev)
         the_game->show_help(symbol_str("nd_player"));
       else
       {
-    if (selected_object->controller())
+    if (selected_object->m_controller)
       the_game->show_help(symbol_str("nd_player"));
     else
     {
@@ -1397,10 +1397,10 @@ void dev_controll::make_ai_window(GameObject *o)
     aiw=wm->CreateWindow(ivec2(prop->getd("ai x", 0), prop->getd("ai y", 0)),
                          ivec2(-1),
        new button(wl,wh-20,DEV_AI_OK,cache.img(dev_ok),
-       new text_field(wl,wh+th*0, DEV_AI_XVEL,    symbol_str("ai_xvel"),"#####",(double)o->xvel(),
-       new text_field(wl,wh+th*1, DEV_AI_YVEL,    symbol_str("ai_yvel"),"#####",(double)o->yvel(),
-       new text_field(wl,wh+th*2, DEV_AI_XACEL,   symbol_str("ai_xacel"),"#####",(double)o->xacel(),
-       new text_field(wl,wh+th*3, DEV_AI_YACEL,   symbol_str("ai_yacel"),"#####",(double)o->yacel(),
+       new text_field(wl,wh+th*0, DEV_AI_XVEL,    symbol_str("ai_xvel"),"#####",(double)o->m_vel.x,
+       new text_field(wl,wh+th*1, DEV_AI_YVEL,    symbol_str("ai_yvel"),"#####",(double)o->m_vel.y,
+       new text_field(wl,wh+th*2, DEV_AI_XACEL,   symbol_str("ai_xacel"),"#####",(double)o->m_accel.x,
+       new text_field(wl,wh+th*3, DEV_AI_YACEL,   symbol_str("ai_yacel"),"#####",(double)o->m_accel.y,
        new text_field(wl,wh+th*4, DEV_AI_STTIME,  symbol_str("ai_stime"),"####",(double)o->aistate_time(),
        new text_field(wl,wh+th*5, DEV_AI_GRAVITY, symbol_str("ai_gravity"),"####",(double)o->gravity(),
        new text_field(wl,wh+th*6, DEV_AI_HEALTH,  symbol_str("ai_health"),"####",(double)o->hp(),
@@ -1478,11 +1478,11 @@ void dev_controll::close_ai_window()
       }
       else
       {
-    x=atoi(aiw->read(DEV_AI_XVEL)); if (x!=o->xvel()) o->set_xvel(x);
-    x=atoi(aiw->read(DEV_AI_YVEL)); if (x!=o->yvel()) o->set_yvel(x);
+        o->m_vel.x = atoi(aiw->read(DEV_AI_XVEL));
+        o->m_vel.y = atoi(aiw->read(DEV_AI_YVEL));
 
-    x=atoi(aiw->read(DEV_AI_XACEL)); if (x!=o->xacel()) o->set_xacel(x);
-    x=atoi(aiw->read(DEV_AI_YACEL)); if (x!=o->yacel()) o->set_yacel(x);
+        o->m_accel.x = atoi(aiw->read(DEV_AI_XACEL));
+        o->m_accel.y = atoi(aiw->read(DEV_AI_YACEL));
 
     x=atoi(aiw->read(DEV_AI_STTIME)); if (x!=o->aistate_time()) o->set_aistate_time(x);
     x=atoi(aiw->read(DEV_AI_GRAVITY)); if (x!=o->gravity()) o->set_gravity(x);
@@ -2496,7 +2496,7 @@ void dev_controll::handle_event(Event &ev)
       {
         GameObject *old=use;
         close_oedit_window();
-        if (use->controller())
+        if (use->m_controller)
           the_game->show_help(symbol_str("no_clone"));
         else
         {
@@ -2790,9 +2790,12 @@ void dev_controll::handle_event(Event &ev)
       case '9' : do_command("set_aitype",ev); break;
       case 'c' : do_command("center",ev); break;
       case 'C' :
-      if (selected_object && selected_object->controller()==NULL)
-      { copy_object=selected_object;
-            wm->Push(new Event(DEV_OEDIT_COPY,NULL)); } break;
+          if (selected_object && selected_object->m_controller == nullptr)
+          {
+              copy_object = selected_object;
+              wm->Push(new Event(DEV_OEDIT_COPY,NULL));
+          }
+          break;
 
       case 'D' : the_game->toggle_delay(); break;
       case 'L' : toggle_show_menu(); break;

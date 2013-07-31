@@ -540,7 +540,7 @@ void net_reload()
 
                 f->next=new view(o,NULL,join_list->client_id);
                 strcpy(f->next->name,join_list->name);
-                o->set_controller(f->next);
+                o->m_controller = f->next;
                 f->next->set_tint(f->next->player_number);
                 if (start)
                 g_current_level->add_object_after(o,start);

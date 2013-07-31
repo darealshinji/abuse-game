@@ -74,17 +74,14 @@ static int ant_dodge(GameObject *o)
       o->set_aistate(ANT_JUMP);
       if (!can_see(o, o->m_pos.x, o->m_pos.y, o->m_pos.x, o->m_pos.y - 120))   // is there a roof above?
       {
-    o->set_yvel(-17);
-    o->set_xvel(0);
-    o->set_aistate(ANT_JUMP_ROOF);
-    ant_ai();
-      } else
+        o->m_vel = ivec2(0, -17);
+        o->set_aistate(ANT_JUMP_ROOF);
+        ant_ai();
+      }
+      else
       {
-    o->set_yvel(-12);
-    if (o->direction>0)
-      o->set_xvel(22);
-    else o->set_xvel(-22);
-    o->set_aistate(ANT_JUMP);
+        o->m_vel = ivec2(o->direction > 0 ? 22 : -22, -12);
+        o->set_aistate(ANT_JUMP);
       }
     }
     return 1;
@@ -112,8 +109,8 @@ static void fire_at_player(GameObject *o, GameObject *b)
 {
   int32_t firex = o->m_pos.x + (o->direction > 0 ? 15 : -15),
           firey = o->m_pos.y - 15,
-          playerx = b->m_pos.x + b->xvel() * 8,
-          playery = b->m_pos.y - 15 + b->yvel() * 2;
+          playerx = b->m_pos.x + b->m_vel.x * 8,
+          playery = b->m_pos.y - 15 + b->m_vel.y * 2;
   if (can_see(o, o->m_pos.x, o->m_pos.y, firex, firey) && can_see(o, firex, firey, playerx, playery))
   {
     int angle=lisp_atan2(firey-playery,playerx-firex);
@@ -364,24 +361,25 @@ void *ant_ai()
     {
       o->lvars[ANT_need_to_dodge]=0;
       o->set_state((character_state)S_jump_up);
-//      o->set_yvel(o->yvel()+1);
-      o->set_xacel(0);
-      int32_t xv=0,yv=o->yvel();
+//      o->m_vel.y += 1;
+      o->m_accel.x = 0;
+      int32_t xv = 0, yv = o->m_vel.y;
       o->m_pos.y-=31;
       o->try_move(o->m_pos.x,o->m_pos.y,xv,yv,1);
       o->m_pos.y+=31+yv;
-      if (yv!=o->yvel())
+      if (yv != o->m_vel.y)
       {
-    if (o->yvel()>0)
-    {
-      o->set_state(stopped);
-      o->set_aistate(ANT_RUNNING);
-    } else
-    {
-      o->set_state((character_state)S_top_walk);
-      o->set_aistate(ANT_ROOF_WALK);
-    }
-    o->set_yvel(0);
+        if (o->m_vel.y > 0)
+        {
+          o->set_state(stopped);
+          o->set_aistate(ANT_RUNNING);
+        }
+        else
+        {
+          o->set_state((character_state)S_top_walk);
+          o->set_aistate(ANT_ROOF_WALK);
+        }
+        o->m_vel.y = 0;
       }
     } break;
     case ANT_ROOF_WALK :
