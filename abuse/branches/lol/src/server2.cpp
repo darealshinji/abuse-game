@@ -17,7 +17,6 @@
 #include "nfclient.h"
 #include "dprint.h"
 #include "view.h"
-#include "jrand.h"
 #include "objects.h"
 #include "level.h"
 #include "dev.h"

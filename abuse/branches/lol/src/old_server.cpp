@@ -22,7 +22,6 @@
 #include "jnet.h"
 #include "level.h"
 #include "game.h"
-#include "jrand.h"
 #include "timing.h"
 //#include "nfserver.h"
 //#include "nfclient.h"

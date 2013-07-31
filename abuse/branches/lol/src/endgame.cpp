@@ -28,7 +28,6 @@
 #include "dev.h"
 #include "clisp.h"
 #include "dprint.h"
-#include "jrand.h"
 #include "director.h"
 #include "lisp_gc.h"
 
@@ -122,7 +121,7 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
 
       uint8_t c=color_table->Lookup(r3>>3,g3>>3,b3>>3);
 
-      *sl=*(white_light+((*l)/2+28+jrand()%4)*256+c);
+      *sl=*(white_light+((*l)/2+28+rand(4))*256+c);
 
     }
     if (sx+n->x+x>x2) x2=sx+n->x+x;
@@ -193,9 +192,9 @@ void show_end2()
 
   for (si=sinfo,i=0; i<800; i++)
   {
-    *(si++)=jrand()%320;
-    *(si++)=jrand()%200;
-    *(si++)=c[jrand()%4];
+    *(si++)= rand(320);
+    *(si++)= rand(200);
+    *(si++)=c[rand(4)];
     main_screen->PutPixel(ivec2(si[-3],si[-2]),si[-1]);
   }
   int32_t paddr[256];
@@ -297,14 +296,14 @@ void show_end2()
       i++;
       if (i<150 || (i<170 && ((i-149)%2)==0) || (i<180 && ((i-149)%4)==0) || (i<190 && ((i-149)%8)==0))
       {
-        clist=new ex_char(ex+jrand()%(cache.img(mask)->Size().x-cache.img(mask)->Size().x/3),
-            ey+jrand()%(cache.img(mask)->Size().y-cache.img(mask)->Size().y/3),0,1,clist);
+        clist=new ex_char(ex+rand(cache.img(mask)->Size().x-cache.img(mask)->Size().x/3),
+            ey+rand(cache.img(mask)->Size().y-cache.img(mask)->Size().y/3),0,1,clist);
     if (sound_avail&SFX_INITIALIZED)
           cache.sfx(explo_snd)->play(127);
       }
 
-//      clist=new ex_char(ex+jrand()%(cache.img(mask)->Size().x,
-//            ey+jrand()%(cache.img(mask)->Size().y,0,1,clist);
+//      clist=new ex_char(ex+rand(cache.img(mask)->Size().x,
+//            ey+rand(cache.img(mask)->Size().y,0,1,clist);
 
       ex_char *c=clist,*last=NULL;
       for (; c; )

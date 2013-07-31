@@ -25,7 +25,6 @@
 #include "scroller.h"
 #include "id.h"
 #include "dev.h"
-#include "jrand.h"
 #include "dprint.h"
 #include "transp.h"
 #include "clisp.h"
@@ -294,7 +293,7 @@ uint16_t make_sync()
         }
     }
 
-    return ret ^ rand_on;
+    return ret;
 }
 
 

@@ -31,7 +31,6 @@
 #include "dprint.h"
 #include "particle.h"
 #include "objects.h"
-#include "jrand.h"
 #include "clisp.h"
 #include "status.h"
 #include "dev.h"
@@ -1640,7 +1639,7 @@ void Level::write_player_info(bFILE *fp, object_node *save_list)
   }
 
   fp->write_uint8(RC_32);
-  fp->write_uint32(rand_on);
+  fp->write_uint32(0); /* Used to be the PRNG state */
 
   fp->write_uint8(RC_32);
   fp->write_uint32(total_weapons);
@@ -1733,8 +1732,8 @@ int Level::load_player_info(bFILE *fp, SpecDir *sd, object_node *save_list)
     {
       fp->seek(se->offset,0);
       if (fp->read_uint8()==RC_32)
-        rand_on=fp->read_uint32();
-    } else rand_on=0;
+        (void)fp->read_uint32(); /* Used to be the PRNG state */
+    }
 
     se=sd->find("weapon_array");
     if (se)
@@ -2988,7 +2987,7 @@ GameObject *Level::get_random_start(int min_player_dist, view *exclude)
   int retries=t;
   do
   {
-    int ctry=jrandom(t)+1;
+    int ctry=rand(t)+1;
     GameObject *n=first;
     for (n=first; ctry && n; n=n->next)
     {

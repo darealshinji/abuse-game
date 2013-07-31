@@ -20,7 +20,6 @@
 #include "timing.h"
 #include "filter.h"
 #include "video.h"
-#include "jrand.h"
 
 #define p_swap(x,y) { x^=y; y^=x; x^=y; }
 #define p_dist(x1,y1,x2,y2) (((int)(x1)-(int)x2)*((int)(x1)-(int)x2)+      \
@@ -176,7 +175,6 @@ super_morph::super_morph(TransImage *hint1, TransImage *hint2,
 
 
   /******* Now apply simulated annealing to solve for a smaller total distance ********/
-  int rand_on=0;
   for (y=0; y<aneal_steps; y++)
   {
     if (stat_fun)
@@ -189,7 +187,7 @@ super_morph::super_morph(TransImage *hint1, TransImage *hint2,
       unsigned char *range_start=dp;
       for (a=0; a<z; a++,dp+=4)
       {
-    unsigned char *swap=range_start+(rtable[((rand_on++)&(RAND_TABLE_SIZE-1))]%z)*4;
+    unsigned char *swap = range_start + rand(z) * 4;
     int d_old=p_dist(dp[0],dp[1],dp[2],dp[3])+p_dist(swap[0],swap[1],swap[2],swap[3]);
     int d_new=p_dist(dp[0],dp[1],swap[2],swap[3])+p_dist(swap[0],swap[1],dp[2],dp[3]);
     if (d_new<d_old)
@@ -345,7 +343,6 @@ int smorph_player::show(image *screen, int x, int y, ColorFilter *fil, palette *
 main(int argc, char **argv)
 {
   image_init();
-  jrand_init();
   FILE *fp=fopen("art/mrphmask.spe","rb");
   SpecDir sd(fp);
   image *h1=new image(sd.find("20 h"),fp),
