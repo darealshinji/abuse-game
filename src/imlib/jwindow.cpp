@@ -232,14 +232,14 @@ void WindowManager::move_window(Jwindow *j, int x, int y)
     j->m_surf->AddDirty(ivec2(0), j->m_size);
 }
 
-WindowManager::WindowManager(image *screen, palette *pal, int Hi,
+WindowManager::WindowManager(image *screen, Palette *pal, int Hi,
                              int Med, int Low, JCFont *Font)
   : EventHandler(screen, pal)
 {
     wm = this;
     m_surf = screen;
     hi = Hi; low = Low; med = Med; m_first = NULL; m_pal = pal; m_grab = NULL;
-    bk = pal->find_closest(0, 0, 0);
+    bk = pal->FindClosest(u8vec3(0));
     state = inputing; fnt = Font;  wframe_fnt = Font;
     memset(key_state, 0, sizeof(key_state));
     frame_suppress = 0;

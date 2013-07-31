@@ -152,8 +152,8 @@ int main(int argc, char *argv[])
               }
             case SPEC_PALETTE:
               {
-                palette *pal = new palette(se, &fp);
-                printf(" \t# %i colors", pal->pal_size());
+                Palette *pal = new Palette(se, &fp);
+                printf(" \t# %i colors", pal->Count());
                 delete pal;
                 break;
               }
@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
     }
     else if (cmd == CMD_GETPCX)
     {
-        palette *pal;
+        Palette *pal;
         int imgid = atoi(argv[3]);
         int palid = argc > 4 ? atoi(argv[4]) : -1;
 
@@ -237,9 +237,9 @@ int main(int argc, char *argv[])
                 palid = i;
 
         if (palid == -1)
-            pal = new palette(256);
+            pal = new Palette(256);
         else
-            pal = new palette(dir.entries[palid], &fp);
+            pal = new Palette(dir.entries[palid], &fp);
 
         image *im = new image(&fp, dir.entries[imgid]);
         write_PCX(im, pal, "/dev/stdout");
@@ -339,7 +339,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            palette *pal = NULL;
+            Palette *pal = NULL;
             image *im = read_PCX(argv[5], pal);
             if (!im)
             {

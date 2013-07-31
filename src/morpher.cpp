@@ -24,7 +24,7 @@ void morph_char::draw(GameObject *who, view *v)
     if (fleft)
     {
         ivec2 pos = the_game->GameToMouse(who->m_pos - ivec2(cx >> 16, cy >> 16), v);
-        mor->show(main_screen, pos.x, pos.x, color_table, pal, 1000);
+        mor->show(main_screen, pos.x, pos.x, color_table, g_palette, 1000);
         cx += dcx;
         cy += dcy;
         fleft--;
@@ -70,7 +70,7 @@ morph_char::morph_char(GameObject *who, int to_type, void (*stat_fun)(int), int 
       image *i1=f1->forward->ToImage(),
       *i2=f2->forward->ToImage();
 
-      mor=new smorph_player(sm,pal,i1,i2,fleft,who->direction);
+      mor = new smorph_player(sm, g_palette, i1, i2, fleft, who->direction);
       delete i2;
       delete i1;
       delete sm;

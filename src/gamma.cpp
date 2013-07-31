@@ -27,7 +27,7 @@
 #include "loader2.h"
 
 extern int dev_ok;
-palette *old_pal = NULL;
+Palette *old_pal = NULL;
 
 class gray_picker : public spicker
 {
@@ -67,7 +67,7 @@ static char const *lang_string(char const *symbol)
     return lstring_value(v->GetValue());
 }
 
-void gamma_correct(palette *&pal, int force_menu)
+void gamma_correct(Palette *&pal, int force_menu)
 {
     long dg=0,old_dg=0;
     int abort=0;
@@ -79,7 +79,7 @@ void gamma_correct(palette *&pal, int force_menu)
     {
         delete pal;
         pal = old_pal;
-        old_pal = NULL;
+        old_pal = nullptr;
     }
 
     if(gs && DEFINEDP(gs->GetValue()) && !force_menu)
@@ -93,52 +93,23 @@ void gamma_correct(palette *&pal, int force_menu)
             dg = old_dg = lnumber_value(gs->GetValue());
         }
         // load in a fine gray palette they can chose from
-        palette *gray_pal = pal->copy();
-        int i = 0;
+        Palette *gray_pal = pal->Copy();
         int tc = 32;
 
-        for(; i < tc; i++)
-        {
-            gray_pal->set(i, i * 4, i * 4, i * 4);
-        }
+        for(int i = 0; i < tc; i++)
+            gray_pal->SetColor(i, u8vec3(i * 4));
 
         gray_pal->load();
 
         int wm_bc = wm->bright_color(), wm_mc = wm->medium_color(), wm_dc = wm->dark_color();
 
-        int br_r = pal->red(wm_bc) + 20;
-        if(br_r > 255)
-            br_r = 255;
-        int br_g = pal->green(wm_bc) + 20;
-        if(br_g > 255)
-            br_g = 255;
-        int br_b = pal->blue(wm_bc) + 20;
-        if(br_b > 255)
-            br_b = 255;
+        u8vec3 br = (u8vec3)min((ivec3)pal->GetColor(wm_bc), ivec3(255 - 20)) + u8vec3(20);
+        u8vec3 md = (u8vec3)max((ivec3)pal->GetColor(wm_mc), ivec3(20)) - u8vec3(20);
+        u8vec3 dr = (u8vec3)max((ivec3)pal->GetColor(wm_dc), ivec3(40)) - u8vec3(40);
 
-        int md_r = pal->red(wm_mc) - 20;
-        if(md_r < 0)
-            md_r = 0;
-        int md_g = pal->green(wm_mc) - 20;
-        if(md_g < 0)
-            md_g = 0;
-        int md_b = pal->blue(wm_mc) - 20;
-        if(md_b < 0)
-            md_b = 0;
-
-        int dr_r = pal->red(wm_dc) - 40;
-        if(dr_r < 0)
-            dr_r = 0;
-        int dr_g = pal->green(wm_dc) - 40;
-        if(dr_g < 0)
-            dr_g = 0;
-        int dr_b = pal->blue(wm_dc) - 40;
-        if(dr_b < 0)
-            dr_b = 0;
-
-        wm->set_colors(gray_pal->find_closest(br_r, br_g, br_b),
-            gray_pal->find_closest(md_r, md_g, md_b),
-            gray_pal->find_closest(dr_r, dr_g, dr_b));
+        wm->set_colors(gray_pal->FindClosest(br),
+                       gray_pal->FindClosest(md),
+                       gray_pal->FindClosest(dr));
 
         int sh = wm->font()->Size().y + 35;
         button *but = new button(5, 5 + sh * 3, ID_GAMMA_OK, cache.img(ok_button),
@@ -210,14 +181,13 @@ void gamma_correct(palette *&pal, int force_menu)
     double gamma = log(dg / 255.0) / log(16.0 / 255.0);
 
     old_pal = pal;
-    pal = new palette;
+    pal = new Palette;
     for(int i = 0; i < 256; i++)
     {
-        uint8_t oldr, oldg, oldb;
-        old_pal->get(i, oldr, oldg, oldb);
-        pal->set(i, (int)(lol::pow(oldr / 255.0, gamma) * 255),
-            (int)(lol::pow(oldg / 255.0, gamma) * 255),
-            (int)(lol::pow(oldb / 255.0, gamma) * 255));
+        u8vec3 old = old_pal->GetColor(i);
+        pal->SetColor(i, u8vec3(lol::pow(old.r / 255.0, gamma) * 255,
+                                lol::pow(old.g / 255.0, gamma) * 255,
+                                lol::pow(old.b / 255.0, gamma) * 255));
     }
 
     pal->load();

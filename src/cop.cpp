@@ -785,31 +785,14 @@ void *bottom_draw()
 
   if (o->lvars[r_ramp] || o->lvars[g_ramp] || o->lvars[b_ramp])
   {
-    int r=o->lvars[r_ramp];
-    if (r>7) r-=7;
-    else r=0;
-    o->lvars[r_ramp]=r;
+    o->lvars[r_ramp] = lol::max(o->lvars[r_ramp] - 7, 0);
+    o->lvars[g_ramp] = lol::max(o->lvars[g_ramp] - 7, 0);
+    o->lvars[b_ramp] = lol::max(o->lvars[b_ramp] - 7, 0);
+    ivec3 delta(o->lvars[r_ramp], o->lvars[g_ramp], o->lvars[b_ramp]);
 
-    int g=o->lvars[g_ramp];
-    if (g>7) g-=7;
-    else g=0;
-    o->lvars[g_ramp]=g;
-
-    int b=o->lvars[b_ramp];
-    if (b>7) b-=7;
-    else b=0;
-    o->lvars[b_ramp]=b;
-
-    palette *p=pal->copy();
-    uint8_t *addr=(uint8_t *)p->addr();
-    int ra,ga,ba;
-
-    for (int i=0; i<256; i++)
-    {
-      ra=(int)*addr+r; if (ra>255) ra=255; else if (ra<0) r=0; *addr=(uint8_t)ra; addr++;
-      ga=(int)*addr+g; if (ga>255) ga=255; else if (ga<0) g=0; *addr=(uint8_t)ga; addr++;
-      ba=(int)*addr+b; if (ba>255) ba=255; else if (ba<0) b=0; *addr=(uint8_t)ba; addr++;
-    }
+    Palette *p = g_palette->Copy();
+    for (int i = 0; i < 256; i++)
+      p->SetColor(i, (u8vec3)clamp((ivec3)p->GetColor(i) + delta, 0, 255));
     p->load();
     delete p;
   }

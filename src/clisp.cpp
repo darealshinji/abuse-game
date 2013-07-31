@@ -697,11 +697,11 @@ void *l_caller(long number, void *args)
       int t=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
       int x=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
       int y=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
-      int r1=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
       int r2=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
+      int r3=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
       int xs=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
       int ys=lnumber_value(CAR(args)->Eval());
-      return LPointer::Create(add_light_source(t,x,y,r1,r2,xs,ys));
+      return LPointer::Create(add_light_source(t,x,y,r2,r3,xs,ys));
     } break;
     case 15 :
     {
@@ -751,7 +751,7 @@ void *l_caller(long number, void *args)
       long a2=lnumber_value(CAR(args)->Eval()); args=CDR(args);
 
       void *list = CAR(args)->Eval();
-      PtrRef r1(list);
+      PtrRef r2(list);
       GameObject *find=g_current_level->find_object_in_angle(current_object->m_pos.x,
                             current_object->m_pos.y,
                             a1,a2,list,current_object);
@@ -879,7 +879,7 @@ void *l_caller(long number, void *args)
       else b1=b2=b3=xv=yv=0;
 
       void *ret=NULL;
-      PtrRef r1(ret);
+      PtrRef r2(ret);
       push_onto_list(LNumber::Create(b3),ret);
       push_onto_list(LNumber::Create(b2),ret);
       push_onto_list(LNumber::Create(b1),ret);
@@ -891,7 +891,7 @@ void *l_caller(long number, void *args)
     {
       void *ret=NULL;
       {
-    PtrRef r1(ret);
+    PtrRef r2(ret);
     push_onto_list(LNumber::Create((last_demo_mbut&4)==4),ret);
     push_onto_list(LNumber::Create((last_demo_mbut&2)==2),ret);
     push_onto_list(LNumber::Create((last_demo_mbut&1)==1),ret);
@@ -908,7 +908,7 @@ void *l_caller(long number, void *args)
       ivec2 pos = the_game->MouseToGame(ivec2(x, y));
       void *ret = NULL;
       {
-          PtrRef r1(ret);
+          PtrRef r2(ret);
           push_onto_list(LNumber::Create(pos.y), ret);
           push_onto_list(LNumber::Create(pos.x), ret);
       }
@@ -922,7 +922,7 @@ void *l_caller(long number, void *args)
       ivec2 pos = the_game->GameToMouse(ivec2(x, y), current_view);
       void *ret = NULL;
       {
-        PtrRef r1(ret);
+        PtrRef r2(ret);
         push_onto_list(LNumber::Create(pos.y), ret);
         push_onto_list(LNumber::Create(pos.x), ret);
       }
@@ -959,7 +959,7 @@ void *l_caller(long number, void *args)
       void *fn=CAR(args)->Eval(); args=CDR(args);
       char tmp[200];
       {
-    PtrRef r1(fn);
+    PtrRef r2(fn);
     char *slash=lstring_value(CAR(args)->Eval());
     char *filename=lstring_value(fn);
 
@@ -983,7 +983,7 @@ void *l_caller(long number, void *args)
       get_directory(lstring_value(CAR(args)->Eval()),files,tfiles,dirs,tdirs);
       void *fl=NULL,*dl=NULL,*rl=NULL;
       {
-    PtrRef r1(fl),r2(dl);
+    PtrRef r2(fl),r3(dl);
 
     for (i=tfiles-1; i>=0; i--) { push_onto_list(LString::Create(files[i]),fl); free(files[i]); }
     free(files);
@@ -1014,7 +1014,7 @@ void *l_caller(long number, void *args)
       long last=lnumber_value(CAR(args)->Eval());
       long i;
       void *ret=NULL;
-      PtrRef r1(ret);
+      PtrRef r2(ret);
 
       if (last>=first)
       {
@@ -1194,7 +1194,7 @@ long c_caller(long number, void *args)
     case 48 : return lnumber_value(CAR(args))&BLOCKED_RIGHT; break;
 
     case 50 : dev_cont->add_palette(args); break;
-    case 51 : write_PCX(main_screen,pal,lstring_value(CAR(args))); break;
+    case 51 : write_PCX(main_screen, g_palette, lstring_value(CAR(args))); break;
 
     case 52 : the_game->zoom=lnumber_value(CAR(args)); the_game->draw(); break;
     case 55 : the_game->show_help(lstring_value(CAR(args))); break;
@@ -1584,7 +1584,7 @@ long c_caller(long number, void *args)
     lbreak("color out of range (0..255) in color lookup\n");
     exit(0);
       }
-      return color_table->Lookup(r >> 3, g >> 3, b >> 3);
+      return color_table->Lookup(u8vec3(r >> 3, g >> 3, b >> 3));
     } break;
     case 173 :
     {
@@ -1706,8 +1706,9 @@ long c_caller(long number, void *args)
     if (!se) lbreak("File %s has no palette!\n",lstring_value(CAR(args)));
     else
     {
-      if (pal) delete pal;
-      pal=new palette(se,fp);
+      if (g_palette)
+        delete g_palette;
+      g_palette = new Palette(se,fp);
     }
     delete fp;
       }
@@ -1906,18 +1907,14 @@ long c_caller(long number, void *args)
     } break;
     case 228 :
     {
-      palette *p=pal->copy();
-      uint8_t *addr=(uint8_t *)p->addr();
-      int r,g,b;
-      int ra=lnumber_value(CAR(args)); args=CDR(args);
-      int ga=lnumber_value(CAR(args)); args=CDR(args);
-      int ba=lnumber_value(CAR(args));
-      for (int i=0; i<256; i++)
-      {
-    r=(int)*addr+ra; if (r>255) r=255; else if (r<0) r=0; *addr=(uint8_t)r; addr++;
-    g=(int)*addr+ga; if (g>255) g=255; else if (g<0) g=0; *addr=(uint8_t)g; addr++;
-    b=(int)*addr+ba; if (b>255) b=255; else if (b<0) b=0; *addr=(uint8_t)b; addr++;
-      }
+      ivec3 delta;
+      delta.r = lnumber_value(CAR(args)); args=CDR(args);
+      delta.g = lnumber_value(CAR(args)); args=CDR(args);
+      delta.b = lnumber_value(CAR(args));
+
+      Palette *p = g_palette->Copy();
+      for (int i = 0; i < 256; i++)
+        p->SetColor(i, (u8vec3)clamp((ivec3)p->GetColor(i) + delta, 0, 255));
       p->load();
       delete p;
     } break;

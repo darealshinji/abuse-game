@@ -13,7 +13,7 @@
 #include "image.h"
 #include "palette.h"
 
-void write_include(image *im, palette *pal, char *filename, char *name);
+void write_include(image *im, Palette *pal, char *filename, char *name);
 
 #endif
 

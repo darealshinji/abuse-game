@@ -115,29 +115,27 @@ public:
     uint8_t Pixel(ivec2 pos);
     void PutPixel(ivec2 pos, uint8_t color);
 
-    inline uint8_t *scan_line(int16_t y)
+    inline uint8_t *scan_line(int y)
     {
         return m_data + y * m_size.x;
     }
     image *copy(); // makes a copy of an image
-    void clear(int16_t color = -1); // -1 is background color
+    void clear(int color = -1); // -1 is background color
 
     ivec2 Size() const { return m_size; }
 
-    void scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2,
-                int16_t xd, int16_t yd);
+    void scroll(int x1, int y1, int x2, int y2, int xd, int yd);
     void PutImage(image *screen, ivec2 pos, int transparent = 0);
     void PutPart(image *screen, ivec2 pos, ivec2 aa, ivec2 bb,
                  int transparent = 0);
-    image *copy_part_dithered(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+    image *copy_part_dithered(int x1, int y1, int x2, int y2);
     void Bar(ivec2 p1, ivec2 p2, uint8_t color);
-    void xor_bar(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
+    void xor_bar(int x1, int y1, int x2, int y2, uint8_t color);
     void WidgetBar(ivec2 p1, ivec2 p2,
                    uint8_t light, uint8_t med, uint8_t dark);
     void Line(ivec2 p1, ivec2 p2, uint8_t color);
     void Rectangle(ivec2 p1, ivec2 p2, uint8_t color);
-    void burn_led(int16_t x, int16_t y, int32_t num, int16_t color,
-                  int16_t scale = 1);
+    void burn_led(int x, int y, int32_t num, int color, int scale = 1);
     void SetClip(ivec2 aa, ivec2 bb);
     void GetClip(ivec2 &aa, ivec2 &bb);
     void InClip(ivec2 aa, ivec2 bb);
@@ -166,12 +164,12 @@ public:
     {
         if (m_special) m_special->ClearDirties();
     }
-    void dither(palette *pal); // use a b&w palette!
+    void dither(Palette *pal); // use a b&w palette!
     void Scale(ivec2 size);
     void SetSize(ivec2 size, uint8_t *page = NULL);
-    void flood_fill(int16_t x, int16_t y, uint8_t color);
-    image *create_smooth(int16_t smoothness = 1); // 0 no smoothness
-    void unpack_scanline(int16_t line, char bitsperpixel = 1);
+    void flood_fill(int x, int y, uint8_t color);
+    image *create_smooth(int smoothness = 1); // 0 no smoothness
+    void unpack_scanline(int line, char bitsperpixel = 1);
     void FlipX();
     void FlipY();
 };

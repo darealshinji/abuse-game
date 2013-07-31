@@ -10,6 +10,7 @@
 
 #ifndef _PALETTE_H_
 #define _PALETTE_H_
+
 #include "linked.h"
 #include "specs.h"
 #define COLOR_BITS 6    // On PC-6, most others -8
@@ -20,53 +21,52 @@
 #define BLUE2(x) (unsigned char) ((x&3)*(int)255/(int)3)
 
 
-struct color
+class Palette : public linked_node
 {
-  unsigned char red,green,blue;
-} ;
+public:
+  Palette(int number_colors=256);
+  Palette(SpecEntry *e, bFILE *fp);
+  Palette(bFILE *fp);
 
-class palette : public linked_node
-{
-  color *pal;
-  unsigned char *usd;           // bit array
-  short ncolors;
+  Palette *Copy() const;
+
+  int Count() const { return m_colors.Count(); }
+  u8vec3 *Data() { return m_colors.Data(); }
+  u8vec3 const *Data() const { return m_colors.Data(); }
+
+  u8vec3 GetColor(int x) const;
+  uint8_t GetGray(int x) const;
+  void SetColor(int x, u8vec3 color);
+
+  int FindColor(u8vec3 color) const;
+  int FindClosest(u8vec3 color) const;
+  int FindBrightest(int all = 0) const;
+  int FindDarkest(int all = 0, int noblack = 1) const;
+
+  void FadeTo(int total_fades, int fade_on, u8vec3 dest);
+
+private:
+  Array<u8vec3> m_colors;
+  Array<uint8_t> m_used;
   int bg;
+
 public :
-  palette(int number_colors=256);
-  palette(SpecEntry *e, bFILE *fp);
-  palette(bFILE *fp);
-  void set(int x, unsigned char red, unsigned char green, unsigned char blue);
-  void get(int x, unsigned char &red, unsigned char &green, unsigned char &blue);
   uint32_t getquad(int x);
-  unsigned int red(int x) { return pal[x].red; }
-  unsigned int green(int x) { return pal[x].green; }
-  unsigned int blue(int x) { return pal[x].blue; }
-  void *addr() { return (void *) pal; }
   void shift(int amount);
   void load();
   void load_nice();
-  void fade_to(int total_fades, int fade_on, int dest_r, int dest_g, int dest_b);
 
   void defaults();
   void set_rgbs();
   void make_black_white();
   void black_white();
 
-  int pal_size() { return ncolors; }
-  void set_used(int color_num);
-  void set_unused(int color_num);
   int used(int color_num);
   void set_all_used();
   void set_all_unused();
-  int find_color(uint8_t r, uint8_t g, uint8_t b);
-  int find_closest(uint8_t r, uint8_t g, uint8_t b);
-  palette *copy();
-  uint8_t brightest(int all=0);
-  uint8_t darkest(int all=0, int noblack=1);
   int write(bFILE *fp);
   int size();
-  ~palette();
-} ;
+};
 
 class quant_node : public linked_node
 {
@@ -99,5 +99,6 @@ public :
   ~quant_palette();
 } ;
 
-palette *last_loaded();
+Palette *last_loaded();
 #endif
+

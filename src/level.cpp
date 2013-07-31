@@ -756,7 +756,7 @@ int Level::tick()
     {
       char name[100];
       sprintf(name,"shot%04d.pcx",screen_shot_on++);
-      write_PCX(main_screen,pal,name);
+      write_PCX(main_screen, g_palette, name);
     }
   }
 

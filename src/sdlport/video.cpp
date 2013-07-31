@@ -44,7 +44,7 @@ image *main_screen = NULL;
 int win_xscale, win_yscale, mouse_xscale, mouse_yscale;
 int xres, yres;
 
-extern palette *lastl;
+extern Palette *lastl;
 extern flags_struct flags;
 GLfloat texcoord[4];
 GLuint texid;
@@ -313,27 +313,28 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
 // load()
 // Set the palette
 //
-void palette::load()
+void Palette::load()
 {
     if(lastl)
         delete lastl;
-    lastl = copy();
+    lastl = Copy();
 
     // Force to only 256 colours.
     // Shouldn't be needed, but best to be safe.
-    if(ncolors > 256)
-        ncolors = 256;
+    if (m_colors.Count() > 256)
+        m_colors.Resize(256);
 
-    SDL_Color colors[ncolors];
-    for(int ii = 0; ii < ncolors; ii++)
+    SDL_Color *sdlcolors = new SDL_Color[m_colors.Count()];
+    for(int i = 0; i < m_colors.Count(); i++)
     {
-        colors[ii].r = red(ii);
-        colors[ii].g = green(ii);
-        colors[ii].b = blue(ii);
+        sdlcolors[i].r = m_colors[i].r;
+        sdlcolors[i].g = m_colors[i].g;
+        sdlcolors[i].b = m_colors[i].b;
     }
-    SDL_SetColors(surface, colors, 0, ncolors);
+    SDL_SetColors(surface, sdlcolors, 0, m_colors.Count());
+
     if(window->format->BitsPerPixel == 8)
-        SDL_SetColors(window, colors, 0, ncolors);
+        SDL_SetColors(window, sdlcolors, 0, m_colors.Count());
 
     // Now redraw the surface
     update_window_done();
@@ -342,7 +343,7 @@ void palette::load()
 //
 // load_nice()
 //
-void palette::load_nice()
+void Palette::load_nice()
 {
     load();
 }

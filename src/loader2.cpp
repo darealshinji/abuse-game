@@ -49,7 +49,7 @@ song *current_song=NULL;
 uint16_t current_start_type,start_position_type,last_start_number;
 int light_buttons[13];
 int joy_picts[2*9];
-palette *pal;
+Palette *g_palette;
 
 int big_font_pict=-1,small_font_pict=-1,console_font_pict=-1,cdc_logo;
 
@@ -291,7 +291,7 @@ void load_data(int argc, char **argv)
     nforetiles=nbacktiles=0;
     foretiles=NULL;
     backtiles=NULL;
-    pal=NULL;
+    g_palette = nullptr;
     color_table=NULL;
 
 # if 0

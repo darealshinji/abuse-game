@@ -19,7 +19,7 @@
 #include "dev.h"
 
 
-extern palette *pal;
+extern Palette *g_palette;
 
 boundary::boundary(bFILE *fp, char const *er_name) : point_list(fp)
 {
@@ -229,7 +229,7 @@ foretile::foretile(bFILE *fp)
     memset(g, 0, AUTOTILE_WIDTH * AUTOTILE_HEIGHT * sizeof(int));
     memset(b, 0, AUTOTILE_WIDTH * AUTOTILE_HEIGHT * sizeof(int));
 
-  if (!pal)
+  if (!g_palette)
   {
     lbreak("Palette has no been defined\nuse load_palette before load_tiles");
     exit(0);
@@ -247,19 +247,19 @@ foretile::foretile(bFILE *fp)
     for (x=0; x<w; x++,sl++)
     {
       l=(y*AUTOTILE_HEIGHT/h)*AUTOTILE_WIDTH +  x*AUTOTILE_WIDTH/w;
-      r[l]+=pal->red(*sl);
-      g[l]+=pal->green(*sl);
-      b[l]+=pal->blue(*sl);
-      t[l]++;
+      r[l] += g_palette->GetColor(*sl).r;
+      g[l] += g_palette->GetColor(*sl).g;
+      b[l] += g_palette->GetColor(*sl).b;
+      t[l] ++;
     }
   }
   micro_image = new image(ivec2(AUTOTILE_WIDTH, AUTOTILE_HEIGHT));
 
   for (l=0; l<AUTOTILE_WIDTH*AUTOTILE_HEIGHT; l++)
     micro_image->PutPixel(ivec2(l % AUTOTILE_WIDTH, l / AUTOTILE_WIDTH),
-       color_table->Lookup((r[l]/(t[l]*4/5))>>3,
-                 (g[l]/(t[l]*4/5))>>3,
-                 (b[l]/(t[l]*4/5))>>3));
+       color_table->Lookup(u8vec3((r[l]/(t[l]*4/5))>>3,
+                                  (g[l]/(t[l]*4/5))>>3,
+                                  (b[l]/(t[l]*4/5))>>3)));
 
 
   im=new TransImage(img,"foretile");
@@ -308,12 +308,11 @@ figure::figure(bFILE *fp, int type)
 
 char_tint::char_tint(bFILE *fp)  // se should be a palette entry
 {
-  palette *p=new palette(fp);
-  uint8_t *t=data,*p_addr=(uint8_t *)p->addr();
-  for (int i=0; i<256; i++,t++,p_addr+=3)
-    *t=pal->find_closest(*p_addr,p_addr[1],p_addr[2]);
-
-  delete p;
+    Palette *p = new Palette(fp);
+    uint8_t *t = data;
+    for (int i = 0; i < 256; i++, t++)
+        *t = g_palette->FindClosest(p->GetColor(i));
+    delete p;
 }
 
 

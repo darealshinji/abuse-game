@@ -73,12 +73,14 @@ void VolumeWindow::draw_vol(int x1, int y1, int x2, int y2, int t,
 void VolumeWindow::draw_sfx_vol()
 {
     draw_vol(6, 16, 34, 22, sfx_volume, 127,
-             pal->find_closest(200, 75, 19), pal->find_closest(40, 0, 0));
+             g_palette->FindClosest(u8vec3(200, 75, 19)),
+             g_palette->FindClosest(u8vec3(40, 0, 0)));
 }
 
 void VolumeWindow::draw_music_vol()
 {
     draw_vol(6, 61, 34, 67, music_volume, 127,
-             pal->find_closest(255, 0, 0), pal->find_closest(40, 0, 0));
+             g_palette->FindClosest(u8vec3(255, 0, 0)),
+             g_palette->FindClosest(u8vec3(40, 0, 0)));
 }
 

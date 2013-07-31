@@ -31,7 +31,7 @@
 //
 // Constructor
 //
-EventHandler::EventHandler(image *screen, palette *pal)
+EventHandler::EventHandler(image *screen, Palette *pal)
 {
     ASSERT(screen);
     ASSERT(pal);
@@ -55,8 +55,8 @@ EventHandler::EventHandler(image *screen, palette *pal)
     };
 
     Filter f;
-    f.Set(1, pal->brightest(1));
-    f.Set(2, pal->darkest(1));
+    f.Set(1, pal->FindBrightest(1));
+    f.Set(2, pal->FindDarkest(1));
     image *im = new image(ivec2(8, 10), mouse_sprite);
     f.Apply(im);
 
