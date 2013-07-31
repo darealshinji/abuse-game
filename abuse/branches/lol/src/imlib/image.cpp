@@ -144,7 +144,7 @@ void image_init()
     ;
 }
 
-void image::clear(int16_t color)
+void image::clear(int color)
 {
     Lock();
     if(color == -1)
@@ -607,9 +607,9 @@ void image::Bar(ivec2 p1, ivec2 p2, uint8_t color)
     AddDirty(p1, p2 + ivec2(1));
 }
 
-void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
+void image::xor_bar(int x1, int y1, int x2, int y2, uint8_t color)
 {
-  int16_t y, x;
+  int y, x;
   if (x1>x2 || y1>y2) return ;
   if (m_special)
   { x1=m_special->bound_x1(x1);
@@ -641,9 +641,8 @@ void image::xor_bar  (int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t co
 }
 
 
-void image::unpack_scanline(int16_t line, char bitsperpixel)
+void image::unpack_scanline(int line, char bitsperpixel)
 {
-  int16_t x;
   uint8_t *sl, *ex, mask, bt, sh;
   ex=(uint8_t *)malloc(m_size.x);
 
@@ -656,31 +655,33 @@ void image::unpack_scanline(int16_t line, char bitsperpixel)
   else if (bitsperpixel==2) { mask=128+64;        bt=4; }
   else                 {  mask=128+64+32+16; bt=2; }
 
-  for (x=0; x<m_size.x; x++)
-  { sh=((x%bt)<<(bitsperpixel-1));
+  for (int x = 0; x < m_size.x; x++)
+  {
+    sh=((x%bt)<<(bitsperpixel-1));
     sl[x]=(ex[x/bt]&(mask>>sh))>>(bt-sh-1);
   }
 
   free((char *)ex);
 }
 
-void image::dither(palette *pal)
+void image::dither(Palette *pal)
 {
-  int16_t x, y, j;
-  uint8_t dt_matrix[]={ 0,  136, 24, 170,
-           68, 204, 102, 238,
-           51, 187, 17, 153,
-           119, 255, 85, 221};
+    uint8_t const dt_matrix[] =
+    {
+          0,  136, 24, 170,
+         68, 204, 102, 238,
+         51, 187, 17, 153,
+         119, 255, 85, 221
+    };
 
-  uint8_t *sl;
-  Lock();
-  for (y = 0; y < m_size.y; y++)
-  {
-    sl=scan_line(y);
-    for (j=y%4, x=0; x < m_size.x; x++)
-      sl[x] = (pal->red(sl[x]) > dt_matrix[j * 4 + (x & 3)]) ? 255 : 0;
-  }
-  Unlock();
+    Lock();
+    for (int y = 0; y < m_size.y; y++)
+    {
+        uint8_t *sl = scan_line(y);
+        for (int j = y % 4, x = 0; x < m_size.x; x++)
+            sl[x] = (pal->GetColor(sl[x]).r > dt_matrix[j * 4 + (x & 3)]) ? 255 : 0;
+    }
+    Unlock();
 }
 
 void image_descriptor::ClearDirties()
@@ -725,7 +726,7 @@ void image::Scale(ivec2 new_size)
     Unlock();
 }
 
-void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, int16_t yd)
+void image::scroll(int x1, int y1, int x2, int y2, int xd, int yd)
 {
   ASSERT(x1 >= 0);
   ASSERT(y1 >= 0);
@@ -738,12 +739,12 @@ void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, i
   {
     ivec2 caa, cbb;
     m_special->GetClip(caa, cbb);
-    x1=lol::max(x1, caa.x);
-    y1=lol::max(caa.y, y1);
-    x2=lol::min(x2, cbb.x - 1);
-    y2=lol::min(y2, cbb.y - 1);
+    x1 = lol::max(x1, caa.x);
+    y1 = lol::max(caa.y, y1);
+    x2 = lol::min(x2, cbb.x - 1);
+    y2 = lol::min(y2, cbb.y - 1);
   }
-  int16_t xsrc, ysrc, xdst, ydst, xtot=x2-x1-lol::abs(xd)+1, ytot, xt;
+  int xsrc, ysrc, xdst, ydst, xtot=x2-x1-lol::abs(xd)+1, ytot, xt;
   uint8_t *src, *dst;
   if (xd<0) { xsrc=x1-xd; xdst=x1; } else { xsrc=x2-xd; xdst=x2; }
   if (yd<0) { ysrc=y1-yd; ydst=y1; } else { ysrc=y2-yd; ydst=y2; }
@@ -761,11 +762,11 @@ void image::scroll(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t xd, i
 }
 
 
-image *image::create_smooth(int16_t smoothness)
+image *image::create_smooth(int smoothness)
 {
   ASSERT(smoothness >= 0);
 
-  int16_t i, j, k, l, t, d;
+  int i, j, k, l, t, d;
   image *im;
   if (!smoothness)
     return NULL;
@@ -798,13 +799,13 @@ void image::WidgetBar(ivec2 p1, ivec2 p2,
 class fill_rec
 {
 public :
-  int16_t x, y;
+  int x, y;
   fill_rec *last;
-  fill_rec(int16_t X, int16_t Y, fill_rec *Last)
+  fill_rec(int X, int Y, fill_rec *Last)
   { x=X; y=Y; last=Last; }
 } ;
 
-void image::flood_fill(int16_t x, int16_t y, uint8_t color)
+void image::flood_fill(int x, int y, uint8_t color)
 {
   uint8_t *sl, *above, *below;
   fill_rec *recs=NULL, *r;
@@ -889,15 +890,15 @@ void image::flood_fill(int16_t x, int16_t y, uint8_t color)
 
 #define LED_L 5
 #define LED_H 5
-void image::burn_led(int16_t x, int16_t y, int32_t num, int16_t color, int16_t scale)
+void image::burn_led(int x, int y, int32_t num, int color, int scale)
 {
   char st[100];
-  int16_t ledx[]={ 1, 2, 1, 2, 3, 3, 3, 3, 1, 2, 0, 0, 0, 0};
-  int16_t ledy[]={ 3, 3, 0, 0, 1, 2, 4, 6, 7, 7, 4, 6, 1, 2};
+  int ledx[]={ 1, 2, 1, 2, 3, 3, 3, 3, 1, 2, 0, 0, 0, 0};
+  int ledy[]={ 3, 3, 0, 0, 1, 2, 4, 6, 7, 7, 4, 6, 1, 2};
 
-  int16_t dig[]={ 2+4+8+16+32+64, 4+8, 2+4+1+32+16, 2+4+1+8+16, 64+1+4+8,
+  int dig[]={ 2+4+8+16+32+64, 4+8, 2+4+1+32+16, 2+4+1+8+16, 64+1+4+8,
              2+64+1+8+16, 64+32+1+8+16, 2+4+8, 1+2+4+8+16+32+64, 64+2+4+1+8, 1};
-  int16_t xx, yy, zz;
+  int xx, yy, zz;
   sprintf(st, "%8ld", (long int)num);
   for (xx=0; xx<8; xx++)
   {
@@ -921,7 +922,7 @@ uint8_t dither_matrix[]={ 0,  136, 24, 170,
              51, 187, 17, 153,
              119, 255, 85, 221};
 
-image *image::copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+image *image::copy_part_dithered (int x1, int y1, int x2, int y2)
 {
   int x, y, ry, rx, bo, dity, ditx;
   image *ret;
@@ -951,7 +952,7 @@ image *image::copy_part_dithered (int16_t x1, int16_t y1, int16_t x2, int16_t y2
       memset(sl1, 0, (x2-x1+8)/8);
       for (bo=7, rx=0, x=x1, ditx=x1%4; x<=x2; x++)
       {
-        if (last_loaded()->red(sl2[x])>dither_matrix[ditx+dity])
+        if (last_loaded()->GetColor(sl2[x]).r > dither_matrix[ditx+dity])
           sl1[rx]|=1<<bo;
         if (bo!=0)
       bo--;

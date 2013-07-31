@@ -146,7 +146,7 @@ protected:
     void remove_window(Jwindow *);
 
 public:
-    WindowManager(image *, palette *, int hi, int med, int low, JCFont *);
+    WindowManager(image *, Palette *, int hi, int med, int low, JCFont *);
     ~WindowManager();
 
     Jwindow *m_first, *m_grab;
@@ -183,7 +183,7 @@ public:
     void release_focus();
 
 private:
-    palette *m_pal;
+    Palette *m_pal;
     image *m_surf;
 };
 

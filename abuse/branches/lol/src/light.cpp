@@ -185,27 +185,23 @@ LightSource *add_light_source(char type, int32_t x, int32_t y,
 uint8_t *tints[TTINTS];
 uint8_t bright_tint[256];
 
-void calc_tint(uint8_t *tint, int rs, int gs, int bs, int ra, int ga, int ba, palette *pal)
+void calc_tint(uint8_t *tint, u8vec3 s, u8vec3 a, Palette *pal)
 {
-  palette npal;
-  memset(npal.addr(),0,256);
-  int i=0;
-  for (; i<256; i++)
+  Palette npal;
+  for (int i = 0; i < 256; i++)
   {
-    npal.set(i,(int)rs,(int)gs,(int)bs);
-    rs+=ra; if (rs>255) rs=255; else if (rs<0) rs=0;
-    gs+=ga; if (gs>255) gs=255; else if (gs<0) gs=0;
-    bs+=ba; if (bs>255) bs=255; else if (bs<0) bs=0;
+    npal.SetColor(i, s);
+    s = (u8vec3)clamp((ivec3)s + (ivec3)a, 0, 255);
   }
-  Filter f(pal,&npal);
-  Filter f2(&npal,pal);
+  Filter f(pal, &npal);
+  Filter f2(&npal, pal);
 
-  for (i=0; i<256; i++,tint++)
-    *tint=f2.GetMapping(f.GetMapping(i));
+  for (int i = 0; i < 256; i++, tint++)
+    *tint = f2.GetMapping(f.GetMapping(i));
 }
 
 
-void calc_light_table(palette *pal)
+void calc_light_table(Palette *pal)
 {
     white_light_initial=(uint8_t *)malloc(256*64);
     white_light=white_light_initial;
@@ -229,7 +225,7 @@ void calc_light_table(palette *pal)
     }
     else
     {
-        if (fp->read_uint16() != Crc::FromData((uint8_t *)pal->addr(), 768))
+        if (fp->read_uint16() != Crc::FromData((uint8_t *)pal->Data(), 768))
             recalc=1;
         else
         {
@@ -249,19 +245,17 @@ void calc_light_table(palette *pal)
     {
         dprintf("Palette has changed, recalculating light table...\n");
         stat_man->push("white light",NULL);
-        int color=0;
-        for (; color<256; color++)
+        for (int color = 0; color < 256; color++)
         {
-            uint8_t r,g,b;
-            pal->get(color,r,g,b);
-            stat_man->update(color*100/256);
-            for (int intensity=63; intensity>=0; intensity--)
+            u8vec3 rgb = pal->GetColor(color);
+            stat_man->update(color * 100 / 256);
+            for (int intensity = 63; intensity >= 0; intensity--)
             {
-                if (r>0 || g>0 || b>0)
-                    white_light[intensity*256+color]=pal->find_closest(r,g,b);
+                if (rgb != u8vec3(0))
+                    white_light[intensity*256+color] = pal->FindClosest(rgb);
                 else
                     white_light[intensity*256+color]=0;
-                if (r) r--;  if (g) g--;  if (b) b--;
+                rgb = max(rgb, u8vec3(1)) - u8vec3(1);
             }
         }
         stat_man->pop();
@@ -310,25 +304,23 @@ void calc_light_table(palette *pal)
     for (i=0,c=tints[0]; i<256; i++,c++) *c=i;  // make the normal tint (maps everthing to itself)
     for (i=0,c=tints[TTINTS-1]; i<256; i++,c++)  // reverse green
     {
-      int r=pal->red(i)/2,g=255-pal->green(i)-30,b=pal->blue(i)*3/5+50;
-      if (g<0) g=0;
-      if (b>255) b=0;
-      *c=pal->find_closest(r,g,b);
+      ivec3 rgb = (ivec3)pal->GetColor(i);
+      rgb = clamp(ivec3(rgb.r / 2, 255 - rgb.g - 30, rgb.b * 3 / 5 + 50), 0, 255);
+      *c = pal->FindClosest(rgb);
     }
     for (i=0; i<256; i++)
     {
-      int r=pal->red(i)+(255-pal->red(i))/2,
-          g=pal->green(i)+(255-pal->green(i))/2,
-          b=pal->blue(i)+(255-pal->blue(i))/2;
-      bright_tint[i]=pal->find_closest(r,g,b);
+      u8vec3 rgb = pal->GetColor(i) + (u8vec3(255) - pal->GetColor(i)) / (uint8_t)2;
+      bright_tint[i] = pal->FindClosest(rgb);
     }
 
     // make the colored tints
     for (i=1; i<TTINTS-1; i++)
     {
       stat_man->update(i*100/(TTINTS-1));
-      calc_tint(tints[i],ti[0],ti[1],ti[2],ti[3],ti[4],ti[5],pal);
-      ti+=6;
+      calc_tint(tints[i], u8vec3(ti[0], ti[1], ti[2]),
+                          u8vec3(ti[3], ti[4], ti[5]), pal);
+      ti += 6;
     }
     stat_man->pop();
 /*    fprintf(stderr,"calculating transparency tables (256 total)\n");
@@ -359,8 +351,8 @@ void calc_light_table(palette *pal)
             dprintf( "Unable to open file light.tbl for writing\n" );
         else
         {
-            f->write_uint16(Crc::FromData((uint8_t *)pal->addr(),768));
-            f->write(white_light,256*64);
+            f->write_uint16(Crc::FromData(pal->Data(), 768));
+            f->write(white_light, 256 * 64);
 //      f->write(green_light,256*64);
             for (int i=0; i<TTINTS; i++)
                 f->write(tints[i],256);

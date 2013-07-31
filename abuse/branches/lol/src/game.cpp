@@ -74,7 +74,7 @@ int frame_panic = 0, massive_frame_panic = 0;
 int demo_start = 0, idle_ticks = 0;
 int req_end = 0;
 
-extern palette *old_pal;
+extern Palette *old_pal;
 char **start_argv;
 int start_argc;
 int has_joystick = 0;
@@ -402,7 +402,7 @@ void Game::set_state(int new_state)
     int old_state = state;
     state = new_state;
 
-    pal->load();    // restore old palette
+    g_palette->load();    // restore old palette
 
     if(playing_state(state) &&  !(dev & EDIT_MODE))
         wm->SetMouseShape(cache.img(c_target)->copy(), ivec2(8));
@@ -1078,7 +1078,7 @@ template<int N> static void Fade(image *im, int steps)
     /* 25ms per step */
     float const duration = 0.025f;
 
-    palette *old_pal = pal->copy();
+    Palette *tmp_pal = g_palette->Copy();
 
     if (im)
     {
@@ -1090,15 +1090,13 @@ template<int N> static void Fade(image *im, int steps)
     for (Timer total; total.Poll() < duration * steps; )
     {
         Timer frame;
-        uint8_t *sl1 = (uint8_t *)pal->addr();
-        uint8_t *sl2 = (uint8_t *)old_pal->addr();
         int i = (int)(total.Poll() / duration);
         int v = (N ? i + 1 : steps - i) * 256 / steps;
 
-        for (int j = 0; j < 3 * 256; j++)
-            *sl1++ = (int)*sl2++ * v / 256;
+        for (int j = 0; j < 256; j++)
+            g_palette->SetColor(j, (u8vec3)((ivec3)tmp_pal->GetColor(j) * v / 256));
 
-        pal->load();
+        g_palette->load();
         wm->flush_screen();
         frame.Wait(duration);
     }
@@ -1107,10 +1105,10 @@ template<int N> static void Fade(image *im, int steps)
     {
         main_screen->clear();
         wm->flush_screen();
-        old_pal->load();
+        tmp_pal->load();
     }
-    delete pal;
-    pal = old_pal;
+    delete g_palette;
+    g_palette = tmp_pal;
 }
 
 void fade_in(image *im, int steps)
@@ -1165,9 +1163,9 @@ void do_title()
     if(!fp->open_failure())
     {
         SpecDir sd(fp);
-        palette *old_pal = pal;
-        pal = new palette(sd.find(SPEC_PALETTE), fp);
-        pal->shift(1);
+        Palette *tmp_pal = g_palette;
+        g_palette = new Palette(sd.find(SPEC_PALETTE), fp);
+        g_palette->shift(1);
 
         image *gray = new image(fp, sd.find("gray_pict"));
         image *smoke[5];
@@ -1180,7 +1178,7 @@ void do_title()
         }
 
         main_screen->clear();
-        pal->load();
+        g_palette->load();
 
         int dx = (xres + 1) / 2 - gray->Size().x / 2, dy = (yres + 1) / 2 - gray->Size().y / 2;
         main_screen->PutImage(gray, ivec2(dx, dy));
@@ -1189,7 +1187,7 @@ void do_title()
         fade_in(NULL, 16);
         uint8_t cmap[32];
         for(int i = 0; i < 32; i++)
-        cmap[i] = pal->find_closest(i * 256 / 32, i * 256 / 32, i * 256 / 32);
+        cmap[i] = g_palette->FindClosest(u8vec3(i * 256 / 32, i * 256 / 32, i * 256 / 32));
 
         Event ev;
         ev.type = EV_SPURIOUS;
@@ -1227,8 +1225,8 @@ void do_title()
         for (int i = 0; i < 5; i++)
             delete smoke[i];
         delete gray;
-        delete pal;
-        pal = old_pal;
+        delete g_palette;
+        g_palette = tmp_pal;
     }
     delete fp;
 
@@ -1299,7 +1297,7 @@ Game::Game(int argc, char **argv)
   reset_keymap();                   // we think all the keys are up right now
   finished = false;
 
-  calc_light_table(pal);
+  calc_light_table(g_palette);
 
   if(g_current_level == NULL && net_start())  // if we joined a net game get level from server
   {
@@ -1318,7 +1316,7 @@ Game::Game(int argc, char **argv)
     fprintf(stderr, "Resolution must be > 640x400 to use -2 option\n");
     exit(0);
   }
-  pal->load();
+  g_palette->load();
 
   recalc_local_view_space();   // now that we know what size the screen is...
 
@@ -1329,7 +1327,7 @@ Game::Game(int argc, char **argv)
   morph_dark_color = get_color(cache.img(window_colors)->Pixel(ivec2(2, 1)));
   morph_bright_color = get_color(cache.img(window_colors)->Pixel(ivec2(0, 1)));
   morph_med_color = get_color(cache.img(window_colors)->Pixel(ivec2(1, 1)));
-  morph_sel_frame_color = pal->find_closest(255, 255, 0);
+  morph_sel_frame_color = g_palette->FindClosest(u8vec3(255, 255, 0));
   light_connection_color = morph_sel_frame_color;
 
   if(NILP(symbol_value(l_default_font)))
@@ -1355,7 +1353,7 @@ Game::Game(int argc, char **argv)
 
   console_font = new JCFont(cache.img(console_font_pict));
 
-  wm = new WindowManager(main_screen, pal, bright_color,
+  wm = new WindowManager(main_screen, g_palette, bright_color,
                          med_color, dark_color, game_font);
 
   delete stat_man;  // move to a graphical status manager
@@ -1374,7 +1372,7 @@ Game::Game(int argc, char **argv)
     exit(0);
   }
 
-  gamma_correct(pal);
+  gamma_correct(g_palette);
 
   if(main_net_cfg == NULL || (main_net_cfg->state != net_configuration::SERVER &&
                  main_net_cfg->state != net_configuration::CLIENT))
@@ -1996,7 +1994,7 @@ Game::~Game()
     delete figures[i];
   }
   free_pframes();
-  delete pal;
+  delete g_palette;
   free(object_names);
   free(figures);
 

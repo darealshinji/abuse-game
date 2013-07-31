@@ -39,14 +39,14 @@ public:
     void PutRemap(image *screen, ivec2 pos, uint8_t *map);
     void PutDoubleRemap(image *screen, ivec2 pos, uint8_t *map, uint8_t *map2);
     void PutFade(image *screen, ivec2 pos, int amount, int nframes,
-                 ColorFilter *f, palette *pal);
+                 ColorFilter *f, Palette *pal);
     void PutFadeTint(image *screen, ivec2 pos, int amount, int nframes,
-                     uint8_t *tint, ColorFilter *f, palette *pal);
+                     uint8_t *tint, ColorFilter *f, Palette *pal);
     void PutColor(image *screen, ivec2 pos, uint8_t color);
     void PutFilled(image *screen, ivec2 pos, uint8_t color);
     void PutPredator(image *screen, ivec2 pos);
     void PutBlend(image *screen, ivec2 pos, image *blend, ivec2 bpos,
-                  int blend_amount, ColorFilter *f, palette *pal);
+                  int blend_amount, ColorFilter *f, Palette *pal);
     void PutScanLine(image *screen, ivec2 pos, int line);
 
     size_t DiskUsage();
@@ -62,7 +62,7 @@ private:
                          image *blend, ivec2 bpos,
                          uint8_t *map1, uint8_t *map2, int amount,
                          int nframes, uint8_t *tint,
-                         ColorFilter *f, palette *pal);
+                         ColorFilter *f, Palette *pal);
 
     ivec2 m_size;
     uint8_t *m_data;

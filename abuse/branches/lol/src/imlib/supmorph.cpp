@@ -201,42 +201,32 @@ super_morph::super_morph(TransImage *hint1, TransImage *hint2,
   }
 }
 
-smorph_player::smorph_player(super_morph *m, palette *pal, image *i1, image *i2, int frames, int dir)
+smorph_player::smorph_player(super_morph *m, Palette *pal, image *i1, image *i2, int frames, int dir)
 {
-  int i,x1,y1,x2,y2;
-  unsigned char *d=m->movers,*paddr=(unsigned char *)pal->addr(),*pa;
-  stepper *p;
-  p=steps=(stepper *)malloc(sizeof(stepper)*m->t);
+  unsigned char *d = m->movers;
+  stepper *p = steps = (stepper *)malloc(sizeof(stepper)*m->t);
   f_left=frames;
   frames--;
   t=m->t;
   w=m->w; h=m->h;
 
-  for (i=0; i<t; i++,p++)
+  for (int i = 0; i < t; i++, p++)
   {
-    x1=*(d++);
-    y1=*(d++);
-    x2=*(d++);
-    y2=*(d++);
+    int x1 = *d++;
+    int y1 = *d++;
+    int x2 = *d++;
+    int y2 = *d++;
 
-    unsigned char r1,g1,b1,r2,g2,b2;
-    pa=paddr+(int)(*(i1->scan_line(y1)+x1))*3;
-    r1=*(pa++);
-    g1=*(pa++);
-    b1=*(pa++);
+    u8vec3 c1 = pal->GetColor(*(i1->scan_line(y1) + x1));
+    u8vec3 c2 = pal->GetColor(*(i2->scan_line(y2) + x2));
 
-    pa=paddr+(int)(*(i2->scan_line(y2)+x2))*3;
-    r2=*(pa++);
-    g2=*(pa++);
-    b2=*(pa++);
+    p->r = c1.r <<16;
+    p->g = c1.g <<16;
+    p->b = c1.b <<16;
 
-    p->r=r1<<16;
-    p->g=g1<<16;
-    p->b=b1<<16;
-
-    p->dr=(long)(((int)r2-(int)r1)<<16)/frames;
-    p->dg=(long)(((int)g2-(int)g1)<<16)/frames;
-    p->db=(long)(((int)b2-(int)b1)<<16)/frames;
+    p->dr = (long)(((int)c2.r - (int)c1.r) << 16) / frames;
+    p->dg = (long)(((int)c2.g - (int)c1.g) << 16) / frames;
+    p->db = (long)(((int)c2.b - (int)c1.b) << 16) / frames;
 
     if (dir<0)
     {
@@ -252,34 +242,28 @@ smorph_player::smorph_player(super_morph *m, palette *pal, image *i1, image *i2,
   hole=(unsigned char *)malloc(w*h);
 }
 
-
-
-
-
-int smorph_player::show(image *screen, int x, int y, ColorFilter *fil, palette *pal,
+int smorph_player::show(image *screen, int x, int y, ColorFilter *fil, Palette *pal,
             int blur_threshold)
 {
     if (!f_left)
         return 0;
 
-    int i,px,py,ix,iy;
+    int i;
     ivec2 caa, cbb;
     screen->GetClip(caa, cbb);
     screen->AddDirty(ivec2(x, y), ivec2(x + w, y + h));
     stepper *ss;
     memset(hole,0,w*h);
-    unsigned char *paddr=(unsigned char *)pal->addr();
     for (ss=steps,i=0; i<t; i++,ss++)
     {
-      ix=(ss->x>>(16));
-      iy=(ss->y>>(16));
-      px=ix+x;
-      py=iy+y;
+      int ix = ss->x >> 16;
+      int iy = ss->y >> 16;
+      int px = ix + x;
+      int py = iy + y;
       if (px>=caa.x && px < cbb.x && py>=caa.y && py < cbb.y)
       {
-        hole[ix+iy*w]=*(screen->scan_line(py)+px)=fil->Lookup(ss->r>>(19),
-                                    ss->g>>(19),
-                                    ss->b>>(19));
+        int n = fil->Lookup(u8vec3(ss->r >> 19, ss->g >> 19, ss->b >> 19));
+        hole[ix+iy*w]=*(screen->scan_line(py)+px) = n;
       }
       ss->x+=ss->dx;
       ss->y+=ss->dy;
@@ -292,40 +276,40 @@ int smorph_player::show(image *screen, int x, int y, ColorFilter *fil, palette *
       return 1;
 
     unsigned char *ll=hole+1,*tl=hole+w+1,*nl=hole+w*2+1;
-    for (iy=1; iy<h-1; iy++)    // now scan the for holes to fill
+    for (int iy = 1; iy < h - 1; iy++)    // now scan the for holes to fill
     {
-      for (ix=1; ix<w-1; ix++,ll++,tl++,nl++)
+      for (int ix = 1; ix < w - 1; ix++, ll++, tl++, nl++)
       {
     if (x+ix>=caa.x && x+ix < cbb.x && y+iy>=caa.y && y+iy < cbb.y)
     {
       int t=0;
-      unsigned char *pa;
-      int r=0,g=0,b=0;
+      ivec3 rgb(0);
 /*      if (*(tl-1)) t++;
       if (*(tl+1)) t++;
       if (*ll) t++;
       if (*nl) t++; */
 
-      if (*(tl-1)) { t++; pa=paddr+(*(tl-1))*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
-      if (*(tl+1)) { t++; pa=paddr+(*(tl+1))*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
-      if (*(ll)) { t++; pa=paddr+(*ll)*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
-      if (*(nl)) { t++; pa=paddr+(*nl)*3; r+=*(pa++); g+=*(pa++); b+=*(pa++); }
+      if (*(tl-1)) { t++; rgb += (ivec3)pal->GetColor(*(tl - 1)); }
+      if (*(tl+1)) { t++; rgb += (ivec3)pal->GetColor(*(tl + 1)); }
+      if (*(ll)) { t++; rgb += (ivec3)pal->GetColor(*ll); }
+      if (*(nl)) { t++; rgb += (ivec3)pal->GetColor(*nl); }
+
+      if (t)
+          rgb /= t;
 
       if (*tl)
       {
         if (t)
         {
-          pa=paddr+(*tl)*3;
-          r/=t; g/=t; b/=t;
-          int dist=((int)(*pa)-r)*((int)(*pa)-r); pa++;
-          dist+=((int)(*pa)-g)*((int)(*pa)-g); pa++;
-          dist+=((int)(*pa)-b)*((int)(*pa)-b);
-          if (dist>blur_threshold)
-            *(tl)=*(screen->scan_line(y+iy)+x+ix)=fil->Lookup(r>>3,g>>3,b>>3);
-        } else *(tl)=*(screen->scan_line(y+iy)+x+ix)=0; // kill single pixels
+          ivec3 color = (ivec3)pal->GetColor(*tl);
+          int dist = sqlength(color - rgb);
+          if (dist > blur_threshold)
+            *(tl)=*(screen->scan_line(y+iy)+x+ix) = fil->Lookup(u8vec3(rgb / 8));
+        } else
+            *(tl) = *(screen->scan_line(y+iy)+x+ix)=0; // kill single pixels
       }
       else if (t>=3)
-        *(tl)=*(screen->scan_line(y+iy)+x+ix)=fil->Lookup((r/t)>>3,(g/t)>>3,(b/t)>>3);
+        *(tl)=*(screen->scan_line(y+iy)+x+ix)=fil->Lookup(u8vec3(rgb / 8));
     }
       }
       ll+=2;

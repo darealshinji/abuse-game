@@ -137,7 +137,7 @@ public :
     tile_type GetMapFg(ivec2 pos) { return g_current_level->GetFg(pos); }
   void end_session();
   void need_refresh() { refresh=1; }       // for development mode only
-  palette *current_palette() { return pal; }
+  Palette *current_palette() { return g_palette; }
 
   void update_screen();
   void get_input();

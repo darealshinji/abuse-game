@@ -24,14 +24,14 @@ class tool_picker : public spicker
   int *ids;
   int total_icons;
   int iw,ih;
-  palette *old_pal;
+  Palette *old_pal;
 
   public :
 
   // you are expected keep image and id list in memory, tool_picker does not copy them
   tool_picker(int X, int Y, int ID,
           int show_h, visual_object **Icons, int *Ids, int total_ic,
-          palette *icon_palette, palette *pal, ifield *Next);
+          Palette *icon_palette, Palette *pal, ifield *Next);
 
   virtual void draw_item(image *screen, int x, int y, int num, int active);
   virtual int total() { return total_icons; }
@@ -40,7 +40,7 @@ class tool_picker : public spicker
   virtual void note_new_current(image *screen, InputManager *inm, int x)
   { wm->Push(new Event(ids[x],NULL)); }
 
-  void remap(palette *pal, image *screen);
+  void remap(Palette *pal, image *screen);
   ~tool_picker();
 } ;
 

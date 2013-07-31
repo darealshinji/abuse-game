@@ -119,7 +119,7 @@ void read_PCX_line(FILE *fp, unsigned char *start, short skip, int width)
   } while (n<width);
 }
 
-image *read_PCX(char const *filename, palette *&pal)
+image *read_PCX(char const *filename, Palette *&pal)
 {
   if (PCX_file_type(filename)!=PCX_8) return NULL;
   FILE *fp=fopen(filename,"rb");
@@ -133,19 +133,19 @@ image *read_PCX(char const *filename, palette *&pal)
   unsigned char palette_confirm;
   if (!fread(&palette_confirm,1,1,fp) || palette_confirm!=12)
   {
-    pal=new palette;
+    pal = new Palette;
     pal->defaults();
   }
   else
   {
-    pal=new palette;
-    fread(pal->addr(),1,256*3,fp);
+    pal = new Palette;
+    fread(pal->Data(), 1, 256 * 3, fp);
   }
   fclose(fp);
   return im;
 }
 
-void write_PCX(image *im, palette *pal, char const *filename)
+void write_PCX(image *im, Palette *pal, char const *filename)
 {
   FILE *fp=fopen(filename,"wb");
   if (!fp)
@@ -199,7 +199,7 @@ void write_PCX(image *im, palette *pal, char const *filename)
     }
   }
   fputc(12,fp);  // note that there is a palette attached
-  fwrite(pal->addr(),1,256*3,fp);
+  fwrite(pal->Data(), 1, 256 * 3, fp);
   fclose(fp);
 }
 

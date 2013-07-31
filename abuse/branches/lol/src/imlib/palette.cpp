@@ -21,256 +21,197 @@
 #include "video.h"
 #include "filter.h"
 
-palette *lastl=NULL;
+Palette *lastl = NULL;
 
-palette::palette(bFILE *fp)
+Palette::Palette(bFILE *fp)
 {
-  ncolors=fp->read_uint16();
-  pal=(color *)malloc(sizeof(color)*ncolors);
-  usd=(unsigned char *)malloc(ncolors/8+1);
-  set_all_unused();
-  fp->read(pal,sizeof(color)*ncolors);
-  bg=0;
-}
-
-palette::palette(SpecEntry *e, bFILE *fp)
-{
-  fp->seek(e->offset,0);
-  ncolors=fp->read_uint16();
-  pal=(color *)malloc(sizeof(color)*ncolors);
-  usd=(unsigned char *)malloc(ncolors/8+1);
-  set_all_unused();
-  fp->read(pal,sizeof(color)*ncolors);
-  bg=0;
-}
-
-int palette::size()
-{
-  return ncolors*sizeof(color)+2;
-}
-
-int palette::write(bFILE *fp)
-{
-  fp->write_uint16(ncolors);
-  return fp->write(pal,sizeof(color)*ncolors)==ncolors;
-}
-
-int palette::find_closest(uint8_t r, uint8_t g, uint8_t b)
-{
-   unsigned char *cl=(unsigned char *)addr();
-   int c=0,d=0x100000,i,nd;
-   for (i=0; i<256; i++)
-   {
-     nd=((int)r-(int)(*cl))*((int)r-(int)(*cl)); cl++;
-     nd+=((int)g-(int)(*cl))*((int)g-(int)(*cl)); cl++;
-     nd+=((int)b-(int)(*cl))*((int)b-(int)(*cl)); cl++;
-     if (nd<d)
-     { c=i; d=nd; }
-   }
-   return c;
-}
-
-int palette::find_color(uint8_t r, uint8_t g, uint8_t b)
-{
-  int i,ub,mask,find;
-  for (i=0,ub=0,mask=128,find=-1; i<ncolors && find<0; i++)
-  {
-    if (usd[ub]&mask)
-      if (r==pal[i].red && b==pal[i].blue && g==pal[i].green)
-    find=i;
-    mask>>=1;
-    if (mask==0)
-    { mask=128; ub++; }
-  }
-  return find;
-}
-
-uint32_t palette::getquad(int x)
-{ union { char entry[4]; uint32_t ret; };
-  entry[3]=0;
-  entry[2]=pal[x].red;
-  entry[1]=pal[x].green;
-  entry[0]=pal[x].blue;
-  return ret;
-}
-
-
-void palette::black_white()
-{
-  int i;
-  unsigned char r,g,b,gr;
-
-  for (i=0; i<256; i++)
-  {
-    get(i,r,g,b);
-    gr=(unsigned char)((double) r*0.30+(double) g*0.59+(double)b*0.11);
-    set(i,gr,gr,gr);
-  }
-}
-
-void palette::make_black_white()
-{
-  int i,c;
-  set(0,0,0,0);
-  for (i=1; i<ncolors; i++)
-  { c=(int)((double)i/(double)ncolors*(double)255);
-    set(i,c,c,c);
-  }
-}
-
-void palette::set_rgbs()
-{
-  ASSERT(ncolors == 256);
-
-  int i, v;
-  for (i=0; i<64; i++)
-  {
-    if (i==0) v=0;
-    else
-    {
-      v=(int) ((double)i+(double)(lol::sqrt(63.0-i)));
-      v<<=2;
-    }
-
-    set(i,         i,     0,     0);            // reds 0-63
-    set(i+64,      0,     i,     0);
-    set(i+128,     0,     0,     i);       // blues 128-191
-    set(i+128+64,  v,     v,     v);        // whites .. rest
-  }
-  set_all_used();
-}
-
-void palette::set_all_used()
-{
-  int i;
-  for (i=0; i<ncolors; i++) set_used(i);
-}
-
-void palette::set_all_unused()
-{
-  int i;
-  for (i=0; i<ncolors; i++) set_unused(i);
-}
-
-
-palette *palette::copy()
-{
-  palette *p;
-  int i;
-  p=new palette(ncolors);
-  for (i=0; i<ncolors; i++)
-  {
-    if (used(i))
-      p->set_used(i);
-    else p->set_unused(i);
-    p->set(i,red(i),green(i),blue(i));
-  }
-  return p;
-}
-
-void palette::set_used(int color_num)
-{
-    ASSERT(color_num >= 0);
-    ASSERT(color_num < ncolors);
-
-    int x = color_num / 8;
-    int b = color_num % 8;
-    usd[x] |= 128 >> b;
-}
-
-void palette::set_unused(int color_num)
-{
-    ASSERT(color_num >= 0);
-    ASSERT(color_num < ncolors);
-
-    int x = color_num / 8;
-    int b = color_num % 8;
-    usd[x] &= 0xff ^ (128 >> b);
-}
-
-int palette::used(int color_num)
-{
-    ASSERT(color_num >= 0);
-    ASSERT(color_num < ncolors);
-
-    int x = color_num / 8;
-    int b = color_num % 8;
-    return usd[x] & (128 >> b);
-}
-
-void palette::defaults()
-{
-  int i;
-  set(0,0,0,0);
-  set_used(0);
-  for (i=1; i<ncolors; i++)
-    set_unused(i);
-  if (ncolors==256)
-    for (i=0; i<ncolors; i++)
-      set(i,RED3(i),GREEN3(i),BLUE2(i));
-  else if (ncolors==16)
-    for (i=0; i<ncolors; i++)
-      set(i,255-(i&3),255-((i&4)>>2),255-((i&8)>>3));
-  else
-    for (i=0; i<ncolors; i++)
-      set(i,255-(i%3),255-((i+1)%3),255-((i+2)%3));
-}
-
-void palette::shift(int amount)
-{
-  int i;
-  unsigned char m;
-  if (amount<0)
-  {
-
-    m=-amount;
-    for (i=0; i<ncolors*3; i++)
-      ((unsigned char *) pal)[i]>>=m;
-  }
-  else if (amount>0)
-  {
-    m=amount;
-    for (i=0; i<ncolors*3; i++)
-      ((unsigned char *) pal)[i]<<=m;
-  }
-}
-
-
-
-void palette::set(int x, unsigned char red, char unsigned green, char unsigned blue)
-{
-    ASSERT(x >= 0 && x < ncolors, "palete::set passed bad x");
-    ASSERT((int)red <= ncolors && (int)green <= ncolors && (int)blue <= ncolors,
-           "palette::set color values bigger than palette");
-
-    pal[x].red = red;
-    pal[x].green = green;
-    pal[x].blue = blue;
-}
-
-void palette::get(int x, unsigned char &red, unsigned char &green, unsigned char &blue)
-{
-    ASSERT(x >= 0 && x < ncolors, "palete::get passed bad x");
-
-    red = pal[x].red;
-    green = pal[x].green;
-    blue = pal[x].blue;
-}
-
-palette::~palette()
-{
-    free(pal);
-    free(usd);
-}
-
-palette::palette(int number_colors)
-{
-    ASSERT(number_colors > 0, "palette::constructor - need at least one color!");
-
-    ncolors = number_colors;
+    int count = fp->read_uint16();
+    m_colors.Resize(count);
+    m_used.Resize(count, 0);
+    set_all_unused();
+    fp->read(m_colors.Data(), m_colors.Bytes());
     bg = 0;
-    pal = (color *)malloc(ncolors*3);
-    usd = (unsigned char *)malloc(ncolors / 8 + 1);
+}
+
+Palette::Palette(SpecEntry *e, bFILE *fp)
+{
+    fp->seek(e->offset,0);
+    int count = fp->read_uint16();
+    m_colors.Resize(count);
+    m_used.Resize(count, 0);
+    set_all_unused();
+    fp->read(m_colors.Data(), m_colors.Bytes());
+    bg = 0;
+}
+
+int Palette::write(bFILE *fp)
+{
+    fp->write_uint16(m_colors.Count());
+    return fp->write(m_colors.Data(), m_colors.Bytes()) == m_colors.Bytes();
+}
+
+int Palette::FindClosest(u8vec3 color) const
+{
+     int c = 0, d = 0x100000;
+     for (int i = 0; i < m_colors.Count(); ++i)
+     {
+         int nd = sqlength((ivec3)(color - m_colors[i]));
+         if (nd < d)
+         {
+             c = i;
+             d = nd;
+         }
+     }
+     return c;
+}
+
+int Palette::FindColor(u8vec3 color) const
+{
+    for (int i = 0; i < m_colors.Count(); ++i)
+        if (m_used[i] && m_colors[i] == color)
+            return i;
+    return -1;
+}
+
+uint32_t Palette::getquad(int x)
+{
+    union { char entry[4]; uint32_t ret; };
+    entry[3] = 0;
+    entry[2] = m_colors[x].r;
+    entry[1] = m_colors[x].g;
+    entry[0] = m_colors[x].b;
+    return ret;
+}
+
+
+void Palette::black_white()
+{
+    for (int i = 0; i < 256; i++)
+        m_colors[i] = u8vec3(GetGray(i));
+}
+
+void Palette::make_black_white()
+{
+    for (int i = 0; i < m_colors.Count(); i++)
+    {
+        uint8_t c = (uint8_t)((double)i / m_colors.Count() * 255);
+        m_colors[i] = u8vec3(c);
+    }
+}
+
+void Palette::set_rgbs()
+{
+    ASSERT(m_colors.Count() == 256);
+
+    for (int i = 0; i < 64; i++)
+    {
+        int v = 0;
+        if (i > 0)
+        {
+            v = (int)((double)i + (double)(lol::sqrt(63.0 - i)));
+            v <<= 2;
+        }
+
+        m_colors[i] = u8vec3(i, 0, 0);       // reds 0-63
+        m_colors[i + 64] = u8vec3(0, i, 0);
+        m_colors[i + 128] = u8vec3(0, 0, i); // blues 128-191
+        m_colors[i + 192] = u8vec3(v, v, v); // whites .. rest
+    }
+    set_all_used();
+}
+
+void Palette::set_all_used()
+{
+    memset(m_used.Data(), 1, m_used.Bytes());
+}
+
+void Palette::set_all_unused()
+{
+    memset(m_used.Data(), 0, m_used.Bytes());
+}
+
+Palette *Palette::Copy() const
+{
+    Palette *p = new Palette(m_colors.Count());
+    p->m_colors = m_colors;
+    p->m_used = m_used;
+    return p;
+}
+
+int Palette::used(int color_num)
+{
+    return m_used[color_num];
+}
+
+void Palette::defaults()
+{
+    m_colors[0] = u8vec3(0);
+    m_used[0] = 1;
+
+    for (int i = 1; i < m_colors.Count(); i++)
+        m_used[i] = 0;
+
+    if (m_colors.Count() == 256)
+        for (int i = 0; i < m_colors.Count(); i++)
+            m_colors[i] = u8vec3(RED3(i), GREEN3(i), BLUE2(i));
+    else if (m_colors.Count() == 16)
+        for (int i = 0; i < m_colors.Count(); i++)
+            m_colors[i] = u8vec3(255 - (i & 3),
+                                 255 - ((i & 4) >> 2),
+                                 255 - ((i & 8) >> 3));
+    else
+        for (int i = 0; i < m_colors.Count(); i++)
+            m_colors[i] = u8vec3(255 - (i % 3),
+                                 255 - ((i + 1) % 3),
+                                 255 - ((i + 2) % 3));
+}
+
+void Palette::shift(int amount)
+{
+    if (amount < 0)
+    {
+        int m = -amount;
+        for (int i = 0; i < m_colors.Count(); i++)
+        {
+            u8vec3 c = m_colors[i];
+            m_colors[i] = u8vec3(c.r >> m, c.g >> m, c.b >> m);
+        }
+    }
+    else if (amount > 0)
+    {
+        int m = amount;
+        for (int i = 0; i < m_colors.Count(); i++)
+        {
+            u8vec3 c = m_colors[i];
+            m_colors[i] = u8vec3(c.r << m, c.g << m, c.b << m);
+        }
+    }
+}
+
+
+
+void Palette::SetColor(int n, u8vec3 color)
+{
+    m_colors[n] = color;
+}
+
+u8vec3 Palette::GetColor(int n) const
+{
+    return m_colors[n];
+}
+
+uint8_t Palette::GetGray(int n) const
+{
+    u8vec3 c = m_colors[n];
+    return (uint8_t)(c.r * 0.30 + c.g * 0.59 + c.b * 0.11);
+}
+
+Palette::Palette(int number_colors)
+{
+    ASSERT(number_colors > 0, "Palette::constructor - need at least one color!");
+
+    m_colors.Resize(number_colors);
+    m_used.Resize(number_colors);
     defaults();
 }
 
@@ -396,63 +337,54 @@ quant_palette::~quant_palette()
   }
 }
 
-uint8_t palette::brightest(int all)
-{ uint8_t r,g,b,bri;
-  unsigned i;
-  long brv;
-  brv=0; bri=0;
-
-  for (i=0; i<(unsigned int)ncolors; i++)
-  { if (all || used(i))
-    {
-      get(i,r,g,b);
-      if ((long)r*(long)g*(long)b>brv)
-      { brv=(long)r*(long)g*(long)b;
-    bri=i;
-      }
-    }
-  }
-
-  return bri;
-}
-
-uint8_t palette::darkest(int all, int noblack)
-{ uint8_t r,g,b,bri;
-  unsigned i;
-  long brv,x;
-  brv=(long)258*(long)258*(long)258; bri=0;
-
-  for (i=0; i<(unsigned int)ncolors; i++)
-  { if (all || used(i))
-    {
-      get(i,r,g,b);
-      x=(long)r*(long)g*(long)b;
-      if (x<brv && (x || !noblack))
-      { brv=(long)r*(long)g*(long)b;
-    bri=i;
-      }
-    }
-  }
-  return bri;
-}
-
-
-
-palette *last_loaded()
-{ return lastl; }
-
-void palette::fade_to(int total_fades, int fade_on, int dest_r, int dest_g, int dest_b)
+int Palette::FindBrightest(int all) const
 {
-  uint8_t *sl=(uint8_t *)addr();
-  uint8_t x;
-  int i;
-  for (i=0; i<ncolors; i++)
-  {
-    x=(( dest_r-(int)*sl)*fade_on/total_fades+*sl);
-    *(sl++)=x;
-    x=(( dest_g-(int)*sl)*fade_on/total_fades+*sl);
-    *(sl++)=x;
-    x=(( dest_b-(int)*sl)*fade_on/total_fades+*sl);
-    *(sl++)=x;
-  }
+    int brv = 0, bri = 0;
+
+    for (int i = 0; i < m_colors.Count(); ++i)
+    {
+        if (all || m_used[i])
+        {
+            int gray = GetGray(i);
+            if (gray > brv)
+            {
+                brv = gray;
+                bri = i;
+            }
+        }
+    }
+
+    return bri;
 }
+
+int Palette::FindDarkest(int all, int noblack) const
+{
+    int brv = 258, bri = 0;
+
+    for (int i = 0; i < m_colors.Count(); ++i)
+    {
+        if (all || m_used[i])
+        {
+            int gray = GetGray(i);
+            if (gray < brv && (gray || !noblack))
+            {
+                brv = gray;
+                bri = i;
+            }
+        }
+    }
+
+    return bri;
+}
+
+Palette *last_loaded()
+{
+    return lastl;
+}
+
+void Palette::FadeTo(int total_fades, int fade_on, u8vec3 dest)
+{
+    for (int i = 0; i < m_colors.Count(); i++)
+        m_colors[i] += u8vec3(ivec3(dest - m_colors[i]) * fade_on / total_fades);
+}
+

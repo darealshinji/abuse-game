@@ -19,7 +19,7 @@ class Filter
 {
 public :
     Filter(int colors = 256);
-    Filter(palette *from, palette *to);
+    Filter(Palette *from, Palette *to);
     ~Filter();
 
     void Set(int color_num, int change_to);
@@ -28,27 +28,26 @@ public :
     void PutImage(image *screen, image *im, ivec2 pos);
 
 private:
-    int m_size;
-    uint8_t *m_table;
+    Array<uint8_t> m_table;
 };
 
 class ColorFilter
 {
 public:
     ColorFilter(SpecEntry *e, bFILE *fp);
-    ColorFilter(palette *pal, int color_bits);
+    ColorFilter(Palette *pal, int color_bits);
     ~ColorFilter();
 
     size_t DiskUsage();
     int Write(bFILE *fp);
-    int Lookup(int r, int g, int b)
+    int Lookup(u8vec3 c)
     {
-        return m_table[(r * m_size + g) * m_size + b];
+        return m_table[(c.r * m_size + c.g) * m_size + c.b];
     }
 
 private:
+    Array<uint8_t> m_table;
     int m_size;
-    uint8_t *m_table;
 };
 
 #endif

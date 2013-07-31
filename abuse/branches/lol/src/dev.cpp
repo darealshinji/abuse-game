@@ -590,7 +590,7 @@ void dev_controll::toggle_toolbar()
     tool_picker *tp=new tool_picker(0, 0,
                          ID_NULL,
                          5,(visual_object **)dev_mode_pict,dev_mode_ids,DEV_MODES,
-                        pal,pal,NULL);
+                        g_palette, g_palette, NULL);
     tbw=wm->CreateWindow(ivec2(prop->getd("toolbar x", -1),
                                prop->getd("toolbar y", -1)), ivec2(-1), tp);
     tp->set_x(setx,tbw->m_surf);
@@ -933,7 +933,7 @@ dev_controll::dev_controll()
   if (open_fwin) toggle_fgw();
   if (open_bwin) toggle_bgw();
   if (start_nodelay) the_game->toggle_delay();
-  yellow=pal->find_closest(255,255,0);
+  yellow = g_palette->FindClosest(u8vec3(255, 255, 0));
   if (start_edit)
   {
     the_game->load_level(level_file);
@@ -1633,12 +1633,12 @@ void dev_controll::handle_event(Event &ev)
     return;
 
   if (ev.type==EV_KEY && ev.key==JK_F2)
-    write_PCX(main_screen,pal,"scrnshot.pcx");
+    write_PCX(main_screen, g_palette, "scrnshot.pcx");
   else if (ev.type==EV_KEY && ev.key==JK_F3)
   {
     char name[100];
     sprintf(name,"shot%04d.pcx",screen_shot_on++);
-    write_PCX(main_screen,pal,name);
+    write_PCX(main_screen, g_palette, name);
   } else if (ev.type==EV_KEY && ev.key==JK_F5)
   {
     if (sshot_fcount!=-1)
@@ -3547,7 +3547,7 @@ void toggle_edit_mode()
   if (dev&EDIT_MODE)
   {
     wm->SetMouseShape(cache.img(c_normal)->copy(), ivec2(1, 1));
-    pal->load();
+    g_palette->load();
   }
   else
   {

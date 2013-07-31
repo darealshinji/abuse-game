@@ -19,47 +19,39 @@
 
 Filter::Filter(int colors)
 {
-    ASSERT(colors >= 0 && colors <= 256, "bad colors value");
+    ASSERT(colors >= 0 && colors <= 256, "bad color count");
 
-    m_size = colors;
-    m_table = (uint8_t *)malloc(m_size);
-    memset(m_table, 0, m_size * sizeof(*m_table));
+    m_table.Resize(colors, 0);
 }
 
 // Creates a conversion filter from one palette to another
-Filter::Filter(palette *from, palette *to)
+Filter::Filter(Palette *from, Palette *to)
 {
-    m_size = lol::max(from->pal_size(), to->pal_size());
-    m_table = (uint8_t *)malloc(m_size);
+    int size = lol::max(from->Count(), to->Count());
+    m_table.Resize(size);
 
-    uint8_t *dst = m_table;
-    uint8_t *src = (uint8_t *)from->addr();
-    int dk = to->darkest(1);
+    int dk = to->FindDarkest(1);
 
-    for (int i = 0; i < m_size; i++)
+    for (int i = 0; i < size; i++)
     {
-       int r = *src++;
-       int g = *src++;
-       int b = *src++;
-       int color = to->find_closest(r, g, b);
+        u8vec3 color = from->GetColor(i);
+        int n = to->FindClosest(color);
 
-       // Make sure non-blacks don't get remapped to the transparency
-       if ((r || g || b) && to->red(color) == 0
-            && to->green(color) == 0 && to->blue(color) == 0)
-           color = dk;
+        // Make sure non-blacks don't get remapped to the transparency
+        if (color != u8vec3(0) && to->GetColor(n) == u8vec3(0))
+            n = dk;
 
-       *dst++ = color;
+        m_table[i] = n;
     }
 }
 
 Filter::~Filter()
 {
-    free(m_table);
 }
 
 void Filter::Set(int color_num, int change_to)
 {
-    ASSERT(color_num >= 0 && color_num < m_size, "Bad colors_num");
+    ASSERT(color_num >= 0 && color_num < m_table.Count(), "Bad colors_num");
 
     m_table[color_num] = change_to;
 }
@@ -71,9 +63,8 @@ void Filter::Apply(image *im)
     int npixels = im->Size().x * im->Size().y;
     while (npixels--)
     {
-        ASSERT(*dst < m_size, "not enough filter colors");
         *dst = m_table[*dst];
-        dst++;
+        ++dst;
     }
     im->Unlock();
 }
@@ -117,36 +108,32 @@ void Filter::PutImage(image *screen, image *im, ivec2 pos)
     screen->Unlock();
 }
 
-ColorFilter::ColorFilter(palette *pal, int color_bits)
+ColorFilter::ColorFilter(Palette *pal, int color_bits)
 {
-    int max = pal->pal_size();
+    int max = pal->Count();
     int mul = 1 << (8 - color_bits);
     m_size = 1 << color_bits;
-    m_table = (uint8_t *)malloc(m_size * m_size * m_size);
+    m_table.Resize(m_size * m_size * m_size);
 
     /* For each colour in the RGB cube, find the nearest palette element. */
     for (int r = 0; r < m_size; r++)
     for (int g = 0; g < m_size; g++)
     for (int b = 0; b < m_size; b++)
     {
+        ivec3 rgb = ivec3(r, g, b) * mul;
         int best = 256 * 256 * 3;
-        int color = 0;
-        uint8_t *pp = (uint8_t *)pal->addr();
+        int n = 0;
 
         for (int i = 0; i < max; i++)
         {
-            int rd = *pp++ - r * mul,
-                gd = *pp++ - g * mul,
-                bd = *pp++ - b * mul;
-
-            int dist = rd * rd + bd * bd + gd * gd;
+            int dist = sqlength(rgb - (ivec3)pal->GetColor(i));
             if (dist < best)
             {
                 best = dist;
-                color = i;
+                n = i;
             }
         }
-        m_table[(r * m_size + g) * m_size + b] = color;
+        m_table[(r * m_size + g) * m_size + b] = n;
     }
 }
 
@@ -154,24 +141,22 @@ ColorFilter::ColorFilter(SpecEntry *e, bFILE *fp)
 {
     fp->seek(e->offset, 0);
     m_size = fp->read_uint16();
-    m_table = (uint8_t *)malloc(m_size * m_size * m_size);
-    fp->read(m_table, m_size * m_size * m_size);
+    m_table.Resize(m_size * m_size * m_size);
+    fp->read(m_table.Data(), m_table.Bytes());
 }
 
 ColorFilter::~ColorFilter()
 {
-    free(m_table);
 }
 
 size_t ColorFilter::DiskUsage()
 {
-    return sizeof(uint16_t) + m_size * m_size * m_size;
+    return sizeof(uint16_t) + m_table.Bytes();
 }
 
 int ColorFilter::Write(bFILE *fp)
 {
     fp->write_uint16(m_size);
-    int bytes = m_size * m_size * m_size;
-    return fp->write(m_table, bytes) == bytes;
+    return fp->write(m_table.Data(), m_table.Bytes()) == m_table.Bytes();
 }
 

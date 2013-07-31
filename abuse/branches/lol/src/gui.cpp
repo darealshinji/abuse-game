@@ -104,10 +104,10 @@ void ico_button::draw(int active, image *screen)
 
     if (active && key[0])
     {
-        int g=80;
+        int g = 80;
         screen->Bar(ivec2(0, 0), ivec2(144, 20), 0);
         wm->font()->PutString(screen, ivec2(0), symbol_str(key),
-                              color_table->Lookup(g>>3, g>>3, g>>3));
+                              color_table->Lookup(u8vec3(g >> 3, g >> 3, g >> 3)));
     }
     else if (!active && key[0])
     {

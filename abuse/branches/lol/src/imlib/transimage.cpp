@@ -148,7 +148,7 @@ template<int N>
 void TransImage::PutImageGeneric(image *screen, ivec2 pos, uint8_t color,
                                  image *blend, ivec2 bpos, uint8_t *map,
                                  uint8_t *map2, int amount, int nframes,
-                                 uint8_t *tint, ColorFilter *f, palette *pal)
+                                 uint8_t *tint, ColorFilter *f, Palette *pal)
 {
     ivec2 pos1, pos2;
     int ysteps, mul = 0;
@@ -164,16 +164,13 @@ void TransImage::PutImageGeneric(image *screen, ivec2 pos, uint8_t color,
     }
 
     uint8_t *datap = ClipToLine(screen, pos1, pos2, pos, ysteps),
-            *screen_line, *blend_line = NULL, *paddr = NULL;
+            *screen_line, *blend_line = NULL;
     if (!datap)
         return; // if ClipToLine says nothing to draw, return
 
     ASSERT(N != BLEND || (pos.y >= bpos.y
                               && pos.y + ysteps <= bpos.y + blend->Size().y),
            "blend doesn't fit on TransImage");
-
-    if (N == FADE || N == FADE_TINT || N == BLEND)
-        paddr = (uint8_t *)pal->addr();
 
     if (N == FADE || N == FADE_TINT)
         mul = (amount << 16) / nframes;
@@ -253,15 +250,14 @@ void TransImage::PutImageGeneric(image *screen, ivec2 pos, uint8_t color,
 
                 while (count--)
                 {
-                    uint8_t *p1 = paddr + 3 * *sl2++;
-                    uint8_t *p2 = paddr + 3 * (N == FADE_TINT ? tint[*sl3++]
-                                                              : *sl3++);
+                    u8vec3 c1 = pal->GetColor(*sl2++);
+                    u8vec3 c2 = pal->GetColor(N == FADE_TINT ? tint[*sl3++] : *sl3++);
 
-                    uint8_t r = ((((int)p1[0] - p2[0]) * mul) >> 16) + p2[0];
-                    uint8_t g = ((((int)p1[1] - p2[1]) * mul) >> 16) + p2[1];
-                    uint8_t b = ((((int)p1[2] - p2[2]) * mul) >> 16) + p2[2];
+                    uint8_t r = ((((int)c1.r - c2.r) * mul) >> 16) + c2.r;
+                    uint8_t g = ((((int)c1.g - c2.g) * mul) >> 16) + c2.g;
+                    uint8_t b = ((((int)c1.b - c2.b) * mul) >> 16) + c2.b;
 
-                    *sl++ = f->Lookup(r >> 3, g >> 3, b >> 3);
+                    *sl++ = f->Lookup(u8vec3(r >> 3, g >> 3, b >> 3));
                 }
             }
 
@@ -295,14 +291,14 @@ void TransImage::PutDoubleRemap(image *screen, ivec2 pos,
 
 // Used when eg. the player teleports, or in rocket trails
 void TransImage::PutFade(image *screen, ivec2 pos, int amount, int nframes,
-                         ColorFilter *f, palette *pal)
+                         ColorFilter *f, Palette *pal)
 {
     PutImageGeneric<FADE>(screen, pos, 0, NULL, ivec2(0), NULL, NULL,
                           amount, nframes, NULL, f, pal);
 }
 
 void TransImage::PutFadeTint(image *screen, ivec2 pos, int amount, int nframes,
-                             uint8_t *tint, ColorFilter *f, palette *pal)
+                             uint8_t *tint, ColorFilter *f, Palette *pal)
 {
     PutImageGeneric<FADE_TINT>(screen, pos, 0, NULL, ivec2(0), NULL, NULL,
                                amount, nframes, tint, f, pal);
@@ -317,7 +313,7 @@ void TransImage::PutColor(image *screen, ivec2 pos, uint8_t color)
 // This method is unused but is believed to work.
 // Assumes that the blend image completely covers the transparent image.
 void TransImage::PutBlend(image *screen, ivec2 pos, image *blend, ivec2 bpos,
-                          int amount, ColorFilter *f, palette *pal)
+                          int amount, ColorFilter *f, Palette *pal)
 {
     PutImageGeneric<BLEND>(screen, pos, 0, blend, bpos, NULL, NULL,
                            amount, 1, NULL, f, pal);

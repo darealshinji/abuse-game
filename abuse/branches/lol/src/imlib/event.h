@@ -60,7 +60,7 @@ public:
 class EventHandler
 {
 public:
-    EventHandler(image *screen, palette *pal);
+    EventHandler(image *screen, Palette *pal);
     ~EventHandler();
 
     void Push(Event *ev)

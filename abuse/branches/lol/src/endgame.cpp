@@ -31,7 +31,7 @@
 #include "director.h"
 #include "lisp_gc.h"
 
-extern palette *old_pal;
+extern Palette *old_pal;
 
 struct mask_line
 {
@@ -119,7 +119,7 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
           g3=g1+(g2-g1)*fade256/256,
           b3=b1+(b2-b1)*fade256/256;
 
-      uint8_t c=color_table->Lookup(r3>>3,g3>>3,b3>>3);
+      uint8_t c = color_table->Lookup(u8vec3(r3 >> 3, g3 >> 3, b3 >> 3));
 
       *sl=*(white_light+((*l)/2+28+rand(4))*256+c);
 
@@ -184,10 +184,13 @@ void show_end2()
 
 
   main_screen->clear();
-  int c[4]={ pal->find_closest(222,222,22),
-        pal->find_closest(200,200,200),
-        pal->find_closest(100,100,100),
-        pal->find_closest(64,64,64)};
+  int c[4] =
+  {
+    g_palette->FindClosest(u8vec3(222, 222, 22)),
+    g_palette->FindClosest(u8vec3(200, 200, 200)),
+    g_palette->FindClosest(u8vec3(100, 100, 100)),
+    g_palette->FindClosest(u8vec3(64, 64, 64))
+  };
   uint16_t sinfo[800*3],*si;
 
   for (si=sinfo,i=0; i<800; i++)
@@ -201,12 +204,16 @@ void show_end2()
   if (old_pal)
   {
     for (i=0; i<256; i++)
-      paddr[i]=(old_pal->red(i)<<16)|(old_pal->green(i)<<8)|(old_pal->blue(i));
+      paddr[i] = (old_pal->GetColor(i).r << 16)
+               | (old_pal->GetColor(i).g << 8)
+               | (old_pal->GetColor(i).b);
   }
   else
   {
     for (i=0; i<256; i++)
-      paddr[i]=(pal->red(i)<<16)|(pal->green(i)<<8)|(pal->blue(i));
+      paddr[i] = (g_palette->GetColor(i).r << 16)
+               | (g_palette->GetColor(i).g << 8)
+               | (g_palette->GetColor(i).b);
   }
 
   int dx=(xres+1)/2-320/2,dy=(yres+1)/2-200/2;
@@ -369,7 +376,7 @@ void show_end2()
 
   uint8_t cmap[32];
   for (i=0; i<32; i++)
-    cmap[i]=pal->find_closest(i*256/32,i*256/32,i*256/32);
+    cmap[i] = g_palette->FindClosest(u8vec3(i * 256 / 32, i * 256 / 32, i * 256 / 32));
 
   void *end_plot = LSymbol::FindOrCreate("plot_end")->GetValue();
 
@@ -442,7 +449,7 @@ void share_end()
   uint8_t cmap[32];
   int i;
   for (i=0; i<32; i++)
-    cmap[i]=pal->find_closest(i*256/32,i*256/32,i*256/32);
+    cmap[i] = g_palette->FindClosest(u8vec3(i * 256 / 32, i * 256 / 32, i * 256 / 32));
 
   Event ev; ev.type=EV_SPURIOUS;
   time_marker start;
@@ -494,7 +501,7 @@ void show_end()
   uint8_t cmap[32];
   int i;
   for (i=0; i<32; i++)
-    cmap[i]=pal->find_closest(i*256/32,i*256/32,i*256/32);
+    cmap[i] = g_palette->FindClosest(u8vec3(i * 256 / 32, i * 256 / 32, i * 256 / 32));
 
   Event ev; ev.type=EV_SPURIOUS;
   time_marker start;
