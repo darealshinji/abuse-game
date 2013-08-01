@@ -471,22 +471,22 @@ void dev_controll::dev_draw(view *v)
   int32_t x1,y1,x2,y2;
   if (dev&EDIT_MODE)
   {
-    int32_t vx=v->xoff(),vy=v->yoff();
+    ivec2 dv = ivec2(v->xoff(), v->yoff());
 
     if (dev&DRAW_LINKS)
     {
-      for (LightSource *f = first_light_source; f; f = f->next)
+      for (LightSource *f = first_light_source; f; f = f->m_next)
       {
-    if (f->m_pos.x - vx >= 0 && f->m_pos.x - vx <= (v->m_bb.x - v->m_aa.x + 1)
-         && f->m_pos.y - vy >= 0 && f->m_pos.y - vy <= (v->m_bb.y - v->m_aa.y + 1))
-    {
-      image *im = cache.img(light_buttons[f->type]);
-      main_screen->PutImage(im, f->m_pos - ivec2(vx, vy)
-                                         + v->m_aa - im->Size() / 2);
-      main_screen->Rectangle(ivec2(f->x1 - vx, f->y1 - vy) + v->m_aa,
-                             ivec2(f->x2 - vx, f->y2 - vy) + v->m_aa,
-                             wm->medium_color());
-    }
+        if (f->m_pos.x - dv.x >= 0
+             && f->m_pos.x - dv.x <= (v->m_bb.x - v->m_aa.x + 1)
+             && f->m_pos.y - dv.y >= 0
+             && f->m_pos.y - dv.y <= (v->m_bb.y - v->m_aa.y + 1))
+        {
+          image *im = cache.img(light_buttons[f->m_type]);
+          main_screen->PutImage(im, f->m_pos - dv + v->m_aa - im->Size() / 2);
+          main_screen->Rectangle(f->m_p1 - dv + v->m_aa, f->m_p2 - dv + v->m_aa,
+                                 wm->medium_color());
+        }
       }
     }
 
@@ -557,7 +557,7 @@ static LightSource *find_light(int32_t x, int32_t y)
 {
   image *i = cache.img(light_buttons[0]);
   int l = i->Size().x / 2, h = i->Size().y / 2;
-  for (LightSource *f = first_light_source; f; f = f->next)
+  for (LightSource *f = first_light_source; f; f = f->m_next)
   {
     if (x >= f->m_pos.x - l && x <= f->m_pos.x + l
          && y >= f->m_pos.y - h && y <= f->m_pos.y + h)
@@ -1704,7 +1704,7 @@ void dev_controll::handle_event(Event &ev)
     {
       edit_light->m_pos = snap(the_game->MouseToGame(last_demo_mpos));
 
-      edit_light->calc_range();
+      edit_light->CalcRange();
       the_game->need_refresh();
     } else if (ev.type==EV_KEY)
     {
@@ -1713,60 +1713,60 @@ void dev_controll::handle_event(Event &ev)
       {
         case '+' :
         {
-          if (edit_light->type==9)
+          if (edit_light->m_type==9)
           {
-        if (edit_light->inner_radius<64)
-        { edit_light->inner_radius++; rd=1; }
-          } else { edit_light->outer_radius++; rd=1; }
+        if (edit_light->m_inner_radius<64)
+        { edit_light->m_inner_radius++; rd=1; }
+          } else { edit_light->m_outer_radius++; rd=1; }
         } break;
         case '-' :
         {
-          if (edit_light->type==9)
+          if (edit_light->m_type==9)
           {
-        if (edit_light->inner_radius>0)
-        { edit_light->inner_radius--; rd=1; }
-          } else if (edit_light->outer_radius>edit_light->inner_radius+1)
-          { edit_light->outer_radius--; rd=1; }
+        if (edit_light->m_inner_radius>0)
+        { edit_light->m_inner_radius--; rd=1; }
+          } else if (edit_light->m_outer_radius>edit_light->m_inner_radius+1)
+          { edit_light->m_outer_radius--; rd=1; }
         } break;
         case JK_RIGHT :
         {
-          if (edit_light->type==9)
-          { edit_light->xshift++; rd=1; }
-          else if (edit_light->xshift>0)
-          { edit_light->xshift--; rd=1; }
+          if (edit_light->m_type==9)
+          { edit_light->m_shift.x++; rd=1; }
+          else if (edit_light->m_shift.x>0)
+          { edit_light->m_shift.x--; rd=1; }
         } break;
         case JK_LEFT :
         {
-          if (edit_light->type==9)
+          if (edit_light->m_type==9)
           {
-        if (edit_light->xshift>1)
-        { edit_light->xshift--; rd=1; }
+        if (edit_light->m_shift.x>1)
+        { edit_light->m_shift.x--; rd=1; }
           }
           else
-          { edit_light->xshift++; rd=1; }
+          { edit_light->m_shift.x++; rd=1; }
         } break;
         case JK_UP :
         {
-          if (edit_light->type==9)
-          { edit_light->yshift++; rd=1; }
-          else if (edit_light->yshift>0)
-          { edit_light->yshift--; rd=1; }
+          if (edit_light->m_type==9)
+          { edit_light->m_shift.y++; rd=1; }
+          else if (edit_light->m_shift.y>0)
+          { edit_light->m_shift.y--; rd=1; }
         } break;
         case JK_DOWN :
         {
-          if (edit_light->type==9)
+          if (edit_light->m_type==9)
           {
-        if (edit_light->yshift>1)
-        { edit_light->yshift--; rd=1; }
+        if (edit_light->m_shift.y>1)
+        { edit_light->m_shift.y--; rd=1; }
           }
           else
-          { edit_light->yshift++; rd=1; }
+          { edit_light->m_shift.y++; rd=1; }
         } break;
 
       }
       if (rd)
       {
-        edit_light->calc_range();
+        edit_light->CalcRange();
         the_game->need_refresh();
       }
 
@@ -1925,10 +1925,10 @@ void dev_controll::handle_event(Event &ev)
                new button(bw*1,0,DEV_LEDIT_MOVE,cache.img(dev_move),
                   new button(bw*2,0,DEV_LEDIT_COPY,cache.img(dev_copy),
             new button(bw*3,0,DEV_LEDIT_DEL,cache.img(dev_del),NULL)))),
-            new text_field(0,bh,DEV_LEDIT_W,      "W ","******",edit_light->xshift,
-            new text_field(0,bh+th*1,DEV_LEDIT_H, "H ","******",edit_light->yshift,
-          new text_field(0,bh+th*2,DEV_LEDIT_R1,"R1","******",(int)(edit_light->inner_radius),
-         new text_field(0,bh+th*3,DEV_LEDIT_R2,"R2","******",(int)(edit_light->outer_radius),
+            new text_field(0,bh,DEV_LEDIT_W,      "W ","******",edit_light->m_shift.x,
+            new text_field(0,bh+th*1,DEV_LEDIT_H, "H ","******",edit_light->m_shift.y,
+          new text_field(0,bh+th*2,DEV_LEDIT_R1,"R1","******",(int)(edit_light->m_inner_radius),
+         new text_field(0,bh+th*3,DEV_LEDIT_R2,"R2","******",(int)(edit_light->m_outer_radius),
                    NULL))))));
       }
       else if (ev.window==NULL)
@@ -2421,21 +2421,21 @@ void dev_controll::handle_event(Event &ev)
     } break;
     case DEV_LEDIT_OK :
     {
-      edit_light->xshift=atoi(ledit->read(DEV_LEDIT_W));
-      edit_light->yshift=atoi(ledit->read(DEV_LEDIT_H));
-      edit_light->inner_radius=atoi(ledit->read(DEV_LEDIT_R1));
-      edit_light->outer_radius=atoi(ledit->read(DEV_LEDIT_R2));
-      if (edit_light->outer_radius<=edit_light->inner_radius)
+      edit_light->m_shift.x = atoi(ledit->read(DEV_LEDIT_W));
+      edit_light->m_shift.y = atoi(ledit->read(DEV_LEDIT_H));
+      edit_light->m_inner_radius = atoi(ledit->read(DEV_LEDIT_R1));
+      edit_light->m_outer_radius = atoi(ledit->read(DEV_LEDIT_R2));
+      if (edit_light->m_outer_radius<=edit_light->m_inner_radius)
       {
-        edit_light->inner_radius=edit_light->outer_radius-1;
-        if (edit_light->inner_radius<1)
+        edit_light->m_inner_radius=edit_light->m_outer_radius-1;
+        if (edit_light->m_inner_radius<1)
         {
-          edit_light->inner_radius=1;
-          edit_light->outer_radius=2;
+          edit_light->m_inner_radius=1;
+          edit_light->m_outer_radius=2;
         }
       }
 
-      edit_light->calc_range();
+      edit_light->CalcRange();
       edit_light=NULL;
       prop->setd("ledit x",ledit->m_pos.x);
       prop->setd("ledit y",ledit->m_pos.y);
@@ -2451,7 +2451,7 @@ void dev_controll::handle_event(Event &ev)
     } break;
     case DEV_LEDIT_COPY :
     {
-      edit_light=edit_light->copy();
+      edit_light=edit_light->Copy();
       prop->setd("ledit x",ledit->m_pos.x);
       prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
@@ -2471,13 +2471,14 @@ void dev_controll::handle_event(Event &ev)
     case DEV_LIGHT9 :
     {
       ivec2 pos = the_game->MouseToGame(last_demo_mpos);
-      edit_light = add_light_source(ev.message.id - DEV_LIGHT0,
-                                    snap_x(pos.x), snap_y(pos.y),
-                                    atoi(lightw->read(DEV_LIGHTR1)),
-                                    atoi(lightw->read(DEV_LIGHTR2)),
-                                    atoi(lightw->read(DEV_LIGHTW)),
-                                    atoi(lightw->read(DEV_LIGHTH)));
-      state=DEV_MOVE_LIGHT;
+      ivec2 shift;
+      shift.x =  atoi(lightw->read(DEV_LIGHTW));
+      shift.y =  atoi(lightw->read(DEV_LIGHTH));
+      edit_light = AddLightSource(ev.message.id - DEV_LIGHT0, snap(pos),
+                                  atoi(lightw->read(DEV_LIGHTR1)),
+                                  atoi(lightw->read(DEV_LIGHTR2)),
+                                  shift);
+      state = DEV_MOVE_LIGHT;
     } break;
     case ID_RAISE_ALL :
     {

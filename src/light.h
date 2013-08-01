@@ -26,53 +26,53 @@ extern int16_t shutdown_lighting_value,shutdown_lighting;
 
 class LightSource
 {
-  public :
-  ivec2 m_pos;
-  int32_t type, xshift, yshift;
-  int32_t outer_radius,mul_div,inner_radius;
+public:
+    LightSource(char Type, ivec2 pos, int32_t inner_r, int32_t outer_r,
+                ivec2 shift, LightSource *next);
+    LightSource *Copy();
+    void CalcRange();
 
-  int32_t x1,y1,x2,y2;
-  char known;
-  LightSource *next;
+    ivec2 m_pos, m_shift;
+    int32_t m_type;
+    int32_t m_outer_radius, mul_div, m_inner_radius;
 
-  void calc_range();
-  LightSource(char Type, int32_t X, int32_t Y, int32_t Inner_radius, int32_t Outer_radius,
-           int32_t Xshift, int32_t Yshift,
-           LightSource *Next);
-  LightSource *copy();
-} ;
+    ivec2 m_p1, m_p2;
+    char known;
+    LightSource *m_next;
+};
 
-class light_patch
+class LightPatch
 {
-  public :
-  int32_t total,x1,y1,x2,y2;
-  LightSource **lights;
-  light_patch *next;
-  light_patch(int32_t X1, int32_t Y1, int32_t X2, int32_t Y2, light_patch *Next)
-  {
-    x1=X1; y1=Y1; x2=X2; y2=Y2;
-    next=Next;
-    total=0;
-    lights=NULL;
-  }
-  void add_light(int32_t X1, int32_t Y1, int32_t X2, int32_t Y2, LightSource *who);
-  light_patch *copy(light_patch *Next);
-  ~light_patch() { if (total) free(lights); }
-} ;
+public:
+    LightPatch(ivec2 p1, ivec2 p2, LightPatch *next)
+      : m_p1(p1),
+        m_p2(p2),
+        m_next(next)
+    {
+    }
+
+    void AddLight(ivec2 p1, ivec2 p2, LightSource *who);
+    LightPatch *Copy(LightPatch *next);
+
+    ivec2 m_p1, m_p2;
+    Array<LightSource *> m_lights;
+
+    /* FIXME: this should disappear */
+    LightPatch *m_next;
+};
 
 void delete_all_lights();
 void delete_light(LightSource *which);
-LightSource *add_light_source(char type, int32_t x, int32_t y,
-                   int32_t inner, int32_t outer, int32_t xshift, int32_t yshift);
+LightSource *AddLightSource(char type, ivec2 pos, int32_t inner,
+                            int32_t outer, ivec2 shift);
 
 void add_light_spec(SpecDir *sd, char const *level_name);
 void write_lights(bFILE *fp);
 void read_lights(SpecDir *sd, bFILE *fp, char const *level_name);
 
 
-void delete_patch_list(light_patch *first);
-light_patch *find_patch(int screenx, int screeny, light_patch *list);
-int calc_light_value(int32_t x, int32_t y, light_patch *which);
+void delete_patch_list(LightPatch *first);
+LightPatch *find_patch(int screenx, int screeny, LightPatch *list);
 void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient);
 void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient,
              image *out, int32_t out_x, int32_t out_y);

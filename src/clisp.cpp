@@ -694,14 +694,15 @@ void *l_caller(long number, void *args)
     } break;
     case 14 :
     {
-      int t=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
-      int x=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
-      int y=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
-      int r2=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
-      int r3=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
-      int xs=lnumber_value(CAR(args)->Eval()); args=lcdr(args);
-      int ys=lnumber_value(CAR(args)->Eval());
-      return LPointer::Create(add_light_source(t,x,y,r2,r3,xs,ys));
+      ivec2 pos, shift;
+      int t = lnumber_value(CAR(args)->Eval()); args=lcdr(args);
+      pos.x = lnumber_value(CAR(args)->Eval()); args=lcdr(args);
+      pos.y = lnumber_value(CAR(args)->Eval()); args=lcdr(args);
+      int r2 = lnumber_value(CAR(args)->Eval()); args=lcdr(args);
+      int r3 = lnumber_value(CAR(args)->Eval()); args=lcdr(args);
+      shift.x = lnumber_value(CAR(args)->Eval()); args=lcdr(args);
+      shift.y = lnumber_value(CAR(args)->Eval());
+      return LPointer::Create(AddLightSource(t, pos, r2, r3, shift));
     } break;
     case 15 :
     {
@@ -902,10 +903,10 @@ void *l_caller(long number, void *args)
     } break;
     case 49 :
     {
-      int x = lnumber_value(CAR(args)->Eval()); args = CDR(args);
-      int y = lnumber_value(CAR(args)->Eval()); args = CDR(args);
-
-      ivec2 pos = the_game->MouseToGame(ivec2(x, y));
+      ivec2 pos;
+      pos.x = lnumber_value(CAR(args)->Eval()); args = CDR(args);
+      pos.y = lnumber_value(CAR(args)->Eval()); args = CDR(args);
+      pos = the_game->MouseToGame(pos);
       void *ret = NULL;
       {
           PtrRef r2(ret);
@@ -916,10 +917,10 @@ void *l_caller(long number, void *args)
     } break;
     case 50 :
     {
-      int x = lnumber_value(CAR(args)->Eval()); args=CDR(args);
-      int y = lnumber_value(CAR(args)->Eval()); args=CDR(args);
-
-      ivec2 pos = the_game->GameToMouse(ivec2(x, y), current_view);
+      ivec2 pos;
+      pos.x = lnumber_value(CAR(args)->Eval()); args=CDR(args);
+      pos.y = lnumber_value(CAR(args)->Eval()); args=CDR(args);
+      pos = the_game->GameToMouse(pos, current_view);
       void *ret = NULL;
       {
         PtrRef r2(ret);
@@ -1300,51 +1301,57 @@ long c_caller(long number, void *args)
     case 103 : return current_object->total_lights(); break;
 
     case 104 :
-    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
-      int32_t x=lnumber_value(CAR(CDR(args)));
-      if (x>=1)
-        l->inner_radius=x;
-      l->calc_range();
+    {
+      LightSource *l = (LightSource *)lpointer_value(CAR(args));
+      int32_t x = lnumber_value(CAR(CDR(args)));
+      if (x >= 1)
+        l->m_inner_radius = x;
+      l->CalcRange();
       return 1;
     } break;
     case 105 :
-    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
-      int32_t x=lnumber_value(CAR(CDR(args)));
-      if (x>l->inner_radius)
-        l->outer_radius=x;
-      l->calc_range();
+    {
+      LightSource *l = (LightSource *)lpointer_value(CAR(args));
+      int32_t x = lnumber_value(CAR(CDR(args)));
+      if (x > l->m_inner_radius)
+        l->m_outer_radius = x;
+      l->CalcRange();
       return 1;
     } break;
     case 106 :
-    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
-      l->m_pos.x=lnumber_value(CAR(CDR(args)));
-      l->calc_range();
+    {
+      LightSource *l = (LightSource *)lpointer_value(CAR(args));
+      l->m_pos.x = lnumber_value(CAR(CDR(args)));
+      l->CalcRange();
       return 1;
     } break;
     case 107 :
-    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
-      l->m_pos.y=lnumber_value(CAR(CDR(args)));
-      l->calc_range();
+    {
+      LightSource *l = (LightSource *)lpointer_value(CAR(args));
+      l->m_pos.y = lnumber_value(CAR(CDR(args)));
+      l->CalcRange();
       return 1;
     } break;
     case 108 :
-    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
-      l->xshift=lnumber_value(CAR(CDR(args)));
-      l->calc_range();
+    {
+      LightSource *l = (LightSource *)lpointer_value(CAR(args));
+      l->m_shift.x = lnumber_value(CAR(CDR(args)));
+      l->CalcRange();
       return 1;
     } break;
     case 109 :
-    { LightSource *l=(LightSource *)lpointer_value(CAR(args));
-      l->yshift=lnumber_value(CAR(CDR(args)));
-      l->calc_range();
+    {
+      LightSource *l = (LightSource *)lpointer_value(CAR(args));
+      l->m_shift.y = lnumber_value(CAR(CDR(args)));
+      l->CalcRange();
       return 1;
     } break;
-    case 110 : return ((LightSource *)lpointer_value(CAR(args)))->inner_radius; break;
-    case 111 : return ((LightSource *)lpointer_value(CAR(args)))->outer_radius; break;
+    case 110 : return ((LightSource *)lpointer_value(CAR(args)))->m_inner_radius; break;
+    case 111 : return ((LightSource *)lpointer_value(CAR(args)))->m_outer_radius; break;
     case 112 : return ((LightSource *)lpointer_value(CAR(args)))->m_pos.x; break;
     case 113 : return ((LightSource *)lpointer_value(CAR(args)))->m_pos.y; break;
-    case 114 : return ((LightSource *)lpointer_value(CAR(args)))->xshift; break;
-    case 115 : return ((LightSource *)lpointer_value(CAR(args)))->yshift; break;
+    case 114 : return ((LightSource *)lpointer_value(CAR(args)))->m_shift.x; break;
+    case 115 : return ((LightSource *)lpointer_value(CAR(args)))->m_shift.y; break;
     case 116 : return current_object->m_accel.x; break;
     case 117 : return current_object->m_accel.y; break;
     case 118 : g_current_level->remove_light((LightSource *)lpointer_value(CAR(args))); break;
