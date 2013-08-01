@@ -398,12 +398,10 @@ void InsertLight(LightPatch *&first, LightPatch *l)
 
 void AddLight(LightPatch *&first, ivec2 p1, ivec2 p2, LightSource *who)
 {
-    LightPatch *next;
-    LightPatch *p = first;
-
-    for (; p; p = next)
+    for (LightPatch *p = first, *next; p; p = next)
     {
-        next=p->m_next;
+        next = p->m_next;
+
         // first see if light patch we are adding is enclosed entirely
         // by another patch
         if (p1.x >= p->m_p1.x && p1.y >= p->m_p1.y
@@ -456,64 +454,49 @@ void AddLight(LightPatch *&first, ivec2 p1, ivec2 p2, LightSource *who)
             InsertLight(first, p);
 
             p->m_lights.Push(who);
-            return ;
-          }
+            return;
+        }
 
-    // see if the patch completly covers another patch.
-    if (p1 <= p->m_p1 && p2 >= p->m_p2)
-    {
-      if (p1.x < p->m_p1.x)
-        AddLight(first, p1, ivec2(p->m_p1.x - 1, p2.y), who);
-      if (p2.x > p->m_p2.x)
-        AddLight(first, ivec2(p->m_p2.x + 1, p1.y), p2, who);
-      if (p1.y < p->m_p1.y)
-        AddLight(first, ivec2(p->m_p1.x, p1.y), ivec2(p->m_p2.x, p->m_p1.y - 1), who);
-      if (p2.y > p->m_p2.y)
-        AddLight(first, ivec2(p->m_p1.x, p->m_p2.y + 1), ivec2(p->m_p2.x, p2.y), who);
+        // see if the patch completly covers another patch.
+        if (p1 <= p->m_p1 && p2 >= p->m_p2)
+        {
+            if (p1.x < p->m_p1.x)
+                AddLight(first, p1, ivec2(p->m_p1.x - 1, p2.y), who);
+            if (p2.x > p->m_p2.x)
+                AddLight(first, ivec2(p->m_p2.x + 1, p1.y), p2, who);
+            if (p1.y < p->m_p1.y)
+                AddLight(first, ivec2(p->m_p1.x, p1.y), ivec2(p->m_p2.x, p->m_p1.y - 1), who);
+            if (p2.y > p->m_p2.y)
+                AddLight(first, ivec2(p->m_p1.x, p->m_p2.y + 1), ivec2(p->m_p2.x, p2.y), who);
 
-      if (p->m_lights.Count() < MAX_LP)
-        p->m_lights.Push(who);
+            if (p->m_lights.Count() < MAX_LP)
+                p->m_lights.Push(who);
 
-      return;
+            return;
+        }
+
+        // see if we intersect another rect
+        if (p2 >= p->m_p1 && p1 <= p->m_p2)
+        {
+            ivec2 ap1 = lol::max(p1, p->m_p1),
+                  ap2 = lol::min(p2, p->m_p2);
+
+            if (p1.x < p->m_p1.x)
+                AddLight(first, ivec2(p1.x, ap1.y), ivec2(p->m_p1.x - 1, ap2.y), who);
+
+            if (p2.x > p->m_p2.x)
+                AddLight(first, ivec2(p->m_p2.x + 1, ap1.y), ivec2(p2.x, ap2.y), who);
+
+            if (p1.y < p->m_p1.y)
+                AddLight(first, p1, ivec2(p2.x, p->m_p1.y - 1), who);
+
+            if (p2.y > p->m_p2.y)
+                AddLight(first, ivec2(p1.x, p->m_p2.y + 1), p2, who);
+
+            AddLight(first, ap1, ap2, who);
+            return;
+        }
     }
-
-    // see if we intersect another rect
-    if (p2 >= p->m_p1 && p1 <= p->m_p2)
-    {
-      ivec2 ap1 = lol::max(p1, p->m_p1),
-            ap2 = lol::min(p2, p->m_p2);
-
-      if (p1.x < p->m_p1.x)
-        AddLight(first, ivec2(p1.x, ap1.y), ivec2(p->m_p1.x - 1, ap2.y), who);
-
-      if (p2.x > p->m_p2.x)
-        AddLight(first, ivec2(p->m_p2.x + 1, ap1.y), ivec2(p2.x, ap2.y), who);
-
-      if (p1.y < p->m_p1.y)
-        AddLight(first, p1, ivec2(p2.x, p->m_p1.y - 1), who);
-
-      if (p2.y > p->m_p2.y)
-        AddLight(first, ivec2(p1.x, p->m_p2.y + 1), p2, who);
-
-      AddLight(first, ap1, ap2, who);
-      return;
-    }
-  }
-}
-
-LightPatch *find_patch(int screenx, int screeny, LightPatch *list)
-{
-    for (; list; list = list->m_next)
-        if (screenx >= list->m_p1.x && screenx <= list->m_p2.x
-             && screeny >= list->m_p1.y && screeny <= list->m_p2.y)
-            return list;
-
-    return nullptr;
-}
-
-void reduce_patches(LightPatch *f)   // find constant valued patches
-{
-
 }
 
 LightPatch *MakePatchList(ivec2 size, ivec2 screen)
@@ -529,20 +512,8 @@ LightPatch *MakePatchList(ivec2 size, ivec2 screen)
         if (p1.x <= p2.x && p1.y <= p2.y)
             AddLight(first, p1, p2, f);
     }
-    reduce_patches(first);
 
     return first;
-}
-
-
-void delete_patch_list(LightPatch *first)
-{
-  while (first)
-  {
-    LightPatch *p=first;
-    first=first->m_next;
-    delete p;
-  }
 }
 
 inline void MAP_PUT(uint8_t * screen_addr, uint8_t * remap, int w)
