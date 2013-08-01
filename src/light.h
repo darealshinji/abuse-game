@@ -70,9 +70,6 @@ void add_light_spec(SpecDir *sd, char const *level_name);
 void write_lights(bFILE *fp);
 void read_lights(SpecDir *sd, bFILE *fp, char const *level_name);
 
-
-void delete_patch_list(LightPatch *first);
-LightPatch *find_patch(int screenx, int screeny, LightPatch *list);
 void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient);
 void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient,
              image *out, int32_t out_x, int32_t out_y);
