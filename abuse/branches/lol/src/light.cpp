@@ -37,12 +37,14 @@ int light_detail=MEDIUM_DETAIL;
 
 int32_t light_to_number(LightSource *l)
 {
-
-  if (!l) return 0;
-  int x=1;
-  for (LightSource *s=first_light_source; s; s=s->next,x++)
-    if (s==l) return x;
-  return 0;
+    if (l)
+    {
+        int x = 1;
+        for (LightSource *s = first_light_source; s; s = s->m_next, x++)
+            if (s == l)
+                return x;
+    }
+    return 0;
 }
 
 
@@ -51,14 +53,16 @@ LightSource *number_to_light(int32_t x)
   if (x==0) return NULL;
   x--;
   LightSource *s=first_light_source;
-  for (; x && s; x--,s=s->next);
+  for (; x && s; x--,s=s->m_next)
+    ;
   return s;
 }
 
-LightSource *LightSource::copy()
+LightSource *LightSource::Copy()
 {
-  next=new LightSource(type, m_pos.x, m_pos.y, inner_radius, outer_radius, xshift, yshift, next);
-  return next;
+    m_next = new LightSource(m_type, m_pos, m_inner_radius,
+                             m_outer_radius, m_shift, m_next);
+    return m_next;
 }
 
 void delete_all_lights()
@@ -69,7 +73,7 @@ void delete_all_lights()
       dev_cont->notify_deleted_light(first_light_source);
 
     LightSource *p=first_light_source;
-    first_light_source=first_light_source->next;
+    first_light_source=first_light_source->m_next;
     delete p;
   }
 }
@@ -81,103 +85,101 @@ void delete_light(LightSource *which)
 
   if (which==first_light_source)
   {
-    first_light_source=first_light_source->next;
+    first_light_source=first_light_source->m_next;
     delete which;
   }
   else
   {
     LightSource *f=first_light_source;
-    for (; f->next!=which && f; f=f->next);
+    for (; f->m_next!=which && f; f=f->m_next)
+      ;
     if (f)
     {
-      f->next=which->next;
+      f->m_next=which->m_next;
       delete which;
     }
   }
 }
 
-void LightSource::calc_range()
+void LightSource::CalcRange()
 {
-  switch (type)
-  {
-    case 0 :
-    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y-(outer_radius>>yshift);
-      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y+(outer_radius>>yshift);
-    } break;
-    case 1 :
-    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y-(outer_radius>>yshift);
-      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y;
-    } break;
-    case 2 :
-    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y;
-      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y+(outer_radius>>yshift);
-    } break;
-    case 3 :
-    { x1 = m_pos.x; y1 = m_pos.y-(outer_radius>>yshift);
-      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y+(outer_radius>>yshift);
-    } break;
-    case 4 :
-    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y-(outer_radius>>yshift);
-      x2 = m_pos.x; y2 = m_pos.y+(outer_radius>>yshift);
-    } break;
-
-
-    case 5 :
-    { x1 = m_pos.x; y1 = m_pos.y-(outer_radius>>yshift);
-      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y;
-    } break;
-    case 6 :
-    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y-(outer_radius>>yshift);
-      x2 = m_pos.x; y2 = m_pos.y;
-    } break;
-    case 7 :
-    { x1 = m_pos.x-(outer_radius>>xshift); y1 = m_pos.y;
-      x2 = m_pos.x; y2 = m_pos.y+(outer_radius>>yshift);
-    } break;
-    case 8 :
-    { x1 = m_pos.x; y1 = m_pos.y;
-      x2 = m_pos.x+(outer_radius>>xshift); y2 = m_pos.y+(outer_radius>>yshift);
-    } break;
-    case 9 :
+    ivec2 delta = ivec2(m_outer_radius >> m_shift.x,
+                        m_outer_radius >> m_shift.y);
+    switch (m_type)
     {
-      x1 = m_pos.x;
-      y1 = m_pos.y;
-      x2 = m_pos.x + xshift;
-      y2 = m_pos.y + yshift;
-    } break;
-
-  }
-  mul_div=(1<<16)/(outer_radius-inner_radius)*64;
+    case 0:
+        m_p1 = m_pos - delta;
+        m_p2 = m_pos + delta;
+        break;
+    case 1:
+        m_p1 = m_pos - delta;
+        m_p2 = m_pos + ivec2(delta.x, 0);
+        break;
+    case 2:
+        m_p1 = m_pos - ivec2(delta.x, 0);
+        m_p2 = m_pos + delta;
+        break;
+    case 3:
+        m_p1 = m_pos - ivec2(0, delta.y);
+        m_p2 = m_pos + delta;
+        break;
+    case 4:
+        m_p1 = m_pos - delta;
+        m_p2 = m_pos + ivec2(0, delta.y);
+        break;
+    case 5:
+        m_p1 = m_pos - ivec2(0, delta.y);
+        m_p2 = m_pos + ivec2(delta.x, 0);
+        break;
+    case 6:
+        m_p1 = m_pos - delta;
+        m_p2 = m_pos;
+        break;
+    case 7:
+        m_p1 = m_pos - ivec2(delta.x, 0);
+        m_p2 = m_pos + ivec2(0, delta.y);
+        break;
+    case 8:
+        m_p1 = m_pos;
+        m_p2 = m_pos + delta;
+        break;
+    case 9:
+        m_p1 = m_pos;
+        m_p2 = m_pos + m_shift;
+        break;
+    }
+    mul_div = (1 << 16) / (m_outer_radius - m_inner_radius) * 64;
 }
 
-LightSource::LightSource(char Type, int32_t X, int32_t Y, int32_t Inner_radius,
-               int32_t Outer_radius, int32_t Xshift,  int32_t Yshift, LightSource *Next)
+LightSource::LightSource(char Type, ivec2 pos, int32_t inner_radius,
+               int32_t outer_radius, ivec2 shift, LightSource *next)
 {
-  type=Type;
-  m_pos = ivec2(X, Y);
-  inner_radius=Inner_radius;
-  outer_radius=Outer_radius;
-  next=Next;
-  known=0;
-  xshift=Xshift;
-  yshift=Yshift;
-  calc_range();
+    m_type = Type;
+    m_pos = pos;
+    m_inner_radius = inner_radius;
+    m_outer_radius = outer_radius;
+    m_next = next;
+    known = 0;
+    m_shift = shift;
+
+    CalcRange();
 }
 
 
 int count_lights()
 {
   int t=0;
-  for (LightSource *s=first_light_source; s; s=s->next)
+  for (LightSource *s=first_light_source; s; s=s->m_next)
     t++;
   return t;
 }
 
-LightSource *add_light_source(char type, int32_t x, int32_t y,
-                   int32_t inner, int32_t outer, int32_t xshift, int32_t yshift)
+LightSource *AddLightSource(char type, ivec2 pos,
+                            int32_t inner, int32_t outer, ivec2 shift)
 {
-  first_light_source=new LightSource(type,x,y,inner,outer,xshift,yshift,first_light_source);
-  return first_light_source;
+    first_light_source = new LightSource(type, pos, inner, outer,
+                                         shift, first_light_source);
+    return first_light_source;
 }
 
 
@@ -365,240 +367,180 @@ void calc_light_table(Palette *pal)
 }
 
 
-light_patch *light_patch::copy(light_patch *Next)
+LightPatch *LightPatch::Copy(LightPatch *next)
 {
-  light_patch *p=new light_patch(x1,y1,x2,y2,Next);
-  p->total=total;
-  if (total)
-  {
-    p->lights=(LightSource **)malloc(total*sizeof(LightSource *));
-    memcpy(p->lights,lights,total*(sizeof(LightSource *)));
-  }
-  else
-    p->lights=NULL;
-  return p;
+    LightPatch *p = new LightPatch(m_p1, m_p2, next);
+    p->m_lights = m_lights;
+    return p;
 }
 
 #define MAX_LP 6
 
 // insert light into list make sure the are sorted by y1
-void insert_light(light_patch *&first, light_patch *l)
+void InsertLight(LightPatch *&first, LightPatch *l)
 {
-  if (!first)
-    first=l;
-  else if (l->y1<first->y1)
-  {
-    l->next=first;
-    first=l;
-  } else
-  {
-    light_patch *p=first;
-    for (; p->next && p->next->y1<l->y1; p=p->next);
-    l->next=p->next;
-    p->next=l;
-  }
-}
-
-void add_light(light_patch *&first, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
-                LightSource *who)
-{
-  light_patch *next;
-  light_patch *p=first;
-  for (; p; p=next)
-  {
-    next=p->next;
-    // first see if light patch we are adding is enclosed entirely by another patch
-    if (x1>=p->x1 && y1>=p->y1 && x2<=p->x2 && y2<=p->y2)
+    if (!first)
+        first = l;
+    else if (l->m_p1.y < first->m_p1.y)
     {
-      if (p->total==MAX_LP) return ;
-
-      if (x1>p->x1)
-      {
-    light_patch *l=p->copy(NULL);
-    l->x2=x1-1;
-    insert_light(first,l);
-      }
-      if (x2<p->x2)
-      {
-    light_patch *l=p->copy(NULL);
-    l->x1=x2+1;
-    insert_light(first,l);
-      }
-      if (y1>p->y1)
-      {
-    light_patch *l=p->copy(NULL);
-    l->x1=x1;
-    l->x2=x2;
-    l->y2=y1-1;
-    insert_light(first,l);
-      }
-      if (y2<p->y2)
-      {
-    light_patch *l=p->copy(NULL);
-    l->x1=x1;
-    l->x2=x2;
-    l->y1=y2+1;
-    insert_light(first,l);
-      }
-      p->x1=x1; p->y1=y1; p->x2=x2; p->y2=y2;
-      // p has possibly changed it's y1, so we need to move it to it's correct sorted
-      // spot in the list
-      if (first==p)
-        first=first->next;
-      else
-      {
-    light_patch *q=first;
-    for (; q->next!=p; q=q->next);
-    q->next=p->next;
-      }
-      insert_light(first,p);
-
-
-      p->total++;
-      p->lights=(LightSource **)realloc(p->lights,sizeof(LightSource *)*p->total);
-      p->lights[p->total-1]=who;
-      return ;
-    }
-
-    // see if the patch completly covers another patch.
-    if (x1<=p->x1 && y1<=p->y1 && x2>=p->x2 && y2>=p->y2)
-    {
-      if (x1<p->x1)
-        add_light(first,x1,y1,p->x1-1,y2,who);
-      if (x2>p->x2)
-        add_light(first,p->x2+1,y1,x2,y2,who);
-      if (y1<p->y1)
-        add_light(first,p->x1,y1,p->x2,p->y1-1,who);
-      if (y2>p->y2)
-        add_light(first,p->x1,p->y2+1,p->x2,y2,who);
-      if (p->total==MAX_LP)  return ;
-      p->total++;
-      p->lights=(LightSource **)realloc(p->lights,sizeof(LightSource *)*p->total);
-      p->lights[p->total-1]=who;
-      return ;
-    }
-
-    // see if we intersect another rect
-    if (!(x2<p->x1 || y2<p->y1 || x1>p->x2 || y1>p->y2))
-    {
-      int ax1,ay1,ax2,ay2;
-      if (x1<p->x1)
-      {
-        add_light(first,x1,lol::max(y1,p->y1),p->x1-1,lol::min(y2,p->y2),who);
-    ax1=p->x1;
-      } else
-    ax1=x1;
-
-      if (x2>p->x2)
-      {
-        add_light(first,p->x2+1,lol::max(y1,p->y1),x2,lol::min(y2,p->y2),who);
-    ax2=p->x2;
-      }
-      else
-    ax2=x2;
-
-      if (y1<p->y1)
-      {
-        add_light(first,x1,y1,x2,p->y1-1,who);
-    ay1=p->y1;
-      } else
-    ay1=y1;
-
-      if (y2>p->y2)
-      {
-        add_light(first,x1,p->y2+1,x2,y2,who);
-    ay2=p->y2;
-      } else
-    ay2=y2;
-
-
-      add_light(first,ax1,ay1,ax2,ay2,who);
-
-      return ;
-    }
-  }
-}
-
-light_patch *find_patch(int screenx, int screeny, light_patch *list)
-{
-  for (; list; list=list->next)
-  {
-    if (screenx>=list->x1 && screenx<=list->x2 && screeny>=list->y1 && screeny<=list->y2)
-      return list;
-  }
-  return NULL;
-}
-
-/* shit
-int calc_light_value(light_patch *which, int32_t x, int32_t y)
-{
-  int lv=0;
-  int t=which->total;
-  for (register int i=t-1; i>=0; i--)
-  {
-    LightSource *fn=which->lights[i];
-    if (fn->type==9)
-    {
-      lv=fn->inner_radius;
-      i=0;
+        l->m_next = first;
+        first = l;
     }
     else
     {
-      int32_t dx=lol::abs(fn->x-x)<<fn->xshift;
-      int32_t dy=lol::abs(fn->y-y)<<fn->yshift;
-      int32_t  r2;
-      if (dx<dy)
-        r2=dx+dy-(dx>>1);
-      else r2=dx+dy-(dy>>1);
+        LightPatch *p = first;
+        for (; p->m_next && p->m_next->m_p1.y < l->m_p1.y; p = p->m_next)
+            ;
+        l->m_next = p->m_next;
+        p->m_next = l;
+    }
+}
 
-      if (r2>=fn->inner_radius)
-      {
-    if (r2<fn->outer_radius)
+void AddLight(LightPatch *&first, ivec2 p1, ivec2 p2, LightSource *who)
+{
+    LightPatch *next;
+    LightPatch *p = first;
+
+    for (; p; p = next)
     {
-      lv+=((fn->outer_radius-r2)*fn->mul_div)>>16;
+        next=p->m_next;
+        // first see if light patch we are adding is enclosed entirely
+        // by another patch
+        if (p1.x >= p->m_p1.x && p1.y >= p->m_p1.y
+             && p2.x <= p->m_p2.x && p2.y <= p->m_p2.y)
+        {
+            if (p->m_lights.Count() == MAX_LP)
+                return;
+
+            if (p1.x > p->m_p1.x)
+            {
+                LightPatch *l = p->Copy(nullptr);
+                l->m_p2.x = p1.x - 1;
+                InsertLight(first, l);
+            }
+            if (p2.x < p->m_p2.x)
+            {
+                LightPatch *l = p->Copy(nullptr);
+                l->m_p1.x = p2.x + 1;
+                InsertLight(first, l);
+            }
+            if (p1.y>p->m_p1.y)
+            {
+                LightPatch *l = p->Copy(nullptr);
+                l->m_p1.x = p1.x;
+                l->m_p2.x = p2.x;
+                l->m_p2.y = p1.y - 1;
+                InsertLight(first, l);
+            }
+            if (p2.y<p->m_p2.y)
+            {
+                LightPatch *l = p->Copy(nullptr);
+                l->m_p1.x = p1.x;
+                l->m_p2.x = p2.x;
+                l->m_p1.y = p2.y + 1;
+                InsertLight(first, l);
+            }
+            p->m_p1 = p1;
+            p->m_p2 = p2;
+            // p has possibly changed its p1.y, so we need to move it to
+            // its correct sorted spot in the list
+            if (first == p)
+                first = first->m_next;
+            else
+            {
+                LightPatch *q = first;
+                for (; q->m_next!=p; q=q->m_next)
+                    ;
+                q->m_next=p->m_next;
+            }
+            InsertLight(first, p);
+
+            p->m_lights.Push(who);
+            return ;
+          }
+
+    // see if the patch completly covers another patch.
+    if (p1 <= p->m_p1 && p2 >= p->m_p2)
+    {
+      if (p1.x < p->m_p1.x)
+        AddLight(first, p1, ivec2(p->m_p1.x - 1, p2.y), who);
+      if (p2.x > p->m_p2.x)
+        AddLight(first, ivec2(p->m_p2.x + 1, p1.y), p2, who);
+      if (p1.y < p->m_p1.y)
+        AddLight(first, ivec2(p->m_p1.x, p1.y), ivec2(p->m_p2.x, p->m_p1.y - 1), who);
+      if (p2.y > p->m_p2.y)
+        AddLight(first, ivec2(p->m_p1.x, p->m_p2.y + 1), ivec2(p->m_p2.x, p2.y), who);
+
+      if (p->m_lights.Count() < MAX_LP)
+        p->m_lights.Push(who);
+
+      return;
     }
-      } else lv=63;
+
+    // see if we intersect another rect
+    if (p2 >= p->m_p1 && p1 <= p->m_p2)
+    {
+      ivec2 ap1 = lol::max(p1, p->m_p1),
+            ap2 = lol::min(p2, p->m_p2);
+
+      if (p1.x < p->m_p1.x)
+        AddLight(first, ivec2(p1.x, ap1.y), ivec2(p->m_p1.x - 1, ap2.y), who);
+
+      if (p2.x > p->m_p2.x)
+        AddLight(first, ivec2(p->m_p2.x + 1, ap1.y), ivec2(p2.x, ap2.y), who);
+
+      if (p1.y < p->m_p1.y)
+        AddLight(first, p1, ivec2(p2.x, p->m_p1.y - 1), who);
+
+      if (p2.y > p->m_p2.y)
+        AddLight(first, ivec2(p1.x, p->m_p2.y + 1), p2, who);
+
+      AddLight(first, ap1, ap2, who);
+      return;
     }
   }
-  if (lv>63) return 63;
-  else
-    return lv;
-} */
+}
 
+LightPatch *find_patch(int screenx, int screeny, LightPatch *list)
+{
+    for (; list; list = list->m_next)
+        if (screenx >= list->m_p1.x && screenx <= list->m_p2.x
+             && screeny >= list->m_p1.y && screeny <= list->m_p2.y)
+            return list;
 
-void reduce_patches(light_patch *f)   // find constant valued patches
+    return nullptr;
+}
+
+void reduce_patches(LightPatch *f)   // find constant valued patches
 {
 
 }
 
-light_patch *make_patch_list(int width, int height, int32_t screenx, int32_t screeny)
+LightPatch *MakePatchList(ivec2 size, ivec2 screen)
 {
-  light_patch *first=new light_patch(0,0,width-1,height-1,NULL);
+    LightPatch *first = new LightPatch(ivec2(0), size - ivec2(1), nullptr);
 
-  for (LightSource *f=first_light_source; f; f=f->next)   // determine which lights will have effect
-  {
-    int32_t x1=f->x1-screenx,y1=f->y1-screeny,
-        x2=f->x2-screenx,y2=f->y2-screeny;
-    if (x1<0) x1=0;
-    if (y1<0) y1=0;
-    if (x2>=width)  x2=width-1;
-    if (y2>=height) y2=height-1;
+    // determine which lights will have effect
+    for (LightSource *f = first_light_source; f; f = f->m_next)
+    {
+        ivec2 p1 = lol::max(f->m_p1 - screen, ivec2(0));
+        ivec2 p2 = lol::min(f->m_p2 - screen, size - ivec2(1));
 
-    if (x1<=x2 && y1<=y2)
-      add_light(first,x1,y1,x2,y2,f);
-  }
-  reduce_patches(first);
+        if (p1.x <= p2.x && p1.y <= p2.y)
+            AddLight(first, p1, p2, f);
+    }
+    reduce_patches(first);
 
-  return first;
+    return first;
 }
 
 
-void delete_patch_list(light_patch *first)
+void delete_patch_list(LightPatch *first)
 {
   while (first)
   {
-    light_patch *p=first;
-    first=first->next;
+    LightPatch *p=first;
+    first=first->m_next;
     delete p;
   }
 }
@@ -626,52 +568,34 @@ inline void MAP_2PUT(uint8_t * in_addr, uint8_t * out_addr, uint8_t * remap, int
 }
 
 uint16_t min_light_level;
+
 // calculate the light value for this block.  sum up all contritors
-inline int calc_light_value(light_patch *lp,   // light patch to look at
-                int32_t sx,           // screen x & y
-                int32_t sy)
+static inline int CalcLightValue(LightPatch *lp, ivec2 screen)
 {
-  int lv=min_light_level,r2,light_count;
-  register int dx,dy;           // x and y distances
+    int lv = min_light_level;
 
-  LightSource **lon_p=lp->lights;
-
-  for (light_count=lp->total; light_count>0; light_count--)
-  {
-    LightSource *fn=*lon_p;
-    register int32_t *dt=&(*lon_p)->type;
-                                     // note we are accessing structure members by bypassing the compiler
-                                     // for speed, this may not work on all compilers, but don't
-                                     // see why it shouldn't..  all members are int32_t
-
-    if (*dt==9)                      // (dt==type),  if light is a Solid rectangle, return it value
-      return fn->inner_radius;
-    else
+    for (int i = 0; i < lp->m_lights.Count(); ++i)
     {
-      dt++;
-      dx=lol::abs(*dt-sx); dt++;               // xdist between light and this block  (dt==x)
-      dx<<=*dt;  dt++;                    // shift makes distance further,
-                                          // making light skinner. (dt==xshift)
+        LightSource *l = lp->m_lights[i];
 
-      dy=lol::abs(*dt-sy); dt++;                   // ydist (dt==y)
-      dy<<=*dt;  dt++;                        // (dt==yshift)
+        if (l->m_type == 9) // if light is a Solid rectangle, return its value
+            return l->m_inner_radius;
 
-      if (dx<dy)                     // calculate approximate distance
-        r2=dx+dy-(dx>>1);
-      else r2=dx+dy-(dy>>1);
+        // xdist between light and this block; shift makes distance further, making light skinner.
+        int dx = lol::abs(l->m_pos.x - screen.x) << l->m_shift.x;
+        int dy = lol::abs(l->m_pos.y - screen.y) << l->m_shift.y;
 
-      if (r2<*dt)                    // if this withing the light's outer radius?  (dt==outer_radius)
-      {
-    int v=*dt-r2; dt++;
-    lv+=v*(*dt)>>16;
-      }
+        // calculate approximate distance
+        int r2 = dx + dy - (lol::min(dx, dy) >> 1);
+
+        if (r2 < l->m_outer_radius) // if this within the light's outer radius?
+        {
+            int v = l->m_outer_radius - r2;
+            lv += v * l->mul_div >> 16;
+        }
     }
-    lon_p++;
-  }
 
-  if (lv>63)
-    return 63;          // lighting table only has 64 (256 bytes) entries
-  else return lv;
+    return lol::min(lv, 63); // lighting table only has 64 (256 bytes) entries
 }
 
 
@@ -769,7 +693,7 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
   ivec2 caa, cbb;
   sc->GetClip(caa, cbb);
 
-  light_patch *first = make_patch_list(cbb.x - caa.x, cbb.y - caa.y, screenx, screeny);
+  LightPatch *first = MakePatchList(cbb - caa, ivec2(screenx, screeny));
 
   int prefix_x=(screenx&7);
   int prefix=screenx&7;
@@ -783,7 +707,7 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
   uint8_t *remap_line=(uint8_t *)malloc(remap_size);
 
-  light_patch *f=first;
+  LightPatch *f=first;
 
   main_screen->Lock();
 
@@ -793,8 +717,8 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
   for (int y = caa.y; y < cbb.y; )
   {
     int x,count;
-//    while (f->next && f->y2<y)
-//      f=f->next;
+//    while (f->m_next && f->m_p2.y<y)
+//      f=f->m_next;
     uint8_t *rem=remap_line;
 
     int todoy=4-((screeny+y)&3);
@@ -806,11 +730,12 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
     if (suffix)
     {
-      light_patch *lp=f;
-      for (; (lp->y1>y-caa.y || lp->y2<y-caa.y ||
-                  lp->x1>suffix_x || lp->x2<suffix_x); lp=lp->next);
+      LightPatch *lp=f;
+      for (; (lp->m_p1.y>y-caa.y || lp->m_p2.y<y-caa.y ||
+                  lp->m_p1.x>suffix_x || lp->m_p2.x<suffix_x); lp=lp->m_next)
+          ;
       uint8_t * caddr=(uint8_t *)screen_line + cbb.x - caa.x - suffix;
-      uint8_t *r=light_lookup+(((int32_t)calc_light_value(lp,suffix_x+screenx,calcy)<<8));
+      uint8_t *r=light_lookup+(((int32_t)CalcLightValue(lp, ivec2(suffix_x + screenx, calcy)) << 8));
       switch (todoy)
       {
     case 4 :
@@ -830,11 +755,11 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
     if (prefix)
     {
-      light_patch *lp=f;
-      for (; (lp->y1>y-caa.y || lp->y2<y-caa.y ||
-                  lp->x1>prefix_x || lp->x2<prefix_x); lp=lp->next);
+      LightPatch *lp=f;
+      for (; (lp->m_p1.y>y-caa.y || lp->m_p2.y<y-caa.y ||
+                  lp->m_p1.x>prefix_x || lp->m_p2.x<prefix_x); lp=lp->m_next);
 
-      uint8_t *r=light_lookup+(((int32_t)calc_light_value(lp,prefix_x+screenx,calcy)<<8));
+      uint8_t *r=light_lookup+(((int32_t)CalcLightValue(lp, ivec2(prefix_x + screenx, calcy)) << 8));
       uint8_t * caddr=(uint8_t *)screen_line;
       switch (todoy)
       {
@@ -858,9 +783,10 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
     for (x=prefix,count=0; count<remap_size; count++,x+=8,rem++)
     {
-      light_patch *lp=f;
-      for (; (lp->y1>y-caa.y || lp->y2<y-caa.y || lp->x1>x || lp->x2<x); lp=lp->next);
-      *rem=calc_light_value(lp,x+screenx,calcy);
+      LightPatch *lp=f;
+      for (; (lp->m_p1.y>y-caa.y || lp->m_p2.y<y-caa.y || lp->m_p1.x>x || lp->m_p2.x<x); lp=lp->m_next)
+        ;
+      *rem = CalcLightValue(lp, ivec2(x + screenx, calcy));
     }
 
     switch (todoy)
@@ -882,8 +808,8 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
   while (first)
   {
-    light_patch *p=first;
-    first=first->next;
+    LightPatch *p=first;
+    first=first->m_next;
     delete p;
   }
   free(remap_line);
@@ -943,7 +869,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
     return ;
   }
 
-  light_patch *first = make_patch_list(cbb.x - caa.x, cbb.y - caa.y, screenx, screeny);
+  LightPatch *first = MakePatchList(cbb - caa, ivec2(screenx, screeny));
 
   int scr_w=sc->Size().x;
   int dscr_w=out->Size().x;
@@ -960,7 +886,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 
   uint8_t *remap_line=(uint8_t *)malloc(remap_size);
 
-  light_patch *f=first;
+  LightPatch *f=first;
   uint8_t *in_line=sc->scan_line(caa.y)+caa.x;
   uint8_t *out_line=out->scan_line(caa.y*2+out_y)+caa.x*2+out_x;
 
@@ -968,8 +894,8 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
   for (int y = caa.y; y < cbb.y; )
   {
     int x,count;
-//    while (f->next && f->y2<y)
-//      f=f->next;
+//    while (f->m_next && f->m_p2.y<y)
+//      f=f->m_next;
     uint8_t *rem=remap_line;
 
     int todoy=4-((screeny+y)&3);
@@ -981,13 +907,13 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 
     if (suffix)
     {
-      light_patch *lp=f;
-      for (; (lp->y1>y-caa.y || lp->y2<y-caa.y ||
-                  lp->x1>suffix_x || lp->x2<suffix_x); lp=lp->next);
+      LightPatch *lp=f;
+      for (; (lp->m_p1.y>y-caa.y || lp->m_p2.y<y-caa.y ||
+                  lp->m_p1.x>suffix_x || lp->m_p2.x<suffix_x); lp=lp->m_next);
       uint8_t * caddr=(uint8_t *)in_line + cbb.x - caa.x - suffix;
       uint8_t * daddr=(uint8_t *)out_line+(cbb.x - caa.x - suffix)*2;
 
-      uint8_t *r=light_lookup+(((int32_t)calc_light_value(lp,suffix_x+screenx,calcy)<<8));
+      uint8_t *r = light_lookup + (((int32_t)CalcLightValue(lp, ivec2(suffix_x + screenx, calcy)) << 8));
       switch (todoy)
       {
     case 4 :
@@ -1015,11 +941,12 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 
     if (prefix)
     {
-      light_patch *lp=f;
-      for (; (lp->y1>y-caa.y || lp->y2<y-caa.y ||
-                  lp->x1>prefix_x || lp->x2<prefix_x); lp=lp->next);
+      LightPatch *lp=f;
+      for (; (lp->m_p1.y > y - caa.y || lp->m_p2.y < y - caa.y ||
+               lp->m_p1.x > prefix_x || lp->m_p2.x < prefix_x); lp = lp->m_next)
+          ;
 
-      uint8_t *r=light_lookup+(((int32_t)calc_light_value(lp,prefix_x+screenx,calcy)<<8));
+      uint8_t *r = light_lookup + (((int32_t)CalcLightValue(lp, ivec2(prefix_x + screenx, calcy)) << 8));
       uint8_t * caddr=(uint8_t *)in_line;
       uint8_t * daddr=(uint8_t *)out_line;
       switch (todoy)
@@ -1054,9 +981,11 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 
     for (x=prefix,count=0; count<remap_size; count++,x+=8,rem++)
     {
-      light_patch *lp=f;
-      for (; (lp->y1>y-caa.y || lp->y2<y-caa.y || lp->x1>x || lp->x2<x); lp=lp->next);
-      *rem=calc_light_value(lp,x+screenx,calcy);
+      LightPatch *lp=f;
+      for (; (lp->m_p1.y > y - caa.y || lp->m_p2.y < y - caa.y
+               || lp->m_p1.x > x || lp->m_p2.x < x); lp = lp->m_next)
+        ;
+      *rem = CalcLightValue(lp, ivec2(x + screenx, calcy));
     }
 
     rem=remap_line;
@@ -1093,8 +1022,8 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 
   while (first)
   {
-    light_patch *p=first;
-    first=first->next;
+    LightPatch *p=first;
+    first=first->m_next;
     delete p;
   }
   free(remap_line);
@@ -1106,7 +1035,7 @@ void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *l
 void add_light_spec(SpecDir *sd, char const *level_name)
 {
   int32_t size=4+4;  // number of lights and minimum light levels
-  for (LightSource *f=first_light_source; f; f=f->next)
+  for (LightSource *f=first_light_source; f; f=f->m_next)
     size+=6*4+1;
   sd->add_by_hand(new SpecEntry(SPEC_LIGHT_LIST,"lights",NULL,size,0));
 }
@@ -1115,18 +1044,18 @@ void write_lights(bFILE *fp)
 {
   int t=0;
   LightSource *f=first_light_source;
-  for (; f; f=f->next) t++;
+  for (; f; f=f->m_next) t++;
   fp->write_uint32(t);
   fp->write_uint32(min_light_level);
-  for (f=first_light_source; f; f=f->next)
+  for (f = first_light_source; f; f = f->m_next)
   {
     fp->write_uint32(f->m_pos.x);
     fp->write_uint32(f->m_pos.y);
-    fp->write_uint32(f->xshift);
-    fp->write_uint32(f->yshift);
-    fp->write_uint32(f->inner_radius);
-    fp->write_uint32(f->outer_radius);
-    fp->write_uint8(f->type);
+    fp->write_uint32(f->m_shift.x);
+    fp->write_uint32(f->m_shift.y);
+    fp->write_uint32(f->m_inner_radius);
+    fp->write_uint32(f->m_outer_radius);
+    fp->write_uint8(f->m_type);
   }
 }
 
@@ -1144,20 +1073,22 @@ void read_lights(SpecDir *sd, bFILE *fp, char const *level_name)
     while (t)
     {
       t--;
-      int32_t x=fp->read_uint32();
-      int32_t y=fp->read_uint32();
-      int32_t xshift=fp->read_uint32();
-      int32_t yshift=fp->read_uint32();
+      ivec2 pos, shift;
+      pos.x = fp->read_uint32();
+      pos.y = fp->read_uint32();
+      shift.x = fp->read_uint32();
+      shift.y = fp->read_uint32();
       int32_t ir=fp->read_uint32();
       int32_t ora=fp->read_uint32();
       int32_t ty=fp->read_uint8();
 
-      LightSource *p=new LightSource(ty,x,y,ir,ora,xshift,yshift,NULL);
+      LightSource *p = new LightSource(ty, pos, ir, ora, shift, nullptr);
 
       if (first_light_source)
-        last->next=p;
-      else first_light_source=p;
-      last=p;
+        last->m_next = p;
+      else
+        first_light_source = p;
+      last = p;
     }
   }
 }
