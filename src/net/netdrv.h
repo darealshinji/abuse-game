@@ -86,7 +86,6 @@ class net_driver
                 net_socket::socket_type sock_type=net_socket::SOCKET_SECURE);
   net_protocol *get_protocol() { return proto; }
   int become_server();
-  int get_game_port() { return game_port; }
   ~net_driver();
 } ;
 

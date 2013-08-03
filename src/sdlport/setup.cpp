@@ -36,6 +36,8 @@
 #   include <GL/glu.h>
 #endif    /* __APPLE__ */
 
+#include "common.h"
+
 #include "specs.h"
 #include "keys.h"
 #include "setup.h"

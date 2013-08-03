@@ -174,7 +174,7 @@ public:
 
 class SpecDir
 {
-public :
+public:
     SpecDir(FILE *fp);
     SpecDir(bFILE *fp);
     SpecDir();
@@ -183,11 +183,13 @@ public :
     void startup(bFILE *fp);
     void FullyLoad(bFILE *fp);
 
+    void Print();
+
   SpecEntry *find(char const *name);
   SpecEntry *find(char const *name, int type);
   SpecEntry *find(int type);
-  long find_number(char const *name);
-  long find_number(int type);
+  int find_number(char const *name);
+  int find_number(int type);
   void remove(SpecEntry *e);
   void add_by_hand(SpecEntry *e);
   void calc_offsets();
@@ -196,20 +198,11 @@ public :
   long type_total(int type);
   jFILE *write(char const *filename);
   int    write(bFILE *fp);
-  void print();
   void delete_entries();   // if the directory was created by hand instead of by file
 
-    int total;
-    SpecEntry **entries;
-    void *data;
-    size_t size;
+    Array<SpecEntry *> m_entries;
+    Array<uint8_t> m_data;
 };
-
-/*jFILE *add_directory_entry(char *filename,
-                         unsigned short data_type,
-                         char *data_name,
-                         unsigned long data_size,
-                         char *link_filename=NULL); */
 
 uint16_t read_uint16(FILE *fp);
 uint32_t read_uint32(FILE *fp);

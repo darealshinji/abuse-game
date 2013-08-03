@@ -124,7 +124,6 @@ public:
 
     ivec2 Size() const { return m_size; }
 
-    void scroll(int x1, int y1, int x2, int y2, int xd, int yd);
     void PutImage(image *screen, ivec2 pos, int transparent = 0);
     void PutPart(image *screen, ivec2 pos, ivec2 aa, ivec2 bb,
                  int transparent = 0);

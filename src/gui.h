@@ -16,7 +16,7 @@
 class ico_button : public ifield
 {
   int up,act,u,d,ua,da;  // up, down, up active, down active
-  int activate_id;         // sent when if not -1 when object receives a draw actove
+  int activate_id;         // sent when if not -1 when object receives a draw active
   char key[16];
 public :
   ico_button(int X, int Y, int ID, int Up, int down, int upa, int downa, ifield *Next, int act_id=-1, char const *help_key=NULL);

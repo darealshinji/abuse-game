@@ -103,17 +103,12 @@ part_sequence::part_sequence(void *args)
   // count how many frames are in the file
   SpecDir sd(fp);
   delete fp;
-  tframes=0;
-  int i=0;
-  for (; i<sd.total; i++)
-    if (sd.entries[i]->type==SPEC_PARTICLE) tframes++;
+  tframes = sd.type_total(SPEC_PARTICLE);
   frames=(int *)malloc(sizeof(int)*tframes);
 
-  int on=0;
-  for (i=0; i<sd.total; i++)
-    if (sd.entries[i]->type==SPEC_PARTICLE)
-      frames[on++]=cache.reg(fn,sd.entries[i]->name,SPEC_PARTICLE,1);
-
+  for (int i = 0, j = 0; i < sd.m_entries.Count(); i++)
+    if (sd.m_entries[i]->type == SPEC_PARTICLE)
+      frames[j++] = cache.reg(fn, sd.m_entries[i]->name, SPEC_PARTICLE, 1);
 }
 
 part_frame::part_frame(bFILE *fp)

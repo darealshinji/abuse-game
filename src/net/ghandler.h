@@ -10,7 +10,7 @@
 
 extern base_memory_struct *base;
 
-class game_handler     // game_client and game_serevr are derived from here
+class game_handler     // game_client and game_server are derived from here
 {
   public :
   virtual int process_net()      { return 1; }     // return 0 if net-shutdown need to happen

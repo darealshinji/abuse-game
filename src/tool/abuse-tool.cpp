@@ -128,9 +128,9 @@ int main(int argc, char *argv[])
 
         dir.FullyLoad(&fp);
 
-        for (int i = 0; i < dir.total; i++)
+        for (int i = 0; i < dir.m_entries.Count(); i++)
         {
-            SpecEntry *se = dir.entries[i];
+            SpecEntry *se = dir.m_entries[i];
 
             /* Print basic information */
             printf("% 5i   % 3i % 8i  %04x  %s", i, se->type, (int)se->size,
@@ -207,13 +207,13 @@ int main(int argc, char *argv[])
     {
         int id = atoi(argv[3]);
 
-        if (id < 0 || id >= dir.total)
+        if (id < 0 || id >= dir.m_entries.Count())
         {
             fprintf(stderr, "abuse-tool: id %i not found in %s\n", id, file);
             return EXIT_FAILURE;
         }
 
-        SpecEntry *se = dir.entries[id];
+        SpecEntry *se = dir.m_entries[id];
         fp.seek(se->offset, SEEK_SET);
 
         for (size_t todo = se->size; todo > 0; )
@@ -232,16 +232,16 @@ int main(int argc, char *argv[])
         int imgid = atoi(argv[3]);
         int palid = argc > 4 ? atoi(argv[4]) : -1;
 
-        for (int i = 0; palid == -1 && i < dir.total; i++)
-            if (dir.entries[i]->type == SPEC_PALETTE)
+        for (int i = 0; palid == -1 && i < dir.m_entries.Count(); i++)
+            if (dir.m_entries[i]->type == SPEC_PALETTE)
                 palid = i;
 
         if (palid == -1)
             pal = new Palette(256);
         else
-            pal = new Palette(dir.entries[palid], &fp);
+            pal = new Palette(dir.m_entries[palid], &fp);
 
-        image *im = new image(&fp, dir.entries[imgid]);
+        image *im = new image(&fp, dir.m_entries[imgid]);
         write_PCX(im, pal, "/dev/stdout");
         delete im;
         delete pal;
@@ -252,7 +252,8 @@ int main(int argc, char *argv[])
         int src = atoi(argv[3]);
         int dst = atoi(argv[4]);
 
-        if (src < 0 || dst < 0 || src >= dir.total || dst >= dir.total)
+        if (src < 0 || src >= dir.m_entries.Count()
+             || dst < 0 || dst >= dir.m_entries.Count())
         {
             fprintf(stderr, "abuse-tool: ids %i/%i out of range\n", src, dst);
             return EXIT_FAILURE;
@@ -260,16 +261,16 @@ int main(int argc, char *argv[])
 
         dir.FullyLoad(&fp);
 
-        SpecEntry *tmp = dir.entries[src];
+        SpecEntry *tmp = dir.m_entries[src];
         for (int d = src < dst ? 1 : -1; src != dst; src += d)
-            dir.entries[src] = dir.entries[src + d];
-        dir.entries[dst] = tmp;
+            dir.m_entries[src] = dir.m_entries[src + d];
+        dir.m_entries[dst] = tmp;
     }
     else if (cmd == CMD_RENAME || cmd == CMD_TYPE)
     {
         int id = atoi(argv[3]);
 
-        if (id < 0 || id >= dir.total)
+        if (id < 0 || id >= dir.m_entries.Count())
         {
             fprintf(stderr, "abuse-tool: id %i out of range\n", id);
             return EXIT_FAILURE;
@@ -277,24 +278,21 @@ int main(int argc, char *argv[])
 
         dir.FullyLoad(&fp);
         if (cmd == CMD_RENAME)
-            dir.entries[id]->name = argv[4];
+            dir.m_entries[id]->name = argv[4];
         else
-            dir.entries[id]->type = (uint8_t)atoi(argv[4]);
+            dir.m_entries[id]->type = (uint8_t)atoi(argv[4]);
     }
     else if (cmd == CMD_DEL)
     {
         int id = atoi(argv[3]);
 
-        if (id < 0 || id >= dir.total)
+        if (id < 0 || id >= dir.m_entries.Count())
         {
             fprintf(stderr, "abuse-tool: id %i out of range\n", id);
             return EXIT_FAILURE;
         }
 
-        dir.total--;
-        for (int i = id; i < dir.total; i++)
-            dir.entries[i] = dir.entries[i + 1];
-
+        dir.m_entries.Remove(id);
         dir.FullyLoad(&fp);
     }
     else if (cmd == CMD_PUT || cmd == CMD_PUTPCX)
@@ -303,20 +301,19 @@ int main(int argc, char *argv[])
         uint8_t type = atoi(argv[4]);
 
         if (id == -1)
-            id = dir.total;
+            id = dir.m_entries.Count();
 
-        if (id < 0 || id > dir.total)
+        if (id < 0 || id > dir.m_entries.Count())
         {
             fprintf(stderr, "abuse-tool: id %i out of range\n", id);
             return EXIT_FAILURE;
         }
 
         dir.FullyLoad(&fp);
-        dir.total++;
-        dir.entries = (SpecEntry **)realloc(dir.entries,
-                                            dir.total * sizeof(SpecEntry *));
-        for (int i = dir.total - 1; i-- > id; )
-            dir.entries[i + 1] = dir.entries[i];
+
+        dir.m_entries.Resize(dir.m_entries.Count() + 1);
+        for (int i = dir.m_entries.Count() - 1; i-- > id; )
+            dir.m_entries[i + 1] = dir.m_entries[i];
 
         char *name = strrchr(argv[5], '/');
         if (!name)
@@ -355,8 +352,8 @@ int main(int argc, char *argv[])
             memcpy(data + 2, &y, sizeof(y));
             memcpy(data + 4, im->scan_line(0), size.x * size.y);
         }
-        dir.entries[id] = new SpecEntry(type, name, NULL, len, 0);
-        dir.entries[id]->data = data;
+        dir.m_entries[id] = new SpecEntry(type, name, NULL, len, 0);
+        dir.m_entries[id]->data = data;
     }
     else
     {
@@ -368,8 +365,8 @@ int main(int argc, char *argv[])
     dir.calc_offsets();
     fp.seek(0, SEEK_SET); // FIXME: create a new file
     dir.write(&fp);
-    for (int i = 0; i < dir.total; i++)
-        fp.write(dir.entries[i]->data, dir.entries[i]->size);
+    for (int i = 0; i < dir.m_entries.Count(); i++)
+        fp.write(dir.m_entries[i]->data, dir.m_entries[i]->size);
 
     return EXIT_SUCCESS;
 }

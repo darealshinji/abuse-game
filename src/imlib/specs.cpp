@@ -556,19 +556,13 @@ double bFILE::read_double()
 
 SpecDir::~SpecDir()
 {
-
-  if (total)
-  {
-    free(data);
-    free(entries);
-  }
 }
 
 void SpecDir::FullyLoad(bFILE *fp)
 {
-    for (int i = 0; i < total; i++)
+    for (int i = 0; i < m_entries.Count(); ++i)
     {
-        SpecEntry *se = entries[i];
+        SpecEntry *se = m_entries[i];
         free(se->data);
         se->data = malloc(se->size);
         fp->seek(se->offset, SEEK_SET);
@@ -603,156 +597,138 @@ void SpecDir::calc_offsets()
     size_t o = SPEC_SIG_SIZE + 2;
 
     // calculate the size of directory info
-    for (int i = 0; i < total; i++)
-        o += 1 + 1 + strlen(entries[i]->name) + 1 + 1 + 8;
+    for (int i = 0; i < m_entries.Count(); ++i)
+        o += 1 + 1 + strlen(m_entries[i]->name) + 1 + 1 + 8;
 
     // calculate offset for each entry
-    for (int i = 0; i < total; i++)
+    for (int i = 0; i < m_entries.Count(); ++i)
     {
-        entries[i]->offset = o;
-        o += entries[i]->size;
+        m_entries[i]->offset = o;
+        o += m_entries[i]->size;
     }
 }
 
 SpecEntry *SpecDir::find(char const *name, int type)
 {
-  int i;
-  SpecEntry **e;
-  for (i=0,e=entries; i<total; i++,e++)
-    if (!strcmp((*e)->name,name) && (*e)->type==type)
-      return (*e);
-  return NULL;
+    for (int i = 0; i < m_entries.Count(); ++i)
+        if (!strcmp(m_entries[i]->name, name) && m_entries[i]->type == type)
+            return m_entries[i];
+    return nullptr;
 }
 
 SpecEntry *SpecDir::find(char const *name)
 {
-  int i;
-  SpecEntry **e;
-  for (i=0,e=entries; i<total; i++,e++)
-    if (!strcmp((*e)->name,name))
-      return (*e);
-  return NULL;
-}
-
-long SpecDir::find_number(char const *name)
-{
-  int i;
-  SpecEntry **e;
-  for (i=0,e=entries; i<total; i++,e++)
-    if (!strcmp((*e)->name,name))
-      return i;
-  return -1;
+    int i = find_number(name);
+    return i >= 0 ? m_entries[i] : nullptr;
 }
 
 SpecEntry *SpecDir::find(int type)
 {
-  int i;
-  SpecEntry **e;
-  for (i=0,e=entries; i<total; i++,e++)
-    if ((*e)->type==type)
-      return (*e);
-  return NULL;
+    int i = find_number(type);
+    return i >= 0 ? m_entries[i] : nullptr;
+}
+
+int SpecDir::find_number(char const *name)
+{
+    for (int i = 0; i < m_entries.Count(); ++i)
+        if (!strcmp(m_entries[i]->name, name))
+            return i;
+    return -1;
+}
+
+int SpecDir::find_number(int type)
+{
+    for (int i = 0; i < m_entries.Count(); ++i)
+        if (m_entries[i]->type == type)
+            return i;
+    return -1;
 }
 
 long SpecDir::type_total(int type)
 {
-  int i,x=0;
-  SpecEntry **e;
-  for (i=0,e=entries; i<total; i++,e++)
-    if ((*e)->type==type) x++;
-  return x;
+    int ret = 0;
+    for (int i = 0; i < m_entries.Count(); ++i)
+        if (m_entries[i]->type == type)
+            ++ret;
+    return ret;
 }
 
-long SpecDir::find_number(int type)
+void SpecDir::Print()
 {
-  int i;
-  SpecEntry **e;
-  for (i=0,e=entries; i<total; i++,e++)
-    if ((*e)->type==type)
-      return i;
-  return -1;
+    printf("[   Entry type   ][   Entry name   ][  Size  ][ Offset ]\n");
+    for (int i = 0; i < m_entries.Count(); ++i)
+        m_entries[i]->Print();
 }
-
-void SpecDir::print()
-{
-  SpecEntry **se;
-  int i;
-  printf("[   Entry type   ][   Entry name   ][  Size  ][ Offset ]\n");
-  for (i=0,se=entries; i<total; i++,se++)
-    (*se)->Print();
-}
-
 
 void SpecDir::startup(bFILE *fp)
 {
-  char buf[256];
-  memset(buf,0,256);
-  fp->read(buf,8);
-  buf[9]=0;
-  size=0;
-  if (!strcmp(buf,SPEC_SIGNATURE))
-  {
-    total=fp->read_uint16();
-    entries=(SpecEntry **)malloc(sizeof(SpecEntry *)*total);
-    long start=fp->tell();
+    char buf[256];
+    memset(buf, 0, 256);
+    fp->read(buf, 8);
+    buf[9] = 0;
 
-    int i;
-    for (i=0; i<total; i++)
+    int data_size = 0;
+    if (!strcmp(buf, SPEC_SIGNATURE))
     {
-      fp->read(buf,2);
-      long entry_size=sizeof(SpecEntry)+(unsigned char)buf[1];
-      entry_size=(entry_size+3)&(~3);
-      fp->read(buf,(unsigned char)buf[1]);
-      fp->read(buf,9);
+        int total = fp->read_uint16();
+        m_entries.Resize(total);
+        long start = fp->tell();
 
-      size+=entry_size;
+        for (int i = 0; i < total; i++)
+        {
+            fp->read(buf, 2);
+            long entry_size = sizeof(SpecEntry) + (uint8_t)buf[1];
+            entry_size = (entry_size + 3) & ~3;
+            fp->read(buf, (uint8_t)buf[1]);
+            fp->read(buf, 9);
+
+            data_size += entry_size;
+        }
+
+        m_data.Resize(data_size);
+        uint8_t *dp = m_data.Data();
+
+        fp->seek(start, SEEK_SET);
+        for (int i = 0; i < total; i++)
+        {
+            SpecEntry *se = (SpecEntry *)dp;
+
+            uint8_t len, flags, type;
+            fp->read(&type, 1);
+            fp->read(&len, 1);
+            se->type = type;
+            se->data = nullptr;
+            se->name = (char *)dp + sizeof(SpecEntry);
+            fp->read(se->name, len);
+            fp->read(&flags, 1);
+
+            se->size = fp->read_uint32();
+            se->offset = fp->read_uint32();
+            dp += ((sizeof(SpecEntry) + len) + 3) & ~3;
+
+            m_entries[i] = se;
+        }
     }
-    data=malloc(size);
-    char *dp=(char *)data;
-    fp->seek(start,SEEK_SET);
-    for (i=0; i<total; i++)
+    else
     {
-      SpecEntry *se=(SpecEntry *)dp;
-      entries[i]=se;
-
-      unsigned char len,flags,type;
-      fp->read(&type,1);
-      fp->read(&len,1);
-      se->type=type;
-      se->data = NULL;
-      se->name=dp+sizeof(SpecEntry);
-      fp->read(se->name,len);
-      fp->read(&flags,1);
-
-      se->size=fp->read_uint32();
-      se->offset=fp->read_uint32();
-      dp+=((sizeof(SpecEntry)+len)+3)&(~3);
+        m_data.Empty();
+        m_entries.Empty();
     }
-  }
-  else
-  {
-    total=0;
-    data=NULL;
-    entries=NULL;
-  }
 }
 
-
 SpecDir::SpecDir(bFILE *fp)
-{ startup(fp); }
+{
+    startup(fp);
+}
 
 SpecDir::SpecDir(FILE *fp)
 {
-  jFILE jfp(fp);
-  startup(&jfp);
+    jFILE jfp(fp);
+    startup(&jfp);
 }
 
 SpecDir::SpecDir()
 {
-  size=0;
-  total=0;
-  data=NULL;
-  entries=NULL;
 }
 
 /*
@@ -783,10 +759,8 @@ int write_string(bFILE *fp, char const *st)
 
 long SpecDir::data_start_offset()
 {
-    /* FIXME: no need for a for loop here! */
-    long i;
-    for(i = 0; i < total; i++)
-        return entries[i]->offset;
+    if (m_entries.Count())
+        return m_entries[0]->offset;
 
     // If no entries, then no data, but return where it would start anyway
     return SPEC_SIG_SIZE + 2;
@@ -794,56 +768,60 @@ long SpecDir::data_start_offset()
 
 long SpecDir::data_end_offset()
 {
-    /* FIXME: no need for a for loop here! */
-  SpecEntry **e;
-  long i;
-  for (i=total-1,e=entries; i>=0; i--,e++)
-    return (*e)->offset+(*e)->size;
+    if (m_entries.Count())
+        return m_entries.Last()->offset + m_entries.Last()->size;
 
-  return SPEC_SIG_SIZE+2;
+  return SPEC_SIG_SIZE + 2;
 }
 
 int SpecDir::write(bFILE *fp)
 {
+    char sig[SPEC_SIG_SIZE];
+    strcpy(sig, SPEC_SIGNATURE);
 
-  char sig[SPEC_SIG_SIZE];
-  unsigned char flags=0;
-  unsigned long offset,data_size;
-  SpecEntry **e;
-  strcpy(sig,SPEC_SIGNATURE);
+    if (fp->write(sig, sizeof(sig)) != sizeof(sig))
+        return 0;
 
-  if (fp->write(sig,sizeof(sig))!=sizeof(sig))    return 0;
-  fp->write_uint16(total);
+    fp->write_uint16(m_entries.Count());
 
+    for (int i = 0; i < m_entries.Count(); ++i)
+    {
+        if (fp->write(&m_entries[i]->type, 1) != 1)
+            return 0;
+        if (!write_string(fp, m_entries[i]->name))
+            return 0;
 
-  int i;
-  for (i=0,e=entries; i<total; i++,e++)
-  {
-    if (fp->write(&(*e)->type,1)!=1)                 return 0;
-    if (!write_string(fp,(*e)->name))                return 0;
-    flags=0;
-    if (fp->write(&flags,1)!=1)                     return 0;
+        uint8_t flags = 0;
+        if (fp->write(&flags, 1) != 1)
+            return 0;
 
-    data_size=lltl((*e)->size);
-    if (fp->write((char *)&data_size,4)!=4)              return 0;
-    offset=lltl((*e)->offset);
-    if (fp->write((char *)&offset,4)!=4)                  return 0;
+        uint32_t data_size = lltl(m_entries[i]->size);
+        if (fp->write((char *)&data_size, 4) != 4)
+            return 0;
+        uint32_t offset = lltl(m_entries[i]->offset);
+        if (fp->write((char *)&offset, 4) != 4)
+            return 0;
 
-  }
-  return 1;
+    }
+    return 1;
 }
 
 jFILE *SpecDir::write(char const *filename)
 {
-  jFILE *fp;
-  fp=new jFILE(filename,"wb");
-  if (fp->open_failure()) { delete fp; return NULL; }
-  if (!write(fp))
-  {
-    delete fp;
-    return NULL;
-  } else return fp;
+    jFILE *fp = new jFILE(filename,"wb");
+    if (fp->open_failure())
+    {
+        delete fp;
+        return nullptr;
+    }
 
+    if (!write(fp))
+    {
+        delete fp;
+        return nullptr;
+    }
+
+    return fp;
 }
 
 uint16_t read_uint16(FILE *fp)
@@ -876,38 +854,28 @@ void write_uint8(FILE *fp, uint8_t x) { fputc((unsigned char)x,fp); }
 
 void SpecDir::remove(SpecEntry *e)
 {
-  int i;
-  for (i=0; i<total && entries[i]!=e; i++);            // find the entry in the array first
-
-  if (entries[i]==e)                                 // make sre it was found
-  {
-    delete e;
-    total--;
-    for (; i<total; i++)                               // compact the pointer array
-      entries[i]=entries[i+1];
-    entries=(SpecEntry **)realloc(entries,sizeof(SpecEntry *)*total);
-  }
-  else
-    printf("Spec_directory::remove bad entry pointer\n");
+    for (int i = 0; i < m_entries.Count(); ++i)
+    {
+        if (m_entries[i] == e)
+        {
+            delete e;
+            m_entries.Remove(i);
+            return;
+        }
+    }
+    ASSERT(false, "bad spec entry pointer");
 }
-
-
 
 void SpecDir::add_by_hand(SpecEntry *e)
 {
-  total++;
-  entries=(SpecEntry **)realloc(entries,sizeof(SpecEntry *)*total);
-  entries[total-1]=e;
+    m_entries.Push(e);
 }
 
 void SpecDir::delete_entries()   // if the directory was created by hand instead of by file
 {
-  int i;
-  for (i=0; i<total; i++)
-    delete entries[i];
-
-  if (total)
-    free(entries);
+    for (int i = 0; i < m_entries.Count(); ++i)
+        delete m_entries[i];
+    m_entries.Empty();
 }
 
 void note_open_fd(int fd, char const *str)

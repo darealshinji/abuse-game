@@ -12,6 +12,8 @@
 #   include "config.h"
 #endif
 
+#include "common.h"
+
 #include "crc.h"
 
 uint16_t Crc::FromData(void const *buf, size_t len)
