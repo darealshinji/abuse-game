@@ -73,7 +73,6 @@ class dev_controll
   char **pwin_list;
   int total_pals;
   dev_state state;
-  int area_x1,area_y1,area_x2,area_y2;
   area_controller *current_area;
   time_marker last_area_click;
 public :

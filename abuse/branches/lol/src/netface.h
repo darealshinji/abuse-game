@@ -35,7 +35,7 @@ enum { NFCMD_OPEN,
        NFCMD_SET_FS,            // used to set the default (active) filesever
        NFCMD_CRCS_CALCED,       // engine sends this to driver after crcs are saved
        NFCMD_REQUEST_LSF,       // engine sends to driver with remote server name, returns 0 for failure or lsf name
-       NFCMD_PROCESS_LSF,       // remote engine sends to driver with lsf name, when get_lsf is set in base_mem
+       NFCMD_PROCESS_LSF,       // remote engine sends to driver with lsf name, when get_lsf is set in base_memory
        NFCMD_REQUEST_ENTRY,     // sent from joining client engine to driver, who then connects as client_abuse
        NFCMD_BECOME_SERVER,
        NFCMD_BLOCK,             // used by UNIX version to have engine give it up it's time-slice

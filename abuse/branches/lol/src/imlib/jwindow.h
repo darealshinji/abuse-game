@@ -112,8 +112,6 @@ public:
     int y1() { return _y1; }
     int x2() { return _x2; }
     int y2() { return _y2; }
-    void clip_in() { m_surf->SetClip(ivec2(x1(), y1()), ivec2(x2() + 1, y2() + 1)); }
-    void clip_out() { m_surf->SetClip(ivec2(0), m_size); }
     char *read(int id) { return inm->get(id)->read(); }
     void local_close();
 

@@ -69,7 +69,6 @@ public:
 private:
   JCFont *fnt;
   bool finished;
-  int bg_top,fg_top;                         // in the fg/bg window which tile is at the top?
   int bright_color,med_color,dark_color,     // for boundaries and windows, etc
       morph_bright_color,morph_med_color,morph_dark_color;
 

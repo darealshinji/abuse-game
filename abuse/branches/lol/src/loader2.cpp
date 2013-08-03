@@ -122,10 +122,10 @@ void insert_tiles(char *filename)
     int ft=0,bt=0;
     SpecDir sd(fp);
     delete fp;
-    int i=0;
-    for (; i<sd.total; i++)
+
+    for (int i = 0; i < sd.m_entries.Count(); i++)
     {
-      SpecEntry *se=sd.entries[i];
+      SpecEntry *se = sd.m_entries[i];
       if (se->type==SPEC_FORETILE)
         ft++;
       else if (se->type==SPEC_BACKTILE)
@@ -147,17 +147,17 @@ void insert_tiles(char *filename)
       if (bt)
         backtiles=(int *)realloc(backtiles,sizeof(int)*(nbacktiles+bt));
 
-      for (i=0; i<sd.total; i++)
+      for (int i = 0; i < sd.m_entries.Count(); i++)
       {
-    if (sd.entries[i]->type==SPEC_FORETILE)
+    if (sd.m_entries[i]->type==SPEC_FORETILE)
     {
-      foretiles[fon]=cache.reg(filename,sd.entries[i]->name);
+      foretiles[fon]=cache.reg(filename,sd.m_entries[i]->name);
       fon++;
       nforetiles++;
     }
-    if (sd.entries[i]->type==SPEC_BACKTILE)
+    if (sd.m_entries[i]->type==SPEC_BACKTILE)
     {
-      backtiles[bon]=cache.reg(filename,sd.entries[i]->name);
+      backtiles[bon]=cache.reg(filename,sd.m_entries[i]->name);
       bon++;
       nbacktiles++;
     }
@@ -170,13 +170,7 @@ void insert_tiles(char *filename)
 void load_tiles(Cell *file_list)
 {
   bFILE *fp;
-  SpecDir *sd;
-  SpecEntry *spe;
-
-
   int num;
-
-
 
   Cell *fl;
   int old_fsize=nforetiles,
@@ -192,12 +186,12 @@ void load_tiles(Cell *file_list)
     }
     else
     {
-      sd=new SpecDir(fp);
+      SpecDir sd(fp);
       delete fp;
-      int i;
-      for (i=0; i<sd->total; i++)
+      for (int i = 0; i < sd.m_entries.Count(); i++)
       {
-    spe=sd->entries[i];
+        SpecEntry *spe = sd.m_entries[i];
+
         switch (spe->type)
         {
           case SPEC_BACKTILE :
@@ -213,7 +207,6 @@ void load_tiles(Cell *file_list)
           break;
         }
       }
-      delete sd;
     }
   }
 
@@ -238,13 +231,13 @@ void load_tiles(Cell *file_list)
     fp=open_file(fn,"rb");
     if (!fp->open_failure())
     {
-      sd=new SpecDir(fp);
+      SpecDir sd(fp);
       delete fp;
 
-      int i;
-      for (i=0; i<sd->total; i++)
+      for (int i = 0; i < sd.m_entries.Count(); i++)
       {
-    spe=sd->entries[i];
+        SpecEntry *spe = sd.m_entries[i];
+
         switch (spe->type)
         {
           case SPEC_BACKTILE :
@@ -272,7 +265,6 @@ void load_tiles(Cell *file_list)
             break;
         }
       }
-      delete sd;
     } else delete fp;
   }
 

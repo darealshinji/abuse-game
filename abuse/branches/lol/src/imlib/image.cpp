@@ -726,42 +726,6 @@ void image::Scale(ivec2 new_size)
     Unlock();
 }
 
-void image::scroll(int x1, int y1, int x2, int y2, int xd, int yd)
-{
-  ASSERT(x1 >= 0);
-  ASSERT(y1 >= 0);
-  ASSERT(x1 < x2);
-  ASSERT(y1 < y2);
-  ASSERT(x2 < m_size.x);
-  ASSERT(y2 < m_size.y);
-
-  if (m_special)
-  {
-    ivec2 caa, cbb;
-    m_special->GetClip(caa, cbb);
-    x1 = lol::max(x1, caa.x);
-    y1 = lol::max(caa.y, y1);
-    x2 = lol::min(x2, cbb.x - 1);
-    y2 = lol::min(y2, cbb.y - 1);
-  }
-  int xsrc, ysrc, xdst, ydst, xtot=x2-x1-lol::abs(xd)+1, ytot, xt;
-  uint8_t *src, *dst;
-  if (xd<0) { xsrc=x1-xd; xdst=x1; } else { xsrc=x2-xd; xdst=x2; }
-  if (yd<0) { ysrc=y1-yd; ydst=y1; } else { ysrc=y2-yd; ydst=y2; }
-  for (ytot=y2-y1-lol::abs(yd)+1; ytot; ytot--)
-  { src=scan_line(ysrc)+xsrc;
-    dst=scan_line(ydst)+xdst;
-    if (xd<0)
-      for (xt = 0; xt < xtot; xt++)
-        *dst++ = *src++;
-      else for (xt = 0; xt < xtot; xt++)
-        *dst-- = *src--;
-    if (yd<0) { ysrc++; ydst++; } else { ysrc--; ydst--; }
-  }
-  AddDirty(ivec2(x1, y1), ivec2(x2 + 1, y2 + 1));
-}
-
-
 image *image::create_smooth(int smoothness)
 {
   ASSERT(smoothness >= 0);

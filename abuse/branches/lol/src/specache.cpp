@@ -73,7 +73,7 @@ SpecDir *SpecDirCache::GetSpecDir(String const filename, bFILE *fp)
     f->m_next = m_list;
     m_list = f;
 
-    m_size += f->m_sd->size;
+    m_size += f->m_sd->m_data.Count();
     if (parent)
         *parent = f;
     else
