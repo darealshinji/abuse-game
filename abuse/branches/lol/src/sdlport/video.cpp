@@ -39,16 +39,20 @@
 #include "image.h"
 #include "setup.h"
 
+#if 0 // STUB
 SDL_Surface *window = NULL, *surface = NULL;
+#endif
 image *main_screen = NULL;
 int win_xscale, win_yscale, mouse_xscale, mouse_yscale;
 int xres, yres;
 
 extern Palette *lastl;
 extern flags_struct flags;
+#if 0 // STUB
 GLfloat texcoord[4];
 GLuint texid;
 SDL_Surface *texture = NULL;
+#endif
 
 //
 // power_of_two()
@@ -67,6 +71,9 @@ static int power_of_two(int input)
 //
 void set_mode(int mode, int argc, char **argv)
 {
+    printf("Stub for set_mode(%d, ...)\n", mode);
+
+#if 0 // STUB
     const SDL_VideoInfo *vidInfo;
     int vidFlags = SDL_HWPALETTE;
 
@@ -81,18 +88,23 @@ void set_mode(int mode, int argc, char **argv)
         vidFlags |= SDL_FULLSCREEN;
 
     vidFlags |= SDL_DOUBLEBUF;
+#endif
 
     // Calculate the window scale
     win_xscale = mouse_xscale = (flags.xres << 16) / xres;
     win_yscale = mouse_yscale = (flags.yres << 16) / yres;
 
+#if 0 // STUB
     // allow doublebuffering in with gl too
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, GL_TRUE);
     // set video gl capability
     vidFlags |= SDL_OPENGL;
+#endif
+
     // force no scaling, let the hw do it
     win_xscale = win_yscale = 1 << 16;
 
+#if 0 // STUB
     // Set the icon for this window.  Looks nice on taskbars etc.
     SDL_WM_SetIcon(SDL_LoadBMP("abuse.bmp"), NULL);
 
@@ -103,6 +115,7 @@ void set_mode(int mode, int argc, char **argv)
         printf("Video : Unable to set video mode : %s\n", SDL_GetError());
         exit(1);
     }
+#endif
 
     // Create the screen image
     main_screen = new image(ivec2(xres, yres), NULL, 2);
@@ -114,6 +127,7 @@ void set_mode(int mode, int argc, char **argv)
     }
     main_screen->clear();
 
+#if 0 // STUB
     // texture width/height should be power of 2
     // FIXME: we can use GL_ARB_texture_non_power_of_two or
     // GL_ARB_texture_rectangle to avoid the extra memory allocation
@@ -177,6 +191,7 @@ void set_mode(int mode, int argc, char **argv)
     SDL_ShowCursor(0);
     if(flags.grabmouse)
         SDL_WM_GrabInput(SDL_GRAB_ON);
+#endif
 
     update_dirty(main_screen);
 }
@@ -187,14 +202,18 @@ void set_mode(int mode, int argc, char **argv)
 //
 void close_graphics()
 {
+    printf("Stub for close_graphics()\n");
+
     if(lastl)
         delete lastl;
     lastl = NULL;
+#if 0 // STUB
     // Free our 8-bit surface
     if(surface)
         SDL_FreeSurface(surface);
     if (texture)
         SDL_FreeSurface(texture);
+#endif
 
     delete main_screen;
 }
@@ -204,6 +223,9 @@ void close_graphics()
 //
 void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
 {
+    printf("Stub for put_part_image(%i,%i %i,%i %i,%i)\n", x, y, x1, y1, x2, y2);
+
+#if 0 // STUB
     int xe, ye;
     SDL_Rect srcrect, dstrect;
     int ii, jj;
@@ -307,6 +329,7 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
     // Unlock the surface if we locked it.
     if(SDL_MUSTLOCK(surface))
         SDL_UnlockSurface(surface);
+#endif
 }
 
 //
@@ -315,6 +338,8 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
 //
 void Palette::load()
 {
+    printf("Stub for palette::load\n");
+
     if(lastl)
         delete lastl;
     lastl = Copy();
@@ -324,6 +349,7 @@ void Palette::load()
     if (m_colors.Count() > 256)
         m_colors.Resize(256);
 
+#if 0 // STUB
     SDL_Color *sdlcolors = new SDL_Color[m_colors.Count()];
     for(int i = 0; i < m_colors.Count(); i++)
     {
@@ -335,6 +361,7 @@ void Palette::load()
 
     if(window->format->BitsPerPixel == 8)
         SDL_SetColors(window, sdlcolors, 0, m_colors.Count());
+#endif
 
     // Now redraw the surface
     update_window_done();
@@ -352,6 +379,9 @@ void Palette::load_nice()
 
 void update_window_done()
 {
+    printf("Stub for update_window_done\n");
+
+#if 0 // STUB
     // convert color-indexed surface to RGB texture
     SDL_BlitSurface(surface, NULL, texture, NULL);
 
@@ -372,5 +402,6 @@ void update_window_done()
     glEnd();
 
     SDL_GL_SwapBuffers();
+#endif
 }
 

@@ -22,6 +22,7 @@
 #endif
 
 #include "common.h"
+#include "loldebug.h"
 
 #include "sdlport/joy.h"
 
@@ -2265,78 +2266,110 @@ void game_net_init(int argc, char **argv)
   }
 }
 
-int main(int argc, char *argv[])
+class AbuseGame
 {
-    start_argc = argc;
-    start_argv = argv;
-
-    for (int i = 0; i < argc; i++)
+public:
+    AbuseGame(int argc, char *argv[])
+      : m_argc(argc),
+        m_argv(argv)
     {
-        if (!strcmp(argv[i], "-cprint"))
-            external_print = 1;
-    }
+        start_argc = argc;
+        start_argv = argv;
+
+        for (int i = 0; i < argc; i++)
+        {
+            if (!strcmp(argv[i], "-cprint"))
+                external_print = 1;
+        }
 
 #if (defined(__APPLE__) && !defined(__MACH__))
-    unsigned char km[16];
+        unsigned char km[16];
 
-    fprintf(stderr, "Mac Options: ");
-    xres = 320; yres = 200;
-    GetKeys((uint32_t*)&km);
-    if ((km[ 0x3a >>3] >> (0x3a & 7)) &1 != 0)
-    {
-        dev|=EDIT_MODE;
-        start_edit = 1;
-        start_running = 1;
-        disable_autolight = 1;
-        fprintf(stderr, "Edit Mode...");
-    }
-    if ((km[ 0x3b >>3] >> (0x3b & 7)) &1 != 0)
-    {
-        PixMult = 1;
-        fprintf(stderr, "Single Pixel...");
-    }
-    else
-    {
-        PixMult = 2;
-        fprintf(stderr, "Double Pixel...");
-    }
-    if ((km[ 0x38 >>3] >> (0x38 & 7)) &1 != 0)
-    {
-        xres *= 2;  yres *= 2;
-        fprintf(stderr, "Double Size...");
-    }
-    fprintf(stderr, "\n");
+        fprintf(stderr, "Mac Options: ");
+        xres = 320; yres = 200;
+        GetKeys((uint32_t*)&km);
+        if ((km[ 0x3a >>3] >> (0x3a & 7)) &1 != 0)
+        {
+            dev|=EDIT_MODE;
+            start_edit = 1;
+            start_running = 1;
+            disable_autolight = 1;
+            fprintf(stderr, "Edit Mode...");
+        }
+        if ((km[ 0x3b >>3] >> (0x3b & 7)) &1 != 0)
+        {
+            PixMult = 1;
+            fprintf(stderr, "Single Pixel...");
+        }
+        else
+        {
+            PixMult = 2;
+            fprintf(stderr, "Double Pixel...");
+        }
+        if ((km[ 0x38 >>3] >> (0x38 & 7)) &1 != 0)
+        {
+            xres *= 2;  yres *= 2;
+            fprintf(stderr, "Double Size...");
+        }
+        fprintf(stderr, "\n");
 
-    if (tcpip.installed())
-        fprintf(stderr, "Using %s\n", tcpip.name());
+        if (tcpip.installed())
+            fprintf(stderr, "Using %s\n", tcpip.name());
 #endif
 
-    set_dprinter(game_printer);
-    set_dgetter(game_getter);
-    set_no_space_handler(handle_no_space);
+        set_dprinter(game_printer);
+        set_dgetter(game_getter);
+        set_no_space_handler(handle_no_space);
 
-    setup(argc, argv);
+        setup(argc, argv);
 
-    show_startup();
+        show_startup();
 
-    start_sound(argc, argv);
+        start_sound(argc, argv);
 
-    stat_man = new text_status_manager();
+        stat_man = new text_status_manager();
 
 #if !defined __CELLOS_LV2__
-    // look to see if we are supposed to fetch the data elsewhere
-    if (getenv("ABUSE_PATH"))
-        set_filename_prefix(getenv("ABUSE_PATH"));
+        // look to see if we are supposed to fetch the data elsewhere
+        if (getenv("ABUSE_PATH"))
+            set_filename_prefix(getenv("ABUSE_PATH"));
 
-    // look to see if we are supposed to save the data elsewhere
-    if (getenv("ABUSE_SAVE_PATH"))
-        set_save_filename_prefix(getenv("ABUSE_SAVE_PATH"));
+        // look to see if we are supposed to save the data elsewhere
+        if (getenv("ABUSE_SAVE_PATH"))
+            set_save_filename_prefix(getenv("ABUSE_SAVE_PATH"));
 #endif
 
-    set_spec_main_file("abuse.spe");
-    check_for_lisp(argc, argv);
+        set_spec_main_file("abuse.spe");
+        check_for_lisp(argc, argv);
+        m_abusethread = new Thread(DoWorkHelper, this);
+    }
 
-    do
+    ~AbuseGame()
+    {
+        delete stat_man;
+        delete main_net_cfg; main_net_cfg = NULL;
+
+        set_filename_prefix(NULL);  // dealloc this mem if there was any
+        set_save_filename_prefix(NULL);
+
+        sound_uninit();
+    }
+
+private:
+    static void *DoWorkHelper(void *data)
+    {
+        AbuseGame *that = (AbuseGame *)data;
+
+        do
+        {
+            that->DoWork();
+        }
+        while (main_net_cfg && main_net_cfg->restart_state());
+
+        return NULL;
+    };
+
+    void DoWork()
     {
         if (main_net_cfg && !main_net_cfg->notify_reset())
         {
@@ -2344,23 +2377,23 @@ int main(int argc, char *argv[])
             exit(0);
         }
 
-        game_net_init(argc, argv);
+        game_net_init(m_argc, m_argv);
         Lisp::Init();
 
-        dev_init(argc, argv);
+        dev_init(m_argc, m_argv);
 
-        Game *g = new Game(argc, argv);
+        Game *g = new Game(m_argc, m_argv);
 
         dev_cont = new dev_controll();
         dev_cont->load_stuff();
 
         g->get_input(); // prime the net
 
-        for (int i = 1; i + 1 < argc; i++)
+        for (int i = 1; i + 1 < m_argc; i++)
         {
-            if (!strcmp(argv[i], "-server"))
+            if (!strcmp(m_argv[i], "-server"))
             {
-                if (!become_server(argv[i + 1]))
+                if (!become_server(m_argv[i + 1]))
                 {
                     dprintf("unable to become a server\n");
                     exit(0);
@@ -2470,16 +2503,22 @@ int main(int argc, char *argv[])
 
         base->packet.packet_reset();
     }
-    while (main_net_cfg && main_net_cfg->restart_state());
 
-    delete stat_man;
-    delete main_net_cfg; main_net_cfg = NULL;
+    Thread *m_abusethread;
+    int m_argc;
+    char **m_argv;
+};
 
-    set_filename_prefix(NULL);  // dealloc this mem if there was any
-    set_save_filename_prefix(NULL);
+int main(int argc, char *argv[])
+{
+    /* Initialise Lol Engine */
+    System::Init(argc, argv);
 
-    sound_uninit();
+    Application app("Abuse", ivec2(640, 480), 60.0f);
+    new DebugFps(5, 5);
+    new AbuseGame(argc, argv);
+    app.Run();
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
