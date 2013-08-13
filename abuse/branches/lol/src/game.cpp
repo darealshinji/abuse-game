@@ -62,6 +62,10 @@
 #define SHIFT_RIGHT_DEFAULT 0
 #define SHIFT_DOWN_DEFAULT 30
 
+LOLFX_RESOURCE_DECLARE(blit);
+
+extern Array<uint8_t> g_screen;
+
 extern CrcManager *net_crcs;
 
 Game *the_game = NULL;
@@ -1566,8 +1570,7 @@ void Game::get_input()
                 dev_cont->handle_event(ev);
             }
 
-            view *v = first_view;
-            for(; v; v = v->next)
+            for(view *v = first_view; v; v = v->next)
             {
                 if(v->local_player() && v->handle_event(ev))
                     ev.type = EV_SPURIOUS;       // if the Event was used by the view, gobble it up
@@ -2224,7 +2227,7 @@ void game_net_init(int argc, char **argv)
   }
 }
 
-class AbuseGame
+class AbuseGame : protected Entity
 {
 public:
     AbuseGame(int argc, char *argv[])
@@ -2233,6 +2236,10 @@ public:
     {
         start_argc = argc;
         start_argv = argv;
+
+        /* FIXME: find a better place for this */
+        xres = 320;
+        yres = 240;
 
         for (int i = 0; i < argc; i++)
         {
@@ -2254,21 +2261,7 @@ public:
             disable_autolight = 1;
             fprintf(stderr, "Edit Mode...");
         }
-        if ((km[ 0x3b >>3] >> (0x3b & 7)) &1 != 0)
-        {
-            PixMult = 1;
-            fprintf(stderr, "Single Pixel...");
-        }
-        else
-        {
-            PixMult = 2;
-            fprintf(stderr, "Double Pixel...");
-        }
-        if ((km[ 0x38 >>3] >> (0x38 & 7)) &1 != 0)
-        {
-            xres *= 2;  yres *= 2;
-            fprintf(stderr, "Double Size...");
-        }
+
         fprintf(stderr, "\n");
 
         if (tcpip.installed())
@@ -2300,6 +2293,16 @@ public:
         set_spec_main_file("abuse.spe");
         check_for_lisp(argc, argv);
         m_abusethread = new Thread(DoWorkHelper, this);
+
+        m_vertices << vec2(-1.0,  1.0);
+        m_vertices << vec2(-1.0, -1.0);
+        m_vertices << vec2( 1.0, -1.0);
+        m_vertices << vec2(-1.0,  1.0);
+        m_vertices << vec2( 1.0, -1.0);
+        m_vertices << vec2( 1.0,  1.0);
+
+        m_screen = nullptr;
+        m_palette = nullptr;
     }
 
     ~AbuseGame()
@@ -2311,6 +2314,57 @@ public:
         set_save_filename_prefix(NULL);
 
         sound_uninit();
+    }
+
+    virtual void TickGame(float seconds)
+    {
+        Entity::TickGame(seconds);
+    }
+
+    virtual void TickDraw(float seconds)
+    {
+        Entity::TickDraw(seconds);
+
+        /* Initialise GPU data */
+        if (!m_screen)
+        {
+            m_palette = new Texture(ivec2(256, 1), PixelFormat::RGB_8);
+            m_screen = new Texture(ivec2(xres, yres), PixelFormat::Y_8);
+
+            m_shader = Shader::Create(LOLFX_RESOURCE_NAME(blit));
+            m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
+            m_screen_uni = m_shader->GetUniformLocation("u_Screen");
+            m_palette_uni = m_shader->GetUniformLocation("u_Palette");
+
+            m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
+
+            m_vbo = new VertexBuffer(m_vertices.Bytes());
+            void *vertices = m_vbo->Lock(0, 0);
+            memcpy(vertices, &m_vertices[0], m_vertices.Bytes());
+            m_vbo->Unlock();
+
+            /* FIXME: this object never cleans up */
+        }
+
+        if (g_screen.Count())
+        {
+            m_screen->Bind();
+            m_screen->SetData(g_screen.Data());
+        }
+
+        if (lastl)
+        {
+            m_palette->Bind();
+            m_palette->SetData(lastl->Data());
+        }
+
+        m_shader->Bind();
+        m_shader->SetUniform(m_palette_uni, m_palette->GetTexture(), 0);
+        m_shader->SetUniform(m_screen_uni, m_screen->GetTexture(), 1);
+        m_vdecl->SetStream(m_vbo, m_coord);
+        m_vdecl->Bind();
+        m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
+        m_vdecl->Unbind();
     }
 
 private:
@@ -2325,7 +2379,7 @@ private:
         while (main_net_cfg && main_net_cfg->restart_state());
 
         return NULL;
-    };
+    }
 
     void DoWork()
     {
@@ -2460,9 +2514,18 @@ private:
         base->packet.packet_reset();
     }
 
-    Thread *m_abusethread;
     int m_argc;
     char **m_argv;
+
+    Thread *m_abusethread;
+
+    Array<vec2> m_vertices;
+    Texture *m_screen, *m_palette;
+    Shader *m_shader;
+    ShaderAttrib m_coord;
+    ShaderUniform m_screen_uni, m_palette_uni;
+    VertexDeclaration *m_vdecl;
+    VertexBuffer *m_vbo;
 };
 
 int main(int argc, char *argv[])
