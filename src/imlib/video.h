@@ -29,6 +29,7 @@ class AbuseVideo
 extern int xres,yres;
 extern int xoff,yoff;
 extern image *main_screen;
+extern Palette *lastl;
 
 void CreateScreen(int argc, char **argv);
 void DestroyScreen();

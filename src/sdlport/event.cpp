@@ -83,10 +83,11 @@ void EventHandler::SysEvent(Event &ev)
     // Sort the mouse out
     int x, y;
     uint8_t buttons = SDL_GetMouseState(&x, &y);
-    x = lol::min((x << 16) / mouse_xscale, main_screen->Size().x - 1);
-    y = lol::min((y << 16) / mouse_yscale, main_screen->Size().y - 1);
-    ev.mouse_move.x = x;
-    ev.mouse_move.y = y;
+    /* FIXME: this should be somewhere else */
+    x = x * main_screen->Size().x / Video::GetSize().x;
+    y = y * main_screen->Size().y / Video::GetSize().y;
+    ev.mouse_move.x = lol::min(x, main_screen->Size().x - 1);
+    ev.mouse_move.y = lol::min(y, main_screen->Size().y - 1);
     ev.type = EV_MOUSE_MOVE;
 
     // Left button

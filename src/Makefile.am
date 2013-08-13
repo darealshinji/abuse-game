@@ -1,4 +1,5 @@
-## Process this file with automake to produce Makefile.in
+
+include $(top_srcdir)/build/autotools/common.am
 
 SUBDIRS = lisp net imlib sdlport
 
@@ -6,6 +7,8 @@ bin_PROGRAMS = abuse abuse-tool
 
 abuse_SOURCES = \
     common.h \
+    \
+    blit.lolfx \
     \
     specache.cpp specache.h \
     netcfg.cpp netcfg.h \
