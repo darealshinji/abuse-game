@@ -38,8 +38,6 @@ status_bar::status_bar()
 // defined in dev.c
 void scale_put_trans(image *im, image *screen, int x, int y, short new_width, short new_height);
 void scale_put(image *im, image *screen, int x, int y, short new_width, short new_height);
-extern image *small_render;
-
 
 void status_bar::load()
 {
@@ -81,8 +79,8 @@ void status_bar::draw_num(image *screen, int x, int y, int num, int *offset)
   }
 
   image *im=cache.img(*offset);
-  int dw=small_render ? im->Size().x*2 : im->Size().x;
-  int dh=small_render ? im->Size().y*2 : im->Size().y;
+  int dw = im->Size().x;
+  int dh = im->Size().y;
 
   int n=num/100;
   scale_put(cache.img(offset[n]),main_screen,x,y,dw,dh);
@@ -108,41 +106,36 @@ void status_bar::redraw(image *screen)
     image *sb=cache.img(sbar);
 
     // status bar width & height
-    int sb_w=(small_render ? sb->Size().x*2 : sb->Size().x),
-    sb_h=(small_render ? sb->Size().y*2 : sb->Size().y);
+    int sb_w = sb->Size().x;
+    int sb_h = sb->Size().y;
 
     // status bar x & y position
     int sx=xres/2-sb_w/2,sy=yres-sb_h;
 
     // weapon x offset, and x add increment
-    int wx=small_render ? 80 : 40,wa=small_render ? 34*2 : 34;
+    int wx = 40, wa = 34;
 
     // weapon icon width & height
-    int ww=small_render ? cache.img(bweap[0])->Size().x*2 : cache.img(bweap[0])->Size().x;
-    int wh=small_render ? cache.img(bweap[0])->Size().y*2 : cache.img(bweap[0])->Size().y;
+    int ww = cache.img(bweap[0])->Size().x;
+    int wh = cache.img(bweap[0])->Size().y;
 
 
     // numpad y offset
-    int np_yo=small_render ? 42 : 21;
-    int np_w=small_render ? cache.img(sbar_numpad)->Size().x*2 : cache.img(sbar_numpad)->Size().x;
-    int np_h=small_render ? cache.img(sbar_numpad)->Size().y*2 : cache.img(sbar_numpad)->Size().y;
+    int np_yo = 21;
+    int np_w = cache.img(sbar_numpad)->Size().x;
+    int np_h = cache.img(sbar_numpad)->Size().y;
 
     // selection bar width * height
-    int sel_w=small_render ? cache.img(sbar_select)->Size().x*2 : cache.img(sbar_select)->Size().x;
-    int sel_h=small_render ? cache.img(sbar_select)->Size().y*2 : cache.img(sbar_select)->Size().y;
+    int sel_w = cache.img(sbar_select)->Size().x;
+    int sel_h = cache.img(sbar_select)->Size().y;
 
-    int sel_off=small_render ?  8 : 4;
+    int sel_off = 4;
     scale_put(sb,screen,sx,sy,sb_w,sb_h);
 
     if (v->m_focus)
-      draw_num(screen,sx+(small_render ? 17*2 : 17),sy+(small_render ? 11*2 : 11),v->m_focus->hp(),bnum);
+      draw_num(screen, sx + 17, sy + 11, v->m_focus->hp(), bnum);
 
-    int ammo_x,ammo_y;
-    if (small_render)
-    {
-      ammo_x=sx+52*2;
-      ammo_y=sy+25*2;
-    } else { ammo_x=sx+52; ammo_y=sy+25; }
+    int ammo_x = sx + 52, ammo_y = sy + 25;
 
     int i,x_on=sx+wx,t=TOTAL_WEAPONS;
     if (t>=total_weapons) t=total_weapons;
@@ -183,10 +176,8 @@ void status_bar::area(int &x1, int &y1, int &x2, int &y2)
   image *sb=cache.img(sbar);
 
   // status bar width & height
-  int sb_w=sb->Size().x,
-      sb_h=sb->Size().y;
-
-  if (small_render) { sb_w*=2; sb_h*=2; }
+  int sb_w = sb->Size().x,
+      sb_h = sb->Size().y;
 
   x1=xres/2-sb_w/2;
   x2=xres/2+sb_w/2;
@@ -201,7 +192,7 @@ void status_bar::draw_health(image *screen,int amount)
   {
     int x1,y1,x2,y2;
     area(x1,y1,x2,y2);
-    draw_num(screen,x1+(small_render ? 17*2 : 17),y1+(small_render ? 11*2 : 11),amount,bnum);
+    draw_num(screen, x1 + 17, y1 + 11, amount, bnum);
   }
 }
 
@@ -212,9 +203,8 @@ void status_bar::draw_ammo(image *screen, int weapon_num, int amount, int light)
   {
     int x1,y1,x2,y2;
     area(x1,y1,x2,y2);
-    draw_num(screen,
-        x1+(small_render ? 52*2+weapon_num*34*2 : 52+weapon_num*34),
-        y1+(small_render ? 25*2 : 25),amount,bnum+(light ? 20 : 10));
+    draw_num(screen, x1 + 52 + weapon_num * 34, y1 + 25,
+             amount, bnum + (light ? 20 : 10));
   }
 }
 
@@ -225,16 +215,8 @@ int status_bar::mouse_in_area()
   int x1,y1,x2,y2;
   area(x1,y1,x2,y2);
 
-  int mx,my;
-  if (small_render)
-  {
-    mx = v->pointer_x * 2 - v->m_aa.x;
-    my = v->pointer_y * 2 - v->m_aa.y;
-  } else
-  {
-    mx = v->pointer_x;
-    my = v->pointer_y;
-  }
+    int mx = v->pointer_x;
+    int my = v->pointer_y;
 
   if (mx>=x1 && my>=y1 && mx<=x2 && my<=y2)
     return 1;
@@ -283,35 +265,31 @@ void status_bar::step()
     sb_h=sb->Size().y;
   }
 
-  // see if the mouse is in the sbar region (demo_x already corrected for small_render)
+  // see if the mouse is in the sbar region
   int sx1,sy1,sx2,sy2;
   area(sx1,sy1,sx2,sy2);
 
-  int view_y2=small_render ? (v->m_bb.y-v->m_aa.y+1)*2+v->m_aa.y : v->m_bb.y;
-  if (sy1<view_y2)     // tell view to shrink if it is overlapping the status bar
+  int view_y2 = v->m_bb.y;
+  if (sy1 < view_y2)     // tell view to shrink if it is overlapping the status bar
   {
-    v->suggest.send_view=1;
+    v->suggest.send_view = 1;
     v->suggest.cx1 = v->m_aa.x;
     v->suggest.cy1 = v->m_aa.y;
     v->suggest.cx2 = v->m_bb.x;
-    v->suggest.cy2 = small_render ? (sy1 - v->m_aa.y - 2) / 2 + v->m_aa.y : sy1 - 2;
+    v->suggest.cy2 = sy1 - 2;
   }
 
   if (sbar<=0 || !total_weapons) return ;
 
-  int mx = small_render ? last_demo_mpos.x * 2 - v->m_aa.x : last_demo_mpos.x;
-  int my = small_render ? last_demo_mpos.y * 2 - v->m_aa.y : last_demo_mpos.y;
+  int mx = last_demo_mpos.x;
+  int my = last_demo_mpos.y;
 
   if (mx>sx1 && my>sy1 && mx<sx2 && my<sy2)
   {
 
     int new_target;
 
-    mx-=sx1;
-    if (small_render) mx/=2;
-
-
-    mx-=47;
+    mx -= sx1 - 47;
     if (mx<0) new_target=0;
     else
     {

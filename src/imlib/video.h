@@ -21,13 +21,18 @@
 
 #include "image.h"
 
+class AbuseVideo
+{
+
+};
+
 extern int xres,yres;
 extern int xoff,yoff;
 extern image *main_screen;
 
-void set_mode(int mode, int argc=0, char **argv=NULL);
-void close_graphics();
-void update_window_done();
+void CreateScreen(int argc, char **argv);
+void DestroyScreen();
+void UpdateScreen();
 
 void update_dirty(image *im, int xoff=0, int yoff=0);
 void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2);
