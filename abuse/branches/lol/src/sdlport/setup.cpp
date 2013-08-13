@@ -46,7 +46,6 @@ flags_struct flags;
 keys_struct keys;
 
 extern int xres, yres;
-static unsigned int scale;
 
 //
 // Display help
@@ -71,9 +70,6 @@ void showHelp()
     printf( "  -h, --help        Display this text\n" );
     printf( "  -mono             Disable stereo sound\n" );
     printf( "  -nosound          Disable sound\n" );
-    printf( "  -scale <arg>      Scale to <arg>\n" );
-//    printf( "  -x <arg>          Set the width to <arg>\n" );
-//    printf( "  -y <arg>          Set the height to <arg>\n" );
     printf( "\n" );
     printf( "Anthony Kruize <trandor@labyrinth.net.au>\n" );
     printf( "\n" );
@@ -97,7 +93,6 @@ void createRCFile( char *rcfile )
         #endif
         fputs( "; Use mono audio only\nmono=0\n\n", fd );
         fputs( "; Grab the mouse to the window\ngrabmouse=0\n\n", fd );
-        fputs( "; Set the scale factor\nscale=2\n\n", fd );
         fputs( "; Use anti-aliasing\nantialias=1\n\n", fd );
 //        fputs( "; Set the width of the window\nx=320\n\n", fd );
 //        fputs( "; Set the height of the window\ny=200\n\n", fd );
@@ -147,21 +142,8 @@ void readRCFile()
             }
             else if( strcasecmp( result, "scale" ) == 0 )
             {
-                result = strtok( NULL, "\n" );
-                scale = atoi( result );
-//                flags.xres = xres * atoi( result );
-//                flags.yres = yres * atoi( result );
+                /* Ignore deprecated setting */
             }
-/*            else if( strcasecmp( result, "x" ) == 0 )
-            {
-                result = strtok( NULL, "\n" );
-                flags.xres = atoi( result );
-            }
-            else if( strcasecmp( result, "y" ) == 0 )
-            {
-                result = strtok( NULL, "\n" );
-                flags.yres = atoi( result );
-            }*/
             else if( strcasecmp( result, "antialias" ) == 0 )
             {
                 result = strtok( NULL, "\n" );
@@ -253,32 +235,6 @@ void parseCommandLine( int argc, char **argv )
                 yres = 200;
             }
         }
-        else if( !strcasecmp( argv[ii], "-scale" ) )
-        {
-            int result;
-            if( sscanf( argv[++ii], "%d", &result ) )
-            {
-                scale = result;
-/*                flags.xres = xres * scale;
-                flags.yres = yres * scale; */
-            }
-        }
-/*        else if( !strcasecmp( argv[ii], "-x" ) )
-        {
-            int x;
-            if( sscanf( argv[++ii], "%d", &x ) )
-            {
-                flags.xres = x;
-            }
-        }
-        else if( !strcasecmp( argv[ii], "-y" ) )
-        {
-            int y;
-            if( sscanf( argv[++ii], "%d", &y ) )
-            {
-                flags.yres = y;
-            }
-        }*/
         else if( !strcasecmp( argv[ii], "-nosound" ) )
         {
             flags.nosound = 1;
@@ -318,8 +274,6 @@ void setup( int argc, char **argv )
     flags.nosound            = 0;            // Enable sound
     flags.grabmouse            = 0;            // Don't grab the mouse
     flags.nosdlparachute    = 0;            // SDL error handling
-    flags.xres = xres        = 320;            // Default window width
-    flags.yres = yres        = 200;            // Default window height
     flags.antialias            = GL_NEAREST;    // Don't anti-alias
     keys.up                    = key_value( "UP" );
     keys.down                = key_value( "DOWN" );
@@ -327,7 +281,6 @@ void setup( int argc, char **argv )
     keys.right                = key_value( "RIGHT" );
     keys.b3                    = key_value( "CTRL_R" );
     keys.b4                    = key_value( "INSERT" );
-    scale                    = 2;            // Default scale amount
 
     // Display our name and version
     printf( "%s %s\n", PACKAGE_NAME, PACKAGE_VERSION );
@@ -394,10 +347,6 @@ void setup( int argc, char **argv )
 
     // Handle command-line parameters
     parseCommandLine( argc, argv );
-
-    // Calculate the scaled window size.
-    flags.xres = xres * scale;
-    flags.yres = yres * scale;
 
     // Stop SDL handling some errors
     if( flags.nosdlparachute )

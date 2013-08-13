@@ -20,9 +20,7 @@
 extern int confirm_quit();
 
 
-extern int scale_mult,scale_div;
 extern char level_file[100];
-extern image *small_render;
 
 void dev_init(int argc, char **argv);
 void dev_cleanup();
@@ -50,17 +48,20 @@ public :
   ~pal_win();
 } ;
 
-enum dev_state { DEV_CREATE_OBJECT,
-         DEV_MOVE_OBJECT,
-         DEV_SELECT,
-         DEV_MOUSE_RELEASE,
-         DEV_MOVE_LIGHT,
-         DEV_CREATE_LIGHT,
-             DEV_DRAG_AREA_TOP,
-             DEV_DRAG_AREA_BOTTOM };
+enum dev_state
+{
+    DEV_CREATE_OBJECT,
+    DEV_MOVE_OBJECT,
+    DEV_SELECT,
+    DEV_MOUSE_RELEASE,
+    DEV_MOVE_LIGHT,
+    DEV_CREATE_LIGHT,
+    DEV_DRAG_AREA_TOP,
+    DEV_DRAG_AREA_BOTTOM,
+};
 
 extern char backw_on,forew_on,show_menu_on,ledit_on,pmenu_on,omenu_on,commandw_on,tbw_on,searchw_on,
-            small_render_on,interpolate_draw,disable_autolight,fps_on,profile_on,show_names,fg_reversed,
+            interpolate_draw,disable_autolight,fps_on,profile_on,show_names,fg_reversed,
         raise_all;
 
 
@@ -119,7 +120,6 @@ public :
   void close_area_win(int read_values);
   void notify_deleted_object(GameObject *o);
   void notify_deleted_light(LightSource *l);
-  void set_state(int new_state);
   ~dev_controll();
 } ;
 

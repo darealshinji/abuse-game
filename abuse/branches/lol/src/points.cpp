@@ -36,11 +36,6 @@ point_list::point_list(bFILE *fp)
   {
     data=(unsigned char *)malloc((int)tot*2);
     fp->read(data,(int)tot*2);
-
-    int i;
-    for (i=0; i<tot*2; i++)
-      data[i]=data[i]*scale_mult/scale_div;
-
   } else data=NULL;
 }
 

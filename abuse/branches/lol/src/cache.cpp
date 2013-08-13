@@ -1074,7 +1074,7 @@ void CacheList::free_oldest()
   }
   else
   {
-    close_graphics();
+    DestroyScreen();
     printf("Out of memory, please remove any TSR's device drivers you can\n");
     exit(0);
   }

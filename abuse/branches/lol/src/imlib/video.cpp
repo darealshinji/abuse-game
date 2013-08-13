@@ -45,7 +45,7 @@ void update_dirty(image *im, int xoff, int yoff)
         }
     }
 
-    update_window_done();
+    UpdateScreen();
 }
 
 void put_image(image * im, int x, int y)

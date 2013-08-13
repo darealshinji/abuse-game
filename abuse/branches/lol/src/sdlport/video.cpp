@@ -43,7 +43,7 @@
 SDL_Surface *window = NULL, *surface = NULL;
 #endif
 image *main_screen = NULL;
-int win_xscale, win_yscale, mouse_xscale, mouse_yscale;
+int mouse_xscale, mouse_yscale;
 int xres, yres;
 
 extern Palette *lastl;
@@ -54,6 +54,7 @@ GLuint texid;
 SDL_Surface *texture = NULL;
 #endif
 
+#if 0 // STUB
 //
 // power_of_two()
 // Get the nearest power of two
@@ -64,14 +65,15 @@ static int power_of_two(int input)
     for(value = 1 ; value < input ; value <<= 1);
     return value;
 }
+#endif
 
 //
-// set_mode()
+// CreateScreen()
 // Set the video mode
 //
-void set_mode(int mode, int argc, char **argv)
+void CreateScreen(int argc, char **argv)
 {
-    printf("Stub for set_mode(%d, ...)\n", mode);
+    printf("Stub for CreateScreen(...)\n");
 
 #if 0 // STUB
     const SDL_VideoInfo *vidInfo;
@@ -79,38 +81,33 @@ void set_mode(int mode, int argc, char **argv)
 
     // Check for video capabilities
     vidInfo = SDL_GetVideoInfo();
-    if(vidInfo->hw_available)
+    if (vidInfo->hw_available)
         vidFlags |= SDL_HWSURFACE;
     else
         vidFlags |= SDL_SWSURFACE;
 
-    if(flags.fullscreen)
+    if (flags.fullscreen)
         vidFlags |= SDL_FULLSCREEN;
 
     vidFlags |= SDL_DOUBLEBUF;
 #endif
 
-    // Calculate the window scale
-    win_xscale = mouse_xscale = (flags.xres << 16) / xres;
-    win_yscale = mouse_yscale = (flags.yres << 16) / yres;
+    // Calculate the window scale for the mouse
+    mouse_xscale = 1 << 16;
+    mouse_yscale = 1 << 16;
 
 #if 0 // STUB
     // allow doublebuffering in with gl too
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, GL_TRUE);
     // set video gl capability
     vidFlags |= SDL_OPENGL;
-#endif
 
-    // force no scaling, let the hw do it
-    win_xscale = win_yscale = 1 << 16;
-
-#if 0 // STUB
     // Set the icon for this window.  Looks nice on taskbars etc.
     SDL_WM_SetIcon(SDL_LoadBMP("abuse.bmp"), NULL);
 
     // Create the window with a preference for 8-bit (palette animations!), but accept any depth */
-    window = SDL_SetVideoMode(flags.xres, flags.yres, 8, vidFlags | SDL_ANYFORMAT);
-    if(window == NULL)
+    window = SDL_SetVideoMode(xres, yres, 8, vidFlags | SDL_ANYFORMAT);
+    if (window == NULL)
     {
         printf("Video : Unable to set video mode : %s\n", SDL_GetError());
         exit(1);
@@ -119,7 +116,7 @@ void set_mode(int mode, int argc, char **argv)
 
     // Create the screen image
     main_screen = new image(ivec2(xres, yres), NULL, 2);
-    if(main_screen == NULL)
+    if (main_screen == NULL)
     {
         // Our screen image is no good, we have to bail.
         printf("Video : Unable to create screen image.\n");
@@ -175,7 +172,7 @@ void set_mode(int mode, int argc, char **argv)
 
     // Create our 8-bit surface
     surface = SDL_CreateRGBSurface(SDL_SWSURFACE, window->w, window->h, 8, 0xff, 0xff, 0xff, 0xff);
-    if(surface == NULL)
+    if (surface == NULL)
     {
         // Our surface is no good, we have to bail.
         printf("Video : Unable to create 8-bit surface.\n");
@@ -189,7 +186,7 @@ void set_mode(int mode, int argc, char **argv)
 
     // Grab and hide the mouse cursor
     SDL_ShowCursor(0);
-    if(flags.grabmouse)
+    if (flags.grabmouse)
         SDL_WM_GrabInput(SDL_GRAB_ON);
 #endif
 
@@ -197,19 +194,19 @@ void set_mode(int mode, int argc, char **argv)
 }
 
 //
-// close_graphics()
+// DestroyScreen()
 // Shutdown the video mode
 //
-void close_graphics()
+void DestroyScreen()
 {
-    printf("Stub for close_graphics()\n");
+    printf("Stub for DestroyScreen()\n");
 
-    if(lastl)
+    if (lastl)
         delete lastl;
     lastl = NULL;
 #if 0 // STUB
     // Free our 8-bit surface
-    if(surface)
+    if (surface)
         SDL_FreeSurface(surface);
     if (texture)
         SDL_FreeSurface(texture);
@@ -227,13 +224,11 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
 
 #if 0 // STUB
     int xe, ye;
-    SDL_Rect srcrect, dstrect;
-    int ii, jj;
-    int srcx, srcy, xstep, ystep;
+    int srcx, srcy;
     uint8_t *dpixel;
     uint16_t dinset;
 
-    if(y > yres || x > xres)
+    if (y > yres || x > xres)
         return;
 
     ASSERT(x1 >= 0);
@@ -242,92 +237,54 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
     ASSERT(y2 >= y1);
 
     // Adjust if we are trying to draw off the screen
-    if(x < 0)
+    if (x < 0)
     {
         x1 += -x;
         x = 0;
     }
-    srcrect.x = x1;
-    if(x + (x2 - x1) >= xres)
+    srcx = x1;
+    if (x + (x2 - x1) >= xres)
         xe = xres - x + x1 - 1;
     else
         xe = x2;
 
-    if(y < 0)
+    if (y < 0)
     {
         y1 += -y;
         y = 0;
     }
-    srcrect.y = y1;
-    if(y + (y2 - y1) >= yres)
+    srcy = y1;
+    if (y + (y2 - y1) >= yres)
         ye = yres - y + y1 - 1;
     else
         ye = y2;
 
-    if(srcrect.x >= xe || srcrect.y >= ye)
+    if (srcx >= xe || srcy >= ye)
         return;
 
-    // Scale the image onto the surface
-    srcrect.w = xe - srcrect.x;
-    srcrect.h = ye - srcrect.y;
-    dstrect.x = ((x * win_xscale) >> 16);
-    dstrect.y = ((y * win_yscale) >> 16);
-    dstrect.w = ((srcrect.w * win_xscale) >> 16);
-    dstrect.h = ((srcrect.h * win_yscale) >> 16);
+    int w = xe - srcx;
+    int h = ye - srcy;
 
-    xstep = (srcrect.w << 16) / dstrect.w;
-    ystep = (srcrect.h << 16) / dstrect.h;
-
-    srcy = ((srcrect.y) << 16);
-    dinset = ((surface->w - dstrect.w)) * surface->format->BytesPerPixel;
+    dinset = ((surface->w - w)) * surface->format->BytesPerPixel;
 
     // Lock the surface if necessary
-    if(SDL_MUSTLOCK(surface))
+    if (SDL_MUSTLOCK(surface))
         SDL_LockSurface(surface);
 
     dpixel = (uint8_t *)surface->pixels;
-    dpixel += (dstrect.x + ((dstrect.y) * surface->w)) * surface->format->BytesPerPixel;
+    dpixel += (x + (y * surface->w)) * surface->format->BytesPerPixel;
 
     // Update surface part
-    if ((win_xscale==1<<16) && (win_yscale==1<<16)) // no scaling or hw scaling
+    dpixel = ((uint8_t *)surface->pixels) + y * surface->w + x;
+    for (int i = 0; i < h; i++)
     {
-        srcy = srcrect.y;
-        dpixel = ((uint8_t *)surface->pixels) + y * surface->w + x ;
-        for(ii=0 ; ii < srcrect.h; ii++)
-        {
-            memcpy(dpixel, im->scan_line(srcy) + srcrect.x , srcrect.w);
-            dpixel += surface->w;
-            srcy ++;
-        }
-    }
-    else    // sw scaling
-    {
-        xstep = (srcrect.w << 16) / dstrect.w;
-        ystep = (srcrect.h << 16) / dstrect.h;
-
-        srcy = ((srcrect.y) << 16);
-        dinset = ((surface->w - dstrect.w)) * surface->format->BytesPerPixel;
-
-        dpixel = (uint8_t *)surface->pixels + (dstrect.x + ((dstrect.y) * surface->w)) * surface->format->BytesPerPixel;
-
-        for(ii = 0; ii < dstrect.h; ii++)
-        {
-            srcx = (srcrect.x << 16);
-            for(jj = 0; jj < dstrect.w; jj++)
-            {
-                memcpy(dpixel, im->scan_line((srcy >> 16)) + ((srcx >> 16) * surface->format->BytesPerPixel), surface->format->BytesPerPixel);
-                dpixel += surface->format->BytesPerPixel;
-                srcx += xstep;
-            }
-            dpixel += dinset;
-            srcy += ystep;
-        }
-//        dpixel += dinset;
-//        srcy += ystep;
+        memcpy(dpixel, im->scan_line(srcy) + srcx , w);
+        dpixel += surface->w;
+        srcy++;
     }
 
     // Unlock the surface if we locked it.
-    if(SDL_MUSTLOCK(surface))
+    if (SDL_MUSTLOCK(surface))
         SDL_UnlockSurface(surface);
 #endif
 }
@@ -340,7 +297,7 @@ void Palette::load()
 {
     printf("Stub for palette::load\n");
 
-    if(lastl)
+    if (lastl)
         delete lastl;
     lastl = Copy();
 
@@ -359,27 +316,19 @@ void Palette::load()
     }
     SDL_SetColors(surface, sdlcolors, 0, m_colors.Count());
 
-    if(window->format->BitsPerPixel == 8)
+    if (window->format->BitsPerPixel == 8)
         SDL_SetColors(window, sdlcolors, 0, m_colors.Count());
 #endif
 
     // Now redraw the surface
-    update_window_done();
-}
-
-//
-// load_nice()
-//
-void Palette::load_nice()
-{
-    load();
+    UpdateScreen();
 }
 
 // ---- support functions ----
 
-void update_window_done()
+void UpdateScreen()
 {
-    printf("Stub for update_window_done\n");
+    printf("Stub for UpdateScreen()\n");
 
 #if 0 // STUB
     // convert color-indexed surface to RGB texture

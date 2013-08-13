@@ -18,8 +18,6 @@ struct flags_struct
     short nosound;
     short grabmouse;
     short nosdlparachute;
-    short xres;
-    short yres;
     short overlay;
     int antialias;
 };
