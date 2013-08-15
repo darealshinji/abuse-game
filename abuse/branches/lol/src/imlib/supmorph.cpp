@@ -349,7 +349,7 @@ main(int argc, char **argv)
   time_marker time2;
   printf("time = %lf\n",time2.diff_time(&time1));
 
-  set_mode(19,argc,argv);
+  CreateScreen(argc,argv);
   pal->load();
   i1->put_image(screen,30,30);
   update_dirty(screen);
@@ -359,7 +359,7 @@ main(int argc, char **argv)
     screen->bar(30,30,30+sp.w,30+sp.h,0);
   }
   sleep(2);
-  close_graphics();
+  DestroyScreen();
 }*/
 
 

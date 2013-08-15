@@ -424,6 +424,8 @@ void Game::set_state(int new_state)
 
     if(d)
         draw(state == SCENE_STATE);
+
+    dev_cont->set_state(new_state);
 }
 
 void Game::joy_calb(Event &ev)
@@ -659,7 +661,10 @@ void Game::draw_map(view *v, int interpolate)
   // save the dirty rect routines some work by markinging evrything in the
   // view area dirty alreadt
 
-  main_screen->AddDirty(v->m_aa, v->m_bb + ivec2(1));
+  if(small_render)
+    main_screen->AddDirty(v->m_aa, (v->m_bb - v->m_aa + ivec2(1)) * 2 + ivec2(v->m_aa.x, 0) + ivec2(1));
+  else
+    main_screen->AddDirty(v->m_aa, v->m_bb + ivec2(1));
 
   if(v->draw_solid != -1)      // fill the screen and exit..
   {
@@ -672,7 +677,23 @@ void Game::draw_map(view *v, int interpolate)
     return;
   }
 
+    // if we do a small render, we need to restore these
+    ivec2 old_aa(0), old_bb(0);
+    image *old_screen = NULL;
+
+  if(small_render && (dev & DRAW_LIGHTS))  // cannot do this if we skip lighting
+  {
+    old_aa = v->m_aa;
+    old_bb = v->m_bb;
+
+    v->m_aa = ivec2(0);
+    v->m_bb = small_render->Size() - ivec2(1);
+
+    old_screen = main_screen;
+    main_screen = small_render;
+  } else
     main_screen->dirt_off();
+
 
   int32_t xoff, yoff;
   if(interpolate)
@@ -981,15 +1002,27 @@ void Game::draw_map(view *v, int interpolate)
     if(cache.in_use())
     main_screen->PutImage(cache.img(vmm_image), ivec2(v->m_aa.x, v->m_bb.y - cache.img(vmm_image)->Size().y+1));
 
-    main_screen->dirt_on();
     if(dev & DRAW_LIGHTS)
     {
-        main_screen->dirt_on();
-        if(xres * yres <= 64000)
-            light_screen(main_screen, xoff, yoff, white_light, v->ambient);
-        else
-            light_screen(main_screen, xoff, yoff, white_light, 63);            // no lighting for hi - rez
-    }
+      if(small_render)
+      {
+    double_light_screen(main_screen, xoff, yoff, white_light, v->ambient, old_screen, old_aa.x, old_aa.y);
+
+    v->m_aa = old_aa;
+    v->m_bb = old_bb;
+    main_screen = old_screen;
+      } else
+      {
+    main_screen->dirt_on();
+    if(xres * yres <= 64000)
+          light_screen(main_screen, xoff, yoff, white_light, v->ambient);
+    else light_screen(main_screen, xoff, yoff, white_light, 63);            // no lighting for hi - rez
+      }
+
+    } else
+      main_screen->dirt_on();
+
+
 
   }  else
     main_screen->dirt_on();
@@ -1042,6 +1075,8 @@ void Game::request_level_load(char *name)
 {
   strcpy(req_name, name);
 }
+
+extern int start_doubled;
 
 template<int N> static void Fade(image *im, int steps)
 {
@@ -1280,6 +1315,12 @@ Game::Game(int argc, char **argv)
   }
 
   CreateScreen(argc, argv);
+  if(get_option("-2") && (xres < 639 || yres < 399))
+  {
+    DestroyScreen();
+    fprintf(stderr, "Resolution must be > 640x400 to use -2 option\n");
+    exit(0);
+  }
   g_palette->load();
 
   recalc_local_view_space();   // now that we know what size the screen is...
@@ -1304,10 +1345,11 @@ Game::Game(int argc, char **argv)
   {
     if(small_font_pict != -1)
     {
-      if(xres > 400)
-        font_pict = big_font_pict;
-      else
-        font_pict = small_font_pict;
+      if(xres/(start_doubled ? 2 : 1)>400)
+      {
+    font_pict = big_font_pict;
+      }
+      else font_pict = small_font_pict;
     } else font_pict = big_font_pict;
   } else font_pict = small_font_pict;
 
@@ -1570,7 +1612,8 @@ void Game::get_input()
                 dev_cont->handle_event(ev);
             }
 
-            for(view *v = first_view; v; v = v->next)
+            view *v = first_view;
+            for(; v; v = v->next)
             {
                 if(v->local_player() && v->handle_event(ev))
                     ev.type = EV_SPURIOUS;       // if the Event was used by the view, gobble it up
@@ -1707,8 +1750,8 @@ void Game::get_input()
                                 {
                                     if(v->local_player())
                                     {
-                                        int w = xres - 10;
-                                        int h = yres - 10;
+                                        int w = (xres - 10)/(small_render ? 2 : 1);
+                                        int h = (yres - 10)/(small_render ? 2 : 1);
 
                                         v->suggest.send_view = 1;
                                         v->suggest.cx1 = 5;

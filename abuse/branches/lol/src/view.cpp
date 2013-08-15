@@ -465,6 +465,8 @@ int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went 
       pan_x=lltl(x[4]);
       pan_y=lltl(x[5]);
       m_shift = ivec2(lltl(x[7]), lltl(x[6]));
+      if (small_render)
+          small_render->Scale(m_bb - m_aa + ivec2(1));
 
       suggest.send_view=0;
       if (local_player())
@@ -680,41 +682,46 @@ int view::drawable()
 void recalc_local_view_space()   // calculates view areas for local players, should be called
                                  // when adding or deleting local players
 {
-    if (!main_screen)
-        return;
+  if (main_screen)
+  {
+    int t=total_local_players();
+    if (!t) return ;
 
-    int t = total_local_players();
-    if (!t)
-        return;
+    int Xres=small_render ? xres/2 : xres;
+    int Yres=small_render ? yres/2 : yres;
 
-    int h = yres / t;
-    int w = lol::max(h * 320 / 200, 300);
-    int y = 5;
+    int h=Yres/t;
+    int w=h*320/200,y=5;
+    if (w<300) w=300;
 
-    for (view *f = player_list; f; f = f->next)
+    for (view *f=player_list; f; f=f->next)
     {
-        if (f->local_player())
-        {
-            f->suggest.cx1 = lol::max(xres / 2 - w / 2, 2);
-            f->suggest.cx2 = lol::min(xres / 2 + w / 2, xres - 2);
+      if (f->local_player())
+      {
+    f->suggest.cx1=Xres/2-w/2;
+    f->suggest.cx2=Xres/2+w/2;
+    if (f->suggest.cx1<2) f->suggest.cx1=2;
+    if (f->suggest.cx2>Xres-2) f->suggest.cx2=Xres-2;
 
-            f->suggest.cy1 = y;
-            f->suggest.cy2 = h - (total_weapons ? 33 : 0);
+    f->suggest.cy1=y;
+    f->suggest.cy2=h-(total_weapons ? 33 : 0);
 
-            f->suggest.shift = f->m_shift;
-            f->suggest.pan_x = f->pan_x;
-            f->suggest.pan_y = f->pan_y;
-            f->suggest.send_view = 1;
+    f->suggest.shift = f->m_shift;
+    f->suggest.pan_x=f->pan_x;
+    f->suggest.pan_y=f->pan_y;
+    f->suggest.send_view=1;
 
-            if (!player_list->next)
-            {
-                f->m_aa = ivec2(f->suggest.cx1, f->suggest.cy1);
-                f->m_bb = ivec2(f->suggest.cx2, f->suggest.cy2);
-                f->suggest.send_view = 0;
-            }
-            y += h;
-        }
+    if (!player_list->next)
+    {
+      f->m_aa = ivec2(f->suggest.cx1, f->suggest.cy1);
+      f->m_bb = ivec2(f->suggest.cx2, f->suggest.cy2);
+      f->suggest.send_view = 0;
     }
+    y+=h;
+      }
+    }
+  }
+
 }
 
 
