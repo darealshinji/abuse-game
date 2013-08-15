@@ -18,6 +18,8 @@
 #endif
 #include <sys/types.h>
 
+#include <list>
+
 #if defined __APPLE__ && !defined __MACH__
 #   include "GUSI.h"
 #elif defined HAVE_NETINET_IN_H
@@ -38,7 +40,6 @@
 #endif
 
 #include "sock.h"
-#include "isllist.h"
 
 extern fd_set master_set, master_write_set, read_set, exception_set, write_set;
 
@@ -90,8 +91,8 @@ protected:
       ip_address *addr;
       char name[256];   //name
   };
-  typedef isllist<RequestItem *>::iterator p_request;
-  isllist<RequestItem*> servers,returned;
+  typedef std::list<RequestItem *>::iterator p_request;
+  std::list<RequestItem*> servers,returned;
 
   // Notification Data
   net_socket *notifier;

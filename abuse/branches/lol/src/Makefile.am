@@ -58,7 +58,7 @@ abuse_SOURCES = \
     devsel.cpp devsel.h \
     crc.cpp crc.h \
     gamma.cpp gamma.h \
-    id.h netface.h isllist.h sbar.h \
+    id.h netface.h sbar.h \
     nfserver.h \
     \
     ui/volumewindow.cpp ui/volumewindow.h \
