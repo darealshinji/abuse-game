@@ -292,6 +292,7 @@ figure::figure(bFILE *fp, int type)
   fp->read(&hit_damage,1);
 
   fp->read(&xcfg,1);
+  xcfg=xcfg*scale_mult/scale_div;
 
   if (type==SPEC_CHARACTER)
   {

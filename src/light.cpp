@@ -790,8 +790,8 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient,
              image *out, int32_t out_x, int32_t out_y)
 {
-  if (sc->Size().x * 2 + out_x>out->Size().x ||
-      sc->Size().y * 2 + out_y>out->Size().y)
+  if (sc->Size().x*2+out_x>out->Size().x ||
+      sc->Size().y*2+out_y>out->Size().y)
     return ;   // screen was resized and small_render has not changed size yet
 
 

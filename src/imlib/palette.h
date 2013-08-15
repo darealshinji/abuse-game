@@ -54,6 +54,7 @@ public :
   uint32_t getquad(int x);
   void shift(int amount);
   void load();
+  void load_nice();
 
   void defaults();
   void set_rgbs();
