@@ -29,7 +29,7 @@ class gui_status_node
   visual_object *show;
   Jwindow *stat_win;
   int last_update;
-  time_marker last_time;
+  TimeMarker last_time;
   gui_status_node(char const *Name, visual_object *Show, gui_status_node *Next)
   { name = strdup(Name);
     show=Show;
@@ -95,8 +95,8 @@ void gui_status_manager::update(int percentage)
   {
     if (!first->stat_win)
     {
-      time_marker now;
-      if (now.diff_time(&first->last_time)>1)
+      TimeMarker now;
+      if (now.DiffTime(&first->last_time)>1)
       {
     long wx=xres/2,wy=10,len1=strlen(first->name)*wm->font()->Size().x+10,len2=0,len3,
       h1=wm->font()->Size().y+5,h2=first->show ? first->show->height() : 0;

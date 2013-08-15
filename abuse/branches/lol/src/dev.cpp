@@ -1524,9 +1524,9 @@ void dev_controll::pick_handle_input(Event &ev)
       { find = a; find_top = 0; }
     }
 
-    time_marker now;
-    int dc=now.diff_time(&last_area_click)<0.5;
-    last_area_click.get_time();
+    TimeMarker now;
+    int dc=now.DiffTime(&last_area_click)<0.5;
+    last_area_click.GetTime();
     if (find && current_area && dc)
     {
       if (area_win) close_area_win(0);

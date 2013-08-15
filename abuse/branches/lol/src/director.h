@@ -19,7 +19,7 @@ class director        // the director controlls the scene
       pan_xv,pan_yv,pan_steps,
       frame_speed,scroll_speed,pan_speed,scene_abort;
   char *text;
-  time_marker *pan_time,*frame_time,*text_time;
+  TimeMarker *pan_time,*frame_time,*text_time;
 public :
   void set_text_region(int left, int top, int right, int bottom)
   { tleft=left; ttop=top; tright=right; tbottom=bottom; }

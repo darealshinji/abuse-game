@@ -7,7 +7,6 @@ libsdlport_a_SOURCES = \
     video.cpp \
     event.cpp \
     sound.cpp sound.h \
-    timing.cpp \
     jdir.cpp \
     joystick.cpp joy.h \
     setup.cpp setup.h \

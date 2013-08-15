@@ -133,22 +133,22 @@ void director::wait(void *arg)
   do
   {
     the_game->draw_map(the_game->first_view);
-    time_marker cur_time;
+    TimeMarker cur_time;
 
     if (pan_steps)
     {
       if (pan_time)
       {
-    if ((int)(cur_time.diff_time(pan_time)*1000)>pan_speed)
+    if ((int)(cur_time.DiffTime(pan_time)*1000)>pan_speed)
     {
       the_game->pan(pan_xv,pan_yv);
       pan_steps--;
       delete pan_time;
       if (pan_steps)
-          pan_time=new time_marker;
+          pan_time=new TimeMarker;
       else pan_time=NULL;
     }
-      } else pan_time=new time_marker;
+      } else pan_time=new TimeMarker;
     } else if (arg==pan_symbol) done=1;
 
     if (text)
@@ -164,16 +164,16 @@ void director::wait(void *arg)
         text=NULL;
       if (text_time)
       {
-    if ((int)(cur_time.diff_time(text_time)*1000)>scroll_speed)
+    if ((int)(cur_time.DiffTime(text_time)*1000)>scroll_speed)
     {
       text_y+=text_step;
       delete text_time;
       if (text)
-        text_time=new time_marker;
+        text_time=new TimeMarker;
       else
         text_time=NULL;
     }
-      } else text_time=new time_marker;
+      } else text_time=new TimeMarker;
     } else if (arg==text_symbol) done=1;
 
     wm->flush_screen();

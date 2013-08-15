@@ -71,8 +71,6 @@ void write_lights(bFILE *fp);
 void read_lights(SpecDir *sd, bFILE *fp, char const *level_name);
 
 void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient);
-void double_light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient,
-             image *out, int32_t out_x, int32_t out_y);
 
 void calc_light_table(Palette *pal);
 extern LightSource *first_light_source;

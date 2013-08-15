@@ -11,18 +11,28 @@
 #ifndef __TIMING_HPP_
 #define __TIMING_HPP_
 
-class time_marker
+class TimeMarker
 {
 public:
-#if defined __CELLOS_LV2__
-    uint64_t ticks;
-#else
-    long seconds;
-    long micro_seconds;
-#endif
-    void get_time();
-    time_marker();
-    double diff_time(time_marker *other); // return time diff in seconds
+    inline TimeMarker()
+    {
+        GetTime();
+    }
+
+    inline void GetTime()
+    {
+        static Timer m_timer;
+        m_seconds = m_timer.Poll();
+    }
+
+    // return time diff in seconds
+    inline double DiffTime(TimeMarker *other)
+    {
+        return m_seconds - other->m_seconds;
+    }
+
+private:
+    double m_seconds;
 };
 
 #endif

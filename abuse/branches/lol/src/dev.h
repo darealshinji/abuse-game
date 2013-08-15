@@ -75,7 +75,7 @@ class dev_controll
   int total_pals;
   dev_state state;
   area_controller *current_area;
-  time_marker last_area_click;
+  TimeMarker last_area_click;
 public :
   Jwindow *backw,*forew,*commandw,*modew,*omenu,*oedit,*ledit,
           *music_window,*pmenu,*show_menu,*lightw,*aiw,*ambw,*tbw,*area_win,

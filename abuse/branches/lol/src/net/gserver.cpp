@@ -268,7 +268,7 @@ int game_server::process_net()
             fprintf(stderr,"(got data from %d)",found->client_id);
 
 //          fprintf(stderr,"(got packet %d)\n",use->tick_received());
-//          { time_marker now,start; while (now.diff_time(&start)<5.0) now.get_time(); }
+//          { TimeMarker now,start; while (now.DiffTime(&start)<5.0) now.GetTime(); }
 
           if (base->input_state!=INPUT_RELOAD)
             add_client_input((char *)use->packet_data(),use->packet_size(),found);
