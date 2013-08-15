@@ -465,8 +465,6 @@ int view::process_input(char cmd, uint8_t *&pk)   // return 0 if something went 
       pan_x=lltl(x[4]);
       pan_y=lltl(x[5]);
       m_shift = ivec2(lltl(x[7]), lltl(x[6]));
-      if (small_render)
-          small_render->Scale(m_bb - m_aa + ivec2(1));
 
       suggest.send_view=0;
       if (local_player())
@@ -687,10 +685,7 @@ void recalc_local_view_space()   // calculates view areas for local players, sho
     int t=total_local_players();
     if (!t) return ;
 
-    int Xres=small_render ? xres/2 : xres;
-    int Yres=small_render ? yres/2 : yres;
-
-    int h=Yres/t;
+    int h=yres/t;
     int w=h*320/200,y=5;
     if (w<300) w=300;
 
@@ -698,10 +693,10 @@ void recalc_local_view_space()   // calculates view areas for local players, sho
     {
       if (f->local_player())
       {
-    f->suggest.cx1=Xres/2-w/2;
-    f->suggest.cx2=Xres/2+w/2;
+    f->suggest.cx1=xres/2-w/2;
+    f->suggest.cx2=xres/2+w/2;
     if (f->suggest.cx1<2) f->suggest.cx1=2;
-    if (f->suggest.cx2>Xres-2) f->suggest.cx2=Xres-2;
+    if (f->suggest.cx2>xres-2) f->suggest.cx2=xres-2;
 
     f->suggest.cy1=y;
     f->suggest.cy2=h-(total_weapons ? 33 : 0);
