@@ -55,7 +55,7 @@ int game_client::process_server_command()
     net_packet *pack=&base->packet;
     game_sock->write(pack->data,pack->packet_size()+pack->packet_prefix_size(),server_data_port);
 
-    { time_marker now,start; while (now.diff_time(&start)<3.0) now.get_time(); }
+    { TimeMarker now,start; while (now.DiffTime(&start)<3.0) now.GetTime(); }
       }
       return 1;
     } break;
@@ -128,7 +128,7 @@ int game_client::input_missing()
   net_packet *pack=&base->packet;
   game_sock->write(pack->data,pack->packet_size()+pack->packet_prefix_size(),server_data_port);
 //  fprintf(stderr,"2");
-//  { time_marker now,start; while (now.diff_time(&start)<3.0) now.get_time(); }
+//  { TimeMarker now,start; while (now.DiffTime(&start)<3.0) now.GetTime(); }
 
 /*
   unsigned char pk[2]={ CLCMD_REQUEST_RESEND,base->packet.tick_received()};
@@ -148,7 +148,7 @@ void game_client::add_engine_input()
 //  data_sock->write(pack->data,pack->packet_size()+pack->packet_prefix_size());
 /*  fprintf(stderr,"(sending %d)\n",base->packet.tick_received());
 
-  { time_marker now,start; while (now.diff_time(&start)<5.0) now.get_time(); }  */
+  { TimeMarker now,start; while (now.DiffTime(&start)<5.0) now.GetTime(); }  */
 }
 
 

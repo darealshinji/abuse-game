@@ -408,15 +408,15 @@ int GameObject::decide()
     current_object=this;
     void *m = LSpace::Tmp.Mark();
 
-    time_marker *prof1=NULL;
+    TimeMarker *prof1=NULL;
     if (profiling())
-      prof1=new time_marker;
+      prof1=new TimeMarker;
 
     LObject *ret = ((LSymbol *)figures[otype]->get_fun(OFUN_AI))->EvalFunction(NULL);
     if (profiling())
     {
-      time_marker now;
-      profile_add_time(this->otype,now.diff_time(prof1));
+      TimeMarker now;
+      profile_add_time(this->otype,now.DiffTime(prof1));
       delete prof1;
     }
 
@@ -512,15 +512,15 @@ void GameObject::do_damage(int amount, GameObject *from, int32_t hitx, int32_t h
     frm->m_cdr = hx;
     am->m_cdr = frm;
 
-    time_marker *prof1 = NULL;
+    TimeMarker *prof1 = NULL;
     if (profiling())
-      prof1 = new time_marker;
+      prof1 = new TimeMarker;
 
     ((LSymbol *)d)->EvalUserFunction(am);
     if (profiling())
     {
-      time_marker now;
-      profile_add_time(this->otype, now.diff_time(prof1));
+      TimeMarker now;
+      profile_add_time(this->otype, now.DiffTime(prof1));
       delete prof1;
     }
 
@@ -622,15 +622,15 @@ void GameObject::draw()
     current_object=this;
 
     void *m = LSpace::Tmp.Mark();
-    time_marker *prof1=NULL;
+    TimeMarker *prof1=NULL;
     if (profiling())
-      prof1=new time_marker;
+      prof1=new TimeMarker;
 
     ((LSymbol *)figures[otype]->get_fun(OFUN_DRAW))->EvalFunction(NULL);
     if (profiling())
     {
-      time_marker now;
-      profile_add_time(this->otype,now.diff_time(prof1));
+      TimeMarker now;
+      profile_add_time(this->otype,now.DiffTime(prof1));
       delete prof1;
     }
 
@@ -647,15 +647,15 @@ void GameObject::map_draw()
     current_object=this;
 
     void *m = LSpace::Tmp.Mark();
-    time_marker *prof1=NULL;
+    TimeMarker *prof1=NULL;
     if (profiling())
-      prof1=new time_marker;
+      prof1=new TimeMarker;
 
     ((LSymbol *)figures[otype]->get_fun(OFUN_MAP_DRAW))->EvalFunction(NULL);
     if (profiling())
     {
-      time_marker now;
-      profile_add_time(this->otype,now.diff_time(prof1));
+      TimeMarker now;
+      profile_add_time(this->otype,now.DiffTime(prof1));
       delete prof1;
     }
 
@@ -1144,15 +1144,15 @@ GameObject *create(int type, int32_t x, int32_t y, int skip_constructor, int ait
 
     void *m = LSpace::Tmp.Mark();
 
-    time_marker *prof1=NULL;
+    TimeMarker *prof1=NULL;
     if (profiling())
-      prof1=new time_marker;
+      prof1=new TimeMarker;
 
     ((LSymbol *)figures[type]->get_fun(OFUN_CONSTRUCTOR))->EvalFunction(NULL);
     if (profiling())
     {
-      time_marker now;
-      profile_add_time(type,now.diff_time(prof1));
+      TimeMarker now;
+      profile_add_time(type,now.DiffTime(prof1));
       delete prof1;
     }
 
@@ -1206,15 +1206,15 @@ int GameObject::move(int cx, int cy, int button)
 
     void *m = LSpace::Tmp.Mark();
 
-    time_marker *prof1 = NULL;
+    TimeMarker *prof1 = NULL;
     if (profiling())
-      prof1=new time_marker;
+      prof1=new TimeMarker;
 
     LObject *r = ((LSymbol *)figures[otype]->get_fun(OFUN_MOVER))->EvalFunction(lcx);
     if (profiling())
     {
-      time_marker now;
-      profile_add_time(this->otype,now.diff_time(prof1));
+      TimeMarker now;
+      profile_add_time(this->otype,now.DiffTime(prof1));
       delete prof1;
     }
 
@@ -1543,16 +1543,16 @@ void GameObject::change_aitype(int new_type)
       GameObject *o=current_object;
       current_object=(GameObject *)this;
 
-      time_marker *prof1=NULL;
+      TimeMarker *prof1=NULL;
       if (profiling())
-        prof1=new time_marker;
+        prof1=new TimeMarker;
 
       ((LSymbol *)f)->EvalUserFunction(NULL);
 
       if (profiling())
       {
-    time_marker now;
-    profile_add_time(this->otype,now.diff_time(prof1));
+    TimeMarker now;
+    profile_add_time(this->otype,now.DiffTime(prof1));
     delete prof1;
       }
 
@@ -1587,15 +1587,15 @@ void GameObject::change_type(int new_type)
 
     void *m = LSpace::Tmp.Mark();
 
-    time_marker *prof1=NULL;
+    TimeMarker *prof1=NULL;
     if (profiling())
-      prof1=new time_marker;
+      prof1=new TimeMarker;
 
     ((LSymbol *)figures[new_type]->get_fun(OFUN_CONSTRUCTOR))->EvalFunction(NULL);
     if (profiling())
     {
-      time_marker now;
-      profile_add_time(otype,now.diff_time(prof1));
+      TimeMarker now;
+      profile_add_time(otype,now.DiffTime(prof1));
       delete prof1;
     }
 

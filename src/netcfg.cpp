@@ -478,7 +478,7 @@ int net_configuration::input()   // pulls up dialog box and input fileds
     enum { MAX_GAMES=9 };
     net_address *game_addr[MAX_GAMES+1];
     int join_game=-1;
-    time_marker start,now;
+    TimeMarker start,now;
 
     do
     {
@@ -517,10 +517,10 @@ int net_configuration::input()   // pulls up dialog box and input fileds
       wm->flush_screen();
       char name[256];
 
-      now.get_time();
-      if (total_games<MAX_GAMES && now.diff_time(&start)>0.5)
+      now.GetTime();
+      if (total_games<MAX_GAMES && now.DiffTime(&start)>0.5)
       {
-        start.get_time();
+        start.GetTime();
         net_address *find=prot->find_address(0x9090,name);    // was server_port
         if (find)
         {
@@ -544,10 +544,10 @@ int net_configuration::input()   // pulls up dialog box and input fileds
       if (get_options(0))
       {
         int still_there=1;  // change this back to 0, to check if games are stil alive
-        time_marker start,now;
+        TimeMarker start,now;
         do
         {
-          now.get_time();
+          now.GetTime();
           char name[256];
           net_address *find=prot->find_address(0x9090,name);  // was server_port
           if (find)
@@ -557,7 +557,7 @@ int net_configuration::input()   // pulls up dialog box and input fileds
             delete find;
           }
 
-        } while (now.diff_time(&start)<3 && !still_there);
+        } while (now.DiffTime(&start)<3 && !still_there);
 
         if (still_there)
         {

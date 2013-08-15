@@ -223,19 +223,19 @@ void show_end2()
   image *tcopy=cache.img(planet)->copy();
   fade_in(NULL,32);
 
-  time_marker old_time;
+  TimeMarker old_time;
 
 
 
   for (i=0; i<80; )
   {
-    time_marker new_time;
-    if (new_time.diff_time(&old_time)>0.1)
+    TimeMarker new_time;
+    if (new_time.DiffTime(&old_time)>0.1)
     {
       if ((i%10)==0 && (sound_avail&SFX_INITIALIZED))
         cache.sfx(space_snd)->play(64);
 
-      old_time.get_time();
+      old_time.GetTime();
       main_screen->clear();
       int j;
       for (si=sinfo,j=0; j<800; j++,si+=3)
@@ -281,13 +281,13 @@ void show_end2()
   ex_char *clist=NULL;
   for (i=0; i<200; )
   {
-    time_marker new_time;
-    if (new_time.diff_time(&old_time)>0.1)
+    TimeMarker new_time;
+    if (new_time.DiffTime(&old_time)>0.1)
     {
       if ((i%10)==0 && (sound_avail&SFX_INITIALIZED))
         cache.sfx(space_snd)->play(64);
 
-      old_time.get_time();
+      old_time.GetTime();
       main_screen->clear();
       int j;
       for (si=sinfo,j=0; j<800; j++,si+=3)
@@ -351,13 +351,13 @@ void show_end2()
   i=0;
   do
   {
-    time_marker new_time;
-    if (new_time.diff_time(&old_time)>0.1)
+    TimeMarker new_time;
+    if (new_time.DiffTime(&old_time)>0.1)
     {
       if ((i%10)==0 && (sound_avail&SFX_INITIALIZED))
         cache.sfx(space_snd)->play(64);
 
-      old_time.get_time();
+      old_time.GetTime();
       scan_map(main_screen,ex,ey,cache.img(planet),
            cache.img(planet2),
            256,paddr,
@@ -381,7 +381,7 @@ void show_end2()
   void *end_plot = LSymbol::FindOrCreate("plot_end")->GetValue();
 
 
-  time_marker start;
+  TimeMarker start;
 
   ev.type=EV_SPURIOUS;
   for (i=0; i<320 && ev.type!=EV_KEY; i++)
@@ -397,7 +397,7 @@ void show_end2()
          p,cache.img(mask)->Size().y,eoff,coff);
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),wm->font(),cmap,wm->bright_color());
     wm->flush_screen();
-    time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
+    TimeMarker now; while (now.DiffTime(&start)<0.18) now.GetTime(); start.GetTime();
 
     while (wm->IsPending() && ev.type!=EV_KEY) wm->get_event(ev);
   }
@@ -452,7 +452,7 @@ void share_end()
     cmap[i] = g_palette->FindClosest(u8vec3(i * 256 / 32, i * 256 / 32, i * 256 / 32));
 
   Event ev; ev.type=EV_SPURIOUS;
-  time_marker start;
+  TimeMarker start;
   for (i=0; i<320 && ev.type!=EV_KEY; i++)
   {
     main_screen->PutImage(im, ivec2(dx, dy));
@@ -461,7 +461,7 @@ void share_end()
 
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(mid_plot),wm->font(),cmap,wm->bright_color());
     wm->flush_screen();
-    time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
+    TimeMarker now; while (now.DiffTime(&start)<0.18) now.GetTime(); start.GetTime();
     while (wm->IsPending() && ev.type!=EV_KEY) wm->get_event(ev);
   }
 
@@ -504,14 +504,14 @@ void show_end()
     cmap[i] = g_palette->FindClosest(u8vec3(i * 256 / 32, i * 256 / 32, i * 256 / 32));
 
   Event ev; ev.type=EV_SPURIOUS;
-  time_marker start;
+  TimeMarker start;
   for (i=0; i<320 && ev.type!=EV_KEY; i++)
   {
     main_screen->PutImage(im, ivec2(dx, dy));
 
     text_draw(205-i,dx+10,dy,dx+319-10,dy+199,lstring_value(end_plot),wm->font(),cmap,wm->bright_color());
     wm->flush_screen();
-    time_marker now; while (now.diff_time(&start)<0.18) now.get_time(); start.get_time();
+    TimeMarker now; while (now.DiffTime(&start)<0.18) now.GetTime(); start.GetTime();
     while (wm->IsPending() && ev.type!=EV_KEY) wm->get_event(ev);
   }
 

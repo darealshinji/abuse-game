@@ -634,7 +634,7 @@ int get_inputs_from_server(unsigned char *buf)
 {
   if (prot && base->input_state!=INPUT_PROCESSING)      // if input is not here, wait on it
   {
-    time_marker start;
+    TimeMarker start;
 
     int total_retry=0;
     Jwindow *abort=NULL;
@@ -648,16 +648,16 @@ int get_inputs_from_server(unsigned char *buf)
       }
       service_net_request();
 
-      time_marker now;                   // if this is taking to long, the packet was probably lost, ask for it to be resent
+      TimeMarker now;                   // if this is taking to long, the packet was probably lost, ask for it to be resent
 
-      if (now.diff_time(&start)>0.05)
+      if (now.DiffTime(&start)>0.05)
       {
     if (prot->debug_level(net_protocol::DB_IMPORTANT_EVENT))
       fprintf(stderr,"(missed packet)");
 
 
     game_face->input_missing();
-    start.get_time();
+    start.GetTime();
 
     total_retry++;
     if (total_retry==12000)    // 2 minutes and nothing

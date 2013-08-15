@@ -157,7 +157,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   image *save = new image(ivec2(mw - 2,bh));
   int color=128,cdir=50;
 
-  time_marker *last_color_time=NULL;
+  TimeMarker *last_color_time=NULL;
   if (!NILP(def))
     choice=lnumber_value(def);
   do
@@ -200,12 +200,12 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       }
     }
 
-    time_marker cur_time;
-    if (!last_color_time || (int)(cur_time.diff_time(last_color_time)*1000)>120)
+    TimeMarker cur_time;
+    if (!last_color_time || (int)(cur_time.DiffTime(last_color_time)*1000)>120)
     {
       if (last_color_time)
         delete last_color_time;
-      last_color_time=new time_marker;
+      last_color_time=new TimeMarker;
 
       int by1=(font->Size().y+1)*choice+my+5-2;
       int by2=by1+bh-1;
@@ -641,11 +641,11 @@ void main_menu()
     Event ev;
 
     int stop_menu=0;
-    time_marker start;
+    TimeMarker start;
     wm->flush_screen();
     do
     {
-        time_marker new_time;
+        TimeMarker new_time;
 
         if (wm->IsPending())
         {
@@ -658,7 +658,7 @@ void main_menu()
                 wm->Push(new Event(ID_QUIT,NULL));
 
             menu_handler(ev,inm);
-            start.get_time();
+            start.GetTime();
 
             wm->flush_screen();
         }
@@ -668,10 +668,10 @@ void main_menu()
             Timer tmp; tmp.Wait(0.03f);
         }
 
-        if (new_time.diff_time(&start)>10)
+        if (new_time.DiffTime(&start)>10)
         {
             if (volume_window)
-                start.get_time();
+                start.GetTime();
             else
             {
                 if (!current_demo)
@@ -703,7 +703,7 @@ void main_menu()
                 else
                 {
                     ev.type=EV_SPURIOUS;
-                    start.get_time();
+                    start.GetTime();
                 }
             }
         }

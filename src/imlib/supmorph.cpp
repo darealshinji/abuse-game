@@ -340,14 +340,14 @@ main(int argc, char **argv)
   if (steps<2) steps=50;
   TransImage *hh1=new TransImage(h1,"hint1"),*hh2=new TransImage(h2,"hint2");
 
-  time_marker time1;
+  TimeMarker time1;
   super_morph sm(hh1,hh2,steps);
   int frames=atoi(argv[2]);
   if (frames<2) frames=16;
   smorph_player sp(&sm,pal,i1,i2,frames,-1);
 
-  time_marker time2;
-  printf("time = %lf\n",time2.diff_time(&time1));
+  TimeMarker time2;
+  printf("time = %lf\n",time2.DiffTime(&time1));
 
   CreateScreen(argc,argv);
   pal->load();

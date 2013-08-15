@@ -718,14 +718,14 @@ void *l_caller(long number, void *args)
     {
       long trials=lnumber_value(CAR(args)->Eval());
       args=CDR(args);
-      time_marker start;
+      TimeMarker start;
       for (int x=0; x<trials; x++)
       {
     LSpace::Tmp.Clear();
     CAR(args)->Eval();
       }
-      time_marker end;
-      return LFixedPoint::Create((long)(end.diff_time(&start)*(1<<16)));
+      TimeMarker end;
+      return LFixedPoint::Create((long)(end.DiffTime(&start)*(1<<16)));
     } break;
     case 18 :
     { return LString::Create(object_names[current_object->otype]); } break;

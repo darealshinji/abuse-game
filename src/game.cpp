@@ -1175,7 +1175,7 @@ void do_title()
             main_screen->PutImage(smoke[i % 5], ivec2(dx + 24, dy + 5));
             text_draw(205 - i, dx + 15, dy, dx + 320 - 15, dy + 199, str, wm->font(), cmap, wm->bright_color());
             wm->flush_screen();
-            time_marker now;
+            TimeMarker now;
 
             while(wm->IsPending() && ev.type != EV_KEY)
                 wm->get_event(ev);
@@ -1370,7 +1370,7 @@ Game::Game(int argc, char **argv)
   }
 }
 
-time_marker *led_last_time = NULL;
+TimeMarker *led_last_time = NULL;
 static float avg_time = 1.0f / 15, possible_time = 1.0f / 15;
 
 void Game::toggle_delay()
