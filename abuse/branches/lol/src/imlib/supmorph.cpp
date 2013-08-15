@@ -347,7 +347,7 @@ main(int argc, char **argv)
   printf("time = %lf\n", t.Get());
 
   CreateScreen(argc,argv);
-  pal->load();
+  pal->Load();
   i1->put_image(screen,30,30);
   update_dirty(screen);
   sleep(2);

@@ -793,7 +793,7 @@ void *bottom_draw()
     Palette *p = g_palette->Copy();
     for (int i = 0; i < 256; i++)
       p->SetColor(i, (u8vec3)clamp((ivec3)p->GetColor(i) + delta, 0, 255));
-    p->load();
+    p->Load();
     delete p;
   }
 

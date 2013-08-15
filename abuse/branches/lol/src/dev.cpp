@@ -3510,7 +3510,7 @@ void toggle_edit_mode()
   if (dev&EDIT_MODE)
   {
     wm->SetMouseShape(cache.img(c_normal)->copy(), ivec2(1, 1));
-    g_palette->load();
+    g_palette->Load();
   }
   else
   {

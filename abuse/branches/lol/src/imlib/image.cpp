@@ -903,7 +903,7 @@ image *image::copy_part_dithered (int x1, int y1, int x2, int y2)
 
   if (x2<x1 || y2<y1) return NULL;
   ret=new image(ivec2((x2-x1+8)/8, (y2-y1+1)));
-  if (!last_loaded())
+  if (!Palette::LastLoaded())
     ret->clear();
   else
   {
@@ -916,7 +916,7 @@ image *image::copy_part_dithered (int x1, int y1, int x2, int y2)
       memset(sl1, 0, (x2-x1+8)/8);
       for (bo=7, rx=0, x=x1, ditx=x1%4; x<=x2; x++)
       {
-        if (last_loaded()->GetColor(sl2[x]).r > dither_matrix[ditx+dity])
+        if (Palette::LastLoaded()->GetColor(sl2[x]).r > dither_matrix[ditx+dity])
           sl1[rx]|=1<<bo;
         if (bo!=0)
       bo--;
