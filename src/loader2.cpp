@@ -16,7 +16,6 @@
 
 #include "common.h"
 
-#include "timing.h"
 #include "loader2.h"
 #include "chars.h"
 #include "specs.h"

@@ -21,7 +21,6 @@
 #include "level.h"
 #include "game.h"
 #include "dev.h"
-#include "timing.h"
 #include "netface.h"
 
 #if HAVE_NETWORK
@@ -634,7 +633,7 @@ int get_inputs_from_server(unsigned char *buf)
 {
   if (prot && base->input_state!=INPUT_PROCESSING)      // if input is not here, wait on it
   {
-    TimeMarker start;
+    Timer t;
 
     int total_retry=0;
     Jwindow *abort=NULL;
@@ -648,16 +647,14 @@ int get_inputs_from_server(unsigned char *buf)
       }
       service_net_request();
 
-      TimeMarker now;                   // if this is taking to long, the packet was probably lost, ask for it to be resent
-
-      if (now.DiffTime(&start)>0.05)
+      if (t.Poll() > 0.05)
       {
     if (prot->debug_level(net_protocol::DB_IMPORTANT_EVENT))
       fprintf(stderr,"(missed packet)");
 
 
     game_face->input_missing();
-    start.GetTime();
+    t.Get();
 
     total_retry++;
     if (total_retry==12000)    // 2 minutes and nothing

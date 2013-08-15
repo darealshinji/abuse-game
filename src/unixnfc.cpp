@@ -28,7 +28,6 @@
 #include "view.h"
 #include "objects.h"
 #include "level.h"
-#include "timing.h"
 #include "server2.h"
 #include "game.h"
 #include "jwindow.h"

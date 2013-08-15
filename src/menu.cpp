@@ -23,7 +23,6 @@
 #include "menu.h"
 #include "lisp.h"
 #include "game.h"
-#include "timing.h"
 #include "game.h"
 #include "id.h"
 #include "pmenu.h"
@@ -157,7 +156,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   image *save = new image(ivec2(mw - 2,bh));
   int color=128,cdir=50;
 
-  TimeMarker *last_color_time=NULL;
+  Timer *last_color_time = nullptr;
   if (!NILP(def))
     choice=lnumber_value(def);
   do
@@ -200,12 +199,11 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       }
     }
 
-    TimeMarker cur_time;
-    if (!last_color_time || (int)(cur_time.DiffTime(last_color_time)*1000)>120)
+    if (!last_color_time || last_color_time->Poll() * 1000.0 > 120.0)
     {
-      if (last_color_time)
-        delete last_color_time;
-      last_color_time=new TimeMarker;
+      if (!last_color_time)
+        last_color_time = new Timer;
+      last_color_time->Get();
 
       int by1=(font->Size().y+1)*choice+my+5-2;
       int by2=by1+bh-1;
@@ -641,12 +639,10 @@ void main_menu()
     Event ev;
 
     int stop_menu=0;
-    TimeMarker start;
+    Timer t;
     wm->flush_screen();
     do
     {
-        TimeMarker new_time;
-
         if (wm->IsPending())
         {
             do
@@ -658,7 +654,7 @@ void main_menu()
                 wm->Push(new Event(ID_QUIT,NULL));
 
             menu_handler(ev,inm);
-            start.GetTime();
+            t.Get();
 
             wm->flush_screen();
         }
@@ -668,10 +664,10 @@ void main_menu()
             Timer tmp; tmp.Wait(0.03f);
         }
 
-        if (new_time.DiffTime(&start)>10)
+        if (t.Poll() > 10.0)
         {
             if (volume_window)
-                start.GetTime();
+                t.Get();
             else
             {
                 if (!current_demo)
@@ -703,7 +699,7 @@ void main_menu()
                 else
                 {
                     ev.type=EV_SPURIOUS;
-                    start.GetTime();
+                    t.Get();
                 }
             }
         }

@@ -25,7 +25,7 @@ libimlib_a_SOURCES = \
     jwindow.cpp jwindow.h \
     video.cpp video.h \
     event.cpp event.h \
-    timing.h jdir.h visobj.h \
+    jdir.h visobj.h \
     $(NULL)
 
 INCLUDES = -I$(srcdir) -I$(srcdir)/.. $(SDL_CFLAGS)

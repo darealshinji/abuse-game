@@ -122,8 +122,9 @@ int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *fo
 
 void director::wait(void *arg)
 {
-  if (scene_abort) return ;
-  pan_time=frame_time=text_time=NULL;
+  if (scene_abort)
+    return;
+  pan_time = text_time = nullptr;
   int done=0;
   LSymbol *pan_symbol = LSymbol::FindOrCreate("pan"),
              *text_symbol = LSymbol::FindOrCreate("text");
@@ -133,22 +134,21 @@ void director::wait(void *arg)
   do
   {
     the_game->draw_map(the_game->first_view);
-    TimeMarker cur_time;
 
     if (pan_steps)
     {
       if (pan_time)
       {
-    if ((int)(cur_time.DiffTime(pan_time)*1000)>pan_speed)
+    if ((int)(pan_time->Poll() * 1000) > pan_speed)
     {
       the_game->pan(pan_xv,pan_yv);
       pan_steps--;
       delete pan_time;
       if (pan_steps)
-          pan_time=new TimeMarker;
+          pan_time = new Timer;
       else pan_time=NULL;
     }
-      } else pan_time=new TimeMarker;
+      } else pan_time=new Timer;
     } else if (arg==pan_symbol) done=1;
 
     if (text)
@@ -164,16 +164,16 @@ void director::wait(void *arg)
         text=NULL;
       if (text_time)
       {
-    if ((int)(cur_time.DiffTime(text_time)*1000)>scroll_speed)
+    if ((int)(text_time->Poll() * 1000) > scroll_speed)
     {
       text_y+=text_step;
       delete text_time;
       if (text)
-        text_time=new TimeMarker;
+        text_time=new Timer;
       else
         text_time=NULL;
     }
-      } else text_time=new TimeMarker;
+      } else text_time=new Timer;
     } else if (arg==text_symbol) done=1;
 
     wm->flush_screen();
@@ -208,7 +208,6 @@ void director::wait(void *arg)
     }
   } while (!done);
   if (pan_time) delete pan_time;
-  if (frame_time) delete frame_time;
   if (text_time) delete text_time;
 }
 

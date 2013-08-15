@@ -20,7 +20,6 @@
 #include "image.h"
 #include "video.h"
 #include "palette.h"
-#include "timing.h"
 #include "specs.h"
 #include "dprint.h"
 #include "filter.h"

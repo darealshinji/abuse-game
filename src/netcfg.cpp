@@ -19,7 +19,6 @@
 #include "netcfg.h"
 #include "input.h"
 #include "cache.h"
-#include "timing.h"
 #include "light.h"
 
 #include "dev.h"
@@ -478,7 +477,8 @@ int net_configuration::input()   // pulls up dialog box and input fileds
     enum { MAX_GAMES=9 };
     net_address *game_addr[MAX_GAMES+1];
     int join_game=-1;
-    TimeMarker start,now;
+
+    Timer t;
 
     do
     {
@@ -517,10 +517,9 @@ int net_configuration::input()   // pulls up dialog box and input fileds
       wm->flush_screen();
       char name[256];
 
-      now.GetTime();
-      if (total_games<MAX_GAMES && now.DiffTime(&start)>0.5)
+      if (total_games<MAX_GAMES && t.Poll() > 0.5)
       {
-        start.GetTime();
+        t.Get();
         net_address *find=prot->find_address(0x9090,name);    // was server_port
         if (find)
         {
@@ -544,10 +543,9 @@ int net_configuration::input()   // pulls up dialog box and input fileds
       if (get_options(0))
       {
         int still_there=1;  // change this back to 0, to check if games are stil alive
-        TimeMarker start,now;
+        Timer t2;
         do
         {
-          now.GetTime();
           char name[256];
           net_address *find=prot->find_address(0x9090,name);  // was server_port
           if (find)
@@ -557,7 +555,7 @@ int net_configuration::input()   // pulls up dialog box and input fileds
             delete find;
           }
 
-        } while (now.DiffTime(&start)<3 && !still_there);
+        } while (t.Poll() < 3.0 && !still_there);
 
         if (still_there)
         {
