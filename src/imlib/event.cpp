@@ -80,25 +80,12 @@ EventHandler::~EventHandler()
 void EventHandler::Get(Event &ev)
 {
     // Sleep until there are events available
-    while(!m_pending)
-    {
-        Timer tmp;
+    for (Timer t; !m_pending; t.Wait(0.001))
         IsPending();
 
-        if (!m_pending)
-            tmp.Wait(0.001);
-    }
-
     // Return first queued event if applicable
-    Event *ep = (Event *)m_events.first();
-    if(ep)
-    {
-        ev = *ep;
-        m_events.unlink(ep);
-        delete ep;
-        m_pending = m_events.first() != NULL;
+    if (m_events.TryPop(ev))
         return;
-    }
 
     // Return an event from the platform-specific system
     SysEvent(ev);
