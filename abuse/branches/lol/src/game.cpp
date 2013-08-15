@@ -461,7 +461,7 @@ void Game::menu_select(Event &ev)
     if(top_menu)
     {
 #if 0
-        wm->Push(new Event(men_mess[((pick_list *)ev.message.data)->get_selection()], NULL));
+        wm->Push(Event(men_mess[((pick_list *)ev.message.data)->get_selection()], NULL));
         wm->close_window(top_menu);
         top_menu = NULL;
 #endif
@@ -1661,7 +1661,7 @@ void Game::get_input()
                                     } break;
                                     case 'v':
                                     {
-                                        wm->Push(new Event(DO_VOLUME, NULL));
+                                        wm->Push(Event(DO_VOLUME, NULL));
                                     } break;
                                     case 'p':
                                     {
@@ -1676,7 +1676,7 @@ void Game::get_input()
                                     {
                                         if(start_edit)
                                         {
-                                            wm->Push(new Event(ID_LEVEL_SAVE, NULL));
+                                            wm->Push(Event(ID_LEVEL_SAVE, NULL));
                                         }
                                     } break;
                                     case JK_TAB:

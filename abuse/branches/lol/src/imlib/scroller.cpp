@@ -432,7 +432,7 @@ void pick_list::handle_inside_event(Event &ev, image *screen, InputManager *inm)
     if (sel<t && sel>=0)
     {
       if (sel==cur_sel)
-      wm->Push(new Event(id,(char *)this));
+      wm->Push(Event(id, (char *)this));
       else
       {
     cur_sel=sel;
@@ -440,7 +440,7 @@ void pick_list::handle_inside_event(Event &ev, image *screen, InputManager *inm)
       }
     }
   } else if (ev.type==EV_KEY && ev.key==JK_ENTER)
-    wm->Push(new Event(id,(char *)this));
+    wm->Push(Event(id, (char *)this));
   else if (ev.type==EV_KEY)
   {
     int found=-1;

@@ -1976,7 +1976,7 @@ void dev_controll::handle_event(Event &ev)
       char cmd[100];
       sprintf(cmd,"load %s",mess_win->read(ID_MESS_STR1));
       dev_cont->do_command(cmd,ev);
-      wm->Push(new Event(ID_CANCEL,NULL));        // close window
+      wm->Push(Event(ID_CANCEL, NULL));        // close window
     } break;
     case ID_GAME_SAVE :
     {
@@ -2013,8 +2013,8 @@ void dev_controll::handle_event(Event &ev)
       if (g_current_level)
       {
         g_current_level->set_name(mess_win->read(ID_MESS_STR1));
-        wm->Push(new Event(ID_CANCEL,NULL));        // close window after save
-        wm->Push(new Event(ID_LEVEL_SAVE,NULL));
+        wm->Push(Event(ID_CANCEL, NULL));        // close window after save
+        wm->Push(Event(ID_LEVEL_SAVE, NULL));
       }
     } break;
     case ID_EDIT_SAVE :
@@ -2054,7 +2054,7 @@ void dev_controll::handle_event(Event &ev)
     } break;
     case ID_LEVEL_NEW_OK :
     {
-      wm->Push(new Event(ID_CANCEL,NULL));  // close_window
+      wm->Push(Event(ID_CANCEL, NULL));  // close_window
       if (g_current_level)
         delete g_current_level;
       g_current_level=new Level(100,100,"untitled.spe");
@@ -2080,7 +2080,7 @@ void dev_controll::handle_event(Event &ev)
         g_current_level->set_size(atoi(mess_win->read(ID_MESS_STR1)),
                     atoi(mess_win->read(ID_MESS_STR2)));
       } else the_game->show_help("Create a level first!");
-      wm->Push(new Event(ID_CANCEL,NULL));  // close_window
+      wm->Push(Event(ID_CANCEL, NULL));  // close_window
     } break;
 
     case ID_SUSPEND :
@@ -2128,7 +2128,7 @@ void dev_controll::handle_event(Event &ev)
         case ID_RECORD_DEMO_OK :
     {
       demo_man.set_state(demo_manager::RECORDING,mess_win->read(ID_RECORD_DEMO_FILENAME));
-      wm->Push(new Event(ID_CANCEL,NULL));        // close window
+      wm->Push(Event(ID_CANCEL, NULL));        // close window
     } break;
 
     case ID_PLAY_DEMO :
@@ -2186,12 +2186,12 @@ void dev_controll::handle_event(Event &ev)
                       new button(40,h*4,ID_WARN_CANCEL,symbol_str("cancel_button"),NULL))),
                     symbol_str("WARNING"));
         wm->grab_focus(warn_win);
-      } else wm->Push(new Event(ID_SET_SCROLL_OK,NULL));
+      } else wm->Push(Event(ID_SET_SCROLL_OK, NULL));
     } break;
     case ID_WARN_CANCEL :
     {
       wm->close_window(warn_win); warn_win=NULL;
-      wm->Push(new Event(ID_CANCEL,NULL));
+      wm->Push(Event(ID_CANCEL, NULL));
     } break;
     case ID_SET_SCROLL_OK :
     {
@@ -2200,7 +2200,7 @@ void dev_controll::handle_event(Event &ev)
       bg_xdiv=atoi(mess_win->read(ID_MESS_STR2));
       bg_ymul=atoi(mess_win->read(ID_MESS_STR3));
       bg_ydiv=atoi(mess_win->read(ID_MESS_STR4));
-      wm->Push(new Event(ID_CANCEL,NULL));        // close window
+      wm->Push(Event(ID_CANCEL, NULL));        // close window
     } break;
 
     case ID_CENTER_PLAYER :
@@ -2239,7 +2239,7 @@ void dev_controll::handle_event(Event &ev)
           atoi(mess_win->read(ID_MESS_STR2)));
       char const *s=name;
       LObject::Compile(s)->Eval();
-      wm->Push(new Event(ID_CANCEL,NULL));        // close window
+      wm->Push(Event(ID_CANCEL, NULL));        // close window
     } break;
     case ID_TOGGLE_DELAY :
     {
@@ -2688,7 +2688,7 @@ void dev_controll::handle_event(Event &ev)
       case 'a' : toggle_toolbar(); break;
       case 'A' : { if (selected_object)
                {
-             if (oedit) wm->Push(new Event(DEV_OEDIT_OK,NULL));
+             if (oedit) wm->Push(Event(DEV_OEDIT_OK, NULL));
              make_ai_window(selected_object);
                }
              } break;
@@ -2753,7 +2753,7 @@ void dev_controll::handle_event(Event &ev)
           if (selected_object && selected_object->m_controller == nullptr)
           {
               copy_object = selected_object;
-              wm->Push(new Event(DEV_OEDIT_COPY,NULL));
+              wm->Push(Event(DEV_OEDIT_COPY, NULL));
           }
           break;
 

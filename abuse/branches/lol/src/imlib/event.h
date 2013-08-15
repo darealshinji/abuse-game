@@ -31,7 +31,7 @@
 
 class Jwindow;
 
-class Event : public linked_node
+class Event
 {
 public:
     Event()
@@ -63,9 +63,10 @@ public:
     EventHandler(image *screen, Palette *pal);
     ~EventHandler();
 
-    void Push(Event *ev)
+    void Push(Event const &ev)
     {
-        m_events.add_end(ev);
+        /* Don’t really care about losing events */
+        m_events.TryPush(ev);
     }
 
     void SysInit();
@@ -90,7 +91,7 @@ public:
     }
 
 private:
-    linked_list m_events;
+    Queue<Event, 256> m_events;
     int m_pending, last_key;
 
     image *m_screen;

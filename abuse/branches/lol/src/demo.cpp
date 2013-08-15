@@ -208,7 +208,7 @@ int demo_manager::set_state(demo_state new_state, char *filename)
       delete record_file;
       l_difficulty = initial_difficulty;
       the_game->set_state(MENU_STATE);
-      wm->Push(new Event(ID_NULL,NULL));
+      wm->Push(Event(ID_NULL, NULL));
 
       view *v=player_list;
       for (; v; v=v->next)  // reset all the players

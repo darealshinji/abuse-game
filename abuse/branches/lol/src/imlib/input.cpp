@@ -288,7 +288,7 @@ void text_field::handle_event(Event &ev, image *screen, InputManager *im)
            data[strlen(format)-1]=' ';
            draw_text(screen);
            draw_cur(wm->bright_color(),screen);
-           wm->Push(new Event(id,(char *)this));
+           wm->Push(Event(id, (char *)this));
          } break;
       default : if (ev.key>=' ' && ev.key<='~')
          {
@@ -301,7 +301,7 @@ void text_field::handle_event(Event &ev, image *screen, InputManager *im)
        data[strlen(format)]=0;
            draw_text(screen);
            draw_cur(wm->bright_color(),screen);
-           wm->Push(new Event(id,(char *)this));
+           wm->Push(Event(id, (char *)this));
          } break;
     }
   }
@@ -373,7 +373,7 @@ void button::handle_event(Event &ev, image *screen, InputManager *im)
     up=!up;
     draw_first(screen);
     draw(act,screen);
-    wm->Push(new Event(id,(char *)this));
+    wm->Push(Event(id, (char *)this));
   }
 }
 
@@ -382,7 +382,7 @@ void button::draw(int active, image *screen)
   int x1,y1,x2,y2,color=(active ? wm->bright_color() : wm->medium_color());
   area(x1,y1,x2,y2);
   if (active!=act  && act_id!=-1 && active)
-    wm->Push(new Event(act_id,NULL));
+    wm->Push(Event(act_id, NULL));
 
   if (pressed)
   {

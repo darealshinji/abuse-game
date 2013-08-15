@@ -473,7 +473,7 @@ void share_end()
   fade_out(16);
   wm->SetMouseShape(blank.copy(), ivec2(0, 0)); // don't show mouse
   show_sell(1);
-  wm->Push(new Event(ID_SHOW_SELL,NULL));
+  wm->Push(Event(ID_SHOW_SELL, NULL));
 }
 
 

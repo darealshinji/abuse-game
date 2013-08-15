@@ -92,14 +92,14 @@ void ico_button::draw(int active, image *screen)
     area(x1, y1, x2, y2);
 
     if (active != act && activate_id != -1 && active)
-        wm->Push(new Event(activate_id, NULL));
+        wm->Push(Event(activate_id, NULL));
 
     screen->PutImage(cache.img((up && !active) ? u :
                                (up && active) ? ua :
                                (!up && !active) ? d : da), ivec2(x1, y1));
 
     if (act != active && active && activate_id != -1)
-        wm->Push(new Event(activate_id, NULL));
+        wm->Push(Event(activate_id, NULL));
     act = active;
 
     if (active && key[0])
@@ -127,7 +127,7 @@ void ico_button::handle_event(Event &ev, image *screen, InputManager *im)
     area(x1,y1,x2,y2);
     up=!up;
     draw(act,screen);
-    wm->Push(new Event(id,(char *)this));
+    wm->Push(Event(id, (char *)this));
     if (S_BUTTON_PRESS_SND)
       cache.sfx(S_BUTTON_PRESS_SND)->play(sfx_volume);
   }
