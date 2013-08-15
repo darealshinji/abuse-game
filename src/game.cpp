@@ -405,7 +405,7 @@ void Game::set_state(int new_state)
     int old_state = state;
     state = new_state;
 
-    g_palette->load();    // restore old palette
+    g_palette->Load();    // restore old palette
 
     if(playing_state(state) &&  !(dev & EDIT_MODE))
         wm->SetMouseShape(cache.img(c_target)->copy(), ivec2(8));
@@ -1063,7 +1063,7 @@ template<int N> static void Fade(image *im, int steps)
         for (int j = 0; j < 256; j++)
             g_palette->SetColor(j, (u8vec3)((ivec3)tmp_pal->GetColor(j) * v / 256));
 
-        g_palette->load();
+        g_palette->Load();
         wm->flush_screen();
         frame.Wait(duration);
     }
@@ -1072,7 +1072,7 @@ template<int N> static void Fade(image *im, int steps)
     {
         main_screen->clear();
         wm->flush_screen();
-        tmp_pal->load();
+        tmp_pal->Load();
     }
     delete g_palette;
     g_palette = tmp_pal;
@@ -1145,7 +1145,7 @@ void do_title()
         }
 
         main_screen->clear();
-        g_palette->load();
+        g_palette->Load();
 
         int dx = (xres + 1) / 2 - gray->Size().x / 2, dy = (yres + 1) / 2 - gray->Size().y / 2;
         main_screen->PutImage(gray, ivec2(dx, dy));
@@ -1276,7 +1276,7 @@ Game::Game(int argc, char **argv)
   }
 
   CreateScreen(argc, argv);
-  g_palette->load();
+  g_palette->Load();
 
   recalc_local_view_space();   // now that we know what size the screen is...
 
@@ -2347,10 +2347,10 @@ public:
             m_screen->SetData(g_screen.Data());
         }
 
-        if (lastl)
+        if (Palette::LastLoaded())
         {
             m_palette->Bind();
-            m_palette->SetData(lastl->Data());
+            m_palette->SetData(Palette::LastLoaded()->Data());
         }
 
         m_shader->Bind();
@@ -2528,7 +2528,7 @@ int main(int argc, char *argv[])
     /* Initialise Lol Engine */
     System::Init(argc, argv);
 
-    Application app("Abuse", ivec2(640, 480), 60.0f);
+    Application app("Abuse", ivec2(800, 600), 60.0f);
     new DebugFps(5, 5);
     new AbuseGame(argc, argv);
     app.Run();

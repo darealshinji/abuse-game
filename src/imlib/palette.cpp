@@ -153,7 +153,9 @@ void Palette::defaults()
 
     if (m_colors.Count() == 256)
         for (int i = 0; i < m_colors.Count(); i++)
-            m_colors[i] = u8vec3(RED3(i), GREEN3(i), BLUE2(i));
+            m_colors[i] = u8vec3(((i >> 5) & 7) * 255 / 7,
+                                 ((i >> 2) & 7) * 255 / 7,
+                                 (i & 3) * 255 / 7);
     else if (m_colors.Count() == 16)
         for (int i = 0; i < m_colors.Count(); i++)
             m_colors[i] = u8vec3(255 - (i & 3),
@@ -188,8 +190,6 @@ void Palette::shift(int amount)
     }
 }
 
-
-
 void Palette::SetColor(int n, u8vec3 color)
 {
     m_colors[n] = color;
@@ -213,128 +213,6 @@ Palette::Palette(int number_colors)
     m_colors.Resize(number_colors);
     m_used.Resize(number_colors);
     defaults();
-}
-
-
-
-quant_node::~quant_node()
-{
-/*  if (!is_leaf())
-  { for (i=0; i<8; i++)
-      if (children[i])
-      {    delete children[i];
-    children[i]=NULL;
-      }
-  } */
-}
-
-
-/*void quant_node::prune()
-{
-  int t,r,g,b;
-  ASSERT(!is_leaf(),"Cannot prune a leaf!");
-  total(t,r,g,b);
-  red=r/t;
-  green=g/t;
-  blue=b/t;
-  be_childish();
-} */
-
-void quant_node::total(int &tnodes, int &tr, int &tg, int &tb)
-{
-  int i;
-  if (is_leaf())
-  { tnodes+=tot;
-    tr+=red*tot;
-    tg+=green*tot;
-    tb+=blue*tot;
-  }
-  else
-  { for (i=0; i<8; i++)
-      if (children[i])
-    children[i]->total(tnodes,tr,tg,tb);
-  }
-}
-
-quant_node::quant_node(int level, quant_node *dad,
-    unsigned char r, unsigned char g, unsigned char b)
-{
-    int i;
-    ASSERT(level <= 8, "Tree cannot have more than eight levels");
-
-    if (level == 8)
-        be_childish();
-    else
-        for (i=0; i<8; i++) children[i]=NULL;
-    padre = dad;
-    red = r; green = g; blue = b;
-    tot = 0;
-}
-
-quant_palette::quant_palette(int max_colors)
-{ root=NULL; nc=0; mx=max_colors; }
-
-void quant_palette::re_delete(quant_node *who, int lev)  // removes all children from memory
-{ int x;                                  // and recurses down
-  if (who)
-  {
-    if (!who->is_leaf())
-    { for (x=0; x<8; x++)
-    if (who->children[x])
-    {
-      ASSERT(lev < 8, "Levl > 7");
-      re_delete(who->children[x],lev+1);
-      level[lev].unlink(who->children[x]);
-      delete who->children[x];
-    }
-    }
-  }
-}
-
-void quant_palette::prune()
-{
-  int pruned,lev,x,r,g,b,t;
-  quant_node *p=NULL,*f=NULL;
-  for (pruned=0,lev=8; lev>1 && !pruned; lev--)
-  {
-    p=(quant_node *)level[lev-1].first();
-    if (p)
-    { do
-      {
-    f=p->father();
-    for (x=0; x<8 && !pruned; x++)
-      if (f->children[x])
-        if (f->children[x]->Next()!=p->Next())        // if this son is not me!
-        pruned=1;                   //  I have a brother! stop
-       p=(quant_node *)p->Next();
-      } while (p != level[lev-1].first() && !pruned);
-    }
-  }
-  ASSERT(lev > 0, "could not prune!");
-  t=0; r=0; g=0; b=0;
-  f->total(t,r,g,b);
-  if (t<=1)
-  {
-    t=0; r=0; g=0; b=0;
-    f->total(t,r,g,b);
-  }
-  ASSERT(t > 1, "Should be more colors");
-  printf("%d Pruned at level %d, r=%d, g=%d, b=%d, total nodes off = %d\n",nc,
-    lev,r/t,g/t,b/t,t);
-  f->set(r/t,g/t,b/t);
-  nc-=t;
-  nc++;
-  re_delete(f,lev);
-  f->be_childish();
-}
-
-quant_palette::~quant_palette()
-{
-  if (root)
-  {
-    re_delete(root,1);
-    delete root;
-  }
 }
 
 int Palette::FindBrightest(int all) const
@@ -377,7 +255,18 @@ int Palette::FindDarkest(int all, int noblack) const
     return bri;
 }
 
-Palette *last_loaded()
+void Palette::Load()
+{
+    // Force to only 256 colours.
+    // Shouldn't be needed, but best to be safe.
+    if (m_colors.Count() > 256)
+        m_colors.Resize(256);
+
+    delete lastl;
+    lastl = Copy();
+}
+
+Palette *Palette::LastLoaded()
 {
     return lastl;
 }

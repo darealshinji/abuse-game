@@ -143,25 +143,6 @@ void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
     }
 }
 
-//
-// load()
-// Set the palette
-//
-void Palette::load()
-{
-    // Force to only 256 colours.
-    // Shouldn't be needed, but best to be safe.
-    if (m_colors.Count() > 256)
-        m_colors.Resize(256);
-
-    if (lastl)
-        delete lastl;
-    lastl = Copy();
-
-    // Now redraw the surface
-    UpdateScreen();
-}
-
 // ---- support functions ----
 
 void UpdateScreen()

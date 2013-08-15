@@ -99,7 +99,7 @@ void gamma_correct(Palette *&pal, int force_menu)
         for(int i = 0; i < tc; i++)
             gray_pal->SetColor(i, u8vec3(i * 4));
 
-        gray_pal->load();
+        gray_pal->Load();
 
         int wm_bc = wm->bright_color(), wm_mc = wm->medium_color(), wm_dc = wm->dark_color();
 
@@ -190,5 +190,5 @@ void gamma_correct(Palette *&pal, int force_menu)
                                 lol::pow(old.b / 255.0, gamma) * 255));
     }
 
-    pal->load();
+    pal->Load();
 }
