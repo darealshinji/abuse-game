@@ -30,7 +30,6 @@
 #include "palette.h"
 #include "video.h"
 #include "event.h"
-#include "timing.h"
 #include "sprite.h"
 #include "game.h"
 

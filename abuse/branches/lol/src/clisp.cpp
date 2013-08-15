@@ -716,16 +716,15 @@ void *l_caller(long number, void *args)
     } break;
     case 17 :
     {
-      long trials=lnumber_value(CAR(args)->Eval());
-      args=CDR(args);
-      TimeMarker start;
-      for (int x=0; x<trials; x++)
+      long trials = lnumber_value(CAR(args)->Eval());
+      args = CDR(args);
+      Timer t;
+      for (int x = 0; x < trials; x++)
       {
-    LSpace::Tmp.Clear();
-    CAR(args)->Eval();
+        LSpace::Tmp.Clear();
+        CAR(args)->Eval();
       }
-      TimeMarker end;
-      return LFixedPoint::Create((long)(end.DiffTime(&start)*(1<<16)));
+      return LFixedPoint::Create((long)(t.Get() * (1 << 16)));
     } break;
     case 18 :
     { return LString::Create(object_names[current_object->otype]); } break;

@@ -16,7 +16,6 @@
 #include "specs.h"
 #include "nfserver.h"
 #include "dprint.h"
-#include "timing.h"
 #include "cache.h"
 #include "crc.h"
 

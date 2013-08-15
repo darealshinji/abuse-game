@@ -24,7 +24,6 @@
 
 #include "gserver.h"
 #include "netface.h"
-#include "timing.h"
 #include "netcfg.h"
 #include "id.h"
 #include "jwindow.h"
@@ -268,7 +267,7 @@ int game_server::process_net()
             fprintf(stderr,"(got data from %d)",found->client_id);
 
 //          fprintf(stderr,"(got packet %d)\n",use->tick_received());
-//          { TimeMarker now,start; while (now.DiffTime(&start)<5.0) now.GetTime(); }
+//          { Timer t; t.Wait(5.0); }
 
           if (base->input_state!=INPUT_RELOAD)
             add_client_input((char *)use->packet_data(),use->packet_size(),found);

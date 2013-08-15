@@ -26,7 +26,6 @@
 #include "gclient.h"
 #include "netface.h"
 #include "undrv.h"
-#include "timing.h"
 
 extern base_memory_struct *base;
 extern net_socket *comm_sock,*game_sock;
@@ -55,7 +54,7 @@ int game_client::process_server_command()
     net_packet *pack=&base->packet;
     game_sock->write(pack->data,pack->packet_size()+pack->packet_prefix_size(),server_data_port);
 
-    { TimeMarker now,start; while (now.DiffTime(&start)<3.0) now.GetTime(); }
+    { Timer t; t.Wait(3.0); }
       }
       return 1;
     } break;
@@ -128,7 +127,7 @@ int game_client::input_missing()
   net_packet *pack=&base->packet;
   game_sock->write(pack->data,pack->packet_size()+pack->packet_prefix_size(),server_data_port);
 //  fprintf(stderr,"2");
-//  { TimeMarker now,start; while (now.DiffTime(&start)<3.0) now.GetTime(); }
+//  { Timer t; t.Wait(3.0); }
 
 /*
   unsigned char pk[2]={ CLCMD_REQUEST_RESEND,base->packet.tick_received()};
@@ -148,7 +147,7 @@ void game_client::add_engine_input()
 //  data_sock->write(pack->data,pack->packet_size()+pack->packet_prefix_size());
 /*  fprintf(stderr,"(sending %d)\n",base->packet.tick_received());
 
-  { TimeMarker now,start; while (now.DiffTime(&start)<5.0) now.GetTime(); }  */
+    { Timer t; t.Wait(5.0); } */
 }
 
 

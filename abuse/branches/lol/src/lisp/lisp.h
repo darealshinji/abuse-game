@@ -14,10 +14,6 @@
 #include <cstdlib>
 #include <stdint.h>
 
-#ifdef L_PROFILE
-#include "timing.h"
-#endif
-
 #define Cell void
 #define MAX_LISP_TOKEN_LEN 200
 

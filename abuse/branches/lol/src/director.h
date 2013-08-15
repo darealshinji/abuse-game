@@ -11,15 +11,13 @@
 #ifndef __DIRECTOR_HPP_
 #define __DIRECTOR_HPP_
 
-#include "timing.h"
-
 class director        // the director controlls the scene
 {
   int tleft,ttop,tright,tbottom,text_y,text_step,
       pan_xv,pan_yv,pan_steps,
       frame_speed,scroll_speed,pan_speed,scene_abort;
   char *text;
-  TimeMarker *pan_time,*frame_time,*text_time;
+  Timer *pan_time, *text_time;
 public :
   void set_text_region(int left, int top, int right, int bottom)
   { tleft=left; ttop=top; tright=right; tbottom=bottom; }

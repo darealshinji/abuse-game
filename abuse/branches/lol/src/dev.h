@@ -14,7 +14,6 @@
 #include "game.h"
 #include "light.h"
 #include "console.h"
-#include "timing.h"
 
 /* Cleaned-up externs */
 extern int confirm_quit();
@@ -75,7 +74,7 @@ class dev_controll
   int total_pals;
   dev_state state;
   area_controller *current_area;
-  TimeMarker last_area_click;
+  Timer last_area_click;
 public :
   Jwindow *backw,*forew,*commandw,*modew,*omenu,*oedit,*ledit,
           *music_window,*pmenu,*show_menu,*lightw,*aiw,*ambw,*tbw,*area_win,

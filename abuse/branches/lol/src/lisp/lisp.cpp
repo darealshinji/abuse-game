@@ -1447,7 +1447,7 @@ LObject *LSymbol::EvalFunction(void *arg_list)
 #endif
 
 #ifdef L_PROFILE
-    TimeMarker start;
+    Timer t;
 #endif
 
     LObject *ret = NULL;
@@ -1493,8 +1493,7 @@ LObject *LSymbol::EvalFunction(void *arg_list)
     }
 
 #ifdef L_PROFILE
-    TimeMarker end;
-    time_taken += end.DiffTime(&start);
+    time_taken += t.Get();
 #endif
 
     return ret;
@@ -2965,7 +2964,7 @@ LObject *LSymbol::EvalUserFunction(LList *arg_list)
     }
 #endif
 #ifdef L_PROFILE
-    TimeMarker start;
+    Timer t;
 #endif
 
     LUserFunction *fun = (LUserFunction *)m_function;
@@ -3041,8 +3040,7 @@ LObject *LSymbol::EvalUserFunction(LList *arg_list)
     l_user_stack.m_size = stack_start;
 
 #ifdef L_PROFILE
-    TimeMarker end;
-    sym->time_taken += end.DiffTime(&start);
+    sym->time_taken += t.Get();
 #endif
 
     return ret;

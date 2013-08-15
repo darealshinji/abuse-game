@@ -408,17 +408,10 @@ int GameObject::decide()
     current_object=this;
     void *m = LSpace::Tmp.Mark();
 
-    TimeMarker *prof1=NULL;
-    if (profiling())
-      prof1=new TimeMarker;
-
+    Timer t;
     LObject *ret = ((LSymbol *)figures[otype]->get_fun(OFUN_AI))->EvalFunction(NULL);
     if (profiling())
-    {
-      TimeMarker now;
-      profile_add_time(this->otype,now.DiffTime(prof1));
-      delete prof1;
-    }
+      profile_add_time(this->otype, t.Get());
 
     LSpace::Tmp.Restore(m);
 
@@ -512,17 +505,10 @@ void GameObject::do_damage(int amount, GameObject *from, int32_t hitx, int32_t h
     frm->m_cdr = hx;
     am->m_cdr = frm;
 
-    TimeMarker *prof1 = NULL;
-    if (profiling())
-      prof1 = new TimeMarker;
-
+    Timer t;
     ((LSymbol *)d)->EvalUserFunction(am);
     if (profiling())
-    {
-      TimeMarker now;
-      profile_add_time(this->otype, now.DiffTime(prof1));
-      delete prof1;
-    }
+      profile_add_time(this->otype, t.Get());
 
     LSpace::Tmp.Restore(m);
 
@@ -622,17 +608,11 @@ void GameObject::draw()
     current_object=this;
 
     void *m = LSpace::Tmp.Mark();
-    TimeMarker *prof1=NULL;
-    if (profiling())
-      prof1=new TimeMarker;
 
+    Timer t;
     ((LSymbol *)figures[otype]->get_fun(OFUN_DRAW))->EvalFunction(NULL);
     if (profiling())
-    {
-      TimeMarker now;
-      profile_add_time(this->otype,now.DiffTime(prof1));
-      delete prof1;
-    }
+      profile_add_time(this->otype, t.Get());
 
     LSpace::Tmp.Restore(m);
 
@@ -647,17 +627,11 @@ void GameObject::map_draw()
     current_object=this;
 
     void *m = LSpace::Tmp.Mark();
-    TimeMarker *prof1=NULL;
-    if (profiling())
-      prof1=new TimeMarker;
 
+    Timer t;
     ((LSymbol *)figures[otype]->get_fun(OFUN_MAP_DRAW))->EvalFunction(NULL);
     if (profiling())
-    {
-      TimeMarker now;
-      profile_add_time(this->otype,now.DiffTime(prof1));
-      delete prof1;
-    }
+      profile_add_time(this->otype, t.Get());
 
     LSpace::Tmp.Restore(m);
   }
@@ -1144,17 +1118,10 @@ GameObject *create(int type, int32_t x, int32_t y, int skip_constructor, int ait
 
     void *m = LSpace::Tmp.Mark();
 
-    TimeMarker *prof1=NULL;
-    if (profiling())
-      prof1=new TimeMarker;
-
+    Timer t;
     ((LSymbol *)figures[type]->get_fun(OFUN_CONSTRUCTOR))->EvalFunction(NULL);
     if (profiling())
-    {
-      TimeMarker now;
-      profile_add_time(type,now.DiffTime(prof1));
-      delete prof1;
-    }
+      profile_add_time(type, t.Get());
 
     LSpace::Tmp.Restore(m);
     current_object = o;
@@ -1206,17 +1173,10 @@ int GameObject::move(int cx, int cy, int button)
 
     void *m = LSpace::Tmp.Mark();
 
-    TimeMarker *prof1 = NULL;
-    if (profiling())
-      prof1=new TimeMarker;
-
+    Timer t;
     LObject *r = ((LSymbol *)figures[otype]->get_fun(OFUN_MOVER))->EvalFunction(lcx);
     if (profiling())
-    {
-      TimeMarker now;
-      profile_add_time(this->otype,now.DiffTime(prof1));
-      delete prof1;
-    }
+      profile_add_time(this->otype, t.Get());
 
     LSpace::Tmp.Restore(m);
 
@@ -1543,19 +1503,10 @@ void GameObject::change_aitype(int new_type)
       GameObject *o=current_object;
       current_object=(GameObject *)this;
 
-      TimeMarker *prof1=NULL;
-      if (profiling())
-        prof1=new TimeMarker;
-
+      Timer t;
       ((LSymbol *)f)->EvalUserFunction(NULL);
-
       if (profiling())
-      {
-    TimeMarker now;
-    profile_add_time(this->otype,now.DiffTime(prof1));
-    delete prof1;
-      }
-
+          profile_add_time(this->otype, t.Get());
 
       current_object=o;
     }
@@ -1587,17 +1538,10 @@ void GameObject::change_type(int new_type)
 
     void *m = LSpace::Tmp.Mark();
 
-    TimeMarker *prof1=NULL;
-    if (profiling())
-      prof1=new TimeMarker;
-
+    Timer t;
     ((LSymbol *)figures[new_type]->get_fun(OFUN_CONSTRUCTOR))->EvalFunction(NULL);
     if (profiling())
-    {
-      TimeMarker now;
-      profile_add_time(otype,now.DiffTime(prof1));
-      delete prof1;
-    }
+      profile_add_time(otype, t.Get());
 
     LSpace::Tmp.Restore(m);
     current_object = o;
