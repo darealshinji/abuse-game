@@ -122,7 +122,7 @@ void demo_manager::do_inputs()
         ivec2 mouse = the_game->GameToMouse(ivec2(player_list->pointer_x,
                                                   player_list->pointer_y),
                                             player_list);
-        wm->SetMousePos((small_render ? 2 : 1) * mouse);
+        wm->SetMousePos(mouse);
       }
       else
       {

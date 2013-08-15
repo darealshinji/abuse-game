@@ -40,7 +40,7 @@
 
 #define make_above_tile(x) ((x)|0x4000)
 char backw_on=0,forew_on=0,show_menu_on=0,ledit_on=0,pmenu_on=0,omenu_on=0,commandw_on=0,tbw_on=0,
-     searchw_on=0,small_render_on=0,interpolate_draw=0,disable_autolight=0,fps_on=0,profile_on=0,
+     searchw_on=0,interpolate_draw=0,disable_autolight=0,fps_on=0,profile_on=0,
      show_names=0,fg_reversed=0,
      raise_all;
 
@@ -92,10 +92,8 @@ Jwindow *mess_win=NULL,*warn_win=NULL;
 
 GameObject *edit_object;
 dev_controll *dev_cont=NULL;
-image *small_render=NULL;
 
 ivec2 dlast;
-int scale_mult,scale_div;
 int last_created_type=-1;
 char level_file[100]="levels/level00.spe";
 
@@ -232,20 +230,7 @@ static void single_render()
     // enlarge clip area
     view *v = the_game->first_view;
     v->m_bb = v->m_aa + 2 * (v->m_bb - v->m_aa + ivec2(1));
-    delete small_render;
-    small_render = NULL;
-    small_render_on = 0;
 }
-
-static void double_render()
-{
-    // reduce clip area
-    view *v = the_game->first_view;
-    v->m_bb = v->m_aa + (v->m_bb - v->m_aa + ivec2(1)) / 2;
-    small_render = new image(v->m_bb - v->m_aa + ivec2(1), NULL, 2);
-    small_render_on = 1;
-}
-
 
 void dev_controll::search_forward()
 {
@@ -816,7 +801,7 @@ void dev_controll::toggle_search_window()
     searchw_on = 0;
 }
 
-int open_owin=0,open_fwin=0,open_bwin=0,start_edit=0,start_nodelay=0,start_doubled=0,start_mem=0;
+int open_owin=0,open_fwin=0,open_bwin=0,start_edit=0,start_nodelay=0,start_mem=0;
 
 
 int get_option(char const *name);
@@ -824,8 +809,6 @@ int get_option(char const *name);
 
 void dev_init(int argc, char **argv)
 {
-  scale_mult=1;
-  scale_div=1;
   dev=0;
   int i;
   prop=new property_manager;
@@ -839,11 +822,6 @@ void dev_init(int argc, char **argv)
       start_edit=1;
       start_running=1;
       disable_autolight=1;
-      if (get_option("-2"))
-      {
-        printf("%s\n",symbol_str("no2"));
-        exit(0);
-      }
     }
     else if (!strcmp(argv[i],"-fwin"))
       open_fwin=1;
@@ -855,20 +833,12 @@ void dev_init(int argc, char **argv)
       open_owin=1;
     else if (!strcmp(argv[i],"-nodelay"))
       start_nodelay=1;
-// AK : NOTE: Commented this out as it causes a conflict
-/*    else if (!strcmp(argv[i],"-scale"))
-    {
-      i++;
-      scale_mult=atoi(argv[i++]);
-      scale_div=atoi(argv[i]);
-    }*/
     else if (!strcmp(argv[i],"-f"))
     {
       i++;
       strncpy(level_file, argv[i], sizeof(level_file) - 1);
       level_file[sizeof(level_file) - 1] = '\0';
-    } else if (!strcmp(argv[i],"-2"))
-      start_doubled=1;
+    }
     else if (!strcmp(argv[i],"-demo"))
       demo_start=1;
 
@@ -946,13 +916,6 @@ dev_controll::dev_controll()
 
   if (get_option("-nolight"))
     dev=dev^DRAW_LIGHTS;
-}
-
-
-void dev_controll::set_state(int new_state)
-{
-  if (start_doubled && new_state==RUN_STATE && !small_render)
-    double_render();
 }
 
 void dev_controll::load_stuff()
@@ -1976,10 +1939,7 @@ void dev_controll::handle_event(Event &ev)
     } break;
 /*    case ID_ENLARGE_RENDER :
     {
-      if (!small_render)
-        double_render();
-      else
-        single_render();
+      single_render();
 
       view_shift_disabled=!view_shift_disabled;
     } break; */
