@@ -12,14 +12,13 @@
 #define _IMAGE_HPP_
 
 #include <stdlib.h>
-#include "linked.h"
 #include "palette.h"
 #include "specs.h"
 #define MAX_DIRTY 200
 
 void image_init();
 void image_uninit();
-extern linked_list image_list;
+extern Array<class AImage *> image_list;
 
 class ADirtyRect
 {
@@ -28,14 +27,9 @@ public :
 
     ADirtyRect(ivec2 aa, ivec2 bb)
     {
+        ASSERT(bb >= aa);
         m_aa = aa;
         m_bb = bb;
-        if (!(bb >= aa))
-            printf("add incorrect dirty\n");
-    }
-    virtual int compare(void *n1)
-    {
-        return ((ADirtyRect *)n1)->m_aa.y > m_aa.y;
     }
 
     ivec2 m_aa, m_bb;
@@ -89,13 +83,13 @@ public:
         m_bb = size;
     }
 
-    Array<ADirtyRect> m_dirties; /* Is private because of update_dirties() */
+    Array<ADirtyRect> m_dirties; /* Is public because of update_dirties() */
 
 private:
     ivec2 m_size, m_aa, m_bb;
 };
 
-class AImage : public linked_node
+class AImage
 {
 public:
     AImage(bFILE *fp, SpecEntry *e = NULL);

@@ -19,7 +19,7 @@
 
 #include "image.h"
 
-linked_list image_list; // FIXME: only jwindow.cpp needs this
+Array<AImage *> image_list; // FIXME: only jwindow.cpp needs this
 
 image_descriptor::image_descriptor(ivec2 size, int keep_dirties)
 {
@@ -38,7 +38,10 @@ void AImage::SetSize(ivec2 size)
 
 AImage::~AImage()
 {
-    image_list.unlink(this);
+    for (int i = image_list.Count(); i--; )
+        if (image_list[i] == this)
+            image_list.RemoveSwap(i);
+
     delete m_special;
 }
 
@@ -69,7 +72,7 @@ AImage::AImage(ivec2 size, int create_descriptor)
     m_data.Resize(m_size.x * m_size.y);
     if (create_descriptor)
         m_special = new image_descriptor(size, create_descriptor == 2);
-    image_list.add_end(this);
+    image_list.Push(this);
 }
 
 AImage::AImage(bFILE *fp, SpecEntry *e /* = NULL */)
@@ -82,17 +85,13 @@ AImage::AImage(bFILE *fp, SpecEntry *e /* = NULL */)
     m_data.Resize(m_size.x * m_size.y);
     for (int i = 0; i < m_size.y; i++)
         fp->read(scan_line(i), m_size.x);
-    image_list.add_end(this);
+    image_list.Push(this);
 }
 
 void image_uninit()
 {
-    while (image_list.first())
-    {
-        AImage *im = (AImage *)image_list.first();
-        image_list.unlink(im);
-        delete im;
-    }
+    while (image_list.Count())
+        delete image_list[0];
 }
 
 

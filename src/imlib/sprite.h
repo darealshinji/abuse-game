@@ -12,9 +12,8 @@
 #define __SPRITE_HPP
 
 #include "image.h"
-#include "linked.h"
 
-class ASprite : public linked_node
+class ASprite
 {
 public:
     ASprite(AImage *screen, AImage *visual, ivec2 pos);

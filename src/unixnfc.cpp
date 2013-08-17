@@ -537,7 +537,7 @@ int get_inputs_from_server(unsigned char *buf)
 
     int total_retry=0;
     Jwindow *abort=NULL;
-    linked_list input;
+    Array<Event> input;
     while (base->input_state!=INPUT_PROCESSING)
     {
       if (!net_installed)
@@ -579,9 +579,7 @@ int get_inputs_from_server(unsigned char *buf)
         kill_slackers();
         else if (ev.type!=EV_MOUSE_MOVE)  // no need to save mouse move events (likely to be a lot)
         {
-          event *e=new event;
-          *e=ev;
-          input.add_front(e);
+          input.Push(ev);
         }
       } while (wm->event_waiting());
 
@@ -593,12 +591,8 @@ int get_inputs_from_server(unsigned char *buf)
     if (abort)
     {
       wm->close_window(abort);
-      while (input.first())               // push all the key events
-      {
-    event *ev=(event *)input.first();
-    input.unlink(ev);
-    wm->push_event(ev);
-      }
+      while (input.Count())               // push all the key events
+        wm->push_event(input.Pop());
     }
   }
 

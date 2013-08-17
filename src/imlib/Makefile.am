@@ -5,7 +5,6 @@ libimlib_a_SOURCES = \
     filter.cpp filter.h \
     image.cpp image.h \
     transimage.cpp transimage.h \
-    linked.cpp linked.h \
     input.cpp input.h \
     palette.cpp palette.h \
     include.cpp include.h \

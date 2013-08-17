@@ -11,10 +11,9 @@
 #ifndef _PALETTE_H_
 #define _PALETTE_H_
 
-#include "linked.h"
 #include "specs.h"
 
-class Palette : public linked_node
+class Palette
 {
 public:
     Palette(int number_colors=256);
