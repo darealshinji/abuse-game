@@ -21,10 +21,12 @@ void image_init();
 void image_uninit();
 extern linked_list image_list;
 
-class dirty_rect : public linked_node
+class ADirtyRect
 {
 public :
-    dirty_rect(ivec2 aa, ivec2 bb)
+    inline ADirtyRect() {}
+
+    ADirtyRect(ivec2 aa, ivec2 bb)
     {
         m_aa = aa;
         m_bb = bb;
@@ -33,7 +35,7 @@ public :
     }
     virtual int compare(void *n1)
     {
-        return ((dirty_rect *)n1)->m_aa.y > m_aa.y;
+        return ((ADirtyRect *)n1)->m_aa.y > m_aa.y;
     }
 
     ivec2 m_aa, m_bb;
@@ -41,10 +43,11 @@ public :
 
 class image_descriptor
 {
+    friend class AImage;
+
 public:
     uint8_t keep_dirt;
 
-    linked_list dirties;
     void *extended_descriptor;
 
     image_descriptor(ivec2 size, int keep_dirties = 1);
@@ -56,7 +59,6 @@ public:
     inline int y1_clip() { return m_aa.y; }
     inline int x2_clip() { return m_bb.x; }
     inline int y2_clip() { return m_bb.y; }
-    void ClearDirties();
     void GetClip(ivec2 &aa, ivec2 &bb)
     {
         aa = m_aa; bb = m_bb;
@@ -86,6 +88,8 @@ public:
         m_aa = ivec2(0);
         m_bb = size;
     }
+
+    Array<ADirtyRect> m_dirties; /* Is private because of update_dirties() */
 
 private:
     ivec2 m_size, m_aa, m_bb;
@@ -153,11 +157,7 @@ public:
     }
     void DeleteDirty(ivec2 aa, ivec2 bb)
     {
-        if(m_special) m_special->DeleteDirty(aa, bb);
-    }
-    void ClearDirties()
-    {
-        if (m_special) m_special->ClearDirties();
+        if (m_special) m_special->DeleteDirty(aa, bb);
     }
     void dither(Palette *pal); // use a b&w palette!
     void Scale(ivec2 size);

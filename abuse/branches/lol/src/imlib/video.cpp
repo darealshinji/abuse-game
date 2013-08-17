@@ -30,19 +30,16 @@ void update_dirty(AImage *im, int xoff, int yoff)
     }
     else
     {
-        int count = im->m_special->dirties.Count();
-        dirty_rect *dr = (dirty_rect *)(im->m_special->dirties.first());
-        while (count > 0)
+        for (int i = 0; i < im->m_special->m_dirties.Count(); ++i)
         {
-            put_part_image(im, xoff + dr->m_aa.x, yoff + dr->m_aa.y,
-                           dr->m_aa.x, dr->m_aa.y,
-                           dr->m_bb.x + 1, dr->m_bb.y + 1);
-            dirty_rect *tmp = dr;
-            dr = (dirty_rect *)(dr->Next());
-            im->m_special->dirties.unlink(tmp);
-            delete tmp;
-            count--;
+            ADirtyRect &rect = im->m_special->m_dirties[i];
+
+            put_part_image(im, xoff + rect.m_aa.x, yoff + rect.m_aa.y,
+                           rect.m_aa.x, rect.m_aa.y,
+                           rect.m_bb.x + 1, rect.m_bb.y + 1);
         }
+
+        im->m_special->m_dirties.Resize(0);
     }
 
     UpdateScreen();
