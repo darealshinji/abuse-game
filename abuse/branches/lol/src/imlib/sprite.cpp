@@ -19,7 +19,6 @@
 #include "video.h"
 #include "image.h"
 #include "palette.h"
-#include "linked.h"
 #include "sprite.h"
 
 ASprite::ASprite(AImage *screen, AImage *visual, ivec2 pos)

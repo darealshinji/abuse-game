@@ -410,9 +410,9 @@ Jwindow::Jwindow(ivec2 pos, ivec2 size, ifield *f, char const *name)
     if(size.y == -1)
         m_size.y = lol::max(m_size.y, top_border() + bottom_border());
     m_surf = new AImage(m_size, 2);
-    m_surf->clear(backg);
     // Keep this from getting destroyed when image list is cleared
-    image_list.unlink(m_surf);
+    image_list.Pop();
+    m_surf->clear(backg);
     inm->m_surf = m_surf;
 
     next = nullptr;

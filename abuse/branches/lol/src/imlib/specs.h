@@ -17,8 +17,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "linked.h"
-
 extern char const *spec_types[];
 
 enum
