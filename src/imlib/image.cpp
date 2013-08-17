@@ -329,24 +329,21 @@ void AImage::InClip(int x1, int y1, int x2, int y2)
 //
 void image_descriptor::ReduceDirties()
 {
-    ivec2 aa(6000), bb(-1);
-
-    for (dirty_rect *p = (dirty_rect *)dirties.first(); p; )
+    if (m_dirties.Count())
     {
-        aa = lol::min(aa, p->m_aa);
-        bb = lol::max(bb, p->m_bb);
-        dirty_rect *tmp = (dirty_rect *)p->Next();
-        dirties.unlink(p);
-        delete p;
-        p = tmp;
+        for (int i = 1; i < m_dirties.Count(); ++i)
+        {
+            m_dirties[0].m_aa = lol::min(m_dirties[0].m_aa, m_dirties[i].m_aa);
+            m_dirties[0].m_bb = lol::max(m_dirties[0].m_bb, m_dirties[i].m_bb);
+        }
+
+        m_dirties.Resize(1);
     }
-    dirties.add_front(new dirty_rect(aa, bb));
 }
 
 void image_descriptor::DeleteDirty(ivec2 aa, ivec2 bb)
 {
     int ax1, ay1, ax2, ay2;
-    dirty_rect *p, *next;
 
     if (!keep_dirt)
         return;
@@ -357,90 +354,83 @@ void image_descriptor::DeleteDirty(ivec2 aa, ivec2 bb)
     if (!(aa < bb))
         return;
 
-    int i = dirties.Count();
-    if (!i)
-        return;
-
-    for (p = (dirty_rect *)dirties.first(); i; i--, p = next)
+    for (int i = m_dirties.Count(); i--; )
     {
-        next = (dirty_rect *)p->Next();
+        ADirtyRect &rect = m_dirties[i];
 
         // are the two touching?
-        if (!(bb > p->m_aa && aa <= p->m_bb))
+        if (!(bb > rect.m_aa && aa <= rect.m_bb))
             continue;
 
         // does it take a x slice off? (across)
-        if (bb.x >= p->m_bb.x + 1 && aa.x <= p->m_aa.x)
+        if (bb.x >= rect.m_bb.x + 1 && aa.x <= rect.m_aa.x)
         {
-            if (bb.y >= p->m_bb.y + 1 && aa.y <= p->m_aa.y)
-            {
-                dirties.unlink(p);
-                delete p;
-            }
-            else if (bb.y >= p->m_bb.y + 1)
-                p->m_bb.y = aa.y - 1;
-            else if (aa.y <= p->m_aa.y)
-                p->m_aa.y = bb.y;
+            if (bb.y >= rect.m_bb.y + 1 && aa.y <= rect.m_aa.y)
+                m_dirties.RemoveSwap(i);
+            else if (bb.y >= rect.m_bb.y + 1)
+                rect.m_bb.y = aa.y - 1;
+            else if (aa.y <= rect.m_aa.y)
+                rect.m_aa.y = bb.y;
             else
             {
-                dirties.add_front(new dirty_rect(p->m_aa, ivec2(p->m_bb.x, aa.y - 1)));
-                p->m_aa.y = bb.y;
+                m_dirties << ADirtyRect(rect.m_aa, ivec2(rect.m_bb.x, aa.y - 1));
+                rect.m_aa.y = bb.y;
             }
         }
         // does it take a y slice off (down)
-        else if (bb.y - 1 >= p->m_bb.y && aa.y <= p->m_aa.y)
+        else if (bb.y - 1 >= rect.m_bb.y && aa.y <= rect.m_aa.y)
         {
-            if (bb.x - 1 >= p->m_bb.x)
-                p->m_bb.x = aa.x - 1;
-            else if (aa.x <= p->m_aa.x)
-                p->m_aa.x = bb.x;
+            if (bb.x - 1 >= rect.m_bb.x)
+                rect.m_bb.x = aa.x - 1;
+            else if (aa.x <= rect.m_aa.x)
+                rect.m_aa.x = bb.x;
             else
             {
-                dirties.add_front(new dirty_rect(p->m_aa, ivec2(aa.x - 1, p->m_bb.y)));
-                p->m_aa.x = bb.x;
+                m_dirties << ADirtyRect(rect.m_aa, ivec2(aa.x - 1, rect.m_bb.y));
+                rect.m_aa.x = bb.x;
             }
         }
         // otherwise it just takes a little chunk off
         else
         {
-            if (bb.x - 1 >= p->m_bb.x) { ax1=p->m_aa.x; ax2 = aa.x; }
-            else if (aa.x<=p->m_aa.x) { ax1=bb.x; ax2=p->m_bb.x+1; }
-            else { ax1=p->m_aa.x; ax2=aa.x; }
+            if (bb.x - 1 >= rect.m_bb.x) { ax1=rect.m_aa.x; ax2 = aa.x; }
+            else if (aa.x<=rect.m_aa.x) { ax1=bb.x; ax2=rect.m_bb.x+1; }
+            else { ax1=rect.m_aa.x; ax2=aa.x; }
 
-            if (bb.y - 1>=p->m_bb.y) { ay1=aa.y; ay2=p->m_bb.y+1; }
-            else if (aa.y<=p->m_aa.y) { ay1=p->m_aa.y; ay2=bb.y; }
+            if (bb.y - 1>=rect.m_bb.y) { ay1=aa.y; ay2=rect.m_bb.y+1; }
+            else if (aa.y<=rect.m_aa.y) { ay1=rect.m_aa.y; ay2=bb.y; }
             else { ay1=aa.y; ay2=bb.y; }
 
-            dirties.add_front(new dirty_rect(ivec2(ax1, ay1), ivec2(ax2 - 1, ay2 - 1)));
+            m_dirties << ADirtyRect(ivec2(ax1, ay1), ivec2(ax2 - 1, ay2 - 1));
 
-            if (bb.x - 1>=p->m_bb.x || aa.x<=p->m_aa.x)  { ax1=p->m_aa.x; ax2=p->m_bb.x+1; }
-            else { ax1=bb.x; ax2=p->m_bb.x+1; }
+            if (bb.x - 1>=rect.m_bb.x || aa.x<=rect.m_aa.x)  { ax1=rect.m_aa.x; ax2=rect.m_bb.x+1; }
+            else { ax1=bb.x; ax2=rect.m_bb.x+1; }
 
-            if (bb.y - 1>=p->m_bb.y)
-            { if (ax1==p->m_aa.x) { ay1=p->m_aa.y; ay2=aa.y; }
-              else { ay1=aa.y; ay2=p->m_bb.y+1;   } }
-            else if (aa.y<=p->m_aa.y) { if (ax1==p->m_aa.x) { ay1=bb.y; ay2=p->m_bb.y+1; }
-                                        else  { ay1=p->m_aa.y; ay2=bb.y; } }
-            else { if (ax1==p->m_aa.x) { ay1=p->m_aa.y; ay2=aa.y; }
+            if (bb.y - 1>=rect.m_bb.y)
+            { if (ax1==rect.m_aa.x) { ay1=rect.m_aa.y; ay2=aa.y; }
+              else { ay1=aa.y; ay2=rect.m_bb.y+1;   } }
+            else if (aa.y<=rect.m_aa.y) { if (ax1==rect.m_aa.x) { ay1=bb.y; ay2=rect.m_bb.y+1; }
+                                        else  { ay1=rect.m_aa.y; ay2=bb.y; } }
+            else { if (ax1==rect.m_aa.x) { ay1=rect.m_aa.y; ay2=aa.y; }
                    else { ay1=aa.y; ay2=bb.y; } }
-            dirties.add_front(new dirty_rect(ivec2(ax1, ay1), ivec2(ax2 - 1, ay2 - 1)));
+            m_dirties << ADirtyRect(ivec2(ax1, ay1), ivec2(ax2 - 1, ay2 - 1));
 
-            if (aa.x > p->m_aa.x && bb.x - 1 < p->m_bb.x)
+            if (aa.x > rect.m_aa.x && bb.x - 1 < rect.m_bb.x)
             {
-                if (aa.y > p->m_aa.y && bb.y - 1 < p->m_bb.y)
+                if (aa.y > rect.m_aa.y && bb.y - 1 < rect.m_bb.y)
                 {
-                    dirties.add_front(new dirty_rect(p->m_aa, ivec2(p->m_bb.x, aa.y - 1)));
-                    dirties.add_front(new dirty_rect(ivec2(p->m_aa.x, bb.y), p->m_bb));
+                    m_dirties << ADirtyRect(rect.m_aa, ivec2(rect.m_bb.x, aa.y - 1));
+                    m_dirties << ADirtyRect(ivec2(rect.m_aa.x, bb.y), rect.m_bb);
                 }
-                else if (aa.y <= p->m_aa.y)
-                    dirties.add_front(new dirty_rect(ivec2(p->m_aa.x, bb.y), p->m_bb));
+                else if (aa.y <= rect.m_aa.y)
+                    m_dirties << ADirtyRect(ivec2(rect.m_aa.x, bb.y), rect.m_bb);
                 else
-                    dirties.add_front(new dirty_rect(p->m_aa, ivec2(p->m_bb.x, aa.y - 1)));
+                    m_dirties << ADirtyRect(rect.m_aa, ivec2(rect.m_bb.x, aa.y - 1));
             }
-            else if (aa.y > p->m_aa.y && bb.y - 1 < p->m_bb.y)
-                dirties.add_front(new dirty_rect(ivec2(p->m_aa.x, bb.y), p->m_bb));
-            dirties.unlink(p);
-            delete p;
+            else if (aa.y > rect.m_aa.y && bb.y - 1 < rect.m_bb.y)
+                m_dirties << ADirtyRect(ivec2(rect.m_aa.x, bb.y), rect.m_bb);
+
+            m_dirties.RemoveSwap(i);
         }
     }
 }
@@ -448,7 +438,6 @@ void image_descriptor::DeleteDirty(ivec2 aa, ivec2 bb)
 // specifies that an area is a dirty
 void image_descriptor::AddDirty(ivec2 aa, ivec2 bb)
 {
-    dirty_rect *p;
     if (!keep_dirt)
         return;
 
@@ -458,67 +447,43 @@ void image_descriptor::AddDirty(ivec2 aa, ivec2 bb)
     if (!(aa < bb))
         return;
 
-    int i = dirties.Count();
-    if (!i)
-        dirties.add_front(new dirty_rect(aa, bb - ivec2(1)));
-    else if (i >= MAX_DIRTY)
+    Array<ADirtyRect> to_add;
+
+    for (int i = m_dirties.Count(); i--; )
     {
-        dirties.add_front(new dirty_rect(aa, bb - ivec2(1)));
-        ReduceDirties();  // reduce to one dirty rectangle, we have to many
-    }
-    else
-    {
-      for (p=(dirty_rect *)dirties.first(); i>0; i--)
-      {
+        ADirtyRect &rect = m_dirties[i];
 
         // check to see if this new rectangle completly encloses the check rectangle
-        if (aa.x<=p->m_aa.x && aa.y<=p->m_aa.y && bb.x>=p->m_bb.x+1 && bb.y>=p->m_bb.y+1)
+        if (aa.x <= rect.m_aa.x && aa.y <= rect.m_aa.y
+             && bb.x >= rect.m_bb.x + 1 && bb.y >= rect.m_bb.y + 1)
         {
-          dirty_rect *tmp=(dirty_rect*) p->Next();
-          dirties.unlink(p);
-          delete p;
-          if (!dirties.first())
-              i=0;
-          else p=tmp;
+            m_dirties.RemoveSwap(i);
         }
-        else if (!(bb.x - 1 <p->m_aa.x || bb.y - 1 <p->m_aa.y || aa.x>p->m_bb.x || aa.y>p->m_bb.y))
+        else if (bb.x - 1 >= rect.m_aa.x && bb.y - 1 >= rect.m_aa.y
+                  && aa.x <= rect.m_bb.x && aa.y <= rect.m_bb.y)
         {
-
-
-
-/*          if (x1<=p->m_aa.x) { a+=p->m_aa.x-x1; ax1=x1; } else ax1=p->m_aa.x;
-          if (y1<=p->m_aa.y) { a+=p->m_aa.y-y1; ay1=y1; } else ay1=p->m_aa.y;
-          if (x2 - 1 >=p->m_bb.x) { a+=x2 - 1 -p->m_bb.x; ax2=x2 - 1; } else ax2=p->m_bb.x;
-          if (y2 - 1 >=p->m_bb.y) { a+=y2 - 1 -p->m_bb.y; ay2=y2 - 1; } else ay2=p->m_bb.y;
-
-      if (a<50)
-      { p->m_aa.x=ax1;                         // then expand the dirty
-        p->m_aa.y=ay1;
-        p->m_bb.x=ax2;
-        p->m_bb.y=ay2;
-        return ;
-      }
-      else */
-            {
-              if (aa.x < p->m_aa.x)
-                AddDirty(ivec2(aa.x, lol::max(aa.y, p->m_aa.y)),
-                         ivec2(p->m_aa.x, lol::min(bb.y, p->m_bb.y + 1)));
-              if (bb.x > p->m_bb.x + 1)
-                AddDirty(ivec2(p->m_bb.x + 1, lol::max(aa.y, p->m_aa.y)),
-                         ivec2(bb.x, lol::min(bb.y, p->m_bb.y + 1)));
-              if (aa.y < p->m_aa.y)
-                AddDirty(aa, ivec2(bb.x, p->m_aa.y));
-              if (bb.y - 1 > p->m_bb.y)
-                AddDirty(ivec2(aa.x, p->m_bb.y + 1), bb);
-              return ;
-            }
-            p = (dirty_rect *)p->Next();
-          } else p = (dirty_rect *)p->Next();
-
-      }
-      ASSERT(aa < bb);
-      dirties.add_end(new dirty_rect(aa, bb - ivec2(1)));
+            if (aa.x < rect.m_aa.x)
+                to_add << ADirtyRect(ivec2(aa.x, lol::max(aa.y, rect.m_aa.y)),
+                                     ivec2(rect.m_aa.x, lol::min(bb.y, rect.m_bb.y + 1)));
+            if (bb.x > rect.m_bb.x + 1)
+                to_add << ADirtyRect(ivec2(rect.m_bb.x + 1, lol::max(aa.y, rect.m_aa.y)),
+                                     ivec2(bb.x, lol::min(bb.y, rect.m_bb.y + 1)));
+            if (aa.y < rect.m_aa.y)
+                to_add << ADirtyRect(aa, ivec2(bb.x, rect.m_aa.y));
+            if (bb.y - 1 > rect.m_bb.y)
+                to_add << ADirtyRect(ivec2(aa.x, rect.m_bb.y + 1), bb);
+            break;
+        }
     }
+
+    for (int i = 0; i < to_add.Count(); ++i)
+        AddDirty(to_add[i].m_aa, to_add[i].m_bb);
+
+    ASSERT(aa < bb);
+    m_dirties << ADirtyRect(aa, bb - ivec2(1));
+
+    if (m_dirties.Count() >= MAX_DIRTY)
+        ReduceDirties(); // reduce to one dirty rectangle, we have too many
 }
 
 void AImage::Bar(ivec2 p1, ivec2 p2, uint8_t color)
@@ -616,17 +581,6 @@ void AImage::dither(Palette *pal)
         uint8_t *sl = scan_line(y);
         for (int j = y % 4, x = 0; x < m_size.x; x++)
             sl[x] = (pal->GetColor(sl[x]).r > dt_matrix[j * 4 + (x & 3)]) ? 255 : 0;
-    }
-}
-
-void image_descriptor::ClearDirties()
-{
-    dirty_rect *dr = (dirty_rect *)dirties.first();
-    while (dr)
-    {
-        dirties.unlink(dr);
-        delete dr;
-        dr = (dirty_rect *)dirties.first();
     }
 }
 
