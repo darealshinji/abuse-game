@@ -42,7 +42,7 @@ struct mask_line
 
 extern int text_draw(int y, int x1, int y1, int x2, int y2, char const *buf, JCFont *font, uint8_t *cmap, char color);
 
-static mask_line *make_mask_lines(image *mask, int map_width)
+static mask_line *make_mask_lines(AImage *mask, int map_width)
 {
   mask_line *p=(mask_line *)malloc(mask->Size().y*sizeof(mask_line));
   for (int y=0; y<mask->Size().y; y++)
@@ -83,7 +83,7 @@ static mask_line *make_mask_lines(image *mask, int map_width)
 }
 
 
-void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256, int32_t *paddr, mask_line *p, int mask_height,
+void scan_map(AImage *screen, int sx, int sy, AImage *im1, AImage *im2, int fade256, int32_t *paddr, mask_line *p, int mask_height,
           int xoff, int coff)
 {
   int x1=10000,x2=0;
@@ -130,7 +130,7 @@ void scan_map(image *screen, int sx, int sy, image *im1, image *im2, int fade256
 }
 
 
-void fade_in(image *im, int steps);
+void fade_in(AImage *im, int steps);
 void fade_out(int steps);
 
 class ex_char {
@@ -141,8 +141,8 @@ class ex_char {
   ex_char (int X, int Y, int Frame, int Char_num, ex_char *Next) { x=X; y=Y; frame=Frame; char_num=Char_num; next=Next; }
 } ;
 
-void scale_put      (image *im, image *screen, int x, int y, short new_width, short new_height);
-void scale_put_trans(image *im, image *screen, int x, int y, short new_width, short new_height);
+void scale_put      (AImage *im, AImage *screen, int x, int y, short new_width, short new_height);
+void scale_put_trans(AImage *im, AImage *screen, int x, int y, short new_width, short new_height);
 
 void show_end2()
 {
@@ -178,7 +178,7 @@ void show_end2()
   int ey=yres/2-cache.img(mask)->Size().y/2;
   fade_out(16);
 
-  image blank(ivec2(2)); blank.clear();
+  AImage blank(ivec2(2)); blank.clear();
   wm->SetMouseShape(blank.copy(), ivec2(0, 0));      // don't show mouse
 
 
@@ -219,7 +219,7 @@ void show_end2()
 
 
   scan_map(main_screen,ex,ey,cache.img(planet),cache.img(planet2),0,paddr,p,cache.img(mask)->Size().y,eoff,coff);
-  image *tcopy=cache.img(planet)->copy();
+  AImage *tcopy=cache.img(planet)->copy();
   fade_in(NULL,32);
 
   Timer t;
@@ -255,7 +255,7 @@ void show_end2()
       if (i>38)
       {
     int t=i-38;
-    image *s=cache.img(ship);
+    AImage *s=cache.img(ship);
     int nw=s->Size().x*(t+2)/16,
         nh=s->Size().y*(t+2)/16;
 
@@ -423,11 +423,11 @@ void show_sell(int abortable);
 void share_end()
 {
   fade_out(16);
-  image blank(ivec2(2, 2)); blank.clear();
+  AImage blank(ivec2(2, 2)); blank.clear();
   wm->SetMouseShape(blank.copy(), ivec2(0, 0)); // don't show mouse
   main_screen->clear();
 
-  image *im=cache.img(cache.reg("art/fore/endgame.spe","tbc",SPEC_IMAGE,1));
+  AImage *im=cache.img(cache.reg("art/fore/endgame.spe","tbc",SPEC_IMAGE,1));
 
   void *to_be = LSymbol::FindOrCreate("to_be_continued")->GetValue();
   PtrRef r1(to_be);
@@ -480,11 +480,11 @@ void share_end()
 void show_end()
 {
   fade_out(16);
-  image blank(ivec2(2, 2)); blank.clear();
+  AImage blank(ivec2(2, 2)); blank.clear();
   wm->SetMouseShape(blank.copy(), ivec2(0, 0));      // don't show mouse
   main_screen->clear();
 
-  image *im=cache.img(cache.reg("art/fore/endgame.spe","end.pcx",SPEC_IMAGE,1));
+  AImage *im=cache.img(cache.reg("art/fore/endgame.spe","end.pcx",SPEC_IMAGE,1));
 
   int dx=(xres+1)/2-320/2,dy=(yres+1)/2-200/2;
 

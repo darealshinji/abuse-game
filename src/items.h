@@ -33,7 +33,7 @@ class backtile
 {
 public :
   uint16_t next;
-  image *im;
+  AImage *im;
   backtile(SpecEntry *e, bFILE *fp);
   backtile(bFILE *fp);
   int32_t size() { ivec2 s = im->Size(); return 2 + 4 + s.x * s.y; }
@@ -50,7 +50,7 @@ public :
                            // if ground is not level this is 255
   boundary *points;
 
-  image *micro_image;
+  AImage *micro_image;
 
   foretile(bFILE *fp);
   int32_t size() { return im->Size().x*im->Size().y+4+2+1+points->size(); }

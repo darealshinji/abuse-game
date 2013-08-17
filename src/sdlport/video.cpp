@@ -41,7 +41,7 @@
 
 Array<uint8_t> g_screen;
 
-image *main_screen = NULL;
+AImage *main_screen = NULL;
 int mouse_xscale, mouse_yscale;
 int xres, yres;
 
@@ -61,7 +61,7 @@ void CreateScreen(int argc, char **argv)
     g_screen.Resize(xres * yres);
 
     // Create the screen image
-    main_screen = new image(ivec2(xres, yres), NULL, 2);
+    main_screen = new AImage(ivec2(xres, yres), 2);
     if (main_screen == NULL)
     {
         // Our screen image is no good, we have to bail.
@@ -89,7 +89,7 @@ void DestroyScreen()
 // put_part_image()
 // Draw only dirty parts of the image to screen
 //
-void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2)
+void put_part_image(AImage *im, int x, int y, int x1, int y1, int x2, int y2)
 {
     int xe, ye;
     int srcx, srcy;

@@ -440,7 +440,7 @@ void *ant_ai()
 
 
 
-void fade_in(image *im, int steps);
+void fade_in(AImage *im, int steps);
 void fade_out(int steps);
 
 void show_stats()
@@ -450,7 +450,7 @@ void show_stats()
     fade_out(8);
     wm->SetMousePos(ivec2(0, 0));
     main_screen->clear();
-    image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
+    AImage *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
     main_screen->PutImage(im, ivec2(0, 0));
 
 

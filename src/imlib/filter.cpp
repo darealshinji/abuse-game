@@ -56,9 +56,8 @@ void Filter::Set(int color_num, int change_to)
     m_table[color_num] = change_to;
 }
 
-void Filter::Apply(image *im)
+void Filter::Apply(AImage *im)
 {
-    im->Lock();
     uint8_t *dst = im->scan_line(0);
     int npixels = im->Size().x * im->Size().y;
     while (npixels--)
@@ -66,12 +65,11 @@ void Filter::Apply(image *im)
         *dst = m_table[*dst];
         ++dst;
     }
-    im->Unlock();
 }
 
 /* This is only ever used in the editor, when showing the toolbar. It
  * does not look like it's very useful. */
-void Filter::PutImage(image *screen, image *im, ivec2 pos)
+void Filter::PutImage(AImage *screen, AImage *im, ivec2 pos)
 {
     ivec2 aa = ivec2(0), bb = im->Size(), caa, cbb;
     screen->GetClip(caa, cbb);
@@ -91,9 +89,6 @@ void Filter::PutImage(image *screen, image *im, ivec2 pos)
 
     screen->AddDirty(pos, pos + span);
 
-    screen->Lock();
-    im->Lock();
-
     for (int j = 0; j < span.y; j++)
     {
         uint8_t *src = im->scan_line(aa.y + j) + aa.x;
@@ -103,9 +98,6 @@ void Filter::PutImage(image *screen, image *im, ivec2 pos)
             if (*src)
                 *dst = m_table[*src];
     }
-
-    im->Unlock();
-    screen->Unlock();
 }
 
 ColorFilter::ColorFilter(Palette *pal, int color_bits)

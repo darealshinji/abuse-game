@@ -60,7 +60,7 @@ public:
 class EventHandler
 {
 public:
-    EventHandler(image *screen, Palette *pal);
+    EventHandler(AImage *screen, Palette *pal);
     ~EventHandler();
 
     void Push(Event const &ev)
@@ -78,7 +78,7 @@ public:
   void flush_screen();
 
   int has_mouse() { return 1; }
-    void SetMouseShape(image *im, ivec2 center)
+    void SetMouseShape(AImage *im, ivec2 center)
     {
         m_sprite->SetVisual(im, 1);
         m_center = center;
@@ -94,7 +94,7 @@ private:
     Queue<Event, 256> m_events;
     int m_pending, last_key;
 
-    image *m_screen;
+    AImage *m_screen;
 
 protected:
     /* Mouse information */

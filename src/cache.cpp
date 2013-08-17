@@ -198,7 +198,7 @@ void CacheList::unmalloc(CacheItem *i)
     case SPEC_CHARACTER : delete ((figure *)i->data);   break;
     case SPEC_FORETILE : delete ((foretile *)i->data);  break;
     case SPEC_BACKTILE : delete ((backtile *)i->data);  break;
-    case SPEC_IMAGE    : delete ((image *)i->data);     break;
+    case SPEC_IMAGE    : delete ((AImage *)i->data);     break;
     case SPEC_EXTERN_SFX : delete ((sound_effect *)i->data); break;
     case SPEC_PARTICLE : delete ((part_frame *)i->data); break;
     case SPEC_EXTERNAL_LCACHE : if (i->data) free(i->data); break;
@@ -976,7 +976,7 @@ figure *CacheList::fig(int id)
   }
 }
 
-image *CacheList::img(int id)
+AImage *CacheList::img(int id)
 {
   CacheItem *me = list + id;
 
@@ -985,17 +985,17 @@ image *CacheList::img(int id)
   if (me->last_access>=0)
   {
     touch(me);
-    return (image *)me->data;
+    return (AImage *)me->data;
   }
   else
   {
     touch(me);                                           // hold me, feel me, be me!
     locate(me);
-    image *im=new image(fp);
+    AImage *im=new AImage(fp);
     me->data=(void *)im;
     last_offset=fp->tell();
 
-    return (image *)me->data;
+    return (AImage *)me->data;
   }
 }
 

@@ -65,13 +65,13 @@ class pmenu
   int itemw(pmenu_item *p)
   { return strlen(p->name())*wm->font()->Size().x+2; }
   int itemx(pmenu_item *p);
-  pmenu_item *inarea(int mx, int my, image *screen);
+  pmenu_item *inarea(int mx, int my, AImage *screen);
 public :
   ~pmenu();
-  pmenu(int X, int Y, pmenu_item *first, image *screen);
+  pmenu(int X, int Y, pmenu_item *first, AImage *screen);
   void move(int new_x, int new_y);
-  void draw(image *screen, int top_only=0);
-  int handle_event(Event &ev, image *screen);
+  void draw(AImage *screen, int top_only=0);
+  int handle_event(Event &ev, AImage *screen);
 
 } ;
 

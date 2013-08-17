@@ -16,7 +16,7 @@
 
 #include "transp.h"
 
-void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
+void transp_put(AImage *im, AImage *screen, uint8_t *table, int x, int y)
 {
     ivec2 caa, cbb;
     screen->GetClip(caa, cbb);
@@ -55,7 +55,7 @@ void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
 
 
 /*
-void transp_put(image *im, image *screen, uint8_t *table, int x, int y)
+void transp_put(AImage *im, AImage *screen, uint8_t *table, int x, int y)
 {
   int cx1, cy1, cx2, cy2;
   screen->GetClip(cx1, cy1, cx2, cy2);

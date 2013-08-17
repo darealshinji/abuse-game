@@ -34,7 +34,7 @@ extern int idle_ticks;
 
 extern void net_receive();
 extern void net_send(int force);
-extern void fade_in(image *im, int steps);
+extern void fade_in(AImage *im, int steps);
 extern void fade_out(int steps);
 
 void get_event(Event &ev)

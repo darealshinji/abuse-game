@@ -200,7 +200,7 @@ super_morph::super_morph(TransImage *hint1, TransImage *hint2,
   }
 }
 
-smorph_player::smorph_player(super_morph *m, Palette *pal, image *i1, image *i2, int frames, int dir)
+smorph_player::smorph_player(super_morph *m, Palette *pal, AImage *i1, AImage *i2, int frames, int dir)
 {
   unsigned char *d = m->movers;
   stepper *p = steps = (stepper *)malloc(sizeof(stepper)*m->t);
@@ -241,7 +241,7 @@ smorph_player::smorph_player(super_morph *m, Palette *pal, image *i1, image *i2,
   hole=(unsigned char *)malloc(w*h);
 }
 
-int smorph_player::show(image *screen, int x, int y, ColorFilter *fil, Palette *pal,
+int smorph_player::show(AImage *screen, int x, int y, ColorFilter *fil, Palette *pal,
             int blur_threshold)
 {
     if (!f_left)
@@ -328,10 +328,10 @@ main(int argc, char **argv)
   image_init();
   FILE *fp=fopen("art/mrphmask.spe","rb");
   SpecDir sd(fp);
-  image *h1=new image(sd.find("20 h"),fp),
-        *h2=new image(sd.find("1h"),fp),
-        *i1=new image(sd.find("20"),fp),
-        *i2=new image(sd.find("1"),fp);
+  AImage *h1=new AImage(sd.find("20 h"),fp),
+        *h2=new AImage(sd.find("1h"),fp),
+        *i1=new AImage(sd.find("20"),fp),
+        *i2=new AImage(sd.find("1"),fp);
   palette *pal=new palette(sd.find(SPEC_PALETTE),fp);
   color_filter *fil=new color_filter(sd.find(SPEC_COLOR_TABLE),fp);
 

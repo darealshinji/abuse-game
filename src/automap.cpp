@@ -22,7 +22,7 @@ automap *current_automap=0;
 void automap::draw()
 {
   if (!automap_window) return ;
-  image *screen=automap_window->m_surf;
+  AImage *screen=automap_window->m_surf;
 
   long sx,ex,sy,ey,x,y,window_xstart,window_ystart,
                        window_xend,window_yend,
@@ -62,13 +62,11 @@ void automap::draw()
   // if view position hasn't changed, only update the blinking dot and return
   if (draw_xstart==old_dx && draw_ystart==old_dy)
   {
-   automap_window->m_surf->Lock();
    automap_window->m_surf->AddDirty(center, center + ivec2(1));
     if ((tick++)&4)
       automap_window->m_surf->PutPixel(center, 255);
     else
       automap_window->m_surf->PutPixel(center, 27);
-   automap_window->m_surf->Unlock();
     return ;
   }
 
@@ -140,12 +138,10 @@ void automap::draw()
 
   // draw the person as a dot, no need to add a dirty because we marked the
   // whole screen already
-  automap_window->m_surf->Lock();
   if ((tick++)&4)
     automap_window->m_surf->PutPixel(center, 255);
   else
     automap_window->m_surf->PutPixel(center, 27);
-  automap_window->m_surf->Unlock();
 
   // set the clip back to full window size because soemthing else could mess with the area
   automap_window->m_surf->SetClip(ivec2(0), screen->Size());

@@ -22,7 +22,7 @@
 #include "linked.h"
 #include "sprite.h"
 
-ASprite::ASprite(image *screen, image *visual, ivec2 pos)
+ASprite::ASprite(AImage *screen, AImage *visual, ivec2 pos)
 {
     ASSERT(visual);
     ASSERT(screen);
@@ -30,7 +30,7 @@ ASprite::ASprite(image *screen, image *visual, ivec2 pos)
     m_pos = pos;
     m_visual = visual;
     m_screen = screen;
-    m_save = new image(visual->Size());
+    m_save = new AImage(visual->Size());
 
     if (m_pos + visual->Size() >= ivec2(0) && m_pos < ivec2(xres, yres))
         m_save->PutPart(m_screen, ivec2(0), m_pos, m_pos + m_save->Size());
@@ -41,7 +41,7 @@ ASprite::~ASprite()
     delete m_save;
 }
 
-void ASprite::SetVisual(image *visual, int delete_old)
+void ASprite::SetVisual(AImage *visual, int delete_old)
 {
     if (delete_old)
         delete m_visual;
@@ -49,7 +49,7 @@ void ASprite::SetVisual(image *visual, int delete_old)
     if (m_save->Size() != visual->Size())
     {
         delete m_save;
-        m_save = new image(visual->Size());
+        m_save = new AImage(visual->Size());
     }
 
     if (m_pos + visual->Size() >= ivec2(0) && m_pos < ivec2(xres, yres))

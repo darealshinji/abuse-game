@@ -119,13 +119,13 @@ void read_PCX_line(FILE *fp, unsigned char *start, short skip, int width)
   } while (n<width);
 }
 
-image *read_PCX(char const *filename, Palette *&pal)
+AImage *read_PCX(char const *filename, Palette *&pal)
 {
   if (PCX_file_type(filename)!=PCX_8) return NULL;
   FILE *fp=fopen(filename,"rb");
   read_PCX_header(fp);
 
-  image *im=new image(ivec2(PCX_header.xmax-PCX_header.xmin+1,
+  AImage *im=new AImage(ivec2(PCX_header.xmax-PCX_header.xmin+1,
                             PCX_header.ymax-PCX_header.ymin+1));
   int y;
   for (y=0;y<im->Size().y;y++)
@@ -145,7 +145,7 @@ image *read_PCX(char const *filename, Palette *&pal)
   return im;
 }
 
-void write_PCX(image *im, Palette *pal, char const *filename)
+void write_PCX(AImage *im, Palette *pal, char const *filename)
 {
   FILE *fp=fopen(filename,"wb");
   if (!fp)

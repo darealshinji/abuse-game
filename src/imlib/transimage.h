@@ -27,39 +27,39 @@
 class TransImage
 {
 public:
-    TransImage(image *im, char const *name);
+    TransImage(AImage *im, char const *name);
     ~TransImage();
 
     inline ivec2 Size() { return m_size; }
     inline uint8_t *Data() { return m_data; }
 
-    image *ToImage();
+    AImage *ToImage();
 
-    void PutImage(image *screen, ivec2 pos);
-    void PutRemap(image *screen, ivec2 pos, uint8_t *map);
-    void PutDoubleRemap(image *screen, ivec2 pos, uint8_t *map, uint8_t *map2);
-    void PutFade(image *screen, ivec2 pos, int amount, int nframes,
+    void PutImage(AImage *screen, ivec2 pos);
+    void PutRemap(AImage *screen, ivec2 pos, uint8_t *map);
+    void PutDoubleRemap(AImage *screen, ivec2 pos, uint8_t *map, uint8_t *map2);
+    void PutFade(AImage *screen, ivec2 pos, int amount, int nframes,
                  ColorFilter *f, Palette *pal);
-    void PutFadeTint(image *screen, ivec2 pos, int amount, int nframes,
+    void PutFadeTint(AImage *screen, ivec2 pos, int amount, int nframes,
                      uint8_t *tint, ColorFilter *f, Palette *pal);
-    void PutColor(image *screen, ivec2 pos, uint8_t color);
-    void PutFilled(image *screen, ivec2 pos, uint8_t color);
-    void PutPredator(image *screen, ivec2 pos);
-    void PutBlend(image *screen, ivec2 pos, image *blend, ivec2 bpos,
+    void PutColor(AImage *screen, ivec2 pos, uint8_t color);
+    void PutFilled(AImage *screen, ivec2 pos, uint8_t color);
+    void PutPredator(AImage *screen, ivec2 pos);
+    void PutBlend(AImage *screen, ivec2 pos, AImage *blend, ivec2 bpos,
                   int blend_amount, ColorFilter *f, Palette *pal);
-    void PutScanLine(image *screen, ivec2 pos, int line);
+    void PutScanLine(AImage *screen, ivec2 pos, int line);
 
     size_t DiskUsage();
 
 private:
-    uint8_t *ClipToLine(image *screen, ivec2 pos1, ivec2 pos2,
+    uint8_t *ClipToLine(AImage *screen, ivec2 pos1, ivec2 pos2,
                         ivec2 &posy, int &ysteps);
 
     enum PutMode { NORMAL, REMAP, REMAP2, FADE, FADE_TINT, COLOR,
                    FILLED, PREDATOR, BLEND, SCANLINE };
     template<int N>
-    void PutImageGeneric(image *dest, ivec2 pos, uint8_t color,
-                         image *blend, ivec2 bpos,
+    void PutImageGeneric(AImage *dest, ivec2 pos, uint8_t color,
+                         AImage *blend, ivec2 bpos,
                          uint8_t *map1, uint8_t *map2, int amount,
                          int nframes, uint8_t *tint,
                          ColorFilter *f, Palette *pal);

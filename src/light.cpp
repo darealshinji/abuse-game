@@ -625,7 +625,7 @@ inline void put_8line(uint8_t *in_line, uint8_t *out_line, uint8_t *remap, uint8
 }
 
 
-void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient)
+void light_screen(AImage *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient)
 {
   int lx_run=0,ly_run;                     // light block x & y run size in pixels ==  (1<<lx_run)
 
@@ -668,8 +668,6 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
   uint8_t *remap_line=(uint8_t *)malloc(remap_size);
 
   LightPatch *f=first;
-
-  main_screen->Lock();
 
   int scr_w=main_screen->Size().x;
   uint8_t *screen_line=main_screen->scan_line(caa.y)+caa.x;
@@ -764,7 +762,6 @@ void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lo
 
     screen_line-=prefix;
   }
-  main_screen->Unlock();
 
   while (first)
   {

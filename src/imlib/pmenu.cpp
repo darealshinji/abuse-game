@@ -23,7 +23,7 @@ void pmenu::move(int new_x, int new_y)
   wm->move_window(bar,new_x,new_y);
 }
 
-pmenu::pmenu(int X, int Y, pmenu_item *first, image *screen)
+pmenu::pmenu(int X, int Y, pmenu_item *first, AImage *screen)
 {
   top=first;
   active=NULL;
@@ -311,7 +311,7 @@ int pmenu::itemx(pmenu_item *p)
 }
 
 
-void pmenu::draw(image *screen, int top_only)
+void pmenu::draw(AImage *screen, int top_only)
 {
 
 }
@@ -379,7 +379,7 @@ int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top,
   } else return 0;
 }
 
-pmenu_item *pmenu::inarea(int mx, int my, image *screen)
+pmenu_item *pmenu::inarea(int mx, int my, AImage *screen)
 {
   mx-=bar->m_pos.x;
   my-=bar->m_pos.y;
@@ -415,7 +415,7 @@ pmenu_item::~pmenu_item()
 { if (n) free(n); if (sub) delete sub;
 }
 
-int pmenu::handle_event(Event &ev, image *screen)
+int pmenu::handle_event(Event &ev, AImage *screen)
 {
   if (!active && ev.window!=bar) return 0;
 /*

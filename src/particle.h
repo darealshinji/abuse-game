@@ -37,7 +37,7 @@ class part_frame
   int t,x1,y1,x2,y2;
   part *data;
   part_frame(bFILE *fp);
-  void draw(image *screen, int x, int y, int dir);
+  void draw(AImage *screen, int x, int y, int dir);
   ~part_frame();
 } ;
 

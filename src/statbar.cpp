@@ -36,8 +36,8 @@ status_bar::status_bar()
 }
 
 // defined in dev.c
-void scale_put_trans(image *im, image *screen, int x, int y, short new_width, short new_height);
-void scale_put(image *im, image *screen, int x, int y, short new_width, short new_height);
+void scale_put_trans(AImage *im, AImage *screen, int x, int y, short new_width, short new_height);
+void scale_put(AImage *im, AImage *screen, int x, int y, short new_width, short new_height);
 
 void status_bar::load()
 {
@@ -70,7 +70,7 @@ void status_bar::load()
   sbar_numpad=cache.reg(sbname,"sbar_numpad",SPEC_IMAGE);
 }
 
-void status_bar::draw_num(image *screen, int x, int y, int num, int *offset)
+void status_bar::draw_num(AImage *screen, int x, int y, int num, int *offset)
 {
   if (num<0 || num>999)
   {
@@ -78,7 +78,7 @@ void status_bar::draw_num(image *screen, int x, int y, int num, int *offset)
     return ;
   }
 
-  image *im=cache.img(*offset);
+  AImage *im=cache.img(*offset);
   int dw = im->Size().x;
   int dh = im->Size().y;
 
@@ -94,7 +94,7 @@ void status_bar::draw_num(image *screen, int x, int y, int num, int *offset)
   scale_put(cache.img(offset[num]),main_screen,x,y,dw,dh);
 }
 
-void status_bar::redraw(image *screen)
+void status_bar::redraw(AImage *screen)
 {
   need_rf=0;
   if (!v) return ;
@@ -103,7 +103,7 @@ void status_bar::redraw(image *screen)
   {
     if (!playing_state(the_game->state)) return ;
 
-    image *sb=cache.img(sbar);
+    AImage *sb=cache.img(sbar);
 
     // status bar width & height
     int sb_w = sb->Size().x;
@@ -173,7 +173,7 @@ void status_bar::area(int &x1, int &y1, int &x2, int &y2)
     return ;
   }
 
-  image *sb=cache.img(sbar);
+  AImage *sb=cache.img(sbar);
 
   // status bar width & height
   int sb_w = sb->Size().x;
@@ -186,7 +186,7 @@ void status_bar::area(int &x1, int &y1, int &x2, int &y2)
 }
 
 
-void status_bar::draw_health(image *screen,int amount)
+void status_bar::draw_health(AImage *screen,int amount)
 {
   if (total_weapons)
   {
@@ -197,7 +197,7 @@ void status_bar::draw_health(image *screen,int amount)
 }
 
 
-void status_bar::draw_ammo(image *screen, int weapon_num, int amount, int light)
+void status_bar::draw_ammo(AImage *screen, int weapon_num, int amount, int light)
 {
   if (total_weapons)
   {
@@ -258,7 +258,7 @@ void status_bar::step()
   int sb_w,sb_h;
   if (sbar>0 && total_weapons)
   {
-    image *sb=cache.img(sbar);
+    AImage *sb=cache.img(sbar);
 
     // status bar width & height
     sb_w=sb->Size().x;

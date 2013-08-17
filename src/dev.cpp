@@ -103,7 +103,7 @@ class cached_image : public visual_object
   int id;
   public :
   cached_image(int Id) { id=Id; }
-  virtual void draw(image *screen, int x, int y, Filter *f)
+  virtual void draw(AImage *screen, int x, int y, Filter *f)
   {
     if (f)
       f->PutImage(screen, cache.img(id), ivec2(x, y));
@@ -143,7 +143,7 @@ class amb_cont : public scroller
   public :
   amb_cont(int X, int Y, ifield *Next) : scroller(X,Y,ID_NULL,100,wm->font()->Size().y+2,0,64,Next)
   { if (player_list) sx=player_list->ambient; }
-  virtual void scroll_event(int newx, image *screen)
+  virtual void scroll_event(int newx, AImage *screen)
   {
     screen->Bar(m_pos, m_pos + ivec2(l - 1, h - 1), wm->dark_color());
     char st[100];
@@ -159,7 +159,7 @@ class amb_cont : public scroller
 int confirm_quit()
 {
     Jwindow *quitw;
-    image *ok_image, *cancel_image;
+    AImage *ok_image, *cancel_image;
 
     ok_image = cache.img(cache.reg("art/frame.spe", "dev_ok",
                                  SPEC_IMAGE, 1))->copy();
@@ -350,7 +350,7 @@ static void load_dev_icons()
 
 }
 
-void scale_put(image *im, image *screen, int x, int y, short new_width, short new_height)
+void scale_put(AImage *im, AImage *screen, int x, int y, short new_width, short new_height)
 {
   unsigned char *sl1,*sl2;
   int32_t xstep=(im->Size().x<<16)/new_width,
@@ -377,8 +377,6 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
   if (y+new_height>cbb.y)
     new_height-=y+new_height-cbb.y;
 
-  screen->Lock();
-  im->Lock();
   for (iy=iy_start; new_height>0; new_height--,y++,iy+=ystep)
   {
     sl1=im->scan_line(iy>>16);
@@ -386,12 +384,10 @@ void scale_put(image *im, image *screen, int x, int y, short new_width, short ne
     for (ix=ix_start,sx=0; sx<new_width; sx++,ix+=xstep,sl2++)
       *sl2=sl1[ix>>16];
   }
-  im->Unlock();
-  screen->Unlock();
 }
 
 
-void scale_put_trans(image *im, image *screen, int x, int y, short new_width, short new_height)
+void scale_put_trans(AImage *im, AImage *screen, int x, int y, short new_width, short new_height)
 {
   unsigned char *sl1,*sl2;
   int32_t xstep=(im->Size().x<<16)/new_width,
@@ -419,7 +415,6 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
     new_height-=y+new_height-cbb.y;
 
   uint8_t d;
-  screen->Lock();
   for (iy=iy_start; new_height>0; new_height--,y++,iy+=ystep)
   {
     sl1=im->scan_line(iy>>16);
@@ -431,7 +426,6 @@ void scale_put_trans(image *im, image *screen, int x, int y, short new_width, sh
         *sl2=d;
     }
   }
-  screen->Unlock();
 }
 
 int dev_controll::need_plus_minus()
@@ -467,7 +461,7 @@ void dev_controll::dev_draw(view *v)
              && f->m_pos.y - dv.y >= 0
              && f->m_pos.y - dv.y <= (v->m_bb.y - v->m_aa.y + 1))
         {
-          image *im = cache.img(light_buttons[f->m_type]);
+          AImage *im = cache.img(light_buttons[f->m_type]);
           main_screen->PutImage(im, f->m_pos - dv + v->m_aa - im->Size() / 2);
           main_screen->Rectangle(f->m_p1 - dv + v->m_aa, f->m_p2 - dv + v->m_aa,
                                  wm->medium_color());
@@ -483,7 +477,7 @@ void dev_controll::dev_draw(view *v)
 
     if (selected_light)
     {
-      image *im = cache.img(light_buttons[0]);
+      AImage *im = cache.img(light_buttons[0]);
       ivec2 pos = the_game->GameToMouse(selected_light->m_pos, v);
       main_screen->Rectangle(pos - im->Size() / 2, pos + im->Size() / 2,
                              wm->bright_color());
@@ -540,7 +534,7 @@ void dev_controll::dev_draw(view *v)
 
 static LightSource *find_light(int32_t x, int32_t y)
 {
-  image *i = cache.img(light_buttons[0]);
+  AImage *i = cache.img(light_buttons[0]);
   int l = i->Size().x / 2, h = i->Size().y / 2;
   for (LightSource *f = first_light_source; f; f = f->m_next)
   {
@@ -2930,7 +2924,7 @@ void pal_win::draw()
   if (me)
   {
     me->clear();
-    image *im=new image(ivec2(the_game->ftile_width(),the_game->ftile_height()));
+    AImage *im=new AImage(ivec2(the_game->ftile_width(),the_game->ftile_height()));
     int th=the_game->ftile_height()/scale,tw=the_game->ftile_width()/scale;
 
     for (i=0; i<w*h; i++)

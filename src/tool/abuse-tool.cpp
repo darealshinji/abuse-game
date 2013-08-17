@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
             case SPEC_CHARACTER:
             case SPEC_CHARACTER2:
               {
-                image *im = new image(&fp, se);
+                AImage *im = new AImage(&fp, se);
                 printf(" \t# %i x %i pixels", im->Size().x, im->Size().y);
                 delete im;
                 break;
@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
         else
             pal = new Palette(dir.m_entries[palid], &fp);
 
-        image *im = new image(&fp, dir.m_entries[imgid]);
+        AImage *im = new AImage(&fp, dir.m_entries[imgid]);
         write_PCX(im, pal, "/dev/stdout");
         delete im;
         delete pal;
@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
         else
         {
             Palette *pal = NULL;
-            image *im = read_PCX(argv[5], pal);
+            AImage *im = read_PCX(argv[5], pal);
             if (!im)
             {
                 fprintf(stderr, "abuse-tool: cannot open %s\n", argv[5]);

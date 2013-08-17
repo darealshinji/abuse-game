@@ -213,7 +213,7 @@ backtile::backtile(SpecEntry *e, bFILE *fp)
 foretile::foretile(bFILE *fp)
 {
     uint8_t *sl;
-    image *img = load_image(fp);
+    AImage *img = load_image(fp);
 
     // create the micro image of the fore tile by averaging the color values
     // in 2×2 space and storing the closest match
@@ -253,7 +253,7 @@ foretile::foretile(bFILE *fp)
       t[l] ++;
     }
   }
-  micro_image = new image(ivec2(AUTOTILE_WIDTH, AUTOTILE_HEIGHT));
+  micro_image = new AImage(ivec2(AUTOTILE_WIDTH, AUTOTILE_HEIGHT));
 
   for (l=0; l<AUTOTILE_WIDTH*AUTOTILE_HEIGHT; l++)
     micro_image->PutPixel(ivec2(l % AUTOTILE_WIDTH, l / AUTOTILE_WIDTH),
@@ -283,7 +283,7 @@ size_t figure::MemUsage()
 
 figure::figure(bFILE *fp, int type)
 {
-  image *im=load_image(fp);
+  AImage *im=load_image(fp);
   forward=new TransImage(im,"figure data");
   im->FlipX();
   backward=new TransImage(im,"figure backward data");

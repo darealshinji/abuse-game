@@ -162,7 +162,7 @@ void draw_panims(view *v)
   }
 }
 
-void part_frame::draw(image *screen, int x, int y, int dir)
+void part_frame::draw(AImage *screen, int x, int y, int dir)
 {
     ivec2 caa, cbb;
     screen->GetClip(caa, cbb);
@@ -177,7 +177,6 @@ void part_frame::draw(image *screen, int x, int y, int dir)
   int i=t;
   while (i && pon->y<caa.y) { pon++; i--; }
   if (!i) return ;
-  screen->Lock();
   if (dir>0)
   {
     while (i && pon->y < cbb.y)
@@ -199,7 +198,6 @@ void part_frame::draw(image *screen, int x, int y, int dir)
       pon++;
     }
   }
-  screen->Unlock();
 }
 
 void ScatterLine(ivec2 p1, ivec2 p2, int c, int s)
@@ -217,7 +215,6 @@ void ScatterLine(ivec2 p1, ivec2 p2, int c, int s)
     int ym = (1 << s);
     s = (15 - s);
 
-    main_screen->Lock();
     while(t--)
     {
         int x = (xo >> 16) + (rand(0x10000) >> s) - xm;
@@ -229,7 +226,6 @@ void ScatterLine(ivec2 p1, ivec2 p2, int c, int s)
         xo += dx;
         yo += dy;
     }
-    main_screen->Unlock();
 }
 
 void AScatterLine(ivec2 p1, ivec2 p2, int c1, int c2, int s)
@@ -246,8 +242,6 @@ void AScatterLine(ivec2 p1, ivec2 p2, int c1, int c2, int s)
     int xm = (1 << s);
     int ym = (1 << s);
     s = (15 - s);
-
-    main_screen->Lock();
 
     int w = main_screen->Size().x;
     uint8_t *addr;
@@ -270,7 +264,5 @@ void AScatterLine(ivec2 p1, ivec2 p2, int c1, int c2, int s)
         xo += dx;
         yo += dy;
     }
-
-    main_screen->Unlock();
 }
 

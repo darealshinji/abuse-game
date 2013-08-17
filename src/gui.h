@@ -22,9 +22,9 @@ public :
   ico_button(int X, int Y, int ID, int Up, int down, int upa, int downa, ifield *Next, int act_id=-1, char const *help_key=NULL);
 
   virtual void area(int &x1, int &y1, int &x2, int &y2);
-  virtual void draw_first(image *screen) { draw(0,screen); }
-  virtual void draw(int active, image *screen);
-  virtual void handle_event(Event &ev, image *screen, InputManager *im);
+  virtual void draw_first(AImage *screen) { draw(0,screen); }
+  virtual void draw(int active, AImage *screen);
+  virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
 
   virtual char *read() { return (char *)&up; }
   int status() { return up; }
@@ -38,9 +38,9 @@ class ico_switch_button : public ifield
   public :
   ico_switch_button(int X, int Y, int ID, int start_on, ifield *butts, ifield *Next);
   virtual void area(int &x1, int &y1, int &x2, int &y2);
-  virtual void draw_first(image *screen) { cur_but->draw_first(screen); }
-  virtual void draw(int active, image *screen) { cur_but->draw(active,screen); act=active; }
-  virtual void handle_event(Event &ev, image *screen, InputManager *im);
+  virtual void draw_first(AImage *screen) { cur_but->draw_first(screen); }
+  virtual void draw(int active, AImage *screen) { cur_but->draw(active,screen); act=active; }
+  virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
   virtual ifield *unlink(int id);
   virtual char *read() { return cur_but->read(); }
   ~ico_switch_button();

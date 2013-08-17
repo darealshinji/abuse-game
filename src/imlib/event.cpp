@@ -31,7 +31,7 @@
 //
 // Constructor
 //
-EventHandler::EventHandler(image *screen, Palette *pal)
+EventHandler::EventHandler(AImage *screen, Palette *pal)
 {
     ASSERT(screen);
     ASSERT(pal);
@@ -57,16 +57,14 @@ EventHandler::EventHandler(image *screen, Palette *pal)
     Filter f;
     f.Set(1, pal->FindBrightest(1));
     f.Set(2, pal->FindDarkest(1));
-    image *im = new image(ivec2(8, 10), mouse_sprite);
+    AImage *im = new AImage(ivec2(8, 10));
+    memcpy(im->scan_line(0), mouse_sprite, 8 * 10);
     f.Apply(im);
 
     m_sprite = new ASprite(screen, im, ivec2(100, 100));
     m_pos = screen->Size() / 2;
     m_center = ivec2(0, 0);
     m_button = 0;
-
-    // Platform-specific stuff
-    SysInit();
 }
 
 //

@@ -18,13 +18,13 @@
 
 #include "fonts.h"
 
-void JCFont::PutString(image *screen, ivec2 pos, char const *st, int color)
+void JCFont::PutString(AImage *screen, ivec2 pos, char const *st, int color)
 {
     for ( ; *st; st++, pos.x += m_size.x)
         PutChar(screen, pos, *st, color);
 }
 
-void JCFont::PutChar(image *screen, ivec2 pos, char ch, int color)
+void JCFont::PutChar(AImage *screen, ivec2 pos, char ch, int color)
 {
     if (!m_data[(int)ch])
         return;
@@ -35,11 +35,11 @@ void JCFont::PutChar(image *screen, ivec2 pos, char ch, int color)
         m_data[(int)ch]->PutImage(screen, pos);
 }
 
-JCFont::JCFont(image *letters)
+JCFont::JCFont(AImage *letters)
 {
     m_size = (letters->Size() + ivec2(1)) / ivec2(32, 8);
 
-    image tmp(m_size);
+    AImage tmp(m_size);
 
     for (int ch = 0; ch < 256; ch++)
     {

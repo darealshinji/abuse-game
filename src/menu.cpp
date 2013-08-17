@@ -55,7 +55,6 @@ static void TintArea(ivec2 aa, ivec2 bb, u8vec3 color, int percent)
 
     percent = 256 - percent;
 
-    main_screen->Lock();
     for (int y = aa.y; y < bb.y; y++)
     {
         uint8_t *sl = main_screen->scan_line(y) + aa.x;
@@ -67,7 +66,6 @@ static void TintArea(ivec2 aa, ivec2 bb, u8vec3 color, int percent)
         }
     }
     main_screen->AddDirty(aa, bb);
-    main_screen->Unlock();
 }
 
 void DarkWidget(ivec2 aa, ivec2 bb, int br, int dr, int amount)
@@ -153,7 +151,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   Event ev;
   int choice=0,done=0;
   int bh=font->Size().y+3;
-  image *save = new image(ivec2(mw - 2,bh));
+  AImage *save = new AImage(ivec2(mw - 2,bh));
   int color=128,cdir=50;
 
   Timer *last_color_time = nullptr;
@@ -351,7 +349,7 @@ void save_difficulty()
 }
 
 void fade_out(int steps);
-void fade_in(image *im, int steps);
+void fade_in(AImage *im, int steps);
 
 
 void show_sell(int abortable)
@@ -370,7 +368,7 @@ void show_sell(int abortable)
 
   if (DEFINEDP(ss->GetValue()))
   {
-    image blank(ivec2(2, 2)); blank.clear();
+    AImage blank(ivec2(2, 2)); blank.clear();
     wm->SetMouseShape(blank.copy(), ivec2(0, 0));      // don't show mouse
 
     LObject *tmp = (LObject *)ss->GetValue();
@@ -489,7 +487,7 @@ void menu_handler(Event &ev, InputManager *inm)
       main_screen->clear();
       if (title_screen>=0)
       {
-        image *im = cache.img(title_screen);
+        AImage *im = cache.img(title_screen);
         main_screen->PutImage(im, main_screen->Size() / 2 - im->Size() / 2);
       }
       inm->redraw();

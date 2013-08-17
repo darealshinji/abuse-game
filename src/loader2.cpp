@@ -72,15 +72,15 @@ char mouse_scrolling=0,palettes_locked=1,view_shift_disabled=0;
 int light_connection_color;
 
 
-image *load_image(SpecEntry *e, bFILE *fp)
+AImage *load_image(SpecEntry *e, bFILE *fp)
 {
-    image *im = new image(fp, e);
+    AImage *im = new AImage(fp, e);
     return im;
 }
 
-image *load_image(bFILE *fp)
+AImage *load_image(bFILE *fp)
 {
-    image *im = new image(fp);
+    AImage *im = new AImage(fp);
     return im;
 }
 
@@ -351,8 +351,9 @@ void load_data(int argc, char **argv)
   }
 
 
-  image *tmp_image = new image(ivec2(192, 104), fnt6x13);
-  big_font=new JCFont(tmp_image);
+  AImage *tmp_image = new AImage(ivec2(192, 104));
+  memcpy(tmp_image->scan_line(0), fnt6x13, 192 * 104);
+  big_font = new JCFont(tmp_image);
   delete tmp_image;
 
 

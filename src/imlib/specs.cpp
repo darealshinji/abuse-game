@@ -35,7 +35,7 @@ char const *spec_types[] =
     "Color table",  // 1
     "Palette",      // 2
     "Invalid Type", // 3
-    "Image",        // 4
+    "AImage",        // 4
     "Fore Tile",
     "Back Tile",
     "Character",
@@ -47,7 +47,7 @@ char const *spec_types[] =
     "Patched morph",
     "Normal file",
     "Compress1 file",
-    "Vector Image",
+    "Vector AImage",
     "Light list",
     "Grue fgmap",
     "Grue bgmap",

@@ -33,14 +33,14 @@ class tool_picker : public spicker
           int show_h, visual_object **Icons, int *Ids, int total_ic,
           Palette *icon_palette, Palette *pal, ifield *Next);
 
-  virtual void draw_item(image *screen, int x, int y, int num, int active);
+  virtual void draw_item(AImage *screen, int x, int y, int num, int active);
   virtual int total() { return total_icons; }
   virtual int item_width() { return iw; }
   virtual int item_height() { return ih; }
-  virtual void note_new_current(image *screen, InputManager *inm, int x)
+  virtual void note_new_current(AImage *screen, InputManager *inm, int x)
   { wm->Push(Event(ids[x], NULL)); }
 
-  void remap(Palette *pal, image *screen);
+  void remap(Palette *pal, AImage *screen);
   ~tool_picker();
 } ;
 
