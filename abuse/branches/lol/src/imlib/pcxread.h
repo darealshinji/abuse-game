@@ -14,7 +14,7 @@
 #include "image.h"
 #include "palette.h"
 
-void write_PCX(image *im, Palette *pal, char const *filename);
-image *read_PCX(char const *filename, Palette *&pal);
+void write_PCX(AImage *im, Palette *pal, char const *filename);
+AImage *read_PCX(char const *filename, Palette *&pal);
 
 #endif

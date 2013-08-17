@@ -22,12 +22,12 @@ int total_help_screens;
 int *help_screens;
 static int help_page=0;
 
-void fade_in(image *im, int steps);
+void fade_in(AImage *im, int steps);
 void fade_out(int steps);
 
 void draw_help()
 {
-  image *im=cache.img(help_screens[help_page]);
+  AImage *im=cache.img(help_screens[help_page]);
   int x1=xres/2-im->Size().x/2,y1=yres/2-im->Size().y/2;
   int x2=x1+im->Size().x,y2=y1+im->Size().y;
   main_screen->PutImage(im, ivec2(x1, y1));

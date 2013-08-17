@@ -93,7 +93,7 @@ public :
 
   void step();
   void show_help(char const *st);
-  void draw_value(image *screen, int x, int y, int w, int h, int val, int max);
+  void draw_value(AImage *screen, int x, int y, int w, int h, int val, int max);
   unsigned char get_color(int x) { return x; }
   int done();
   void draw(int scene_mode=0);

@@ -1020,7 +1020,7 @@ void *score_draw()
 }
 
 
-extern void fade_in(image *im, int steps);
+extern void fade_in(AImage *im, int steps);
 extern void fade_out(int steps);
 
 void *show_kills()
@@ -1028,7 +1028,7 @@ void *show_kills()
   fade_out(8);
   wm->SetMousePos(ivec2(0, 0));
   main_screen->clear();
-  image *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
+  AImage *im=cache.img(cache.reg("art/frame.spe","end_level_screen",SPEC_IMAGE,1));
   main_screen->PutImage(im, ivec2(0, 0));
   int x1=im->Size().x+1,y1=0,y2=main_screen->Size().y;
   JCFont *fnt=wm->font();

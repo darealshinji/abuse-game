@@ -59,7 +59,7 @@ void last_savegame_name(char *buf)
     sprintf(buf,"%ssave%04d.spe",get_save_filename_prefix(), (last_save_game_number+MAX_SAVE_GAMES-1)%MAX_SAVE_GAMES+1);
 }
 
-Jwindow *create_num_window(int mx, int total_saved, int lines, image **thumbnails)
+Jwindow *create_num_window(int mx, int total_saved, int lines, AImage **thumbnails)
 {
   ico_button *buts[MAX_SAVE_GAMES];
   int y = 0, x = 0, i;
@@ -166,12 +166,12 @@ int show_load_icon()
 int load_game(int show_all, char const *title)   // return 0 if the player escapes, else return the number of the game to load
 {
     int total_saved=0;
-    image *thumbnails[MAX_SAVE_GAMES];
+    AImage *thumbnails[MAX_SAVE_GAMES];
     int start_num=0;
     int max_w=160,max_h=100;
     memset(thumbnails,0,sizeof(thumbnails));
 
-    image *first=NULL;
+    AImage *first=NULL;
 
     for (start_num=0; start_num<MAX_SAVE_GAMES; start_num++)
     {
@@ -190,7 +190,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
             SpecEntry *se=sd.find("thumb nail");
             if (se && se->type==SPEC_IMAGE)
             {
-                thumbnails[start_num] = new image(fp, se);
+                thumbnails[start_num] = new AImage(fp, se);
                 if (thumbnails[start_num]->Size().x>max_w) max_w=thumbnails[start_num]->Size().x;
                 if (thumbnails[start_num]->Size().y>max_h) max_h=thumbnails[start_num]->Size().y;
                 if (!first) first=thumbnails[start_num];
@@ -201,7 +201,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         }
         if (fail && show_all)
         {
-            thumbnails[start_num] = new image(ivec2(160, 100));
+            thumbnails[start_num] = new AImage(ivec2(160, 100));
             thumbnails[start_num]->clear();
             console_font->PutString(thumbnails[start_num], ivec2(0), symbol_str("no_saved"));
             total_saved++;

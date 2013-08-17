@@ -19,11 +19,11 @@
 #include "cache.h"
 #include "game.h"
 
-void scale_put(image *im, image *screen, int x, int y, short new_width, short new_height);
-void scale_put_trans(image *im, image *screen, int x, int y, short new_width, short new_height);
+void scale_put(AImage *im, AImage *screen, int x, int y, short new_width, short new_height);
+void scale_put_trans(AImage *im, AImage *screen, int x, int y, short new_width, short new_height);
 int cur_bg=0,cur_fg=0,cur_char=0;
 
-void tile_picker::recenter(image *screen)
+void tile_picker::recenter(AImage *screen)
 {
   set_x(get_current(), screen);
 }
@@ -90,10 +90,10 @@ tile_picker::tile_picker(int X, int Y, int ID, int spec_type,
 }
 
 
-void tile_picker::scroll_event(int newx, image *screen)
+void tile_picker::scroll_event(int newx, AImage *screen)
 {
   int ya = pich(), xw = picw(), c = get_current();
-  image im(ivec2(xw, ya));
+  AImage im(ivec2(xw, ya));
   last_sel=newx;
 
   screen->Bar(m_pos, m_pos + ivec2(l - 1, h - 1), wm->black());
@@ -146,7 +146,7 @@ void tile_picker::scroll_event(int newx, image *screen)
 }
 
 
-void tile_picker::handle_inside_event(Event &ev, image *screen, InputManager *inm)
+void tile_picker::handle_inside_event(Event &ev, AImage *screen, InputManager *inm)
 {
   if (ev.type==EV_MOUSE_BUTTON)
   {

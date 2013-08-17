@@ -31,17 +31,17 @@ class status_bar
       bnum[30];
 
   void area(int &x1, int &y1, int &x2, int &y2);
-  void draw_num(image *screen, int x, int y, int num, int *offset);
+  void draw_num(AImage *screen, int x, int y, int num, int *offset);
   int mouse_in_area();
   public :
   status_bar();
   void associate(view *V) { v=V; }
   void load();                     // load graphics into cache
-  void redraw(image *screen);
+  void redraw(AImage *screen);
 
   void step();
-  void draw_health(image *screen,int amount);
-  void draw_ammo(image *screen, int weapon_num, int amount, int light);
+  void draw_health(AImage *screen,int amount);
+  void draw_ammo(AImage *screen, int weapon_num, int amount, int light);
   void need_refresh() { need_rf=1; }
   void draw_update();
 };

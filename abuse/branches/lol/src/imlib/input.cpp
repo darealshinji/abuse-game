@@ -83,13 +83,13 @@ void button_box::area(int &x1, int &y1, int &x2, int &y2)
   }
 }
 
-void button_box::draw_first(image *screen)
+void button_box::draw_first(AImage *screen)
 {
   for (button *b=buttons; b; b=(button *)b->next)
     b->draw_first(screen);
 }
 
-void button_box::draw(int active, image *screen)
+void button_box::draw(int active, AImage *screen)
 {
   return ;
 }
@@ -111,7 +111,7 @@ char *button_box::read()
   return NULL;
 }
 
-void button_box::handle_event(Event &ev, image *screen, InputManager *im)
+void button_box::handle_event(Event &ev, AImage *screen, InputManager *im)
 {
   switch (ev.type)
   {
@@ -189,7 +189,7 @@ void button_box::arrange_up_down()
     }
 }
 
-void button::change_visual(image *new_visual)
+void button::change_visual(AImage *new_visual)
 {
     ASSERT(visual);
     visual = new_visual;
@@ -224,7 +224,7 @@ button::button(int X, int Y, int ID, char const *Text, ifield *Next)
 }
 
 
-button::button(int X, int Y, int ID, image *vis, ifield *Next)
+button::button(int X, int Y, int ID, AImage *vis, ifield *Next)
 {
     m_pos = ivec2(X, Y);
     id=ID; text=NULL;
@@ -233,7 +233,7 @@ button::button(int X, int Y, int ID, image *vis, ifield *Next)
     pressed=NULL;
 }
 
-button::button(int X, int Y, int ID, image *Depressed, image *Pressed, image *active, ifield *Next)
+button::button(int X, int Y, int ID, AImage *Depressed, AImage *Pressed, AImage *active, ifield *Next)
 {
     m_pos = ivec2(X, Y);
     id=ID; text=NULL;
@@ -245,7 +245,7 @@ button::button(int X, int Y, int ID, image *Depressed, image *Pressed, image *ac
 
 
 void text_field::change_data(char const *new_data, int new_cursor, // cursor==-1, does not change it.
-                 int active, image *screen)
+                 int active, AImage *screen)
 {
   if (strlen(format)<strlen(new_data))
     data=(char *)realloc(data,strlen(new_data));
@@ -263,7 +263,7 @@ char *text_field::read()
   return data;
 }
 
-void text_field::handle_event(Event &ev, image *screen, InputManager *im)
+void text_field::handle_event(Event &ev, AImage *screen, InputManager *im)
 {
   int xx;
   if (ev.type==EV_KEY)
@@ -307,7 +307,7 @@ void text_field::handle_event(Event &ev, image *screen, InputManager *im)
   }
 }
 
-void text_field::draw(int active, image *screen)
+void text_field::draw(int active, AImage *screen)
 {
   if (active)
   {
@@ -363,7 +363,7 @@ text_field::text_field(int X, int Y, int ID, char const *Prompt,
 void button::push()
 { up=!up; }
 
-void button::handle_event(Event &ev, image *screen, InputManager *im)
+void button::handle_event(Event &ev, AImage *screen, InputManager *im)
 {
   if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
                                          ev.mouse_button))
@@ -377,7 +377,7 @@ void button::handle_event(Event &ev, image *screen, InputManager *im)
   }
 }
 
-void button::draw(int active, image *screen)
+void button::draw(int active, AImage *screen)
 {
   int x1,y1,x2,y2,color=(active ? wm->bright_color() : wm->medium_color());
   area(x1,y1,x2,y2);
@@ -401,7 +401,7 @@ void button::draw(int active, image *screen)
   }
 }
 
-void button::draw_first(image *screen)
+void button::draw_first(AImage *screen)
 {
     if (pressed)
     {
@@ -440,7 +440,7 @@ void button::draw_first(image *screen)
         screen->PutImage(visual, ivec2(x1 + 3, y1 + 3), 1);
 }
 
-void text_field::draw_first(image *screen)
+void text_field::draw_first(AImage *screen)
 {
   wm->font()->PutString(screen, m_pos + ivec2(0, 3), prompt);
   screen->Bar(ivec2(xstart(), m_pos.y), ivec2(xend(), yend()), wm->dark_color());
@@ -448,7 +448,7 @@ void text_field::draw_first(image *screen)
 }
 
 
-void text_field::draw_cur(int color, image *screen)
+void text_field::draw_cur(int color, AImage *screen)
 {
   screen->Bar(ivec2(xstart() + cur * wm->font()->Size().x + 1, yend() - 2),
               ivec2(xstart() + (cur + 1) * wm->font()->Size().x, yend() - 1),
@@ -489,7 +489,7 @@ void info_field::area(int &x1, int &y1, int &x2, int &y2)
   y2 = m_pos.y + h;
 }
 
-void info_field::put_para(image *screen, char const *st, int dx, int dy,
+void info_field::put_para(AImage *screen, char const *st, int dx, int dy,
               int xspace, int yspace, JCFont *font, int color)
 {
   int ox=dx;
@@ -509,7 +509,7 @@ void info_field::put_para(image *screen, char const *st, int dx, int dy,
   }
 }
 
-void info_field::draw_first(image *screen)
+void info_field::draw_first(AImage *screen)
 {
   put_para(screen, text, m_pos.x+1, m_pos.y+1, wm->font()->Size().x,
            wm->font()->Size().y, wm->font(), wm->black());

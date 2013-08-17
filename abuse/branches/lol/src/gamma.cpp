@@ -33,7 +33,7 @@ class gray_picker : public spicker
 {
 public:
     int sc;
-    virtual void draw_item(image *screen, int x, int y, int num, int active)
+    virtual void draw_item(AImage *screen, int x, int y, int num, int active)
     {
         long x2 = x + item_width() - 1;
         long y2 = y + item_height() - 1;

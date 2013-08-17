@@ -261,9 +261,9 @@ extern int start_running,demo_start,start_edit;
 
 void net_configuration::error(char const *message)
 {
-  image *screen_backup = main_screen->copy();
+  AImage *screen_backup = main_screen->copy();
 
-  image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
+  AImage *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
   int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
   main_screen->PutImage(ns, ivec2(x, y));
@@ -328,12 +328,12 @@ ifield *net_configuration::center_ifield(ifield *i,int x1, int x2, ifield *place
 
 int net_configuration::get_options(int server)
 {
-  image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
+  AImage *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
   int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
   main_screen->PutImage(ns, ivec2(x, y));
   JCFont *fnt=wm->font();
-  image *ok_image=cache.img(cache.reg("art/frame.spe","dev_ok",SPEC_IMAGE,1))->copy(),
+  AImage *ok_image=cache.img(cache.reg("art/frame.spe","dev_ok",SPEC_IMAGE,1))->copy(),
     *cancel_image=cache.img(cache.reg("art/frame.spe","cancel",SPEC_IMAGE,1))->copy();
 
   ifield *list=NULL;
@@ -447,7 +447,7 @@ int net_configuration::input()   // pulls up dialog box and input fileds
   int ret=0;
   main_screen->clear();
 
-  image *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
+  AImage *ns=cache.img(cache.reg("art/frame.spe","net_screen",SPEC_IMAGE,1));
   int ns_w=ns->Size().x,ns_h=ns->Size().y;
   int x=(xres+1)/2-ns_w/2,y=(yres+1)/2-ns_h/2;
   main_screen->PutImage(ns, ivec2(x, y));

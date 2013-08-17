@@ -116,7 +116,7 @@ public:
     backtile *backt(int id);
     foretile *foret(int id);
     figure *fig(int id);
-    image *img(int id);
+    AImage *img(int id);
     part_frame *part(int id);
     sound_effect *sfx(int id);
     LObject *lblock(int id);

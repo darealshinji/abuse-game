@@ -142,7 +142,7 @@ public :
   void load_options(SpecDir *sd, bFILE *fp);
   void write_objects(bFILE *fp, object_node *save_list);
   void write_options(bFILE *fp);
-  void write_thumb_nail(bFILE *fp, image *im);
+  void write_thumb_nail(bFILE *fp, AImage *im);
   void write_cache_prof_info();
   void restart();
 

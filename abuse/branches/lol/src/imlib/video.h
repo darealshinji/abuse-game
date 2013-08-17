@@ -28,17 +28,17 @@ class AbuseVideo
 
 extern int xres,yres;
 extern int xoff,yoff;
-extern image *main_screen;
+extern AImage *main_screen;
 
 void CreateScreen(int argc, char **argv);
 void DestroyScreen();
 void UpdateScreen();
 
-void update_dirty(image *im, int xoff=0, int yoff=0);
-void put_part_image(image *im, int x, int y, int x1, int y1, int x2, int y2);
-void put_image(image * im, int x, int y);
+void update_dirty(AImage *im, int xoff=0, int yoff=0);
+void put_part_image(AImage *im, int x, int y, int x1, int y1, int x2, int y2);
+void put_image(AImage * im, int x, int y);
 
-void clear_put_image(image *im, int x, int y);
+void clear_put_image(AImage *im, int x, int y);
 int get_vmode();
 
 #endif

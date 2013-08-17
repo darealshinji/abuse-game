@@ -70,7 +70,7 @@ void add_light_spec(SpecDir *sd, char const *level_name);
 void write_lights(bFILE *fp);
 void read_lights(SpecDir *sd, bFILE *fp, char const *level_name);
 
-void light_screen(image *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient);
+void light_screen(AImage *sc, int32_t screenx, int32_t screeny, uint8_t *light_lookup, uint16_t ambient);
 
 void calc_light_table(Palette *pal);
 extern LightSource *first_light_source;

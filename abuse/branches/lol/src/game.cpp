@@ -438,7 +438,7 @@ void Game::joy_calb(Event &ev)
         if(y > 0) y = 1; else if(y < 0) y = -1;
         if(but) but = 1;
         int dx = 20, dy = 5;
-        image *jim = cache.img(joy_picts[but * 9+(y + 1)*3 + x + 1]);
+        AImage *jim = cache.img(joy_picts[but * 9+(y + 1)*3 + x + 1]);
         joy_win->m_surf->Bar(ivec2(dx, dy), ivec2(dx + jim->Size().x + 6,
                                                   dy + jim->Size().y + 6),
                              wm->black());
@@ -476,7 +476,7 @@ void Game::show_help(char const *st)
     refresh = 1;
 }
 
-void Game::draw_value(image *screen, int x, int y, int w, int h,
+void Game::draw_value(AImage *screen, int x, int y, int w, int h,
                       int val, int max)
 {
     screen->Bar(ivec2(x, y), ivec2(x + w - 1, y + h), wm->dark_color());
@@ -598,10 +598,8 @@ void Game::dev_scroll()
   }
 }
 
-void remap_area(image *screen, int x1, int y1, int x2, int y2, uint8_t *remap)
+void remap_area(AImage *screen, int x1, int y1, int x2, int y2, uint8_t *remap)
 {
-    screen->Lock();
-
     uint8_t *sl = (uint8_t *)screen->scan_line(y1) + x1;
     int step = screen->Size().x - (x2 - x1 + 1);
 
@@ -614,7 +612,6 @@ void remap_area(image *screen, int x1, int y1, int x2, int y2, uint8_t *remap)
         }
         sl += step;
     }
-    screen->Unlock();
 }
 
 static void post_render()
@@ -642,7 +639,7 @@ void Game::draw_map(view *v, int interpolate)
     {
       if(state == SCENE_STATE)
         main_screen->SetClip(v->m_aa, v->m_bb + ivec2(1));
-      image *tit = cache.img(title_screen);
+      AImage *tit = cache.img(title_screen);
       main_screen->PutImage(tit, main_screen->Size() / 2 - tit->Size() / 2);
       if(state == SCENE_STATE)
         main_screen->SetClip(caa, cbb);
@@ -662,10 +659,8 @@ void Game::draw_map(view *v, int interpolate)
   if(v->draw_solid != -1)      // fill the screen and exit..
   {
     int c = v->draw_solid;
-    main_screen->Lock();
     for(int y = v->m_aa.y; y <= v->m_bb.y; y++)
       memset(main_screen->scan_line(y)+v->m_aa.x, c, v->m_bb.x - v->m_aa.x + 1);
-    main_screen->Unlock();
     v->draw_solid = -1;
     return;
   }
@@ -798,7 +793,6 @@ void Game::draw_map(view *v, int interpolate)
         main_screen->clear(wm->bright_color());
       else
         main_screen->clear(wm->black());
-      main_screen->Lock();
       for(y = y1, draw_y = yo; y <= y2; y++, draw_y += yinc)
       {
     if (!(draw_y < ncaa.y || draw_y + yinc > ncbb.y))
@@ -823,7 +817,6 @@ void Game::draw_map(view *v, int interpolate)
       }
     }
       }
-      main_screen->Unlock();
 
       if(dev & EDIT_MODE)
         g_current_level->draw_areas(v);
@@ -1040,7 +1033,7 @@ void Game::request_level_load(char *name)
   strcpy(req_name, name);
 }
 
-template<int N> static void Fade(image *im, int steps)
+template<int N> static void Fade(AImage *im, int steps)
 {
     /* 25ms per step */
     float const duration = 0.025f;
@@ -1078,7 +1071,7 @@ template<int N> static void Fade(image *im, int steps)
     g_palette = tmp_pal;
 }
 
-void fade_in(image *im, int steps)
+void fade_in(AImage *im, int steps)
 {
     Fade<1>(im, steps);
 }
@@ -1115,7 +1108,7 @@ void do_title()
     // is not and the window gets closed during do_title, then
     // exit() will try to delete (through the desctructor of
     // image_list in image.cpp) the image on the stack -> boom.
-    image *blank = new image(ivec2(2, 2));
+    AImage *blank = new AImage(ivec2(2, 2));
     blank->clear();
     wm->SetMouseShape(blank->copy(), ivec2(0, 0)); // hide mouse
     delete blank;
@@ -1134,14 +1127,14 @@ void do_title()
         g_palette = new Palette(sd.find(SPEC_PALETTE), fp);
         g_palette->shift(1);
 
-        image *gray = new image(fp, sd.find("gray_pict"));
-        image *smoke[5];
+        AImage *gray = new AImage(fp, sd.find("gray_pict"));
+        AImage *smoke[5];
 
         char nm[20];
         for (int i = 0; i < 5; i++)
         {
             sprintf(nm, "smoke%04d.pcx", i + 1);
-            smoke[i] = new image(fp, sd.find(nm));
+            smoke[i] = new AImage(fp, sd.find(nm));
         }
 
         main_screen->clear();
@@ -1360,7 +1353,7 @@ Game::Game(int argc, char **argv)
     main_screen->clear();
     if(title_screen >= 0)
     {
-      image *im = cache.img(title_screen);
+      AImage *im = cache.img(title_screen);
       main_screen->PutImage(im, main_screen->Size() / 2 - im->Size() / 2);
     }
     set_state(MENU_STATE);   // then go to menu state so windows will turn off

@@ -19,18 +19,18 @@ class button : public ifield
 {
   int up,act;
   char *text;
-  image *visual,*pressed,*act_pict;
+  AImage *visual,*pressed,*act_pict;
   int act_id;
 public :
   button(int X, int Y, int ID, char const *Text, ifield *Next);
-  button(int X, int Y, int ID, image *vis, ifield *Next);
-  button(int X, int Y, int ID, image *Depressed, image *Pressed, image *active, ifield *Next);
+  button(int X, int Y, int ID, AImage *vis, ifield *Next);
+  button(int X, int Y, int ID, AImage *Depressed, AImage *Pressed, AImage *active, ifield *Next);
 
   virtual void area(int &x1, int &y1, int &x2, int &y2);
-  virtual void draw_first(image *screen);
-  virtual void draw(int active, image *screen);
-  virtual void handle_event(Event &ev, image *screen, InputManager *im);
-  void change_visual(image *new_visual);
+  virtual void draw_first(AImage *screen);
+  virtual void draw(int active, AImage *screen);
+  virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
+  void change_visual(AImage *new_visual);
   virtual void remap(Filter *f);
   virtual ~button() { if (text) free(text); }
   void push();
@@ -50,9 +50,9 @@ public :
   virtual void remap(Filter *f);
   virtual void Move(ivec2 pos);
   virtual void area(int &x1, int &y1, int &x2, int &y2);
-  virtual void draw_first(image *screen);
-  virtual void draw(int active, image *screen);
-  virtual void handle_event(Event &ev, image *screen, InputManager *im);
+  virtual void draw_first(AImage *screen);
+  virtual void draw(int active, AImage *screen);
+  virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
   virtual ~button_box();
   virtual char *read();   // return pointer to first button which is depressed
   virtual ifield *find(int search_id);  // should return pointer to item you control with this id
@@ -67,9 +67,9 @@ class text_field : public ifield
   int xstart() { return m_pos.x + wm->font()->Size().x * (strlen(prompt)+1) + 3; }
   int xend() { return m_pos.x + wm->font()->Size().x * (strlen(prompt) + 1 + strlen(format)) + 7; }
   int yend() { return m_pos.y + wm->font()->Size().y + 5; }
-  void draw_cur(int color, image *screen);
+  void draw_cur(int color, AImage *screen);
   int last_spot() { int x=strlen(data); while (x && data[x-1]==' ') x--; return x; }
-  void draw_text(image *screen)
+  void draw_text(AImage *screen)
   {
     screen->Bar(ivec2(xstart() + 1, m_pos.y + 1), ivec2(xend() - 1, yend() - 1),
                 wm->dark_color());
@@ -82,14 +82,14 @@ public :
                                double Data, ifield *Next);
 
   virtual void area(int &x1, int &y1, int &x2, int &y2);
-  virtual void draw_first(image *screen);
-  virtual void draw(int active, image *screen);
-  virtual void handle_event(Event &ev, image *screen, InputManager *im);
+  virtual void draw_first(AImage *screen);
+  virtual void draw(int active, AImage *screen);
+  virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
 
   virtual ~text_field() { free(prompt); free(format); free(data); }
   virtual char *read();
   void change_data(char const *new_data, int new_cursor,       // cursor==-1, does not change it.
-           int active, image *screen);
+           int active, AImage *screen);
 } ;
 
 
@@ -97,14 +97,14 @@ class info_field : public ifield
 {
   char *text;
   int w,h;
-  void put_para(image *screen, char const *st, int dx, int dy, int xspace,
+  void put_para(AImage *screen, char const *st, int dx, int dy, int xspace,
         int yspace, JCFont *font, int color);
 public :
   info_field(int X, int Y, int ID, char const *info, ifield *Next);
   virtual void area(int &x1, int &y1, int &x2, int &y2);
-  virtual void draw_first(image *screen);
-  virtual void draw(int active, image *screen) { (void)active; (void)screen; }
-  virtual void handle_event(Event &ev, image *screen, InputManager *im)
+  virtual void draw_first(AImage *screen);
+  virtual void draw(int active, AImage *screen) { (void)active; (void)screen; }
+  virtual void handle_event(Event &ev, AImage *screen, InputManager *im)
   {
       (void)ev; (void)screen; (void)im;
   }

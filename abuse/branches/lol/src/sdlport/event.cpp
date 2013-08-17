@@ -34,14 +34,7 @@
 #include "game.h"
 
 extern int get_key_binding(char const *dir, int i);
-extern int mouse_xscale, mouse_yscale;
 short mouse_buttons[5] = { 0, 0, 0, 0, 0 };
-
-void EventHandler::SysInit()
-{
-    // Ignore activate events
-    SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
-}
 
 void EventHandler::SysWarpMouse(ivec2 pos)
 {

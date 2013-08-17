@@ -1592,11 +1592,11 @@ bFILE *Level::create_dir(char *filename, int save_all,
   return sd.write(filename);
 }
 
-void scale_put(image *im, image *screen, int x, int y, short new_width, short new_height);
+void scale_put(AImage *im, AImage *screen, int x, int y, short new_width, short new_height);
 
-void Level::write_thumb_nail(bFILE *fp, image *im)
+void Level::write_thumb_nail(bFILE *fp, AImage *im)
 {
-  image *i = new image(ivec2(160, 100 + wm->font()->Size().y * 2));
+  AImage *i = new AImage(ivec2(160, 100 + wm->font()->Size().y * 2));
   i->clear();
   scale_put(im,i,0,0,160,100);
   if (first_name)
@@ -1612,10 +1612,8 @@ void Level::write_thumb_nail(bFILE *fp, image *im)
   fp->write_uint16(i->Size().x);
   fp->write_uint16(i->Size().y);
 
-  i->Lock();
   for(int y = 0; y < i->Size().y; y++)
     fp->write(i->scan_line(y),i->Size().x);
-  i->Unlock();
 
   delete i;
 }

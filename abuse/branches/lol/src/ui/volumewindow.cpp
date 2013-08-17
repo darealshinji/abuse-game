@@ -42,7 +42,7 @@ VolumeWindow::VolumeWindow() : Jwindow("Volume")
     //reconfigure();
     bg = cache.reg(ff, "vcontrol", SPEC_IMAGE, 1);
     m_size = cache.img(bg)->Size();
-    m_surf = new image(m_size, NULL, 2);
+    m_surf = new AImage(m_size, 2);
     redraw();
 }
 

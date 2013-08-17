@@ -19,7 +19,7 @@
 #include "image.h"
 #include "video.h"
 
-void update_dirty(image *im, int xoff, int yoff)
+void update_dirty(AImage *im, int xoff, int yoff)
 {
     // make sure the image has the ability to contain dirty areas
     ASSERT(im->m_special);
@@ -48,7 +48,7 @@ void update_dirty(image *im, int xoff, int yoff)
     UpdateScreen();
 }
 
-void put_image(image * im, int x, int y)
+void put_image(AImage * im, int x, int y)
 {
     put_part_image(im, x, y, 0, 0, im->Size().x - 1, im->Size().y - 1);
 }

@@ -17,12 +17,12 @@
 class ASprite : public linked_node
 {
 public:
-    ASprite(image *screen, image *visual, ivec2 pos);
+    ASprite(AImage *screen, AImage *visual, ivec2 pos);
     ~ASprite();
 
-    void SetVisual(image *visual, int delete_old = 0);
+    void SetVisual(AImage *visual, int delete_old = 0);
 
-    image *m_visual, *m_screen, *m_save;
+    AImage *m_visual, *m_screen, *m_save;
 
 private:
     ivec2 m_pos;

@@ -31,8 +31,8 @@ class file_picker : public spicker
   virtual int total() { return tf+td; }
   virtual int item_width() { return wm->font()->Size().x * wid; }
   virtual int item_height() { return wm->font()->Size().y + 1; }
-  virtual void draw_item(image *screen, int x, int y, int num, int active);
-  virtual void note_selection(image *screen, InputManager *inm, int x);
+  virtual void draw_item(AImage *screen, int x, int y, int num, int active);
+  virtual void note_selection(AImage *screen, InputManager *inm, int x);
   void free_up();
   ~file_picker() { free_up(); }
 } ;
@@ -48,7 +48,7 @@ void file_picker::free_up()
   if (td) free(d);
 }
 
-void file_picker::note_selection(image *screen, InputManager *inm, int x)
+void file_picker::note_selection(AImage *screen, InputManager *inm, int x)
 {
   if (x<td)
   {
@@ -92,7 +92,7 @@ void file_picker::note_selection(image *screen, InputManager *inm, int x)
 
 }
 
-void file_picker::draw_item(image *screen, int x, int y, int num, int active)
+void file_picker::draw_item(AImage *screen, int x, int y, int num, int active)
 {
     if (active)
         screen->Bar(ivec2(x, y),

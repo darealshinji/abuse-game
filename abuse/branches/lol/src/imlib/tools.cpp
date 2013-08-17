@@ -43,14 +43,14 @@ tool_picker::~tool_picker()
         delete icons[i];                   // delete visual object, which should be a "shell"
 }
 
-void tool_picker::remap(Palette *pal, image *screen)
+void tool_picker::remap(Palette *pal, AImage *screen)
 {
     delete map;
     map = new Filter(old_pal, pal);
     draw_first(screen);
 }
 
-void tool_picker::draw_item(image *screen, int x, int y, int num, int active)
+void tool_picker::draw_item(AImage *screen, int x, int y, int num, int active)
 {
     screen->Bar(ivec2(x, y), ivec2(x + iw - 1, y + ih - 1),
                 active ? wm->bright_color() : wm->black());

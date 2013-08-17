@@ -54,7 +54,7 @@ uint8_t vs_down_arrow[8*10]={
     1, 1, 2, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0};
 
-void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
+void show_icon(AImage *screen, int x, int y, int icw, int ich, uint8_t *buf)
 {
   ivec2 caa, cbb;
   screen->GetClip(caa, cbb);
@@ -64,7 +64,6 @@ void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
   remap[1]=wm->bright_color();
   remap[2]=wm->dark_color();
 
-  screen->Lock();
   for (int yc=ich; yc; yc--,y++)
   {
     if (y >= caa.y && y < cbb.y)
@@ -78,7 +77,6 @@ void show_icon(image *screen, int x, int y, int icw, int ich, uint8_t *buf)
     }
   }
   screen->AddDirty(ivec2(x, y), ivec2(x + icw, y + ich));
-  screen->Unlock();
 }
 
 scroller::scroller(int X, int Y, int ID, int L, int H, int Vert, int Total_items, ifield *Next)
@@ -119,7 +117,7 @@ uint8_t *scroller::b2()
 }
 
 
-void scroller::draw_first(image *screen)
+void scroller::draw_first(AImage *screen)
 {
   if (sx>=t) sx=t-1;
   draw(0,screen);
@@ -162,7 +160,7 @@ void scroller::wig_area(int &x1, int &y1, int &x2, int &y2)
 
 }
 
-void scroller::draw_widget(image *screen, int erase)
+void scroller::draw_widget(AImage *screen, int erase)
 {
   int x1,y1,x2,y2;
   wig_area(x1,y1,x2,y2);
@@ -173,7 +171,7 @@ void scroller::draw_widget(image *screen, int erase)
                       wm->medium_color(), wm->dark_color());
 }
 
-void scroller::draw(int active, image *screen)
+void scroller::draw(int active, AImage *screen)
 {
   int x1,y1,x2,y2;
   area(x1,y1,x2,y2);
@@ -181,7 +179,7 @@ void scroller::draw(int active, image *screen)
                     active ? wm->bright_color() : wm->dark_color());
 }
 
-void scroller::handle_event(Event &ev, image *screen, InputManager *inm)
+void scroller::handle_event(Event &ev, AImage *screen, InputManager *inm)
 {
   int mx=ev.mouse_move.x,my=ev.mouse_move.y;
   switch (ev.type)
@@ -285,7 +283,7 @@ void scroller::handle_event(Event &ev, image *screen, InputManager *inm)
 }
 
 
-void scroller::handle_right(image *screen, InputManager *inm)
+void scroller::handle_right(AImage *screen, InputManager *inm)
 {
   if (!vert && sx<t-1)
   {
@@ -296,7 +294,7 @@ void scroller::handle_right(image *screen, InputManager *inm)
   }
 }
 
-void scroller::handle_left(image *screen, InputManager *inm)
+void scroller::handle_left(AImage *screen, InputManager *inm)
 {
   if (!vert && sx>1)
   {
@@ -307,7 +305,7 @@ void scroller::handle_left(image *screen, InputManager *inm)
   }
 }
 
-void scroller::handle_up(image *screen, InputManager *inm)
+void scroller::handle_up(AImage *screen, InputManager *inm)
 {
   if (vert && sx>1)
   {
@@ -318,7 +316,7 @@ void scroller::handle_up(image *screen, InputManager *inm)
   }
 }
 
-void scroller::handle_down(image *screen, InputManager *inm)
+void scroller::handle_down(AImage *screen, InputManager *inm)
 {
   if (vert && sx<t-1)
   {
@@ -329,7 +327,7 @@ void scroller::handle_down(image *screen, InputManager *inm)
   }
 }
 
-void scroller::set_x (int x, image *screen)
+void scroller::set_x (int x, AImage *screen)
 {
   if (x<0) x=0;
   if (x>=t) x=t-1;
@@ -364,7 +362,7 @@ int scroller::mouse_to_drag(int mx,int my)
 }
 
 
-void scroller::scroll_event(int newx, image *screen)
+void scroller::scroll_event(int newx, AImage *screen)
 {
   screen->Bar(m_pos, m_pos + ivec2(l - 1, h - 1), wm->black());
   int xa,ya,xo=0,yo;
@@ -392,7 +390,7 @@ int lis_sort(void const *a, void const *b)
 }
 
 pick_list::pick_list(int X, int Y, int ID, int height,
-        char **List, int num_entries, int start_yoffset, ifield *Next, image *texture)
+        char **List, int num_entries, int start_yoffset, ifield *Next, AImage *texture)
      : scroller(X,Y,ID,2,2,1,0,Next)
 {
   th=height;
@@ -415,7 +413,7 @@ pick_list::pick_list(int X, int Y, int ID, int height,
   cur_sel=sx=start_yoffset;
 }
 
-void pick_list::handle_inside_event(Event &ev, image *screen, InputManager *inm)
+void pick_list::handle_inside_event(Event &ev, AImage *screen, InputManager *inm)
 {
   if (ev.type==EV_MOUSE_MOVE && activate_on_mouse_move())
   {
@@ -461,7 +459,7 @@ void pick_list::handle_inside_event(Event &ev, image *screen, InputManager *inm)
   }
 }
 
-void pick_list::handle_up(image *screen, InputManager *inm)
+void pick_list::handle_up(AImage *screen, InputManager *inm)
 {
   if (cur_sel>0)
     cur_sel--;
@@ -475,7 +473,7 @@ void pick_list::handle_up(image *screen, InputManager *inm)
   scroll_event(sx,screen);
 }
 
-void pick_list::handle_down(image *screen, InputManager *inm)
+void pick_list::handle_down(AImage *screen, InputManager *inm)
 {
   if (cur_sel<t-1)
     cur_sel++;
@@ -489,7 +487,7 @@ void pick_list::handle_down(image *screen, InputManager *inm)
   scroll_event(sx,screen);
 }
 
-void pick_list::scroll_event(int newx, image *screen)
+void pick_list::scroll_event(int newx, AImage *screen)
 {
   last_sel=newx;
   if (tex)
@@ -580,7 +578,7 @@ void spicker::reconfigure()
   } else cur_sel=0;
 }
 
-void spicker::draw_background(image *screen)
+void spicker::draw_background(AImage *screen)
 {
     screen->Bar(m_pos, m_pos + ivec2(l - 1, h - 1), wm->dark_color());
 }
@@ -592,7 +590,7 @@ void spicker::area_config()
     h = item_height() * (vert ? r : 1) + 4;
 }
 
-void spicker::set_x(int x, image *screen)
+void spicker::set_x(int x, AImage *screen)
 {
   cur_sel=x;
   sx=x;
@@ -600,7 +598,7 @@ void spicker::set_x(int x, image *screen)
 }
 
 
-void spicker::scroll_event(int newx, image *screen)
+void spicker::scroll_event(int newx, AImage *screen)
 {
   last_sel=newx;
   int xa,ya,xo,yo;
@@ -624,7 +622,7 @@ void spicker::scroll_event(int newx, image *screen)
 }
 
 
-void spicker::handle_inside_event(Event &ev, image *screen, InputManager *inm)
+void spicker::handle_inside_event(Event &ev, AImage *screen, InputManager *inm)
 {
   switch (ev.type)
   {
@@ -687,7 +685,7 @@ void spicker::handle_inside_event(Event &ev, image *screen, InputManager *inm)
 
 
 
-void spicker::handle_up(image *screen, InputManager *inm)
+void spicker::handle_up(AImage *screen, InputManager *inm)
 {
   if (vert && cur_sel>0)
   {
@@ -704,7 +702,7 @@ void spicker::handle_up(image *screen, InputManager *inm)
   }
 }
 
-void spicker::handle_down(image *screen, InputManager *inm)
+void spicker::handle_down(AImage *screen, InputManager *inm)
 {
   if (vert && cur_sel<t-1)
     cur_sel++;
@@ -719,11 +717,11 @@ void spicker::handle_down(image *screen, InputManager *inm)
   note_new_current(screen,inm,cur_sel);
 }
 
-void spicker::handle_left(image *screen, InputManager *inm)
+void spicker::handle_left(AImage *screen, InputManager *inm)
 {
 }
 
-void spicker::handle_right(image *screen, InputManager *inm)
+void spicker::handle_right(AImage *screen, InputManager *inm)
 {
 }
 

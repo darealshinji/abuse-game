@@ -17,7 +17,7 @@
 #include "include.h"
 #include "ctype.h"
 
-void write_include(image *im, Palette *pal, char *filename, char *name)
+void write_include(AImage *im, Palette *pal, char *filename, char *name)
 {
   char tmp_name[200];
   strcpy(tmp_name, name);

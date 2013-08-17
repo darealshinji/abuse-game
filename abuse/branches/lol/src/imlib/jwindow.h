@@ -33,7 +33,7 @@ class InputManager
     friend class Jwindow;
 
 public:
-    InputManager(image *screen, ifield *first);
+    InputManager(AImage *screen, ifield *first);
     InputManager(Jwindow *owner, ifield *first);
     ~InputManager();
 
@@ -49,7 +49,7 @@ public:
     void allow_no_selections();
 
 private:
-    image *m_surf;
+    AImage *m_surf;
     ifield *m_first, *m_active, *m_grab;
     Jwindow *m_cur, *m_owner;
     int no_selections_allowed;
@@ -67,9 +67,9 @@ public :
     virtual void set_owner(Jwindow *owner);
     virtual void Move(ivec2 pos) { m_pos = pos; }
     virtual void area(int &x1, int &y1, int &x2, int &y2) = 0;
-    virtual void draw_first(image *screen) = 0;
-    virtual void draw(int active, image *screen) = 0;
-    virtual void handle_event(Event &ev, image *screen, InputManager *im) = 0;
+    virtual void draw_first(AImage *screen) = 0;
+    virtual void draw(int active, AImage *screen) = 0;
+    virtual void handle_event(Event &ev, AImage *screen, InputManager *im) = 0;
     virtual int selectable() { return 1; }
     virtual void remap(Filter *f) { (void)f; }
     virtual char *read() = 0;
@@ -121,7 +121,7 @@ public:
     static int bottom_border();
 
     ivec2 m_pos, m_size;
-    image *m_surf;
+    AImage *m_surf;
 
 protected:
     Jwindow *owner;
@@ -144,11 +144,11 @@ protected:
     void remove_window(Jwindow *);
 
 public:
-    WindowManager(image *, Palette *, int hi, int med, int low, JCFont *);
+    WindowManager(AImage *, Palette *, int hi, int med, int low, JCFont *);
     ~WindowManager();
 
     Jwindow *m_first, *m_grab;
-    image *mouse_pic, *mouse_save;
+    AImage *mouse_pic, *mouse_save;
     int hi, med, low, bk; // bright, medium, dark and black colors
     int key_state[512];
     enum { inputing, dragging } state;
@@ -182,7 +182,7 @@ public:
 
 private:
     Palette *m_pal;
-    image *m_surf;
+    AImage *m_surf;
 };
 
 #endif
