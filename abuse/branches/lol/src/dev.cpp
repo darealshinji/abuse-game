@@ -982,9 +982,8 @@ void dev_controll::do_command(char const *command, Event &ev)
       int32_t *w=(int32_t *)malloc(total_weapons*sizeof(int32_t));
       memcpy(w,player_list->weapons,total_weapons*sizeof(int32_t));
 
-      char tmp[100];
-      strcpy(tmp,g_current_level->name());
-      the_game->load_level(tmp);
+      String const name = g_current_level->GetName();
+      the_game->load_level(name.C());
       g_current_level->unactivate_all();
 
       if (main_screen)  // don't draw if graphics haven't been setup yet.
@@ -1041,10 +1040,11 @@ void dev_controll::do_command(char const *command, Event &ev)
   }
   if (!strcmp(fword,"name"))
   {
-    while (*command && *command!=' ') command++;
+    while (*command && *command!=' ')
+      command++;
     if (*command)
-      g_current_level->set_name(command+1);
-    dprintf(symbol_str("name_now"),g_current_level->name());
+      g_current_level->SetName(command + 1);
+    dprintf(symbol_str("name_now"), g_current_level->GetName().C());
   }
   if (!strcmp(fword,"set_first_level"))
   {
@@ -1959,9 +1959,12 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        mess_win=file_dialog(symbol_str("level_name"),g_current_level ? g_current_level->name() : "",
-                 ID_LEVEL_LOAD_OK,symbol_str("ok_button"),ID_CANCEL,symbol_str("cancel_button"),
-                 symbol_str("FILENAME"),ID_MESS_STR1);
+        mess_win = file_dialog(symbol_str("level_name"),
+                               g_current_level ? g_current_level->GetName().C()
+                                               : "",
+                               ID_LEVEL_LOAD_OK, symbol_str("ok_button"),
+                               ID_CANCEL, symbol_str("cancel_button"),
+                               symbol_str("FILENAME"), ID_MESS_STR1);
         wm->grab_focus(mess_win);
       }
     } break;
@@ -1981,11 +1984,11 @@ void dev_controll::handle_event(Event &ev)
     case ID_LEVEL_SAVE :
     { if (g_current_level)
       {
-        if (g_current_level->save(g_current_level->name(),0))
+        if (g_current_level->save(g_current_level->GetName().C(), 0))
         {
-          char msg[100];
-          sprintf(msg,symbol_str("saved_level"),g_current_level->name());
-          the_game->show_help(msg);
+          String msg = String::Printf(symbol_str("saved_level"),
+                                      g_current_level->GetName().C());
+          the_game->show_help(msg.C());
           the_game->need_refresh();
         }
       }
@@ -1995,10 +1998,12 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        mess_win=file_dialog(symbol_str("saveas_name"),g_current_level ? g_current_level->name() : "untitled.spe",
-                   ID_LEVEL_SAVEAS_OK,symbol_str("ok_button"),
-                 ID_CANCEL,symbol_str("cancel_button"),
-                 symbol_str("FILENAME"),ID_MESS_STR1);
+        mess_win = file_dialog(symbol_str("saveas_name"),
+                               g_current_level ? g_current_level->GetName().C()
+                                               : "untitled.spe",
+                               ID_LEVEL_SAVEAS_OK, symbol_str("ok_button"),
+                               ID_CANCEL, symbol_str("cancel_button"),
+                               symbol_str("FILENAME"), ID_MESS_STR1);
         wm->grab_focus(mess_win);
       }
     } break;
@@ -2006,7 +2011,7 @@ void dev_controll::handle_event(Event &ev)
     {
       if (g_current_level)
       {
-        g_current_level->set_name(mess_win->read(ID_MESS_STR1));
+        g_current_level->SetName(mess_win->read(ID_MESS_STR1));
         wm->Push(Event(ID_CANCEL, NULL));        // close window after save
         wm->Push(Event(ID_LEVEL_SAVE, NULL));
       }

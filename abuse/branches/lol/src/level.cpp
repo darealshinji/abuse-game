@@ -83,7 +83,6 @@ void Level::load_fail()
 {
   if (map_fg)    free(map_fg);   map_fg=NULL;
   if (map_bg)    free(map_bg);   map_bg=NULL;
-  if (Name)      free(Name);     Name=NULL;
 
   first_active=NULL;
   for (view * f = player_list; f; f = f->next)
@@ -119,7 +118,6 @@ Level::~Level()
   if (target_list) free(target_list);
   if (block_list) free(block_list);
   if (all_block_list) free(all_block_list);
-  if (first_name) free(first_name);
 }
 
 void Level::restart()
@@ -843,9 +841,9 @@ void Level::set_size(int w, int h)
   bg_height=nbh;
   bg_width=nbw;
 
-  char msg[80];
-  sprintf(msg,"Level %s size now %d %d\n",name(),foreground_width(),foreground_height());
-  the_game->show_help(msg);
+  String msg = String::Printf("Level %s size now %d %d\n", GetName().C(),
+                              foreground_width(), foreground_height());
+  the_game->show_help(msg.C());
 }
 
 
@@ -1236,6 +1234,8 @@ void Level::load_objects(SpecDir *sd, bFILE *fp)
 }
 
 Level::Level(SpecDir *sd, bFILE *fp, char const *lev_name)
+  : m_name(lev_name),
+    m_first_name("")
 {
   SpecEntry *e;
   area_list=NULL;
@@ -1251,25 +1251,24 @@ Level::Level(SpecDir *sd, bFILE *fp, char const *lev_name)
 
   all_block_list=NULL;
   all_block_list_size=all_block_total=0;
-  first_name=NULL;
 
   the_game->need_refresh();
 
   char cmd[100];
-  sprintf(cmd,symbol_str("loading"),lev_name);
+  sprintf(cmd, symbol_str("loading"), lev_name);
   stack_stat stat(cmd);
-  Name = strdup(lev_name);
 
   e=sd->find("first name");
   if (e)
   {
-    fp->seek(e->offset,0);
-    int len=fp->read_uint8();   // read the length of the string
-    first_name=(char *)malloc(len);
-    fp->read(first_name,len);    // read the string
-  } else
+    fp->seek(e->offset, 0);
+    int len = fp->read_uint8(); // read the length of the string
+    m_first_name.Resize(len);
+    fp->read(m_first_name.C(), len); // read the string
+  }
+  else
   {
-    first_name = strdup(Name);
+    m_first_name = m_name;
   }
 
   e=sd->find("fgmap");
@@ -1420,34 +1419,20 @@ Level::Level(SpecDir *sd, bFILE *fp, char const *lev_name)
 */
 
 
-void get_prof_assoc_filename(char *filename, char *prof_filename)
+String get_prof_assoc_filename(String const &filename)
 {
-  char *s1,*s2,*dot=NULL;
-  for (s1=filename,s2=prof_filename,dot=NULL; *s1; s1++,s2++)
-  {
-    *s2=*s1;
-    if (*s1=='.') dot=s2;
-  }
-  if (dot) s2=dot+1;
-
-  *(s2++)='c';
-  *(s2++)='p';
-  *(s2++)='f';
-  *s2=0;
+    int dot = filename.LastIndexOf('.');
+    return (dot == -1 ? filename : filename.Sub(0, dot)) + ".cpf";
 }
 
 void Level::level_loaded_notify()
 {
-  char *n;
-  if (first_name)
-    n=first_name;
-  else
-    n=name();
-  if (strstr(n,"levels/level"))
+  String n = m_first_name.Count() ? m_first_name : m_name;
+  if (n.Sub(0, 12) == "levels/level")
   {
     char nm[100];
-    sprintf(nm,"music/abuse%c%c.hmi",n[12],n[13]);
-    bFILE *fp=open_file(nm,"rb");
+    sprintf(nm, "music/abuse%c%c.hmi", n[12], n[13]);
+    bFILE *fp = open_file(nm, "rb");
     if (fp->open_failure())
     {
       delete fp;
@@ -1481,10 +1466,10 @@ bFILE *Level::create_dir(char *filename, int save_all,
              object_node *save_list, object_node *exclude_list)
 {
   SpecDir sd;
-  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"Copyright 1995 Crack dot Com, All Rights reserved",NULL,0,0));
-  if (first_name)
-    sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"first name",NULL,strlen(first_name)+2,0));
-
+  sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY, "Copyright 1995 Crack dot Com, All Rights reserved", NULL, 0, 0));
+  if (m_first_name.Count())
+    sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY, "first name",
+                                 NULL, m_first_name.Count() + 2, 0));
 
 
   sd.add_by_hand(new SpecEntry(SPEC_GRUE_FGMAP,"fgmap",NULL,4+4+fg_width*fg_height*2,0));
@@ -1559,7 +1544,7 @@ bFILE *Level::create_dir(char *filename, int save_all,
     sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,object_descriptions[i].name,NULL,1+
               RC_type_size(object_descriptions[i].type)*t,0));
 
-  add_light_spec(&sd,Name);
+  add_light_spec(&sd, m_name.C());
 
 
   sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"object_links",NULL,1+4+total_object_links(save_list)*8,0));
@@ -1599,8 +1584,8 @@ void Level::write_thumb_nail(bFILE *fp, AImage *im)
   AImage *i = new AImage(ivec2(160, 100 + wm->font()->Size().y * 2));
   i->clear();
   scale_put(im,i,0,0,160,100);
-  if (first_name)
-    wm->font()->PutString(i, ivec2(80 - strlen(first_name) * wm->font()->Size().x / 2, 100), first_name);
+  if (m_first_name.Count())
+    wm->font()->PutString(i, ivec2(80 - m_first_name.Count() * wm->font()->Size().x / 2, 100), m_first_name.C());
 
   time_t t;
   t=time(NULL);
@@ -2105,17 +2090,13 @@ void Level::write_cache_prof_info()
 {
   if (cache.prof_is_on())
   {
-    char pf_name[100];
-    if (first_name)
-      get_prof_assoc_filename(first_name,pf_name);
-    else
-      get_prof_assoc_filename(Name,pf_name);
-
+    String pf_name = get_prof_assoc_filename(m_first_name.Count()
+                                              ? m_name : m_first_name);
 
     SpecDir sd;
     sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY,"cache profile info",NULL,cache.prof_size(),0));
     sd.calc_offsets();
-    jFILE *fp2=sd.write(pf_name);
+    jFILE *fp2 = sd.write(pf_name.C());
     if (!fp2)
       the_game->show_help("Unable to open cache profile output file");
     else
@@ -2132,14 +2113,11 @@ void Level::load_cache_info(SpecDir *sd, bFILE *fp)
 {
   if (!DEFINEDP(symbol_value(l_empty_cache)) || !symbol_value(l_empty_cache))
   {
-    char pf_name[100];
-    if (first_name)
-      get_prof_assoc_filename(first_name,pf_name);  // get cache info from orignal filename if this is a savegame
-    else
-      get_prof_assoc_filename(Name,pf_name);
+    // get cache info from orignal filename if this is a savegame
+    String pf_name = get_prof_assoc_filename(m_first_name.Count()
+                                              ? m_name : m_first_name);
 
-
-    cache.load_cache_prof_info(pf_name,this);
+    cache.load_cache_prof_info(pf_name.C(), this);
   }
 }
 
@@ -2184,9 +2162,7 @@ int Level::save(char const *filename, int save_all)
     // if we are not doing a savegame then change the first_name to this name
     if( !save_all )
     {
-        if( first_name )
-            free(first_name);
-        first_name = strdup(name);
+        m_first_name = name;
     }
 
     object_node *players, *objs;
@@ -2202,10 +2178,10 @@ int Level::save(char const *filename, int save_all)
     {
         if( !fp->open_failure() )
         {
-            if( first_name )
+            if( m_first_name.Count() )
             {
-                fp->write_uint8( strlen( first_name ) + 1 );
-                fp->write( first_name, strlen( first_name ) + 1 );
+                fp->write_uint8(m_first_name.Count() + 1);
+                fp->write(m_first_name.C(), m_first_name.Count() + 1);
             }
             else
             {
@@ -2293,6 +2269,8 @@ int Level::save(char const *filename, int save_all)
 }
 
 Level::Level(int width, int height, char const *name)
+  : m_name(""),
+    m_first_name("")
 {
   the_game->need_refresh();
   area_list=NULL;
@@ -2310,10 +2288,6 @@ Level::Level(int width, int height, char const *name)
   all_block_list=NULL;
   all_block_list_size=all_block_total=0;
 
-  Name=NULL;
-  first_name=NULL;
-
-  set_name(name);
   first=first_active=NULL;
 
   fg_width=width;

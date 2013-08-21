@@ -69,25 +69,26 @@ int demo_manager::start_recording(char *filename)
   record_file=open_file(filename,"wb");
   if (record_file->open_failure()) { delete record_file; return 0; }
 
-  char name[100];
-  strcpy(name,g_current_level->name());
+  String const name = g_current_level->GetName();
 
-  the_game->load_level(name);
-  record_file->write((void *)"DEMO,VERSION:2",14);
-  record_file->write_uint8(strlen(name)+1);
-  record_file->write(name,strlen(name)+1);
+  the_game->load_level(name.C());
+  record_file->write((void *)"DEMO,VERSION:2", 14);
+  record_file->write_uint8(name.Count() + 1);
+  record_file->write(name.C(), name.Count() + 1);
 
-
+  uint8_t difficulty = 3;
   if (DEFINEDP(symbol_value(l_difficulty)))
   {
-    if (symbol_value(l_difficulty)==l_easy) record_file->write_uint8(0);
-    else if (symbol_value(l_difficulty)==l_medium) record_file->write_uint8(1);
-    else if (symbol_value(l_difficulty)==l_hard) record_file->write_uint8(2);
-    else record_file->write_uint8(3);
-  } else record_file->write_uint8(3);
+    if (symbol_value(l_difficulty) == l_easy)
+      difficulty = 0;
+    else if (symbol_value(l_difficulty) == l_medium)
+      difficulty = 1;
+    else if (symbol_value(l_difficulty) == l_hard)
+      difficulty = 2;
+  }
+  record_file->write_uint8(difficulty);
 
-
-  state=RECORDING;
+  state = RECORDING;
 
   reset_game();
 
