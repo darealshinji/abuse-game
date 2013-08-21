@@ -457,23 +457,23 @@ void show_stats()
     int x1=im->Size().x+1,y1=0,x2=xres,y2=main_screen->Size().y;
     fade_in(NULL,16);
 
-    char name[50];
-    strcpy(name,g_current_level->original_name());
-    char dig1=name[strlen(name)-strlen(".spe")-2];
-    char dig2=name[strlen(name)-strlen(".spe")-1];
+    String const &name = g_current_level->GetOriginalName();
+    ASSERT(name.Count() > strlen(".spe") + 2,
+           "invalid level name %s", name.C());
+    String digits = name.Sub(name.Count() - strlen(".spe") - 2, 2);
 
-
-    char msg[50];
-
-    if (isdigit(dig1) && isdigit(dig2))
+    String msg = symbol_str("lev_complete");
+    msg += " : ";
+    if (isdigit(digits[0]) && isdigit(digits[1]))
     {
-      if (dig1!='0')
-        sprintf(msg,"%s : %c%c",symbol_str("lev_complete"),dig1,dig2);
-      else
-        sprintf(msg,"%s : %c",symbol_str("lev_complete"),dig2);
-    } else sprintf(msg,"%s : %s",symbol_str("lev_complete"),g_current_level->original_name());
+        if (digits[0] != '0')
+            msg += digits[0];
+        msg += digits[1];
+    }
+    else
+        msg += name;
 
-    int w = wm->font()->Size().x * strlen(msg),
+    int w = wm->font()->Size().x * msg.Count(),
         h = wm->font()->Size().y;
     int x=(x1+x2)/2-w/2,y=(y1+y2)/2-h/2;
     main_screen->Bar(ivec2(x - 10, y - 10), ivec2(x + w + 10, y + h + 10),
@@ -481,8 +481,8 @@ void show_stats()
     main_screen->Bar(ivec2(x - 9, y - 9), ivec2(x + w + 9, y + h + 9),
                      wm->medium_color());
 
-    wm->font()->PutString(main_screen, ivec2(x + 1, y + 1), msg, wm->dark_color());
-    wm->font()->PutString(main_screen, ivec2(x, y), msg, wm->bright_color());
+    wm->font()->PutString(main_screen, ivec2(x + 1, y + 1), msg.C(), wm->dark_color());
+    wm->font()->PutString(main_screen, ivec2(x, y), msg.C(), wm->bright_color());
     wm->flush_screen();
     Timer now; now.Wait(0.5);
   }

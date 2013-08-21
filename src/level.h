@@ -50,7 +50,7 @@ class Level        // contain map info and objects
            *map_bg,
        bg_width,bg_height,
        fg_width,fg_height;
-  char *Name,*first_name;
+  String m_name, m_first_name;
   int32_t total_objs;
   GameObject *first,*first_active,*last;
 
@@ -75,13 +75,28 @@ class Level        // contain map info and objects
   uint32_t ctick;
 
 public :
-  char *original_name() { if (first_name) return first_name; else return Name; }
+    String const & GetOriginalName() const
+    {
+        if (m_first_name.Count())
+            return m_first_name;
+        return m_name;
+    }
+
+    String const &GetName() const
+    {
+        return m_name;
+    }
+
+    void SetName(String const &name)
+    {
+        m_name = name;
+    }
+
   uint32_t tick_counter() { return ctick; }
   void set_tick_counter(uint32_t x);
   area_controller *area_list;
 
   void clear_active_list() { first_active=NULL; }
-  char *name() { return Name; }
   GameObject *attacker(GameObject *who);
   int is_attacker(GameObject *who);
   GameObject *main_character();
@@ -97,7 +112,6 @@ public :
   void load_fail();
   Level(int width, int height, char const *name);
   int save(char const *filename, int save_all);  // save_all includes player and view information (1 = success)
-  void set_name(char const *name) { Name=strcpy((char *)realloc(Name,strlen(name)+1),name); }
   void set_size(int w, int h);
   void remove_light(LightSource *which);
   void try_pushback(GameObject *subject,GameObject *target);

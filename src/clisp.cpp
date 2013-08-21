@@ -812,7 +812,7 @@ void *l_caller(long number, void *args)
     } break;
     case 26 :
     {
-      return LString::Create(g_current_level->name());
+      return LString::Create(g_current_level->GetName().C());
     } break;
     case 27 : return ant_ai(); break;
     case 28 : return sensor_ai(); break;

@@ -132,7 +132,7 @@ public:
     int compare(int a, int b); // compares usage count (used by qsort)
     int offset_compare(int a, int b);
 
-    void load_cache_prof_info(char *filename, Level *lev);
+    void load_cache_prof_info(String const &filename, Level *lev);
     // sarray is a index table sorted by offset/filenum
     int search(int *sarray, uint16_t filenum, int32_t offset);
 

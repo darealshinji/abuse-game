@@ -475,7 +475,7 @@ void CacheList::preload_cache(Level *lev)
   load_chars();
 }
 
-void CacheList::load_cache_prof_info(char *filename, Level *lev)
+void CacheList::load_cache_prof_info(String const &filename, Level *lev)
 {
   int j;
   for (j=0; j<this->total; j++)
@@ -485,7 +485,7 @@ void CacheList::load_cache_prof_info(char *filename, Level *lev)
   preload_cache(lev);                // preliminary guesses at stuff to load
 
   int load_fail=1;
-  bFILE *fp=open_file(filename,"rb");
+  bFILE *fp = open_file(filename.C(), "rb");
   if (!fp->open_failure())
   {
     SpecDir sd(fp);
