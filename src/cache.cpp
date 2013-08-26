@@ -50,144 +50,122 @@ int crc_man_write_crc_file(char const *filename)
 
 int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
 {
-  char msg[100];
-  sprintf(msg, "%s", symbol_str("calc_crc"));  // this may take some time, show the user a status indicator
-  if (stat_man) stat_man->push(msg,NULL);
-
-  int i,total=0;
-  for (i=0; i<total_files; i++)
-  {
-    int failed=0;
-    get_crc(i,failed);
-
-    if (failed)
-    {
-      jFILE *fp=new jFILE(get_filename(i),"rb");
-      if (!fp->open_failure())
-      {
-    set_crc(i, Crc::FromFile(fp));
-    total++;
-      }
-      delete fp;
-    } else total++;
+    String msg = String::Printf("%s", symbol_str("calc_crc"));
     if (stat_man)
-      stat_man->update(i*100/total_files);
-  }
-  if (stat_man) stat_man->pop();
-  jFILE *fp=new jFILE(NET_CRC_FILENAME,"wb");
-  if (fp->open_failure())
-  {
-    delete fp;
-    return 0;
-  }
+        stat_man->push(msg.C(), NULL);
 
-  fp->write_uint16(total);
-  total=0;
-  for (i=0; i<total_files; i++)
-  {
-    uint32_t crc;
-    int failed=0;
-    crc=get_crc(i,failed);
-    if (!failed)
+    int total = 0;
+    for (int i = 0; i < m_files.Count(); ++i)
     {
-      fp->write_uint32(crc);
-      uint8_t len=strlen(get_filename(i))+1;
-      fp->write_uint8(len);
-      fp->write(get_filename(i),len);
-      total++;
+        int failed = 0;
+        get_crc(i, failed);
+
+        if (failed)
+        {
+            jFILE fp(GetFileName(i).C(), "rb");
+            if (!fp.open_failure())
+            {
+                set_crc(i, Crc::FromFile(&fp));
+                total++;
+            }
+        }
+        else
+            total++;
+
+        if (stat_man)
+            stat_man->update(i * 100 / m_files.Count());
     }
-  }
-  delete fp;
-  return 1;
+    if (stat_man)
+        stat_man->pop();
+
+    jFILE fp(NET_CRC_FILENAME, "wb");
+    if (fp.open_failure())
+        return 0;
+
+    fp.write_uint16(total);
+
+    for (int i = 0; i < m_files.Count(); ++i)
+    {
+        int failed = 0;
+        uint32_t crc = get_crc(i, failed);
+        if (!failed)
+        {
+            fp.write_uint32(crc);
+            String const &name = GetFileName(i);
+            fp.write_uint8(name.Count() + 1);
+            fp.write(name.C(), name.Count() + 1);
+        }
+    }
+    return 1;
 }
 
 int CrcManager::load_crc_file(char const *filename)
 {
-  bFILE *fp=open_file(filename,"rb");
-  if (fp->open_failure())
-  {
-    delete fp;
-    return 0;
-  } else
-  {
-    short total=fp->read_uint16();
-    int i;
-    for (i=0; i<total; i++)
+    jFILE fp(filename, "rb");
+    if (fp.open_failure())
+        return 0;
+
+    uint16_t count = fp.read_uint16();
+    for (int i = 0; i < count; i++)
     {
-      char name[256];
-      uint32_t crc=fp->read_uint32();
-      uint8_t len=fp->read_uint8();
-      fp->read(name,len);
-      set_crc(get_filenumber(name),crc);
+        String name;
+        uint32_t crc = fp.read_uint32();
+        uint8_t len = fp.read_uint8();
+        name.Resize(len);
+        fp.read(name.C(), len);
+        set_crc(GetFileNumber(name), crc);
     }
-    delete fp;
-  }
-  return 1;
+
+    return 1;
 }
 
 void CrcManager::clean_up()
 {
-  for (int i=0; i<total_files; i++)
-    delete files[i];
-  if (total_files)
-    free(files);
-  total_files=0;
-  files=NULL;
+    for (int i = 0; i < m_files.Count(); ++i)
+        delete m_files[i];
+    m_files.Empty();
+}
+
+CrcedFile::CrcedFile(char const *name)
+  : m_name(name),
+    m_crc(0),
+    m_calculated(0)
+{
 }
 
 CrcedFile::~CrcedFile()
 {
-  free(filename);
-}
-
-CrcedFile::CrcedFile(char const *name)
-{
-  filename = strdup(name);
-  crc_calculated=0;
 }
 
 CrcManager::CrcManager()
 {
-  total_files=0;
-  files=NULL;
 }
 
-int CrcManager::get_filenumber(char const *filename)
+int CrcManager::GetFileNumber(String const &name)
 {
-  for (int i=0; i<total_files; i++)
-    if (!strcmp(filename,files[i]->filename)) return i;
-  total_files++;
-  files=(CrcedFile **)realloc(files,total_files*sizeof(CrcedFile *));
-  files[total_files-1]=new CrcedFile(filename);
-  return total_files-1;
+    for (int i = 0; i < m_files.Count(); ++i)
+        if (name == m_files[i]->m_name)
+            return i;
+
+    m_files.Push(new CrcedFile(name.C()));
+    return m_files.Count() - 1;
 }
 
-char *CrcManager::get_filename(int filenumber)
+String const &CrcManager::GetFileName(int filenumber)
 {
-  ASSERT(filenumber >= 0);
-  ASSERT(filenumber < total_files);
-  return files[filenumber]->filename;
+    return m_files[filenumber]->m_name;
 }
 
 uint32_t CrcManager::get_crc(int filenumber, int &failed)
 {
-  ASSERT(filenumber >= 0);
-  ASSERT(filenumber < total_files);
-  if (files[filenumber]->crc_calculated)
-  {
-    failed = 0;
-    return files[filenumber]->crc;
-  }
-  failed = 1;
-  return 0;
+    failed = m_files[filenumber]->m_calculated ? 0 : 1;
+    return m_files[filenumber]->m_crc;
 }
 
 void CrcManager::set_crc(int filenumber, uint32_t crc)
 {
-  ASSERT(filenumber >= 0);
-  ASSERT(filenumber < total_files);
-  files[filenumber]->crc_calculated = 1;
-  files[filenumber]->crc=crc;
+    m_files[filenumber]->m_crc = crc;
+    m_files[filenumber]->m_calculated = 1;
 }
 
 void CacheList::unmalloc(CacheItem *i)
@@ -210,8 +188,6 @@ void CacheList::unmalloc(CacheItem *i)
   i->last_access=-1;
 }
 
-
-
 void CacheList::prof_init()
 {
   if (prof_data)
@@ -221,36 +197,34 @@ void CacheList::prof_init()
   memset(prof_data,0,sizeof(int)*total);
 }
 
-static int c_sorter(const void *a, const void *b)
+static int c_sorter(void const *a, void const *b)
 {
-  return cache.compare(*(int *)a,*(int *)b);
+  return cache.compare(*(int const *)a, *(int const *)b);
 }
 
 int CacheList::compare(int a, int b)
 {
-  if (prof_data[a]<prof_data[b])
-    return 1;
-  else if (prof_data[a]>prof_data[b])
-    return -1;
-  else return 0;
+    if (prof_data[a] < prof_data[b])
+        return 1;
+    else if (prof_data[a] > prof_data[b])
+        return -1;
+    return 0;
 }
-
 
 int CacheList::prof_size()
 {
-  int size=0;     // count up the size for a spec enrty
-  size+=2;        // total filenames
-  int i;
-  for (i=0; i<crc_manager.total_filenames(); i++)
-      size+=strlen(crc_manager.get_filename(i))+2;    // filename + 0 + size of string
+    int size = 0;     // count up the size for a spec entry
+    size += 2;        // total filenames
+    for (int i = 0; i < crc_manager.total_filenames(); i++)
+        size += crc_manager.GetFileName(i).Count() + 2;    // filename + 0 + size of string
 
-  size+=4;       // number of entries saved
+    size += 4;       // number of entries saved
 
-  for (i=0; i<total; i++)
-    if (list[i].last_access>0)       // don't save unaccessed counts
-      size+=2+4+1;                   // filenumber & offset & type
+    for (int i = 0; i < total; i++)
+        if (list[i].last_access > 0)       // don't save unaccessed counts
+            size += 2 + 4 + 1;             // filenumber & offset & type
 
-  return size;
+    return size;
 }
 
 
@@ -268,9 +242,9 @@ void CacheList::prof_write(bFILE *fp)
       fp->write_uint16(crc_manager.total_filenames());
       for (i=0; i<crc_manager.total_filenames(); i++)
       {
-    int l=strlen(crc_manager.get_filename(i))+1;
-        fp->write_uint8(l);
-    fp->write(crc_manager.get_filename(i),l);
+        String const &name = crc_manager.GetFileName(i);
+        fp->write_uint8(name.Count() + 1);
+        fp->write(name.C(), name.Count() + 1);
       }
 
       int tsaved=0;
@@ -503,15 +477,13 @@ void CacheList::load_cache_prof_info(String const &filename, Level *lev)
       {
     fnum_remap=(int *)malloc(sizeof(int)*tnames);
 
-    int i;
-    for (i=0; i<tnames; i++)
+    for (int i = 0; i < tnames; i++)
     {
-      fp->read(name,fp->read_uint8());
-      fnum_remap[i]=-1;                    // initialize the map to no-map
+      fp->read(name, fp->read_uint8());
+      fnum_remap[i] = -1;                    // initialize the map to no-map
 
-      int j;
-      for (j=0; j<crc_manager.total_filenames(); j++)
-        if (!strcmp(crc_manager.get_filename(j),name))
+      for (int j = 0; j < crc_manager.total_filenames(); j++)
+        if (crc_manager.GetFileName(j) == name)
           fnum_remap[i]=j;
     }
 
@@ -523,10 +495,11 @@ void CacheList::load_cache_prof_info(String const &filename, Level *lev)
     int tmatches=0;
 
     sorted_id_list=(int *)malloc(sizeof(int)*total);
-    for (j=0; j<total; j++) sorted_id_list[j]=j;
+    for (int j = 0; j < total; j++)
+        sorted_id_list[j] = j;
     qsort(sorted_id_list,total,sizeof(int),s_offset_compare);
 
-    for (i=0; i<tsaved; i++)
+    for (int i = 0; i < tsaved; i++)
     {
       fp->read_uint8(); // read type
       short file_num=fp->read_uint16();
@@ -537,7 +510,7 @@ void CacheList::load_cache_prof_info(String const &filename, Level *lev)
       uint32_t offset=fp->read_uint32();
 
       // search for a match
-      j=search(sorted_id_list,file_num,offset);
+      int j = search(sorted_id_list,file_num,offset);
       if (j!=-1)
       {
         if (list[j].last_access<0)  // if not loaded
@@ -550,14 +523,13 @@ void CacheList::load_cache_prof_info(String const &filename, Level *lev)
 
     free(sorted_id_list);            // was used for searching, no longer needed
 
-    for (j=0; j<total; j++)
+    for (int j = 0; j < total; j++)
       if (list[j].last_access==0)
         unmalloc(list+j);             // free any cache entries that are not accessed at all in the level
 
-
     ful=0;
     int tcached=0;
-    for (j=0; j<total; j++)    // now load all of the objects until full
+    for (int j = 0; j < total; j++)    // now load all of the objects until full
     {
 //      stat_man->update(j*70/total+25);
       if (list[j].file_number>=0 && list[j].last_access==-2)
@@ -589,7 +561,7 @@ void CacheList::load_cache_prof_info(String const &filename, Level *lev)
       tmatches=tsaved+1;
 
     last_access=tmatches+1;
-    for (i=0; i<tsaved; i++)      // reorder the last access of each cache to reflect prioirties
+    for (int i = 0; i < tsaved; i++)      // reorder the last access of each cache to reflect prioirties
     {
       if (priority[i]!=-1)
       {
@@ -608,8 +580,7 @@ void CacheList::load_cache_prof_info(String const &filename, Level *lev)
 
   if (load_fail) // no cache file, go solely on above gueses
   {
-    int j;
-    for (j=0; j<total; j++)    // now load all of the objects until full, don't free old stuff
+    for (int j = 0; j < total; j++)    // now load all of the objects until full, don't free old stuff
     {
 //      stat_man->update(j*70/total+25);
 
@@ -642,20 +613,15 @@ void CacheList::load_cache_prof_info(String const &filename, Level *lev)
 
 void CacheList::prof_poll_start()
 {
-  poll_start_access=last_access;
+    poll_start_access = last_access;
 }
 
 void CacheList::prof_poll_end()
 {
-  if (prof_data)
-  {
-    int i=0;
-    for (; i<total; i++)
-    {
-      if (list[i].last_access>=poll_start_access)
-        prof_data[i]++;
-    }
-  }
+    if (prof_data)
+        for (int i = 0; i < total; i++)
+            if (list[i].last_access >= poll_start_access)
+                prof_data[i]++;
 }
 
 void CacheList::unreg(int id)
@@ -720,33 +686,34 @@ void CacheList::empty()
 void CacheList::locate(CacheItem *i, int local_only)
 {
 //  dprintf("cache in %s, type %d, offset %d\n",crc_manager.get_filename(i->file_number),i->type,i->offset);
-  if (i->file_number!=last_file)
-  {
-    if (fp) delete fp;
-    if (last_dir) delete last_dir;
-    if (local_only)
-      fp=new jFILE(crc_manager.get_filename(i->file_number),"rb");
-    else
-      fp=open_file(crc_manager.get_filename(i->file_number),"rb");
-
-
-    if (fp->open_failure())
+    if (i->file_number != last_file)
     {
-      printf("Ooch. Could not open file %s\n",crc_manager.get_filename(i->file_number));
-      delete fp;
-      exit(0);
+        delete fp;
+        delete last_dir;
+        if (local_only)
+            fp = new jFILE(crc_manager.GetFileName(i->file_number).C(), "rb");
+        else
+            fp = open_file(crc_manager.GetFileName(i->file_number).C(), "rb");
+
+        if (fp->open_failure())
+        {
+            Log::Error("Could not open file %s\n", crc_manager.GetFileName(i->file_number).C());
+            delete fp;
+            exit(0);
+        }
+
+        last_offset = -1;
+        last_dir = new SpecDir(fp);
+        last_file = i->file_number;
     }
 
-    last_offset=-1;
-    last_dir=new SpecDir(fp);
-    last_file=i->file_number;
-  }
-  if (i->offset!=last_offset)
-  {
-    fp->seek(i->offset,SEEK_SET);
-    last_offset=i->offset;
-  }
-  used=1;
+    if (i->offset != last_offset)
+    {
+        fp->seek(i->offset, SEEK_SET);
+        last_offset = i->offset;
+    }
+
+    used = 1;
 }
 
 int CacheList::AllocId()
@@ -813,7 +780,7 @@ extern int total_files_open;
 
 int CacheList::reg(char const *filename, char const *name, int type, int rm_dups)
 {
-    int fn = crc_manager.get_filenumber(filename);
+    int fn = crc_manager.GetFileNumber(filename);
     int offset = 0;
 
     if (type == SPEC_EXTERN_SFX)
@@ -1013,8 +980,8 @@ sound_effect *CacheList::sfx(int id)
   else
   {
     touch(me);                                           // hold me, feel me, be me!
-    char *fn=crc_manager.get_filename(me->file_number);
-    me->data=(void *)new sound_effect(fn);
+    String const &name = crc_manager.GetFileName(me->file_number);
+    me->data = (void *)new sound_effect(name.C());
     return (sound_effect *)me->data;
   }
 }
@@ -1104,7 +1071,7 @@ void CacheList::show_accessed()
       ci=new_old;
       old=ci->last_access;
       printf("type=(%20s) file=(%20s) access=(%6ld)\n",spec_types[ci->type],
-         crc_manager.get_filename(ci->file_number),
+         crc_manager.GetFileName(ci->file_number).C(),
          (long int)ci->last_access);
     }
   } while (new_old);

@@ -30,29 +30,29 @@ protected:
     CrcedFile(char const *name);
     ~CrcedFile();
 
-    int crc_calculated;
-    uint32_t crc;
-    char *filename;
+    String m_name;
+    uint32_t m_crc;
+    int m_calculated;
 };
 
 // stores crc for each file open to avoid redundant calculations
 class CrcManager
 {
-private:
-    int total_files;
-    CrcedFile **files;
-
 public:
     CrcManager();
 
-    int get_filenumber(char const *filename);
+    int GetFileNumber(String const &filename);
+    String const &GetFileName(int filenumber);
+
     uint32_t get_crc(int filenumber, int &failed);
     void set_crc(int filenumber, uint32_t crc);
-    char *get_filename(int filenumber);
     void clean_up();
-    int total_filenames() { return total_files; }
+    int total_filenames() { return m_files.Count(); }
     int write_crc_file(char const *filename);
     int load_crc_file(char const *filename);
+
+private:
+    Array<CrcedFile *> m_files;
 };
 
 /* Cache item types:
