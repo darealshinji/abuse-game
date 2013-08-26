@@ -38,7 +38,8 @@
 
 extern int past_startup;
 
-property_manager *prop;
+APropertyManager *g_prop;
+
 int *backtiles;
 int *foretiles;
 JCFont *big_font,*console_font;

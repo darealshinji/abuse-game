@@ -59,8 +59,8 @@ void profile_init()
   profile_reset();
 
 
-  prof_win=wm->CreateWindow(ivec2(prop->getd("profile x", -1),
-                                  prop->getd("profile y", -1)),
+  prof_win=wm->CreateWindow(ivec2(g_prop->getd("profile x", -1),
+                                  g_prop->getd("profile y", -1)),
                             ivec2(20, prof_height + 1) * console_font->Size(),
                             NULL, "PROFILE");
 }
