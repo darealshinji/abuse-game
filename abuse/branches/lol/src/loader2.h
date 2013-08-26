@@ -15,8 +15,8 @@
 #include "sdlport/sound.h"
 
 #include "jwindow.h"
-class property_manager;
-extern property_manager *prop;
+
+extern class APropertyManager *g_prop;
 
 /*********************************title screen***********************************/
 extern int title_screen;

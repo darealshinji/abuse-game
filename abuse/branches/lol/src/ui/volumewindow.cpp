@@ -15,7 +15,7 @@
 #include "common.h"
 
 #include "volumewindow.h" // class VolumeWindow
-#include "property.h"     // class property_manager
+#include "property.h"     // class APropertyManager
 #include "gui.h"          // ico_button
 
 VolumeWindow::VolumeWindow() : Jwindow("Volume")
@@ -30,8 +30,8 @@ VolumeWindow::VolumeWindow() : Jwindow("Volume")
     d_ua = cache.reg(ff, "d_ua", SPEC_IMAGE, 1),
     d_da = cache.reg(ff, "d_da", SPEC_IMAGE, 1),
     slider = cache.reg(ff, "volume_slide", SPEC_IMAGE, 1);
-    m_pos.x = prop->getd("volume_x", xres / 2 - 20);
-    m_pos.y = prop->getd("volume_y", yres / 2 - 50);
+    m_pos.x = g_prop->getd("volume_x", xres / 2 - 20);
+    m_pos.y = g_prop->getd("volume_y", yres / 2 - 50);
     inm->add(new ico_button(10, 27, ID_SFX_DOWN, d_u, d_d, d_ua, d_da,
                   new ico_button(21, 27, ID_SFX_UP, u_u, u_d, u_ua, u_da,
                       new info_field(15, 42, 0, symbol_str("SFXv"),

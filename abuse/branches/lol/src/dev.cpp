@@ -309,8 +309,8 @@ void dev_controll::make_ambient()
     if(ambw)
         return;
 
-    ambw = wm->CreateWindow(ivec2(prop->getd("ambient x", -1),
-                                  prop->getd("ambient y", -1)),
+    ambw = wm->CreateWindow(ivec2(g_prop->getd("ambient x", -1),
+                                  g_prop->getd("ambient y", -1)),
                             ivec2(-1), new amb_cont(0, 0, NULL), "ambient");
 }
 
@@ -551,8 +551,8 @@ void dev_controll::toggle_toolbar()
   if (tbw)
   {
     tbw_on=0;
-    prop->setd("toolbar x",tbw->m_pos.x);
-    prop->setd("toolbar y",tbw->m_pos.y);
+    g_prop->setd("toolbar x",tbw->m_pos.x);
+    g_prop->setd("toolbar y",tbw->m_pos.y);
     wm->close_window(tbw);
     tbw=NULL;
   } else
@@ -570,8 +570,8 @@ void dev_controll::toggle_toolbar()
                          ID_NULL,
                          5,(visual_object **)dev_mode_pict,dev_mode_ids,DEV_MODES,
                         g_palette, g_palette, NULL);
-    tbw=wm->CreateWindow(ivec2(prop->getd("toolbar x", -1),
-                               prop->getd("toolbar y", -1)), ivec2(-1), tp);
+    tbw=wm->CreateWindow(ivec2(g_prop->getd("toolbar x", -1),
+                               g_prop->getd("toolbar y", -1)), ivec2(-1), tp);
     tp->set_x(setx,tbw->m_surf);
   }
 }
@@ -581,8 +581,8 @@ void dev_controll::toggle_show_menu()
     if(show_menu)
     {
         show_menu_on = 0;
-        prop->setd("layer x", show_menu->m_pos.x);
-        prop->setd("layer y", show_menu->m_pos.y);
+        g_prop->setd("layer x", show_menu->m_pos.x);
+        g_prop->setd("layer y", show_menu->m_pos.y);
         wm->close_window(show_menu);
         show_menu = NULL;
         return;
@@ -611,8 +611,8 @@ void dev_controll::toggle_show_menu()
     if(dev & DRAW_FG_LAYER)
         fb->push();
 
-    show_menu = wm->CreateWindow(ivec2(prop->getd("layer x", -1),
-                                       prop->getd("layer y", -1)), ivec2(-1),
+    show_menu = wm->CreateWindow(ivec2(g_prop->getd("layer x", -1),
+                                       g_prop->getd("layer y", -1)), ivec2(-1),
                                  fb, symbol_str(symbol_str("SHOW?")));
 }
 
@@ -624,8 +624,8 @@ void dev_controll::toggle_omenu()
     if(omenu)
     {
         omenu_on = 0;
-        prop->setd("objects x", omenu->m_pos.x);
-        prop->setd("objects y", omenu->m_pos.y);
+        g_prop->setd("objects x", omenu->m_pos.x);
+        g_prop->setd("objects y", omenu->m_pos.y);
         wm->close_window(omenu);
         omenu = NULL;
         free(listable_objs);
@@ -650,8 +650,8 @@ void dev_controll::toggle_omenu()
             c++;
         }
 
-    omenu = wm->CreateWindow(ivec2(prop->getd("objects x", 0),
-                                   prop->getd("objects y", 0)), ivec2(-1),
+    omenu = wm->CreateWindow(ivec2(g_prop->getd("objects x", 0),
+                                   g_prop->getd("objects y", 0)), ivec2(-1),
                              new pick_list(0, 0, DEV_CREATE,
                                            yres / wm->font()->Size().y / 2,
                                            listable_objs, total_listable, 0,
@@ -671,8 +671,8 @@ void dev_controll::toggle_pmenu()
     if(pmenu)
     {
         pmenu_on = 0;
-        prop->setd("pal x", pmenu->m_pos.x);
-        prop->setd("pal y", pmenu->m_pos.y);
+        g_prop->setd("pal x", pmenu->m_pos.x);
+        g_prop->setd("pal y", pmenu->m_pos.y);
         wm->close_window(pmenu);
         pmenu = NULL;
         free(pwin_list);
@@ -691,8 +691,8 @@ void dev_controll::toggle_pmenu()
     for(int i = 0; i < total_pals; i++)
         pwin_list[i] = pal_wins[i]->name;
 
-    pmenu = wm->CreateWindow(ivec2(prop->getd("pal x", 0),
-                                   prop->getd("pal y", -1)), ivec2(-1),
+    pmenu = wm->CreateWindow(ivec2(g_prop->getd("pal x", 0),
+                                   g_prop->getd("pal y", -1)), ivec2(-1),
                              new pick_list(0, 0, DEV_PALETTE,
                                            yres / wm->font()->Size().y / 2,
                                            pwin_list, total_pals, 0, NULL,
@@ -705,8 +705,8 @@ void dev_controll::toggle_fgw()
     if(forew)
     {
         forew_on = 1;
-        prop->setd("fore x", forew->m_pos.x);
-        prop->setd("fore y", forew->m_pos.y);
+        g_prop->setd("fore x", forew->m_pos.x);
+        g_prop->setd("fore y", forew->m_pos.y);
         wm->close_window(forew);
         forew = NULL;
         return;
@@ -721,8 +721,8 @@ void dev_controll::toggle_fgw()
                                         fg_scale, maxh, fg_w, NULL);
     f_tp->reverse();
 
-    forew = wm->CreateWindow(ivec2(prop->getd("fore x", -30),
-                                   prop->getd("fore y", 0)),
+    forew = wm->CreateWindow(ivec2(g_prop->getd("fore x", -30),
+                                   g_prop->getd("fore y", 0)),
                              ivec2(-1), f_tp,symbol_str("l_fg"));
 }
 
@@ -745,8 +745,8 @@ void dev_controll::toggle_bgw()
     if(backw)
     {
         backw_on = 1;
-        prop->setd("back x", backw->m_pos.x);
-        prop->setd("back y", backw->m_pos.y);
+        g_prop->setd("back x", backw->m_pos.x);
+        g_prop->setd("back y", backw->m_pos.y);
         wm->close_window(backw);
         backw = NULL;
         return;
@@ -759,8 +759,8 @@ void dev_controll::toggle_bgw()
     /* FIXME: previous code had 1 instead of 0, investigate */
     tile_picker *f_tp = new tile_picker(0, 0, DEV_BG_PICKER, SPEC_BACKTILE,
                                         bg_scale, maxh, bg_w, NULL);
-    forew = wm->CreateWindow(ivec2(prop->getd("back x", -30),
-                                   prop->getd("back y", 0)),
+    forew = wm->CreateWindow(ivec2(g_prop->getd("back x", -30),
+                                   g_prop->getd("back y", 0)),
                              ivec2(-1), f_tp,symbol_str("l_bg"));
 }
 
@@ -769,9 +769,9 @@ void dev_controll::toggle_search_window()
     if(search_window)
     {
         searchw_on = 1;
-        prop->setd("searchw x", search_window->m_pos.x);
-        prop->setd("searchw y", search_window->m_pos.y);
-        prop->set("search name", search_window->read(ID_SEARCH_TEXT));
+        g_prop->setd("searchw x", search_window->m_pos.x);
+        g_prop->setd("searchw y", search_window->m_pos.y);
+        g_prop->set("search name", search_window->read(ID_SEARCH_TEXT));
         wm->close_window(search_window);
         search_window = NULL;
         search_object = NULL;
@@ -780,12 +780,12 @@ void dev_controll::toggle_search_window()
 
     int bw = cache.img(dev_forward)->Size().x;
     /* FIXME: previous code had 1,1 instead of 0,0 -- investigate */
-    search_window = wm->CreateWindow(ivec2(prop->getd("searchw x", -30),
-                                           prop->getd("searchw y", 0)),
+    search_window = wm->CreateWindow(ivec2(g_prop->getd("searchw x", -30),
+                                           g_prop->getd("searchw y", 0)),
                                      ivec2(-1),
         new text_field(0, 0, ID_SEARCH_TEXT, "object name>",
                        "***************************",
-                       prop->get("search name", ""),
+                       g_prop->get("search name", ""),
         new button(bw, wm->font()->Size().y + 5, ID_SEARCH_BACKWARD,
                    cache.img(dev_backward),
         new button(bw * 3, wm->font()->Size().y + 5, ID_SEARCH_FOREWARD,
@@ -805,8 +805,8 @@ void dev_init(int argc, char **argv)
 {
   dev=0;
   int i;
-  prop=new property_manager;
-  prop->load("defaults.prp");
+  g_prop = new APropertyManager;
+  g_prop->load("defaults.prp");
 
   for (i=1; i<argc; i++)
   {
@@ -847,13 +847,13 @@ void dev_init(int argc, char **argv)
     exit(0);
   }
 
-  fg_reversed=prop->getd("fg_reversed",0);
-  mouse_scrolling=prop->getd("mouse_scrolling",0);
-  palettes_locked=prop->getd("palettes_locked",0);
-  view_shift_disabled=prop->getd("view_shift_disabled",0);
-  fps_on=prop->getd("fps_on",0);
-  show_names=prop->getd("show_names",0);
-  raise_all=prop->getd("raise_all",0);
+  fg_reversed = g_prop->getd("fg_reversed",0);
+  mouse_scrolling = g_prop->getd("mouse_scrolling",0);
+  palettes_locked = g_prop->getd("palettes_locked",0);
+  view_shift_disabled = g_prop->getd("view_shift_disabled",0);
+  fps_on = g_prop->getd("fps_on",0);
+  show_names = g_prop->getd("show_names",0);
+  raise_all = g_prop->getd("raise_all",0);
 }
 
 static pmenu *make_menu(int x, int y);
@@ -1274,12 +1274,12 @@ void dev_controll::toggle_light_window()
 {
     if(lightw)
     {
-        prop->setd("light create x", lightw->m_pos.x);
-        prop->setd("light create y", lightw->m_pos.y);
-        prop->setd("light create w", atoi(lightw->read(DEV_LIGHTW)));
-        prop->setd("light create h", atoi(lightw->read(DEV_LIGHTH)));
-        prop->setd("light create r1", atoi(lightw->read(DEV_LIGHTR1)));
-        prop->setd("light create r2", atoi(lightw->read(DEV_LIGHTR2)));
+        g_prop->setd("light create x", lightw->m_pos.x);
+        g_prop->setd("light create y", lightw->m_pos.y);
+        g_prop->setd("light create w", atoi(lightw->read(DEV_LIGHTW)));
+        g_prop->setd("light create h", atoi(lightw->read(DEV_LIGHTH)));
+        g_prop->setd("light create r1", atoi(lightw->read(DEV_LIGHTR1)));
+        g_prop->setd("light create r2", atoi(lightw->read(DEV_LIGHTR2)));
         wm->close_window(lightw);
         lightw = NULL;
         return;
@@ -1287,8 +1287,8 @@ void dev_controll::toggle_light_window()
 
     int bh = 16 + 6, bw = 20 + 6, th = wm->font()->Size().y + 4;
 
-    lightw = wm->CreateWindow(ivec2(prop->getd("light create x", 0),
-                                    prop->getd("light create y", 0)), ivec2(-1),
+    lightw = wm->CreateWindow(ivec2(g_prop->getd("light create x", 0),
+                                    g_prop->getd("light create y", 0)), ivec2(-1),
         new button_box(0, 0, DEV_LIGHT_BUTTON_BOX, 1,
             new button(bw * 0, bh * 0, DEV_LIGHT0, cache.img(light_buttons[0]),
             new button(bw * 1, bh * 0, DEV_LIGHT1, cache.img(light_buttons[1]),
@@ -1303,13 +1303,13 @@ void dev_controll::toggle_light_window()
             new button(bw * 1, bh * 3, DEV_AMBIENT, cache.img(light_buttons[11]),
             NULL))))))))))),
         new text_field(0, bh * 4, DEV_LIGHTW, "W ", "******",
-                       prop->getd("light create w", 0),
+                       g_prop->getd("light create w", 0),
         new text_field(0, bh * 4 + th * 1, DEV_LIGHTH, "H ", "******",
-                       prop->getd("light create h", 0),
+                       g_prop->getd("light create h", 0),
         new text_field(0, bh * 4 + th * 2, DEV_LIGHTR1, "R1", "******",
-                       prop->getd("light create r1", 1),
+                       g_prop->getd("light create r1", 1),
         new text_field(0, bh * 4 + th * 3, DEV_LIGHTR2, "R2", "******",
-                       prop->getd("light create r2", 100), NULL))))),
+                       g_prop->getd("light create r2", 100), NULL))))),
         symbol_str("l_light"));
 }
 
@@ -1344,14 +1344,14 @@ void dev_controll::make_ai_window(GameObject *o)
       last=p;
       wh+=th;
     }
-    aiw=wm->CreateWindow(ivec2(prop->getd("ai x",0), prop->getd("ai y",0)),
+    aiw=wm->CreateWindow(ivec2(g_prop->getd("ai x",0), g_prop->getd("ai y",0)),
                          ivec2(-1),
        new button(wl,owh-20,DEV_AI_OK,cache.img(dev_ok),first),"ai");
 
   }
   else
   {
-    aiw=wm->CreateWindow(ivec2(prop->getd("ai x", 0), prop->getd("ai y", 0)),
+    aiw=wm->CreateWindow(ivec2(g_prop->getd("ai x", 0), g_prop->getd("ai y", 0)),
                          ivec2(-1),
        new button(wl,wh-20,DEV_AI_OK,cache.img(dev_ok),
        new text_field(wl,wh+th*0, DEV_AI_XVEL,    symbol_str("ai_xvel"),"#####",(double)o->m_vel.x,
@@ -1377,8 +1377,8 @@ void dev_controll::notify_deleted_light(LightSource *l)
   {
     if (ledit)
     {
-      prop->setd("ledit x",ledit->m_pos.x);
-      prop->setd("ledit y",ledit->m_pos.y);
+      g_prop->setd("ledit x",ledit->m_pos.x);
+      g_prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
     }
     edit_light=NULL;
@@ -1452,8 +1452,8 @@ void dev_controll::close_ai_window()
     x=atoi(aiw->read(DEV_AI_FADE)); if (x!=o->fade_count()) o->set_fade_count(x);
       }
     }
-    prop->setd("ai x",aiw->m_pos.x);
-    prop->setd("ai y",aiw->m_pos.y);
+    g_prop->setd("ai x",aiw->m_pos.x);
+    g_prop->setd("ai y",aiw->m_pos.y);
     wm->close_window(aiw);
     aiw=NULL;
     ai_object=NULL;
@@ -1482,8 +1482,8 @@ void dev_controll::close_area_win(int read_values)
 {
   if (area_win)
   {
-    prop->setd("area_box x",area_win->m_pos.x);
-    prop->setd("area_box y",area_win->m_pos.y);
+    g_prop->setd("area_box x",area_win->m_pos.x);
+    g_prop->setd("area_box y",area_win->m_pos.y);
 
     if (current_area && read_values)
     {
@@ -1524,8 +1524,8 @@ void dev_controll::pick_handle_input(Event &ev)
     {
       if (area_win) close_area_win(0);
       int wl=0,wh=0,th=wm->font()->Size().y+12,bw=cache.img(dev_ok)->Size().x+10;
-      area_win=wm->CreateWindow(ivec2(prop->getd("area_box x", 0),
-                                      prop->getd("area_box y", 0)), ivec2(-1),
+      area_win=wm->CreateWindow(ivec2(g_prop->getd("area_box x", 0),
+                                      g_prop->getd("area_box y", 0)), ivec2(-1),
                   new button(wl+bw*0,wh-8,DEV_AREA_OK,cache.img(dev_ok),
                   new button(wl+bw*1,wh-8,DEV_AREA_DELETE,cache.img(dev_del),
 
@@ -1557,8 +1557,8 @@ void dev_controll::close_oedit_window()
 {
   if (oedit)
   {
-    prop->setd("oedit x",oedit->m_pos.x);
-    prop->setd("oedit y",oedit->m_pos.y);
+    g_prop->setd("oedit x",oedit->m_pos.x);
+    g_prop->setd("oedit y",oedit->m_pos.y);
     wm->close_window(oedit);
     oedit=NULL;
     edit_object=NULL;
@@ -1838,8 +1838,8 @@ void dev_controll::handle_event(Event &ev)
 
         int bw=20+6,bh=16+6;
 
-        oedit=wm->CreateWindow(ivec2(prop->getd("oedit x", 0),
-                                     prop->getd("oedit y", 0)), ivec2(-1),
+        oedit=wm->CreateWindow(ivec2(g_prop->getd("oedit x", 0),
+                                     g_prop->getd("oedit y", 0)), ivec2(-1),
             new button_box(0,0,ID_NULL,1,
                 new button(bw*0,0,DEV_OEDIT_OK,cache.img(dev_ok),
                 new button(bw*1,0,DEV_OEDIT_MOVE,cache.img(dev_move),
@@ -1863,8 +1863,8 @@ void dev_controll::handle_event(Event &ev)
       {
         if (ledit)
         {
-          prop->setd("ledit x",ledit->m_pos.x);
-          prop->setd("ledit x",ledit->m_pos.y);
+          g_prop->setd("ledit x",ledit->m_pos.x);
+          g_prop->setd("ledit x",ledit->m_pos.y);
           wm->close_window(ledit);
         }
         int bw=20+6,bh=16+6,th=wm->font()->Size().y+4;
@@ -1874,8 +1874,8 @@ void dev_controll::handle_event(Event &ev)
           edit_object->add_light(edit_light);
           edit_light->known=1;
         }
-        ledit=wm->CreateWindow(ivec2(prop->getd("ledit x", 0),
-                                     prop->getd("ledit y", 0)), ivec2(-1),
+        ledit=wm->CreateWindow(ivec2(g_prop->getd("ledit x", 0),
+                                     g_prop->getd("ledit y", 0)), ivec2(-1),
               new button_box(0,0,ID_NULL,1,
                    new button(bw*0,0,DEV_LEDIT_OK,cache.img(dev_ok),
                new button(bw*1,0,DEV_LEDIT_MOVE,cache.img(dev_move),
@@ -2262,7 +2262,7 @@ void dev_controll::handle_event(Event &ev)
     case ID_MOUSE_SCROLL :
     {
       mouse_scrolling=!mouse_scrolling;
-      prop->setd("mouse_scrolling",mouse_scrolling);
+      g_prop->setd("mouse_scrolling",mouse_scrolling);
       if (mouse_scrolling)
         the_game->show_help(symbol_str("ms_on"));
       else
@@ -2272,7 +2272,7 @@ void dev_controll::handle_event(Event &ev)
     case ID_LOCK_PALETTES :
     {
       palettes_locked=!palettes_locked;
-      prop->setd("palettes_locked",palettes_locked);
+      g_prop->setd("palettes_locked",palettes_locked);
       if (palettes_locked)
         the_game->show_help(symbol_str("pal_lock"));
       else the_game->show_help(symbol_str("pal_unlock"));
@@ -2281,7 +2281,7 @@ void dev_controll::handle_event(Event &ev)
     case ID_DISABLE_VIEW_SHIFT :
     {
       view_shift_disabled=!view_shift_disabled;
-      prop->setd("view_shift_disabled",view_shift_disabled);
+      g_prop->setd("view_shift_disabled",view_shift_disabled);
       if (view_shift_disabled)
         the_game->show_help(symbol_str("vs_dis"));
       else the_game->show_help(symbol_str("vs_en"));
@@ -2367,8 +2367,8 @@ void dev_controll::handle_event(Event &ev)
 
     case DEV_LEDIT_DEL :
     {
-      prop->setd("ledit x",ledit->m_pos.x);
-      prop->setd("ledit y",ledit->m_pos.y);
+      g_prop->setd("ledit x",ledit->m_pos.x);
+      g_prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       if (g_current_level)
         g_current_level->remove_light(edit_light);
@@ -2395,23 +2395,23 @@ void dev_controll::handle_event(Event &ev)
 
       edit_light->CalcRange();
       edit_light=NULL;
-      prop->setd("ledit x",ledit->m_pos.x);
-      prop->setd("ledit y",ledit->m_pos.y);
+      g_prop->setd("ledit x",ledit->m_pos.x);
+      g_prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       the_game->need_refresh();
     } break;
     case DEV_LEDIT_MOVE :
     {
-      prop->setd("ledit x",ledit->m_pos.x);
-      prop->setd("ledit y",ledit->m_pos.y);
+      g_prop->setd("ledit x",ledit->m_pos.x);
+      g_prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       state=DEV_MOVE_LIGHT;
     } break;
     case DEV_LEDIT_COPY :
     {
       edit_light=edit_light->Copy();
-      prop->setd("ledit x",ledit->m_pos.x);
-      prop->setd("ledit y",ledit->m_pos.y);
+      g_prop->setd("ledit x",ledit->m_pos.x);
+      g_prop->setd("ledit y",ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       state=DEV_MOVE_LIGHT;
     } break;
@@ -2441,7 +2441,7 @@ void dev_controll::handle_event(Event &ev)
     case ID_RAISE_ALL :
     {
       raise_all=!raise_all;
-      prop->setd("raise_all",raise_all);
+      g_prop->setd("raise_all",raise_all);
       if (raise_all)
         the_game->show_help(symbol_str("fg_r"));
       else
@@ -2492,8 +2492,8 @@ void dev_controll::handle_event(Event &ev)
     {
       char cmd[100];
       strcpy(cmd,commandw->inm->get(DEV_COMMAND)->read());
-      prop->setd("commandw x",commandw->m_pos.x);
-      prop->setd("commandw y",commandw->m_pos.y);
+      g_prop->setd("commandw x",commandw->m_pos.x);
+      g_prop->setd("commandw y",commandw->m_pos.y);
       wm->close_window(commandw);
       commandw=NULL;
       do_command(cmd,ev);
@@ -2595,8 +2595,8 @@ void dev_controll::handle_event(Event &ev)
       {
     if (ev.window==commandw)
     {
-      prop->setd("commandw x",commandw->m_pos.x);
-      prop->setd("commandw y",commandw->m_pos.y);
+      g_prop->setd("commandw x",commandw->m_pos.x);
+      g_prop->setd("commandw y",commandw->m_pos.y);
       wm->close_window(commandw);
       commandw=NULL;
     } else if (ev.window==oedit)
@@ -2658,7 +2658,7 @@ void dev_controll::handle_event(Event &ev)
     {
       toggle_fgw();
       fg_reversed=!fg_reversed;
-      prop->setd("fg_reversed",fg_reversed);
+      g_prop->setd("fg_reversed",fg_reversed);
       toggle_fgw();
     } else if (ev.key=='f') toggle_fgw();
 
@@ -2718,7 +2718,7 @@ void dev_controll::handle_event(Event &ev)
       case 'i' :
       {
         fg_reversed=!fg_reversed;
-        prop->setd("fg_reversed",fg_reversed);
+        g_prop->setd("fg_reversed",fg_reversed);
         if (forew)
         {
           toggle_fgw();
@@ -3326,8 +3326,8 @@ void dev_controll::show_mem()
 void dev_cleanup()
 {
   if (start_edit)
-    prop->save("defaults.prp");
-  delete prop;
+    g_prop->save("defaults.prp");
+  delete g_prop;
   if (listable_objs)
   {
     free(listable_objs);
