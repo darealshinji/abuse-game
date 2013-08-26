@@ -87,12 +87,12 @@ nfs_file::nfs_file(char const *filename, char const *mode)
       local_filename++;
     }
 
-    int remote_file_num=net_crcs->get_filenumber(local_filename);
-    uint32_t remote_crc=net_crcs->get_crc(remote_file_num,fail2);
+    int remote_file_num = net_crcs->GetFileNumber(local_filename);
+    uint32_t remote_crc = net_crcs->get_crc(remote_file_num, fail2);
     if (!fail2)
     {
-      int local_file_num=crc_manager.get_filenumber(local_filename);
-      uint32_t local_crc=crc_manager.get_crc(local_file_num,fail1);
+      int local_file_num = crc_manager.GetFileNumber(local_filename);
+      uint32_t local_crc = crc_manager.get_crc(local_file_num, fail1);
       if (fail1)
       {
     bFILE *fp=new jFILE(local_filename,"rb");

@@ -2386,7 +2386,7 @@ LObject *LSysFunction::EvalFunction(LList *arg_list)
             sprintf(msg, "(load \"%s\")", st);
             if (stat_man)
                 stat_man->push(msg, NULL);
-            crc_manager.get_filenumber(st); // make sure this file gets crc'ed
+            crc_manager.GetFileNumber(st); // make sure this file gets crc'ed
 #endif
             LObject *compiled_form = NULL;
             PtrRef r11(compiled_form);
