@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -973,13 +973,13 @@ void *respawn_ai()
 
 static int compare_players(const void *a, const void *b)
 {
-  if  ( ((view **)a)[0]->kills > ((view **)b)[0]->kills)
+  if  ( ((view * const *)a)[0]->kills > ((view * const *)b)[0]->kills)
     return -1;
-  else if  ( ((view **)a)[0]->kills < ((view **)b)[0]->kills)
+  else if  ( ((view * const *)a)[0]->kills < ((view * const *)b)[0]->kills)
     return 1;
-  else if (((view **)a)[0]->player_number > ((view **)b)[0]->player_number)
+  else if (((view * const *)a)[0]->player_number > ((view * const *)b)[0]->player_number)
     return -1;
-  else if (((view **)a)[0]->player_number < ((view **)b)[0]->player_number)
+  else if (((view * const *)a)[0]->player_number < ((view * const *)b)[0]->player_number)
     return 1;
   else return 0;
 }
@@ -1070,5 +1070,4 @@ void *show_kills()
 
   return NULL;
 }
-
 

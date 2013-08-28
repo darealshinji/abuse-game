@@ -48,7 +48,7 @@
 #include "gamma.h"
 #include "lisp_gc.h"
 #include "demo.h"
-#include "sbar.h"
+#include "statbar.h"
 #include "profile.h"
 #include "compiled.h"
 #include "lisp_gc.h"

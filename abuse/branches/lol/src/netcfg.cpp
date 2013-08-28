@@ -107,7 +107,7 @@ int net_configuration::confirm_inputs(InputManager *i, int server)
 
     if (sscanf(i->get(NET_KILLS)->read(),"%d",&kl)!=1 || kl<1 || kl>99)  {  error(symbol_str("kill_error")); return 0; }
 
-    char *nm=i->get(NET_NAME)->read();
+    char const *nm=i->get(NET_NAME)->read();
     if (strstr(nm,"\"")) {  error(symbol_str("name_error")); return 0; }
     strcpy(name,nm);
 
@@ -115,7 +115,7 @@ int net_configuration::confirm_inputs(InputManager *i, int server)
     max_players=((AWidget *)(i->get(NET_MAX)->read()))->m_id - MAX_2 + 2;
     if (max_players<min_players)  {  error(symbol_str("max_error")); return 0; }
 
-    char *s_nm=i->get(NET_SERVER_NAME)->read();
+    char const *s_nm=i->get(NET_SERVER_NAME)->read();
     if (strstr(s_nm,"\"")) {  error(symbol_str("game_error")); return 0; }
 
     strcpy(game_name,s_nm);
@@ -149,7 +149,7 @@ int net_configuration::confirm_inputs(InputManager *i, int server)
     kills=kl;
 
   } else  {
-    char *nm=i->get(NET_NAME)->read();
+    char const *nm=i->get(NET_NAME)->read();
     if (strstr(nm,"\"")) {  error(symbol_str("name_error")); return 0; }
     strcpy(name,nm);
   }
@@ -232,9 +232,8 @@ extern int start_running,demo_start,start_edit;
   for (; i; i=i->next)
   {
     i->y=y;
-    int x1,y1,x2,y2;
-    i->area(x1,y1,x2,y2);
-    y=y2+2;
+    ibox2 area = i->GetArea();
+    y = area.B.y + 2;
   }
 
 
@@ -318,16 +317,13 @@ void net_configuration::error(char const *message)
 
 AWidget *net_configuration::center_ifield(AWidget *f, int x1, int x2, AWidget *place_below)
 {
-  int X1,Y1,X2,Y2;
-  f->area(X1,Y1,X2,Y2);
-  f->m_pos.x=(x1+x2)/2-(X2-X1)/2;
+    ibox2 area = f->GetArea();
+    f->m_pos.x = (x1 + x2) / 2 - (area.B.x - area.A.x) / 2;
 
-  if (place_below)
-  {
-    place_below->area(X1,Y1,X2,Y2);
-    f->m_pos.y=Y2+2;
-  }
-  return f;
+    if (place_below)
+        f->m_pos.y = place_below->GetArea().B.y + 2;
+
+    return f;
 }
 
 int net_configuration::get_options(int server)

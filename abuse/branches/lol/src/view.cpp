@@ -29,7 +29,7 @@
 #include "transp.h"
 #include "clisp.h"
 #include "demo.h"
-#include "sbar.h"
+#include "statbar.h"
 #include "nfserver.h"
 #include "chat.h"
 

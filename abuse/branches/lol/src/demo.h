@@ -24,13 +24,13 @@ class demo_manager
   enum demo_state { NORMAL,
             RECORDING,
             PLAYING    } state;
-  int set_state(demo_state new_state, char *filename=NULL);
+  int set_state(demo_state new_state, char const *filename = nullptr);
   demo_state current_state() { return state; }
   int save_packet(void *packet, int packet_size);   // returns non 0 if actually saved
   int get_packet(void *packet, int &packet_size);   // returns non 0 if actually loaded
 
-  int start_playing(char *filename);
-  int start_recording(char *filename);
+  int start_playing(char const *filename);
+  int start_recording(char const *filename);
   void reset_game();
   int demo_skip() { if (skip_next) { skip_next--; return 1; } else return 0; }
   demo_manager() { state=NORMAL; skip_next=0; }

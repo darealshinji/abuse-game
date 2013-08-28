@@ -18,7 +18,7 @@ abuse_SOURCES = \
     loadgame.cpp loadgame.h \
     profile.cpp profile.h \
     cop.cpp cop.h \
-    statbar.cpp \
+    statbar.cpp statbar.h \
     compiled.cpp compiled.h \
     ant.cpp ant.h \
     sensor.cpp \
@@ -58,7 +58,7 @@ abuse_SOURCES = \
     devsel.cpp devsel.h \
     crc.cpp crc.h \
     gamma.cpp gamma.h \
-    id.h netface.h sbar.h \
+    id.h netface.h \
     nfserver.h \
     \
     ui/volumewindow.cpp ui/volumewindow.h \

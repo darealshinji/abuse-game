@@ -439,10 +439,9 @@ void AWindow::reconfigure()
 
     for (int i = 0; i < inm->m_fields.Count(); ++i)
     {
-        int x1, y1, x2, y2;
         inm->m_fields[i]->set_owner(this);
-        inm->m_fields[i]->area(x1, y1, x2, y2);
-        m_size = lol::max(m_size, ivec2(x2, y2));
+        ibox2 area = inm->m_fields[i]->GetArea();
+        m_size = lol::max(m_size, area.B);
     }
 }
 
@@ -573,7 +572,6 @@ void InputManager::clear_current()
 void InputManager::handle_event(Event &ev, AWindow *j)
 {
   int in_area = -1;
-  int x1,y1,x2,y2;
 
   if(m_owner)
       m_surf = m_owner->m_surf;
@@ -590,9 +588,8 @@ void InputManager::handle_event(Event &ev, AWindow *j)
     {
       for (int i = 0; i < m_fields.Count(); ++i)
       {
-        m_fields[i]->area(x1,y1,x2,y2);
-        if (ev.mouse_move.x >= x1 && ev.mouse_move.y >= y1 &&
-            ev.mouse_move.x <= x2 && ev.mouse_move.y <= y2)
+        ibox2 area = m_fields[i]->GetArea();
+        if (ev.mouse_move >= area.A && ev.mouse_move <= area.B)
             in_area = i;
       }
       if (in_area != m_active && (no_selections_allowed || (in_area >= 0 && m_fields[in_area]->selectable())))
@@ -629,15 +626,9 @@ void InputManager::handle_event(Event &ev, AWindow *j)
       m_fields[m_active]->handle_event(ev, m_surf, this);
     else
     {
-      m_fields[m_active]->area(x1,y1,x2,y2);
-      if (m_grab >= 0 || (ev.mouse_move.x>=x1 && ev.mouse_move.y>=y1 &&
-          ev.mouse_move.x<=x2 && ev.mouse_move.y<=y2))
-      {
-        if (j)
-          m_fields[m_active]->handle_event(ev,m_surf,j->inm);
-        else
-          m_fields[m_active]->handle_event(ev,m_surf,this);
-      }
+      ibox2 area = m_fields[m_active]->GetArea();
+      if (m_grab >= 0 || (ev.mouse_move >= area.A && ev.mouse_move <= area.B))
+          m_fields[m_active]->handle_event(ev, m_surf, j ? j->inm : this);
     }
   }
 

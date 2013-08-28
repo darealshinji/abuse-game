@@ -58,9 +58,8 @@ void AFilePicker::note_selection(AImage *screen, InputManager *inm, int x)
 #if !defined __CELLOS_LV2__
     if (strcmp(d[x],"."))
     {
-      int x1,y1,x2,y2;
-      area(x1,y1,x2,y2);
-      screen->Bar(ivec2(x1, y1), ivec2(x2, y2), wm->medium_color());
+      ibox2 area = GetArea();
+      screen->Bar(area.A, area.B, wm->medium_color());
 
       char st[200],curdir[200];
       sprintf(st,"%s/%s",cd,d[x]);
@@ -74,12 +73,12 @@ void AFilePicker::note_selection(AImage *screen, InputManager *inm, int x)
       wid=0;
       int i=0;
       for (; i<tf; i++)
-      if ((int)strlen(f[i])>wid) wid=strlen(f[i]);
+        if ((int)strlen(f[i])>wid)
+          wid=strlen(f[i]);
       for (i=0; i<td; i++)
-      if ((int)strlen(d[i])+2>wid) wid=strlen(d[i])+2;
+        if ((int)strlen(d[i])+2>wid)
+          wid=strlen(d[i])+2;
       sx=0;
-
-
 
       reconfigure();
       draw_first(screen);

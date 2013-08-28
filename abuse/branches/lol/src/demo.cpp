@@ -62,7 +62,7 @@ int event_waiting()
 { return wm->IsPending(); }
 
 
-int demo_manager::start_recording(char *filename)
+int demo_manager::start_recording(char const *filename)
 {
   if (!g_current_level) return 0;
 
@@ -150,7 +150,7 @@ void demo_manager::reset_game()
 
 }
 
-int demo_manager::start_playing(char *filename)
+int demo_manager::start_playing(char const *filename)
 {
   uint8_t sig[15];
   record_file=open_file(filename,"rb");
@@ -191,7 +191,7 @@ int demo_manager::start_playing(char *filename)
   return 1;
 }
 
-int demo_manager::set_state(demo_state new_state, char *filename)
+int demo_manager::set_state(demo_state new_state, char const *filename)
 {
   if (new_state==state) return 1;
 

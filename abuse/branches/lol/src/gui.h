@@ -18,12 +18,12 @@ class AIconButton : public AWidget
 public:
     AIconButton(ivec2 pos, int id, int Up, int down, int upa, int downa, int act_id = -1, char const *help_key = nullptr);
 
-    virtual void area(int &x1, int &y1, int &x2, int &y2);
+    virtual ibox2 GetArea();
     virtual void draw_first(AImage *screen) { Draw(0, screen); }
     virtual void Draw(int active, AImage *screen);
     virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
 
-    virtual char *read() { return (char *)&up; }
+    virtual char const *read() { return (char const *)&up; }
     int status() { return up; }
     void set_act_id(int id);
 
@@ -39,12 +39,12 @@ public:
     AIconSwitchButton(ivec2 pos, int id, int start_on, AWidgetList const &buttons = AWidgetList());
     ~AIconSwitchButton();
 
-    virtual void area(int &x1, int &y1, int &x2, int &y2);
+    virtual ibox2 GetArea();
     virtual void draw_first(AImage *screen) { m_buttons[m_current]->draw_first(screen); }
     virtual void Draw(int active, AImage *screen) { m_buttons[m_current]->Draw(active, screen); act = active; }
     virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
     virtual AWidget *unlink(int id);
-    virtual char *read() { return m_buttons[m_current]->read(); }
+    virtual char const *read() { return m_buttons[m_current]->read(); }
 
 private:
     AWidgetList m_buttons;

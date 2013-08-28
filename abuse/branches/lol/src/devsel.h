@@ -21,7 +21,7 @@ public:
 
     virtual void handle_inside_event(Event &ev, AImage *screen, InputManager *inm);
     virtual void scroll_event(int newx, AImage *screen);
-    virtual char *read() { return (char *)this; }
+    virtual char const *read() { return (char const *)this; }
     int picw();
     int pich();
     int total();
