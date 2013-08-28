@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -30,7 +30,7 @@
 #include "level.h"
 #include "server2.h"
 #include "game.h"
-#include "jwindow.h"
+#include "window.h"
 
 extern char lsf[256];
 
@@ -485,7 +485,7 @@ void net_reload()
       base->mem_lock=0;
 
 
-      Jwindow *j=wm->new_window(0,yres/2,-1,-1,new info_field(0, 0, 0, "Clients are re-syncing, please wait...",NULL));
+      AWindow *j=wm->new_window(0,yres/2,-1,-1,new info_field(0, 0, 0, "Clients are re-syncing, please wait...",NULL));
       wm->flush_screen();
       if (!reload_start()) return ;
 
@@ -536,7 +536,7 @@ int get_inputs_from_server(unsigned char *buf)
     gettimeofday(&start,NULL);
 
     int total_retry=0;
-    Jwindow *abort=NULL;
+    AWindow *abort=NULL;
     Array<Event> input;
     while (base->input_state!=INPUT_PROCESSING)
     {

@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -19,7 +19,7 @@
 #include "game.h"
 
 #include "specs.h"
-#include "jwindow.h"
+#include "window.h"
 #include "id.h"
 #include "input.h"
 #include "fonts.h"
@@ -59,15 +59,15 @@ void last_savegame_name(char *buf)
     sprintf(buf,"%ssave%04d.spe",get_save_filename_prefix(), (last_save_game_number+MAX_SAVE_GAMES-1)%MAX_SAVE_GAMES+1);
 }
 
-Jwindow *create_num_window(int mx, int total_saved, int lines, AImage **thumbnails)
+AWindow *create_num_window(int mx, int total_saved, int lines, AImage **thumbnails)
 {
-  ico_button *buts[MAX_SAVE_GAMES];
-  int y = 0, x = 0, i;
-  int iw=cache.img(save_buts[0])->Size().x;
-  int ih=cache.img(save_buts[0])->Size().y;
+  AWidgetList buts;
+  int y = 0, x = 0;
+  int iw = cache.img(save_buts[0])->Size().x;
+  int ih = cache.img(save_buts[0])->Size().y;
   int maxih = ih, maxiw = iw;
   int n=0;
-  for (i=0; i<total_saved; i++,y+=ih)
+  for (int i = 0; i < total_saved; i++, y += ih, n++)
   {
     maxih = lol::max(ih, maxih);
     maxiw = lol::max(iw, maxiw);
@@ -77,16 +77,13 @@ Jwindow *create_num_window(int mx, int total_saved, int lines, AImage **thumbnai
         x += iw;
     }
     if (thumbnails) { while (!thumbnails[n]) n++; }
-    buts[i]=new ico_button(x, y, ID_LOAD_GAME_NUMBER + n,
-               save_buts[n*3+0],save_buts[n*3+0],save_buts[n*3+1],save_buts[n*3+2],NULL);
-    buts[i]->set_act_id(ID_LOAD_GAME_PREVIEW+n);
-    n++;
+    AIconButton *b = new AIconButton(ivec2(x, y), ID_LOAD_GAME_NUMBER + n,
+               save_buts[n * 3 + 0], save_buts[n * 3 + 0], save_buts[n * 3 + 1], save_buts[n * 3 + 2]);
+    b->set_act_id(ID_LOAD_GAME_PREVIEW + n);
+    buts << b;
   }
 
-  for (i=0; i<total_saved-1; i++)
-    buts[i]->next=buts[i+1];
-
-  return wm->CreateWindow(ivec2(mx, yres / 2 - (Jwindow::top_border() + maxih * 5) / 2), ivec2(-1), buts[0]);
+  return wm->CreateWindow(ivec2(mx, yres / 2 - (AWindow::top_border() + maxih * 5) / 2), ivec2(-1), "", buts);
 }
 
 int get_save_spot()
@@ -110,7 +107,7 @@ int get_save_spot()
   if(mx + w + 10 > xres) mx = xres - w - 10;
   if(mx < 0) mx = 0;
 
-  Jwindow *l_win=create_num_window(mx,MAX_SAVE_GAMES,MAX_SAVE_LINES,NULL);
+  AWindow *l_win=create_num_window(mx,MAX_SAVE_GAMES,MAX_SAVE_LINES,NULL);
   Event ev;
   int got_level=0;
   int quit=0;
@@ -232,8 +229,8 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
 */
 
     // Create thumbnail window 5 pixels to the right of the list window
-    Jwindow *l_win=create_num_window(0,total_saved,MAX_SAVE_LINES,thumbnails);
-    Jwindow *preview=wm->CreateWindow(l_win->m_pos + ivec2(l_win->m_size.x + 5, 0), ivec2(max_w, max_h), NULL, title);
+    AWindow *l_win = create_num_window(0, total_saved, MAX_SAVE_LINES, thumbnails);
+    AWindow *preview = wm->CreateWindow(l_win->m_pos + ivec2(l_win->m_size.x + 5, 0), ivec2(max_w, max_h), title);
 
     preview->m_surf->PutImage(first, ivec2(preview->x1(), preview->y1()));
 

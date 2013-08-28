@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -25,11 +25,11 @@ class gui_status_node
   public :
   char *name;
   gui_status_node *next;
-  visual_object *show;
-  Jwindow *stat_win;
+  AVisualObject *show;
+  AWindow *stat_win;
   int last_update;
   Timer last_time;
-  gui_status_node(char const *Name, visual_object *Show, gui_status_node *Next)
+  gui_status_node(char const *Name, AVisualObject *Show, gui_status_node *Next)
   { name = strdup(Name);
     show=Show;
     next=Next;
@@ -75,7 +75,7 @@ void gui_status_manager::draw_bar(gui_status_node *whom, int perc)
                                     wm->bright_color());
 }
 
-void gui_status_manager::push(char const *name, visual_object *show)
+void gui_status_manager::push(char const *name, AVisualObject *show)
 {
   first=new gui_status_node(name,show,first);
 }
@@ -97,9 +97,9 @@ void gui_status_manager::update(int percentage)
       if (first->last_time.Poll() > 1.0)
       {
     long wx=xres/2,wy=10,len1=strlen(first->name)*wm->font()->Size().x+10,len2=0,len3,
-      h1=wm->font()->Size().y+5,h2=first->show ? first->show->height() : 0;
+      h1=wm->font()->Size().y+5,h2=first->show ? first->show->Size().y : 0;
 
-    if (first->show) len2=first->show->width()/2;
+    if (first->show) len2=first->show->Size().x/2;
     if (len2>len1) len3=len2; else len3=len1;
     wx-=len3/2;
 
@@ -110,12 +110,11 @@ void gui_status_manager::update(int percentage)
 
     int mx = first->stat_win->x1() + 1;
     int my = first->stat_win->y1() + wm->font()->Size().y / 2;
-    first->stat_win=wm->CreateWindow(ivec2(wx, wy), ivec2(len3, h1*2+h2), NULL, "status");
+    first->stat_win = wm->CreateWindow(ivec2(wx, wy), ivec2(len3, h1*2+h2), "status");
     wm->font()->PutString(first->stat_win->m_surf, ivec2(mx, my), first->name, wm->black());
     wm->font()->PutString(first->stat_win->m_surf, ivec2(mx, my), first->name, wm->bright_color());
     if (first->show)
-      first->show->draw(first->stat_win->m_surf, (first->stat_win->x2()-first->stat_win->x1())/2-
-                first->show->width()/2, my+h1, NULL);
+      first->show->Draw(first->stat_win->m_surf, ivec2((first->stat_win->x2() - first->stat_win->x1()) / 2 - first->show->Size().x / 2, my + h1), nullptr);
 
     draw_bar(first,percentage);
     wm->flush_screen();

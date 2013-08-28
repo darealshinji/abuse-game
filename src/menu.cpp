@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -110,7 +110,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   args=CAR(CDR(args));
 
   int options = ((LList *)args)->GetLength();
-  int mh=(font->Size().y+1)*options+10,maxw=0;
+  int mh=(font->Size().y+1)*options+10, maxw=0;
 
   Cell *c=(Cell *)args;
   for (; !NILP(c); c=CDR(c))
@@ -130,7 +130,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
   {
     int tl=strlen(title)*font->Size().x;
     int tx=main_screen->Size().x/2-tl/2;
-    DarkWidget(ivec2(tx - 2, my-font->Size().y - 4), ivec2(tx + tl + 3, my - 1), wm->medium_color(),wm->dark_color(),180);
+    DarkWidget(ivec2(tx - 2, my-font->Size().y - 4), ivec2(tx + tl + 3, my - 1), wm->medium_color(), wm->dark_color(), 180);
     font->PutString(main_screen, ivec2(tx + 1, my-font->Size().y - 2), title, wm->bright_color());
   }
 
@@ -149,10 +149,10 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
 
   wm->flush_screen();
   Event ev;
-  int choice=0,done=0;
+  int choice=0, done=0;
   int bh=font->Size().y+3;
-  AImage *save = new AImage(ivec2(mw - 2,bh));
-  int color=128,cdir=50;
+  AImage *save = new AImage(ivec2(mw - 2, bh));
+  int color=128, cdir=50;
 
   Timer *last_color_time = nullptr;
   if (!NILP(def))
@@ -210,7 +210,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
       TintArea(ivec2(mx + 1, by1), ivec2(mx + mw - 1, by2 + 1),
                u8vec3(63), color);
 
-      char *cur=men_str(nth(choice,args));
+      char *cur=men_str(nth(choice, args));
       font->PutString(main_screen, ivec2(mx + 10 + 1, by1 + 3), cur, wm->black());
       font->PutString(main_screen, ivec2(mx + 10, by1 + 2), cur, wm->bright_color());
       main_screen->Rectangle(ivec2(mx + 1, by1), ivec2(mx + mw - 2, by2),
@@ -235,7 +235,7 @@ int menu(void *args, JCFont *font)             // reurns -1 on esc
 
   if (choice!=-1)
   {
-    void *val=nth(choice,args);
+    void *val=nth(choice, args);
     if (item_type(val)==L_CONS_CELL)   // is there another value that the user want us to return?
       return lnumber_value(lcdr(val));
   }
@@ -326,24 +326,24 @@ static void create_volume_window()
 
 void save_difficulty()
 {
-  FILE *fp=open_FILE("hardness.lsp","wb");
+  FILE *fp=open_FILE("hardness.lsp", "wb");
   if (!fp)
     dprintf("Unable to write to file hardness.lsp\n");
   else
   {
-    fprintf(fp,"(setf difficulty '");
+    fprintf(fp, "(setf difficulty '");
     if (DEFINEDP(symbol_value(l_difficulty)))
     {
       if (symbol_value(l_difficulty)==l_extreme)
-        fprintf(fp,"extreme)\n");
+        fprintf(fp, "extreme)\n");
       else if (symbol_value(l_difficulty)==l_hard)
-        fprintf(fp,"hard)\n");
+        fprintf(fp, "hard)\n");
       else if (symbol_value(l_difficulty)==l_easy)
-        fprintf(fp,"easy)\n");
+        fprintf(fp, "easy)\n");
       else
-        fprintf(fp,"medium)\n");
+        fprintf(fp, "medium)\n");
     } else
-       fprintf(fp,"medium)\n");
+       fprintf(fp, "medium)\n");
     fclose(fp);
   }
 }
@@ -375,8 +375,8 @@ void show_sell(int abortable)
     int quit=0;
     while (tmp && !quit)
     {
-      int im=cache.reg_object("art/help.spe",CAR(tmp),SPEC_IMAGE,1);
-      fade_in(cache.img(im),16);
+      int im=cache.reg_object("art/help.spe", CAR(tmp), SPEC_IMAGE, 1);
+      fade_in(cache.img(im), 16);
 
       Event ev;
       do
@@ -427,12 +427,12 @@ void menu_handler(Event &ev, InputManager *inm)
         case ID_LOAD_PLAYER_GAME :
     if (!volume_window)
     {
-      int got_level=load_game(0,symbol_str("LOAD"));
+      int got_level=load_game(0, symbol_str("LOAD"));
       the_game->reset_keymap();
       if (got_level)
       {
         char name[255];
-        sprintf(name,"%ssave%04d.spe", get_save_filename_prefix(), got_level);
+        sprintf(name, "%ssave%04d.spe", get_save_filename_prefix(), got_level);
 
         the_game->load_level(name);
         the_game->set_state(RUN_STATE);
@@ -491,7 +491,7 @@ void menu_handler(Event &ev, InputManager *inm)
         main_screen->PutImage(im, main_screen->Size() / 2 - im->Size() / 2);
       }
       inm->redraw();
-      fade_in(NULL,8);
+      fade_in(NULL, 8);
       wm->flush_screen();
 
     } break;
@@ -507,27 +507,29 @@ void menu_handler(Event &ev, InputManager *inm)
 
 void *current_demo=NULL;
 
-static ico_button *load_icon(int num, int id, int x, int y, int &h, ifield *next, char const *key)
+static AIconButton *load_icon(int num, int id, ivec2 pos, int &h, char const *key)
 {
   char name[20];
   char const *base = "newi";
-  int a,b,c;
-  sprintf(name,"%s%04d.pcx",base,num*3+1);
-  a=cache.reg("art/icons.spe",name,SPEC_IMAGE,1);
+  int a, b, c;
+  sprintf(name, "%s%04d.pcx", base, num*3+1);
+  a=cache.reg("art/icons.spe", name, SPEC_IMAGE, 1);
 
-  sprintf(name,"%s%04d.pcx",base,num*3+2);
-  b=cache.reg("art/icons.spe",name,SPEC_IMAGE,1);
+  sprintf(name, "%s%04d.pcx", base, num*3+2);
+  b=cache.reg("art/icons.spe", name, SPEC_IMAGE, 1);
 
-  sprintf(name,"%s%04d.pcx",base,num*3+3);
-  c=cache.reg("art/icons.spe",name,SPEC_IMAGE,1);
+  sprintf(name, "%s%04d.pcx", base, num*3+3);
+  c=cache.reg("art/icons.spe", name, SPEC_IMAGE, 1);
 
   h=cache.img(a)->Size().y;
 
-  return new ico_button(x,y,id,b,b,a,c,next,-1,key);
+  return new AIconButton(pos, id, b, b, a, c, -1, key);
 }
 
-ico_button *make_default_buttons(int x,int &y, ico_button *append_list)
+AWidgetList make_default_buttons(int x, int &y)
 {
+  AWidgetList ret;
+
   int h;
   int diff_on;
 
@@ -541,94 +543,71 @@ ico_button *make_default_buttons(int x,int &y, ico_button *append_list)
       diff_on=0;
     else
       diff_on=1;
-  } else  diff_on=3;
+  }
+  else
+    diff_on = 3;
 
+  ret << load_icon(0, ID_START_GAME, ivec2(x, y), h, "ic_start");
+  y += h;
 
-  ico_button *start=load_icon(0,ID_START_GAME,x,y,h,NULL,"ic_start");                         y+=h;
+  ret << load_icon(4, ID_LIGHT_OFF, ivec2(x, y), h, "ic_gamma");
+  y += h;
 
-  ico_switch_button *set=NULL;
+  ret << load_icon(5, ID_VOLUME, ivec2(x, y), h, "ic_volume");
+  y += h;
+
   if (!main_net_cfg || (main_net_cfg->state!=net_configuration::SERVER && main_net_cfg->state!=net_configuration::CLIENT))
   {
-    set=new ico_switch_button(x,y,ID_NULL,diff_on,
-                         load_icon(3,ID_EASY,x,y,h,
-                         load_icon(8,ID_MEDIUM,x,y,h,
-                             load_icon(9,ID_HARD,x,y,h,
-                                     load_icon(10,ID_EXTREME,x,y,h,NULL,"ic_extreme"),
-                                  "ic_hard"),"ic_medium"),"ic_easy"),NULL);         y+=h;
-
+    AWidgetList buttons;
+    buttons << load_icon(3, ID_EASY, ivec2(x, y), h, "ic_easy");
+    buttons << load_icon(8, ID_MEDIUM, ivec2(x, y), h, "ic_medium");
+    buttons << load_icon(9, ID_HARD, ivec2(x, y), h, "ic_hard");
+    buttons << load_icon(10, ID_EXTREME, ivec2(x, y), h, "ic_extreme");
+    ret << new AIconSwitchButton(ivec2(x, y), ID_NULL, diff_on, buttons);
+    y += h;
   }
-
-  ico_button *color=load_icon(4,ID_LIGHT_OFF,x,y,h,NULL,"ic_gamma");                          y+=h;
-  ico_button *volume=load_icon(5,ID_VOLUME,x,y,h,NULL,"ic_volume");                            y+=h;
-  ico_button *sell=NULL;
 
   if (prot)
-  {
-    sell=load_icon(11,ID_NETWORKING,x,y,h,NULL,"ic_networking");
-    y+=h;
-  } else
-  {
-    sell=load_icon(2,ID_SHOW_SELL,x,y,h,NULL,"ic_sell");
-    y+=h;
-  }
-  ico_button *quit=load_icon(6,ID_QUIT,x,y,h,NULL,"ic_quit");                                y+=h;
+    ret << load_icon(11, ID_NETWORKING, ivec2(x, y), h, "ic_networking");
+  else
+    ret << load_icon(2, ID_SHOW_SELL, ivec2(x, y), h, "ic_sell");
+  y += h;
 
-  if (set)
-  {
-    start->next=set;
-    set->next=color;
-  }
-  else start->next=color;
+  ret << load_icon(6, ID_QUIT, ivec2(x, y), h, "ic_quit");
+  y += h;
 
-
-  color->next=volume;
-  if (sell)
-  {
-    volume->next=sell;
-    sell->next=quit;
-  } else volume->next=quit;
-
-  ico_button *list=append_list;
-
-  if (append_list)
-  {
-    while (append_list->next)
-      append_list=(ico_button *)append_list->next;
-    append_list->next=start;
-  } else list=start;
-
-  return list;
+  return ret;
 }
 
 
-ico_button *make_conditional_buttons(int x,int &y)
+static AWidgetList make_conditional_buttons(int x, int &y)
 {
-  ico_button *start_list=NULL;
-  int h;
-  if (g_current_level)       // should we include a return icon?
-  {
-    start_list=load_icon(7,ID_RETURN,x,y,h,NULL,"ic_return");                       y+=h;
-  }
+    AWidgetList ret;
+    int h;
+    if (g_current_level)       // should we include a return icon?
+    {
+        ret << load_icon(7, ID_RETURN, ivec2(x, y), h, "ic_return");
+        y += h;
+    }
 
+    if (show_load_icon())
+    {
+        ret << load_icon(1, ID_LOAD_PLAYER_GAME, ivec2(x, y), h, "ic_load");
+        y += h;
+    }
 
-  ico_button *load;
-  if (show_load_icon())
-  { load= load_icon(1,ID_LOAD_PLAYER_GAME,x,y,h,NULL,"ic_load");                     y+=h; }
-  else load=NULL;
-
-  if (start_list) start_list->next=load;
-  else start_list=load;
-
-  return start_list;
+    return ret;
 }
 
 void main_menu()
 {
-    int y=yres/2-100;
-    ico_button *list=make_conditional_buttons(xres-33,y);
-    list=make_default_buttons(xres-33,y,list);
+    int y = yres / 2 - 100;
 
-    InputManager *inm=new InputManager(main_screen,list);
+    AWidgetList buttons;
+    buttons += make_conditional_buttons(xres - 33, y);
+    buttons += make_default_buttons(xres - 33, y);
+
+    InputManager *inm = new InputManager(main_screen, buttons);
     inm->allow_no_selections();
     inm->clear_current();
 
@@ -647,11 +626,11 @@ void main_menu()
             {
                 wm->get_event(ev);
             } while (ev.type==EV_MOUSE_MOVE && wm->IsPending());
-            inm->handle_event(ev,NULL);
+            inm->handle_event(ev, NULL);
             if (ev.type==EV_KEY && ev.key==JK_ESC)
                 wm->Push(Event(ID_QUIT, NULL));
 
-            menu_handler(ev,inm);
+            menu_handler(ev, inm);
             t.Get();
 
             wm->flush_screen();
@@ -676,7 +655,7 @@ void main_menu()
                 }
                 if (current_demo)
                 {
-                    demo_man.set_state(demo_manager::PLAYING,lstring_value(CAR(current_demo)));
+                    demo_man.set_state(demo_manager::PLAYING, lstring_value(CAR(current_demo)));
                     stop_menu=1;
                     current_demo=CDR(current_demo);
                 }

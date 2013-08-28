@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -555,13 +555,10 @@ void net_reload()
       g_current_level->save(NET_STARTFILE,1);
       base->mem_lock=0;
 
-
-      Jwindow *j=wm->CreateWindow(ivec2(0, yres / 2), ivec2(-1), new info_field(0, 0, 0, symbol_str("resync"),
-                          new button(0, wm->font()->Size().y + 5, ID_NET_DISCONNECT,
-                             symbol_str("slack"),NULL)),symbol_str("hold!"))
-;
-
-
+      AWidgetList list;
+      list << new AInfoField(ivec2(0, 0), 0, symbol_str("resync"));
+      list << new AButton(ivec2(0, wm->font()->Size().y + 5), ID_NET_DISCONNECT, symbol_str("slack"));
+      AWindow *j = wm->CreateWindow(ivec2(0, yres / 2), ivec2(-1), symbol_str("hold!"), list);
 
       wm->flush_screen();
       if (!reload_start()) return ;
@@ -636,7 +633,7 @@ int get_inputs_from_server(unsigned char *buf)
     Timer t;
 
     int total_retry=0;
-    Jwindow *abort=NULL;
+    AWindow *abort=NULL;
 
     while (base->input_state!=INPUT_PROCESSING)
     {
@@ -659,10 +656,10 @@ int get_inputs_from_server(unsigned char *buf)
     total_retry++;
     if (total_retry==12000)    // 2 minutes and nothing
     {
-      abort=wm->CreateWindow(ivec2(0, yres / 2), ivec2(-1, wm->font()->Size().y*4),
-                   new info_field(0, 0, 0, symbol_str("waiting"),
-                          new button(0, wm->font()->Size().y + 5, ID_NET_DISCONNECT,
-                             symbol_str("slack"),NULL)),symbol_str("Error"));
+      AWidgetList list;
+      list << new AInfoField(ivec2(0, 0), 0, symbol_str("waiting"));
+      list << new AButton(ivec2(0, wm->font()->Size().y + 5), ID_NET_DISCONNECT, symbol_str("slack"));
+      abort = wm->CreateWindow(ivec2(0, yres / 2), ivec2(-1, wm->font()->Size().y * 4), symbol_str("Error"), list);
       wm->flush_screen();
     }
       }

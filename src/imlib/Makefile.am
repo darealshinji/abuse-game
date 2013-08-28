@@ -21,7 +21,7 @@ libimlib_a_SOURCES = \
     tools.cpp tools.h \
     guistat.cpp guistat.h \
     sprite.cpp sprite.h \
-    jwindow.cpp jwindow.h \
+    window.cpp window.h \
     video.cpp video.h \
     event.cpp event.h \
     jdir.h visobj.h \

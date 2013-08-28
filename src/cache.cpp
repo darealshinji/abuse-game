@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -451,10 +451,9 @@ void CacheList::preload_cache(Level *lev)
 
 void CacheList::load_cache_prof_info(String const &filename, Level *lev)
 {
-  int j;
-  for (j=0; j<this->total; j++)
-    if (list[j].last_access>=0)      // reset all loaded cache items to 0, all non-load to -1
-      list[j].last_access=0;
+  for (int i = 0; i < this->total; i++)
+    if (list[i].last_access>=0)      // reset all loaded cache items to 0, all non-load to -1
+      list[i].last_access=0;
 
   preload_cache(lev);                // preliminary guesses at stuff to load
 

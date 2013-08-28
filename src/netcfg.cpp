@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -55,16 +55,19 @@ enum { NET_OK=1, NET_CANCEL, NET_SERVER_NAME, NET_NAME, NET_PORT, NET_SERVER_POR
 
 void net_configuration::cfg_error(char const *msg)
 {
-  Jwindow *j=wm->CreateWindow(ivec2(-1, 0), ivec2(-1), new info_field(0, 0, 0, msg,
-      new button(0, 30,CFG_ERR_OK,symbol_str("ok_button"),NULL)),symbol_str("input_error"));
-  Event ev;
-  do
-  {
+    AWidgetList widgets;
+    widgets << new AInfoField(ivec2(0, 0), 0, msg);
+    widgets << new AButton(ivec2(0, 30), CFG_ERR_OK, symbol_str("ok_button"));
+    AWindow *j = wm->CreateWindow(ivec2(-1, 0), ivec2(-1), symbol_str("input_error"), widgets);
+
+    Event ev;
+    do
+    {
+        wm->flush_screen();
+        do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->IsPending());
+    } while (ev.type!=EV_MESSAGE || ev.message.id!=CFG_ERR_OK || ev.type==EV_CLOSE_WINDOW || (ev.type==EV_KEY && ev.key==JK_ESC));
+    wm->close_window(j);
     wm->flush_screen();
-    do { wm->get_event(ev); } while (ev.type==EV_MOUSE_MOVE && wm->IsPending());
-  } while (ev.type!=EV_MESSAGE || ev.message.id!=CFG_ERR_OK || ev.type==EV_CLOSE_WINDOW || (ev.type==EV_KEY && ev.key==JK_ESC));
-  wm->close_window(j);
-  wm->flush_screen();
 }
 
 int net_configuration::restart_state()
@@ -108,8 +111,8 @@ int net_configuration::confirm_inputs(InputManager *i, int server)
     if (strstr(nm,"\"")) {  error(symbol_str("name_error")); return 0; }
     strcpy(name,nm);
 
-    min_players=((ifield *)(i->get(NET_MIN)->read()))->id-MIN_1+1;
-    max_players=((ifield *)(i->get(NET_MAX)->read()))->id-MAX_2+2;
+    min_players=((AWidget *)(i->get(NET_MIN)->read()))->m_id - MIN_1 + 1;
+    max_players=((AWidget *)(i->get(NET_MAX)->read()))->m_id - MAX_2 + 2;
     if (max_players<min_players)  {  error(symbol_str("max_error")); return 0; }
 
     char *s_nm=i->get(NET_SERVER_NAME)->read();
@@ -132,9 +135,9 @@ int net_configuration::confirm_inputs(InputManager *i, int server)
     if (!fp->open_failure())
     {
       char str[100];
-      if (((ifield *)(i->get(LEVEL_BOX)->read()))->id==LVL_2)
+      if (((AWidget *)(i->get(LEVEL_BOX)->read()))->m_id == LVL_2)
         sprintf(str,"(load \"addon/deathmat/small.lsp\")\n");
-      else if (((ifield *)(i->get(LEVEL_BOX)->read()))->id==LVL_4)
+      else if (((AWidget *)(i->get(LEVEL_BOX)->read()))->m_id == LVL_4)
         sprintf(str,"(load \"addon/deathmat/medium.lsp\")\n");
       else
         sprintf(str,"(load \"addon/deathmat/large.lsp\")\n");
@@ -170,13 +173,13 @@ extern int start_running,demo_start,start_edit;
 
 /*int net_configuration::input()   // pulls up dialog box and input fileds
 {
-  ifield *ilist=NULL;
+  AWidget *ilist=NULL;
   int x=0,y=0;
 
-  Jwindow *sv=wm->new_window(50,80,-1,-1,new button(0,0,NET_SERVER,symbol_str("server"),
-                     new button(0,wm->font()->height()*2,NET_CLIENT,symbol_str("client"),
-                     new button(0,wm->font()->height()*4,NET_SINGLE,symbol_str("single_play"),
-                     new button(0,wm->font()->height()*6,NET_CANCEL,symbol_str("cancel_net"),
+  AWindow *sv=wm->new_window(50,80,-1,-1,new AButton(0,0,NET_SERVER,symbol_str("server"),
+                     new AButton(0,wm->font()->height()*2,NET_CLIENT,symbol_str("client"),
+                     new AButton(0,wm->font()->height()*4,NET_SINGLE,symbol_str("single_play"),
+                     new AButton(0,wm->font()->height()*6,NET_CANCEL,symbol_str("cancel_net"),
                         NULL)))),symbol_str("Networking"));
 
   Event ev;
@@ -207,25 +210,25 @@ extern int start_running,demo_start,start_edit;
 
   if (state==RESTART_SERVER)
   {
-    ilist=new button(x,y,NET_CANCEL,symbol_str("cancel_button"),ilist);
-    ilist=new button(x,y,NET_OK,       symbol_str("server"),ilist);
-    ilist=new text_field(x,y,NET_KILLS,symbol_str("kills_to_win"),"******",kills,ilist);
-    ilist=new text_field(x,y,NET_MAX,symbol_str("max_play"),"******",max_players,ilist);
-    ilist=new text_field(x,y,NET_MIN,symbol_str("min_play"),"******",min_players,ilist);
-    ilist=new text_field(x,y,NET_PORT,symbol_str("use_port"),"******",port,ilist);
-    ilist=new text_field(x,y,NET_NAME,symbol_str("your_name"),"****************",name,ilist);
+    ilist=new AButton(x,y,NET_CANCEL,symbol_str("cancel_button"),ilist);
+    ilist=new AButton(x,y,NET_OK,       symbol_str("server"),ilist);
+    ilist=new ATextField(x,y,NET_KILLS,symbol_str("kills_to_win"),"******",kills,ilist);
+    ilist=new ATextField(x,y,NET_MAX,symbol_str("max_play"),"******",max_players,ilist);
+    ilist=new ATextField(x,y,NET_MIN,symbol_str("min_play"),"******",min_players,ilist);
+    ilist=new ATextField(x,y,NET_PORT,symbol_str("use_port"),"******",port,ilist);
+    ilist=new ATextField(x,y,NET_NAME,symbol_str("your_name"),"****************",name,ilist);
 
   } else
   {
-    ilist=new button(x,y,NET_CANCEL,symbol_str("cancel_button"),ilist);
-    ilist=new button(x,y,NET_OK,symbol_str("client"),ilist);
-//    ilist=new text_field(x,y,NET_PORT,symbol_str("use_port"),"******",port,ilist);
-    ilist=new text_field(x,y,NET_SERVER_PORT,symbol_str("server_port"),"******",server_port,ilist);
-    ilist=new text_field(x,y,NET_SERVER_NAME,symbol_str("server_name"),"*********************************",game_name,ilist);
-    ilist=new text_field(x,y,NET_NAME,symbol_str("your_name"),"****************",name,ilist);
+    ilist=new AButton(x,y,NET_CANCEL,symbol_str("cancel_button"),ilist);
+    ilist=new AButton(x,y,NET_OK,symbol_str("client"),ilist);
+//    ilist=new ATextField(x,y,NET_PORT,symbol_str("use_port"),"******",port,ilist);
+    ilist=new ATextField(x,y,NET_SERVER_PORT,symbol_str("server_port"),"******",server_port,ilist);
+    ilist=new ATextField(x,y,NET_SERVER_NAME,symbol_str("server_name"),"*********************************",game_name,ilist);
+    ilist=new ATextField(x,y,NET_NAME,symbol_str("your_name"),"****************",name,ilist);
   }
 
-  ifield *i=ilist;
+  AWidget *i=ilist;
   for (; i; i=i->next)
   {
     i->y=y;
@@ -235,7 +238,7 @@ extern int start_running,demo_start,start_edit;
   }
 
 
-  Jwindow *nw=wm->new_window(0,0,-1,-1,ilist,symbol_str("Networking"));
+  AWindow *nw=wm->new_window(0,0,-1,-1,ilist,symbol_str("Networking"));
 
   done=0;
   do
@@ -288,7 +291,8 @@ void net_configuration::error(char const *message)
     int bx=x+ns_w/2-strlen(ok)*fnt->Size().x/2-3,
         by=y+ns_h/2+fnt->Size().y*3;
 
-    button *sb=new button(bx,by,NET_SERVER,ok,NULL);
+    AWidgetList sb;
+    sb << new AButton(vec2(bx, by), NET_SERVER, ok);
 
     InputManager inm(main_screen, sb);
     inm.allow_no_selections();
@@ -312,18 +316,18 @@ void net_configuration::error(char const *message)
 }
 
 
-ifield *net_configuration::center_ifield(ifield *i,int x1, int x2, ifield *place_below)
+AWidget *net_configuration::center_ifield(AWidget *f, int x1, int x2, AWidget *place_below)
 {
   int X1,Y1,X2,Y2;
-  i->area(X1,Y1,X2,Y2);
-  i->m_pos.x=(x1+x2)/2-(X2-X1)/2;
+  f->area(X1,Y1,X2,Y2);
+  f->m_pos.x=(x1+x2)/2-(X2-X1)/2;
 
   if (place_below)
   {
     place_below->area(X1,Y1,X2,Y2);
-    i->m_pos.y=Y2+2;
+    f->m_pos.y=Y2+2;
   }
-  return i;
+  return f;
 }
 
 int net_configuration::get_options(int server)
@@ -336,78 +340,71 @@ int net_configuration::get_options(int server)
   AImage *ok_image=cache.img(cache.reg("art/frame.spe","dev_ok",SPEC_IMAGE,1))->copy(),
     *cancel_image=cache.img(cache.reg("art/frame.spe","cancel",SPEC_IMAGE,1))->copy();
 
-  ifield *list=NULL;
+  AWidgetList list;
 
   if (server)
   {
-    list=center_ifield(new text_field(x,y+30,NET_NAME,symbol_str("your_name"),"************************",name,list),x,x+ns_w,NULL);
-    list=center_ifield(new text_field(0,0,NET_SERVER_NAME,symbol_str("server_name"),"************************",game_name,list),x,x+ns_w,list);
-    list=center_ifield(new info_field(0,0,0,symbol_str("min_play"),list),x,x+ns_w,list);
+    list << center_ifield(new ATextField(ivec2(x, y + 30), NET_NAME, symbol_str("your_name"), "************************", name), x, x + ns_w, nullptr);
+    list << center_ifield(new ATextField(ivec2(0, 0), NET_SERVER_NAME, symbol_str("server_name"), "************************", game_name), x, x + ns_w, list.Last());
+    list << center_ifield(new AInfoField(ivec2(0, 0), 0, symbol_str("min_play")), x, x + ns_w, list.Last());
 
-
-    button_box *b=new button_box(0,0,NET_MIN,1,NULL,list);
-    b->add_button(new button(0,0,MIN_8,"8",NULL));
-    b->add_button(new button(0,0,MIN_7,"7",NULL));
-    b->add_button(new button(0,0,MIN_6,"6",NULL));
-    b->add_button(new button(0,0,MIN_5,"5",NULL));
-    b->add_button(new button(0,0,MIN_4,"4",NULL));
-    b->add_button(new button(0,0,MIN_3,"3",NULL));
-    button *r=new button(0,0,MIN_2,"2",NULL); r->push();
+    AButtonBox *b = new AButtonBox(ivec2(0, 0), NET_MIN, 1);
+    b->add_button(new AButton(ivec2(0, 0), MIN_8, "8"));
+    b->add_button(new AButton(ivec2(0, 0), MIN_7, "7"));
+    b->add_button(new AButton(ivec2(0, 0), MIN_6, "6"));
+    b->add_button(new AButton(ivec2(0, 0), MIN_5, "5"));
+    b->add_button(new AButton(ivec2(0, 0), MIN_4, "4"));
+    b->add_button(new AButton(ivec2(0, 0), MIN_3, "3"));
+    AButton *r = new AButton(ivec2(0, 0), MIN_2, "2");
+    r->push();
     b->add_button(r);
-    b->add_button(new button(0,0,MIN_1,"1",NULL));
-
-
-
+    b->add_button(new AButton(ivec2(0, 0), MIN_1,"1"));
     b->arrange_left_right();
-    center_ifield(b,x,x+ns_w,list);
+    center_ifield(b, x, x + ns_w, list.Last());
     b->arrange_left_right();
-    list=b;
+    list << b;
 
-    list=center_ifield(new info_field(0,0,0,symbol_str("max_play"),list),x,x+ns_w,list);
+    list << center_ifield(new AInfoField(ivec2(0, 0), 0, symbol_str("max_play")), x, x + ns_w, list.Last());
 
-    b=new button_box(0,0,NET_MAX,1,NULL,list);
-    button *q=new button(0,0,MAX_8,"8",NULL); q->push();
+    b = new AButtonBox(ivec2(0, 0), NET_MAX, 1);
+    AButton *q = new AButton(ivec2(0, 0), MAX_8, "8");
+    q->push();
     b->add_button(q);
-    b->add_button(new button(0,0,MAX_7,"7",NULL));
-    b->add_button(new button(0,0,MAX_6,"6",NULL));
-    b->add_button(new button(0,0,MAX_5,"5",NULL));
-    b->add_button(new button(0,0,MAX_4,"4",NULL));
-    b->add_button(new button(0,0,MAX_3,"3",NULL));
-    b->add_button(new button(0,0,MAX_2,"2",NULL));
+    b->add_button(new AButton(ivec2(0, 0), MAX_7, "7"));
+    b->add_button(new AButton(ivec2(0, 0), MAX_6, "6"));
+    b->add_button(new AButton(ivec2(0, 0), MAX_5, "5"));
+    b->add_button(new AButton(ivec2(0, 0), MAX_4, "4"));
+    b->add_button(new AButton(ivec2(0, 0), MAX_3, "3"));
+    b->add_button(new AButton(ivec2(0, 0), MAX_2, "2"));
     b->arrange_left_right();
-    center_ifield(b,x,x+ns_w,list);
+    center_ifield(b, x, x + ns_w, list.Last());
     b->arrange_left_right();
-    list=b;
+    list << b;
 
+    list << center_ifield(new AInfoField(ivec2(0, 0), 0, symbol_str("level_size")), x, x + ns_w, list.Last());
 
-    list=center_ifield(new info_field(0,0,0,symbol_str("level_size"),list),x,x+ns_w,list);
-
-    b=new button_box(0,0,LEVEL_BOX,1,NULL,list);
-    b->add_button(new button(0,0,LVL_8,symbol_str("lvl_8"),NULL));
-    b->add_button(new button(0,0,LVL_4,symbol_str("lvl_4"),NULL));
-    q=new button(0,0,LVL_2,symbol_str("lvl_2"),NULL); q->push();
+    b = new AButtonBox(ivec2(0, 0), LEVEL_BOX, 1);
+    b->add_button(new AButton(ivec2(0, 0), LVL_8, symbol_str("lvl_8")));
+    b->add_button(new AButton(ivec2(0, 0), LVL_4, symbol_str("lvl_4")));
+    q = new AButton(ivec2(0, 0), LVL_2, symbol_str("lvl_2"));
+    q->push();
     b->add_button(q);
-
     b->arrange_left_right();
-    center_ifield(b,x,x+ns_w,list);
+    center_ifield(b, x, x + ns_w, list.Last());
     b->arrange_left_right();
-    list=b;
+    list << b;
 
-    list=center_ifield(new text_field(0,0,NET_KILLS,symbol_str("kills_to_win"),"***","25",list),x,x+ns_w,list);
-
-
-
-
-  } else
+    list << center_ifield(new ATextField(ivec2(0, 0), NET_KILLS, symbol_str("kills_to_win"), "***", "25"), x, x + ns_w, list.Last());
+  }
+  else
   {
-    list=center_ifield(new text_field(x,y+80,NET_NAME,symbol_str("your_name"),"************************",name,list),x,x+ns_w,NULL);
+    list << center_ifield(new ATextField(ivec2(x, y + 80), NET_NAME, symbol_str("your_name"), "************************", name), x, x + ns_w, nullptr);
   }
 
+  list << new AButton(ivec2(x + 80 - 17, y + ns_h - 20 - fnt->Size().y), NET_OK, ok_image);
+  list << new AButton(ivec2(x + 80 + 17, y + ns_h - 20 - fnt->Size().y), NET_CANCEL, cancel_image);
 
-  list=new button(x+80-17,y+ns_h-20-fnt->Size().y,NET_OK,ok_image,list);
-  list=new button(x+80+17,y+ns_h-20-fnt->Size().y,NET_CANCEL,cancel_image,list);
-
-  int ret=0;
+  int ret = 0;
 
   {
     InputManager inm(main_screen, list);
@@ -427,7 +424,7 @@ int net_configuration::get_options(int server)
     {
       case NET_OK : { if (confirm_inputs(&inm,server))
           { ret=1; done=1; }
-          else { ((button *)inm.get(NET_OK))->push(); inm.redraw(); }
+          else { ((AButton *)inm.get(NET_OK))->push(); inm.redraw(); }
           } break;
       case NET_CANCEL : done=1;
     }
@@ -458,14 +455,14 @@ int net_configuration::input()   // pulls up dialog box and input fileds
   wm->font()->PutString(main_screen, ivec2(x + ns_w / 2 - strlen(nw_s) * fnt->Size().x / 2, y + 21 / 2 - fnt->Size().y / 2),
       nw_s,wm->medium_color());
   {
-
+    AWidgetList sb;
     char const *server_str = symbol_str("server");
-    button *sb=new button(x+40, y+ns_h-23-fnt->Size().y, NET_SERVER, server_str, NULL);
+    sb << new AButton(ivec2(x + 40, y + ns_h - 23 - fnt->Size().y), NET_SERVER, server_str);
 
     if (main_net_cfg && (main_net_cfg->state==CLIENT || main_net_cfg->state==SERVER))
-      sb=new button(x+40, y+ns_h-9-fnt->Size().y, NET_SINGLE, symbol_str("single_play"), sb);
+      sb << new AButton(ivec2(x + 40, y + ns_h - 9 - fnt->Size().y), NET_SINGLE, symbol_str("single_play"));
 
-    InputManager inm(main_screen,sb);
+    InputManager inm(main_screen, sb);
 
     inm.allow_no_selections();
     inm.clear_current();
@@ -524,9 +521,11 @@ int net_configuration::input()   // pulls up dialog box and input fileds
         if (find)
         {
           int bw=strlen(name)*fnt->Size().x;
-          inm.add(new button(x+ns_w/2-bw/2,y+button_y,NET_GAME+total_games,name,NULL));
+          AWidgetList widget;
+          widget << new AButton(ivec2(x + ns_w / 2 - bw / 2, y + button_y), NET_GAME + total_games, name);
+          inm.Add(widget);
           find->set_port(server_port);
-          game_addr[total_games]=find;
+          game_addr[total_games] = find;
 
           total_games++;
           button_y += fnt->Size().y + 10;

@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -29,7 +29,7 @@
 #include "keys.h"
 #include "sprite.h"
 
-class Jwindow;
+class AWindow;
 
 class Event
 {
@@ -52,7 +52,7 @@ public:
 
     struct { char alt, ctrl, shift; } key_special;
 
-    Jwindow *window;      // NULL is root
+    AWindow *window;      // NULL is root
     ivec2 window_position;
     struct { int id; char *data; } message;
 };

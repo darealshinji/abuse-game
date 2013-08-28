@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -28,12 +28,12 @@ char const *symbol_str(char const *name);
 
 class pal_win
 {
-  int32_t scale,w,h,x,y,last_selected;
+  int32_t scale, w, h, x, y, last_selected;
   unsigned short *pat;
-  void draw();
+  void Draw();
 
 public :
-  Jwindow *me;
+  AWindow *me;
   void close_window();
   void open_window();
   char *name;
@@ -59,28 +59,22 @@ enum dev_state
     DEV_DRAG_AREA_BOTTOM
 };
 
-extern char backw_on,forew_on,show_menu_on,ledit_on,pmenu_on,omenu_on,commandw_on,tbw_on,searchw_on,
-            interpolate_draw,disable_autolight,fps_on,profile_on,show_names,fg_reversed,
+extern char backw_on, forew_on, show_menu_on, ledit_on, pmenu_on, omenu_on, commandw_on, tbw_on, searchw_on,
+            interpolate_draw, disable_autolight, fps_on, profile_on, show_names, fg_reversed,
         raise_all;
 
 
 class dev_controll
 {
-  GameObject *edit_object,*selected_object,*ai_object,*search_object,
-              *link_object;
-  LightSource *edit_light,*selected_light;
-  pal_win **pal_wins;
-  char **pwin_list;
-  int total_pals;
-  dev_state state;
-  area_controller *current_area;
-  Timer last_area_click;
 public :
-  Jwindow *backw,*forew,*commandw,*modew,*omenu,*oedit,*ledit,
-          *music_window,*pmenu,*show_menu,*lightw,*aiw,*ambw,*tbw,*area_win,
+  dev_controll();
+  ~dev_controll();
+
+  AWindow *backw, *forew, *commandw, *modew, *omenu, *oedit, *ledit,
+          *music_window, *pmenu, *show_menu, *lightw, *aiw, *ambw, *tbw, *area_win,
           *search_window;
 
-  int fg_w,bg_w,fg_scale,bg_scale,yellow;
+  int fg_w, bg_w, fg_scale, bg_scale, yellow;
   void save();
   void fg_fill(int color, int x, int y, pal_win *p);
   void add_palette(void *args);
@@ -98,10 +92,9 @@ public :
   void show_char_mem(char const *name);
   void close_oedit_window();
   void show_mem();
-  dev_controll();
   void handle_event(Event &ev);
   void do_command(char const *st, Event &ev);
-  int is_pal_win(Jwindow *win);
+  int is_pal_win(AWindow *win);
   void dev_draw(view *v);
   void load_stuff();
   int repeat_key_mode();
@@ -119,41 +112,37 @@ public :
   void close_area_win(int read_values);
   void notify_deleted_object(GameObject *o);
   void notify_deleted_light(LightSource *l);
-  ~dev_controll();
-} ;
+
+private:
+  GameObject *edit_object, *selected_object, *ai_object, *search_object,
+              *link_object;
+  LightSource *edit_light, *selected_light;
+  pal_win **pal_wins;
+  char **pwin_list;
+  int total_pals;
+  dev_state state;
+  area_controller *current_area;
+  Timer last_area_click;
+};
 
 class dev_term : public shell_term
 {
-  dev_controll *dv;
-  public :
-  dev_term(int width, int height, dev_controll *dev) : shell_term(console_font, width, height, "dev")
-  {
-    dv = dev;
-  }
-  virtual ~dev_term() { };
-  virtual void execute(char *st);
-} ;
+public:
+    dev_term(int width, int height, dev_controll *dv)
+      : shell_term(console_font, width, height, "dev"),
+        m_dev(dv)
+    {
+    }
+
+    virtual ~dev_term() { };
+    virtual void execute(char const *st);
+
+private:
+    dev_controll *m_dev;
+};
 
 extern dev_term *dev_console;
-
 extern dev_controll *dev_cont;
 
-
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

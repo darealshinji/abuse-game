@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -87,6 +87,8 @@ enum dev_ids
     DEV_AI_TYPE,
     DEV_AI_STATE,
     DEV_AI_FADE,
+    DEV_AI_FIGURES,
+    DEV_AI_FIGURES_MAX = DEV_AI_FIGURES + 100,
 
     DO_VOLUME,
     RAISE_SFX,

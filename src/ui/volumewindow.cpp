@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -16,9 +16,10 @@
 
 #include "volumewindow.h" // class VolumeWindow
 #include "property.h"     // class APropertyManager
-#include "gui.h"          // ico_button
+#include "gui.h"          // class AIconButton
 
-VolumeWindow::VolumeWindow() : Jwindow("Volume")
+VolumeWindow::VolumeWindow()
+  : AWindow("Volume")
 {
     char const *ff = "art/frame.spe";
     u_u = cache.reg(ff, "u_u", SPEC_IMAGE, 1),
@@ -32,12 +33,15 @@ VolumeWindow::VolumeWindow() : Jwindow("Volume")
     slider = cache.reg(ff, "volume_slide", SPEC_IMAGE, 1);
     m_pos.x = g_prop->getd("volume_x", xres / 2 - 20);
     m_pos.y = g_prop->getd("volume_y", yres / 2 - 50);
-    inm->add(new ico_button(10, 27, ID_SFX_DOWN, d_u, d_d, d_ua, d_da,
-                  new ico_button(21, 27, ID_SFX_UP, u_u, u_d, u_ua, u_da,
-                      new info_field(15, 42, 0, symbol_str("SFXv"),
-                          new ico_button(10, 72, ID_MUSIC_DOWN, d_u, d_d, d_ua, d_da,
-                              new ico_button(21, 72, ID_MUSIC_UP, u_u, u_d, u_ua, u_da,
-                                  new info_field(10, 86, 0, symbol_str("MUSICv"), NULL)))))));
+
+    AWidgetList widgets;
+    widgets << new AIconButton(ivec2(10, 27), ID_SFX_DOWN, d_u, d_d, d_ua, d_da);
+    widgets << new AIconButton(ivec2(21, 27), ID_SFX_UP, u_u, u_d, u_ua, u_da);
+    widgets << new AInfoField(ivec2(15, 42), 0, symbol_str("SFXv"));
+    widgets << new AIconButton(ivec2(10, 72), ID_MUSIC_DOWN, d_u, d_d, d_ua, d_da);
+    widgets << new AIconButton(ivec2(21, 72), ID_MUSIC_UP, u_u, u_d, u_ua, u_da);
+    widgets << new AInfoField(ivec2(10, 86), 0, symbol_str("MUSICv"));
+    inm->Add(widgets);
 
     //reconfigure();
     bg = cache.reg(ff, "vcontrol", SPEC_IMAGE, 1);

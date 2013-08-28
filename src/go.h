@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -20,7 +20,7 @@ public:
   elcontrol(FILE *fp, unsigned char *state_remap);
   virtual int size() { return GameObject::size()+2; }
   virtual game_objects type() { return O_elcontrol; }
-  virtual ifield *make_fields(int ystart, ifield *Next);
+  virtual AWidget *make_fields(int ystart, AWidget *Next);
   virtual void gather_input(InputManager *inm);
   virtual void save(FILE *fp) { GameObject::save(fp); write_short(fp,allow_dir); }
   virtual int decide() { return 1; }  // not dead
@@ -40,7 +40,7 @@ public :
   virtual int size();
   virtual void receive_signal(long signal) { (void)signal; }
   virtual game_objects type() { return O_elevator; }
-  virtual ifield *make_fields(int ystart, ifield *Next);
+  virtual AWidget *make_fields(int ystart, AWidget *Next);
   virtual void gather_input(InputManager *inm);
   virtual void save(FILE *fp);
   virtual int can_block(GameObject *who);
@@ -56,7 +56,7 @@ public :
   sensor(FILE *fp, unsigned char *state_remap);
   virtual int size();
   virtual game_objects type() { return O_sensor; }
-  virtual ifield *make_fields(int ystart, ifield *Next);
+  virtual AWidget *make_fields(int ystart, AWidget *Next);
   virtual void gather_input(InputManager *inm);
   virtual void save(FILE *fp);
 

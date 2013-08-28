@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -11,7 +11,7 @@
 #ifndef __NETCFG_HPP_
 #define __NETCFG_HPP_
 
-#include "jwindow.h"
+#include "window.h"
 
 class net_configuration
 {
@@ -34,10 +34,10 @@ class net_configuration
   net_configuration();
   int input();   // pulls up dialog box and input fileds
   void cfg_error(char const *msg);
-  int confirm_inputs(Jwindow *j, int server);
+  int confirm_inputs(AWindow *j, int server);
   void error(char const *message);
   int confirm_inputs(InputManager *i, int server);
-  ifield *center_ifield(ifield *i,int x1, int x2, ifield *place_below);
+  AWidget *center_ifield(AWidget *i,int x1, int x2, AWidget *place_below);
   int get_options(int server);
 } ;
 

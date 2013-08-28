@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -116,10 +116,10 @@ void handle_no_space()
         exit(0);
     }
 
-    info_field *inf = new info_field(0, wm->font()->Size().y * 2, ID_NULL,
-                                     no_space_msg, NULL);
-    button *b = new button(0, 0, ID_QUIT_OK, "Quit", inf);
-    Jwindow *no_space = wm->CreateWindow(ivec2(0), ivec2(-1), b, "ERROR");
+    AWidgetList widgets;
+    widgets << new AButton(ivec2(0, 0), ID_QUIT_OK, "Quit");
+    widgets << new AInfoField(ivec2(0, wm->font()->Size().y * 2), ID_NULL, no_space_msg);
+    AWindow *no_space = wm->CreateWindow(ivec2(0), ivec2(-1), "ERROR", widgets);
 
     Event ev;
     do
@@ -1581,12 +1581,10 @@ void Game::get_input()
                     {
                         if(!joy_win)
                         {
-                            joy_win = wm->CreateWindow(ivec2(80, 50), ivec2(-1),
-                                    new button(70, 9, JOY_OK, "OK",
-                                    new info_field(0, 30, DEV_NULL,
-                                    " Center joystick and\n"
-                                    "press the fire button", NULL)),
-                                    "Joystick");
+                            AWidgetList widgets;
+                            widgets << new AButton(ivec2(70, 9), JOY_OK, "OK"),
+                            widgets << new AInfoField(ivec2(0, 30), DEV_NULL, "Center joystick and\npress the fire button");
+                            joy_win = wm->CreateWindow(ivec2(80, 50), ivec2(-1), "Joystick", widgets);
                             set_state(JOY_CALB_STATE);
                         }
                     }
@@ -1737,7 +1735,7 @@ void Game::get_input()
                                                 current_song->set_volume(music_volume);
                                         }
 
-                                        ((button *)ev.message.data)->push();
+                                        ((AButton *)ev.message.data)->push();
 /*                                        volume_window->inm->redraw();
                                         draw_value(volume_window->m_surf, 2, 43,
                                                 (volume_window->x2()-volume_window->x1()-1), 8, sfx_volume, 127);

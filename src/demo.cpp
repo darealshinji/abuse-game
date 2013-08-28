@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -18,7 +18,7 @@
 
 #include "demo.h"
 #include "specs.h"
-#include "jwindow.h"
+#include "window.h"
 #include "dprint.h"
 #include "dev.h"
 #include "lisp.h"
@@ -72,7 +72,7 @@ int demo_manager::start_recording(char *filename)
   String const name = g_current_level->GetName();
 
   the_game->load_level(name.C());
-  record_file->write((void *)"DEMO,VERSION:2", 14);
+  record_file->write((void const *)"DEMO,VERSION:2", 14);
   record_file->write_uint8(name.Count() + 1);
   record_file->write(name.C(), name.Count() + 1);
 

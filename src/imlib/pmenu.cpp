@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -31,10 +31,10 @@ pmenu::pmenu(int X, int Y, pmenu_item *first, AImage *screen)
   ivec2 caa, cbb;
   screen->GetClip(caa, cbb);
   if (caa.x<X) caa.x=X;
-  int w = cbb.x - caa.x - Jwindow::left_border() - Jwindow::right_border();
-  int h = Jwindow::top_border() + Jwindow::bottom_border();
+  int w = cbb.x - caa.x - AWindow::left_border() - AWindow::right_border();
+  int h = AWindow::top_border() + AWindow::bottom_border();
 
-  bar = wm->CreateWindow(ivec2(X, Y), ivec2(w, 0), NULL);
+  bar = wm->CreateWindow(ivec2(X, Y), ivec2(w, 0));
   bar->freeze();  // can't drag this window
   bar->m_surf->WidgetBar(ivec2(0, 0), ivec2(w - 1, h - 1),
                          wm->bright_color(), wm->medium_color(),
@@ -141,7 +141,7 @@ pmenu_item *psub_menu::find_key(int key)
 }
 
 
-void psub_menu::hide(Jwindow *parent, int x, int y)
+void psub_menu::hide(AWindow *parent, int x, int y)
 {
   int w,h;
   calc_size(w,h);
@@ -182,7 +182,7 @@ void psub_menu::calc_size(int &w, int &h)
   h=h*(ts.y+1)+8;
 }
 
-void psub_menu::draw(Jwindow *parent, int x, int y)
+void psub_menu::draw(AWindow *parent, int x, int y)
 {
   if (win) wm->close_window(win);
 
@@ -201,9 +201,8 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
 
 
   win=wm->CreateWindow(parent->m_pos + ivec2(x, y),
-             ivec2(w - Jwindow::left_border() - Jwindow::right_border(),
-                   h - Jwindow::top_border() - Jwindow::bottom_border()),
-             NULL);
+             ivec2(w - AWindow::left_border() - AWindow::right_border(),
+                   h - AWindow::top_border() - AWindow::bottom_border()));
   win->freeze();
   win->m_surf->WidgetBar(ivec2(0, 0), ivec2(w - 1, h - 1),
                          wm->bright_color(), wm->medium_color(),
@@ -220,7 +219,7 @@ void psub_menu::draw(Jwindow *parent, int x, int y)
 
 }
 
-void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int active)
+void pmenu_item::draw_self(AWindow *parent, int x, int y, int w, int top, int active)
 {
   int bx=x;
   if (on_off) bx=x-wm->font()->Size().x;
@@ -261,7 +260,7 @@ void pmenu_item::draw_self(Jwindow *parent, int x, int y, int w, int top, int ac
   }
 }
 
-void pmenu_item::draw(Jwindow *parent, int x, int y, int w, int top,
+void pmenu_item::draw(AWindow *parent, int x, int y, int w, int top,
               int active)
 {
   if (n)
@@ -317,7 +316,7 @@ void pmenu::draw(AImage *screen, int top_only)
 }
 
 
-int psub_menu::handle_event(Jwindow *parent, int x, int y, Event &ev)
+int psub_menu::handle_event(AWindow *parent, int x, int y, Event &ev)
 {
   int w,h;
   calc_size(w,h);
@@ -356,7 +355,7 @@ int psub_menu::handle_event(Jwindow *parent, int x, int y, Event &ev)
 
 }
 
-int pmenu_item::handle_event(Jwindow *parent, int x, int y, int w, int top,
+int pmenu_item::handle_event(AWindow *parent, int x, int y, int w, int top,
                  Event &ev)
 {
   x+=parent->m_pos.x;
