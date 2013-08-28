@@ -34,7 +34,7 @@
 #include "lisp_gc.h"
 #include "demo.h"
 #include "profile.h"
-#include "sbar.h"
+#include "statbar.h"
 #include "compiled.h"
 #include "chat.h"
 
@@ -240,7 +240,7 @@ void dev_controll::search_forward()
 {
   if (search_window) // if no window then we can't get the object name
   {
-    char *name=search_window->read(ID_SEARCH_TEXT);
+    char const *name = search_window->read(ID_SEARCH_TEXT);
     int type=-1;    // see if this type existss
     int i;
     for (i=0; i<total_objects; i++)

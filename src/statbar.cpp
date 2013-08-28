@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -14,7 +14,7 @@
 
 #include "common.h"
 
-#include "sbar.h"
+#include "statbar.h"
 #include "view.h"
 #include "lisp.h"
 #include "cache.h"
@@ -162,65 +162,51 @@ void status_bar::redraw(AImage *screen)
   }
 }
 
-void status_bar::area(int &x1, int &y1, int &x2, int &y2)
+ibox2 status_bar::GetArea()
 {
-  if (sbar<=0 || !total_weapons)
-  {
-    x2=xres;
-    y2=yres;
-    x1=x2;
-    y1=y2;
-    return ;
-  }
+    if (sbar <= 0 || !total_weapons)
+        return ibox2(xres, yres, xres, yres);
 
-  AImage *sb=cache.img(sbar);
+    AImage *sb = cache.img(sbar);
 
-  // status bar width & height
-  int sb_w = sb->Size().x;
-  int sb_h = sb->Size().y;
+    // status bar width & height
+    int sb_w = sb->Size().x;
+    int sb_h = sb->Size().y;
 
-  x1=xres/2-sb_w/2;
-  x2=xres/2+sb_w/2;
-  y1=yres-sb_h;
-  y2=yres;
+    return ibox2(xres / 2 - sb_w / 2, yres - sb_h,
+                 xres / 2 + sb_w / 2, yres);
 }
-
 
 void status_bar::draw_health(AImage *screen,int amount)
 {
-  if (total_weapons)
-  {
-    int x1,y1,x2,y2;
-    area(x1,y1,x2,y2);
-    draw_num(screen, x1 + 17, y1 + 11, amount, bnum);
-  }
+    if (total_weapons)
+    {
+        ibox2 area = GetArea();
+        draw_num(screen, area.A.x + 17, area.A.y + 11, amount, bnum);
+    }
 }
 
 
 void status_bar::draw_ammo(AImage *screen, int weapon_num, int amount, int light)
 {
-  if (total_weapons)
-  {
-    int x1,y1,x2,y2;
-    area(x1,y1,x2,y2);
-    draw_num(screen, x1 + 52 + weapon_num * 34, y1 + 25,
-             amount, bnum + (light ? 20 : 10));
-  }
+    if (total_weapons)
+    {
+        ibox2 area = GetArea();
+        draw_num(screen, area.A.x + 52 + weapon_num * 34, area.A.y + 25,
+                 amount, bnum + (light ? 20 : 10));
+    }
 }
 
 
 int status_bar::mouse_in_area()
 {
-  if (!v) return 0;
-  int x1,y1,x2,y2;
-  area(x1,y1,x2,y2);
+    if (!v)
+        return 0;
 
-    int mx = v->pointer_x;
-    int my = v->pointer_y;
+    ibox2 area = GetArea();
+    ivec2 mouse(v->pointer_x, v->pointer_y);
 
-  if (mx>=x1 && my>=y1 && mx<=x2 && my<=y2)
-    return 1;
-  else return 0;
+    return mouse >= area.A && mouse <= area.B;
 }
 
 
@@ -228,14 +214,14 @@ void status_bar::draw_update()
 {
   if (total_weapons && v)
   {
-    if (DEFINEDP(symbol_value(l_mouse_can_switch)) && symbol_value(l_mouse_can_switch) &&
-    mouse_in_area())
+    if (DEFINEDP(symbol_value(l_mouse_can_switch)) && symbol_value(l_mouse_can_switch) && mouse_in_area())
     {
       if ((g_current_level->tick_counter()&4)==0)
         wm->SetMouseShape(cache.img(c_mouse1)->copy(), ivec2(4, 4));
       else wm->SetMouseShape(cache.img(c_mouse2)->copy(), ivec2(4, 4));
       changed_cursor=1;
-    } else if (changed_cursor)
+    }
+    else if (changed_cursor)
     {
       if (!(dev&EDIT_MODE))
         wm->SetMouseShape(cache.img(c_target)->copy(), ivec2(8, 8));
@@ -266,35 +252,33 @@ void status_bar::step()
   }
 
   // see if the mouse is in the sbar region
-  int sx1,sy1,sx2,sy2;
-  area(sx1,sy1,sx2,sy2);
+  ibox2 area = GetArea();
 
   int view_y2 = v->m_bb.y;
-  if (sy1<view_y2)     // tell view to shrink if it is overlapping the status bar
+  if (area.A.y < view_y2)     // tell view to shrink if it is overlapping the status bar
   {
     v->suggest.send_view=1;
     v->suggest.cx1 = v->m_aa.x;
     v->suggest.cy1 = v->m_aa.y;
     v->suggest.cx2 = v->m_bb.x;
-    v->suggest.cy2 = sy1 - 2;
+    v->suggest.cy2 = area.A.y - 2;
   }
 
   if (sbar<=0 || !total_weapons) return ;
 
-  int mx = last_demo_mpos.x;
-  int my = last_demo_mpos.y;
+  ivec2 mouse = last_demo_mpos;
 
-  if (mx>sx1 && my>sy1 && mx<sx2 && my<sy2)
+  if (mouse >= area.A && mouse <= area.B)
   {
-
     int new_target;
 
-    mx-=sx1;
-    mx-=47;
-    if (mx<0) new_target=0;
+    mouse.x -= area.A.x;
+    mouse.x -= 47;
+    if (mouse.x < 0)
+      new_target = 0;
     else
     {
-      new_target=mx/33;
+      new_target = mouse.x / 33;
       if (new_target>=TOTAL_WEAPONS)
         new_target=TOTAL_WEAPONS-1;
       if (new_target>=total_weapons)

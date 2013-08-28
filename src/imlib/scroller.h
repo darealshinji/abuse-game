@@ -21,11 +21,11 @@ public:
     void SetSize(ivec2 size) { m_size = size; }
 
     int t, sx;
-    virtual void area(int &x1, int &y1, int &x2, int &y2);
+    virtual ibox2 GetArea();
     virtual void draw_first(AImage *screen);
     virtual void Draw(int active, AImage *screen);
     virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
-    virtual char *read() { return (char *)&sx; }
+    virtual char const *read() { return (char const *)&sx; }
 
     virtual int activate_on_mouse_move() { return 1; }
     virtual void handle_inside_event(Event &ev, AImage *screen, InputManager *inm) { UNUSED(ev, screen, inm); }
@@ -41,8 +41,8 @@ protected:
     ivec2 m_size;
     int drag, vert, last_click;
 
-    int bh();
-    int bw();
+    int bh() const;
+    int bw() const;
     void drag_area(int &x1, int &y1, int &x2, int &y2);
     void dragger_area(int &x1, int &y1, int &x2, int &y2);
     ivec2 b1() { return m_pos + (vert ? ivec2(m_size.x, 0) : ivec2(0, m_size.y)); }
@@ -108,7 +108,7 @@ public:
 
     virtual void handle_inside_event(Event &ev, AImage *screen, InputManager *inm);
     virtual void scroll_event(int newx, AImage *screen);
-    virtual char *read() { return (char *)this; }
+    virtual char const *read() { return (char const *)this; }
     virtual void area_config();
     virtual void handle_up(AImage *screen, InputManager *inm);
     virtual void handle_down(AImage *screen, InputManager *inm);

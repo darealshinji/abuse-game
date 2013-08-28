@@ -89,14 +89,11 @@ AScroller::AScroller(ivec2 pos, int id, ivec2 size, int Vert, int Total_items)
     vert = Vert;
 }
 
-void AScroller::area(int &x1, int &y1, int &x2, int &y2)
+ibox2 AScroller::GetArea()
 {
-  area_config();
-  x1=m_pos.x-1; y1=m_pos.y-1;
-  if (vert)
-  { x2=m_pos.x+m_size.x+bw();  y2=m_pos.y+m_size.y; }
-  else
-  { x2=m_pos.x+m_size.x;  y2=m_pos.y+m_size.y+bh(); }
+    area_config();
+    return ibox2(m_pos - ivec2(1),
+                 m_pos + m_size + (vert ? ivec2(bw(), 0) : ivec2(0, bh())));
 }
 
 void AScroller::dragger_area(int &x1, int &y1, int &x2, int &y2)
@@ -106,8 +103,8 @@ void AScroller::dragger_area(int &x1, int &y1, int &x2, int &y2)
   else { x1=m_pos.x+bw(); y1=m_pos.y+m_size.y; x2=m_pos.x+m_size.x-bw(); y2=m_pos.y+m_size.y+bh()-1; }
 }
 
-int AScroller::bh() { return vert ? 15 : 13; }
-int AScroller::bw() { return vert ? 12 : 14; }
+int AScroller::bh() const { return vert ? 15 : 13; }
+int AScroller::bw() const { return vert ? 12 : 14; }
 
 uint8_t const *AScroller::GetIcon(int index)
 {
@@ -171,10 +168,9 @@ void AScroller::draw_widget(AImage *screen, int erase)
 
 void AScroller::Draw(int active, AImage *screen)
 {
-  int x1,y1,x2,y2;
-  area(x1,y1,x2,y2);
-  screen->Rectangle(ivec2(x1, y1), ivec2(x2, y2),
-                    active ? wm->bright_color() : wm->dark_color());
+    ibox2 area = GetArea();
+    screen->Rectangle(area.A, area.B,
+                      active ? wm->bright_color() : wm->dark_color());
 }
 
 void AScroller::handle_event(Event &ev, AImage *screen, InputManager *inm)

@@ -42,13 +42,13 @@ public:
 
     virtual void set_owner(AWindow *owner);
     virtual void Move(ivec2 pos) { m_pos = pos; }
-    virtual void area(int &x1, int &y1, int &x2, int &y2) = 0;
+    virtual ibox2 GetArea() = 0;
     virtual void draw_first(AImage *screen) = 0;
     virtual void Draw(int active, AImage *screen) = 0;
     virtual void handle_event(Event &ev, AImage *screen, InputManager *im) = 0;
     virtual int selectable() { return 1; }
     virtual void remap(Filter *f) { (void)f; }
-    virtual char *read() = 0;
+    virtual char const *read() = 0;
     virtual AWidget *find(int search_id) { if (m_id == search_id) return this; else return nullptr; }
     virtual AWidget *unlink(int id) { (void)id; return nullptr; }
 
@@ -121,7 +121,7 @@ public:
     int y1() { return _y1; }
     int x2() { return _x2; }
     int y2() { return _y2; }
-    char *read(int id) { return inm->get(id)->read(); }
+    char const *read(int id) { return inm->get(id)->read(); }
     void local_close();
 
     static int left_border();

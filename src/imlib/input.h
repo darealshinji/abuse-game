@@ -24,14 +24,14 @@ public:
     AButton(ivec2 pos, int ID, AImage *Depressed, AImage *Pressed, AImage *active);
     virtual ~AButton() { }
 
-    virtual void area(int &x1, int &y1, int &x2, int &y2);
+    virtual ibox2 GetArea();
     virtual void draw_first(AImage *screen);
     virtual void Draw(int active, AImage *screen);
     virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
     void change_visual(AImage *new_visual);
     virtual void remap(Filter *f);
     void push();
-    virtual char *read() { return (char *)&up; }
+    virtual char const *read() { return (char const *)&up; }
     int status() { return up; }
     void set_act_id(int id) { act_id=id; }
 
@@ -52,11 +52,11 @@ public:
     void press_button(int id);      // if button box doesn't contain id, nothing happens
     virtual void remap(Filter *f);
     virtual void Move(ivec2 pos);
-    virtual void area(int &x1, int &y1, int &x2, int &y2);
+    virtual ibox2 GetArea();
     virtual void draw_first(AImage *screen);
     virtual void Draw(int active, AImage *screen);
     virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
-    virtual char *read();   // return pointer to first button which is depressed
+    virtual char const *read();   // return pointer to first button which is depressed
     virtual AWidget *find(int search_id);  // should return pointer to item you control with this id
     void arrange_left_right();
     void arrange_up_down();
@@ -73,12 +73,12 @@ public:
     ATextField(ivec2 pos, int ID, char const *Prompt, char const *Format, double Data);
     virtual ~ATextField() { free(prompt); free(format); free(data); }
 
-    virtual void area(int &x1, int &y1, int &x2, int &y2);
+    virtual ibox2 GetArea();
     virtual void draw_first(AImage *screen);
     virtual void Draw(int active, AImage *screen);
     virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
 
-    virtual char *read();
+    virtual char const *read();
     void change_data(char const *new_data, int new_cursor,       // cursor==-1, does not change it.
                      int active, AImage *screen);
 
@@ -105,11 +105,11 @@ public:
     AInfoField(ivec2 pos, int ID, char const *info);
     virtual ~AInfoField() { }
 
-    virtual void area(int &x1, int &y1, int &x2, int &y2);
+    virtual ibox2 GetArea();
     virtual void draw_first(AImage *screen);
     virtual void Draw(int active, AImage *screen) { UNUSED(active, screen); }
     virtual void handle_event(Event &ev, AImage *screen, InputManager *im) { UNUSED(ev, screen, im); }
-    virtual char *read() { return m_text.C(); }
+    virtual char const *read() { return m_text.C(); }
     virtual int selectable() { return 0; }
 
 private:

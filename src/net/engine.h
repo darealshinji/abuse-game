@@ -39,7 +39,7 @@ extern fd_set master_write_set;  // set a socket here if you detect a write_full
 
 
 void comm_failed();              // call if problems talking to engine
-void mdie(char *reason);         // call if general net problems
+void mdie(char const *reason);         // call if general net problems
 
 
 #define real2shm(type,ptr) (ptr==NULL ? NULL : ((type *)((char *)(ptr)-(char *)base)))
