@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -39,9 +39,9 @@
 #include "chat.h"
 
 #define make_above_tile(x) ((x)|0x4000)
-char backw_on=0,forew_on=0,show_menu_on=0,ledit_on=0,pmenu_on=0,omenu_on=0,commandw_on=0,tbw_on=0,
-     searchw_on=0,interpolate_draw=0,disable_autolight=0,fps_on=0,profile_on=0,
-     show_names=0,fg_reversed=0,
+char backw_on=0, forew_on=0, show_menu_on=0, ledit_on=0, pmenu_on=0, omenu_on=0, commandw_on=0, tbw_on=0,
+     searchw_on=0, interpolate_draw=0, disable_autolight=0, fps_on=0, profile_on=0,
+     show_names=0, fg_reversed=0,
      raise_all;
 
 char const *symbol_str(char const *name)
@@ -57,13 +57,13 @@ char const *symbol_str(char const *name)
 
   char prog[50];
   char const *cs=prog;
-  strcpy(prog,"(setq section 'game_section)\n");
+  strcpy(prog, "(setq section 'game_section)\n");
   LObject::Compile(cs)->Eval();
-  strcpy(prog,"(load \"lisp/english.lsp\")\n");
+  strcpy(prog, "(load \"lisp/english.lsp\")\n");
   cs=prog;
   if (!LObject::Compile(cs)->Eval())
   {
-    printf("unable to open file '%s'\n",lsf);
+    printf("unable to open file '%s'\n", lsf);
     exit(0);
   }
   LSpace::Current=sp;
@@ -88,7 +88,7 @@ char const *symbol_str(char const *name)
 static GameObject *copy_object=NULL;
 
 pmenu *dev_menu=NULL;
-Jwindow *mess_win=NULL,*warn_win=NULL;
+AWindow *mess_win=NULL, *warn_win=NULL;
 
 GameObject *edit_object;
 dev_controll *dev_cont=NULL;
@@ -97,80 +97,84 @@ ivec2 dlast;
 int last_created_type=-1;
 char level_file[100]="levels/level00.spe";
 
-
-class cached_image : public visual_object
+class ACachedImage : public AVisualObject
 {
-  int id;
-  public :
-  cached_image(int Id) { id=Id; }
-  virtual void draw(AImage *screen, int x, int y, Filter *f)
-  {
-    if (f)
-      f->PutImage(screen, cache.img(id), ivec2(x, y));
-    else
-      screen->PutImage(cache.img(id), ivec2(x, y));
-  }
-  virtual int width() { return cache.img(id)->Size().x; }
-  virtual int height() { return cache.img(id)->Size().y; }
-} ;
+public:
+    ACachedImage(int id) : m_id(id) {}
 
+    virtual void Draw(AImage *screen, ivec2 pos, Filter *f)
+    {
+        if (f)
+            f->PutImage(screen, cache.img(m_id), pos);
+        else
+            screen->PutImage(cache.img(m_id), pos);
+    }
+    virtual ivec2 Size() const { return cache.img(m_id)->Size(); }
+
+private:
+    int m_id;
+};
 
 #define DEV_MODES 3
-cached_image *dev_mode_pict[DEV_MODES];
+ACachedImage *dev_mode_pict[DEV_MODES];
 
-int dev_del,dev_move, dev_char_left,dev_char_right,dev_back,dev_front,dev_ok,dev_copy,dev_brain,
-    dev_lights,dev_objects,dev_ai,dev_mode_icon[DEV_MODES],
-    dev_forward,dev_backward;
+int dev_del, dev_move, dev_char_left, dev_char_right, dev_back, dev_front, dev_ok, dev_copy, dev_brain,
+    dev_lights, dev_objects, dev_ai, dev_mode_icon[DEV_MODES],
+    dev_forward, dev_backward;
 
 char const *dev_mode_icon_names[DEV_MODES] =
 {
     "pixel_mode", "pick_mode", /* "fill_mode",
-    "line_mode","rect_mode","bar_mode", */ "area_select"
+    "line_mode", "rect_mode", "bar_mode", */ "area_select"
 };
 
-int dev_mode_ids[DEV_MODES]={ ID_DMODE_DRAW,ID_DMODE_PICK, ID_DMODE_AREA};
+int dev_mode_ids[DEV_MODES]={ ID_DMODE_DRAW, ID_DMODE_PICK, ID_DMODE_AREA};
 
 int edit_mode=ID_DMODE_DRAW;
 
 
 dev_term *dev_console=NULL;
-int ldef_width=0,ldef_height=0,ldef_r1=1,ldef_r2=100;
+int ldef_width=0, ldef_height=0, ldef_r1=1, ldef_r2=100;
 
 void make_screen_size(int w, int h);
 
-class amb_cont : public scroller
+class AAmbientControl : public AScroller
 {
-  public :
-  amb_cont(int X, int Y, ifield *Next) : scroller(X,Y,ID_NULL,100,wm->font()->Size().y+2,0,64,Next)
-  { if (player_list) sx=player_list->ambient; }
-  virtual void scroll_event(int newx, AImage *screen)
-  {
-    screen->Bar(m_pos, m_pos + ivec2(l - 1, h - 1), wm->dark_color());
-    char st[100];
-    sprintf(st,"%d",newx);
-    wm->font()->PutString(screen, m_pos + ivec2(30, 1), st, wm->bright_color());
-    if (player_list)
-      player_list->ambient=newx;
-    the_game->need_refresh();
-  }
-} ;
+public:
+    AAmbientControl(ivec2 pos)
+      : AScroller(pos, ID_NULL, ivec2(100, wm->font()->Size().y + 2), 0, 64)
+    {
+        if (player_list)
+            sx = player_list->ambient;
+    }
+
+    virtual void scroll_event(int newx, AImage *screen)
+    {
+        screen->Bar(m_pos, m_pos + m_size - ivec2(1), wm->dark_color());
+        String st = String::Printf("%d", newx);
+        wm->font()->PutString(screen, m_pos + ivec2(30, 1), st, wm->bright_color());
+        if (player_list)
+            player_list->ambient = newx;
+        the_game->need_refresh();
+    }
+};
 
 
 int confirm_quit()
 {
-    Jwindow *quitw;
-    AImage *ok_image, *cancel_image;
+    AWindow *quitw;
 
-    ok_image = cache.img(cache.reg("art/frame.spe", "dev_ok",
+    AImage *ok_image = cache.img(cache.reg("art/frame.spe", "dev_ok",
                                  SPEC_IMAGE, 1))->copy();
-    cancel_image = cache.img(cache.reg("art/frame.spe", "cancel",
+    AImage *cancel_image = cache.img(cache.reg("art/frame.spe", "cancel",
                                      SPEC_IMAGE, 1))->copy();
 
+    AWidgetList widgets;
+    widgets << new AButton(ivec2(10, wm->font()->Size().y + 4), ID_QUIT_OK, ok_image);
+    widgets << new AButton(ivec2(38, wm->font()->Size().y + 4), ID_CANCEL, cancel_image);
+    widgets << new AInfoField(ivec2(2, 2), ID_NULL, symbol_str("sure?"));
     quitw = wm->CreateWindow(ivec2(xres / 2 + 40, yres / 2), ivec2(80, -1),
-              new button(10, wm->font()->Size().y + 4, ID_QUIT_OK, ok_image,
-              new button(38, wm->font()->Size().y + 4, ID_CANCEL, cancel_image,
-              new info_field(2, 2, ID_NULL, symbol_str("sure?"), NULL))),
-              symbol_str("quit_title"));
+                             symbol_str("quit_title"), widgets);
 
     wm->grab_focus(quitw);
     int fin = 0, quit = 0;
@@ -208,7 +212,7 @@ int confirm_quit()
 
 static void show_object_number (GameObject *who)
 {
-  int total=0,number=0;
+  int total=0, number=0;
   GameObject *c;
   for (c=g_current_level->first_object(); c; c=c->next)
   {
@@ -217,7 +221,7 @@ static void show_object_number (GameObject *who)
     if (c==who) number=total;
   }
   char msg[100];
-  sprintf(msg,"%s : %d of %d",object_names[who->otype],number,total);
+  sprintf(msg, "%s : %d of %d", object_names[who->otype], number, total);
 }
 
 void dev_controll::search_backward()
@@ -240,17 +244,17 @@ void dev_controll::search_forward()
     int type=-1;    // see if this type existss
     int i;
     for (i=0; i<total_objects; i++)
-      if (!strcmp(object_names[i],name))
+      if (!strcmp(object_names[i], name))
         type=i;
     if (type==-1)
     {
       char msg[60];
-      sprintf(msg,"Object type '%s' does not existss!\n",name);
+      sprintf(msg, "Object type '%s' does not existss!\n", name);
       the_game->show_help(msg);
       the_game->need_refresh();
     } else
     {
-      GameObject *first,*find=NULL;
+      GameObject *first, *find=NULL;
       if (!search_object || search_object->otype!=type)
         first=g_current_level->first_object();
       else
@@ -309,52 +313,53 @@ void dev_controll::make_ambient()
     if(ambw)
         return;
 
+    AWidgetList widgets;
+    widgets << new AAmbientControl(ivec2(0, 0));
     ambw = wm->CreateWindow(ivec2(g_prop->getd("ambient x", -1),
                                   g_prop->getd("ambient y", -1)),
-                            ivec2(-1), new amb_cont(0, 0, NULL), "ambient");
+                            ivec2(-1), "ambient", widgets);
 }
 
-void dev_term::execute(char *st)
+void dev_term::execute(char const *st)
 {
-  if (!strcmp(st,"?"))
-  {
-    put_string("unchop x y, size x y,\n"
-           "load, esave, name\n");
-  } else
-  {
+    if (!strcmp(st, "?"))
+    {
+        put_string("unchop x y, size x y,\n"
+                   "load, esave, name\n");
+        return;
+    }
+
     Event ev;
-    dv->do_command(st,ev);
-  }
+    m_dev->do_command(st, ev);
 }
 
 static void load_dev_icons()
 {
   char const *artf="art/dev.spe";
-  dev_del=cache.reg(artf,"dev_del",SPEC_IMAGE,0);
-  dev_move=cache.reg(artf,"dev_move",SPEC_IMAGE,0);
-  dev_char_left=cache.reg(artf,"dev_char_left",SPEC_IMAGE,0);
-  dev_char_right=cache.reg(artf,"dev_char_right",SPEC_IMAGE,0);
-  dev_back=cache.reg(artf,"dev_back",SPEC_IMAGE,0);
-  dev_front=cache.reg(artf,"dev_front",SPEC_IMAGE,0);
-  dev_ok=cache.reg(artf,"dev_ok",SPEC_IMAGE,0);
-  dev_copy=cache.reg(artf,"dev_copy",SPEC_IMAGE,0);
-  dev_brain=cache.reg(artf,"brain",SPEC_IMAGE,0);
-  dev_lights=cache.reg(artf,"lights",SPEC_IMAGE,0);
-  dev_objects=cache.reg(artf,"objects",SPEC_IMAGE,0);
-  dev_ai=cache.reg(artf,"ai",SPEC_IMAGE,0);
-  dev_forward=cache.reg(artf,"forward",SPEC_IMAGE,0);
-  dev_backward=cache.reg(artf,"backward",SPEC_IMAGE,0);
+  dev_del = cache.reg(artf, "dev_del", SPEC_IMAGE, 0);
+  dev_move = cache.reg(artf, "dev_move", SPEC_IMAGE, 0);
+  dev_char_left = cache.reg(artf, "dev_char_left", SPEC_IMAGE, 0);
+  dev_char_right = cache.reg(artf, "dev_char_right", SPEC_IMAGE, 0);
+  dev_back = cache.reg(artf, "dev_back", SPEC_IMAGE, 0);
+  dev_front = cache.reg(artf, "dev_front", SPEC_IMAGE, 0);
+  dev_ok = cache.reg(artf, "dev_ok", SPEC_IMAGE, 0);
+  dev_copy = cache.reg(artf, "dev_copy", SPEC_IMAGE, 0);
+  dev_brain = cache.reg(artf, "brain", SPEC_IMAGE, 0);
+  dev_lights = cache.reg(artf, "lights", SPEC_IMAGE, 0);
+  dev_objects = cache.reg(artf, "objects", SPEC_IMAGE, 0);
+  dev_ai = cache.reg(artf, "ai", SPEC_IMAGE, 0);
+  dev_forward = cache.reg(artf, "forward", SPEC_IMAGE, 0);
+  dev_backward = cache.reg(artf, "backward", SPEC_IMAGE, 0);
 
   for (int i=0; i<DEV_MODES; i++)
-    dev_mode_icon[i]=cache.reg(artf,dev_mode_icon_names[i],SPEC_IMAGE,0);
-
+    dev_mode_icon[i] = cache.reg(artf, dev_mode_icon_names[i], SPEC_IMAGE, 0);
 }
 
 void scale_put(AImage *im, AImage *screen, int x, int y, short new_width, short new_height)
 {
-  unsigned char *sl1,*sl2;
+  unsigned char *sl1, *sl2;
   int32_t xstep=(im->Size().x<<16)/new_width,
-       ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
+       ystep=(im->Size().y<<16)/new_height, iy, ix, sx, ix_start, iy_start;
   screen->AddDirty(ivec2(x, y), ivec2(x + new_width, y + new_height));
 
   ivec2 caa, cbb;
@@ -377,11 +382,11 @@ void scale_put(AImage *im, AImage *screen, int x, int y, short new_width, short 
   if (y+new_height>cbb.y)
     new_height-=y+new_height-cbb.y;
 
-  for (iy=iy_start; new_height>0; new_height--,y++,iy+=ystep)
+  for (iy=iy_start; new_height>0; new_height--, y++, iy+=ystep)
   {
     sl1=im->scan_line(iy>>16);
     sl2=screen->scan_line(y)+x;
-    for (ix=ix_start,sx=0; sx<new_width; sx++,ix+=xstep,sl2++)
+    for (ix=ix_start, sx=0; sx<new_width; sx++, ix+=xstep, sl2++)
       *sl2=sl1[ix>>16];
   }
 }
@@ -389,9 +394,9 @@ void scale_put(AImage *im, AImage *screen, int x, int y, short new_width, short 
 
 void scale_put_trans(AImage *im, AImage *screen, int x, int y, short new_width, short new_height)
 {
-  unsigned char *sl1,*sl2;
+  unsigned char *sl1, *sl2;
   int32_t xstep=(im->Size().x<<16)/new_width,
-       ystep=(im->Size().y<<16)/new_height,iy,ix,sx,ix_start,iy_start;
+       ystep=(im->Size().y<<16)/new_height, iy, ix, sx, ix_start, iy_start;
   screen->AddDirty(ivec2(x, y), ivec2(x + new_width, y + new_height));
 
   ivec2 caa, cbb;
@@ -415,11 +420,11 @@ void scale_put_trans(AImage *im, AImage *screen, int x, int y, short new_width, 
     new_height-=y+new_height-cbb.y;
 
   uint8_t d;
-  for (iy=iy_start; new_height>0; new_height--,y++,iy+=ystep)
+  for (iy=iy_start; new_height>0; new_height--, y++, iy+=ystep)
   {
     sl1=im->scan_line(iy>>16);
     sl2=screen->scan_line(y)+x;
-    for (ix=ix_start,sx=0; sx<new_width; sx++,ix+=xstep,sl2++)
+    for (ix=ix_start, sx=0; sx<new_width; sx++, ix+=xstep, sl2++)
     {
       d=sl1[ix>>16];
       if (d)
@@ -443,11 +448,11 @@ int dev_controll::repeat_key_mode()
   if (state==DEV_MOVE_LIGHT) return 1; else return 0;
 }
 
-int last_link_x=0,last_link_y=0;
+int last_link_x=0, last_link_y=0;
 
 void dev_controll::dev_draw(view *v)
 {
-  int32_t x1,y1,x2,y2;
+  int32_t x1, y1, x2, y2;
   if (dev&EDIT_MODE)
   {
     ivec2 dv = ivec2(v->xoff(), v->yoff());
@@ -551,11 +556,12 @@ void dev_controll::toggle_toolbar()
   if (tbw)
   {
     tbw_on=0;
-    g_prop->setd("toolbar x",tbw->m_pos.x);
-    g_prop->setd("toolbar y",tbw->m_pos.y);
+    g_prop->setd("toolbar x", tbw->m_pos.x);
+    g_prop->setd("toolbar y", tbw->m_pos.y);
     wm->close_window(tbw);
     tbw=NULL;
-  } else
+  }
+  else
   {
     tbw_on=1;
     int setx=0;
@@ -563,16 +569,17 @@ void dev_controll::toggle_toolbar()
     {
       if (edit_mode==dev_mode_ids[i])
         setx=i;
-      dev_mode_pict[i]=new cached_image(dev_mode_icon[i]);
+      dev_mode_pict[i] = new ACachedImage(dev_mode_icon[i]);
     }
 
-    tool_picker *tp=new tool_picker(0, 0,
-                         ID_NULL,
-                         5,(visual_object **)dev_mode_pict,dev_mode_ids,DEV_MODES,
-                        g_palette, g_palette, NULL);
+    AToolPicker *tp = new AToolPicker(ivec2(0, 0), ID_NULL, 5, (AVisualObject **)dev_mode_pict,
+                                      dev_mode_ids, DEV_MODES, g_palette, g_palette);
+    AWidgetList widgets;
+    widgets << tp;
     tbw=wm->CreateWindow(ivec2(g_prop->getd("toolbar x", -1),
-                               g_prop->getd("toolbar y", -1)), ivec2(-1), tp);
-    tp->set_x(setx,tbw->m_surf);
+                               g_prop->getd("toolbar y", -1)),
+                         ivec2(-1), "", widgets);
+    tp->set_x(setx, tbw->m_surf);
   }
 }
 
@@ -590,30 +597,31 @@ void dev_controll::toggle_show_menu()
 
     show_menu_on = 1;
 
-    button *lnb, *lb, *cb, *bb, *bdb, *fb;
+    AWidgetList widgets;
+    AButton *b;
 
-    lnb = new button(0, 100, SHOW_LINKS, symbol_str("l_links"), NULL);
-    if(dev & DRAW_LINKS)
-        lnb->push();
-    lb = new button(0, 80, SHOW_LIGHT, symbol_str("l_light"), lnb);
-    if(dev & DRAW_LIGHTS)
-        lb->push();
-    cb = new button(0, 60, SHOW_CHARACTERS, symbol_str("l_char"), lb);
-    if(dev & DRAW_PEOPLE_LAYER)
-        cb->push();
-    bb = new button(0, 40, SHOW_BACKGROUND, symbol_str("l_back"), cb);
-    if(dev & DRAW_BG_LAYER)
-        bb->push();
-    bdb = new button(0, 20, SHOW_FOREGROUND_BOUND, symbol_str("l_bound"), bb);
-    if(dev & DRAW_FG_BOUND_LAYER)
-        bdb->push();
-    fb = new button(0, 0, SHOW_FOREGROUND, symbol_str("l_fore"), bdb);
-    if(dev & DRAW_FG_LAYER)
-        fb->push();
+    widgets << (b = new AButton(ivec2(0, 0), SHOW_FOREGROUND, symbol_str("l_fore")));
+    if (dev & DRAW_FG_LAYER)
+        b->push();
+    widgets << (b = new AButton(ivec2(0, 20), SHOW_FOREGROUND_BOUND, symbol_str("l_bound")));
+    if (dev & DRAW_FG_BOUND_LAYER)
+        b->push();
+    widgets << (b = new AButton(ivec2(0, 40), SHOW_BACKGROUND, symbol_str("l_back")));
+    if (dev & DRAW_BG_LAYER)
+        b->push();
+    widgets << (b = new AButton(ivec2(0, 60), SHOW_CHARACTERS, symbol_str("l_char")));
+    if (dev & DRAW_PEOPLE_LAYER)
+        b->push();
+    widgets << (b = new AButton(ivec2(0, 80), SHOW_LIGHT, symbol_str("l_light")));
+    if (dev & DRAW_LIGHTS)
+        b->push();
+    widgets << (b = new AButton(ivec2(0, 100), SHOW_LINKS, symbol_str("l_links")));
+    if (dev & DRAW_LINKS)
+        b->push();
 
     show_menu = wm->CreateWindow(ivec2(g_prop->getd("layer x", -1),
                                        g_prop->getd("layer y", -1)), ivec2(-1),
-                                 fb, symbol_str(symbol_str("SHOW?")));
+                                 symbol_str(symbol_str("SHOW?")), widgets);
 }
 
 char **listable_objs=NULL;
@@ -650,12 +658,13 @@ void dev_controll::toggle_omenu()
             c++;
         }
 
+    AWidgetList widgets;
+    widgets << new APickList(ivec2(0, 0), DEV_CREATE,
+                             yres / wm->font()->Size().y / 2,
+                             listable_objs, total_listable, 0,
+                             cache.img(window_texture));
     omenu = wm->CreateWindow(ivec2(g_prop->getd("objects x", 0),
-                                   g_prop->getd("objects y", 0)), ivec2(-1),
-                             new pick_list(0, 0, DEV_CREATE,
-                                           yres / wm->font()->Size().y / 2,
-                                           listable_objs, total_listable, 0,
-                                           NULL, cache.img(window_texture)));
+                                   g_prop->getd("objects y", 0)), ivec2(-1), "", widgets);
 }
 
 static int get_omenu_item(int x)
@@ -691,14 +700,14 @@ void dev_controll::toggle_pmenu()
     for(int i = 0; i < total_pals; i++)
         pwin_list[i] = pal_wins[i]->name;
 
-    pmenu = wm->CreateWindow(ivec2(g_prop->getd("pal x", 0),
-                                   g_prop->getd("pal y", -1)), ivec2(-1),
-                             new pick_list(0, 0, DEV_PALETTE,
-                                           yres / wm->font()->Size().y / 2,
-                                           pwin_list, total_pals, 0, NULL,
-                                           cache.img(window_texture)));
+    AWidgetList widgets;
+    widgets << new APickList(ivec2(0, 0), DEV_PALETTE,
+                             yres / wm->font()->Size().y / 2,
+                             pwin_list, total_pals, 0,
+                             cache.img(window_texture));
+    pmenu = wm->CreateWindow(ivec2(g_prop->getd("pal x", 0), g_prop->getd("pal y", -1)),
+                             ivec2(-1), "", widgets);
 }
-
 
 void dev_controll::toggle_fgw()
 {
@@ -717,13 +726,15 @@ void dev_controll::toggle_fgw()
     int maxh = (yres - 25) / (the_game->ftile_height() / fg_scale);
 
     /* FIXME: previous code had 1 instead of 0, investigate */
-    tile_picker *f_tp = new tile_picker(0, 0, DEV_FG_PICKER, SPEC_FORETILE,
-                                        fg_scale, maxh, fg_w, NULL);
+    AWidgetList widgets;
+    ATilePicker *f_tp = new ATilePicker(ivec2(0, 0), DEV_FG_PICKER, SPEC_FORETILE,
+                                        fg_scale, maxh, fg_w);
     f_tp->reverse();
+    widgets << f_tp;
 
     forew = wm->CreateWindow(ivec2(g_prop->getd("fore x", -30),
                                    g_prop->getd("fore y", 0)),
-                             ivec2(-1), f_tp,symbol_str("l_fg"));
+                             ivec2(-1), symbol_str("l_fg"), widgets);
 }
 
 void dev_controll::toggle_music_window()
@@ -731,8 +742,8 @@ void dev_controll::toggle_music_window()
 /*  if (!music_window)
   {
     music_window=wm->CreateWindow(ivec2(-1, 30), ivec2(0, 0),
-             new pick_list(0,0,DEV_MUSIC_PICKLIST,10,song_list,total_songs,0,NULL));
-    wm->fnt->put_string(music_window->m_surf,0,1,"songs");
+             new pick_list(0, 0, DEV_MUSIC_PICKLIST, 10, song_list, total_songs, 0, NULL));
+    wm->fnt->put_string(music_window->m_surf, 0, 1, "songs");
   } else
   {
     wm->close_window(music_window);
@@ -748,7 +759,7 @@ void dev_controll::toggle_bgw()
         g_prop->setd("back x", backw->m_pos.x);
         g_prop->setd("back y", backw->m_pos.y);
         wm->close_window(backw);
-        backw = NULL;
+        backw = nullptr;
         return;
     }
 
@@ -757,11 +768,13 @@ void dev_controll::toggle_bgw()
     int maxh = (yres - 25) / (the_game->btile_height() / bg_scale);
 
     /* FIXME: previous code had 1 instead of 0, investigate */
-    tile_picker *f_tp = new tile_picker(0, 0, DEV_BG_PICKER, SPEC_BACKTILE,
-                                        bg_scale, maxh, bg_w, NULL);
+    ATilePicker *f_tp = new ATilePicker(ivec2(0, 0), DEV_BG_PICKER, SPEC_BACKTILE,
+                                        bg_scale, maxh, bg_w);
+    AWidgetList widgets;
+    widgets << f_tp;
     forew = wm->CreateWindow(ivec2(g_prop->getd("back x", -30),
                                    g_prop->getd("back y", 0)),
-                             ivec2(-1), f_tp,symbol_str("l_bg"));
+                             ivec2(-1), symbol_str("l_bg"), widgets);
 }
 
 void dev_controll::toggle_search_window()
@@ -773,29 +786,29 @@ void dev_controll::toggle_search_window()
         g_prop->setd("searchw y", search_window->m_pos.y);
         g_prop->set("search name", search_window->read(ID_SEARCH_TEXT));
         wm->close_window(search_window);
-        search_window = NULL;
-        search_object = NULL;
+        search_window = nullptr;
+        search_object = nullptr;
         return;
     }
 
     int bw = cache.img(dev_forward)->Size().x;
+    AWidgetList widgets;
     /* FIXME: previous code had 1,1 instead of 0,0 -- investigate */
+    widgets << new ATextField(ivec2(0, 0), ID_SEARCH_TEXT, "object name>",
+                              "***************************", g_prop->get("search name", ""));
+    widgets << new AButton(ivec2(bw, wm->font()->Size().y + 5),
+                           ID_SEARCH_BACKWARD, cache.img(dev_backward));
+    widgets << new AButton(ivec2(bw * 3, wm->font()->Size().y + 5),
+                           ID_SEARCH_FOREWARD, cache.img(dev_forward));
     search_window = wm->CreateWindow(ivec2(g_prop->getd("searchw x", -30),
                                            g_prop->getd("searchw y", 0)),
-                                     ivec2(-1),
-        new text_field(0, 0, ID_SEARCH_TEXT, "object name>",
-                       "***************************",
-                       g_prop->get("search name", ""),
-        new button(bw, wm->font()->Size().y + 5, ID_SEARCH_BACKWARD,
-                   cache.img(dev_backward),
-        new button(bw * 3, wm->font()->Size().y + 5, ID_SEARCH_FOREWARD,
-                   cache.img(dev_forward), NULL))), "SEARCH");
+                                     ivec2(-1), "SEARCH", widgets);
 
     /* FIXME: shouldn't this be 1? */
     searchw_on = 0;
 }
 
-int open_owin=0,open_fwin=0,open_bwin=0,start_edit=0,start_nodelay=0,start_mem=0;
+int open_owin=0, open_fwin=0, open_bwin=0, start_edit=0, start_nodelay=0, start_mem=0;
 
 
 int get_option(char const *name);
@@ -810,30 +823,30 @@ void dev_init(int argc, char **argv)
 
   for (i=1; i<argc; i++)
   {
-    if (!strcmp(argv[i],"-edit"))
+    if (!strcmp(argv[i], "-edit"))
     {
       dev|=EDIT_MODE;
       start_edit=1;
       start_running=1;
       disable_autolight=1;
     }
-    else if (!strcmp(argv[i],"-fwin"))
+    else if (!strcmp(argv[i], "-fwin"))
       open_fwin=1;
-    else if (!strcmp(argv[i],"-show_mem"))
+    else if (!strcmp(argv[i], "-show_mem"))
       start_mem=1;
-    else if (!strcmp(argv[i],"-bwin"))
+    else if (!strcmp(argv[i], "-bwin"))
       open_bwin=1;
-    else if (!strcmp(argv[i],"-owin"))
+    else if (!strcmp(argv[i], "-owin"))
       open_owin=1;
-    else if (!strcmp(argv[i],"-nodelay"))
+    else if (!strcmp(argv[i], "-nodelay"))
       start_nodelay=1;
-    else if (!strcmp(argv[i],"-f"))
+    else if (!strcmp(argv[i], "-f"))
     {
       i++;
       strncpy(level_file, argv[i], sizeof(level_file) - 1);
       level_file[sizeof(level_file) - 1] = '\0';
     }
-    else if (!strcmp(argv[i],"-demo"))
+    else if (!strcmp(argv[i], "-demo"))
       demo_start=1;
 
   }
@@ -843,17 +856,17 @@ void dev_init(int argc, char **argv)
 
   if ((get_option("-size") || get_option("-vmode")) && !start_edit)
   {
-    printf("%s\n",symbol_str("no_hirez"));
+    printf("%s\n", symbol_str("no_hirez"));
     exit(0);
   }
 
-  fg_reversed = g_prop->getd("fg_reversed",0);
-  mouse_scrolling = g_prop->getd("mouse_scrolling",0);
-  palettes_locked = g_prop->getd("palettes_locked",0);
-  view_shift_disabled = g_prop->getd("view_shift_disabled",0);
-  fps_on = g_prop->getd("fps_on",0);
-  show_names = g_prop->getd("show_names",0);
-  raise_all = g_prop->getd("raise_all",0);
+  fg_reversed = g_prop->getd("fg_reversed", 0);
+  mouse_scrolling = g_prop->getd("mouse_scrolling", 0);
+  palettes_locked = g_prop->getd("palettes_locked", 0);
+  view_shift_disabled = g_prop->getd("view_shift_disabled", 0);
+  fps_on = g_prop->getd("fps_on", 0);
+  show_names = g_prop->getd("show_names", 0);
+  raise_all = g_prop->getd("raise_all", 0);
 }
 
 static pmenu *make_menu(int x, int y);
@@ -904,9 +917,9 @@ dev_controll::dev_controll()
     the_game->draw();
   }
 
-  dev_console=new dev_term(50,18,this);
+  dev_console=new dev_term(50, 18, this);
   if (start_edit)
-    dev_menu=make_menu(0,yres-wm->font()->Size().y-5);
+    dev_menu=make_menu(0, yres-wm->font()->Size().y-5);
 
   if (get_option("-nolight"))
     dev=dev^DRAW_LIGHTS;
@@ -918,7 +931,7 @@ void dev_controll::load_stuff()
   {
     char prog[100];
     char const *cs;
-    strcpy(prog,"(compile-file \"edit.lsp\")");
+    strcpy(prog, "(compile-file \"edit.lsp\")");
     cs=prog;
     LObject *p = LObject::Compile(cs);
     l_user_stack.push(p);
@@ -940,10 +953,10 @@ void dev_controll::do_command(char const *command, Event &ev)
     return ;
   }
 
-  sscanf(command,"%s",fword);
+  sscanf(command, "%s", fword);
   for (st=command; *st && *st!=' '; st++);
   if (*st) st++;
-  if (!strcmp(fword,"active"))
+  if (!strcmp(fword, "active"))
   {
     if (g_current_level && g_current_level->first_active_object())
     {
@@ -959,7 +972,7 @@ void dev_controll::do_command(char const *command, Event &ev)
     }
   }
 
-  if (!strcmp(fword,"clear_weapons"))
+  if (!strcmp(fword, "clear_weapons"))
   {
     for (view *f = player_list; f; f = f->next)
     {
@@ -971,7 +984,7 @@ void dev_controll::do_command(char const *command, Event &ev)
     }
   }
 
-  if (!strcmp(fword,"reload"))
+  if (!strcmp(fword, "reload"))
   {
     if (g_current_level && player_list && player_list->m_focus)
     {
@@ -980,7 +993,7 @@ void dev_controll::do_command(char const *command, Event &ev)
 
       // save the old weapon array
       int32_t *w=(int32_t *)malloc(total_weapons*sizeof(int32_t));
-      memcpy(w,player_list->weapons,total_weapons*sizeof(int32_t));
+      memcpy(w, player_list->weapons, total_weapons*sizeof(int32_t));
 
       String const name = g_current_level->GetName();
       the_game->load_level(name.C());
@@ -991,33 +1004,33 @@ void dev_controll::do_command(char const *command, Event &ev)
       player_list->reset_player();
       player_list->m_focus->m_pos = oldfocus;
 
-      memcpy(player_list->weapons,w,total_weapons*sizeof(int32_t));
+      memcpy(player_list->weapons, w, total_weapons*sizeof(int32_t));
       free(w);
 
       the_game->need_refresh();
     }
   }
 
-  if (!strcmp(fword,"unchop"))
+  if (!strcmp(fword, "unchop"))
   {
     ivec2 tile = the_game->GetBgTile(dlast);
     if (tile.x>=0 && tile.y>=0)
     {
       int l, h;
-      if (sscanf(command,"%s%d%d",fword,&l,&h)==3)
+      if (sscanf(command, "%s%d%d", fword, &l, &h)==3)
       {
-    dprintf("unchopped %dx%d to ",l,h);
+    dprintf("unchopped %dx%d to ", l, h);
     l=(l+the_game->btile_width()-1)/the_game->btile_width();
     h=(h+the_game->btile_height()-1)/the_game->btile_height();
     for (int y = 0, i = cur_bg; y < h; y++)
           for (int x = 0; x < l; x++)
             the_game->PutBg(tile + ivec2(x, y), i++);
-    dprintf("%dx%d\n",l,h);
+    dprintf("%dx%d\n", l, h);
       } else dprintf(symbol_str("unchop1"));
 
     }
   }
-  if (!strcmp(fword,"center"))
+  if (!strcmp(fword, "center"))
   {
     for (view *v = the_game->first_view; v; v = v->next)
     {
@@ -1027,18 +1040,18 @@ void dev_controll::do_command(char const *command, Event &ev)
     the_game->need_refresh();
   }
 
-  if (!strcmp(fword,"size"))
+  if (!strcmp(fword, "size"))
   {
-    int l,w;
-    if (sscanf(command,"%s%d%d",fword,&l,&w)==3)
+    int l, w;
+    if (sscanf(command, "%s%d%d", fword, &l, &w)==3)
     {
-      g_current_level->set_size(l,w);
-      dprintf("level is now %dx%d\n",l,w);
+      g_current_level->set_size(l, w);
+      dprintf("level is now %dx%d\n", l, w);
     } else dprintf(symbol_str("size1"));
 
 
   }
-  if (!strcmp(fword,"name"))
+  if (!strcmp(fword, "name"))
   {
     while (*command && *command!=' ')
       command++;
@@ -1046,38 +1059,38 @@ void dev_controll::do_command(char const *command, Event &ev)
       g_current_level->SetName(command + 1);
     dprintf(symbol_str("name_now"), g_current_level->GetName().C());
   }
-  if (!strcmp(fword,"set_first_level"))
+  if (!strcmp(fword, "set_first_level"))
   {
-    strcpy(level_file,st);
-    dprintf("first level will be '%s'\n",level_file);
+    strcpy(level_file, st);
+    dprintf("first level will be '%s'\n", level_file);
   }
 
-  if (!strcmp(fword,"load"))
+  if (!strcmp(fword, "load"))
   {
-    if (!strcmp(st,"STARTING_LEVEL"))
+    if (!strcmp(st, "STARTING_LEVEL"))
       st=level_file;
 
-    dprintf("loading '%s'\n",st);
+    dprintf("loading '%s'\n", st);
     the_game->load_level(st);
     g_current_level->unactivate_all();
 
     the_game->need_refresh();
   }
 
-  if (!strcmp(fword,"mem"))
+  if (!strcmp(fword, "mem"))
   {
     if (st[0])
       show_char_mem(st);
     else show_mem();
   }
 
-  if (!strcmp(fword,"esave"))
+  if (!strcmp(fword, "esave"))
   {
     dprintf(symbol_str("esave"));
     save();
   }
 
-  if (!strcmp(fword,"delete"))
+  if (!strcmp(fword, "delete"))
   {
     if (selected_object)
     {
@@ -1111,13 +1124,13 @@ void dev_controll::do_command(char const *command, Event &ev)
     the_game->need_refresh();
   }
 
-  if (!strcmp(fword,"create"))
+  if (!strcmp(fword, "create"))
   {
     char oname[100];
-    sscanf(command,"%s%s",fword,oname);       // read the type of object to create
-    int x,t=-1;
+    sscanf(command, "%s%s", fword, oname);       // read the type of object to create
+    int x, t=-1;
     for (x=0; x<total_objects; x++)             // find the object type by name
-       if (!strcmp(object_names[x],oname))
+       if (!strcmp(object_names[x], oname))
          t=x;
 
     if (t>=0)                                 // did we find it?
@@ -1129,12 +1142,12 @@ void dev_controll::do_command(char const *command, Event &ev)
       last_created_type=t;
     } else
     {
-      sprintf(fword,"No such object type : %s\n",oname);
+      sprintf(fword, "No such object type : %s\n", oname);
       the_game->show_help(fword);
     }
   }
 
-  if (!strcmp(fword,"move"))
+  if (!strcmp(fword, "move"))
   {
     if (selected_object)
       edit_object=selected_object;
@@ -1144,7 +1157,7 @@ void dev_controll::do_command(char const *command, Event &ev)
     else the_game->show_help("No object selected");
 
   }
-  if (!strcmp(fword,"move_light"))
+  if (!strcmp(fword, "move_light"))
   {
     if (selected_light)
       edit_light=selected_light;
@@ -1156,15 +1169,15 @@ void dev_controll::do_command(char const *command, Event &ev)
   }
 
 
-  if (!strcmp(fword,"clear_auto"))
+  if (!strcmp(fword, "clear_auto"))
   {
-    int32_t i,j;
+    int32_t i, j;
     for (i=0; i<g_current_level->foreground_width(); i++)
       for (j=0; j<g_current_level->foreground_height(); j++)
-        g_current_level->clear_fg(i,j);
+        g_current_level->clear_fg(i, j);
   }
 
-  if (!strcmp(fword,"fg_select"))
+  if (!strcmp(fword, "fg_select"))
   {
     ivec2 tile = the_game->GetFgTile(dlast);
     if (tile.x >= 0 && tile.y >= 0 &&
@@ -1173,44 +1186,44 @@ void dev_controll::do_command(char const *command, Event &ev)
     {
       cur_fg=g_current_level->GetFg(tile);
       if (forew)
-    ((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->m_surf);
+    ((ATilePicker *)forew->read(DEV_FG_PICKER))->recenter(forew->m_surf);
       the_game->need_refresh();
     }
   }
 
-  if (!strcmp(fword,"toggle_fg_raise"))
+  if (!strcmp(fword, "toggle_fg_raise"))
   {
     ivec2 tile = the_game->GetFgTile(dlast);
     if (tile.x >= 0 && tile.y >= 0 &&
         tile.x < g_current_level->foreground_width() &&
         tile.y < g_current_level->foreground_height())
-      g_current_level->fg_set_raised(tile.x, tile.y,!g_current_level->fg_raised(tile.x,tile.y));
+      g_current_level->fg_set_raised(tile.x, tile.y, !g_current_level->fg_raised(tile.x, tile.y));
   }
 
-  if (!strcmp(fword,"fg_add"))
+  if (!strcmp(fword, "fg_add"))
   {
     int x;
-    if (sscanf(st,"%d",&x))
+    if (sscanf(st, "%d", &x))
     {
       cur_fg++;
       if (cur_fg<0) cur_fg=0;
       if (cur_fg>=nforetiles) cur_fg=nforetiles-1;
 
       if (forew)
-    ((tile_picker *)forew->read(DEV_FG_PICKER))->recenter(forew->m_surf);
+    ((ATilePicker *)forew->read(DEV_FG_PICKER))->recenter(forew->m_surf);
     }
   }
 
-  if (!strcmp(fword,"restart"))
+  if (!strcmp(fword, "restart"))
   {
     g_current_level->restart();
   }
-  if (!strcmp(fword,"quit"))
+  if (!strcmp(fword, "quit"))
   {
     the_game->end_session();
   }
 
-  if (!strcmp(fword,"to_front"))
+  if (!strcmp(fword, "to_front"))
   {
     GameObject *which=selected_object;
     if (!selected_object) which=edit_object;
@@ -1219,7 +1232,7 @@ void dev_controll::do_command(char const *command, Event &ev)
     else the_game->show_help(symbol_str("forward?"));
   }
 
-  if (!strcmp(fword,"to_back"))
+  if (!strcmp(fword, "to_back"))
   {
     GameObject *which=selected_object;
     if (!selected_object) which=edit_object;
@@ -1228,14 +1241,14 @@ void dev_controll::do_command(char const *command, Event &ev)
     else the_game->show_help(symbol_str("back?"));
   }
 
-  if (!strcmp(fword,"set_aitype"))
+  if (!strcmp(fword, "set_aitype"))
   {
     GameObject *which=selected_object;
     if (!selected_object) which=edit_object;
     if (which)
     {
       int x;
-      if (*st && sscanf(st,"%d",&x)!=EOF)
+      if (*st && sscanf(st, "%d", &x)!=EOF)
         which->change_aitype(x);
       else
       {
@@ -1286,89 +1299,76 @@ void dev_controll::toggle_light_window()
     }
 
     int bh = 16 + 6, bw = 20 + 6, th = wm->font()->Size().y + 4;
+    Array<AButton *> buttons;
+    buttons << new AButton(ivec2(bw * 0, bh * 0), DEV_LIGHT0, cache.img(light_buttons[0]));
+    buttons << new AButton(ivec2(bw * 1, bh * 0), DEV_LIGHT1, cache.img(light_buttons[1]));
+    buttons << new AButton(ivec2(bw * 2, bh * 0), DEV_LIGHT2, cache.img(light_buttons[2]));
+    buttons << new AButton(ivec2(bw * 0, bh * 1), DEV_LIGHT3, cache.img(light_buttons[3]));
+    buttons << new AButton(ivec2(bw * 1, bh * 1), DEV_LIGHT4, cache.img(light_buttons[4]));
+    buttons << new AButton(ivec2(bw * 2, bh * 1), DEV_LIGHT5, cache.img(light_buttons[5]));
+    buttons << new AButton(ivec2(bw * 0, bh * 2), DEV_LIGHT6, cache.img(light_buttons[6]));
+    buttons << new AButton(ivec2(bw * 1, bh * 2), DEV_LIGHT7, cache.img(light_buttons[7]));
+    buttons << new AButton(ivec2(bw * 2, bh * 2), DEV_LIGHT8, cache.img(light_buttons[8]));
+    buttons << new AButton(ivec2(bw * 0, bh * 3), DEV_LIGHT9, cache.img(light_buttons[9]));
+    buttons << new AButton(ivec2(bw * 1, bh * 3), DEV_AMBIENT, cache.img(light_buttons[11]));
 
+    AWidgetList widgets;
+    widgets << new AButtonBox(ivec2(0, 0), DEV_LIGHT_BUTTON_BOX, 1, buttons);
+    widgets << new ATextField(ivec2(0, bh * 4), DEV_LIGHTW, "W ", "******",
+                              g_prop->getd("light create w", 0));
+    widgets << new ATextField(ivec2(0, bh * 4 + th * 1), DEV_LIGHTH, "H ", "******",
+                              g_prop->getd("light create h", 0));
+    widgets << new ATextField(ivec2(0, bh * 4 + th * 2), DEV_LIGHTR1, "R1", "******",
+                              g_prop->getd("light create r1", 1));
+    widgets << new ATextField(ivec2(0, bh * 4 + th * 3), DEV_LIGHTR2, "R2", "******",
+                              g_prop->getd("light create r2", 100));
     lightw = wm->CreateWindow(ivec2(g_prop->getd("light create x", 0),
                                     g_prop->getd("light create y", 0)), ivec2(-1),
-        new button_box(0, 0, DEV_LIGHT_BUTTON_BOX, 1,
-            new button(bw * 0, bh * 0, DEV_LIGHT0, cache.img(light_buttons[0]),
-            new button(bw * 1, bh * 0, DEV_LIGHT1, cache.img(light_buttons[1]),
-            new button(bw * 2, bh * 0, DEV_LIGHT2, cache.img(light_buttons[2]),
-            new button(bw * 0, bh * 1, DEV_LIGHT3, cache.img(light_buttons[3]),
-            new button(bw * 1, bh * 1, DEV_LIGHT4, cache.img(light_buttons[4]),
-            new button(bw * 2, bh * 1, DEV_LIGHT5, cache.img(light_buttons[5]),
-            new button(bw * 0, bh * 2, DEV_LIGHT6, cache.img(light_buttons[6]),
-            new button(bw * 1, bh * 2, DEV_LIGHT7, cache.img(light_buttons[7]),
-            new button(bw * 2, bh * 2, DEV_LIGHT8, cache.img(light_buttons[8]),
-            new button(bw * 0, bh * 3, DEV_LIGHT9, cache.img(light_buttons[9]),
-            new button(bw * 1, bh * 3, DEV_AMBIENT, cache.img(light_buttons[11]),
-            NULL))))))))))),
-        new text_field(0, bh * 4, DEV_LIGHTW, "W ", "******",
-                       g_prop->getd("light create w", 0),
-        new text_field(0, bh * 4 + th * 1, DEV_LIGHTH, "H ", "******",
-                       g_prop->getd("light create h", 0),
-        new text_field(0, bh * 4 + th * 2, DEV_LIGHTR1, "R1", "******",
-                       g_prop->getd("light create r1", 1),
-        new text_field(0, bh * 4 + th * 3, DEV_LIGHTR2, "R2", "******",
-                       g_prop->getd("light create r2", 100), NULL))))),
-        symbol_str("l_light"));
+                              symbol_str("l_light"), widgets);
 }
 
 void dev_controll::make_ai_window(GameObject *o)
 {
-  ai_object=o;
-  int th=wm->font()->Size().y+4,wl = 0, wh = 20;
-  if (figures[o->otype]->total_fields)
-  {
-    int maxl=0;
-    int i=0;
-    for (; i<figures[o->otype]->total_fields; i++)
-      if( strlen(figures[o->otype]->fields[i]->descript_name) > (unsigned)maxl )
-        maxl=strlen(figures[o->otype]->fields[i]->descript_name);
+    AWidgetList widgets;
+    ai_object = o;
+    int th = wm->font()->Size().y + 4, wl = 0, wh = 20;
 
-    int owh=wh;
-    ifield *first=NULL,*last=NULL;
-    for (i=0; i<figures[o->otype]->total_fields; i++)
+    if (figures[o->otype]->total_fields)
     {
-      char tmp[200];
-      strcpy(tmp,figures[o->otype]->fields[i]->descript_name);
-      for (int j=maxl-strlen(figures[o->otype]->fields[i]->descript_name); j; j--)
-        strcat(tmp," ");
-      int er;
-      ifield *p=new text_field(wl,wh,ID_NULL,tmp,"######",
-                   (double)o->get_var_by_name(figures[o->otype]->fields[i]->real_name,er),
-                   NULL);
-      if (last)
-        last->next=p;
-      else
-        first=p;
-      last=p;
-      wh+=th;
+        int maxl = 0;
+        for (int i = 0; i < figures[o->otype]->total_fields; i++)
+            maxl = lol::max(maxl, (int)strlen(figures[o->otype]->fields[i]->descript_name));
+
+        int er, owh = wh;
+        for (int i = 0; i < figures[o->otype]->total_fields; i++)
+        {
+            String tmp = figures[o->otype]->fields[i]->descript_name;
+            while (tmp.Count() < maxl)
+                tmp += ' ';
+            widgets << new ATextField(ivec2(wl, wh), DEV_AI_FIGURES + i, tmp.C(), "######",
+                                      (double)o->get_var_by_name(figures[o->otype]->fields[i]->real_name, er));
+            wh += th;
+        }
+        widgets << new AButton(vec2(wl, owh - 20), DEV_AI_OK, cache.img(dev_ok));
     }
-    aiw=wm->CreateWindow(ivec2(g_prop->getd("ai x",0), g_prop->getd("ai y",0)),
-                         ivec2(-1),
-       new button(wl,owh-20,DEV_AI_OK,cache.img(dev_ok),first),"ai");
-
-  }
-  else
-  {
-    aiw=wm->CreateWindow(ivec2(g_prop->getd("ai x", 0), g_prop->getd("ai y", 0)),
-                         ivec2(-1),
-       new button(wl,wh-20,DEV_AI_OK,cache.img(dev_ok),
-       new text_field(wl,wh+th*0, DEV_AI_XVEL,    symbol_str("ai_xvel"),"#####",(double)o->m_vel.x,
-       new text_field(wl,wh+th*1, DEV_AI_YVEL,    symbol_str("ai_yvel"),"#####",(double)o->m_vel.y,
-       new text_field(wl,wh+th*2, DEV_AI_XACEL,   symbol_str("ai_xacel"),"#####",(double)o->m_accel.x,
-       new text_field(wl,wh+th*3, DEV_AI_YACEL,   symbol_str("ai_yacel"),"#####",(double)o->m_accel.y,
-       new text_field(wl,wh+th*4, DEV_AI_STTIME,  symbol_str("ai_stime"),"####",(double)o->aistate_time(),
-       new text_field(wl,wh+th*5, DEV_AI_GRAVITY, symbol_str("ai_gravity"),"####",(double)o->gravity(),
-       new text_field(wl,wh+th*6, DEV_AI_HEALTH,  symbol_str("ai_health"),"####",(double)o->hp(),
-       new text_field(wl,wh+th*7, DEV_AI_MORPHPR, symbol_str("ai_morph"),"####",(double)o->mp(),
-       new text_field(wl,wh+th*8, DEV_AI_TYPE,    symbol_str("ai_type"),"####",(double)o->aitype(),
-       new text_field(wl,wh+th*9,DEV_AI_STATE,    symbol_str("ai_state"),"####",(double)o->aistate(),
-       new text_field(wl,wh+th*10,DEV_AI_FADE,    symbol_str("ai_fade"),"####",(double)o->fade_count(),
-              NULL)))))))))))),"ai");
-  }
-
-  wm->grab_focus(aiw);
+    else
+    {
+        widgets << new ATextField(ivec2(wl, wh + th * 0), DEV_AI_XVEL,    symbol_str("ai_xvel"), "#####", (double)o->m_vel.x);
+        widgets << new ATextField(ivec2(wl, wh + th * 1), DEV_AI_YVEL,    symbol_str("ai_yvel"), "#####", (double)o->m_vel.y);
+        widgets << new ATextField(ivec2(wl, wh + th * 2), DEV_AI_XACEL,   symbol_str("ai_xacel"), "#####", (double)o->m_accel.x);
+        widgets << new ATextField(ivec2(wl, wh + th * 3), DEV_AI_YACEL,   symbol_str("ai_yacel"), "#####", (double)o->m_accel.y);
+        widgets << new ATextField(ivec2(wl, wh + th * 4), DEV_AI_STTIME,  symbol_str("ai_stime"), "####", (double)o->aistate_time());
+        widgets << new ATextField(ivec2(wl, wh + th * 5), DEV_AI_GRAVITY, symbol_str("ai_gravity"), "####", (double)o->gravity());
+        widgets << new ATextField(ivec2(wl, wh + th * 6), DEV_AI_HEALTH,  symbol_str("ai_health"), "####", (double)o->hp());
+        widgets << new ATextField(ivec2(wl, wh + th * 7), DEV_AI_MORPHPR, symbol_str("ai_morph"), "####", (double)o->mp());
+        widgets << new ATextField(ivec2(wl, wh + th * 8), DEV_AI_TYPE,    symbol_str("ai_type"), "####", (double)o->aitype());
+        widgets << new ATextField(ivec2(wl, wh + th * 9), DEV_AI_STATE,   symbol_str("ai_state"), "####", (double)o->aistate());
+        widgets << new ATextField(ivec2(wl, wh + th * 10), DEV_AI_FADE,   symbol_str("ai_fade"), "####", (double)o->fade_count());
+        widgets << new AButton(ivec2(wl, wh - 20), DEV_AI_OK, cache.img(dev_ok));
+    }
+    aiw = wm->CreateWindow(ivec2(g_prop->getd("ai x", 0), g_prop->getd("ai y", 0)),
+                           ivec2(-1), "ai", widgets);
+    wm->grab_focus(aiw);
 }
 
 void dev_controll::notify_deleted_light(LightSource *l)
@@ -1377,8 +1377,8 @@ void dev_controll::notify_deleted_light(LightSource *l)
   {
     if (ledit)
     {
-      g_prop->setd("ledit x",ledit->m_pos.x);
-      g_prop->setd("ledit y",ledit->m_pos.y);
+      g_prop->setd("ledit x", ledit->m_pos.x);
+      g_prop->setd("ledit y", ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
     }
     edit_light=NULL;
@@ -1414,57 +1414,54 @@ void dev_controll::notify_deleted_object(GameObject *o)
 
 void dev_controll::close_ai_window()
 {
-  if (aiw)
-  {
-    GameObject *o=ai_object;
+    if (!aiw)
+        return;
+
+    GameObject *o = ai_object;
     int32_t x;
     if (o)
     {
-      if (figures[o->otype]->total_fields)
-      {
-    ifield *f=aiw->inm->get(DEV_AI_OK)->next;
-    for (int i=0; i<figures[o->otype]->total_fields; i++)
-    {
-      x=atoi(f->read());
-      char *v=figures[o->otype]->fields[i]->real_name;
-      int er;
-      if (o->get_var_by_name(v,er)!=x)
-      o->set_var_by_name(v,x);
-      f=f->next;
+        if (figures[o->otype]->total_fields)
+        {
+            for (int i = 0; i < figures[o->otype]->total_fields; i++)
+            {
+                AWidget *f = aiw->inm->get(DEV_AI_FIGURES + i);
+                x = atoi(f->read());
+                char *v = figures[o->otype]->fields[i]->real_name;
+                int er;
+                if (o->get_var_by_name(v, er) != x)
+                    o->set_var_by_name(v, x);
+            }
+        }
+        else
+        {
+            o->m_vel.x = atoi(aiw->read(DEV_AI_XVEL));
+            o->m_vel.y = atoi(aiw->read(DEV_AI_YVEL));
+
+            o->m_accel.x = atoi(aiw->read(DEV_AI_XACEL));
+            o->m_accel.y = atoi(aiw->read(DEV_AI_YACEL));
+
+            o->set_aistate_time(atoi(aiw->read(DEV_AI_STTIME)));
+            o->set_gravity(atoi(aiw->read(DEV_AI_GRAVITY)));
+
+            o->set_hp(atoi(aiw->read(DEV_AI_HEALTH)));
+            o->set_mp(atoi(aiw->read(DEV_AI_MORPHPR)));
+
+            o->set_aitype(atoi(aiw->read(DEV_AI_TYPE)));
+            o->set_aistate(atoi(aiw->read(DEV_AI_STATE)));
+            o->set_fade_count(atoi(aiw->read(DEV_AI_FADE)));
+        }
     }
-      }
-      else
-      {
-        o->m_vel.x = atoi(aiw->read(DEV_AI_XVEL));
-        o->m_vel.y = atoi(aiw->read(DEV_AI_YVEL));
-
-        o->m_accel.x = atoi(aiw->read(DEV_AI_XACEL));
-        o->m_accel.y = atoi(aiw->read(DEV_AI_YACEL));
-
-    x=atoi(aiw->read(DEV_AI_STTIME)); if (x!=o->aistate_time()) o->set_aistate_time(x);
-    x=atoi(aiw->read(DEV_AI_GRAVITY)); if (x!=o->gravity()) o->set_gravity(x);
-
-    x=atoi(aiw->read(DEV_AI_HEALTH)); if (x!=o->hp()) o->set_hp(x);
-    x=atoi(aiw->read(DEV_AI_MORPHPR)); if (x!=o->mp()) o->set_mp(x);
-
-    x=atoi(aiw->read(DEV_AI_TYPE)); if (x!=o->aitype()) o->set_aitype(x);
-    x=atoi(aiw->read(DEV_AI_STATE)); if (x!=o->aistate()) o->set_aistate(x);
-    x=atoi(aiw->read(DEV_AI_FADE)); if (x!=o->fade_count()) o->set_fade_count(x);
-      }
-    }
-    g_prop->setd("ai x",aiw->m_pos.x);
-    g_prop->setd("ai y",aiw->m_pos.y);
+    g_prop->setd("ai x", aiw->m_pos.x);
+    g_prop->setd("ai y", aiw->m_pos.y);
     wm->close_window(aiw);
-    aiw=NULL;
-    ai_object=NULL;
+    aiw = nullptr;
+    ai_object = nullptr;
     the_game->need_refresh();
-  }
 }
-
 
 void dev_controll::area_handle_input(Event &ev)
 {
-
   if (ev.type==EV_MOUSE_BUTTON && ev.mouse_button)
   {
     ivec2 pos = the_game->MouseToGame(last_demo_mpos);
@@ -1482,8 +1479,8 @@ void dev_controll::close_area_win(int read_values)
 {
   if (area_win)
   {
-    g_prop->setd("area_box x",area_win->m_pos.x);
-    g_prop->setd("area_box y",area_win->m_pos.y);
+    g_prop->setd("area_box x", area_win->m_pos.x);
+    g_prop->setd("area_box y", area_win->m_pos.y);
 
     if (current_area && read_values)
     {
@@ -1523,20 +1520,21 @@ void dev_controll::pick_handle_input(Event &ev)
     if (find && current_area && dc)
     {
       if (area_win) close_area_win(0);
-      int wl=0,wh=0,th=wm->font()->Size().y+12,bw=cache.img(dev_ok)->Size().x+10;
-      area_win=wm->CreateWindow(ivec2(g_prop->getd("area_box x", 0),
-                                      g_prop->getd("area_box y", 0)), ivec2(-1),
-                  new button(wl+bw*0,wh-8,DEV_AREA_OK,cache.img(dev_ok),
-                  new button(wl+bw*1,wh-8,DEV_AREA_DELETE,cache.img(dev_del),
+      int wl=0, wh=0, th=wm->font()->Size().y+12, bw=cache.img(dev_ok)->Size().x+10;
 
-                  new text_field(wl,wh+th*1,DEV_AREA_AMBIENT,         symbol_str("a_ambient"),"******",current_area->ambient,
-                              new text_field(wl,wh+th*2,DEV_AREA_AMBIENT_SPEED,   symbol_str("a_aspeed"),"******",current_area->ambient_speed,
-                              new text_field(wl,wh+th*3,DEV_AREA_VIEW_XOFF,       symbol_str("a_view_xoff"),"******",current_area->view_xoff,
-                              new text_field(wl,wh+th*4,DEV_AREA_VIEW_YOFF,       symbol_str("a_view_yoff"),"******",current_area->view_yoff,
-                              new text_field(wl,wh+th*5,DEV_AREA_VIEW_XOFF_SPEED, symbol_str("a_view_xspd"),"******",current_area->view_xoff_speed,
-                              new text_field(wl,wh+th*6,DEV_AREA_VIEW_YOFF_SPEED, symbol_str("a_view_yspd"),"******",current_area->view_yoff_speed,
-                         NULL)))))))));
-    } else if (find)
+      AWidgetList widgets;
+      widgets << new AButton(ivec2(wl + bw * 0, wh - 8), DEV_AREA_OK, cache.img(dev_ok));
+      widgets << new AButton(ivec2(wl + bw * 1, wh - 8), DEV_AREA_DELETE, cache.img(dev_del));
+      widgets << new ATextField(ivec2(wl, wh + th * 1), DEV_AREA_AMBIENT,         symbol_str("a_ambient"), "******", current_area->ambient);
+      widgets << new ATextField(ivec2(wl, wh + th * 2), DEV_AREA_AMBIENT_SPEED,   symbol_str("a_aspeed"), "******", current_area->ambient_speed);
+      widgets << new ATextField(ivec2(wl, wh + th * 3), DEV_AREA_VIEW_XOFF,       symbol_str("a_view_xoff"), "******", current_area->view_xoff);
+      widgets << new ATextField(ivec2(wl, wh + th * 4), DEV_AREA_VIEW_YOFF,       symbol_str("a_view_yoff"), "******", current_area->view_yoff);
+      widgets << new ATextField(ivec2(wl, wh + th * 5), DEV_AREA_VIEW_XOFF_SPEED, symbol_str("a_view_xspd"), "******", current_area->view_xoff_speed);
+      widgets << new ATextField(ivec2(wl, wh + th * 6), DEV_AREA_VIEW_YOFF_SPEED, symbol_str("a_view_yspd"), "******", current_area->view_yoff_speed);
+      area_win = wm->CreateWindow(ivec2(g_prop->getd("area_box x", 0),
+                                        g_prop->getd("area_box y", 0)), ivec2(-1), "", widgets);
+    }
+    else if (find)
     {
       current_area=find;
       current_area->active=1;
@@ -1544,7 +1542,8 @@ void dev_controll::pick_handle_input(Event &ev)
       state=DEV_DRAG_AREA_TOP;
       else state=DEV_DRAG_AREA_BOTTOM;
       the_game->need_refresh();
-    } else if (current_area)
+    }
+    else if (current_area)
     {
       current_area->active=0;
       current_area=NULL;
@@ -1557,8 +1556,8 @@ void dev_controll::close_oedit_window()
 {
   if (oedit)
   {
-    g_prop->setd("oedit x",oedit->m_pos.x);
-    g_prop->setd("oedit y",oedit->m_pos.y);
+    g_prop->setd("oedit x", oedit->m_pos.x);
+    g_prop->setd("oedit y", oedit->m_pos.y);
     wm->close_window(oedit);
     oedit=NULL;
     edit_object=NULL;
@@ -1577,7 +1576,7 @@ void dev_controll::handle_event(Event &ev)
     the_game->need_refresh();
   }
 
-  if (dev_menu && dev_menu->handle_event(ev,main_screen)) return ;
+  if (dev_menu && dev_menu->handle_event(ev, main_screen)) return ;
 
   if (!g_current_level) return ;
 
@@ -1593,7 +1592,7 @@ void dev_controll::handle_event(Event &ev)
   else if (ev.type==EV_KEY && ev.key==JK_F3)
   {
     char name[100];
-    sprintf(name,"shot%04d.pcx",screen_shot_on++);
+    sprintf(name, "shot%04d.pcx", screen_shot_on++);
     write_PCX(main_screen, g_palette, name);
   } else if (ev.type==EV_KEY && ev.key==JK_F5)
   {
@@ -1642,7 +1641,7 @@ void dev_controll::handle_event(Event &ev)
     }
     if (ev.window==NULL && ev.type==EV_KEY && ev.key=='d')
     {
-      int32_t xv=0,yv=100;
+      int32_t xv=0, yv=100;
       edit_object->try_move(edit_object->m_pos.x, edit_object->m_pos.y, xv, yv, 1);
       edit_object->m_pos.y += yv;
       state=DEV_SELECT;
@@ -1836,26 +1835,30 @@ void dev_controll::handle_event(Event &ev)
         if (oedit)
           close_oedit_window();
 
-        int bw=20+6,bh=16+6;
+        int bw=20+6, bh=16+6;
 
-        oedit=wm->CreateWindow(ivec2(g_prop->getd("oedit x", 0),
-                                     g_prop->getd("oedit y", 0)), ivec2(-1),
-            new button_box(0,0,ID_NULL,1,
-                new button(bw*0,0,DEV_OEDIT_OK,cache.img(dev_ok),
-                new button(bw*1,0,DEV_OEDIT_MOVE,cache.img(dev_move),
-                new button(bw*2,0,DEV_OEDIT_FRONT,cache.img(dev_front),
-                new button(bw*3,0,DEV_OEDIT_BACK,cache.img(dev_back),
-                new button(bw*4,0,DEV_OEDIT_COPY,cache.img(dev_copy),
-                new button(bw*0,bh*1,DEV_OEDIT_DELETE,cache.img(dev_del),
-                           NULL)))))),
-            new button(bw*5,bh*0,DEV_OEDIT_AI,cache.img(dev_ai),
+        Array<AButton *> but1;
+        but1 << new AButton(ivec2(bw * 0, 0), DEV_OEDIT_OK, cache.img(dev_ok));
+        but1 << new AButton(ivec2(bw * 1, 0), DEV_OEDIT_MOVE, cache.img(dev_move));
+        but1 << new AButton(ivec2(bw * 2, 0), DEV_OEDIT_FRONT, cache.img(dev_front));
+        but1 << new AButton(ivec2(bw * 3, 0), DEV_OEDIT_BACK, cache.img(dev_back));
+        but1 << new AButton(ivec2(bw * 4, 0), DEV_OEDIT_COPY, cache.img(dev_copy));
+        but1 << new AButton(ivec2(bw * 0, bh * 1), DEV_OEDIT_DELETE, cache.img(dev_del));
 
-            new button_box(bw*1,bh*1,DEV_OEDIT_CHAR_BOX,0,
-                new button(bw*1,bh*1,DEV_OEDIT_LEFT,cache.img(dev_char_left),
-                new button(bw*2,bh*1,DEV_OEDIT_RIGHT,cache.img(dev_char_right),NULL)),
-                new button(bw*3,bh*1,DEV_OBJECTS_DELETE,cache.img(dev_objects),
-                new button(bw*4,bh*1,DEV_LIGHTS_DELETE,cache.img(dev_lights),NULL))))),
-            symbol_str("l_EDIT"));
+        Array<AButton *> but2;
+        but2 << new AButton(ivec2(bw * 1, bh * 1), DEV_OEDIT_LEFT, cache.img(dev_char_left));
+        but2 << new AButton(ivec2(bw * 2, bh * 1), DEV_OEDIT_RIGHT, cache.img(dev_char_right));
+        but2 << new AButton(ivec2(bw * 3, bh * 1), DEV_OBJECTS_DELETE, cache.img(dev_objects));
+        but2 << new AButton(ivec2(bw * 4, bh * 1), DEV_LIGHTS_DELETE, cache.img(dev_lights));
+
+        AWidgetList widgets;
+        widgets << new AButtonBox(ivec2(0, 0), ID_NULL, 1, but1);
+        widgets << new AButton(ivec2(bw * 5, bh * 0), DEV_OEDIT_AI, cache.img(dev_ai));
+        widgets << new AButtonBox(ivec2(bw * 1, bh * 1), DEV_OEDIT_CHAR_BOX, 0, but2);
+
+        oedit = wm->CreateWindow(ivec2(g_prop->getd("oedit x", 0),
+                                       g_prop->getd("oedit y", 0)),
+                                 ivec2(-1), symbol_str("l_EDIT"), widgets);
 
 
         edit_object=selected_object;
@@ -1863,29 +1866,31 @@ void dev_controll::handle_event(Event &ev)
       {
         if (ledit)
         {
-          g_prop->setd("ledit x",ledit->m_pos.x);
-          g_prop->setd("ledit x",ledit->m_pos.y);
+          g_prop->setd("ledit x", ledit->m_pos.x);
+          g_prop->setd("ledit x", ledit->m_pos.y);
           wm->close_window(ledit);
         }
-        int bw=20+6,bh=16+6,th=wm->font()->Size().y+4;
+        int bw=20+6, bh=16+6, th=wm->font()->Size().y+4;
         edit_light=selected_light;
         if (edit_object)
         {
           edit_object->add_light(edit_light);
           edit_light->known=1;
         }
-        ledit=wm->CreateWindow(ivec2(g_prop->getd("ledit x", 0),
-                                     g_prop->getd("ledit y", 0)), ivec2(-1),
-              new button_box(0,0,ID_NULL,1,
-                   new button(bw*0,0,DEV_LEDIT_OK,cache.img(dev_ok),
-               new button(bw*1,0,DEV_LEDIT_MOVE,cache.img(dev_move),
-                  new button(bw*2,0,DEV_LEDIT_COPY,cache.img(dev_copy),
-            new button(bw*3,0,DEV_LEDIT_DEL,cache.img(dev_del),NULL)))),
-            new text_field(0,bh,DEV_LEDIT_W,      "W ","******",edit_light->m_shift.x,
-            new text_field(0,bh+th*1,DEV_LEDIT_H, "H ","******",edit_light->m_shift.y,
-          new text_field(0,bh+th*2,DEV_LEDIT_R1,"R1","******",(int)(edit_light->m_inner_radius),
-         new text_field(0,bh+th*3,DEV_LEDIT_R2,"R2","******",(int)(edit_light->m_outer_radius),
-                   NULL))))));
+        Array<AButton *> buttons;
+        buttons << new AButton(ivec2(bw * 0, 0), DEV_LEDIT_OK, cache.img(dev_ok));
+        buttons << new AButton(ivec2(bw * 1, 0), DEV_LEDIT_MOVE, cache.img(dev_move));
+        buttons << new AButton(ivec2(bw * 2, 0), DEV_LEDIT_COPY, cache.img(dev_copy));
+        buttons << new AButton(ivec2(bw * 3, 0), DEV_LEDIT_DEL, cache.img(dev_del));
+
+        AWidgetList widgets;
+        widgets << new AButtonBox(ivec2(0, 0), ID_NULL, 1, buttons);
+        widgets << new ATextField(ivec2(0, bh), DEV_LEDIT_W,           "W ", "******", edit_light->m_shift.x);
+        widgets << new ATextField(ivec2(0, bh + th * 1), DEV_LEDIT_H,  "H ", "******", edit_light->m_shift.y);
+        widgets << new ATextField(ivec2(0, bh + th * 2), DEV_LEDIT_R1, "R1", "******", (int)(edit_light->m_inner_radius));
+        widgets << new ATextField(ivec2(0, bh + th * 3), DEV_LEDIT_R2, "R2", "******", (int)(edit_light->m_outer_radius));
+        ledit = wm->CreateWindow(ivec2(g_prop->getd("ledit x", 0),
+                                       g_prop->getd("ledit y", 0)), ivec2(-1), "", widgets);
       }
       else if (ev.window==NULL)
       {
@@ -1971,13 +1976,13 @@ void dev_controll::handle_event(Event &ev)
     case ID_LEVEL_LOAD_OK :
     {
       char cmd[100];
-      sprintf(cmd,"load %s",mess_win->read(ID_MESS_STR1));
-      dev_cont->do_command(cmd,ev);
+      sprintf(cmd, "load %s", mess_win->read(ID_MESS_STR1));
+      dev_cont->do_command(cmd, ev);
       wm->Push(Event(ID_CANCEL, NULL));        // close window
     } break;
     case ID_GAME_SAVE :
     {
-      g_current_level->save("savegame.spe",1);
+      g_current_level->save("savegame.spe", 1);
       the_game->show_help(symbol_str("saved_game"));
       the_game->need_refresh();
     } break;
@@ -2018,7 +2023,7 @@ void dev_controll::handle_event(Event &ev)
     } break;
     case ID_EDIT_SAVE :
     {
-      do_command("esave",ev);
+      do_command("esave", ev);
       the_game->show_help(symbol_str("edit_saved"));
     } break;
     case ID_CACHE_PROFILE :
@@ -2044,10 +2049,11 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
-               new button(10,20,ID_LEVEL_NEW_OK,symbol_str("YES"),
-                        new button(40,20,ID_CANCEL,symbol_str("NO"),
-          new info_field(0,0,ID_NULL,symbol_str("sure?"),NULL))),symbol_str("New?"));
+        AWidgetList widgets;
+        widgets << new AButton(ivec2(10, 20), ID_LEVEL_NEW_OK, symbol_str("YES"));
+        widgets << new AButton(ivec2(40, 20), ID_CANCEL, symbol_str("NO"));
+        widgets << new AInfoField(ivec2(0, 0), ID_NULL, symbol_str("sure?"));
+        mess_win = wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1), symbol_str("New?"), widgets);
         wm->grab_focus(mess_win);
       }
     } break;
@@ -2056,20 +2062,21 @@ void dev_controll::handle_event(Event &ev)
       wm->Push(Event(ID_CANCEL, NULL));  // close_window
       if (g_current_level)
         delete g_current_level;
-      g_current_level=new Level(100,100,"untitled.spe");
+      g_current_level=new Level(100, 100, "untitled.spe");
     } break;
     case ID_LEVEL_RESIZE :
     {
       if (!mess_win)
       {
-        int h=wm->font()->Size().y+8;
-        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
-            new text_field(0,h*0,ID_MESS_STR1,symbol_str("width_"),"****",
-                   g_current_level ? g_current_level->foreground_width() : 100,
-            new text_field(0,h*1,ID_MESS_STR2,symbol_str("height_"),"****",
-                   g_current_level ? g_current_level->foreground_height() : 100,
-                   new button(10,h*4,ID_LEVEL_RESIZE_OK,symbol_str("ok_button"),
-                   new button(40,h*4,ID_CANCEL,symbol_str("cancel_button"),NULL)))),symbol_str("_scroll"));
+        int h = wm->font()->Size().y + 8;
+        AWidgetList widgets;
+        widgets << new ATextField(ivec2(0, h * 0), ID_MESS_STR1, symbol_str("width_"), "****",
+                                  g_current_level ? g_current_level->foreground_width() : 100);
+        widgets << new ATextField(ivec2(0, h * 1), ID_MESS_STR2, symbol_str("height_"), "****",
+                                  g_current_level ? g_current_level->foreground_height() : 100);
+        widgets << new AButton(ivec2(10, h * 4), ID_LEVEL_RESIZE_OK, symbol_str("ok_button"));
+        widgets << new AButton(ivec2(40, h * 4), ID_CANCEL, symbol_str("cancel_button"));
+        mess_win = wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1), symbol_str("_scroll"), widgets);
       }
     } break;
     case ID_LEVEL_RESIZE_OK :
@@ -2097,7 +2104,7 @@ void dev_controll::handle_event(Event &ev)
     case ID_QUIT :
     {
       if (confirm_quit())
-        do_command("quit",ev);
+        do_command("quit", ev);
     } ;
     case ID_TOGGLE_MAP :
     {
@@ -2114,19 +2121,20 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        int h=wm->font()->Size().y+8;
-        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
-            new text_field(0,h*0,ID_RECORD_DEMO_FILENAME,
-                   "demo filename","*******************",
-                   "demo.dat",
-                   new button(10,h*2,ID_RECORD_DEMO_OK,symbol_str("ok_button"),
-                   new button(40,h*2,ID_CANCEL,symbol_str("cancel_button"),NULL))));
+        int h = wm->font()->Size().y + 8;
+        AWidgetList widgets;
+        widgets << new ATextField(ivec2(0, h * 0), ID_RECORD_DEMO_FILENAME,
+                                  "demo filename", "*******************",
+                                  "demo.dat");
+        widgets << new AButton(ivec2(10, h * 2), ID_RECORD_DEMO_OK, symbol_str("ok_button"));
+        widgets << new AButton(ivec2(40, h * 2), ID_CANCEL, symbol_str("cancel_button"));
+        mess_win = wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1), "", widgets);
       }
     } break;
 
         case ID_RECORD_DEMO_OK :
     {
-      demo_man.set_state(demo_manager::RECORDING,mess_win->read(ID_RECORD_DEMO_FILENAME));
+      demo_man.set_state(demo_manager::RECORDING, mess_win->read(ID_RECORD_DEMO_FILENAME));
       wm->Push(Event(ID_CANCEL, NULL));        // close window
     } break;
 
@@ -2134,19 +2142,20 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        int h=wm->font()->Size().y+8;
-        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
-            new text_field(0,h*0,ID_PLAY_DEMO_FILENAME,
-                   "demo filename","*******************",
-                   "demo.dat",
-                   new button(10,h*2,ID_PLAY_DEMO_OK,symbol_str("ok_button"),
-                   new button(40,h*2,ID_CANCEL,symbol_str("cancel_button"),NULL))));
+        int h = wm->font()->Size().y + 8;
+        AWidgetList widgets;
+        widgets << new ATextField(ivec2(0, h * 0), ID_PLAY_DEMO_FILENAME,
+                                  "demo filename", "*******************",
+                                  "demo.dat");
+        widgets << new AButton(ivec2(10, h * 2), ID_PLAY_DEMO_OK, symbol_str("ok_button"));
+        widgets << new AButton(ivec2(40, h * 2), ID_CANCEL, symbol_str("cancel_button"));
+        mess_win = wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1), "", widgets);
       }
     } break;
 
         case ID_PLAY_DEMO_OK :
     {
-      demo_man.set_state(demo_manager::PLAYING,mess_win->read(ID_PLAY_DEMO_FILENAME));
+      demo_man.set_state(demo_manager::PLAYING, mess_win->read(ID_PLAY_DEMO_FILENAME));
       wm->close_window(mess_win);
       mess_win=NULL;
     } break;
@@ -2155,14 +2164,15 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        int h=wm->font()->Size().y+8;
-        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
-            new text_field(0,h*0,ID_MESS_STR1,symbol_str("x_mul"),"****",bg_xmul,
-            new text_field(0,h*1,ID_MESS_STR2,symbol_str("x_div"),"****",bg_xdiv,
-            new text_field(0,h*2,ID_MESS_STR3,symbol_str("y_mul"),"****",bg_ymul,
-            new text_field(0,h*3,ID_MESS_STR4,symbol_str("y_div"),"****",bg_ydiv,
-                   new button(10,h*4,ID_SET_SCROLL_CHECK,symbol_str("ok_button"),
-                   new button(40,h*4,ID_CANCEL,symbol_str("cancel_button"),NULL)))))),symbol_str("_scroll"));
+        int h = wm->font()->Size().y + 8;
+        AWidgetList widgets;
+        widgets << new ATextField(ivec2(0, h * 0), ID_MESS_STR1, symbol_str("x_mul"), "****", bg_xmul);
+        widgets << new ATextField(ivec2(0, h * 1), ID_MESS_STR2, symbol_str("x_div"), "****", bg_xdiv);
+        widgets << new ATextField(ivec2(0, h * 2), ID_MESS_STR3, symbol_str("y_mul"), "****", bg_ymul);
+        widgets << new ATextField(ivec2(0, h * 3), ID_MESS_STR4, symbol_str("y_div"), "****", bg_ydiv);
+        widgets << new AButton(ivec2(10, h * 4), ID_SET_SCROLL_CHECK, symbol_str("ok_button"));
+        widgets << new AButton(ivec2(40, h * 4), ID_CANCEL, symbol_str("cancel_button"));
+        mess_win = wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1), symbol_str("_scroll"), widgets);
       }
     } break;
     case ID_SET_SCROLL_CHECK :
@@ -2175,15 +2185,14 @@ void dev_controll::handle_event(Event &ev)
       if ( (((float)tbg_xmul/(float)tbg_xdiv) < ((float)bg_xmul/(float)bg_xdiv)) ||
           (((float)tbg_ymul/(float)tbg_ydiv) < ((float)bg_ymul/(float)bg_ydiv)))
       {
-        int h=wm->font()->Size().y+8;
+        int h = wm->font()->Size().y + 8;
 
-        warn_win=wm->CreateWindow(ivec2(xres / 2 - 40, yres / 2 - 40),
-                                  ivec2(-1),
-                  new info_field(0,0,ID_NULL,
-                      symbol_str("back_loss"),
-                      new button(10,h*4,ID_SET_SCROLL_OK,symbol_str("ok_button"),
-                      new button(40,h*4,ID_WARN_CANCEL,symbol_str("cancel_button"),NULL))),
-                    symbol_str("WARNING"));
+        AWidgetList widgets;
+        widgets << new AInfoField(ivec2(0, 0), ID_NULL, symbol_str("back_loss"));
+        widgets << new AButton(ivec2(10, h * 4), ID_SET_SCROLL_OK, symbol_str("ok_button"));
+        widgets << new AButton(ivec2(40, h * 4), ID_WARN_CANCEL, symbol_str("cancel_button"));
+        warn_win = wm->CreateWindow(ivec2(xres / 2 - 40, yres / 2 - 40),
+                                    ivec2(-1), symbol_str("WARNING"), widgets);
         wm->grab_focus(warn_win);
       } else wm->Push(Event(ID_SET_SCROLL_OK, NULL));
     } break;
@@ -2204,7 +2213,7 @@ void dev_controll::handle_event(Event &ev)
 
     case ID_CENTER_PLAYER :
     {
-       do_command("center",ev); break;
+       do_command("center", ev); break;
     } break;
 
     case ID_INTERPOLATE_DRAW :
@@ -2221,19 +2230,20 @@ void dev_controll::handle_event(Event &ev)
     {
       if (!mess_win)
       {
-        int h=wm->font()->Size().y+8;
-        mess_win=wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1),
-            new text_field(0,h*0,ID_MESS_STR1,symbol_str("ap_width"),"****",2,
-            new text_field(0,h*1,ID_MESS_STR2,symbol_str("ap_height"),"****",2,
-            new text_field(0,h*2,ID_MESS_STR3,symbol_str("ap_name"),"***********","pal",
-                   new button(10,h*3,ID_ADD_PALETTE_OK,symbol_str("ok_button"),
-                   new button(40,h*3,ID_CANCEL,symbol_str("cancel_button"),NULL))))),symbol_str("ap_pal"));
+        int h = wm->font()->Size().y + 8;
+        AWidgetList widgets;
+        widgets << new ATextField(ivec2(0, h * 0), ID_MESS_STR1, symbol_str("ap_width"), "****", 2);
+        widgets << new ATextField(ivec2(0, h * 1), ID_MESS_STR2, symbol_str("ap_height"), "****", 2);
+        widgets << new ATextField(ivec2(0, h * 2), ID_MESS_STR3, symbol_str("ap_name"), "***********", "pal");
+        widgets << new AButton(ivec2(10, h * 3), ID_ADD_PALETTE_OK, symbol_str("ok_button"));
+        widgets << new AButton(ivec2(40, h * 3), ID_CANCEL, symbol_str("cancel_button"));
+        mess_win = wm->CreateWindow(ivec2(xres / 2, yres / 2), ivec2(-1), symbol_str("ap_pal"), widgets);
       }
     } break;
     case ID_ADD_PALETTE_OK :
     {
       char name[70];
-      sprintf(name,"(add_palette \"%s\" %d %d)",mess_win->read(ID_MESS_STR3),
+      sprintf(name, "(add_palette \"%s\" %d %d)", mess_win->read(ID_MESS_STR3),
           atoi(mess_win->read(ID_MESS_STR1)),
           atoi(mess_win->read(ID_MESS_STR2)));
       char const *s=name;
@@ -2247,7 +2257,7 @@ void dev_controll::handle_event(Event &ev)
 
     case ID_SMALL_MODE :
     {
-      make_screen_size(311,160); break;
+      make_screen_size(311, 160); break;
     } break;
     case ID_CLEAR_WEAPONS :
     {
@@ -2262,7 +2272,7 @@ void dev_controll::handle_event(Event &ev)
     case ID_MOUSE_SCROLL :
     {
       mouse_scrolling=!mouse_scrolling;
-      g_prop->setd("mouse_scrolling",mouse_scrolling);
+      g_prop->setd("mouse_scrolling", mouse_scrolling);
       if (mouse_scrolling)
         the_game->show_help(symbol_str("ms_on"));
       else
@@ -2272,7 +2282,7 @@ void dev_controll::handle_event(Event &ev)
     case ID_LOCK_PALETTES :
     {
       palettes_locked=!palettes_locked;
-      g_prop->setd("palettes_locked",palettes_locked);
+      g_prop->setd("palettes_locked", palettes_locked);
       if (palettes_locked)
         the_game->show_help(symbol_str("pal_lock"));
       else the_game->show_help(symbol_str("pal_unlock"));
@@ -2281,7 +2291,7 @@ void dev_controll::handle_event(Event &ev)
     case ID_DISABLE_VIEW_SHIFT :
     {
       view_shift_disabled=!view_shift_disabled;
-      g_prop->setd("view_shift_disabled",view_shift_disabled);
+      g_prop->setd("view_shift_disabled", view_shift_disabled);
       if (view_shift_disabled)
         the_game->show_help(symbol_str("vs_dis"));
       else the_game->show_help(symbol_str("vs_en"));
@@ -2332,7 +2342,7 @@ void dev_controll::handle_event(Event &ev)
           g_current_level->area_list=g_current_level->area_list->next;
         else
         {
-          area_controller *a=g_current_level->area_list,*l=NULL;
+          area_controller *a=g_current_level->area_list, *l=NULL;
           for (; a!=current_area && a; a=a->next) { l=a; }
           l->next=a->next;
           delete a;
@@ -2367,8 +2377,8 @@ void dev_controll::handle_event(Event &ev)
 
     case DEV_LEDIT_DEL :
     {
-      g_prop->setd("ledit x",ledit->m_pos.x);
-      g_prop->setd("ledit y",ledit->m_pos.y);
+      g_prop->setd("ledit x", ledit->m_pos.x);
+      g_prop->setd("ledit y", ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       if (g_current_level)
         g_current_level->remove_light(edit_light);
@@ -2395,23 +2405,23 @@ void dev_controll::handle_event(Event &ev)
 
       edit_light->CalcRange();
       edit_light=NULL;
-      g_prop->setd("ledit x",ledit->m_pos.x);
-      g_prop->setd("ledit y",ledit->m_pos.y);
+      g_prop->setd("ledit x", ledit->m_pos.x);
+      g_prop->setd("ledit y", ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       the_game->need_refresh();
     } break;
     case DEV_LEDIT_MOVE :
     {
-      g_prop->setd("ledit x",ledit->m_pos.x);
-      g_prop->setd("ledit y",ledit->m_pos.y);
+      g_prop->setd("ledit x", ledit->m_pos.x);
+      g_prop->setd("ledit y", ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       state=DEV_MOVE_LIGHT;
     } break;
     case DEV_LEDIT_COPY :
     {
       edit_light=edit_light->Copy();
-      g_prop->setd("ledit x",ledit->m_pos.x);
-      g_prop->setd("ledit y",ledit->m_pos.y);
+      g_prop->setd("ledit x", ledit->m_pos.x);
+      g_prop->setd("ledit y", ledit->m_pos.y);
       wm->close_window(ledit); ledit=NULL;
       state=DEV_MOVE_LIGHT;
     } break;
@@ -2441,7 +2451,7 @@ void dev_controll::handle_event(Event &ev)
     case ID_RAISE_ALL :
     {
       raise_all=!raise_all;
-      g_prop->setd("raise_all",raise_all);
+      g_prop->setd("raise_all", raise_all);
       if (raise_all)
         the_game->show_help(symbol_str("fg_r"));
       else
@@ -2491,12 +2501,12 @@ void dev_controll::handle_event(Event &ev)
     case DEV_COMMAND_OK :
     {
       char cmd[100];
-      strcpy(cmd,commandw->inm->get(DEV_COMMAND)->read());
-      g_prop->setd("commandw x",commandw->m_pos.x);
-      g_prop->setd("commandw y",commandw->m_pos.y);
+      strcpy(cmd, commandw->inm->get(DEV_COMMAND)->read());
+      g_prop->setd("commandw x", commandw->m_pos.x);
+      g_prop->setd("commandw y", commandw->m_pos.y);
       wm->close_window(commandw);
       commandw=NULL;
-      do_command(cmd,ev);
+      do_command(cmd, ev);
     } break;
 
     case ID_SHOW_FPS :
@@ -2508,10 +2518,10 @@ void dev_controll::handle_event(Event &ev)
 
     case ID_TOGGLE_NAMES : { show_names=!show_names; } break;
     case DEV_QUIT : the_game->end_session(); break;
-    case DEV_EDIT_FG : dev=1; break; //the_game->draw(); break;
-    case DEV_EDIT_BG : dev=2; break; //the_game->draw(); break;
-    case DEV_EDIT_FGBG : dev=3; break; //the_game->draw(); break;
-    case DEV_PLAY : dev=0; break; //the_game->draw(); break;
+    case DEV_EDIT_FG : dev=1; break; //the_game->Draw(); break;
+    case DEV_EDIT_BG : dev=2; break; //the_game->Draw(); break;
+    case DEV_EDIT_FGBG : dev=3; break; //the_game->Draw(); break;
+    case DEV_PLAY : dev=0; break; //the_game->Draw(); break;
     case SHOW_FOREGROUND :
     { dev=dev^DRAW_FG_LAYER; the_game->need_refresh(); } break;
     case SHOW_FOREGROUND_BOUND :
@@ -2528,10 +2538,10 @@ void dev_controll::handle_event(Event &ev)
 
     case DEV_CREATE :
     {
-      int val=get_omenu_item(((pick_list *)ev.message.data)->get_selection());
+      int val = get_omenu_item(((APickList *)ev.message.data)->get_selection());
       char cmd[100];
-      sprintf(cmd,"create %s",object_names[val]);
-      do_command(cmd,ev);
+      sprintf(cmd, "create %s", object_names[val]);
+      do_command(cmd, ev);
       state=DEV_CREATE_OBJECT;
       dev|=(EDIT_MODE | DRAW_PEOPLE_LAYER);
     }
@@ -2539,13 +2549,13 @@ void dev_controll::handle_event(Event &ev)
 
     case DEV_PALETTE :
     {
-      int val=((pick_list *)ev.message.data)->get_selection();
+      int val = ((APickList *)ev.message.data)->get_selection();
       pal_wins[val]->open_window();
     } break;
 
     case DEV_MUSIC_PICKLIST :
     {
-/*        int *val=((int *)((pick_list *)ev.message.data)->read());
+/*        int *val = ((int *)((APickList *)ev.message.data)->read());
         if (current_song) delete current_song;
         current_song=new song(song_list[*val]);
         current_song->play();        */
@@ -2558,21 +2568,21 @@ void dev_controll::handle_event(Event &ev)
     case DEV_OEDIT_DELETE :
     {
       selected_object=edit_object;
-      do_command("delete",ev);
+      do_command("delete", ev);
       close_oedit_window();
     }
     break;
 
     case DEV_OEDIT_FRONT :
     {
-      do_command("to_front",ev);
+      do_command("to_front", ev);
       close_oedit_window();
     }
     break;
 
     case DEV_OEDIT_BACK :
     {
-      do_command("to_back",ev);
+      do_command("to_back", ev);
       close_oedit_window();
     }
     break;
@@ -2582,7 +2592,7 @@ void dev_controll::handle_event(Event &ev)
       GameObject *o=edit_object;
       close_oedit_window();
       edit_object=o;
-      do_command("move",ev);
+      do_command("move", ev);
     }
     break;
       }
@@ -2595,8 +2605,8 @@ void dev_controll::handle_event(Event &ev)
       {
     if (ev.window==commandw)
     {
-      g_prop->setd("commandw x",commandw->m_pos.x);
-      g_prop->setd("commandw y",commandw->m_pos.y);
+      g_prop->setd("commandw x", commandw->m_pos.x);
+      g_prop->setd("commandw y", commandw->m_pos.y);
       wm->close_window(commandw);
       commandw=NULL;
     } else if (ev.window==oedit)
@@ -2658,7 +2668,7 @@ void dev_controll::handle_event(Event &ev)
     {
       toggle_fgw();
       fg_reversed=!fg_reversed;
-      g_prop->setd("fg_reversed",fg_reversed);
+      g_prop->setd("fg_reversed", fg_reversed);
       toggle_fgw();
     } else if (ev.key=='f') toggle_fgw();
 
@@ -2694,9 +2704,9 @@ void dev_controll::handle_event(Event &ev)
 
       case 'o' : toggle_omenu(); break;
 
-      case '<' : do_command("to_back",ev); break;
+      case '<' : do_command("to_back", ev); break;
 
-      case '>' : do_command("to_front",ev); break;
+      case '>' : do_command("to_front", ev); break;
       case 'p' : toggle_pmenu(); break;
       case 'P' : profile_toggle(); break;
       case '.' :
@@ -2705,8 +2715,8 @@ void dev_controll::handle_event(Event &ev)
         {
           int val=last_created_type;
           char cmd[100];
-          sprintf(cmd,"create %s",object_names[val]);
-          do_command(cmd,ev);
+          sprintf(cmd, "create %s", object_names[val]);
+          do_command(cmd, ev);
           state=DEV_CREATE_OBJECT;
           dev|=(EDIT_MODE | DRAW_PEOPLE_LAYER);
         }
@@ -2714,11 +2724,11 @@ void dev_controll::handle_event(Event &ev)
       break;
 
 
-      case 'd' : { do_command("delete",ev);  the_game->need_refresh(); } break;
+      case 'd' : { do_command("delete", ev);  the_game->need_refresh(); } break;
       case 'i' :
       {
         fg_reversed=!fg_reversed;
-        g_prop->setd("fg_reversed",fg_reversed);
+        g_prop->setd("fg_reversed", fg_reversed);
         if (forew)
         {
           toggle_fgw();
@@ -2746,8 +2756,8 @@ void dev_controll::handle_event(Event &ev)
       case '6' :
       case '7' :
       case '8' :
-      case '9' : do_command("set_aitype",ev); break;
-      case 'c' : do_command("center",ev); break;
+      case '9' : do_command("set_aitype", ev); break;
+      case 'c' : do_command("center", ev); break;
       case 'C' :
           if (selected_object && selected_object->m_controller == nullptr)
           {
@@ -2758,11 +2768,11 @@ void dev_controll::handle_event(Event &ev)
 
       case 'D' : the_game->toggle_delay(); break;
       case 'L' : toggle_show_menu(); break;
-      case '`' : do_command("fg_select",ev); break;
-      case 'r' : { do_command("toggle_fg_raise",ev); the_game->need_refresh(); }  break;
-      case '[' : do_command("fg_add -1",ev); break;
-      case ']' : do_command("fg_add 1",ev); break;
-      case 'R' : do_command("reload",ev); break;
+      case '`' : do_command("fg_select", ev); break;
+      case 'r' : { do_command("toggle_fg_raise", ev); the_game->need_refresh(); }  break;
+      case '[' : do_command("fg_add -1", ev); break;
+      case ']' : do_command("fg_add 1", ev); break;
+      case 'R' : do_command("reload", ev); break;
       case 'w' :
       {
         ivec2 pos = the_game->MouseToGame(dlast);
@@ -2791,7 +2801,7 @@ void dev_controll::handle_event(Event &ev)
           the_game->need_refresh();
         }
       } break;
-      case 'z' : do_command("clear_weapons",ev); break;
+      case 'z' : do_command("clear_weapons", ev); break;
       case 'Z' : if (dev&EDIT_MODE)
       { view *v = the_game->GetView(last_demo_mpos);
         if (v)
@@ -2809,7 +2819,7 @@ void dev_controll::handle_event(Event &ev)
         if (oedit)
           close_oedit_window();
         edit_object=selected_object;
-        do_command("move",ev);
+        do_command("move", ev);
           } else if (selected_light)
           {
         if (ledit)
@@ -2818,7 +2828,7 @@ void dev_controll::handle_event(Event &ev)
           ledit=NULL;
         }
         edit_light=selected_light;
-        do_command("move_light",ev);
+        do_command("move_light", ev);
           }
 
         } break;
@@ -2844,7 +2854,7 @@ void dev_controll::handle_event(Event &ev)
 void dev_controll::add_palette(void *args)
 {
   total_pals++;
-  pal_wins=(pal_win **)realloc(pal_wins,sizeof(pal_win *)*total_pals);
+  pal_wins=(pal_win **)realloc(pal_wins, sizeof(pal_win *)*total_pals);
   pal_wins[total_pals-1]=new pal_win(args);
 }
 
@@ -2882,7 +2892,7 @@ pal_win::pal_win(void *args)
   if (h<=0) h=0;
 
   pat=(unsigned short *)malloc(w*h*sizeof(unsigned short));
-  memset(pat,0,sizeof(unsigned short)*w*h);   // set the palette to black if no parameters are given
+  memset(pat, 0, sizeof(unsigned short)*w*h);   // set the palette to black if no parameters are given
   while (!NILP(ao))   // loop until we run out of parameters
   {
     if (i>w*h)
@@ -2904,10 +2914,11 @@ pal_win::pal_win(void *args)
 
 void pal_win::open_window()
 {
-  if (me) close_window();
-  me=wm->CreateWindow(ivec2(x, y), ivec2(w * f_wid / scale,
-                                         h * f_hi / scale), NULL, name);
-  draw();
+  if (me)
+    close_window();
+  me = wm->CreateWindow(ivec2(x, y), ivec2(w * f_wid,
+                                           h * f_hi) / scale, name);
+  Draw();
 }
 
 void pal_win::close_window()
@@ -2923,21 +2934,21 @@ void pal_win::close_window()
   }
 }
 
-void pal_win::draw()
+void pal_win::Draw()
 {
-  int i,d=cur_fg;
+  int i, d=cur_fg;
   if (me)
   {
     me->clear();
-    AImage *im=new AImage(ivec2(the_game->ftile_width(),the_game->ftile_height()));
-    int th=the_game->ftile_height()/scale,tw=the_game->ftile_width()/scale;
+    AImage *im=new AImage(ivec2(the_game->ftile_width(), the_game->ftile_height()));
+    int th=the_game->ftile_height()/scale, tw=the_game->ftile_width()/scale;
 
     for (i=0; i<w*h; i++)
     {
       im->clear();
-      the_game->get_fg(pat[i])->im->PutImage(im, ivec2(0,0));
-      scale_put(im,me->m_surf,me->x1()+(i%w)*tw,
-        me->y1()+(i/w)*th,tw,th);
+      the_game->get_fg(pat[i])->im->PutImage(im, ivec2(0, 0));
+      scale_put(im, me->m_surf, me->x1()+(i%w)*tw,
+        me->y1()+(i/w)*th, tw, th);
       if (d==pat[i])
       {
     me->m_surf->Rectangle(ivec2(me->x1() + (i % w) * tw,
@@ -2958,13 +2969,13 @@ void pal_win::handle_event(Event &ev)
 
   if (d!=last_selected)  // if so see if we need to hilight any of our tiles.
   {
-    int i,dr=0;
+    int i, dr=0;
     for (i=0; i<w*h; i++)
     {
       if (pat[i]==d || pat[i]==last_selected)
         dr=1;
     }
-    if (dr) draw();
+    if (dr) Draw();
     last_selected=d;
   }
 
@@ -2982,7 +2993,7 @@ void pal_win::handle_event(Event &ev)
       {
         cur_fg=pat[selx+sely*w];
         if (dev_cont->forew)
-          ((tile_picker *)dev_cont->forew->
+          ((ATilePicker *)dev_cont->forew->
            read(DEV_FG_PICKER))->recenter(dev_cont->forew->m_surf);
       }
     } else if (ev.mouse_button==2)
@@ -2996,7 +3007,7 @@ void pal_win::handle_event(Event &ev)
         if (selx>=0 && sely>=0 && selx<w && sely<h)
         {
           pat[selx+sely*w]=cur_fg;
-          draw();
+          Draw();
         }
       }
     }
@@ -3025,25 +3036,25 @@ void pal_win::handle_event(Event &ev)
       case JK_LEFT :
       {
         if (palettes_locked) the_game->show_help(symbol_str("pal_lock"));
-        else if (w>1) resize(-1,0);
+        else if (w>1) resize(-1, 0);
       } break;
       case JK_RIGHT :
       {
         if (palettes_locked) the_game->show_help(symbol_str("pal_lock"));
         else
-          resize(1,0);
+          resize(1, 0);
       } break;
       case JK_UP :
       {
         if (palettes_locked) the_game->show_help(symbol_str("pal_lock"));
-        else if (h>1) resize(0,-1);
+        else if (h>1) resize(0, -1);
       } break;
       case JK_DOWN :
       {
         if (palettes_locked)
           the_game->show_help(symbol_str("pal_lock"));
         else
-          resize(0,1);
+          resize(0, 1);
       } break;
       case JK_ESC : close_window();     break;
       case ' ' :
@@ -3080,12 +3091,12 @@ void pal_win::handle_event(Event &ev)
 
 void pal_win::resize(int xa, int ya)
 {
-  int i,j;
+  int i, j;
   unsigned short *npat;
   if (w+xa<1 || y+ya<1) return ;
 
   npat=(unsigned short *)malloc(sizeof(unsigned short)*(w+xa)*(h+ya));
-  memset(npat,0,sizeof(unsigned short)*(w+xa)*(h+ya));
+  memset(npat, 0, sizeof(unsigned short)*(w+xa)*(h+ya));
   for (i=0; i<(w+xa); i++)
     for (j=0; j<(h+ya); j++)
       if (i+j*w<w*h)
@@ -3108,35 +3119,35 @@ void pal_win::save(FILE *fp)
     y=me->m_pos.y;
   }
 
-  fprintf(fp,"(add_palette \"%s\" %ld %ld %ld %ld %ld ",name,(long)w,(long)h,(long)x,(long)y,(long)scale);
+  fprintf(fp, "(add_palette \"%s\" %ld %ld %ld %ld %ld ", name, (long)w, (long)h, (long)x, (long)y, (long)scale);
   int i;
   for (i=0; i<w*h; i++)
-    fprintf(fp,"%d ",pat[i]&0x7fff);
-  fprintf(fp,")\n");
+    fprintf(fp, "%d ", pat[i]&0x7fff);
+  fprintf(fp, ")\n");
 
 }
 
 void dev_controll::save()
 {
-  FILE *fp=open_FILE("edit.lsp","w");
+  FILE *fp=open_FILE("edit.lsp", "w");
   if (!fp)
     the_game->show_help(symbol_str("no_edit.lsp"));
   else
   {
-    fprintf(fp,"(set_zoom %d)\n",the_game->zoom);
+    fprintf(fp, "(set_zoom %d)\n", the_game->zoom);
 
     int i;
     for (i=0; i<total_pals; i++)
     {
       pal_wins[i]->save(fp);
     }
-    fprintf(fp,"\n");
+    fprintf(fp, "\n");
     fclose(fp);
   }
 
 }
 
-int dev_controll::is_pal_win(Jwindow *win)
+int dev_controll::is_pal_win(AWindow *win)
 {
   int i;
   for (i=0; i<total_pals; i++)
@@ -3148,7 +3159,7 @@ int dev_controll::is_pal_win(Jwindow *win)
 class fill_rec
 {
 public :
-  short x,y;
+  short x, y;
   fill_rec *last;
   fill_rec(short X, short Y, fill_rec *Last)
   { x=X; y=Y; last=Last; }
@@ -3160,19 +3171,19 @@ static int get_color(int color, int x, int y, pal_win *p)
   {
     while (x<0) x+=p->width();
     while (y<0) y+=p->height();
-    return p->get_pat(x%p->width(),y%p->height());
+    return p->get_pat(x%p->width(), y%p->height());
   }
   else return color;
 }
 
 void dev_controll::fg_fill(int color, int x, int y, pal_win *p)
 {
-  unsigned short *sl,*above,*below;
-  fill_rec *recs=NULL,*r;
+  unsigned short *sl, *above, *below;
+  fill_rec *recs=NULL, *r;
   unsigned short fcolor;
   sl=g_current_level->get_fgline(y);
   fcolor=fgvalue(sl[x]);
-  int startx=x,starty=y;
+  int startx=x, starty=y;
   if (fcolor==color) return ;
   do
   {
@@ -3191,7 +3202,7 @@ void dev_controll::fg_fill(int color, int x, int y, pal_win *p)
       {
         above=g_current_level->get_fgline(y-1);
         if (fgvalue(above[x])==fcolor)
-        { r=new fill_rec(x,y-1,recs);
+        { r=new fill_rec(x, y-1, recs);
           recs=r;
         }
       }
@@ -3199,7 +3210,7 @@ void dev_controll::fg_fill(int color, int x, int y, pal_win *p)
       {
         above=g_current_level->get_fgline(y+1);
         if (above[x]==fcolor)
-        { r=new fill_rec(x,y+1,recs);
+        { r=new fill_rec(x, y+1, recs);
           recs=r;
         }
       }
@@ -3208,18 +3219,18 @@ void dev_controll::fg_fill(int color, int x, int y, pal_win *p)
 
       do
       {
-        sl[x]=get_color(color,x-startx,y-starty,p);
+        sl[x]=get_color(color, x-startx, y-starty, p);
         if (y>0)
         { above=g_current_level->get_fgline(y-1);
           if (x>0 && fgvalue(above[x-1])!=fgvalue(fcolor) && fgvalue(above[x])==fgvalue(fcolor))
-          { r=new fill_rec(x,y-1,recs);
+          { r=new fill_rec(x, y-1, recs);
             recs=r;
           }
         }
         if (y<g_current_level->foreground_height()-1)
         { below=g_current_level->get_fgline(y+1);
           if (x>0 && fgvalue(below[x-1])!=fgvalue(fcolor) && fgvalue(below[x])==fgvalue(fcolor))
-          { r=new fill_rec(x,y+1,recs);
+          { r=new fill_rec(x, y+1, recs);
             recs=r;
           }
         }
@@ -3230,7 +3241,7 @@ void dev_controll::fg_fill(int color, int x, int y, pal_win *p)
       {
         above=g_current_level->get_fgline(y-1);
         if (fgvalue(above[x])==fgvalue(fcolor))
-        { r=new fill_rec(x,y-1,recs);
+        { r=new fill_rec(x, y-1, recs);
           recs=r;
         }
       }
@@ -3238,7 +3249,7 @@ void dev_controll::fg_fill(int color, int x, int y, pal_win *p)
       {
         above=g_current_level->get_fgline(y+1);
         if (fgvalue(above[x])==fgvalue(fcolor))
-        { r=new fill_rec(x,y+1,recs);
+        { r=new fill_rec(x, y+1, recs);
           recs=r;
         }
       }
@@ -3256,12 +3267,12 @@ static int get_char_mem(int type, int print)
     {
       int s=figures[type]->get_sequence((character_state)j)->MemUsage();
       if (print)
-        dprintf("(%s=%d)",state_names[j],s);
+        dprintf("(%s=%d)", state_names[j], s);
       t+=s;
     }
   }
   if (print)
-    dprintf("\ntotal=%d\n",t);
+    dprintf("\ntotal=%d\n", t);
   return t;
 }
 
@@ -3270,19 +3281,19 @@ void dev_controll::show_char_mem(char const *name)
   int find=-1;
   for (int i=0; i<total_objects; i++)
   {
-    if (!strcmp(name,object_names[i]))
+    if (!strcmp(name, object_names[i]))
       find=i;
   }
   if (find<0)
-    dprintf("No character '%s' defined\n",name);
+    dprintf("No character '%s' defined\n", name);
   else
-    get_char_mem(find,1);
+    get_char_mem(find, 1);
 
 }
 
 void dev_controll::show_mem()
 {
-  int t=0,s=0;
+  int t=0, s=0;
   int i=0;
   for (; i<nforetiles; i++)
   {
@@ -3295,7 +3306,7 @@ void dev_controll::show_mem()
       }
     }
   }
-  dprintf("%d loaded foretiles=%d bytes\n",t,s);
+  dprintf("%d loaded foretiles=%d bytes\n", t, s);
 
   t=0; s=0;
   for (i=0; i<nbacktiles; i++)
@@ -3309,15 +3320,15 @@ void dev_controll::show_mem()
       }
     }
   }
-  dprintf("%d loaded backtiles=%d bytes\n",t,s);
+  dprintf("%d loaded backtiles=%d bytes\n", t, s);
 
   t=0; s=0;
   for (i=0; i<total_objects; i++)
   {
     t++;
-    s+=get_char_mem(i,0);
+    s+=get_char_mem(i, 0);
   }
-  dprintf("%d character=%d bytes\n",t,s);
+  dprintf("%d character=%d bytes\n", t, s);
 
 }
 
@@ -3348,149 +3359,154 @@ struct pmi
 } ;
 
 
-static pmi filemenu[]={
-          { "menu1_load",         ID_LEVEL_LOAD,NULL,-1},
-      { NULL,0,NULL,-1},
-      { "menu1_save",     ID_LEVEL_SAVE,NULL,-1},
-      { "menu1_saveas",      ID_LEVEL_SAVEAS,NULL,-1},
-      { "menu1_savegame",          ID_GAME_SAVE,NULL,-1},
-      { "menu1_new",          ID_LEVEL_NEW,NULL,-1},
-      { "menu1_resize",         ID_LEVEL_RESIZE,NULL,-1},
-      { NULL,0,NULL,-1},
-      { "menu1_suspend",ID_SUSPEND,NULL,-1},
-      { "menu1_toggle",ID_PLAY_MODE,NULL,-1},
-      { NULL,0,NULL,-1},
-      { "menu1_savepal",ID_EDIT_SAVE,NULL,-1},
-//      { "menu1_startc",ID_CACHE_PROFILE,NULL,-1},
-//      { "menu1_endc",ID_CACHE_PROFILE_END,NULL,-1},
-      { NULL,0,NULL,-1},
-      { "menu1_quit",      ID_QUIT,NULL,-1},
-      { NULL,-1,NULL,-1}
-    };
+static pmi filemenu[] =
+{
+    { "menu1_load", ID_LEVEL_LOAD, nullptr, -1},
+    { nullptr, 0, nullptr, -1},
 
+    { "menu1_save",     ID_LEVEL_SAVE, nullptr, -1},
+    { "menu1_saveas",   ID_LEVEL_SAVEAS, nullptr, -1},
+    { "menu1_savegame", ID_GAME_SAVE, nullptr, -1},
+    { "menu1_new",      ID_LEVEL_NEW, nullptr, -1},
+    { "menu1_resize",   ID_LEVEL_RESIZE, nullptr, -1},
+    { nullptr, 0, nullptr, -1},
 
-static pmi editmenu[]={
-  { "menu2_light",               ID_TOGGLE_LIGHT,NULL,-1},
-  { "menu2_scroll",            ID_SET_SCROLL,NULL,-1},
-  { "menu2_center",       ID_CENTER_PLAYER,NULL,-1},
-  { "menu2_addpal",                ID_ADD_PALETTE,NULL,-1},
-  { "menu2_delay",          ID_TOGGLE_DELAY,NULL,-1},
+    { "menu1_suspend", ID_SUSPEND, nullptr, -1},
+    { "menu1_toggle",  ID_PLAY_MODE, nullptr, -1},
+    { nullptr, 0, nullptr, -1},
 
-  { "menu2_god",                   ID_GOD_MODE,NULL,-1},
-  { "menu2_clear",          ID_CLEAR_WEAPONS,NULL,-1},
-  { "menu2_mscroll",               ID_MOUSE_SCROLL,&mouse_scrolling,-1},
-  { "menu2_lock",       ID_LOCK_PALETTES,&palettes_locked,-1},
-  { "menu2_raise",       ID_RAISE_ALL,&raise_all,-1},
-  { "menu2_names",        ID_TOGGLE_NAMES,&show_names,-1},
+    { "menu1_savepal", ID_EDIT_SAVE, nullptr, -1},
+//  { "menu1_startc",  ID_CACHE_PROFILE, nullptr, -1},
+//  { "menu1_endc",    ID_CACHE_PROFILE_END, nullptr, -1},
+    { nullptr, 0, nullptr, -1},
 
-  { NULL,0,NULL,-1},
-  { "menu2_map",      ID_TOGGLE_MAP,NULL,-1},
-//  { "Shrink to 320x200 (F10)",    ID_SMALL_MODE,NULL,-1},
-  { "menu2_view",        ID_DISABLE_VIEW_SHIFT,&view_shift_disabled,-1},
-//  { "Ultra Smooth draw (U)",      ID_INTERPOLATE_DRAW,  &interpolate_draw,'U'},
-  { "menu2_alight",      ID_DISABLE_AUTOLIGHT, &disable_autolight,'A'},
-  { "menu2_fps",         ID_SHOW_FPS,          &fps_on,-1},
-//  { NULL,0,NULL,-1},
-//  { "Record demo",                ID_RECORD_DEMO,NULL,-1},
-//  { "Play demo",                  ID_PLAY_DEMO,NULL,-1},
-  { NULL,-1,NULL,-1}
+    { "menu1_quit", ID_QUIT, nullptr, -1},
+    { nullptr, -1, nullptr, -1}
+};
+
+static pmi editmenu[] =
+{
+    { "menu2_light",   ID_TOGGLE_LIGHT, nullptr, -1},
+    { "menu2_scroll",  ID_SET_SCROLL, nullptr, -1},
+    { "menu2_center",  ID_CENTER_PLAYER, nullptr, -1},
+    { "menu2_addpal",  ID_ADD_PALETTE, nullptr, -1},
+    { "menu2_delay",   ID_TOGGLE_DELAY, nullptr, -1},
+    { "menu2_god",     ID_GOD_MODE, nullptr, -1},
+    { "menu2_clear",   ID_CLEAR_WEAPONS, nullptr, -1},
+    { "menu2_mscroll", ID_MOUSE_SCROLL, &mouse_scrolling, -1},
+    { "menu2_lock",    ID_LOCK_PALETTES, &palettes_locked, -1},
+    { "menu2_raise",   ID_RAISE_ALL, &raise_all, -1},
+    { "menu2_names",   ID_TOGGLE_NAMES, &show_names, -1},
+    { nullptr, 0, nullptr, -1},
+
+    { "menu2_map",               ID_TOGGLE_MAP, nullptr, -1},
+//  { "Shrink to 320x200 (F10)", ID_SMALL_MODE, nullptr, -1},
+    { "menu2_view",              ID_DISABLE_VIEW_SHIFT, &view_shift_disabled, -1},
+//  { "Ultra Smooth draw (U)",   ID_INTERPOLATE_DRAW,  &interpolate_draw, 'U'},
+    { "menu2_alight",            ID_DISABLE_AUTOLIGHT, &disable_autolight, 'A'},
+    { "menu2_fps",               ID_SHOW_FPS,          &fps_on, -1},
+//  { nullptr, 0, nullptr, -1},
+//  { "Record demo",             ID_RECORD_DEMO, nullptr, -1},
+//  { "Play demo",               ID_PLAY_DEMO, nullptr, -1},
+    { nullptr, -1, nullptr, -1}
 };
 
 
 
 // Window Menus
-static pmi winmenu[]={
-          { "menu3_fore",    ID_WIN_FORE,    &forew_on,-1},
-          { "menu3_back",    ID_WIN_BACK,    &backw_on,-1},
-          { "menu3_layers",    ID_WIN_LAYERS,  &show_menu_on,-1},
-      { "menu3_light",    ID_WIN_LIGHTING,&ledit_on,-1},
-      { "menu3_pal",    ID_WIN_PALETTES,&pmenu_on,-1},
-      { "menu3_objs",    ID_WIN_OBJECTS, &omenu_on,-1},
-//      { "menu3_console",    ID_WIN_CONSOLE, &commandw_on,-1},
-      { "menu3_toolbar",    ID_WIN_TOOLBAR, &tbw_on,-1},
-//      { "Search      (s)",    ID_SEARCH,      &searchw_on,-1},
-      { "menu3_prof",    ID_PROFILE,     &profile_on,-1},
-      { "menu3_save",     ID_SAVE_WINDOWS,NULL,-1},
-      { NULL,-1,NULL,-1}
-    };
-
-
+static pmi winmenu[] =
+{
+    { "menu3_fore",      ID_WIN_FORE,     &forew_on, -1},
+    { "menu3_back",      ID_WIN_BACK,     &backw_on, -1},
+    { "menu3_layers",    ID_WIN_LAYERS,   &show_menu_on, -1},
+    { "menu3_light",     ID_WIN_LIGHTING, &ledit_on, -1},
+    { "menu3_pal",       ID_WIN_PALETTES, &pmenu_on, -1},
+    { "menu3_objs",      ID_WIN_OBJECTS,  &omenu_on, -1},
+//  { "menu3_console",   ID_WIN_CONSOLE,  &commandw_on, -1},
+    { "menu3_toolbar",   ID_WIN_TOOLBAR,  &tbw_on, -1},
+//  { "Search      (s)", ID_SEARCH,       &searchw_on, -1},
+    { "menu3_prof",      ID_PROFILE,      &profile_on, -1},
+    { "menu3_save",      ID_SAVE_WINDOWS, nullptr, -1},
+    { nullptr, -1, nullptr, -1}
+};
 
 /*
-static pmi filemenu[]={
-          { "Load Level",         ID_LEVEL_LOAD,NULL,-1},
-      { NULL,0,NULL,-1},
-      { "Save Level (S)",     ID_LEVEL_SAVE,NULL,-1},
-      { "Save level as",      ID_LEVEL_SAVEAS,NULL,-1},
-      { "Save game",          ID_GAME_SAVE,NULL,-1},
-      { "New level",          ID_LEVEL_NEW,NULL,-1},
-      { "Resize map",         ID_LEVEL_RESIZE,NULL,-1},
-      { NULL,0,NULL,-1},
-      { "Suspend non-players",ID_SUSPEND,NULL,-1},
-      { "Play mode toggle (TAB)",ID_PLAY_MODE,NULL,-1},
-      { NULL,0,NULL,-1},
-      { "Save Palettes         ",ID_EDIT_SAVE,NULL,-1},
-      { "Start cache profile   ",ID_CACHE_PROFILE,NULL,-1},
-      { "End cache profile     ",ID_CACHE_PROFILE_END,NULL,-1},
-      { NULL,0,NULL,-1},
-      { "Quit      (Q)",      ID_QUIT,NULL,-1},
-      { NULL,-1,NULL,-1}
-    };
+static pmi filemenu[] =
+{
+    { "Load Level",         ID_LEVEL_LOAD, nullptr, -1},
+    { nullptr, 0, nullptr, -1},
 
+    { "Save Level (S)",     ID_LEVEL_SAVE, nullptr, -1},
+    { "Save level as",      ID_LEVEL_SAVEAS, nullptr, -1},
+    { "Save game",          ID_GAME_SAVE, nullptr, -1},
+    { "New level",          ID_LEVEL_NEW, nullptr, -1},
+    { "Resize map",         ID_LEVEL_RESIZE, nullptr, -1},
+    { nullptr, 0, nullptr, -1},
 
-static pmi editmenu[]={
-  { "Toggle light",               ID_TOGGLE_LIGHT,NULL,-1},
-  { "Set scroll rate",            ID_SET_SCROLL,NULL,-1},
-  { "Center on player   (c)",       ID_CENTER_PLAYER,NULL,-1},
-  { "Add palette",                ID_ADD_PALETTE,NULL,-1},
-  { "Toggle Delays      (D)",          ID_TOGGLE_DELAY,NULL,-1},
+    { "Suspend non-players", ID_SUSPEND, nullptr, -1},
+    { "Play mode toggle (TAB)", ID_PLAY_MODE, nullptr, -1},
+    { nullptr, 0, nullptr, -1},
 
-  { "God mode",                   ID_GOD_MODE,NULL,-1},
-  { "Clear weapons (z)",          ID_CLEAR_WEAPONS,NULL,-1},
-  { "Mouse scroll",               ID_MOUSE_SCROLL,&mouse_scrolling,-1},
-  { "Lock palette windows",       ID_LOCK_PALETTES,&palettes_locked,-1},
-  { "Raise all foreground",       ID_RAISE_ALL,&raise_all,-1},
-  { "Toggle object names",        ID_TOGGLE_NAMES,&show_names,-1},
+    { "Save Palettes         ", ID_EDIT_SAVE, nullptr, -1},
+    { "Start cache profile   ", ID_CACHE_PROFILE, nullptr, -1},
+    { "End cache profile     ", ID_CACHE_PROFILE_END, nullptr, -1},
+    { nullptr, 0, nullptr, -1},
 
-  { NULL,0,NULL,-1},
-  { "Toggle map        (m)",      ID_TOGGLE_MAP,NULL,-1},
-//  { "Shrink to 320x200 (F10)",    ID_SMALL_MODE,NULL,-1},
-  { "Disable view shifts",        ID_DISABLE_VIEW_SHIFT,&view_shift_disabled,-1},
-//  { "Ultra Smooth draw (U)",      ID_INTERPOLATE_DRAW,  &interpolate_draw,'U'},
-  { "Disable Autolight (A)",      ID_DISABLE_AUTOLIGHT, &disable_autolight,'A'},
-  { "Show FPS/Obj count",         ID_SHOW_FPS,          &fps_on,-1},
-//  { NULL,0,NULL,-1},
-//  { "Record demo",                ID_RECORD_DEMO,NULL,-1},
-//  { "Play demo",                  ID_PLAY_DEMO,NULL,-1},
-  { NULL,-1,NULL,-1}
+    { "Quit      (Q)",      ID_QUIT, nullptr, -1},
+    { nullptr, -1, nullptr, -1}
 };
 
+static pmi editmenu[] =
+{
+    { "Toggle light",           ID_TOGGLE_LIGHT, nullptr, -1},
+    { "Set scroll rate",        ID_SET_SCROLL, nullptr, -1},
+    { "Center on player   (c)", ID_CENTER_PLAYER, nullptr, -1},
+    { "Add palette",            ID_ADD_PALETTE, nullptr, -1},
+    { "Toggle Delays      (D)", ID_TOGGLE_DELAY, nullptr, -1},
+    { "God mode",               ID_GOD_MODE, nullptr, -1},
+    { "Clear weapons (z)",      ID_CLEAR_WEAPONS, nullptr, -1},
+    { "Mouse scroll",           ID_MOUSE_SCROLL, &mouse_scrolling, -1},
+    { "Lock palette windows",   ID_LOCK_PALETTES, &palettes_locked, -1},
+    { "Raise all foreground",   ID_RAISE_ALL, &raise_all, -1},
+    { "Toggle object names",    ID_TOGGLE_NAMES, &show_names, -1},
+    { nullptr, 0, nullptr, -1},
 
+    { "Toggle map        (m)",   ID_TOGGLE_MAP, nullptr, -1},
+//  { "Shrink to 320x200 (F10)", ID_SMALL_MODE, nullptr, -1},
+    { "Disable view shifts",     ID_DISABLE_VIEW_SHIFT, &view_shift_disabled, -1},
+//  { "Ultra Smooth draw (U)",   ID_INTERPOLATE_DRAW,  &interpolate_draw, 'U'},
+    { "Disable Autolight (A)",   ID_DISABLE_AUTOLIGHT, &disable_autolight, 'A'},
+    { "Show FPS/Obj count",      ID_SHOW_FPS,          &fps_on, -1},
+//  { nullptr, 0, nullptr, -1},
+
+//  { "Record demo", ID_RECORD_DEMO, nullptr, -1},
+//  { "Play demo",   ID_PLAY_DEMO, nullptr, -1},
+    { nullptr, -1, nullptr, -1}
+};
 
 // Window Menus
-static pmi winmenu[]={
-          { "Foreground  (f)",    ID_WIN_FORE,    &forew_on,-1},
-          { "Background  (b)",    ID_WIN_BACK,    &backw_on,-1},
-          { "Draw layers (L)",    ID_WIN_LAYERS,  &show_menu_on,-1},
-      { "Lighting    (l)",    ID_WIN_LIGHTING,&ledit_on,-1},
-      { "Palettes    (p)",    ID_WIN_PALETTES,&pmenu_on,-1},
-      { "Objects     (o)",    ID_WIN_OBJECTS, &omenu_on,-1},
-      { "Console     (/)",    ID_WIN_CONSOLE, &commandw_on,-1},
-      { "Tool Bar    (a)",    ID_WIN_TOOLBAR, &tbw_on,-1},
-//      { "Search      (s)",    ID_SEARCH,      &searchw_on,-1},
-      { "Profile     (P)",    ID_PROFILE,     &profile_on,-1},
-      { "Save positions",     ID_SAVE_WINDOWS,NULL,-1},
-      { NULL,-1,NULL,-1}
-    };
-
+static pmi winmenu[] =
+{
+    { "Foreground  (f)", ID_WIN_FORE,     &forew_on, -1},
+    { "Background  (b)", ID_WIN_BACK,     &backw_on, -1},
+    { "Draw layers (L)", ID_WIN_LAYERS,   &show_menu_on, -1},
+    { "Lighting    (l)", ID_WIN_LIGHTING, &ledit_on, -1},
+    { "Palettes    (p)", ID_WIN_PALETTES, &pmenu_on, -1},
+    { "Objects     (o)", ID_WIN_OBJECTS,  &omenu_on, -1},
+    { "Console     (/)", ID_WIN_CONSOLE,  &commandw_on, -1},
+    { "Tool Bar    (a)", ID_WIN_TOOLBAR,  &tbw_on, -1},
+//  { "Search      (s)", ID_SEARCH,       &searchw_on, -1},
+    { "Profile     (P)", ID_PROFILE,      &profile_on, -1},
+    { "Save positions",  ID_SAVE_WINDOWS, nullptr, -1},
+    { nullptr, -1, nullptr, -1}
+};
 */
 
 static pmenu_item *i_recurse(pmi *first)
 {
-  if (first->id==-1)
-    return NULL;
-  else
-    return new pmenu_item(first->id,first->name ? symbol_str(first->name) : 0,first->on_off,first->key,i_recurse(first+1));
+    if (first->id == -1)
+        return nullptr;
+    return new pmenu_item(first->id, first->name ? symbol_str(first->name) : 0, first->on_off, first->key, i_recurse(first+1));
 }
 
 static pmenu *make_menu(int x, int y)

@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -18,7 +18,7 @@
 
 #include "game.h"
 
-#include "jwindow.h"
+#include "window.h"
 #include "lisp.h"
 #include "scroller.h"
 #include "id.h"
@@ -29,19 +29,27 @@
 extern int dev_ok;
 Palette *old_pal = NULL;
 
-class gray_picker : public spicker
+class AGrayPicker : public AScrollPicker
 {
 public:
-    int sc;
-    virtual void draw_item(AImage *screen, int x, int y, int num, int active)
+    AGrayPicker(ivec2 pos, int id, int start, int current)
+      : AScrollPicker(pos, id, 1, 20, 0, 0)
     {
-        long x2 = x + item_width() - 1;
-        long y2 = y + item_height() - 1;
-        screen->Bar(ivec2(x, y), ivec2(x2, y2), 0);
-        screen->Bar(ivec2(x, y), ivec2(x2 - 3, y2), sc + num);
+        cur_sel = current;
+        sc = start;
+        reconfigure();
+        cur_sel = current;
+    }
+
+    int sc;
+    virtual void DrawItem(AImage *screen, ivec2 pos, int num, int active)
+    {
+        ivec2 corner = pos + ivec2(item_width() - 1, item_height() - 1);
+        screen->Bar(pos, corner, 0);
+        screen->Bar(pos, corner - ivec2(3, 0), sc + num);
         if(active)
         {
-            screen->Rectangle(ivec2(x, y), ivec2(x2, y2), 255);
+            screen->Rectangle(pos, corner, 255);
         }
     }
     void set_pos(int x) { cur_sel = x; }
@@ -49,14 +57,6 @@ public:
     virtual int item_width() { return 12; }
     virtual int item_height() { return 20; }
     virtual int activate_on_mouse_move() { return 0; }
-
-    gray_picker(int X, int Y, int ID, int start, int current, ifield *Next) : spicker(X, Y, ID, 1, 20, 0, 0, Next)
-    {
-        cur_sel = current;
-        sc = start;
-        reconfigure();
-        cur_sel=current;
-    }
 };
 
 static char const *lang_string(char const *symbol)
@@ -112,14 +112,17 @@ void gamma_correct(Palette *&pal, int force_menu)
                        gray_pal->FindClosest(dr));
 
         int sh = wm->font()->Size().y + 35;
-        button *but = new button(5, 5 + sh * 3, ID_GAMMA_OK, cache.img(ok_button),
-            new info_field(35, 10 + sh * 3, ID_NULL, lang_string("gamma_msg"), 0));
 
-        gray_picker *gp = new gray_picker(2, 5 + sh, ID_GREEN_PICKER, 0, dg / 4, but);
+        AWidgetList widgets;
+        widgets << new AButton(ivec2(5, 5 + sh * 3), ID_GAMMA_OK, cache.img(ok_button));
+        widgets << new AInfoField(ivec2(35, 10 + sh * 3), ID_NULL, lang_string("gamma_msg"));
+
+        AGrayPicker *gp = new AGrayPicker(ivec2(2, 5 + sh), ID_GREEN_PICKER, 0, dg / 4);
         gp->set_pos(dg / 4);
+        widgets << gp;
 
-        Jwindow *gw = wm->CreateWindow(ivec2(xres / 2 - 190,
-                                             yres / 2 - 90), ivec2(-1), gp);
+        AWindow *gw = wm->CreateWindow(ivec2(xres / 2 - 190,
+                                             yres / 2 - 90), ivec2(-1), "", widgets);
 
         Event ev;
         wm->flush_screen();
@@ -136,7 +139,7 @@ void gamma_correct(Palette *&pal, int force_menu)
                 abort = 1;
         } while(!abort && (ev.type != EV_MESSAGE || ev.message.id != ID_GAMMA_OK));
 
-        dg = ((spicker *)gw->inm->get(ID_GREEN_PICKER))->first_selected() * 4;
+        dg = ((AScrollPicker *)gw->inm->get(ID_GREEN_PICKER))->first_selected() * 4;
 
         wm->close_window(gw);
         wm->flush_screen();

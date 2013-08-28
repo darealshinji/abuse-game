@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -18,192 +18,191 @@
 
 #include "input.h"
 
-void button::remap(Filter *f)
+void AButton::remap(Filter *f)
 {
-  if (visual)
-  {
-    f->Apply(visual);
-    if (pressed)
-      f->Apply(pressed);
-  }
-}
-
-void button_box::press_button(int id)      // if button box doesn't contain id, nothing happens
-{
-}
-
-void button_box::remap(Filter *f)
-{
-  for (button *b=buttons; b; b=(button *)b->next)
-    b->remap(f);
-}
-
-ifield *button_box::find(int search_id)
-{
-  if (search_id==id) return this;
-  for (ifield *i=(ifield *)buttons; i; i=i->next)
-    if (search_id==i->id) return i;
-  return NULL;
-}
-
-button_box::button_box(int X, int Y, int ID, int MaxDown, button *Buttons, ifield *Next)
-{
-  m_pos = ivec2(X, Y); id=ID; next=Next;
-  buttons=Buttons;
-  maxdown=MaxDown;
-  if (buttons && maxdown) buttons->push();  // the first button is automatically selected!
-}
-
-button_box::~button_box()
-{
-  while (buttons)
-  {
-    button *b=buttons;
-    buttons=(button *)buttons->next;
-    delete b;
-  }
-}
-
-void button_box::area(int &x1, int &y1, int &x2, int &y2)
-{
-  button *b=buttons;
-  if (!b) return ;
-  else
-  {
-    b->area(x1,y1,x2,y2);
-    int xp1,yp1,xp2,yp2;
-    for (b=(button *)b->next; b; b=(button *)b->next)
+    if (visual)
     {
-      b->area(xp1,yp1,xp2,yp2);
-      if (xp1<x1) x1=xp1;
-      if (xp2>x2) x2=xp2;
-      if (yp1<y1) y1=yp1;
-      if (yp2>y2) y2=yp2;
+        f->Apply(visual);
+        if (pressed)
+            f->Apply(pressed);
     }
-  }
 }
 
-void button_box::draw_first(AImage *screen)
+void AButtonBox::press_button(int id)      // if button box doesn't contain id, nothing happens
 {
-  for (button *b=buttons; b; b=(button *)b->next)
-    b->draw_first(screen);
 }
 
-void button_box::draw(int active, AImage *screen)
+void AButtonBox::remap(Filter *f)
 {
-  return ;
+    for (int i = 0; i < m_buttons.Count(); ++i)
+        m_buttons[i]->remap(f);
 }
 
-void button_box::Move(ivec2 pos)
+AWidget *AButtonBox::find(int id)
 {
-    for(button * b = buttons; b; b = (button *)b->next)
-        b->Move(pos + b->m_pos);
+    if (id == m_id)
+        return this;
+
+    for (int i = 0; i < m_buttons.Count(); ++i)
+        if (id == m_buttons[i]->m_id)
+            return m_buttons[i];
+
+    return nullptr;
+}
+
+AButtonBox::AButtonBox(ivec2 pos, int id, int MaxDown, Array<AButton *> const &buttons)
+{
+    m_pos = pos;
+    m_id = id;
+    m_buttons = buttons;
+    maxdown = MaxDown;
+    if (m_buttons.Count() && maxdown)
+        m_buttons[0]->push();  // the first button is automatically selected!
+}
+
+AButtonBox::~AButtonBox()
+{
+    for (int i = 0; i < m_buttons.Count(); ++i)
+        delete m_buttons[i];
+}
+
+void AButtonBox::area(int &x1, int &y1, int &x2, int &y2)
+{
+    for (int i = 0; i < m_buttons.Count(); ++i)
+    {
+        if (i)
+        {
+            int xp1, yp1, xp2, yp2;
+            m_buttons[i]->area(xp1, yp1, xp2, yp2);
+            x1 = lol::min(x1, xp1);
+            y1 = lol::min(y1, yp1);
+            x2 = lol::max(x2, xp2);
+            y2 = lol::max(y2, yp2);
+        }
+        else
+            m_buttons[i]->area(x1, y1, x2, y2);
+    }
+}
+
+void AButtonBox::draw_first(AImage *screen)
+{
+    for (int i = 0; i < m_buttons.Count(); ++i)
+        m_buttons[i]->draw_first(screen);
+}
+
+void AButtonBox::Draw(int active, AImage *screen)
+{
+    return;
+}
+
+void AButtonBox::Move(ivec2 pos)
+{
+    for (int i = 0; i < m_buttons.Count(); ++i)
+        m_buttons[i]->Move(pos + m_buttons[i]->m_pos);
     m_pos = pos;
 }
 
-char *button_box::read()
+char *AButtonBox::read()
 {
-  for (button *b=buttons; b; b=(button *)b->next)
-  {
-    if (*((int *)b->read())==0)
-      return (char *)b;
-  }
-  return NULL;
+    for (int i = 0; i < m_buttons.Count(); ++i)
+        if (*((int *)m_buttons[i]->read()) == 0)
+        {
+            ASSERT(false, "This looks suspicious");
+            return (char *)m_buttons[i];
+        }
+
+    return nullptr;
 }
 
-void button_box::handle_event(Event &ev, AImage *screen, InputManager *im)
+void AButtonBox::handle_event(Event &ev, AImage *screen, InputManager *im)
 {
-  switch (ev.type)
-  {
-    case EV_MOUSE_BUTTON :
+    switch (ev.type)
     {
-      int x1,y1,x2,y2;
-      int found=0;
-      for (button *b=buttons; !found && b; b=(button *)b->next)  // see if the user clicked on a button
-      {
-    b->area(x1,y1,x2,y2);
-    if (ev.mouse_move.x>=x1 && ev.mouse_move.x<=x2 &&
-        ev.mouse_move.y>=y1 && ev.mouse_move.y<=y2)
-    {
-      b->handle_event(ev,screen,im);
-
-      int total=0;
-      button *b2=buttons;
-      for (; b2; b2=(button *)b2->next)
-        if (*((int *)b2->read())==0)
-          total++;
-
-      if (*((int *)b->read())==0)  // did the user press or release the button
-      {
-        if (total>maxdown)
+    case EV_MOUSE_BUTTON:
+        // see if the user clicked on a button
+        for (int i = 0, found = 0; i < m_buttons.Count() && !found; ++i)
         {
-          for (b2=buttons; total>maxdown && b2; b2=(button *)b2->next)
-            if ((b!=b2 || maxdown==0) && *((int *)b2->read())==0)
-        {
-          total--;
-          b2->push();
-          b2->draw_first(screen);
-        }
-        }
-        b->draw_first(screen);
-      } else if (total==0 && maxdown)
-        b->push();    // don't let the user de-press a button if non others are selected.
+            int x1, y1, x2, y2;
+            m_buttons[i]->area(x1,y1,x2,y2);
+            if (ev.mouse_move.x >= x1 && ev.mouse_move.x <= x2 &&
+                ev.mouse_move.y >= y1 && ev.mouse_move.y <= y2)
+            {
+                m_buttons[i]->handle_event(ev, screen, im);
 
-      found=1; // don't look at anymore buttons
+                int total = 0;
+                for (int j = 0; j < m_buttons.Count(); ++j)
+                    if (*((int *)m_buttons[j]->read()) == 0)
+                        total++;
 
+                if (*((int *)m_buttons[i]->read()) == 0)  // did the user press or release the button
+                {
+                    for (int j = 0; j < m_buttons.Count() && total > maxdown; ++j)
+                        if ((i != j || maxdown == 0) && *((int *)m_buttons[j]->read()) == 0)
+                        {
+                            total--;
+                            m_buttons[j]->push();
+                            m_buttons[j]->draw_first(screen);
+                        }
+                    m_buttons[i]->draw_first(screen);
+                }
+                else if (total == 0 && maxdown)
+                {
+                    // don't let the user de-press a button if non others are selected.
+                    m_buttons[i]->push();
+                }
+
+                found = 1; // don't look at anymore buttons
+
+            }
+        }
+        break;
     }
-      }
-    } break;
-  }
 }
 
-
-void button_box::add_button(button *b)
+void AButtonBox::add_button(AButton *b)
 {
-  b->next=buttons;
-  buttons=b;
+    m_buttons.Push(b);
 }
 
-
-void button_box::arrange_left_right()
+void AButtonBox::arrange_left_right()
 {
     ivec2 on = m_pos;
-    for (button *b = buttons; b; b = (button *)b->next)
+    for (int i = 0; i < m_buttons.Count(); ++i)
     {
         int x1, y1, x2, y2;
-        b->area(x1, y1, x2, y2);
-        b->m_pos = on;
+        m_buttons[i]->area(x1, y1, x2, y2);
+        m_buttons[i]->m_pos = on;
         on.x += (x2 - x1 + 1) + 1;
     }
 }
 
-void button_box::arrange_up_down()
+void AButtonBox::arrange_up_down()
 {
     ivec2 on = m_pos;
-    for (button *b = buttons; b; b = (button *)b->next)
+    for (int i = 0; i < m_buttons.Count(); ++i)
     {
         int x1, y1, x2, y2;
-        b->area(x1,y1,x2,y2);
-        b->m_pos = on;
+        m_buttons[i]->area(x1, y1, x2, y2);
+        m_buttons[i]->m_pos = on;
         on.y += (y2 - y1 + 1) + 1;
     }
 }
 
-void button::change_visual(AImage *new_visual)
+void AButton::change_visual(AImage *new_visual)
 {
     ASSERT(visual);
     visual = new_visual;
 }
 
-void button::area(int &x1, int &y1, int &x2, int &y2)
+void AButton::area(int &x1, int &y1, int &x2, int &y2)
 {
     ivec2 pos1 = m_pos;
     ivec2 pos2 = m_pos;
 
     if (pressed)
         pos2 += pressed->Size() - ivec2(1);
-    else if (text)
-        pos2 += wm->font()->Size() * ivec2(strlen(text), 1) + ivec2(6);
+    else if (m_text.Count())
+        pos2 += wm->font()->Size() * ivec2(m_text.Count(), 1) + ivec2(6);
     else
         pos2 += visual->Size() + ivec2(6);
 
@@ -212,39 +211,37 @@ void button::area(int &x1, int &y1, int &x2, int &y2)
 }
 
 
-button::button(int X, int Y, int ID, char const *Text, ifield *Next)
+AButton::AButton(ivec2 pos, int id, char const *text)
+  : AWidget(pos, id),
+    m_text(text)
 {
-    m_pos = ivec2(X, Y);
-    id = ID;
-    act_id=-1;
-    text = strdup(Text);
-    up=1; next=Next; act=0;
-    visual=NULL;
-    pressed=NULL;
+    act_id = -1;
+    up = 1;
+    act = 0;
+    visual = NULL;
+    pressed = NULL;
 }
 
 
-button::button(int X, int Y, int ID, AImage *vis, ifield *Next)
+AButton::AButton(ivec2 pos, int id, AImage *vis)
+  : AWidget(pos, id)
 {
-    m_pos = ivec2(X, Y);
-    id=ID; text=NULL;
-    act_id=-1;
-    visual=vis; up=1; next=Next; act=0;
-    pressed=NULL;
+    act_id = -1;
+    visual = vis; up = 1; act = 0;
+    pressed = NULL;
 }
 
-button::button(int X, int Y, int ID, AImage *Depressed, AImage *Pressed, AImage *active, ifield *Next)
+AButton::AButton(ivec2 pos, int id, AImage *Depressed, AImage *Pressed, AImage *active)
+  : AWidget(pos, id)
 {
-    m_pos = ivec2(X, Y);
-    id=ID; text=NULL;
-    act_id=-1;
-    visual=Depressed; up=1; next=Next; act=0;
-    pressed=Pressed;
-    act_pict=active;
+    act_id = -1;
+    visual = Depressed; up = 1; act = 0;
+    pressed = Pressed;
+    act_pict = active;
 }
 
 
-void text_field::change_data(char const *new_data, int new_cursor, // cursor==-1, does not change it.
+void ATextField::change_data(char const *new_data, int new_cursor, // cursor==-1, does not change it.
                  int active, AImage *screen)
 {
   if (strlen(format)<strlen(new_data))
@@ -254,16 +251,16 @@ void text_field::change_data(char const *new_data, int new_cursor, // cursor==-1
   if (new_cursor!=-1)
     cur=new_cursor;
   draw_first(screen);
-  draw(active,screen);
+  Draw(active, screen);
 }
 
-char *text_field::read()
+char *ATextField::read()
 {
   while (*data && data[strlen(data)-1]==' ') data[strlen(data)-1]=0;
   return data;
 }
 
-void text_field::handle_event(Event &ev, AImage *screen, InputManager *im)
+void ATextField::handle_event(Event &ev, AImage *screen, InputManager *im)
 {
   int xx;
   if (ev.type==EV_KEY)
@@ -288,7 +285,7 @@ void text_field::handle_event(Event &ev, AImage *screen, InputManager *im)
            data[strlen(format)-1]=' ';
            draw_text(screen);
            draw_cur(wm->bright_color(),screen);
-           wm->Push(Event(id, (char *)this));
+           wm->Push(Event(m_id, (char *)this));
          } break;
       default : if (ev.key>=' ' && ev.key<='~')
          {
@@ -301,13 +298,13 @@ void text_field::handle_event(Event &ev, AImage *screen, InputManager *im)
        data[strlen(format)]=0;
            draw_text(screen);
            draw_cur(wm->bright_color(),screen);
-           wm->Push(Event(id, (char *)this));
+           wm->Push(Event(m_id, (char *)this));
          } break;
     }
   }
 }
 
-void text_field::draw(int active, AImage *screen)
+void ATextField::Draw(int active, AImage *screen)
 {
   if (active)
   {
@@ -323,61 +320,62 @@ void text_field::draw(int active, AImage *screen)
   }
 }
 
-void text_field::area(int &x1, int &y1, int &x2, int &y2)
+void ATextField::area(int &x1, int &y1, int &x2, int &y2)
 {
-    x1 = m_pos.x; y1 = m_pos.y;
-    x2 = xend(); y2 = yend();
+    x1 = m_pos.x;
+    y1 = m_pos.y;
+    x2 = xend();
+    y2 = yend();
 }
 
-text_field::text_field(int X, int Y, int ID, char const *Prompt,
-                       char const *Format, char const *Data, ifield *Next)
+ATextField::ATextField(ivec2 pos, int id, char const *Prompt,
+                       char const *Format, char const *Data)
+  : AWidget(pos, id)
 {
     int slen=(strlen(Format)>strlen(Data) ? strlen(Format) : strlen(Data));
 
-    m_pos = ivec2(X, Y);
-    id=ID;
     prompt = strdup(Prompt);
-    format=strcpy((char *)malloc(slen+1),Format);
-    data=strcpy((char *)malloc(slen+1),Data);
-    cur=strlen(data);
+    format = strcpy((char *)malloc(slen+1),Format);
+    data = strcpy((char *)malloc(slen+1),Data);
+    cur = strlen(data);
     while (cur && data[cur-1]==' ') cur--;
-    next=Next;
 }
 
-text_field::text_field(int X, int Y, int ID, char const *Prompt,
-                       char const *Format, double Data, ifield *Next)
+ATextField::ATextField(ivec2 pos, int id, char const *Prompt,
+                       char const *Format, double Data)
+  : AWidget(pos, id)
 {
   char num[20];
   sprintf(num,"%g",Data);
   int slen=(strlen(Format)>strlen(num) ? strlen(Format) : strlen(num));
-  m_pos = ivec2(X, Y); id=ID;
   prompt = strdup(Prompt);
   format=strcpy((char *)malloc(slen+1),Format);
   data=strcpy((char *)malloc(slen+1),num);
   cur=strlen(num);
   while (cur && data[cur-1]==' ') cur--;
-  next=Next;
 }
 
 
-void button::push()
-{ up=!up; }
-
-void button::handle_event(Event &ev, AImage *screen, InputManager *im)
+void AButton::push()
 {
-  if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
-                                         ev.mouse_button))
-  {
-    int  x1,y1,x2,y2;
-    area(x1,y1,x2,y2);
-    up=!up;
-    draw_first(screen);
-    draw(act,screen);
-    wm->Push(Event(id, (char *)this));
-  }
+    up = !up;
 }
 
-void button::draw(int active, AImage *screen)
+void AButton::handle_event(Event &ev, AImage *screen, InputManager *im)
+{
+    if ((ev.type == EV_KEY && ev.key == 13)
+         || (ev.type == EV_MOUSE_BUTTON && ev.mouse_button))
+    {
+        int x1, y1, x2, y2;
+        area(x1, y1, x2, y2);
+        up = !up;
+        draw_first(screen);
+        Draw(act, screen);
+        wm->Push(Event(m_id, (char *)this));
+    }
+}
+
+void AButton::Draw(int active, AImage *screen)
 {
   int x1,y1,x2,y2,color=(active ? wm->bright_color() : wm->medium_color());
   area(x1,y1,x2,y2);
@@ -401,11 +399,11 @@ void button::draw(int active, AImage *screen)
   }
 }
 
-void button::draw_first(AImage *screen)
+void AButton::draw_first(AImage *screen)
 {
     if (pressed)
     {
-        draw(0, screen);
+        Draw(0, screen);
         return;
     }
 
@@ -429,10 +427,10 @@ void button::draw_first(AImage *screen)
                   wm->medium_color());
     }
 
-    if ((up && text) || (!up && !visual))
+    if ((up && m_text.Count()) || (!up && !visual))
     {
-        wm->font()->PutString(screen, m_pos + ivec2(4, 5), text, wm->black());
-        wm->font()->PutString(screen, m_pos + ivec2(3, 4), text);
+        wm->font()->PutString(screen, m_pos + ivec2(4, 5), m_text, wm->black());
+        wm->font()->PutString(screen, m_pos + ivec2(3, 4), m_text);
     }
     else if (up)
         screen->PutImage(visual, m_pos + ivec2(3, 3), 1);
@@ -440,7 +438,7 @@ void button::draw_first(AImage *screen)
         screen->PutImage(visual, ivec2(x1 + 3, y1 + 3), 1);
 }
 
-void text_field::draw_first(AImage *screen)
+void ATextField::draw_first(AImage *screen)
 {
   wm->font()->PutString(screen, m_pos + ivec2(0, 3), prompt);
   screen->Bar(ivec2(xstart(), m_pos.y), ivec2(xend(), yend()), wm->dark_color());
@@ -448,7 +446,7 @@ void text_field::draw_first(AImage *screen)
 }
 
 
-void text_field::draw_cur(int color, AImage *screen)
+void ATextField::draw_cur(int color, AImage *screen)
 {
   screen->Bar(ivec2(xstart() + cur * wm->font()->Size().x + 1, yend() - 2),
               ivec2(xstart() + (cur + 1) * wm->font()->Size().x, yend() - 1),
@@ -457,39 +455,41 @@ void text_field::draw_cur(int color, AImage *screen)
 
 
 
-info_field::info_field(int X, int Y, int ID, char const *info, ifield *Next)
+AInfoField::AInfoField(ivec2 pos, int id, char const *info)
 {
-  m_pos = ivec2(X, Y); id = ID; next = Next;
-  text = strdup(info);
-  w = -1;
+    m_pos = pos;
+    m_text = info;
+    m_id = id;
+    w = -1;
 }
 
 
-void info_field::area(int &x1, int &y1, int &x2, int &y2)
+void AInfoField::area(int &x1, int &y1, int &x2, int &y2)
 {
-  if (w==-1)     // if we haven't calculated this yet
-  {
-    int fw = wm->font()->Size().x, fh = wm->font()->Size().y, maxw = 0;
-    char *info=text;
-    for (w=fw,h=fh+1; *info; info++)
+    if (w == -1)     // if we haven't calculated this yet
     {
-      if (w>maxw) maxw=w;
-      if (*info=='\n')
-      {
-    h+=fh+1;
-    w=1;
-      }
-      else w+=fw;
+        int fw = wm->font()->Size().x, fh = wm->font()->Size().y, maxw = 0;
+        int i = 0;
+        for (w = fw, h = fh + 1; m_text[i]; ++i)
+        {
+            maxw = lol::max(maxw, w);
+            if (m_text[i] == '\n')
+            {
+                h += fh + 1;
+                w = 1;
+            }
+            else
+                w += fw;
+        }
+        w = maxw;
     }
-    w=maxw;
-  }
-  x1 = m_pos.x;
-  y1 = m_pos.y;
-  x2 = m_pos.x + w;
-  y2 = m_pos.y + h;
+    x1 = m_pos.x;
+    y1 = m_pos.y;
+    x2 = m_pos.x + w;
+    y2 = m_pos.y + h;
 }
 
-void info_field::put_para(AImage *screen, char const *st, int dx, int dy,
+void AInfoField::put_para(AImage *screen, char const *st, int dx, int dy,
               int xspace, int yspace, JCFont *font, int color)
 {
   int ox=dx;
@@ -509,11 +509,11 @@ void info_field::put_para(AImage *screen, char const *st, int dx, int dy,
   }
 }
 
-void info_field::draw_first(AImage *screen)
+void AInfoField::draw_first(AImage *screen)
 {
-  put_para(screen, text, m_pos.x+1, m_pos.y+1, wm->font()->Size().x,
-           wm->font()->Size().y, wm->font(), wm->black());
-  put_para(screen, text, m_pos.x, m_pos.y, wm->font()->Size().x,
-           wm->font()->Size().y, wm->font(), wm->bright_color());
+    put_para(screen, m_text.C(), m_pos.x+1, m_pos.y+1, wm->font()->Size().x,
+             wm->font()->Size().y, wm->font(), wm->black());
+    put_para(screen, m_text.C(), m_pos.x, m_pos.y, wm->font()->Size().x,
+             wm->font()->Size().y, wm->font(), wm->bright_color());
 }
 

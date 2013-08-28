@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -18,7 +18,7 @@
 #include "event.h"
 #include "fonts.h"
 #include "items.h"
-#include "jwindow.h"
+#include "window.h"
 #include "filter.h"
 #include "level.h"
 #include "cache.h"
@@ -78,7 +78,7 @@ private:
   int has_joystick,no_delay;
 
 
-  Jwindow *top_menu,*joy_win,*last_input;
+  AWindow *top_menu,*joy_win,*last_input;
   JCFont *game_font;
   uint8_t keymap[512/8];
 

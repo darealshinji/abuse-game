@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -17,12 +17,12 @@
 #include "game.h"
 
 #include "profile.h"
-#include "jwindow.h"
+#include "window.h"
 #include "property.h"
 #include "objects.h"
 
 
-Jwindow *prof_win=NULL;
+AWindow *prof_win=NULL;
 int prof_height=10;
 
 struct prof_info
@@ -58,11 +58,10 @@ void profile_init()
   prof_list=(prof_info *)malloc(sizeof(prof_info)*total_objects);
   profile_reset();
 
-
-  prof_win=wm->CreateWindow(ivec2(g_prop->getd("profile x", -1),
-                                  g_prop->getd("profile y", -1)),
-                            ivec2(20, prof_height + 1) * console_font->Size(),
-                            NULL, "PROFILE");
+  prof_win = wm->CreateWindow(ivec2(g_prop->getd("profile x", -1),
+                                    g_prop->getd("profile y", -1)),
+                              ivec2(20, prof_height + 1) * console_font->Size(),
+                              "PROFILE");
 }
 
 
@@ -94,9 +93,9 @@ void profile_add_time(int type, float amount)
 
 static int p_sorter(const void *a, const void *b)
 {
-  if (((prof_info *)a)->total_time<((prof_info *)b)->total_time)
+  if (((prof_info const *)a)->total_time<((prof_info const *)b)->total_time)
     return 1;
-  else if (((prof_info *)a)->total_time>((prof_info *)b)->total_time)
+  else if (((prof_info const *)a)->total_time>((prof_info const *)b)->total_time)
     return -1;
   else return 0;
 }

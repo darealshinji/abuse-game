@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -11,15 +11,17 @@
 #ifndef __JWIN__
 #define __JWIN__
 
+#include <stdarg.h>
+
 #include "video.h"
 #include "image.h"
 #include "event.h"
 #include "filter.h"
 #include "fonts.h"
 
-class ifield;
 class WindowManager;
-class Jwindow;
+class InputManager;
+class AWindow;
 
 extern int frame_top();
 extern int frame_bottom();
@@ -28,75 +30,82 @@ extern int frame_right();
 
 void set_frame_size(int x);
 
-class InputManager
+class AWidget
 {
-    friend class Jwindow;
+    friend class AWindow;
+    friend class InputManager;
 
 public:
-    InputManager(AImage *screen, ifield *first);
-    InputManager(Jwindow *owner, ifield *first);
+    AWidget();
+    AWidget(ivec2 pos, int id);
+    virtual ~AWidget();
+
+    virtual void set_owner(AWindow *owner);
+    virtual void Move(ivec2 pos) { m_pos = pos; }
+    virtual void area(int &x1, int &y1, int &x2, int &y2) = 0;
+    virtual void draw_first(AImage *screen) = 0;
+    virtual void Draw(int active, AImage *screen) = 0;
+    virtual void handle_event(Event &ev, AImage *screen, InputManager *im) = 0;
+    virtual int selectable() { return 1; }
+    virtual void remap(Filter *f) { (void)f; }
+    virtual char *read() = 0;
+    virtual AWidget *find(int search_id) { if (m_id == search_id) return this; else return nullptr; }
+    virtual AWidget *unlink(int id) { (void)id; return nullptr; }
+
+    ivec2 m_pos;
+    int m_id;
+
+protected:
+    AWindow *m_owner;
+};
+
+class AWidgetList : public Array<AWidget *>
+{
+};
+
+class InputManager
+{
+    friend class AWindow;
+
+public:
+    InputManager(AImage *screen, AWidgetList const &fields = AWidgetList());
+    InputManager(AWindow *owner, AWidgetList const &fields = AWidgetList());
     ~InputManager();
 
-    void handle_event(Event &ev, Jwindow *j);
-    ifield *get(int id);
+    void handle_event(Event &ev, AWindow *j);
+    AWidget *get(int id);
     void redraw();
-    void add(ifield *i);
+    void Add(AWidgetList const &fields);
     void remap(Filter *f);
-    ifield *unlink(int id); // unlink ID from list and return field pointer
+    AWidget *unlink(int id); // unlink ID from list and return field pointer
     void clear_current();
-    void grab_focus(ifield *i);
+    void grab_focus(AWidget *i);
     void release_focus();
     void allow_no_selections();
 
 private:
     AImage *m_surf;
-    ifield *m_first, *m_active, *m_grab;
-    Jwindow *m_cur, *m_owner;
+    AWidgetList m_fields;
+    int m_active, m_grab;
+    AWindow *m_cur, *m_owner;
     int no_selections_allowed;
 };
 
-class ifield
-{
-    friend class Jwindow;
-    friend class InputManager;
-
-public :
-    ifield();
-    virtual ~ifield();
-
-    virtual void set_owner(Jwindow *owner);
-    virtual void Move(ivec2 pos) { m_pos = pos; }
-    virtual void area(int &x1, int &y1, int &x2, int &y2) = 0;
-    virtual void draw_first(AImage *screen) = 0;
-    virtual void draw(int active, AImage *screen) = 0;
-    virtual void handle_event(Event &ev, AImage *screen, InputManager *im) = 0;
-    virtual int selectable() { return 1; }
-    virtual void remap(Filter *f) { (void)f; }
-    virtual char *read() = 0;
-    virtual ifield *find(int search_id) { if (id==search_id) return this; else return NULL; }
-    virtual ifield *unlink(int id) { (void)id; return NULL; }
-
-    ivec2 m_pos;
-    int id;
-    ifield *next;
-
-protected:
-    Jwindow *owner;
-};
-
-class Jwindow
+class AWindow
 {
     friend class InputManager;
 
 public:
-    Jwindow *next;
+    AWindow *next;
     int backg;
     InputManager *inm;
     void *local_info;  // pointer to info block for local system (may support windows)
 
-    Jwindow(char const *name = NULL);
-    Jwindow(ivec2 pos, ivec2 size, ifield *f, char const *name = NULL);
-    ~Jwindow();
+    AWindow(String const &name = "");
+    AWindow(ivec2 pos, ivec2 size,
+            String const &name = "",
+            AWidgetList const &widgets = AWidgetList());
+    ~AWindow();
 
     virtual void redraw();
     void Resize(ivec2 size);
@@ -124,7 +133,7 @@ public:
     AImage *m_surf;
 
 protected:
-    Jwindow *owner;
+    AWindow *m_owner;
     int _x1, _y1, _x2, _y2;
 
 private:
@@ -137,32 +146,33 @@ private:
 
 class WindowManager : public EventHandler
 {
-    friend class Jwindow;
+    friend class AWindow;
 
 protected:
-    void add_window(Jwindow *);
-    void remove_window(Jwindow *);
+    void add_window(AWindow *);
+    void remove_window(AWindow *);
 
 public:
     WindowManager(AImage *, Palette *, int hi, int med, int low, JCFont *);
     ~WindowManager();
 
-    Jwindow *m_first, *m_grab;
+    AWindow *m_first, *m_grab;
     AImage *mouse_pic, *mouse_save;
     int hi, med, low, bk; // bright, medium, dark and black colors
     int key_state[512];
     enum { inputing, dragging } state;
     int drag_mousex, drag_mousey, frame_suppress;
-    Jwindow *drag_window;
+    AWindow *drag_window;
     JCFont *fnt, *wframe_fnt;
 
-    Jwindow *CreateWindow(ivec2 pos, ivec2 size,
-                          ifield *fields = NULL, char const *Name = NULL);
+    AWindow *CreateWindow(ivec2 pos, ivec2 size,
+                          String const &name = "",
+                          AWidgetList const &widgets = AWidgetList());
 
     JCFont *frame_font() { return wframe_fnt; }
-    void close_window(Jwindow *j);
-    void resize_window(Jwindow *j, int l, int h);
-    void move_window(Jwindow *j, int x, int y);
+    void close_window(AWindow *j);
+    void resize_window(AWindow *j, int l, int h);
+    void move_window(AWindow *j, int x, int y);
     void get_event(Event &ev);
     void flush_screen();
     int bright_color() { return hi; }
@@ -175,9 +185,9 @@ public:
     int key_pressed(int x) { return key_state[x]; }
     void hide_windows();
     void show_windows();
-    void hide_window(Jwindow *j);
-    void show_window(Jwindow *j);
-    void grab_focus(Jwindow *j);
+    void hide_window(AWindow *j);
+    void show_window(AWindow *j);
+    void grab_focus(AWindow *j);
     void release_focus();
 
 private:

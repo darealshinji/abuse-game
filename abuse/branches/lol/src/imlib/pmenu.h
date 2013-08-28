@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -30,9 +30,9 @@ public :
   char *name() { return n; }
   pmenu_item *find_id(int search_id);
   pmenu_item *find_key(int key);
-  void draw       (Jwindow *parent, int x, int y, int w, int top, int active);
-  void draw_self  (Jwindow *parent, int x, int y, int w, int top, int active);
-  int handle_event(Jwindow *parent, int x, int y, int w, int top, Event &ev);
+  void draw       (AWindow *parent, int x, int y, int w, int top, int active);
+  void draw_self  (AWindow *parent, int x, int y, int w, int top, int active);
+  int handle_event(AWindow *parent, int x, int y, int w, int top, Event &ev);
   int own_event(Event &ev);
   ~pmenu_item();
 } ;
@@ -43,7 +43,7 @@ class psub_menu
   pmenu_item *first;
   psub_menu *next;
   int active;
-  Jwindow *win;
+  AWindow *win;
   pmenu_item *item_num(int x) { pmenu_item *p=first; while (x-- && p) p=p->next; return p; }
 public :
   void calc_size(int &w, int &h);
@@ -51,16 +51,16 @@ public :
   pmenu_item *find_key(int key);
   psub_menu(pmenu_item *First, psub_menu *Next)
   { first=First; Next=Next; win=0; active=0; }
-  int handle_event(Jwindow *parent, int x, int y, Event &ev);
-  void draw(Jwindow *parent, int x, int y);
-  void hide(Jwindow *parent, int x, int y);
+  int handle_event(AWindow *parent, int x, int y, Event &ev);
+  void draw(AWindow *parent, int x, int y);
+  void hide(AWindow *parent, int x, int y);
   int own_event(Event &ev);
   ~psub_menu();
 } ;
 
 class pmenu
 {
-  Jwindow *bar;
+  AWindow *bar;
   pmenu_item *top,*active;
   int itemw(pmenu_item *p)
   { return strlen(p->name())*wm->font()->Size().x+2; }

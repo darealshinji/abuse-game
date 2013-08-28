@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -160,7 +160,7 @@ void automap::toggle_window()
         old_dy = -1000;
 
         automap_window = wm->CreateWindow(ivec2(0), ivec2(w * AUTOTILE_WIDTH,
-                                        h * AUTOTILE_HEIGHT), NULL, "Map");
+                                          h * AUTOTILE_HEIGHT), "Map");
         automap_window->m_surf->Bar(ivec2(17, 1), ivec2(17 + 8 * 6 + 3, 6),
                                     wm->medium_color());
         wm->font()->PutString(automap_window->m_surf, ivec2(20, 2), "Automap",

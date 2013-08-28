@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -10,117 +10,114 @@
 
 #ifndef __INPUT_HPP_
 #define __INPUT_HPP_
-#include "jwindow.h"
+
+#include "window.h"
 #include "filter.h"
 
 extern WindowManager *wm; /* FIXME: get rid of this if possible */
 
-class button : public ifield
+class AButton : public AWidget
 {
-  int up,act;
-  char *text;
-  AImage *visual,*pressed,*act_pict;
-  int act_id;
-public :
-  button(int X, int Y, int ID, char const *Text, ifield *Next);
-  button(int X, int Y, int ID, AImage *vis, ifield *Next);
-  button(int X, int Y, int ID, AImage *Depressed, AImage *Pressed, AImage *active, ifield *Next);
+public:
+    AButton(ivec2 pos, int ID, char const *Text);
+    AButton(ivec2 pos, int ID, AImage *vis);
+    AButton(ivec2 pos, int ID, AImage *Depressed, AImage *Pressed, AImage *active);
+    virtual ~AButton() { }
 
-  virtual void area(int &x1, int &y1, int &x2, int &y2);
-  virtual void draw_first(AImage *screen);
-  virtual void draw(int active, AImage *screen);
-  virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
-  void change_visual(AImage *new_visual);
-  virtual void remap(Filter *f);
-  virtual ~button() { if (text) free(text); }
-  void push();
-  virtual char *read() { return (char *)&up; }
-  int status() { return up; }
-  void set_act_id(int id) { act_id=id; }
-} ;
+    virtual void area(int &x1, int &y1, int &x2, int &y2);
+    virtual void draw_first(AImage *screen);
+    virtual void Draw(int active, AImage *screen);
+    virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
+    void change_visual(AImage *new_visual);
+    virtual void remap(Filter *f);
+    void push();
+    virtual char *read() { return (char *)&up; }
+    int status() { return up; }
+    void set_act_id(int id) { act_id=id; }
 
-class button_box : public ifield
+private:
+    int up, act;
+    String m_text;
+    AImage *visual, *pressed, *act_pict;
+    int act_id;
+};
+
+class AButtonBox : public AWidget
 {
-  button *buttons;
-  int maxdown;
-public :
-  button_box(int X, int Y, int ID, int MaxDown, button *Buttons, ifield *Next);
-  void add_button(button *b);
-  void press_button(int id);      // if button box doesn't contain id, nothing happens
-  virtual void remap(Filter *f);
-  virtual void Move(ivec2 pos);
-  virtual void area(int &x1, int &y1, int &x2, int &y2);
-  virtual void draw_first(AImage *screen);
-  virtual void draw(int active, AImage *screen);
-  virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
-  virtual ~button_box();
-  virtual char *read();   // return pointer to first button which is depressed
-  virtual ifield *find(int search_id);  // should return pointer to item you control with this id
-  void arrange_left_right();
-  void arrange_up_down();
-} ;
+public:
+    AButtonBox(ivec2 pos, int ID, int MaxDown, Array<AButton *> const &buttons = Array<AButton *>());
+    virtual ~AButtonBox();
 
-class text_field : public ifield
+    void add_button(AButton *b);
+    void press_button(int id);      // if button box doesn't contain id, nothing happens
+    virtual void remap(Filter *f);
+    virtual void Move(ivec2 pos);
+    virtual void area(int &x1, int &y1, int &x2, int &y2);
+    virtual void draw_first(AImage *screen);
+    virtual void Draw(int active, AImage *screen);
+    virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
+    virtual char *read();   // return pointer to first button which is depressed
+    virtual AWidget *find(int search_id);  // should return pointer to item you control with this id
+    void arrange_left_right();
+    void arrange_up_down();
+
+private:
+    Array<AButton *> m_buttons;
+    int maxdown;
+};
+
+class ATextField : public AWidget
 {
-  int cur;
-  char *prompt,*data,*format;
-  int xstart() { return m_pos.x + wm->font()->Size().x * (strlen(prompt)+1) + 3; }
-  int xend() { return m_pos.x + wm->font()->Size().x * (strlen(prompt) + 1 + strlen(format)) + 7; }
-  int yend() { return m_pos.y + wm->font()->Size().y + 5; }
-  void draw_cur(int color, AImage *screen);
-  int last_spot() { int x=strlen(data); while (x && data[x-1]==' ') x--; return x; }
-  void draw_text(AImage *screen)
-  {
-    screen->Bar(ivec2(xstart() + 1, m_pos.y + 1), ivec2(xend() - 1, yend() - 1),
-                wm->dark_color());
-    wm->font()->PutString(screen, ivec2(xstart() + 1, m_pos.y + 3), data);
-  }
-public :
-  text_field(int X, int Y, int ID, char const *Prompt, char const *Format,
-                               char const *Data, ifield *Next);
-  text_field(int X, int Y, int ID, char const *Prompt, char const *Format,
-                               double Data, ifield *Next);
+public:
+    ATextField(ivec2 pos, int ID, char const *Prompt, char const *Format, char const *Data);
+    ATextField(ivec2 pos, int ID, char const *Prompt, char const *Format, double Data);
+    virtual ~ATextField() { free(prompt); free(format); free(data); }
 
-  virtual void area(int &x1, int &y1, int &x2, int &y2);
-  virtual void draw_first(AImage *screen);
-  virtual void draw(int active, AImage *screen);
-  virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
+    virtual void area(int &x1, int &y1, int &x2, int &y2);
+    virtual void draw_first(AImage *screen);
+    virtual void Draw(int active, AImage *screen);
+    virtual void handle_event(Event &ev, AImage *screen, InputManager *im);
 
-  virtual ~text_field() { free(prompt); free(format); free(data); }
-  virtual char *read();
-  void change_data(char const *new_data, int new_cursor,       // cursor==-1, does not change it.
-           int active, AImage *screen);
-} ;
+    virtual char *read();
+    void change_data(char const *new_data, int new_cursor,       // cursor==-1, does not change it.
+                     int active, AImage *screen);
+
+private:
+    int cur;
+    char *prompt, *data, *format;
+    int xstart() { return m_pos.x + wm->font()->Size().x * (strlen(prompt)+1) + 3; }
+    int xend() { return m_pos.x + wm->font()->Size().x * (strlen(prompt) + 1 + strlen(format)) + 7; }
+    int yend() { return m_pos.y + wm->font()->Size().y + 5; }
+    void draw_cur(int color, AImage *screen);
+    int last_spot() { int x=strlen(data); while (x && data[x-1]==' ') x--; return x; }
+    void draw_text(AImage *screen)
+    {
+        screen->Bar(ivec2(xstart() + 1, m_pos.y + 1), ivec2(xend() - 1, yend() - 1),
+                    wm->dark_color());
+        wm->font()->PutString(screen, ivec2(xstart() + 1, m_pos.y + 3), data);
+    }
+};
 
 
-class info_field : public ifield
+class AInfoField : public AWidget
 {
-  char *text;
-  int w,h;
-  void put_para(AImage *screen, char const *st, int dx, int dy, int xspace,
-        int yspace, JCFont *font, int color);
-public :
-  info_field(int X, int Y, int ID, char const *info, ifield *Next);
-  virtual void area(int &x1, int &y1, int &x2, int &y2);
-  virtual void draw_first(AImage *screen);
-  virtual void draw(int active, AImage *screen) { (void)active; (void)screen; }
-  virtual void handle_event(Event &ev, AImage *screen, InputManager *im)
-  {
-      (void)ev; (void)screen; (void)im;
-  }
-  virtual char *read() { return text; }
-  virtual int selectable() { return 0; }
-  virtual ~info_field() { free(text); }
-} ;
+public:
+    AInfoField(ivec2 pos, int ID, char const *info);
+    virtual ~AInfoField() { }
+
+    virtual void area(int &x1, int &y1, int &x2, int &y2);
+    virtual void draw_first(AImage *screen);
+    virtual void Draw(int active, AImage *screen) { UNUSED(active, screen); }
+    virtual void handle_event(Event &ev, AImage *screen, InputManager *im) { UNUSED(ev, screen, im); }
+    virtual char *read() { return m_text.C(); }
+    virtual int selectable() { return 0; }
+
+private:
+    String m_text;
+    int w, h;
+    void put_para(AImage *screen, char const *st, int dx, int dy,
+                  int xspace, int yspace, JCFont *font, int color);
+};
 
 #endif
-
-
-
-
-
-
-
-
-
 

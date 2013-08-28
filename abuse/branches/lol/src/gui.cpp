@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -19,74 +19,76 @@
 #include "dev.h"
 #include "loader2.h"
 
-void ico_button::set_act_id(int id)
+void AIconButton::set_act_id(int id)
 {
   activate_id=id;
 }
 
-ico_switch_button::ico_switch_button(int X, int Y, int ID, int start_on, ifield *butts, ifield *Next)
+AIconSwitchButton::AIconSwitchButton(ivec2 pos, int id, int start_on, AWidgetList const &buttons)
+  : AWidget(pos, id)
 {
-  m_pos = ivec2(X, Y); id=ID;
-  next=Next;
-  blist=cur_but=butts;
-  act=0;
-  for (ifield *b=blist; b; b=b->next)
-      b->m_pos = m_pos;
-  while (cur_but && start_on--) cur_but=cur_but->next;
-  if (!cur_but) cur_but=blist;
+  m_buttons = buttons;
+  m_current = start_on < m_buttons.Count() ? start_on : -1;
+  act = 0;
+  for (int i = 0; i < m_buttons.Count(); ++i)
+      m_buttons[i]->m_pos = m_pos;
 }
 
-void ico_switch_button::area(int &x1, int &y1, int &x2, int &y2)
+void AIconSwitchButton::area(int &x1, int &y1, int &x2, int &y2)
 {
-  x1=10000;
-  y1=10000;
-  x2=-10000;
-  y2=-10000;
-  int X1,Y1,X2,Y2;
-  for (ifield *b=blist; b; b=b->next)
+  x1 = 10000;
+  y1 = 10000;
+  x2 = -10000;
+  y2 = -10000;
+  for (int i = 0; i < m_buttons.Count(); ++i)
   {
-    b->area(X1,Y1,X2,Y2);
-    if (X1<x1) x1=X1;
-    if (Y1<y1) y1=Y1;
-    if (X2>x2) x2=X2;
-    if (Y2>y2) y2=Y2;
+    int X1, Y1, X2, Y2;
+    m_buttons[i]->area(X1, Y1, X2, Y2);
+    x1 = lol::min(x1, X1);
+    y1 = lol::min(y1, Y1);
+    x2 = lol::max(x2, X2);
+    y2 = lol::max(y2, Y2);
   }
-  if (!blist) { x1=x2=m_pos.x; y1=y2=m_pos.y; }
+  if (!m_buttons.Count())
+  {
+    x1 = x2 = m_pos.x;
+    y1 = y2 = m_pos.y;
+  }
 }
 
-ifield *ico_switch_button::unlink(int id)
+AWidget *AIconSwitchButton::unlink(int id)
 {
-  ifield *last=NULL;
-  for (ifield *b=blist; b; b=b->next)
+  for (int i = 0; i < m_buttons.Count(); ++i)
   {
-    if (b->id==id)
+    if (m_buttons[i]->m_id == id)
     {
-      if (last) last->next=b->next;
-      else blist=b->next;
-      if (cur_but==b) cur_but=blist;
-      return b;
+      AWidget *ret = m_buttons[i];
+      m_buttons.Remove(i);
+      if (m_current >= m_buttons.Count())
+        m_current = 0;
+      return ret;
     }
-    ifield *x=b->unlink(id);
-    if (x) return x;
-    last=b;
+    AWidget *x = m_buttons[i]->unlink(id);
+    if (x)
+      return x;
   }
-  return NULL;
+  return nullptr;
 }
 
-void ico_switch_button::handle_event(Event &ev, AImage *screen, InputManager *im)
+void AIconSwitchButton::handle_event(Event &ev, AImage *screen, InputManager *im)
 {
-  if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
-                                         ev.mouse_button))
+  if ((ev.type == EV_KEY && ev.key == 13)
+       || (ev.type == EV_MOUSE_BUTTON && ev.mouse_button))
   {
-    cur_but=cur_but->next;
-    if (!cur_but) cur_but=blist;
-    cur_but->draw(act,screen);
-    cur_but->handle_event(ev,screen,im);
+    ++m_current;
+    if (m_current >= m_buttons.Count())
+      m_current = 0;
+    m_buttons[m_current]->Draw(act, screen);
+    m_buttons[m_current]->handle_event(ev, screen, im);
   }
-
 }
 
-void ico_button::draw(int active, AImage *screen)
+void AIconButton::Draw(int active, AImage *screen)
 {
     int x1, y1, x2, y2;
     area(x1, y1, x2, y2);
@@ -118,7 +120,7 @@ void ico_button::draw(int active, AImage *screen)
 extern long S_BUTTON_PRESS_SND;
 extern int sfx_volume;
 
-void ico_button::handle_event(Event &ev, AImage *screen, InputManager *im)
+void AIconButton::handle_event(Event &ev, AImage *screen, InputManager *im)
 {
   if ((ev.type==EV_KEY && ev.key==13) || (ev.type==EV_MOUSE_BUTTON &&
                                          ev.mouse_button))
@@ -126,21 +128,22 @@ void ico_button::handle_event(Event &ev, AImage *screen, InputManager *im)
     int  x1,y1,x2,y2;
     area(x1,y1,x2,y2);
     up=!up;
-    draw(act,screen);
-    wm->Push(Event(id, (char *)this));
+    Draw(act, screen);
+    wm->Push(Event(m_id, (char *)this));
     if (S_BUTTON_PRESS_SND)
       cache.sfx(S_BUTTON_PRESS_SND)->play(sfx_volume);
   }
 }
 
-void ico_button::area(int &x1, int &y1, int &x2, int &y2)
+void AIconButton::area(int &x1, int &y1, int &x2, int &y2)
 {
   x1=m_pos.x; y1=m_pos.y;
   x2=m_pos.x+cache.img(u)->Size().x-1;
   y2=m_pos.y+cache.img(u)->Size().y-1;
 }
 
-ico_button::ico_button(int X, int Y, int ID, int Up, int down, int upa, int downa, ifield *Next, int act_id, char const *help_key)
+AIconButton::AIconButton(ivec2 pos, int id, int Up, int down, int upa, int downa, int act_id, char const *help_key)
+  : AWidget(pos, id)
 {
   if (help_key)
   {
@@ -150,20 +153,16 @@ ico_button::ico_button(int X, int Y, int ID, int Up, int down, int upa, int down
   else key[0]=0;
 
   up=1;
-  m_pos = ivec2(X, Y); id=ID;
   u=Up; d=down;
   ua=upa; da=downa;
-  next=Next;
   activate_id=act_id;
   act = 0;
 }
 
-ico_switch_button::~ico_switch_button()
+AIconSwitchButton::~AIconSwitchButton()
 {
-  while (blist)
-  {
-    ifield *i=blist;
-    blist=blist->next;
-    delete i;
-  }
+  for (int i = 0; i < m_buttons.Count(); ++i)
+    delete m_buttons[i];
+  m_buttons.Empty();
 }
+

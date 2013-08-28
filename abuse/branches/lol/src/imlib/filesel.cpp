@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -21,23 +21,26 @@
 #include "scroller.h"
 #include "jdir.h"
 
-class file_picker : public spicker
+class AFilePicker : public AScrollPicker
 {
-  char **f,**d;
-  int tf,td,wid,sid;
-  char cd[300];
-  public:
-  file_picker(int X, int Y, int ID, int Rows, ifield *Next);
-  virtual int total() { return tf+td; }
-  virtual int item_width() { return wm->font()->Size().x * wid; }
-  virtual int item_height() { return wm->font()->Size().y + 1; }
-  virtual void draw_item(AImage *screen, int x, int y, int num, int active);
-  virtual void note_selection(AImage *screen, InputManager *inm, int x);
-  void free_up();
-  ~file_picker() { free_up(); }
-} ;
+public:
+    AFilePicker(ivec2 pos, int id, int rows);
+    ~AFilePicker() { free_up(); }
 
-void file_picker::free_up()
+    virtual int total() { return tf+td; }
+    virtual int item_width() { return wm->font()->Size().x * wid; }
+    virtual int item_height() { return wm->font()->Size().y + 1; }
+    virtual void DrawItem(AImage *screen, ivec2 pos, int num, int active);
+    virtual void note_selection(AImage *screen, InputManager *inm, int x);
+    void free_up();
+
+private:
+    char **f,**d;
+    int tf,td,wid,sid;
+    char cd[300];
+};
+
+void AFilePicker::free_up()
 {
   int i=0;
   for (; i<tf; i++)
@@ -48,7 +51,7 @@ void file_picker::free_up()
   if (td) free(d);
 }
 
-void file_picker::note_selection(AImage *screen, InputManager *inm, int x)
+void AFilePicker::note_selection(AImage *screen, InputManager *inm, int x)
 {
   if (x<td)
   {
@@ -86,17 +89,17 @@ void file_picker::note_selection(AImage *screen, InputManager *inm, int x)
   {
     char nm[200];
     sprintf(nm,"%s/%s",cd,f[x-td]);
-    text_field *link=(text_field *)inm->get(sid);
+    ATextField *link=(ATextField *)inm->get(sid);
     link->change_data(nm,strlen(nm),1,screen);
   }
 
 }
 
-void file_picker::draw_item(AImage *screen, int x, int y, int num, int active)
+void AFilePicker::DrawItem(AImage *screen, ivec2 pos, int num, int active)
 {
     if (active)
-        screen->Bar(ivec2(x, y),
-                    ivec2(x + item_width() - 1, y + item_height() - 1),
+        screen->Bar(pos,
+                    pos + ivec2(item_width() - 1, item_height() - 1),
                     wm->black());
 
     char st[100], *dest;
@@ -105,45 +108,40 @@ void file_picker::draw_item(AImage *screen, int x, int y, int num, int active)
     else
         sprintf(dest = st, "<%s>", d[num]);
 
-    wm->font()->PutString(screen, ivec2(x, y), dest, wm->bright_color());
+    wm->font()->PutString(screen, pos, dest, wm->bright_color());
 }
 
-file_picker::file_picker(int X, int Y, int ID, int Rows, ifield *Next)
-  : spicker(X,Y,0,Rows,1,1,0,Next)
+AFilePicker::AFilePicker(ivec2 pos, int id, int Rows)
+  : AScrollPicker(pos, 0, Rows, 1, 1, 0)
 {
+    sid = id;
+    strcpy(cd, ".");
 
-  sid=ID;
-
-  strcpy(cd,".");
-
-  get_directory(cd,f,tf,d,td);
-  wid=0;
-  int i=0;
-  for (; i<tf; i++)
-    if ((int)strlen(f[i])>wid) wid=strlen(f[i]);
-  for (i=0; i<td; i++)
-    if ((int)strlen(d[i])+2>wid) wid=strlen(d[i])+2;
-  reconfigure();
+    get_directory(cd,f,tf,d,td);
+    wid=0;
+    int i=0;
+    for (; i<tf; i++)
+        if ((int)strlen(f[i])>wid) wid=strlen(f[i]);
+    for (i=0; i<td; i++)
+        if ((int)strlen(d[i])+2>wid) wid=strlen(d[i])+2;
+    reconfigure();
 }
 
-Jwindow *file_dialog(char const *prompt, char const *def,
-             int ok_id, char const *ok_name, int cancel_id,
+AWindow *file_dialog(char const *prompt, char const *def,
+                     int ok_id, char const *ok_name, int cancel_id,
                      char const *cancel_name, char const *FILENAME_str,
                      int filename_id)
 {
-  int wh2 = 5 + wm->font()->Size().y + 5;
-  int wh3 = wh2 + wm->font()->Size().y + 12;
-  Jwindow *j=wm->CreateWindow(ivec2(0), ivec2(-1),
-                new info_field(5, 5, 0, prompt,
-                            new text_field(0, wh2, filename_id,
-                       ">","****************************************",def,
-                new button(50, wh3, ok_id, ok_name,
-                new button(100, wh3, cancel_id, cancel_name,
-                new file_picker(15, wh3 + wm->font()->Size().y + 10, filename_id, 8,
-                      NULL))))),
+    int wh2 = 5 + wm->font()->Size().y + 5;
+    int wh3 = wh2 + wm->font()->Size().y + 12;
 
-                FILENAME_str);
-  return j;
+    AWidgetList widgets;
+    widgets << new AInfoField(ivec2(5, 5), 0, prompt);
+    widgets << new ATextField(ivec2(0, wh2), filename_id, ">", "****************************************", def);
+    widgets << new AButton(ivec2(50, wh3), ok_id, ok_name);
+    widgets << new AButton(ivec2(100, wh3), cancel_id, cancel_name);
+    widgets << new AFilePicker(ivec2(15, wh3 + wm->font()->Size().y + 10), filename_id, 8);
+    return wm->CreateWindow(ivec2(0), ivec2(-1), FILENAME_str, widgets);
 }
 
 

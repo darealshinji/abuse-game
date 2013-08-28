@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -26,7 +26,7 @@
 #include "netface.h"
 #include "netcfg.h"
 #include "id.h"
-#include "jwindow.h"
+#include "window.h"
 #include "input.h"
 #include "dev.h"
 #include "game.h"
@@ -59,20 +59,25 @@ int game_server::total_players()
 void game_server::game_start_wait()
 {
   int last_count=0;
-  Jwindow *stat=NULL;
+  AWindow *stat=NULL;
   Event ev;
   int abort=0;
   while (!abort && total_players()<main_net_cfg->min_players)
   {
     if (last_count!=total_players())
     {
-      if (stat) wm->close_window(stat);
+      if (stat)
+          wm->close_window(stat);
+
       char msg[100];
-      sprintf(msg,symbol_str("min_wait"),main_net_cfg->min_players-total_players());
-      stat = wm->CreateWindow(ivec2(100, 50), ivec2(-1), new info_field(0, 0, ID_NULL, msg,
-                       new button(0, wm->font()->Size().y * 2, ID_CANCEL,symbol_str("cancel_button"),NULL)  ));
+      sprintf(msg, symbol_str("min_wait"), main_net_cfg->min_players - total_players());
+      AWidgetList widgets;
+      widgets << new AInfoField(ivec2(0, 0), ID_NULL, msg);
+      widgets << new AButton(ivec2(0, wm->font()->Size().y * 2), ID_CANCEL, symbol_str("cancel_button"));
+      stat = wm->CreateWindow(ivec2(100, 50), ivec2(-1), "", widgets);
+
       wm->flush_screen();
-      last_count=total_players();
+      last_count = total_players();
     }
 
     if (wm->IsPending())

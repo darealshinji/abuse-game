@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -16,10 +16,10 @@
 
 #include "tools.h"
 
-tool_picker::tool_picker(int X, int Y, int ID,
-          int show_h, visual_object **Icons, int *Ids, int total_ic,
-          Palette *icon_palette, Palette *pal, ifield *Next)
-  : spicker(X, Y, ID, show_h, 1, 1, 0, Next)
+AToolPicker::AToolPicker(ivec2 pos, int id,
+          int show_h, AVisualObject **Icons, int *Ids, int total_ic,
+          Palette *icon_palette, Palette *pal)
+  : AScrollPicker(pos, id, show_h, 1, 1, 0)
 {
     iw = ih = 0;
     icons = Icons;
@@ -27,15 +27,15 @@ tool_picker::tool_picker(int X, int Y, int ID,
     total_icons = total_ic;
     for (int i = 0; i < total_ic; i++)
     {
-        if (icons[i]->width() > iw) iw = icons[i]->width();
-        if (icons[i]->height() > ih) ih = icons[i]->height();
+        iw = lol::max(iw, icons[i]->Size().x);
+        ih = lol::max(ih, icons[i]->Size().y);
     }
     map = new Filter(icon_palette, pal);
     old_pal = icon_palette->Copy();
     reconfigure();
 }
 
-tool_picker::~tool_picker()
+AToolPicker::~AToolPicker()
 {
     delete old_pal;
     delete map;
@@ -43,17 +43,17 @@ tool_picker::~tool_picker()
         delete icons[i];                   // delete visual object, which should be a "shell"
 }
 
-void tool_picker::remap(Palette *pal, AImage *screen)
+void AToolPicker::remap(Palette *pal, AImage *screen)
 {
     delete map;
     map = new Filter(old_pal, pal);
     draw_first(screen);
 }
 
-void tool_picker::draw_item(AImage *screen, int x, int y, int num, int active)
+void AToolPicker::DrawItem(AImage *screen, ivec2 pos, int num, int active)
 {
-    screen->Bar(ivec2(x, y), ivec2(x + iw - 1, y + ih - 1),
+    screen->Bar(pos, pos + ivec2(iw - 1, ih - 1),
                 active ? wm->bright_color() : wm->black());
-    icons[num]->draw(screen, x, y, map);
+    icons[num]->Draw(screen, pos, map);
 }
 

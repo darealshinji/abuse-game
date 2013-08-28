@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -10,9 +10,11 @@
 
 #ifndef __GU_STAT_HPP
 #define __GU_STAT_HPP
-#include "status.h"
-#include "jwindow.h"
+
 #include <string.h>
+
+#include "status.h"
+#include "window.h"
 
 class gui_status_node;
 class gui_status_manager : public status_manager
@@ -22,7 +24,7 @@ class gui_status_manager : public status_manager
   public :
   gui_status_node *first;
   gui_status_manager();
-  virtual void push(char const *name, visual_object *show);
+  virtual void push(char const *name, AVisualObject *show);
   virtual void update(int percentage);
   virtual void pop();
   void draw_bar(gui_status_node *whom, int perc);
@@ -31,3 +33,4 @@ class gui_status_manager : public status_manager
 } ;
 
 #endif
+

@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -458,7 +458,7 @@ void show_stats()
     fade_in(NULL,16);
 
     String const &name = g_current_level->GetOriginalName();
-    ASSERT(name.Count() > strlen(".spe") + 2,
+    ASSERT(name.Count() > (int)strlen(".spe") + 2,
            "invalid level name %s", name.C());
     String digits = name.Sub(name.Count() - strlen(".spe") - 2, 2);
 

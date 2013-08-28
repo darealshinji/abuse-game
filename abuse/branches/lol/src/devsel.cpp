@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -23,12 +23,12 @@ void scale_put(AImage *im, AImage *screen, int x, int y, short new_width, short 
 void scale_put_trans(AImage *im, AImage *screen, int x, int y, short new_width, short new_height);
 int cur_bg=0,cur_fg=0,cur_char=0;
 
-void tile_picker::recenter(AImage *screen)
+void ATilePicker::recenter(AImage *screen)
 {
   set_x(get_current(), screen);
 }
 
-int tile_picker::picw()
+int ATilePicker::picw()
 {
   switch (type)
   {
@@ -45,7 +45,7 @@ int tile_picker::picw()
   }
 }
 
-int tile_picker::pich()
+int ATilePicker::pich()
 {
   switch (type)
   {
@@ -62,7 +62,7 @@ int tile_picker::pich()
   }
 }
 
-int tile_picker::total()
+int ATilePicker::total()
 {
   switch (type)
   {
@@ -76,27 +76,27 @@ int tile_picker::total()
   return 1;
 }
 
-tile_picker::tile_picker(int X, int Y, int ID, int spec_type,
-             int Scale, int scroll_h, int Wid, ifield *Next)
-     : scroller(X,Y,ID,2,2,1,0,Next)
+ATilePicker::ATilePicker(ivec2 pos, int id, int spec_type,
+             int Scale, int scroll_h, int Wid)
+  : AScroller(pos, id, ivec2(2, 2), 1, 0)
 {
   wid=Wid;
   type=spec_type;
   th=scroll_h;
   scale=Scale;
-  set_size(picw()*wid,pich()*th);
+  SetSize(ivec2(picw() * wid, pich() * th));
   sx=get_current();
   t=total();
 }
 
 
-void tile_picker::scroll_event(int newx, AImage *screen)
+void ATilePicker::scroll_event(int newx, AImage *screen)
 {
   int ya = pich(), xw = picw(), c = get_current();
   AImage im(ivec2(xw, ya));
   last_sel=newx;
 
-  screen->Bar(m_pos, m_pos + ivec2(l - 1, h - 1), wm->black());
+  screen->Bar(m_pos, m_pos + m_size - ivec2(1, 1), wm->black());
   for (int i=newx; i<newx+th*wid; i++)
   {
     ivec2 xyo = m_pos + ivec2(((i - newx) % wid) * xw, ((i - newx) / wid) * ya);
@@ -146,7 +146,7 @@ void tile_picker::scroll_event(int newx, AImage *screen)
 }
 
 
-void tile_picker::handle_inside_event(Event &ev, AImage *screen, InputManager *inm)
+void ATilePicker::handle_inside_event(Event &ev, AImage *screen, InputManager *inm)
 {
   if (ev.type==EV_MOUSE_BUTTON)
   {
@@ -162,7 +162,7 @@ void tile_picker::handle_inside_event(Event &ev, AImage *screen, InputManager *i
 
 
 
-int tile_picker::get_current()
+int ATilePicker::get_current()
 {
   switch (type)
   {
@@ -176,7 +176,7 @@ int tile_picker::get_current()
   return 0;
 }
 
-void tile_picker::set_current(int x)
+void ATilePicker::set_current(int x)
 {
   switch (type)
   {
