@@ -71,14 +71,14 @@ ibox2 AButtonBox::GetArea()
     ibox2 ret;
     for (int i = 0; i < m_buttons.Count(); ++i)
     {
-        ibox2 b = m_buttons[i]->GetArea();
+        ibox2 area = m_buttons[i]->GetArea();
         if (i)
         {
-            ret.A = lol::min(ret.A, b.A);
-            ret.B = lol::max(ret.B, b.B);
+            ret.A = lol::min(ret.A, area.A);
+            ret.B = lol::max(ret.B, area.B);
         }
         else
-            ret = b;
+            ret = area;
     }
     return ret;
 }
