@@ -19,9 +19,9 @@ extern WindowManager *wm; /* FIXME: get rid of this if possible */
 class AButton : public AWidget
 {
 public:
-    AButton(ivec2 pos, int ID, char const *Text);
-    AButton(ivec2 pos, int ID, AImage *vis);
-    AButton(ivec2 pos, int ID, AImage *Depressed, AImage *Pressed, AImage *active);
+    AButton(ivec2 pos, int id, char const *Text);
+    AButton(ivec2 pos, int id, AImage *vis);
+    AButton(ivec2 pos, int id, AImage *Depressed, AImage *Pressed, AImage *active);
     virtual ~AButton() { }
 
     virtual ibox2 GetArea();
@@ -45,7 +45,7 @@ private:
 class AButtonBox : public AWidget
 {
 public:
-    AButtonBox(ivec2 pos, int ID, int MaxDown, Array<AButton *> const &buttons = Array<AButton *>());
+    AButtonBox(ivec2 pos, int id, int MaxDown, Array<AButton *> const &buttons = Array<AButton *>());
     virtual ~AButtonBox();
 
     void add_button(AButton *b);
@@ -69,8 +69,8 @@ private:
 class ATextField : public AWidget
 {
 public:
-    ATextField(ivec2 pos, int ID, char const *Prompt, char const *Format, char const *Data);
-    ATextField(ivec2 pos, int ID, char const *Prompt, char const *Format, double Data);
+    ATextField(ivec2 pos, int id, char const *Prompt, char const *Format, char const *Data);
+    ATextField(ivec2 pos, int id, char const *Prompt, char const *Format, double Data);
     virtual ~ATextField() { free(prompt); free(format); free(data); }
 
     virtual ibox2 GetArea();
@@ -102,7 +102,7 @@ private:
 class AInfoField : public AWidget
 {
 public:
-    AInfoField(ivec2 pos, int ID, char const *info);
+    AInfoField(ivec2 pos, int id, char const *info);
     virtual ~AInfoField() { }
 
     virtual ibox2 GetArea();
