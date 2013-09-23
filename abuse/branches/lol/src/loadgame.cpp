@@ -200,7 +200,7 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         {
             thumbnails[start_num] = new AImage(ivec2(160, 100));
             thumbnails[start_num]->clear();
-            console_font->PutString(thumbnails[start_num], ivec2(0), symbol_str("no_saved"));
+            console_font->PutString(thumbnails[start_num], ivec2::zero, symbol_str("no_saved"));
             total_saved++;
             if (!first) first=thumbnails[start_num];
         }

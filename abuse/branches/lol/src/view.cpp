@@ -195,7 +195,7 @@ view::view(GameObject *focus, view *Next, int number)
   no_xright=0;
   no_ytop=0;
   no_ybottom=0;
-    m_lastlastpos = m_lastpos = focus ? focus->m_pos : ivec2(0);
+    m_lastlastpos = m_lastpos = focus ? focus->m_pos : ivec2::zero;
   last_hp=last_ammo=-1;
   last_type=-1;
   tsecrets=secrets=0;
@@ -214,7 +214,7 @@ view::view(GameObject *focus, view *Next, int number)
   god=0;
 
   player_number=number;
-    m_aa = ivec2(0);
+    m_aa = ivec2::zero;
     m_bb = ivec2(100);
     m_focus = focus;
   next=Next;

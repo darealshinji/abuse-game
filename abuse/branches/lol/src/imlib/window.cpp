@@ -100,7 +100,7 @@ void WindowManager::show_window(AWindow *j)
     if (j->is_hidden())
     {
         j->show();
-        j->m_surf->AddDirty(ivec2(0), j->m_size);
+        j->m_surf->AddDirty(ivec2::zero, j->m_size);
     }
 }
 
@@ -179,7 +179,7 @@ void WindowManager::get_event(Event &ev)
 /*      m_surf->AddDirty(j->x,j->y,j->x+j->l,j->y+j->h);
       for (p=m_first; p!=j; p=p->next)
         p->m_surf->AddDirty(j->x-p->x,j->y-p->y,j->x+j->l-p->x,j->y+j->h-p->y); */
-                    j->m_surf->AddDirty(ivec2(0), j->m_size);
+                    j->m_surf->AddDirty(ivec2::zero, j->m_size);
                     flush_screen();
                 }
 
@@ -239,7 +239,7 @@ void WindowManager::move_window(AWindow *j, int x, int y)
                             j->m_pos - p->m_pos + j->m_size);
     j->m_pos.x = x;
     j->m_pos.y = y;
-    j->m_surf->AddDirty(ivec2(0), j->m_size);
+    j->m_surf->AddDirty(ivec2::zero, j->m_size);
 }
 
 WindowManager::WindowManager(AImage *screen, Palette *pal, int Hi,
@@ -249,7 +249,7 @@ WindowManager::WindowManager(AImage *screen, Palette *pal, int Hi,
     wm = this;
     m_surf = screen;
     hi = Hi; low = Low; med = Med; m_first = NULL; m_pal = pal; m_grab = NULL;
-    bk = pal->FindClosest(u8vec3(0));
+    bk = pal->FindClosest(u8vec3::zero);
     state = inputing; fnt = Font;  wframe_fnt = Font;
     memset(key_state, 0, sizeof(key_state));
     frame_suppress = 0;
@@ -382,7 +382,7 @@ AWindow::AWindow(String const &name)
 
 AWindow::AWindow(ivec2 pos, ivec2 size, String const &name, AWidgetList const &widgets)
 {
-    m_size = ivec2(0);
+    m_size = ivec2::zero;
     _hidden = false;
     _moveable = true;
 

@@ -31,8 +31,8 @@ ASprite::ASprite(AImage *screen, AImage *visual, ivec2 pos)
     m_screen = screen;
     m_save = new AImage(visual->Size());
 
-    if (m_pos + visual->Size() >= ivec2(0) && m_pos < ivec2(xres, yres))
-        m_save->PutPart(m_screen, ivec2(0), m_pos, m_pos + m_save->Size());
+    if (m_pos + visual->Size() >= ivec2::zero && m_pos < ivec2(xres, yres))
+        m_save->PutPart(m_screen, ivec2::zero, m_pos, m_pos + m_save->Size());
 }
 
 ASprite::~ASprite()
@@ -51,7 +51,7 @@ void ASprite::SetVisual(AImage *visual, int delete_old)
         m_save = new AImage(visual->Size());
     }
 
-    if (m_pos + visual->Size() >= ivec2(0) && m_pos < ivec2(xres, yres))
-        m_save->PutPart(m_screen, ivec2(0), m_pos, m_pos + m_save->Size());
+    if (m_pos + visual->Size() >= ivec2::zero && m_pos < ivec2(xres, yres))
+        m_save->PutPart(m_screen, ivec2::zero, m_pos, m_pos + m_save->Size());
 }
 

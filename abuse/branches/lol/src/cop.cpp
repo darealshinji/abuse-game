@@ -586,8 +586,8 @@ static int climb_handler(GameObject *o, int xm, int ym, int but)
     {
       o->set_state((character_state)S_climbing);
       o->set_gravity(0);
-      o->m_vel = ivec2(0);
-      o->m_accel = ivec2(0);
+      o->m_vel = ivec2::zero;
+      o->m_accel = ivec2::zero;
       return 0;
     } else
     {

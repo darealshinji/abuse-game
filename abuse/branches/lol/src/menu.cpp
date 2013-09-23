@@ -75,7 +75,7 @@ void DarkWidget(ivec2 aa, ivec2 bb, int br, int dr, int amount)
     main_screen->Line(aa, ivec2(bb.x - 1, aa.y), br);
     main_screen->Line(ivec2(bb.x - 1, aa.y + 1), bb - ivec2(1), dr);
     main_screen->Line(ivec2(aa.x + 1, bb.y - 1), bb - ivec2(1), dr);
-    TintArea(aa + ivec2(1), bb, u8vec3(0), amount);
+    TintArea(aa + ivec2(1), bb, u8vec3::zero, amount);
 }
 
 char *men_str(void *arg)
@@ -611,7 +611,7 @@ void main_menu()
     inm->allow_no_selections();
     inm->clear_current();
 
-    main_screen->AddDirty(ivec2(0), ivec2(320, 200));
+    main_screen->AddDirty(ivec2::zero, ivec2(320, 200));
 
     Event ev;
 

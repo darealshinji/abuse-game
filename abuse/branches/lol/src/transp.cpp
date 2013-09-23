@@ -24,13 +24,13 @@ void transp_put(AImage *im, AImage *screen, uint8_t *table, int x, int y)
     ivec2 aa(0), bb = im->Size();
     ivec2 pos(x, y);
 
-    aa += lol::max(caa - pos, ivec2(0));
-    bb -= lol::max(caa - pos, ivec2(0));
+    aa += lol::max(caa - pos, ivec2::zero);
+    bb -= lol::max(caa - pos, ivec2::zero);
     pos = lol::max(caa, pos);
 
     bb = lol::min(bb, cbb - ivec2(1) - pos);
 
-    if (!(bb >= ivec2(0)))
+    if (!(bb >= ivec2::zero))
         return;
     screen->AddDirty(pos, pos + bb);
 

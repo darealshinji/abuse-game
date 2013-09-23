@@ -145,7 +145,7 @@ int Palette::used(int color_num)
 
 void Palette::defaults()
 {
-    m_colors[0] = u8vec3(0);
+    m_colors[0] = u8vec3::zero;
     m_used[0] = 1;
 
     for (int i = 1; i < m_colors.Count(); i++)

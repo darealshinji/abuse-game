@@ -44,7 +44,7 @@ JCFont::JCFont(AImage *letters)
     for (int ch = 0; ch < 256; ch++)
     {
         tmp.clear();
-        tmp.PutPart(letters, ivec2(0),
+        tmp.PutPart(letters, ivec2::zero,
                     ivec2(ch % 32, ch / 32) * m_size,
                     ivec2(ch % 32 + 1, ch / 32 + 1) * m_size, 1);
         m_data[ch] = new TransImage(&tmp, "JCfont");
