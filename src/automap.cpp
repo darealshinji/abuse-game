@@ -144,7 +144,7 @@ void automap::draw()
     automap_window->m_surf->PutPixel(center, 27);
 
   // set the clip back to full window size because soemthing else could mess with the area
-  automap_window->m_surf->SetClip(ivec2(0), screen->Size());
+  automap_window->m_surf->SetClip(ivec2::zero, screen->Size());
 }
 
 void automap::toggle_window()
@@ -159,7 +159,7 @@ void automap::toggle_window()
         old_dx = -1000; // make sure the map gets drawn the first time
         old_dy = -1000;
 
-        automap_window = wm->CreateWindow(ivec2(0), ivec2(w * AUTOTILE_WIDTH,
+        automap_window = wm->CreateWindow(ivec2::zero, ivec2(w * AUTOTILE_WIDTH,
                                           h * AUTOTILE_HEIGHT), "Map");
         automap_window->m_surf->Bar(ivec2(17, 1), ivec2(17 + 8 * 6 + 3, 6),
                                     wm->medium_color());

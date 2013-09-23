@@ -119,7 +119,7 @@ void handle_no_space()
     AWidgetList widgets;
     widgets << new AButton(ivec2(0, 0), ID_QUIT_OK, "Quit");
     widgets << new AInfoField(ivec2(0, wm->font()->Size().y * 2), ID_NULL, no_space_msg);
-    AWindow *no_space = wm->CreateWindow(ivec2(0), ivec2(-1), "ERROR", widgets);
+    AWindow *no_space = wm->CreateWindow(ivec2::zero, ivec2(-1), "ERROR", widgets);
 
     Event ev;
     do
@@ -1968,7 +1968,7 @@ Game::~Game()
 
 void Game::draw(int scene_mode)
 {
-    main_screen->AddDirty(ivec2(0), ivec2(xres, yres));
+    main_screen->AddDirty(ivec2::zero, ivec2(xres, yres));
 
     main_screen->clear();
 

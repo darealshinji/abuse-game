@@ -23,7 +23,7 @@ Array<AImage *> image_list; // FIXME: only jwindow.cpp needs this
 
 image_descriptor::image_descriptor(ivec2 size, int keep_dirties)
 {
-    m_aa = ivec2(0);
+    m_aa = ivec2::zero;
     m_bb = size;
     m_size = size;
 
@@ -114,7 +114,7 @@ void AImage::clear(int color)
     else
         for(int j = 0; j < m_size.y; j++)
             memset(scan_line(j), color, m_size.x);
-    AddDirty(ivec2(0), m_size);
+    AddDirty(ivec2::zero, m_size);
 }
 
 AImage *AImage::copy()
@@ -197,7 +197,7 @@ void AImage::Line(ivec2 p1, ivec2 p2, uint8_t color)
 
 void AImage::PutImage(AImage *im, ivec2 pos, int transparent)
 {
-    PutPart(im, pos, ivec2(0), im->m_size, transparent);
+    PutPart(im, pos, ivec2::zero, im->m_size, transparent);
 }
 
 void AImage::PutPart(AImage *im, ivec2 pos, ivec2 aa, ivec2 bb, int transparent)
@@ -209,8 +209,8 @@ void AImage::PutPart(AImage *im, ivec2 pos, ivec2 aa, ivec2 bb, int transparent)
 
     // see if the are to be put is outside of actual image, if so adjust
     // to fit in the image
-    pos += lol::min(aa, ivec2(0));
-    aa += lol::min(aa, ivec2(0));
+    pos += lol::min(aa, ivec2::zero);
+    aa += lol::min(aa, ivec2::zero);
     bb = lol::min(bb, im->m_size);
     // return if it was adjusted so that nothing will be put
     if (!(aa < bb))
@@ -220,8 +220,8 @@ void AImage::PutPart(AImage *im, ivec2 pos, ivec2 aa, ivec2 bb, int transparent)
     if (!(pos < cbb && pos + (bb - aa) > caa))
         return;
 
-    aa += lol::max(caa - pos, ivec2(0));
-    pos += lol::max(caa - pos, ivec2(0));
+    aa += lol::max(caa - pos, ivec2::zero);
+    pos += lol::max(caa - pos, ivec2::zero);
     bb = lol::min(bb, cbb - pos + aa);
     if (!(aa < bb))
         return;
@@ -271,7 +271,7 @@ void AImage::GetClip(ivec2 &aa, ivec2 &bb)
         m_special->GetClip(aa, bb);
     else
     {
-        aa = ivec2(0);
+        aa = ivec2::zero;
         bb = m_size;
     }
 }
@@ -347,7 +347,7 @@ void image_descriptor::DeleteDirty(ivec2 aa, ivec2 bb)
     if (!keep_dirt)
         return;
 
-    aa = lol::max(aa, ivec2(0));
+    aa = lol::max(aa, ivec2::zero);
     bb = lol::min(bb, m_size);
 
     if (!(aa < bb))
@@ -440,7 +440,7 @@ void image_descriptor::AddDirty(ivec2 aa, ivec2 bb)
     if (!keep_dirt)
         return;
 
-    aa = lol::max(aa, ivec2(0));
+    aa = lol::max(aa, ivec2::zero);
     bb = lol::min(bb, m_size);
 
     if (!(aa < bb))

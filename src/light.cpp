@@ -252,7 +252,7 @@ void calc_light_table(Palette *pal)
             stat_man->update(color * 100 / 256);
             for (int intensity = 63; intensity >= 0; intensity--)
             {
-                if (rgb != u8vec3(0))
+                if (rgb != u8vec3::zero)
                     white_light[intensity*256+color] = pal->FindClosest(rgb);
                 else
                     white_light[intensity*256+color]=0;
@@ -500,12 +500,12 @@ void AddLight(LightPatch *&first, ivec2 p1, ivec2 p2, LightSource *who)
 
 LightPatch *MakePatchList(ivec2 size, ivec2 screen)
 {
-    LightPatch *first = new LightPatch(ivec2(0), size - ivec2(1), nullptr);
+    LightPatch *first = new LightPatch(ivec2::zero, size - ivec2(1), nullptr);
 
     // determine which lights will have effect
     for (LightSource *f = first_light_source; f; f = f->m_next)
     {
-        ivec2 p1 = lol::max(f->m_p1 - screen, ivec2(0));
+        ivec2 p1 = lol::max(f->m_p1 - screen, ivec2::zero);
         ivec2 p2 = lol::min(f->m_p2 - screen, size - ivec2(1));
 
         if (p1.x <= p2.x && p1.y <= p2.y)

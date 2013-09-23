@@ -89,8 +89,8 @@ public:
     CharacterType(LList *args, LSymbol *name); // lisp object describes object
     ~CharacterType();
 
-  uint16_t ts,tiv,tv; // total states, total index vars, total local vars
-  sequence **seq;   // [0..ts-1]
+  int ts, tiv, tv; // total states, total index vars, total local vars
+  sequence **seq;  // [0..ts-1]
   LSymbol **seq_syms;  // symbol describing what this state is [0..ts-1]
 
   LSymbol **vars;  // symbol describing variable names    [0..tiv-1]

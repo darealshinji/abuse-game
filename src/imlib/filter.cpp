@@ -38,7 +38,7 @@ Filter::Filter(Palette *from, Palette *to)
         int n = to->FindClosest(color);
 
         // Make sure non-blacks don't get remapped to the transparency
-        if (color != u8vec3(0) && to->GetColor(n) == u8vec3(0))
+        if (color != u8vec3::zero && to->GetColor(n) == u8vec3::zero)
             n = dk;
 
         m_table[i] = n;
@@ -71,14 +71,14 @@ void Filter::Apply(AImage *im)
  * does not look like it's very useful. */
 void Filter::PutImage(AImage *screen, AImage *im, ivec2 pos)
 {
-    ivec2 aa = ivec2(0), bb = im->Size(), caa, cbb;
+    ivec2 aa = ivec2::zero, bb = im->Size(), caa, cbb;
     screen->GetClip(caa, cbb);
 
     // See if the image gets clipped off the screen
     if (!(pos < cbb && pos + (bb - aa) > caa))
         return;
 
-    aa += lol::max(caa - pos, ivec2(0));
+    aa += lol::max(caa - pos, ivec2::zero);
     pos = lol::max(pos, caa);
     bb = lol::min(bb, cbb - pos + aa);
 

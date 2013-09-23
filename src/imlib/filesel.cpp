@@ -140,7 +140,7 @@ AWindow *file_dialog(char const *prompt, char const *def,
     widgets << new AButton(ivec2(50, wh3), ok_id, ok_name);
     widgets << new AButton(ivec2(100, wh3), cancel_id, cancel_name);
     widgets << new AFilePicker(ivec2(15, wh3 + wm->font()->Size().y + 10), filename_id, 8);
-    return wm->CreateWindow(ivec2(0), ivec2(-1), FILENAME_str, widgets);
+    return wm->CreateWindow(ivec2::zero, ivec2(-1), FILENAME_str, widgets);
 }
 
 
