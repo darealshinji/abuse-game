@@ -2318,7 +2318,7 @@ public:
             m_screen = new Texture(ivec2(xres, yres), PixelFormat::Y_8);
 
             m_shader = Shader::Create(LOLFX_RESOURCE_NAME(blit));
-            m_coord = m_shader->GetAttribLocation("in_Position", VertexUsage::Position, 0);
+            m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
             m_screen_uni = m_shader->GetUniformLocation("u_Screen");
             m_palette_uni = m_shader->GetUniformLocation("u_Palette");
 
