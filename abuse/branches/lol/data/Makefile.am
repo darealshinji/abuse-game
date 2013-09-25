@@ -1,7 +1,7 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-EXTRA_DIST = \
+EXTRA_DIST += \
     $(demos) $(music) $(lisp) $(extra) $(art) $(levels) $(doc) $(sound)
 
 install-data-local:
