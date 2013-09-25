@@ -169,25 +169,23 @@ void sound_effect::play(int volume, int pitch, int panpot)
 
 // Play music using SDL_Mixer
 
-song::song(char const * filename)
+song::song(String const &filename)
 {
     data = NULL;
-    Name = strdup(filename);
+    m_name = filename;
     song_id = 0;
 
     rw = NULL;
     music = NULL;
 
-    char realname[255];
-    strcpy(realname, get_filename_prefix());
-    strcat(realname, filename);
+    String realname = String::Printf("%s%s", get_filename_prefix(), m_name.C());
 
     uint32_t data_size;
-    data = load_hmi(realname, data_size);
+    data = load_hmi(realname.C(), data_size);
 
     if (!data)
     {
-        printf("Sound: ERROR - could not load %s\n", realname);
+        printf("Sound: ERROR - could not load %s\n", realname.C());
         return;
     }
 
@@ -197,7 +195,7 @@ song::song(char const * filename)
     if (!music)
     {
         printf("Sound: ERROR - %s while loading %s\n",
-               Mix_GetError(), realname);
+               Mix_GetError(), realname.C());
         return;
     }
 }
@@ -207,7 +205,6 @@ song::~song()
     if(playing())
         stop();
     free(data);
-    free(Name);
 
     Mix_FreeMusic(music);
     SDL_FreeRW(rw);
