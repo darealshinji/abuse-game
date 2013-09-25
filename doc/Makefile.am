@@ -1,4 +1,6 @@
 
+include $(top_srcdir)/build/autotools/common.am
+
 man_MANS = abuse.6 abuse-tool.6
 
 assetdir = $(sharedir)/asset
