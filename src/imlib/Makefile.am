@@ -1,4 +1,6 @@
-## Process this file with automake to produce Makefile.in
+
+include $(top_srcdir)/build/autotools/common.am
+
 noinst_LIBRARIES = libimlib.a
 
 libimlib_a_SOURCES = \
@@ -27,6 +29,5 @@ libimlib_a_SOURCES = \
     jdir.h visobj.h \
     $(NULL)
 
-INCLUDES = -I$(srcdir) -I$(srcdir)/.. $(SDL_CFLAGS)
+libimlib_a_CPPFLAGS = -I$(srcdir) -I$(srcdir)/.. $(AM_CPPFLAGS)
 
-CPPFLAGS = @CPPFLAGS@ -DNO_CHECK

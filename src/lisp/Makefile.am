@@ -1,4 +1,6 @@
-## Process this file with automake to produce Makefile.in
+
+include $(top_srcdir)/build/autotools/common.am
+
 noinst_LIBRARIES = liblisp.a
 
 liblisp_a_SOURCES = \
@@ -9,6 +11,5 @@ liblisp_a_SOURCES = \
     stack.h symbols.h \
     $(NULL)
 
-INCLUDES = -I$(srcdir) -I$(srcdir)/../ -I$(srcdir)/../imlib $(SDL_CFLAGS)
+liblisp_a_CPPFLAGS = -I$(srcdir) -I$(srcdir)/../ -I$(srcdir)/../imlib $(AM_CPPFLAGS)
 
-CPPFLAGS = @CPPFLAGS@ -DNO_CHECK
