@@ -1,5 +1,5 @@
 
-DEFS = @DEFS@
+include $(top_srcdir)/build/autotools/common.am
 
 noinst_LIBRARIES = libsdlport.a
 
@@ -14,7 +14,5 @@ libsdlport_a_SOURCES = \
     $(NULL)
 libsdlport_a_LIBADD =
 
-INCLUDES = -I$(srcdir)/../ -I$(srcdir)/../imlib $(SDL_CFLAGS)
-
-CPPFLAGS = @CPPFLAGS@ -DNO_CHECK -DASSETDIR=\"$(assetdir)\" -DHAVE_OPENGL
+libsdlport_a_CPPFLAGS = -I$(srcdir)/../ -I$(srcdir)/../imlib $(AM_CPPFLAGS) -DASSETDIR=\"$(assetdir)\"
 
