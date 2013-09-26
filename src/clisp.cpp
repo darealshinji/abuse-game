@@ -13,28 +13,27 @@
 #endif
 
 #include <string.h>
-#include <unistd.h>
 
 #include "common.h"
 
 #include "sdlport/joy.h"
 
 #include "ant.h"
-#include "lisp.h"
+#include "lisp/lisp.h"
 #include "game.h"
 #include "dev.h"
-#include "pcxread.h"
+#include "imlib/pcxread.h"
 #include "menu.h"
-#include "dprint.h"
+#include "lisp/dprint.h"
+#include "lisp/lisp_gc.h"
 #include "clisp.h"
 #include "chars.h"
-#include "lisp_gc.h"
 #include "cop.h"
 #include "loadgame.h"
 #include "nfserver.h"
 #include "demo.h"
 #include "chat.h"
-#include "jdir.h"
+#include "imlib/jdir.h"
 #include "netcfg.h"
 
 #define ENGINE_MAJOR 1
