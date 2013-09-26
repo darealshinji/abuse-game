@@ -1,0 +1,389 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\lisp\lisp.cpp">
+      <Filter>lisp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lisp\lisp_gc.cpp">
+      <Filter>lisp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lisp\lisp_opt.cpp">
+      <Filter>lisp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lisp\trig.cpp">
+      <Filter>lisp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\engine.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\fileman.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\gclient.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\gserver.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\netdrv.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\netfile.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\sock.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\tcpip.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\undrv.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\dprint.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sdlport\event.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\filesel.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\filter.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\fonts.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\guistat.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\image.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\include.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\input.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\keys.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\palette.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\pcxread.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\pmenu.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\scroller.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\specs.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\sprite.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\status.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\supmorph.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\tools.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\transimage.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\video.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\window.cpp">
+      <Filter>imlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imlib\event.cpp">
+      <Filter>sdlport</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sdlport\hmi.cpp">
+      <Filter>sdlport</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sdlport\jdir.cpp">
+      <Filter>sdlport</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sdlport\joystick.cpp">
+      <Filter>sdlport</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sdlport\setup.cpp">
+      <Filter>sdlport</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sdlport\sound.cpp">
+      <Filter>sdlport</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sdlport\video.cpp">
+      <Filter>sdlport</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\volumewindow.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <clCompile Include="src/ability.cpp" />
+    <clCompile Include="src/ant.cpp" />
+    <clCompile Include="src/automap.cpp" />
+    <clCompile Include="src/cache.cpp" />
+    <clCompile Include="src/chars.cpp" />
+    <clCompile Include="src/chat.cpp" />
+    <clCompile Include="src/clisp.cpp" />
+    <clCompile Include="src/collide.cpp" />
+    <clCompile Include="src/compiled.cpp" />
+    <clCompile Include="src/configuration.cpp" />
+    <clCompile Include="src/console.cpp" />
+    <clCompile Include="src/control.cpp" />
+    <clCompile Include="src/cop.cpp" />
+    <clCompile Include="src/crc.cpp" />
+    <clCompile Include="src/demo.cpp" />
+    <clCompile Include="src/dev.cpp" />
+    <clCompile Include="src/devsel.cpp" />
+    <clCompile Include="src/director.cpp" />
+    <clCompile Include="src/endgame.cpp" />
+    <clCompile Include="src/extend.cpp" />
+    <clCompile Include="src/fnt6x13.cpp" />
+    <clCompile Include="src/game.cpp" />
+    <clCompile Include="src/gamma.cpp" />
+    <clCompile Include="src/go.cpp" />
+    <clCompile Include="src/gui.cpp" />
+    <clCompile Include="src/help.cpp" />
+    <clCompile Include="src/innet.cpp" />
+    <clCompile Include="src/intsect.cpp" />
+    <clCompile Include="src/items.cpp" />
+    <clCompile Include="src/lcache.cpp" />
+    <clCompile Include="src/level.cpp" />
+    <clCompile Include="src/light.cpp" />
+    <clCompile Include="src/loader2.cpp" />
+    <clCompile Include="src/loadgame.cpp" />
+    <clCompile Include="src/menu.cpp" />
+    <clCompile Include="src/morpher.cpp" />
+    <clCompile Include="src/netcfg.cpp" />
+    <clCompile Include="src/nfclient.cpp" />
+    <clCompile Include="src/objects.cpp" />
+    <clCompile Include="src/old.nfclient.cpp" />
+    <clCompile Include="src/old.nfserver.cpp" />
+    <clCompile Include="src/old_server.cpp" />
+    <clCompile Include="src/particle.cpp" />
+    <clCompile Include="src/points.cpp" />
+    <clCompile Include="src/profile.cpp" />
+    <clCompile Include="src/property.cpp" />
+    <clCompile Include="src/sensor.cpp" />
+    <clCompile Include="src/seq.cpp" />
+    <clCompile Include="src/server2.cpp" />
+    <clCompile Include="src/smallfnt.cpp" />
+    <clCompile Include="src/specache.cpp" />
+    <clCompile Include="src/statbar.cpp" />
+    <clCompile Include="src/transp.cpp" />
+    <clCompile Include="src/unixnfc.cpp" />
+    <clCompile Include="src/view.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\lisp\lisp_opt.h">
+      <Filter>lisp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lisp\lisp.h">
+      <Filter>lisp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lisp\lisp_gc.h">
+      <Filter>lisp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lisp\symbols.h">
+      <Filter>lisp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lisp\stack.h">
+      <Filter>lisp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\engine.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\fileman.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\gclient.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\ghandler.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\gserver.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\netdrv.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\netfile.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\sock.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\tcpip.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\undrv.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\dprint.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\event.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\filesel.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\filter.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\guistat.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\fonts.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\image.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\include.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\input.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\jdir.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\keys.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\palette.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\pcxread.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\pmenu.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\scroller.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\specs.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\sprite.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\status.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\supmorph.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\tools.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\transimage.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\video.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\visobj.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imlib\window.h">
+      <Filter>imlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sdlport\hmi.h">
+      <Filter>sdlport</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sdlport\joy.h">
+      <Filter>sdlport</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sdlport\setup.h">
+      <Filter>sdlport</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sdlport\sound.h">
+      <Filter>sdlport</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\volumewindow.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="src/ability.h" />
+    <ClInclude Include="src/ant.h" />
+    <ClInclude Include="src/automap.h" />
+    <ClInclude Include="src/cache.h" />
+    <ClInclude Include="src/chars.h" />
+    <ClInclude Include="src/chat.h" />
+    <ClInclude Include="src/clisp.h" />
+    <ClInclude Include="src/common.h" />
+    <ClInclude Include="src/compiled.h" />
+    <ClInclude Include="src/configuration.h" />
+    <ClInclude Include="src/console.h" />
+    <ClInclude Include="src/control.h" />
+    <ClInclude Include="src/cop.h" />
+    <ClInclude Include="src/crc.h" />
+    <ClInclude Include="src/demo.h" />
+    <ClInclude Include="src/dev.h" />
+    <ClInclude Include="src/devsel.h" />
+    <ClInclude Include="src/director.h" />
+    <ClInclude Include="src/extend.h" />
+    <ClInclude Include="src/game.h" />
+    <ClInclude Include="src/gamma.h" />
+    <ClInclude Include="src/go.h" />
+    <ClInclude Include="src/gui.h" />
+    <ClInclude Include="src/help.h" />
+    <ClInclude Include="src/id.h" />
+    <ClInclude Include="src/intsect.h" />
+    <ClInclude Include="src/items.h" />
+    <ClInclude Include="src/lcache.h" />
+    <ClInclude Include="src/level.h" />
+    <ClInclude Include="src/light.h" />
+    <ClInclude Include="src/loader2.h" />
+    <ClInclude Include="src/loadgame.h" />
+    <ClInclude Include="src/menu.h" />
+    <ClInclude Include="src/morpher.h" />
+    <ClInclude Include="src/netcfg.h" />
+    <ClInclude Include="src/netface.h" />
+    <ClInclude Include="src/nfclient.h" />
+    <ClInclude Include="src/nfserver.h" />
+    <ClInclude Include="src/objects.h" />
+    <ClInclude Include="src/particle.h" />
+    <ClInclude Include="src/points.h" />
+    <ClInclude Include="src/profile.h" />
+    <ClInclude Include="src/property.h" />
+    <ClInclude Include="src/seq.h" />
+    <ClInclude Include="src/server2.h" />
+    <ClInclude Include="src/specache.h" />
+    <ClInclude Include="src/statbar.h" />
+    <ClInclude Include="src/transp.h" />
+    <ClInclude Include="src/view.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="lisp">
+      <UniqueIdentifier>{75c9b970-7873-493a-af81-9c2b5f0766e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{2a4ffe81-9731-451a-be0c-05e09934a0b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sdlport">
+      <UniqueIdentifier>{0e56ecf6-f1ae-4267-abfa-380149fcb0f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imlib">
+      <UniqueIdentifier>{e321d3b9-59f3-4fc3-8a95-2d82c6baa0d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui">
+      <UniqueIdentifier>{86df6d8d-4640-4849-8407-ad1914d082f8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

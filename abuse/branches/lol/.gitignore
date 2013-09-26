@@ -1,3 +1,4 @@
+# Autotools cruft
 Makefile.in
 Makefile
 aclocal.m4
@@ -14,6 +15,9 @@ stamp-*
 .auto
 .deps
 .dirstamp
+# Visual Studio cruft
+*.vcxproj.user
+# Our binaries
 src/abuse
 src/abuse-tool
 doc/abuse.6

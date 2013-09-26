@@ -11,8 +11,8 @@
 #ifndef __SEQUENCE_HPP_
 #define __SEQUENCE_HPP_
 
-#include "image.h"
-#include "transimage.h"
+#include "imlib/image.h"
+#include "imlib/transimage.h"
 #include "items.h"
 #include "cache.h"
 

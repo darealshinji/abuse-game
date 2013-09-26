@@ -14,7 +14,7 @@
 
 #include <cstring>
 
-#include "lisp.h"
+#include "lisp/lisp.h"
 
 using namespace std;
 

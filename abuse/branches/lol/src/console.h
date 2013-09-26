@@ -11,7 +11,7 @@
 #ifndef __CONSOLE_HPP_
 #define __CONSOLE_HPP_
 
-#include "window.h"
+#include "imlib/window.h"
 
 class console
 {
