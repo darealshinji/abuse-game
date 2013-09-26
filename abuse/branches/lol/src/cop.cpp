@@ -14,8 +14,9 @@
 
 #include "common.h"
 
-#include "lisp.h"
-#include "lisp_gc.h"
+#include "lisp/lisp.h"
+#include "lisp/lisp_gc.h"
+
 #include "compiled.h"
 #include "objects.h"
 #include "level.h"

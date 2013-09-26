@@ -11,8 +11,8 @@
 #ifndef __FONTS_HPP_
 #define __FONTS_HPP_
 
-#include "image.h"
-#include "transimage.h"
+#include "imlib/image.h"
+#include "imlib/transimage.h"
 
 class JCFont
 {

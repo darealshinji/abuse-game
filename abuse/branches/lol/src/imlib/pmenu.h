@@ -11,7 +11,7 @@
 #ifndef __PMENU_HPP_
 #define __PMENU_HPP_
 
-#include "input.h"
+#include "imlib/input.h"
 
 class psub_menu;
 

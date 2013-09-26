@@ -16,7 +16,7 @@
 
 #include "common.h"
 
-#include "input.h"
+#include "imlib/input.h"
 
 void AButton::remap(Filter *f)
 {

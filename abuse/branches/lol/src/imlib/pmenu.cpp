@@ -16,7 +16,7 @@
 
 #include "common.h"
 
-#include "pmenu.h"
+#include "imlib/pmenu.h"
 
 void pmenu::move(int new_x, int new_y)
 {

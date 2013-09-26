@@ -1,7 +1,7 @@
 //
 // Abuse Tool - package manager for Abuse format
 //
-// Copyright: (c) 2011 Sam Hocevar <sam@hocevar.net>
+// Copyright: (c) 2011-2013 Sam Hocevar <sam@hocevar.net>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To
 //   Public License, Version 2, as published by Sam Hocevar. See
@@ -16,9 +16,11 @@
 #include <cstdio>
 
 #include "common.h"
-#include "specs.h"
-#include "image.h"
-#include "pcxread.h"
+
+#include "imlib/specs.h"
+#include "imlib/image.h"
+#include "imlib/pcxread.h"
+
 #include "crc.h"
 
 static void Usage();

@@ -11,7 +11,7 @@
 #ifndef __NETCFG_HPP_
 #define __NETCFG_HPP_
 
-#include "window.h"
+#include "imlib/window.h"
 
 class net_configuration
 {

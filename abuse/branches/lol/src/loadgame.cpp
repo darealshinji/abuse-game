@@ -16,15 +16,16 @@
 
 #include "common.h"
 
-#include "game.h"
+#include "lisp/lisp.h"
 
-#include "specs.h"
-#include "window.h"
+#include "imlib/specs.h"
+#include "imlib/window.h"
+#include "imlib/input.h"
+#include "imlib/fonts.h"
+#include "imlib/dprint.h"
+
+#include "game.h"
 #include "id.h"
-#include "input.h"
-#include "fonts.h"
-#include "lisp.h"
-#include "dprint.h"
 #include "cache.h"
 #include "gui.h"
 #include "dev.h"

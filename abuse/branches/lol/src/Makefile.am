@@ -1,9 +1,9 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-SUBDIRS = lisp net imlib sdlport
-
 bin_PROGRAMS = abuse abuse-tool
+
+noinst_LIBRARIES = libabuse.a
 
 abuse_SOURCES = \
     common.h \
@@ -63,20 +63,64 @@ abuse_SOURCES = \
     \
     ui/volumewindow.cpp ui/volumewindow.h \
     $(NULL)
-
-EXTRALIBS = lisp/liblisp.a sdlport/libsdlport.a imlib/libimlib.a net/libnet.a
-EXTRAINCLUDES = -I$(srcdir) -I$(srcdir)/lisp -I$(srcdir)/imlib -I$(srcdir)/net
-
-abuse_CPPFLAGS = $(EXTRAINCLUDES) $(AM_CPPFLAGS)
-abuse_LDFLAGS = $(EXTRALIBS) $(AM_LDFLAGS)
+abuse_CPPFLAGS = $(AM_CPPFLAGS)
+abuse_LDFLAGS = libabuse.a $(AM_LDFLAGS)
 abuse_LDADD = @LOL_LIBS@
-abuse_DEPENDENCIES = $(EXTRALIBS) @LOL_DEPS@
+abuse_DEPENDENCIES = libabuse.a @LOL_DEPS@
 
 abuse_tool_SOURCES = \
     tool/abuse-tool.cpp \
     crc.cpp crc.h
-abuse_tool_CPPFLAGS = $(EXTRAINCLUDES) $(AM_CPPFLAGS)
-abuse_tool_LDFLAGS = $(EXTRALIBS) $(AM_LDFLAGS)
+abuse_tool_CPPFLAGS = $(AM_CPPFLAGS)
+abuse_tool_LDFLAGS = libabuse.a $(AM_LDFLAGS)
 abuse_tool_LDADD = @LOL_LIBS@
-abuse_tool_DEPENDENCIES = $(EXTRALIBS) @LOL_DEPS@
+abuse_tool_DEPENDENCIES = libabuse.a @LOL_DEPS@
+
+libabuse_a_SOURCES = \
+    imlib/filter.cpp imlib/filter.h \
+    imlib/image.cpp imlib/image.h \
+    imlib/transimage.cpp imlib/transimage.h \
+    imlib/input.cpp imlib/input.h \
+    imlib/palette.cpp imlib/palette.h \
+    imlib/include.cpp imlib/include.h \
+    imlib/fonts.cpp imlib/fonts.h \
+    imlib/specs.cpp imlib/specs.h \
+    imlib/supmorph.cpp imlib/supmorph.h \
+    imlib/pcxread.cpp imlib/pcxread.h \
+    imlib/keys.cpp imlib/keys.h \
+    imlib/dprint.cpp imlib/dprint.h \
+    imlib/status.cpp imlib/status.h \
+    imlib/pmenu.cpp imlib/pmenu.h \
+    imlib/scroller.cpp imlib/scroller.h \
+    imlib/filesel.cpp imlib/filesel.h \
+    imlib/tools.cpp imlib/tools.h \
+    imlib/guistat.cpp imlib/guistat.h \
+    imlib/sprite.cpp imlib/sprite.h \
+    imlib/window.cpp imlib/window.h \
+    imlib/video.cpp imlib/video.h \
+    imlib/event.cpp imlib/event.h \
+    imlib/jdir.h imlib/visobj.h \
+    \
+    lisp/lisp.cpp lisp/lisp.h \
+    lisp/lisp_opt.cpp lisp/lisp_opt.h \
+    lisp/lisp_gc.cpp lisp/lisp_gc.h \
+    lisp/trig.cpp \
+    lisp/stack.h lisp/symbols.h \
+    \
+    net/gserver.cpp net/gserver.h \
+    net/gclient.cpp net/gclient.h \
+    net/fileman.cpp net/fileman.h \
+    net/sock.cpp net/sock.h \
+    net/tcpip.cpp net/tcpip.h \
+    net/ghandler.h net/undrv.h \
+    \
+    sdlport/video.cpp \
+    sdlport/event.cpp \
+    sdlport/sound.cpp sdlport/sound.h \
+    sdlport/jdir.cpp \
+    sdlport/joystick.cpp sdlport/joy.h \
+    sdlport/setup.cpp sdlport/setup.h \
+    sdlport/hmi.cpp sdlport/hmi.h \
+    $(NULL)
+libabuse_a_CPPFLAGS = -I$(srcdir) -I$(srcdir)/.. $(AM_CPPFLAGS) -DASSETDIR=\"$(assetdir)\"
 

@@ -11,7 +11,7 @@
 #ifndef __GUI_HPP_
 #define __GUI_HPP_
 
-#include "window.h"
+#include "imlib/window.h"
 
 class AIconButton : public AWidget
 {

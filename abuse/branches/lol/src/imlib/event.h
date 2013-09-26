@@ -26,7 +26,8 @@
 #define RIGHT_BUTTON   2
 #define MIDDLE_BUTTON  4
 
-#include "keys.h"
+#include "imlib/keys.h"
+
 #include "sprite.h"
 
 class AWindow;

@@ -16,12 +16,12 @@
 
 #include "common.h"
 
-#include "video.h"
-#include "image.h"
-#include "input.h"
-#include "event.h"
-#include "filter.h"
-#include "window.h"
+#include "imlib/video.h"
+#include "imlib/image.h"
+#include "imlib/input.h"
+#include "imlib/event.h"
+#include "imlib/filter.h"
+#include "imlib/window.h"
 
 static int jw_left = 3, jw_right = 3, jw_top = 2, jw_bottom = 3;
 

@@ -11,10 +11,11 @@
 #ifndef __TOOLS_HPP_
 #define __TOOLS_HPP_
 
-#include "window.h"
-#include "input.h"
-#include "specs.h"
-#include "scroller.h"
+#include "imlib/window.h"
+#include "imlib/input.h"
+#include "imlib/specs.h"
+#include "imlib/scroller.h"
+
 #include "visobj.h"
 
 class AToolPicker : public AScrollPicker
@@ -48,10 +49,4 @@ private:
 };
 
 #endif
-
-
-
-
-
-
 

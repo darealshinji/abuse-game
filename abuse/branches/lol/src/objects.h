@@ -10,7 +10,9 @@
 
 #ifndef _OBJECTS_HPP_
 #define _OBJECTS_HPP_
-#include "input.h"
+
+#include "imlib/input.h"
+
 #include "chars.h"
 //#include "sound.h"
 #include "morpher.h"

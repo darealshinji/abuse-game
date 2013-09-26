@@ -14,7 +14,7 @@
 
 #include "common.h"
 
-#include "tools.h"
+#include "imlib/tools.h"
 
 AToolPicker::AToolPicker(ivec2 pos, int id,
           int show_h, AVisualObject **Icons, int *Ids, int total_ic,

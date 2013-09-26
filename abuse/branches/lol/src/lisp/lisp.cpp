@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -22,16 +22,16 @@
 
 #define TYPE_CHECKING 1
 
-#include "lisp.h"
-#include "lisp_gc.h"
-#include "symbols.h"
+#include "lisp/lisp.h"
+#include "lisp/lisp_gc.h"
 
+#include "symbols.h"
 #ifdef NO_LIBS
 #   include "fakelib.h"
 #else
-#   include "status.h"
-#   include "specs.h"
-#   include "dprint.h"
+#   include "imlib/status.h"
+#   include "imlib/specs.h"
+#   include "imlib/dprint.h"
 #   include "cache.h"
 #   include "dev.h"
 #endif

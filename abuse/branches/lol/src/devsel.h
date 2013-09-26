@@ -11,7 +11,7 @@
 #ifndef __DEVSCROLL_HPP_
 #define __DEVSCROLL_HPP_
 
-#include "scroller.h"
+#include "imlib/scroller.h"
 
 class ATilePicker : public AScroller
 {

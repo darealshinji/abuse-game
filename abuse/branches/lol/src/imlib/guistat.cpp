@@ -16,9 +16,9 @@
 
 #include "common.h"
 
-#include "input.h"
-#include "status.h"
-#include "guistat.h"
+#include "imlib/input.h"
+#include "imlib/status.h"
+#include "imlib/guistat.h"
 
 class gui_status_node
 {

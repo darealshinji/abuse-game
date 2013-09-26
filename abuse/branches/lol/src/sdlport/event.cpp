@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 2001 Anthony Kruize <trandor@labyrinth.net.au>
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,10 +26,11 @@
 
 #include "common.h"
 
-#include "image.h"
-#include "palette.h"
-#include "video.h"
-#include "event.h"
+#include "imlib/image.h"
+#include "imlib/palette.h"
+#include "imlib/video.h"
+#include "imlib/event.h"
+
 #include "sprite.h"
 #include "game.h"
 
