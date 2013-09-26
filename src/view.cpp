@@ -13,7 +13,7 @@
 #endif
 
 #if defined HAVE_UNISTD_H
-#   include <unistd.h>
+#   include <unistd.h> /* for getlogin() */
 #endif
 
 #include "common.h"
@@ -175,12 +175,14 @@ char const *get_login()
     if (cur_user_name[0])
         return cur_user_name;
 
-#if defined __CELLOS_LV2__
-    /* FIXME: retrieve login name */
-    return "Player";
-#else
+    /* For some reason mingw has getlogin() in its libs but not in unistd.h,
+     * so I check for both to make sure. */
+#if defined HAVE_GETLOGIN && !defined _WIN32
     char const *login = getlogin();
     return login ? login : "unknown";
+#else
+    /* FIXME: retrieve login name */
+    return "Player";
 #endif
 }
 

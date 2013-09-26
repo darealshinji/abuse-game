@@ -2154,7 +2154,7 @@ int Level::save(char const *filename, int save_all)
                 }
             }
             delete bk;
-#if (defined(__MACH__) || !defined(__APPLE__))
+#if defined S_IRUSR && defined S_IRGRP && defined S_IROTH
             chmod( bkname, S_IRWXU | S_IRWXG | S_IRWXO );
 #endif
         }
@@ -2243,7 +2243,7 @@ int Level::save(char const *filename, int save_all)
             }
 
             delete fp;
-#if (defined(__MACH__) || !defined(__APPLE__))
+#if defined S_IRUSR && defined S_IRGRP && defined S_IROTH
             chmod( name, S_IRWXU | S_IRWXG | S_IRWXO );
 #endif
             write_cache_prof_info();

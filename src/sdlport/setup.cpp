@@ -281,7 +281,11 @@ void setup( int argc, char **argv )
         if( (fd = fopen( savedir, "r" )) == NULL )
         {
             // FIXME: Add some error checking here
-            mkdir( savedir, S_IRUSR | S_IWUSR | S_IXUSR );
+#if defined S_IRUSR && defined S_IRGRP && defined S_IROTH
+            mkdir(savedir, S_IRUSR | S_IWUSR | S_IXUSR);
+#else
+            mkdir(savedir);
+#endif
         }
         else
         {

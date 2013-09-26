@@ -24,9 +24,6 @@
 
 #include <cstring>
 
-#include <SDL.h>
-#include <SDL/SDL_mixer.h>
-
 #include "common.h"
 
 #include "imlib/specs.h"
@@ -112,6 +109,7 @@ sound_effect::sound_effect(char const *filename)
     if (!sound_enabled)
         return;
 
+#if defined USE_SDL_MIXER
     jFILE fp(filename, "rb");
     if (fp.open_failure())
         return;
@@ -121,6 +119,7 @@ sound_effect::sound_effect(char const *filename)
     SDL_RWops *rw = SDL_RWFromMem(temp_data, fp.file_size());
     m_chunk = Mix_LoadWAV_RW(rw, 1);
     free(temp_data);
+#endif
 }
 
 //
@@ -139,10 +138,12 @@ sound_effect::~sound_effect()
     // Therefore with SDL_mixer, a sound that has not finished playing
     // on a level load will cut off in the middle. This is most noticable
     // for the button sound of the load savegame dialog.
+#if defined USE_SDL_MIXER
     Mix_FadeOutGroup(-1, 100);
     while (Mix_Playing(-1))
         SDL_Delay(10);
     Mix_FreeChunk(m_chunk);
+#endif
 }
 
 //
@@ -159,12 +160,14 @@ void sound_effect::play(int volume, int pitch, int panpot)
     if (!sound_enabled)
         return;
 
+#if defined USE_SDL_MIXER
     int channel = Mix_PlayChannel(-1, m_chunk, 0);
     if (channel > -1)
     {
         Mix_Volume(channel, volume);
         Mix_SetPanning(channel, panpot, 255 - panpot);
     }
+#endif
 }
 
 
