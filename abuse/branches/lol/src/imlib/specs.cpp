@@ -296,27 +296,35 @@ void jFILE::open_external(char const *filename, char const *mode, int flags)
   int skip_size=0;
   char tmp_name[200];
   if (spec_prefix && filename[0] != '/')
-    sprintf(tmp_name,"%s%s",spec_prefix,filename);
-  else strcpy(tmp_name,filename);
+    sprintf(tmp_name, "%s%s", spec_prefix, filename);
+  else
+    strcpy(tmp_name, filename);
 
 //  int old_mask=umask(S_IRWXU | S_IRWXG | S_IRWXO);
-  if (flags&O_WRONLY)
+  if (flags & O_WRONLY)
   {
-    if ((flags&O_APPEND)==0)
+    if ((flags & O_APPEND) == 0)
     {
-      skip_size=1;
+      skip_size = 1;
       //int errval = unlink(tmp_name);
     }
 
-    flags-=O_WRONLY;
-    flags|=O_CREAT|O_RDWR;
+    flags &= ~O_WRONLY;
+    flags |= O_CREAT | O_RDWR;
 
-    fd=open(tmp_name,flags,S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
-  } else
-    fd=open(tmp_name,flags);
+#if defined S_IRUSR && defined S_IRGRP && defined S_IROTH
+    fd = open(tmp_name, flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+#else
+    fd = open(tmp_name, flags);
+#endif
+  }
+  else
+  {
+    fd = open(tmp_name, flags);
+  }
 
 //  umask(old_mask);
-  if (fd>=0 && !skip_size)
+  if (fd >= 0 && !skip_size)
   {
     file_length=lseek(fd,0,SEEK_END);
     if ((flags&O_APPEND)==0)
