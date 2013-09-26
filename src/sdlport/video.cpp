@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 2001 Anthony Kruize <trandor@labyrinth.net.au>
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,21 +22,12 @@
 #   include "config.h"
 #endif
 
-#include <SDL.h>
-
-#ifdef __APPLE__
-#   include <OpenGL/gl.h>
-#   include <OpenGL/glu.h>
-#else
-#   include <GL/gl.h>
-#   include <GL/glu.h>
-#endif    /* __APPLE__ */
-
 #include "common.h"
 
-#include "filter.h"
-#include "video.h"
-#include "image.h"
+#include "imlib/filter.h"
+#include "imlib/video.h"
+#include "imlib/image.h"
+
 #include "setup.h"
 
 Array<uint8_t> g_screen;

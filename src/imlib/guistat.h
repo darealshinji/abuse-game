@@ -13,8 +13,8 @@
 
 #include <string.h>
 
-#include "status.h"
-#include "window.h"
+#include "imlib/status.h"
+#include "imlib/window.h"
 
 class gui_status_node;
 class gui_status_manager : public status_manager

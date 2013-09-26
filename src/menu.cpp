@@ -16,27 +16,28 @@
 
 #include "common.h"
 
-#include "dev.h"
+#include "lisp/lisp.h"
+
+#include "imlib/pmenu.h"
+#include "imlib/dprint.h"
+#include "imlib/scroller.h"
+
+#include "net/sock.h"
 
 #include "ui/volumewindow.h"
 
+#include "dev.h"
 #include "menu.h"
-#include "lisp.h"
 #include "game.h"
 #include "game.h"
 #include "id.h"
-#include "pmenu.h"
 #include "gui.h"
 #include "property.h"
 #include "clisp.h"
 #include "gamma.h"
-#include "dprint.h"
 #include "demo.h"
 #include "loadgame.h"
-#include "scroller.h"
 #include "netcfg.h"
-
-#include "net/sock.h"
 
 extern net_protocol *prot;
 

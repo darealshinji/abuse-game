@@ -13,11 +13,11 @@
 
 #include <stdarg.h>
 
-#include "video.h"
-#include "image.h"
-#include "event.h"
-#include "filter.h"
-#include "fonts.h"
+#include "imlib/video.h"
+#include "imlib/image.h"
+#include "imlib/event.h"
+#include "imlib/filter.h"
+#include "imlib/fonts.h"
 
 class WindowManager;
 class InputManager;

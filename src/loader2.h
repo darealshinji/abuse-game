@@ -12,9 +12,10 @@
 #define __LOADER_HPP_
 
 #include "lisp/lisp.h"
-#include "sdlport/sound.h"
 
-#include "window.h"
+#include "imlib/window.h"
+
+#include "sdlport/sound.h"
 
 extern class APropertyManager *g_prop;
 

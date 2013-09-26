@@ -11,15 +11,15 @@
 #ifndef __GAME_HPP_
 #define __GAME_HPP_
 
-#include "loader2.h"
+#include "imlib/image.h"
+#include "imlib/video.h"
+#include "imlib/event.h"
+#include "imlib/fonts.h"
+#include "imlib/window.h"
+#include "imlib/filter.h"
 
-#include "image.h"
-#include "video.h"
-#include "event.h"
-#include "fonts.h"
+#include "loader2.h"
 #include "items.h"
-#include "window.h"
-#include "filter.h"
 #include "level.h"
 #include "cache.h"
 #include "director.h"

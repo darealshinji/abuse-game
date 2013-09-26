@@ -14,17 +14,17 @@
 
 #include "common.h"
 
-#include "game.h"
+#include "lisp/lisp.h"
 
-#include "demo.h"
-#include "specs.h"
-#include "window.h"
-#include "dprint.h"
+#include "imlib/specs.h"
+#include "imlib/window.h"
+#include "imlib/dprint.h"
+
 #include "dev.h"
-#include "lisp.h"
 #include "clisp.h"
 #include "netface.h"
-
+#include "game.h"
+#include "demo.h"
 
 demo_manager demo_man;
 ivec2 last_demo_mpos;

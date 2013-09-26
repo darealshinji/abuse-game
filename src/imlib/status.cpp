@@ -16,8 +16,8 @@
 
 #include "common.h"
 
-#include "status.h"
-#include "dprint.h"
+#include "imlib/status.h"
+#include "imlib/dprint.h"
 
 status_manager *stat_man=NULL;
 

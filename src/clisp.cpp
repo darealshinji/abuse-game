@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -14,18 +14,25 @@
 
 #include <string.h>
 
+#if defined HAVE_UNISTD_H
+#   include <unistd.h> /* for getcwd */
+#endif
+
 #include "common.h"
+
+#include "lisp/lisp.h"
+#include "lisp/lisp_gc.h"
+
+#include "imlib/pcxread.h"
+#include "imlib/dprint.h"
+#include "imlib/jdir.h"
 
 #include "sdlport/joy.h"
 
 #include "ant.h"
-#include "lisp/lisp.h"
 #include "game.h"
 #include "dev.h"
-#include "imlib/pcxread.h"
 #include "menu.h"
-#include "lisp/dprint.h"
-#include "lisp/lisp_gc.h"
 #include "clisp.h"
 #include "chars.h"
 #include "cop.h"
@@ -33,7 +40,6 @@
 #include "nfserver.h"
 #include "demo.h"
 #include "chat.h"
-#include "imlib/jdir.h"
 #include "netcfg.h"
 
 #define ENGINE_MAJOR 1
@@ -938,12 +944,12 @@ void *l_caller(long number, void *args)
     } break;
     case 54 :
     {
-#if defined __CELLOS_LV2__
-      /* FIXME: retrieve the PS3 account name */
-      char const *cd = "Player";
-#else
+#if defined HAVE_UNISTD_H
       char cd[150];
       getcwd(cd, 100);
+#else
+      /* FIXME: maybe retrieve the PS3 account name etc.? */
+      char const *cd = "Player";
 #endif
       return LString::Create(cd);
     } break;

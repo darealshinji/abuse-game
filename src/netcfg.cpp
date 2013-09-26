@@ -14,16 +14,15 @@
 
 #include "common.h"
 
-#include "game.h"
-
-#include "netcfg.h"
-#include "input.h"
-#include "cache.h"
-#include "light.h"
-
-#include "dev.h"
+#include "imlib/input.h"
 
 #include "net/sock.h"
+
+#include "game.h"
+#include "netcfg.h"
+#include "cache.h"
+#include "light.h"
+#include "dev.h"
 
 extern char *get_login();
 net_configuration *main_net_cfg = NULL;

@@ -16,7 +16,7 @@
 
 #include "common.h"
 
-#include "fonts.h"
+#include "imlib/fonts.h"
 
 void JCFont::PutString(AImage *screen, ivec2 pos, String const &st, int color)
 {

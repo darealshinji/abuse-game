@@ -11,8 +11,8 @@
 #ifndef VIS_OBJECT_HPP
 #define VIS_OBJECT_HPP
 
-#include "window.h"
-#include "filter.h"
+#include "imlib/window.h"
+#include "imlib/filter.h"
 
 class AVisualObject
 {

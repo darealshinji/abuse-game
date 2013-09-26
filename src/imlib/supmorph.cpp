@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -14,11 +14,11 @@
 
 #include "common.h"
 
-#include "supmorph.h"
-#include "specs.h"
-#include "transimage.h"
-#include "filter.h"
-#include "video.h"
+#include "imlib/supmorph.h"
+#include "imlib/specs.h"
+#include "imlib/transimage.h"
+#include "imlib/filter.h"
+#include "imlib/video.h"
 
 #define p_swap(x,y) { x^=y; y^=x; x^=y; }
 #define p_dist(x1,y1,x2,y2) (((int)(x1)-(int)x2)*((int)(x1)-(int)x2)+      \

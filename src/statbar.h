@@ -11,11 +11,11 @@
 #ifndef __STAT_BAR_H_
 #define __STAT_BAR_H_
 
+#include "imlib/image.h"
 
 class view;
 
 #define TOTAL_WEAPONS 8
-#include "image.h"
 
 class status_bar
 {

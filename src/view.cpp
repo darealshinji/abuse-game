@@ -12,20 +12,23 @@
 #   include "config.h"
 #endif
 
-#include <unistd.h>
+#if defined HAVE_UNISTD_H
+#   include <unistd.h>
+#endif
 
 #include "common.h"
 
-#include "game.h"
+#include "lisp/lisp.h"
 
+#include "imlib/window.h"
+#include "imlib/scroller.h"
+#include "imlib/dprint.h"
+
+#include "game.h"
 #include "view.h"
-#include "lisp.h"
-#include "window.h"
 #include "configuration.h"
-#include "scroller.h"
 #include "id.h"
 #include "dev.h"
-#include "dprint.h"
 #include "transp.h"
 #include "clisp.h"
 #include "demo.h"

@@ -21,16 +21,17 @@
 
 #include "common.h"
 
-#include "cache.h"
-#include "lisp.h"
-#include "video.h"
-#include "dprint.h"
+#include "lisp/lisp.h"
+#include "lisp/lisp_gc.h"
+
+#include "imlib/video.h"
+#include "imlib/dprint.h"
+#include "imlib/status.h"
+
 #include "lcache.h"
-#include "status.h"
+#include "cache.h"
 #include "game.h"
-#include "lisp_gc.h"
 #include "level.h"
-#include "status.h"
 #include "crc.h"
 #include "dev.h"
 #include "specache.h"

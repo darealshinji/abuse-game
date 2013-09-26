@@ -23,24 +23,26 @@
 
 #include "common.h"
 
+#include "lisp/lisp.h"
+#include "lisp/lisp_gc.h"
+
+#include "imlib/dprint.h"
+#include "imlib/status.h"
+#include "imlib/pcxread.h"
+
 #include "light.h"
 #include "level.h"
 #include "game.h"
 #include "intsect.h"
-#include "lisp.h"
-#include "dprint.h"
 #include "particle.h"
 #include "objects.h"
 #include "clisp.h"
-#include "status.h"
 #include "dev.h"
 #include "demo.h"
-#include "pcxread.h"
 #include "profile.h"
 #include "statbar.h"
 #include "cop.h"
 #include "nfserver.h"
-#include "lisp_gc.h"
 
 Level *g_current_level;
 

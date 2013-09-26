@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -16,19 +16,21 @@
 
 #include "common.h"
 
+#include "lisp/lisp.h"
+#include "lisp/lisp_gc.h"
+
+#include "imlib/pmenu.h"
+#include "imlib/dprint.h"
+
 #include "menu.h"
-#include "lisp.h"
 #include "game.h"
 #include "game.h"
 #include "id.h"
-#include "pmenu.h"
 #include "gui.h"
 #include "property.h"
 #include "dev.h"
 #include "clisp.h"
-#include "dprint.h"
 #include "director.h"
-#include "lisp_gc.h"
 
 extern Palette *old_pal;
 

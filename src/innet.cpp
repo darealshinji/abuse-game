@@ -16,21 +16,22 @@
 
 #include "common.h"
 
-#include "demo.h"
-#include "specs.h"
-#include "level.h"
-#include "game.h"
-#include "dev.h"
-#include "netface.h"
+#include "imlib/specs.h"
+#include "imlib/dprint.h"
 
-#if HAVE_NETWORK
-#   include "fileman.h"
-#endif
 #include "net/sock.h"
 #include "net/ghandler.h"
 #include "net/gserver.h"
 #include "net/gclient.h"
-#include "dprint.h"
+
+#include "demo.h"
+#include "level.h"
+#include "game.h"
+#include "dev.h"
+#if HAVE_NETWORK
+#   include "fileman.h"
+#endif
+#include "netface.h"
 #include "netcfg.h"
 
 /*

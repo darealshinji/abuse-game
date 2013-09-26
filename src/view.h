@@ -11,8 +11,9 @@
 #ifndef _VIEW_HPP_
 #define _VIEW_HPP_
 
+#include "imlib/window.h"
+
 #include "light.h"
-#include "window.h"
 
 class object_node;
 class GameObject;

@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -14,11 +14,14 @@
 
 #include <sys/types.h>
 #include <fcntl.h>
-#include <unistd.h>
+#if defined HAVE_UNISTD_H
+#   include <unistd.h>
+#endif
 
-#include "specs.h"
+#include "imlib/specs.h"
+#include "imlib/dprint.h"
+
 #include "nfserver.h"
-#include "dprint.h"
 #include "crc.h"
 #include "cache.h"
 

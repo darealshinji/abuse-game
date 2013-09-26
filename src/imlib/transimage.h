@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 1995 Crack dot Com
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This software was released into the Public Domain. As with most public
  *  domain software, no warranty is made or implied by Crack dot Com, by
@@ -11,9 +11,9 @@
 #ifndef __TIMAGE_HPP__
 #define __TIMAGE_HPP__
 
-#include "image.h"
-#include "palette.h"
-#include "filter.h"
+#include "imlib/image.h"
+#include "imlib/palette.h"
+#include "imlib/filter.h"
 
 /*  Data is stored in the following format:
  *

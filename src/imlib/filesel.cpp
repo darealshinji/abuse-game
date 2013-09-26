@@ -12,13 +12,16 @@
 #   include "config.h"
 #endif
 
-#include <unistd.h>
+#if defined HAVE_UNISTD_H
+#   include <unistd.h>
+#endif
 
 #include "common.h"
 
-#include "filesel.h"
-#include "input.h"
-#include "scroller.h"
+#include "imlib/filesel.h"
+#include "imlib/input.h"
+#include "imlib/scroller.h"
+
 #include "jdir.h"
 
 class AFilePicker : public AScrollPicker

@@ -14,10 +14,10 @@
 
 #include "common.h"
 
-#include "game.h"
+#include "imlib/window.h"
 
+#include "game.h"
 #include "profile.h"
-#include "window.h"
 #include "property.h"
 #include "objects.h"
 

@@ -19,9 +19,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <unistd.h>
+#if defined HAVE_UNISTD_H
+#   include <unistd.h>
+#endif
 #include <sys/fcntl.h>
 #include <fcntl.h>
+
+#include "imlib/window.h"
 
 #include "netface.h"
 #include "nfserver.h"
@@ -30,7 +34,6 @@
 #include "level.h"
 #include "server2.h"
 #include "game.h"
-#include "window.h"
 
 extern char lsf[256];
 

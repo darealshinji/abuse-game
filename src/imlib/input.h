@@ -11,8 +11,8 @@
 #ifndef __INPUT_HPP_
 #define __INPUT_HPP_
 
-#include "window.h"
-#include "filter.h"
+#include "imlib/window.h"
+#include "imlib/filter.h"
 
 extern WindowManager *wm; /* FIXME: get rid of this if possible */
 

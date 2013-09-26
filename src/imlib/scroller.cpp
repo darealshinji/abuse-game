@@ -14,10 +14,10 @@
 
 #include "common.h"
 
-#include "scroller.h"
+#include "imlib/scroller.h"
+
 #define HS_ICON_W 10
 #define HS_ICON_H 8
-
 
 uint8_t const hs_left_arrow[10*8]={
     0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,

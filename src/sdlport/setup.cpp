@@ -1,7 +1,7 @@
 /*
  *  Abuse - dark 2D side-scrolling platform game
  *  Copyright (c) 2001 Anthony Kruize <trandor@labyrinth.net.au>
- *  Copyright (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
+ *  Copyright (c) 2005-2013 Sam Hocevar <sam@hocevar.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,20 +26,14 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <signal.h>
+
 #include <SDL.h>
-#ifdef __APPLE__
-#   include <Carbon/Carbon.h>
-#   include <OpenGL/gl.h>
-#   include <OpenGL/glu.h>
-#else
-#   include <GL/gl.h>
-#   include <GL/glu.h>
-#endif    /* __APPLE__ */
 
 #include "common.h"
 
-#include "specs.h"
-#include "keys.h"
+#include "imlib/specs.h"
+#include "imlib/keys.h"
+
 #include "setup.h"
 
 flags_struct flags;
@@ -66,7 +60,6 @@ void showHelp()
     printf( "** Abuse-SDL Options **\n" );
     printf( "  -datadir <arg>    Set the location of the game data to <arg>\n" );
     printf( "  -fullscreen       Enable fullscreen mode\n" );
-    printf( "  -antialias        Enable anti-aliasing\n" );
     printf( "  -h, --help        Display this text\n" );
     printf( "  -mono             Disable stereo sound\n" );
     printf( "  -nosound          Disable sound\n" );
@@ -93,7 +86,6 @@ void createRCFile( char *rcfile )
         #endif
         fputs( "; Use mono audio only\nmono=0\n\n", fd );
         fputs( "; Grab the mouse to the window\ngrabmouse=0\n\n", fd );
-        fputs( "; Use anti-aliasing\nantialias=1\n\n", fd );
         fputs( "; Disable the SDL parachute in the case of a crash\nnosdlparachute=0\n\n", fd );
         fputs( "; Key mappings\n", fd );
         fputs( "left=LEFT\nright=RIGHT\nup=UP\ndown=DOWN\n", fd );
@@ -137,14 +129,6 @@ void readRCFile()
             {
                 result = strtok( NULL, "\n" );
                 flags.grabmouse = atoi( result );
-            }
-            else if( strcasecmp( result, "antialias" ) == 0 )
-            {
-                result = strtok( NULL, "\n" );
-                if( atoi( result ) )
-                {
-                    flags.antialias = GL_LINEAR;
-                }
             }
             else if( strcasecmp( result, "nosdlparachute" ) == 0 )
             {
@@ -233,10 +217,6 @@ void parseCommandLine( int argc, char **argv )
         {
             flags.nosound = 1;
         }
-        else if( !strcasecmp( argv[ii], "-antialias" ) )
-        {
-            flags.antialias = GL_LINEAR;
-        }
         else if( !strcasecmp( argv[ii], "-mono" ) )
         {
             flags.mono = 1;
@@ -270,7 +250,6 @@ void setup( int argc, char **argv )
     flags.nosdlparachute    = 0;            // SDL error handling
     flags.xres = xres        = 320;            // Default window width
     flags.yres = yres        = 200;            // Default window height
-    flags.antialias            = GL_NEAREST;    // Don't anti-alias
     keys.up                    = key_value( "UP" );
     keys.down                = key_value( "DOWN" );
     keys.left                = key_value( "LEFT" );

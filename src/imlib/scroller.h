@@ -11,7 +11,7 @@
 #ifndef _SCROLLER_HPP_
 #define _SCROLLER_HPP_
 
-#include "input.h"
+#include "imlib/input.h"
 
 class AScroller : public AWidget
 {

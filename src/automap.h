@@ -11,7 +11,8 @@
 #ifndef __AUTOMAP_HPP_
 #define __AUTOMAP_HPP_
 
-#include "window.h"
+#include "imlib/window.h"
+
 #include "level.h"
 
 class automap
@@ -20,16 +21,16 @@ class automap
   Level *cur_lev;
   int tick,w,h;                // used to draw your position as a blinking spot
   long old_dx,old_dy;
-public :
+
+public:
   automap(Level *l, int width, int height);
   void toggle_window();
   void handle_event(Event &ev);
   void draw();
   ~automap() { if (automap_window) toggle_window(); }
-} ;
+};
 
 extern automap *current_automap;
 
 #endif
-
 
