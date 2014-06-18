@@ -2307,9 +2307,9 @@ public:
         Entity::TickGame(seconds);
     }
 
-    virtual void TickDraw(float seconds)
+    virtual void TickDraw(float seconds, Scene &scene)
     {
-        Entity::TickDraw(seconds);
+        Entity::TickDraw(seconds, scene);
 
         /* Initialise GPU data */
         if (!m_screen)
@@ -2345,8 +2345,8 @@ public:
         }
 
         m_shader->Bind();
-        m_shader->SetUniform(m_palette_uni, m_palette->GetTexture(), 0);
-        m_shader->SetUniform(m_screen_uni, m_screen->GetTexture(), 1);
+        m_shader->SetUniform(m_palette_uni, m_palette->GetTextureUniform(), 0);
+        m_shader->SetUniform(m_screen_uni, m_screen->GetTextureUniform(), 1);
         m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->Bind();
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
