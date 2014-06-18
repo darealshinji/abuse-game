@@ -22,7 +22,11 @@
 #   include "config.h"
 #endif
 
-#include <SDL.h>
+#if defined HAVE_SDL_SDL_H
+#   include <SDL/SDL.h>
+#else
+#   include <SDL.h>
+#endif
 
 #include "common.h"
 
