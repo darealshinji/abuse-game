@@ -126,7 +126,7 @@ dnl doesn't seem to work this way.
 AC_MSG_CHECKING(for OpenGL support)
 have_opengl=no
 AC_TRY_COMPILE([
-    #ifdef WIN32
+    #if defined(_WIN32)
     #include <windows.h>
     #elif defined(__APPLE__) && defined(__MACH__)
 /*    #include <OpenGL/gl.h>*/
