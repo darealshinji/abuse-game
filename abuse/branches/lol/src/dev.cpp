@@ -1351,7 +1351,7 @@ void dev_controll::make_ai_window(GameObject *o)
                                       (double)o->get_var_by_name(figures[o->otype]->fields[i]->real_name, er));
             wh += th;
         }
-        widgets << new AButton(vec2(wl, owh - 20), DEV_AI_OK, cache.img(dev_ok));
+        widgets << new AButton(ivec2(wl, owh - 20), DEV_AI_OK, cache.img(dev_ok));
     }
     else
     {

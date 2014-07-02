@@ -290,7 +290,7 @@ void net_configuration::error(char const *message)
         by=y+ns_h/2+fnt->Size().y*3;
 
     AWidgetList sb;
-    sb << new AButton(vec2(bx, by), NET_SERVER, ok);
+    sb << new AButton(ivec2(bx, by), NET_SERVER, ok);
 
     InputManager inm(main_screen, sb);
     inm.allow_no_selections();
