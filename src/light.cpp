@@ -308,7 +308,7 @@ void calc_light_table(Palette *pal)
     {
       ivec3 rgb = (ivec3)pal->GetColor(i);
       rgb = clamp(ivec3(rgb.r / 2, 255 - rgb.g - 30, rgb.b * 3 / 5 + 50), 0, 255);
-      *c = pal->FindClosest(rgb);
+      *c = pal->FindClosest(u8vec3(rgb));
     }
     for (i=0; i<256; i++)
     {

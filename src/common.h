@@ -20,7 +20,7 @@
 //
 // Lol Engine
 //
-#include "core.h"
+#include <lol/main.h>
 using namespace lol;
 
 //
