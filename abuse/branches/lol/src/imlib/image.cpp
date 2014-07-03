@@ -19,7 +19,7 @@
 
 #include "imlib/image.h"
 
-Array<AImage *> image_list; // FIXME: only jwindow.cpp needs this
+array<AImage *> image_list; // FIXME: only jwindow.cpp needs this
 
 image_descriptor::image_descriptor(ivec2 size, int keep_dirties)
 {
@@ -446,7 +446,7 @@ void image_descriptor::AddDirty(ivec2 aa, ivec2 bb)
     if (!(aa < bb))
         return;
 
-    Array<ADirtyRect> to_add;
+    array<ADirtyRect> to_add;
 
     for (int i = m_dirties.Count(); i--; )
     {

@@ -30,7 +30,7 @@
 
 #include "setup.h"
 
-Array<uint8_t> g_screen;
+array<uint8_t> g_screen;
 
 AImage *main_screen = NULL;
 int mouse_xscale, mouse_yscale;

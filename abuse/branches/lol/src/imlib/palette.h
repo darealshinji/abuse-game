@@ -42,8 +42,8 @@ public:
     void FadeTo(int total_fades, int fade_on, u8vec3 dest);
 
 private:
-    Array<u8vec3> m_colors;
-    Array<uint8_t> m_used;
+    array<u8vec3> m_colors;
+    array<uint8_t> m_used;
     int bg;
 
 public :

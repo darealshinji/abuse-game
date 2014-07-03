@@ -31,7 +31,7 @@ public:
     void set(char const *name, char const *def);
 
 private:
-    Array<AProperty *> m_props;
+    array<AProperty *> m_props;
 
     AProperty *find(char const *name);
 };

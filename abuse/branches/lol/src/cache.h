@@ -54,7 +54,7 @@ public:
     int load_crc_file(char const *filename);
 
 private:
-    Array<CrcedFile *> m_files;
+    array<CrcedFile *> m_files;
 };
 
 /* Cache item types:

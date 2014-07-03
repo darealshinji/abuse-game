@@ -28,7 +28,7 @@ public :
     void PutImage(AImage *screen, AImage *im, ivec2 pos);
 
 private:
-    Array<uint8_t> m_table;
+    array<uint8_t> m_table;
 };
 
 class ColorFilter
@@ -46,7 +46,7 @@ public:
     }
 
 private:
-    Array<uint8_t> m_table;
+    array<uint8_t> m_table;
     int m_size;
 };
 

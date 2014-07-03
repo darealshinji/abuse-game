@@ -20,7 +20,7 @@
 
 void image_init();
 void image_uninit();
-extern Array<class AImage *> image_list;
+extern array<class AImage *> image_list;
 
 class ADirtyRect
 {
@@ -85,7 +85,7 @@ public:
         m_bb = size;
     }
 
-    Array<ADirtyRect> m_dirties; /* Is public because of update_dirties() */
+    array<ADirtyRect> m_dirties; /* Is public because of update_dirties() */
 
 private:
     ivec2 m_size, m_aa, m_bb;
@@ -104,7 +104,7 @@ public:
     ivec2 Size() const { return m_size; }
 
 private:
-    Array<uint8_t> m_data;
+    array<uint8_t> m_data;
     ivec2 m_size;
 
 public:
