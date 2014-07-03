@@ -1301,7 +1301,7 @@ void dev_controll::toggle_light_window()
     }
 
     int bh = 16 + 6, bw = 20 + 6, th = wm->font()->Size().y + 4;
-    Array<AButton *> buttons;
+    array<AButton *> buttons;
     buttons << new AButton(ivec2(bw * 0, bh * 0), DEV_LIGHT0, cache.img(light_buttons[0]));
     buttons << new AButton(ivec2(bw * 1, bh * 0), DEV_LIGHT1, cache.img(light_buttons[1]));
     buttons << new AButton(ivec2(bw * 2, bh * 0), DEV_LIGHT2, cache.img(light_buttons[2]));
@@ -1839,7 +1839,7 @@ void dev_controll::handle_event(Event &ev)
 
         int bw=20+6, bh=16+6;
 
-        Array<AButton *> but1;
+        array<AButton *> but1;
         but1 << new AButton(ivec2(bw * 0, 0), DEV_OEDIT_OK, cache.img(dev_ok));
         but1 << new AButton(ivec2(bw * 1, 0), DEV_OEDIT_MOVE, cache.img(dev_move));
         but1 << new AButton(ivec2(bw * 2, 0), DEV_OEDIT_FRONT, cache.img(dev_front));
@@ -1847,7 +1847,7 @@ void dev_controll::handle_event(Event &ev)
         but1 << new AButton(ivec2(bw * 4, 0), DEV_OEDIT_COPY, cache.img(dev_copy));
         but1 << new AButton(ivec2(bw * 0, bh * 1), DEV_OEDIT_DELETE, cache.img(dev_del));
 
-        Array<AButton *> but2;
+        array<AButton *> but2;
         but2 << new AButton(ivec2(bw * 1, bh * 1), DEV_OEDIT_LEFT, cache.img(dev_char_left));
         but2 << new AButton(ivec2(bw * 2, bh * 1), DEV_OEDIT_RIGHT, cache.img(dev_char_right));
         but2 << new AButton(ivec2(bw * 3, bh * 1), DEV_OBJECTS_DELETE, cache.img(dev_objects));
@@ -1879,7 +1879,7 @@ void dev_controll::handle_event(Event &ev)
           edit_object->add_light(edit_light);
           edit_light->known=1;
         }
-        Array<AButton *> buttons;
+        array<AButton *> buttons;
         buttons << new AButton(ivec2(bw * 0, 0), DEV_LEDIT_OK, cache.img(dev_ok));
         buttons << new AButton(ivec2(bw * 1, 0), DEV_LEDIT_MOVE, cache.img(dev_move));
         buttons << new AButton(ivec2(bw * 2, 0), DEV_LEDIT_COPY, cache.img(dev_copy));

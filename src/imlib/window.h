@@ -59,7 +59,7 @@ protected:
     AWindow *m_owner;
 };
 
-class AWidgetList : public Array<AWidget *>
+class AWidgetList : public array<AWidget *>
 {
 };
 

@@ -540,7 +540,7 @@ int get_inputs_from_server(unsigned char *buf)
 
     int total_retry=0;
     AWindow *abort=NULL;
-    Array<Event> input;
+    array<Event> input;
     while (base->input_state!=INPUT_PROCESSING)
     {
       if (!net_installed)

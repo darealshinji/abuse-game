@@ -62,7 +62,7 @@
 
 LOLFX_RESOURCE_DECLARE(blit);
 
-extern Array<uint8_t> g_screen;
+extern array<uint8_t> g_screen;
 
 extern CrcManager *net_crcs;
 
@@ -2505,7 +2505,7 @@ private:
 
     Thread *m_abusethread;
 
-    Array<vec2> m_vertices;
+    array<vec2> m_vertices;
     Texture *m_screen, *m_palette;
     Shader *m_shader;
     ShaderAttrib m_coord;

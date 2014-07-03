@@ -198,8 +198,8 @@ public:
   int    write(bFILE *fp);
   void delete_entries();   // if the directory was created by hand instead of by file
 
-    Array<SpecEntry *> m_entries;
-    Array<uint8_t> m_data;
+    array<SpecEntry *> m_entries;
+    array<uint8_t> m_data;
 };
 
 uint16_t read_uint16(FILE *fp);

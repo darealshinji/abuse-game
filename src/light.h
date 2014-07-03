@@ -56,7 +56,7 @@ public:
     LightPatch *Copy(LightPatch *next);
 
     ivec2 m_p1, m_p2;
-    Array<LightSource *> m_lights;
+    array<LightSource *> m_lights;
 
     /* FIXME: this should disappear */
     LightPatch *m_next;

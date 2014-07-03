@@ -45,7 +45,7 @@ private:
 class AButtonBox : public AWidget
 {
 public:
-    AButtonBox(ivec2 pos, int id, int MaxDown, Array<AButton *> const &buttons = Array<AButton *>());
+    AButtonBox(ivec2 pos, int id, int MaxDown, array<AButton *> const &buttons = array<AButton *>());
     virtual ~AButtonBox();
 
     void add_button(AButton *b);
@@ -62,7 +62,7 @@ public:
     void arrange_up_down();
 
 private:
-    Array<AButton *> m_buttons;
+    array<AButton *> m_buttons;
     int maxdown;
 };
 

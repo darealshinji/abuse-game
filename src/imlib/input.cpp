@@ -50,7 +50,7 @@ AWidget *AButtonBox::find(int id)
     return nullptr;
 }
 
-AButtonBox::AButtonBox(ivec2 pos, int id, int MaxDown, Array<AButton *> const &buttons)
+AButtonBox::AButtonBox(ivec2 pos, int id, int MaxDown, array<AButton *> const &buttons)
 {
     m_pos = pos;
     m_id = id;
