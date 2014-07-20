@@ -50,22 +50,45 @@ AC_CHECK_LIB(socket, socket, LIBS="$LIBS -lsocket")
 AC_CHECK_LIB(nsl, gethostbyname, LIBS="$LIBS -lnsl")
 
 dnl Check for SDL
-SDL_VERSION=1.1.6
-AM_PATH_SDL($SDL_VERSION, :,
-    AC_MSG_ERROR([*** SDL version $SDL_VERSION or above not found!]))
+SDL2_VERSION=2.0.0
+SDL2_FOUND="no"
+SDLPORT_DIR=sdl2port
+AM_PATH_SDL2($SDL2_VERSION, SDL2_FOUND="yes",
+    AC_MSG_ERROR([*** SDL2 version $SDL2_VERSION or above not found!]))
+
+if test $SDL2_FOUND = "no"; then
+  SDL_VERSION=1.1.6
+  SDLPORT_DIR=sdlport
+  AM_PATH_SDL($SDL_VERSION, :,
+      AC_MSG_ERROR([*** SDL version $SDL_VERSION or above not found!]))
+fi
+
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS $X_LIBS"
+AC_SUBST(SDLPORT_DIR)
 
 dnl Check for SDL mixer
-ac_cv_my_have_sdl_mixer="no"
-save_CPPFLAGS="${CPPFLAGS}"
-CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS}"
-AC_CHECK_HEADERS(SDL/SDL_mixer.h, [ac_cv_my_have_sdl_mixer="yes"])
-CPPFLAGS="${save_CPPFLAGS}"
-if test "${ac_cv_my_have_sdl_mixer}" = "no"; then
-  AC_MSG_ERROR([*** SDL_mixer not found!])
+if test $SDL2_FOUND = "yes"; then
+  ac_cv_my_have_sdl_mixer="no"
+  save_CPPFLAGS="${CPPFLAGS}"
+  CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS}"
+  AC_CHECK_HEADERS(SDL2/SDL_mixer.h, [ac_cv_my_have_sdl_mixer="yes"])
+  CPPFLAGS="${save_CPPFLAGS}"
+  if test "${ac_cv_my_have_sdl_mixer}" = "no"; then
+    AC_MSG_ERROR([*** SDL_mixer not found!])
+  fi
+  LIBS="$LIBS -lSDL2_mixer"
+else
+  ac_cv_my_have_sdl_mixer="no"
+  save_CPPFLAGS="${CPPFLAGS}"
+  CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS}"
+  AC_CHECK_HEADERS(SDL/SDL_mixer.h, [ac_cv_my_have_sdl_mixer="yes"])
+  CPPFLAGS="${save_CPPFLAGS}"
+  if test "${ac_cv_my_have_sdl_mixer}" = "no"; then
+    AC_MSG_ERROR([*** SDL_mixer not found!])
+  fi
+  LIBS="$LIBS -lSDL_mixer"
 fi
-LIBS="$LIBS -lSDL_mixer"
 
 if test "${enable_debug}" = "yes"; then
   AC_DEFINE(HAVE_DEBUG, 1, Define to 1 to activate debug)
@@ -149,12 +172,28 @@ AC_OUTPUT([
     src/lisp/Makefile
     src/net/Makefile
     src/imlib/Makefile
-    src/sdlport/Makefile
     data/Makefile
     doc/Makefile
     doc/abuse.6
     doc/abuse-tool.6])
 
+if test $SDL2_FOUND = "yes"; then
+  AC_OUTPUT([src/sdl2port/Makefile])
+else
+  AC_OUTPUT([src/sdlport/Makefile])
+fi
+
+if test $SDL2_FOUND = "yes"; then
+echo "
+------ Configuration for $PACKAGE $VERSION ------
+    Compiler:          ${CC} (`${CC} --version | head -n 1`)
+    Install prefix:    ${prefix}
+    Asset directory:   ${with_assetdir}
+    SDL version:       `sdl2-config --version`
+
+Now type 'make' to build $PACKAGE.
+"
+else
 echo "
 ------ Configuration for $PACKAGE $VERSION ------
     Compiler:          ${CC} (`${CC} --version | head -n 1`)
@@ -165,3 +204,4 @@ echo "
 
 Now type 'make' to build $PACKAGE.
 "
+fi

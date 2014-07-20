@@ -242,6 +242,9 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
     int quit=0;
     do
     {
+	// disable game controller during save/load screen so that mouse can be used
+	wm->enable_controller(false);
+	
         wm->flush_screen();
         wm->get_event(ev);
         if (ev.type==EV_MESSAGE && ev.message.id>=ID_LOAD_GAME_NUMBER && ev.message.id<ID_LOAD_GAME_PREVIEW)
@@ -257,6 +260,8 @@ int load_game(int show_all, char const *title)   // return 0 if the player escap
         if ((ev.type==EV_CLOSE_WINDOW) || (ev.type==EV_KEY && ev.key==JK_ESC))
             quit=1;
     } while (!got_level && !quit);
+
+    wm->enable_controller(true);
 
     wm->close_window(l_win);
     wm->close_window(preview);
