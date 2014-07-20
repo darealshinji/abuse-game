@@ -6,6 +6,10 @@ Sam Hocevar <sam@hocevar.net>
   Current code maintainer
   Debian package maintainer
 
+Jonathan Simpson <jjsimpso@gmail.com>
+  SDL2 port
+  Game controller support
+
 Anthony Kruize <trandor@labyrinth.net.au>
   SDL port maintainer
 
