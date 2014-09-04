@@ -18,7 +18,7 @@
  *  Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  */
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
@@ -43,7 +43,11 @@ short mouse_buttons[5] = { 0, 0, 0, 0, 0 };
 
 void EventHandler::SysWarpMouse(ivec2 pos)
 {
+#if SDL_VERSION_ATLEAST(2,0,0)
+#   warning no SDL_WarpMouse in SDL2
+#else
     SDL_WarpMouse(pos.x, pos.y);
+#endif
 }
 
 //
@@ -189,6 +193,9 @@ void EventHandler::SysEvent(Event &ev)
         case SDLK_RALT:         ev.key = JK_ALT_R; break;
         case SDLK_LSHIFT:       ev.key = JK_SHIFT_L; break;
         case SDLK_RSHIFT:       ev.key = JK_SHIFT_R; break;
+#if SDL_VERSION_ATLEAST(2,0,0)
+#   warning no event keys in SDL2
+#else
         case SDLK_NUMLOCK:      ev.key = JK_NUM_LOCK; break;
         case SDLK_HOME:         ev.key = JK_HOME; break;
         case SDLK_END:          ev.key = JK_END; break;
@@ -253,6 +260,7 @@ void EventHandler::SysEvent(Event &ev)
             }
             ev.key = EV_SPURIOUS;
             break;
+#endif
         default:
             ev.key = (int)sdlev.key.keysym.sym;
             // Need to handle the case of shift being pressed

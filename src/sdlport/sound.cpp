@@ -18,7 +18,7 @@
  *  Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  */
 
-#if defined HAVE_CONFIG_H
+#if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
@@ -194,7 +194,11 @@ song::song(String const &filename)
     }
 
     rw = SDL_RWFromMem(data, data_size);
+#if SDL_VERSION_ATLEAST(2,0,0)
+    music = Mix_LoadMUS_RW(rw, SDL_FALSE);
+#else
     music = Mix_LoadMUS_RW(rw);
+#endif
 
     if (!music)
     {
