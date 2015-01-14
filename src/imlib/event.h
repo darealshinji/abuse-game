@@ -67,7 +67,7 @@ public:
     void Push(Event const &ev)
     {
         /* Don’t really care about losing events */
-        m_events.TryPush(ev);
+        m_events.try_push(ev);
     }
 
     void SysInit();
@@ -92,7 +92,7 @@ public:
     }
 
 private:
-    Queue<Event, 256> m_events;
+    queue<Event, 256> m_events;
     int m_pending, last_key;
 
     AImage *m_screen;

@@ -82,7 +82,7 @@ void EventHandler::Get(Event &ev)
         IsPending();
 
     // Return first queued event if applicable
-    if (m_events.TryPop(ev))
+    if (m_events.try_pop(ev))
         return;
 
     // Return an event from the platform-specific system
