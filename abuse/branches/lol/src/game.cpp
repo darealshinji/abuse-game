@@ -2278,7 +2278,7 @@ public:
 
         set_spec_main_file("abuse.spe");
         check_for_lisp(argc, argv);
-        m_abusethread = new Thread(DoWorkHelper, this);
+        m_abusethread = new thread(std::bind(&AbuseGame::DoWorkHelper, this));
 
         m_vertices << vec2(-1.0,  1.0);
         m_vertices << vec2(-1.0, -1.0);
@@ -2354,17 +2354,13 @@ public:
     }
 
 private:
-    static void *DoWorkHelper(void *data)
+    void DoWorkHelper()
     {
-        AbuseGame *that = (AbuseGame *)data;
-
         do
         {
-            that->DoWork();
+            DoWork();
         }
         while (main_net_cfg && main_net_cfg->restart_state());
-
-        return NULL;
     }
 
     void DoWork()
@@ -2503,7 +2499,7 @@ private:
     int m_argc;
     char **m_argv;
 
-    Thread *m_abusethread;
+    thread *m_abusethread;
 
     array<vec2> m_vertices;
     Texture *m_screen, *m_palette;
