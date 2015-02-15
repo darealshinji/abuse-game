@@ -11,12 +11,13 @@
 #ifndef __SOUND_H__
 #define __SOUND_H__
 
+#if defined HAVE_SDL_SDL_H
+#   include <SDL/SDL.h>
+#else
+#   include <SDL.h>
+#endif
+
 #if defined USE_SDL_MIXER
-#   if defined HAVE_SDL_SDL_H
-#      include <SDL/SDL.h>
-#   else
-#      include <SDL.h>
-#   endif
 #   if defined HAVE_SDL_SDL_MIXER_H
 #      include <SDL/SDL_mixer.h>
 #   else
