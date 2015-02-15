@@ -42,6 +42,7 @@ static SDL_AudioSpec audioObtained;
 //
 int sound_init( int argc, char **argv )
 {
+#if defined USE_SDL_MIXER
     char *sfxdir, *datadir;
 
     // Disable sound if requested.
@@ -81,6 +82,7 @@ int sound_init( int argc, char **argv )
     sound_enabled = SFX_INITIALIZED | MUSIC_INITIALIZED;
 
     printf( "Sound: Enabled\n" );
+#endif
 
     // It's all good
     return sound_enabled;
@@ -96,7 +98,9 @@ void sound_uninit()
     if (!sound_enabled)
         return;
 
+#if defined USE_SDL_MIXER
     Mix_CloseAudio();
+#endif
 }
 
 //
@@ -175,6 +179,7 @@ void sound_effect::play(int volume, int pitch, int panpot)
 
 song::song(String const &filename)
 {
+#if defined USE_SDL_MIXER
     data = NULL;
     m_name = filename;
     song_id = 0;
@@ -194,8 +199,12 @@ song::song(String const &filename)
     }
 
     rw = SDL_RWFromMem(data, data_size);
-#if SDL_VERSION_ATLEAST(2,0,0)
+#if defined SDL_VERSION_ATLEAST
+#   if SDL_VERSION_ATLEAST(2,0,0)
     music = Mix_LoadMUS_RW(rw, SDL_FALSE);
+#   else
+    music = Mix_LoadMUS_RW(rw);
+#   endif
 #else
     music = Mix_LoadMUS_RW(rw);
 #endif
@@ -206,40 +215,53 @@ song::song(String const &filename)
                Mix_GetError(), realname.C());
         return;
     }
+#endif
 }
 
 song::~song()
 {
+#if defined USE_SDL_MIXER
     if(playing())
         stop();
     free(data);
 
     Mix_FreeMusic(music);
     SDL_FreeRW(rw);
+#endif
 }
 
 void song::play( unsigned char volume )
 {
+#if defined USE_SDL_MIXER
     song_id = 1;
 
     Mix_PlayMusic(this->music, 0);
     Mix_VolumeMusic(volume);
+#endif
 }
 
 void song::stop( long fadeout_time )
 {
+#if defined USE_SDL_MIXER
     song_id = 0;
 
     Mix_FadeOutMusic(100);
+#endif
 }
 
 int song::playing()
 {
+#if defined USE_SDL_MIXER
     return Mix_PlayingMusic();
+#else
+    return 0;
+#endif
 }
 
 void song::set_volume( int volume )
 {
+#if defined USE_SDL_MIXER
     Mix_VolumeMusic(volume);
+#endif
 }
 
