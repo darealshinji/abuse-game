@@ -232,7 +232,7 @@ extern int start_running,demo_start,start_edit;
   {
     i->y=y;
     ibox2 area = i->GetArea();
-    y = area.B.y + 2;
+    y = area.bb.y + 2;
   }
 
 
@@ -317,10 +317,10 @@ void net_configuration::error(char const *message)
 AWidget *net_configuration::center_ifield(AWidget *f, int x1, int x2, AWidget *place_below)
 {
     ibox2 area = f->GetArea();
-    f->m_pos.x = (x1 + x2) / 2 - (area.B.x - area.A.x) / 2;
+    f->m_pos.x = (x1 + x2) / 2 - area.extent().x / 2;
 
     if (place_below)
-        f->m_pos.y = place_below->GetArea().B.y + 2;
+        f->m_pos.y = place_below->GetArea().bb.y + 2;
 
     return f;
 }

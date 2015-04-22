@@ -183,7 +183,7 @@ void status_bar::draw_health(AImage *screen,int amount)
     if (total_weapons)
     {
         ibox2 area = GetArea();
-        draw_num(screen, area.A.x + 17, area.A.y + 11, amount, bnum);
+        draw_num(screen, area.aa.x + 17, area.aa.y + 11, amount, bnum);
     }
 }
 
@@ -193,7 +193,7 @@ void status_bar::draw_ammo(AImage *screen, int weapon_num, int amount, int light
     if (total_weapons)
     {
         ibox2 area = GetArea();
-        draw_num(screen, area.A.x + 52 + weapon_num * 34, area.A.y + 25,
+        draw_num(screen, area.aa.x + 52 + weapon_num * 34, area.aa.y + 25,
                  amount, bnum + (light ? 20 : 10));
     }
 }
@@ -207,7 +207,7 @@ int status_bar::mouse_in_area()
     ibox2 area = GetArea();
     ivec2 mouse(v->pointer_x, v->pointer_y);
 
-    return mouse >= area.A && mouse <= area.B;
+    return mouse >= area.aa && mouse <= area.bb;
 }
 
 
@@ -256,24 +256,24 @@ void status_bar::step()
   ibox2 area = GetArea();
 
   int view_y2 = v->m_bb.y;
-  if (area.A.y < view_y2)     // tell view to shrink if it is overlapping the status bar
+  if (area.aa.y < view_y2)     // tell view to shrink if it is overlapping the status bar
   {
     v->suggest.send_view=1;
     v->suggest.cx1 = v->m_aa.x;
     v->suggest.cy1 = v->m_aa.y;
     v->suggest.cx2 = v->m_bb.x;
-    v->suggest.cy2 = area.A.y - 2;
+    v->suggest.cy2 = area.aa.y - 2;
   }
 
   if (sbar<=0 || !total_weapons) return ;
 
   ivec2 mouse = last_demo_mpos;
 
-  if (mouse >= area.A && mouse <= area.B)
+  if (mouse >= area.aa && mouse <= area.bb)
   {
     int new_target;
 
-    mouse.x -= area.A.x;
+    mouse.x -= area.aa.x;
     mouse.x -= 47;
     if (mouse.x < 0)
       new_target = 0;

@@ -44,8 +44,8 @@ ibox2 AIconSwitchButton::GetArea()
     for (int i = 0; i < m_buttons.Count(); ++i)
     {
         ibox2 tmp = m_buttons[i]->GetArea();
-        ret.A = lol::min(ret.A, tmp.A);
-        ret.B = lol::max(ret.B, tmp.B);
+        ret.aa = lol::min(ret.aa, tmp.aa);
+        ret.bb = lol::max(ret.bb, tmp.bb);
     }
 
     return ret;
@@ -92,7 +92,7 @@ void AIconButton::Draw(int active, AImage *screen)
 
     screen->PutImage(cache.img((up && !active) ? u :
                                (up && active) ? ua :
-                               (!up && !active) ? d : da), area.A);
+                               (!up && !active) ? d : da), area.aa);
 
     if (act != active && active && activate_id != -1)
         wm->Push(Event(activate_id, NULL));
