@@ -169,7 +169,7 @@ void AScroller::draw_widget(AImage *screen, int erase)
 void AScroller::Draw(int active, AImage *screen)
 {
     ibox2 area = GetArea();
-    screen->Rectangle(area.A, area.B,
+    screen->Rectangle(area.aa, area.bb,
                       active ? wm->bright_color() : wm->dark_color());
 }
 

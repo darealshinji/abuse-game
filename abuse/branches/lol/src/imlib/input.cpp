@@ -74,8 +74,8 @@ ibox2 AButtonBox::GetArea()
         ibox2 area = m_buttons[i]->GetArea();
         if (i)
         {
-            ret.A = lol::min(ret.A, area.A);
-            ret.B = lol::max(ret.B, area.B);
+            ret.aa = lol::min(ret.aa, area.aa);
+            ret.bb = lol::max(ret.bb, area.bb);
         }
         else
             ret = area;
@@ -119,7 +119,7 @@ void AButtonBox::handle_event(Event &ev, AImage *screen, InputManager *im)
         for (int i = 0, found = 0; i < m_buttons.Count() && !found; ++i)
         {
             ibox2 area = m_buttons[i]->GetArea();
-            if (ev.mouse_move >= area.A && ev.mouse_move <= area.B)
+            if (ev.mouse_move >= area.aa && ev.mouse_move <= area.bb)
             {
                 m_buttons[i]->handle_event(ev, screen, im);
 
@@ -165,7 +165,7 @@ void AButtonBox::arrange_left_right()
     {
         ibox2 area = m_buttons[i]->GetArea();
         m_buttons[i]->m_pos = on;
-        on.x += (area.B.x - area.A.x + 1) + 1;
+        on.x += (area.extent().x + 1) + 1;
     }
 }
 
@@ -176,7 +176,7 @@ void AButtonBox::arrange_up_down()
     {
         ibox2 area = m_buttons[i]->GetArea();
         m_buttons[i]->m_pos = on;
-        on.y += (area.B.y - area.A.y + 1) + 1;
+        on.y += (area.extent().y + 1) + 1;
     }
 }
 
@@ -369,7 +369,7 @@ void AButton::Draw(int active, AImage *screen)
 
     if (!pressed)
     {
-        screen->Rectangle(area.A + ivec2(2), area.B - ivec2(2), color);
+        screen->Rectangle(area.aa + ivec2(2), area.bb - ivec2(2), color);
         act = active;
     }
     else if (!up)
@@ -392,18 +392,18 @@ void AButton::draw_first(AImage *screen)
 
     if (up)
     {
-        screen->Rectangle(area.A, area.B, wm->black());
+        screen->Rectangle(area.aa, area.bb, wm->black());
 //      screen->widget_bar(,wm->bright_color(),wm->medium_color(),wm->dark_color());
-        screen->WidgetBar(area.A + ivec2(1), area.B - ivec2(1),
+        screen->WidgetBar(area.aa + ivec2(1), area.bb - ivec2(1),
                           wm->bright_color(), wm->medium_color(), wm->dark_color());
     }
     else
     {
-        screen->Line(area.A, ivec2(area.B.x, area.A.y), wm->dark_color());
-        screen->Line(area.A, ivec2(area.A.x, area.B.y), wm->dark_color());
-        screen->Line(ivec2(area.B.x, area.A.y + 1), area.B, wm->bright_color());
-        screen->Line(ivec2(area.A.x + 1, area.B.y), area.B, wm->bright_color());
-        screen->Bar(area.A + ivec2(1), area.B - ivec2(1), wm->medium_color());
+        screen->Line(area.aa, ivec2(area.bb.x, area.aa.y), wm->dark_color());
+        screen->Line(area.aa, ivec2(area.aa.x, area.bb.y), wm->dark_color());
+        screen->Line(ivec2(area.bb.x, area.aa.y + 1), area.bb, wm->bright_color());
+        screen->Line(ivec2(area.aa.x + 1, area.bb.y), area.bb, wm->bright_color());
+        screen->Bar(area.aa + ivec2(1), area.bb - ivec2(1), wm->medium_color());
     }
 
     if ((up && m_text.Count()) || (!up && !visual))
@@ -414,7 +414,7 @@ void AButton::draw_first(AImage *screen)
     else if (up)
         screen->PutImage(visual, m_pos + ivec2(3), 1);
     else
-        screen->PutImage(visual, area.A + ivec2(3), 1);
+        screen->PutImage(visual, area.aa + ivec2(3), 1);
 }
 
 void ATextField::draw_first(AImage *screen)

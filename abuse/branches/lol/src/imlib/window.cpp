@@ -441,7 +441,7 @@ void AWindow::reconfigure()
     {
         inm->m_fields[i]->set_owner(this);
         ibox2 area = inm->m_fields[i]->GetArea();
-        m_size = lol::max(m_size, area.B);
+        m_size = lol::max(m_size, area.bb);
     }
 }
 
@@ -589,7 +589,7 @@ void InputManager::handle_event(Event &ev, AWindow *j)
       for (int i = 0; i < m_fields.Count(); ++i)
       {
         ibox2 area = m_fields[i]->GetArea();
-        if (ev.mouse_move >= area.A && ev.mouse_move <= area.B)
+        if (ev.mouse_move >= area.aa && ev.mouse_move <= area.bb)
             in_area = i;
       }
       if (in_area != m_active && (no_selections_allowed || (in_area >= 0 && m_fields[in_area]->selectable())))
@@ -627,7 +627,7 @@ void InputManager::handle_event(Event &ev, AWindow *j)
     else
     {
       ibox2 area = m_fields[m_active]->GetArea();
-      if (m_grab >= 0 || (ev.mouse_move >= area.A && ev.mouse_move <= area.B))
+      if (m_grab >= 0 || (ev.mouse_move >= area.aa && ev.mouse_move <= area.bb))
           m_fields[m_active]->handle_event(ev, m_surf, j ? j->inm : this);
     }
   }

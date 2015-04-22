@@ -62,7 +62,7 @@ void AFilePicker::note_selection(AImage *screen, InputManager *inm, int x)
     if (strcmp(d[x],"."))
     {
       ibox2 area = GetArea();
-      screen->Bar(area.A, area.B, wm->medium_color());
+      screen->Bar(area.aa, area.bb, wm->medium_color());
 
       char st[200],curdir[200];
       sprintf(st,"%s/%s",cd,d[x]);
