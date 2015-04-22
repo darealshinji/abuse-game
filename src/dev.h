@@ -40,7 +40,7 @@ public :
   void handle_event(Event &ev);
   pal_win(void *args);
   void resize(int xa, int ya);
-  int get_pat(int x, int y) { return pat[y*w+x]; }
+  int get_pat(ivec2 pos) { return pat[pos.y * w + pos.x]; }
   int width() { return w; }
   int height() { return h; }
   void save(FILE *fp);
