@@ -3173,7 +3173,7 @@ static int get_color(int color, int x, int y, pal_win *p)
   {
     while (x<0) x+=p->width();
     while (y<0) y+=p->height();
-    return p->get_pat(x%p->width(), y%p->height());
+    return p->get_pat(ivec2(x % p->width(), y % p->height()));
   }
   else return color;
 }
