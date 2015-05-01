@@ -26,9 +26,9 @@ public:
 
     Palette *Copy() const;
 
-    int Count() const { return m_colors.Count(); }
-    u8vec3 *Data() { return m_colors.Data(); }
-    u8vec3 const *Data() const { return m_colors.Data(); }
+    int Count() const { return m_colors.count(); }
+    u8vec3 *Data() { return m_colors.data(); }
+    u8vec3 const *Data() const { return m_colors.data(); }
 
     u8vec3 GetColor(int x) const;
     uint8_t GetGray(int x) const;

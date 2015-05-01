@@ -458,9 +458,9 @@ void show_stats()
     fade_in(NULL,16);
 
     String const &name = g_current_level->GetOriginalName();
-    ASSERT(name.Count() > (int)strlen(".spe") + 2,
+    ASSERT(name.count() > (int)strlen(".spe") + 2,
            "invalid level name %s", name.C());
-    String digits = name.Sub(name.Count() - strlen(".spe") - 2, 2);
+    String digits = name.sub(name.count() - strlen(".spe") - 2, 2);
 
     String msg = symbol_str("lev_complete");
     msg += " : ";
@@ -473,7 +473,7 @@ void show_stats()
     else
         msg += name;
 
-    int w = wm->font()->Size().x * msg.Count(),
+    int w = wm->font()->Size().x * msg.count(),
         h = wm->font()->Size().y;
     int x=(x1+x2)/2-w/2,y=(y1+y2)/2-h/2;
     main_screen->Bar(ivec2(x - 10, y - 10), ivec2(x + w + 10, y + h + 10),

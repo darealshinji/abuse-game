@@ -20,7 +20,7 @@
 
 void JCFont::PutString(AImage *screen, ivec2 pos, String const &st, int color)
 {
-    for (int i = 0; i < st.Count(); ++i, pos.x += m_size.x)
+    for (int i = 0; i < st.count(); ++i, pos.x += m_size.x)
         PutChar(screen, pos, st[i], color);
 }
 

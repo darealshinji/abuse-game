@@ -34,7 +34,7 @@ void AButtonBox::press_button(int id)      // if button box doesn't contain id, 
 
 void AButtonBox::remap(Filter *f)
 {
-    for (int i = 0; i < m_buttons.Count(); ++i)
+    for (int i = 0; i < m_buttons.count(); ++i)
         m_buttons[i]->remap(f);
 }
 
@@ -43,7 +43,7 @@ AWidget *AButtonBox::find(int id)
     if (id == m_id)
         return this;
 
-    for (int i = 0; i < m_buttons.Count(); ++i)
+    for (int i = 0; i < m_buttons.count(); ++i)
         if (id == m_buttons[i]->m_id)
             return m_buttons[i];
 
@@ -56,20 +56,20 @@ AButtonBox::AButtonBox(ivec2 pos, int id, int MaxDown, array<AButton *> const &b
     m_id = id;
     m_buttons = buttons;
     maxdown = MaxDown;
-    if (m_buttons.Count() && maxdown)
+    if (m_buttons.count() && maxdown)
         m_buttons[0]->push();  // the first button is automatically selected!
 }
 
 AButtonBox::~AButtonBox()
 {
-    for (int i = 0; i < m_buttons.Count(); ++i)
+    for (int i = 0; i < m_buttons.count(); ++i)
         delete m_buttons[i];
 }
 
 ibox2 AButtonBox::GetArea()
 {
     ibox2 ret;
-    for (int i = 0; i < m_buttons.Count(); ++i)
+    for (int i = 0; i < m_buttons.count(); ++i)
     {
         ibox2 area = m_buttons[i]->GetArea();
         if (i)
@@ -85,7 +85,7 @@ ibox2 AButtonBox::GetArea()
 
 void AButtonBox::draw_first(AImage *screen)
 {
-    for (int i = 0; i < m_buttons.Count(); ++i)
+    for (int i = 0; i < m_buttons.count(); ++i)
         m_buttons[i]->draw_first(screen);
 }
 
@@ -96,14 +96,14 @@ void AButtonBox::Draw(int active, AImage *screen)
 
 void AButtonBox::Move(ivec2 pos)
 {
-    for (int i = 0; i < m_buttons.Count(); ++i)
+    for (int i = 0; i < m_buttons.count(); ++i)
         m_buttons[i]->Move(pos + m_buttons[i]->m_pos);
     m_pos = pos;
 }
 
 char const *AButtonBox::read()
 {
-    for (int i = 0; i < m_buttons.Count(); ++i)
+    for (int i = 0; i < m_buttons.count(); ++i)
         if (*((int const *)m_buttons[i]->read()) == 0)
             return (char const *)m_buttons[i];
 
@@ -116,7 +116,7 @@ void AButtonBox::handle_event(Event &ev, AImage *screen, InputManager *im)
     {
     case EV_MOUSE_BUTTON:
         // see if the user clicked on a button
-        for (int i = 0, found = 0; i < m_buttons.Count() && !found; ++i)
+        for (int i = 0, found = 0; i < m_buttons.count() && !found; ++i)
         {
             ibox2 area = m_buttons[i]->GetArea();
             if (ev.mouse_move >= area.aa && ev.mouse_move <= area.bb)
@@ -124,13 +124,13 @@ void AButtonBox::handle_event(Event &ev, AImage *screen, InputManager *im)
                 m_buttons[i]->handle_event(ev, screen, im);
 
                 int total = 0;
-                for (int j = 0; j < m_buttons.Count(); ++j)
+                for (int j = 0; j < m_buttons.count(); ++j)
                     if (*((int const *)m_buttons[j]->read()) == 0)
                         total++;
 
                 if (*((int const *)m_buttons[i]->read()) == 0)  // did the user press or release the button
                 {
-                    for (int j = 0; j < m_buttons.Count() && total > maxdown; ++j)
+                    for (int j = 0; j < m_buttons.count() && total > maxdown; ++j)
                         if ((i != j || maxdown == 0) && *((int const *)m_buttons[j]->read()) == 0)
                         {
                             total--;
@@ -155,13 +155,13 @@ void AButtonBox::handle_event(Event &ev, AImage *screen, InputManager *im)
 
 void AButtonBox::add_button(AButton *b)
 {
-    m_buttons.Push(b);
+    m_buttons.push(b);
 }
 
 void AButtonBox::arrange_left_right()
 {
     ivec2 on = m_pos;
-    for (int i = 0; i < m_buttons.Count(); ++i)
+    for (int i = 0; i < m_buttons.count(); ++i)
     {
         ibox2 area = m_buttons[i]->GetArea();
         m_buttons[i]->m_pos = on;
@@ -172,7 +172,7 @@ void AButtonBox::arrange_left_right()
 void AButtonBox::arrange_up_down()
 {
     ivec2 on = m_pos;
-    for (int i = 0; i < m_buttons.Count(); ++i)
+    for (int i = 0; i < m_buttons.count(); ++i)
     {
         ibox2 area = m_buttons[i]->GetArea();
         m_buttons[i]->m_pos = on;
@@ -191,8 +191,8 @@ ibox2 AButton::GetArea()
     if (pressed)
         return ibox2(m_pos, m_pos + pressed->Size() - ivec2(1));
 
-    if (m_text.Count())
-        return ibox2(m_pos, m_pos + wm->font()->Size() * ivec2(m_text.Count(), 1) + ivec2(6));
+    if (m_text.count())
+        return ibox2(m_pos, m_pos + wm->font()->Size() * ivec2(m_text.count(), 1) + ivec2(6));
 
     return ibox2(m_pos, m_pos + visual->Size() + ivec2(6));
 }
@@ -406,7 +406,7 @@ void AButton::draw_first(AImage *screen)
         screen->Bar(area.aa + ivec2(1), area.bb - ivec2(1), wm->medium_color());
     }
 
-    if ((up && m_text.Count()) || (!up && !visual))
+    if ((up && m_text.count()) || (!up && !visual))
     {
         wm->font()->PutString(screen, m_pos + ivec2(4, 5), m_text, wm->black());
         wm->font()->PutString(screen, m_pos + ivec2(3, 4), m_text);

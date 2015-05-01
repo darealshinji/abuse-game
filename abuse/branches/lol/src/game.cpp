@@ -2324,18 +2324,18 @@ public:
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
 
-            m_vbo = new VertexBuffer(m_vertices.Bytes());
+            m_vbo = new VertexBuffer(m_vertices.bytes());
             void *vertices = m_vbo->Lock(0, 0);
-            memcpy(vertices, &m_vertices[0], m_vertices.Bytes());
+            memcpy(vertices, &m_vertices[0], m_vertices.bytes());
             m_vbo->Unlock();
 
             /* FIXME: this object never cleans up */
         }
 
-        if (g_screen.Count())
+        if (g_screen.count())
         {
             m_screen->Bind();
-            m_screen->SetData(g_screen.Data());
+            m_screen->SetData(g_screen.data());
         }
 
         if (Palette::LastLoaded())

@@ -73,8 +73,8 @@ int demo_manager::start_recording(char const *filename)
 
   the_game->load_level(name.C());
   record_file->write((void const *)"DEMO,VERSION:2", 14);
-  record_file->write_uint8(name.Count() + 1);
-  record_file->write(name.C(), name.Count() + 1);
+  record_file->write_uint8(name.count() + 1);
+  record_file->write(name.C(), name.count() + 1);
 
   uint8_t difficulty = 3;
   if (DEFINEDP(symbol_value(l_difficulty)))

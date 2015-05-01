@@ -187,7 +187,7 @@ song::song(String const &filename)
     rw = NULL;
     music = NULL;
 
-    String realname = String::Printf("%s%s", get_filename_prefix(), m_name.C());
+    String realname = String::format("%s%s", get_filename_prefix(), m_name.C());
 
     uint32_t data_size;
     data = load_hmi(realname.C(), data_size);

@@ -43,8 +43,9 @@ public:
 
     void Set(int x)
     {
-        if (m_string.Count())
-            m_string.Resize(0);
+        // FIXME: would empty() work here?
+        if (m_string.count())
+            m_string.resize(0);
         m_num = x;
     }
 
@@ -61,13 +62,13 @@ APropertyManager::APropertyManager()
 
 APropertyManager::~APropertyManager()
 {
-    for (int i = 0; i < m_props.Count(); ++i)
+    for (int i = 0; i < m_props.count(); ++i)
         delete m_props[i];
 }
 
 AProperty *APropertyManager::find(char const *name)
 {
-    for (int i = 0; i < m_props.Count(); ++i)
+    for (int i = 0; i < m_props.count(); ++i)
         if (m_props[i]->m_name == name)
             return m_props[i];
     return nullptr;
@@ -76,7 +77,7 @@ AProperty *APropertyManager::find(char const *name)
 int APropertyManager::get(char const *name, int def)
 {
     AProperty *f = find(name);
-    if (!f || f->m_string.Count())
+    if (!f || f->m_string.count())
         return def;
     return f->m_num;
 }
@@ -84,7 +85,7 @@ int APropertyManager::get(char const *name, int def)
 char const *APropertyManager::get(char const *name, char const *def)
 {
     AProperty *f = find(name);
-    if (!f || !f->m_string.Count())
+    if (!f || !f->m_string.count())
         return def;
     return f->m_string.C();
 }
@@ -95,7 +96,7 @@ void APropertyManager::set(char const *name, double def)
     if (f)
         f->Set((int)def);
     else
-        m_props.Push(new AProperty(name, (int)def));
+        m_props.push(new AProperty(name, (int)def));
 }
 
 void APropertyManager::set(char const *name, char const *def)
@@ -104,7 +105,7 @@ void APropertyManager::set(char const *name, char const *def)
     if (f)
         f->Set(def);
     else
-        m_props.Push(new AProperty(name, def));
+        m_props.push(new AProperty(name, def));
 }
 
 void APropertyManager::save(char const *filename)
@@ -116,10 +117,10 @@ void APropertyManager::save(char const *filename)
         return;
     }
 
-    for (int i = 0; i < m_props.Count(); ++i)
+    for (int i = 0; i < m_props.count(); ++i)
     {
         fprintf(fp, "%s = ", m_props[i]->m_name.C());
-        if (m_props[i]->m_string.Count())
+        if (m_props[i]->m_string.count())
             fprintf(fp, "\"%s\"\n", m_props[i]->m_string.C());
         else
             fprintf(fp, "%d\n", m_props[i]->m_num);

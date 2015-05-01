@@ -843,7 +843,7 @@ void Level::set_size(int w, int h)
   bg_height=nbh;
   bg_width=nbw;
 
-  String msg = String::Printf("Level %s size now %d %d\n", GetName().C(),
+  String msg = String::format("Level %s size now %d %d\n", GetName().C(),
                               foreground_width(), foreground_height());
   the_game->show_help(msg.C());
 }
@@ -1265,7 +1265,7 @@ Level::Level(SpecDir *sd, bFILE *fp, char const *lev_name)
   {
     fp->seek(e->offset, 0);
     int len = fp->read_uint8(); // read the length of the string
-    m_first_name.Resize(len);
+    m_first_name.resize(len);
     fp->read(m_first_name.C(), len); // read the string
   }
   else
@@ -1423,14 +1423,14 @@ Level::Level(SpecDir *sd, bFILE *fp, char const *lev_name)
 
 String get_prof_assoc_filename(String const &filename)
 {
-    int dot = filename.LastIndexOf('.');
-    return (dot == -1 ? filename : filename.Sub(0, dot)) + ".cpf";
+    int dot = filename.last_index_of('.');
+    return (dot == -1 ? filename : filename.sub(0, dot)) + ".cpf";
 }
 
 void Level::level_loaded_notify()
 {
-  String n = m_first_name.Count() ? m_first_name : m_name;
-  if (n.Sub(0, 12) == "levels/level")
+  String n = m_first_name.count() ? m_first_name : m_name;
+  if (n.sub(0, 12) == "levels/level")
   {
     char nm[100];
     sprintf(nm, "music/abuse%c%c.hmi", n[12], n[13]);
@@ -1469,9 +1469,9 @@ bFILE *Level::create_dir(char *filename, int save_all,
 {
   SpecDir sd;
   sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY, "Copyright 1995 Crack dot Com, All Rights reserved", NULL, 0, 0));
-  if (m_first_name.Count())
+  if (m_first_name.count())
     sd.add_by_hand(new SpecEntry(SPEC_DATA_ARRAY, "first name",
-                                 NULL, m_first_name.Count() + 2, 0));
+                                 NULL, m_first_name.count() + 2, 0));
 
 
   sd.add_by_hand(new SpecEntry(SPEC_GRUE_FGMAP,"fgmap",NULL,4+4+fg_width*fg_height*2,0));
@@ -1586,8 +1586,8 @@ void Level::write_thumb_nail(bFILE *fp, AImage *im)
   AImage *i = new AImage(ivec2(160, 100 + wm->font()->Size().y * 2));
   i->clear();
   scale_put(im,i,0,0,160,100);
-  if (m_first_name.Count())
-    wm->font()->PutString(i, ivec2(80 - m_first_name.Count() * wm->font()->Size().x / 2, 100), m_first_name.C());
+  if (m_first_name.count())
+    wm->font()->PutString(i, ivec2(80 - m_first_name.count() * wm->font()->Size().x / 2, 100), m_first_name.C());
 
   time_t t;
   t=time(NULL);
@@ -2092,7 +2092,7 @@ void Level::write_cache_prof_info()
 {
   if (cache.prof_is_on())
   {
-    String pf_name = get_prof_assoc_filename(m_first_name.Count()
+    String pf_name = get_prof_assoc_filename(m_first_name.count()
                                               ? m_name : m_first_name);
 
     SpecDir sd;
@@ -2116,7 +2116,7 @@ void Level::load_cache_info(SpecDir *sd, bFILE *fp)
   if (!DEFINEDP(symbol_value(l_empty_cache)) || !symbol_value(l_empty_cache))
   {
     // get cache info from orignal filename if this is a savegame
-    String pf_name = get_prof_assoc_filename(m_first_name.Count()
+    String pf_name = get_prof_assoc_filename(m_first_name.count()
                                               ? m_name : m_first_name);
 
     cache.load_cache_prof_info(pf_name.C(), this);
@@ -2180,10 +2180,10 @@ int Level::save(char const *filename, int save_all)
     {
         if( !fp->open_failure() )
         {
-            if( m_first_name.Count() )
+            if( m_first_name.count() )
             {
-                fp->write_uint8(m_first_name.Count() + 1);
-                fp->write(m_first_name.C(), m_first_name.Count() + 1);
+                fp->write_uint8(m_first_name.count() + 1);
+                fp->write(m_first_name.C(), m_first_name.count() + 1);
             }
             else
             {

@@ -38,7 +38,7 @@ void SpecDirCache::Save(bFILE *fp)
     fp->write_uint16(total);
     for (FileNode *f = m_list; f; f = f->m_next)
     {
-        uint8_t len = f->m_name.Count() + 1;
+        uint8_t len = f->m_name.count() + 1;
         fp->write(&len, 1);
         fp->write(f->m_name.C(), len);
         f->m_sd->write(fp);
@@ -73,7 +73,7 @@ SpecDir *SpecDirCache::GetSpecDir(String const filename, bFILE *fp)
     f->m_next = m_list;
     m_list = f;
 
-    m_size += f->m_sd->m_data.Count();
+    m_size += f->m_sd->m_data.count();
     if (parent)
         *parent = f;
     else

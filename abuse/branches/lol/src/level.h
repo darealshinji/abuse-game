@@ -78,7 +78,7 @@ class Level        // contain map info and objects
 public :
     String const & GetOriginalName() const
     {
-        if (m_first_name.Count())
+        if (m_first_name.count())
             return m_first_name;
         return m_name;
     }

@@ -119,7 +119,7 @@ void insert_tiles(char *filename)
     SpecDir sd(fp);
     delete fp;
 
-    for (int i = 0; i < sd.m_entries.Count(); i++)
+    for (int i = 0; i < sd.m_entries.count(); i++)
     {
       SpecEntry *se = sd.m_entries[i];
       if (se->type==SPEC_FORETILE)
@@ -143,7 +143,7 @@ void insert_tiles(char *filename)
       if (bt)
         backtiles=(int *)realloc(backtiles,sizeof(int)*(nbacktiles+bt));
 
-      for (int i = 0; i < sd.m_entries.Count(); i++)
+      for (int i = 0; i < sd.m_entries.count(); i++)
       {
     if (sd.m_entries[i]->type==SPEC_FORETILE)
     {
@@ -184,7 +184,7 @@ void load_tiles(Cell *file_list)
     {
       SpecDir sd(fp);
       delete fp;
-      for (int i = 0; i < sd.m_entries.Count(); i++)
+      for (int i = 0; i < sd.m_entries.count(); i++)
       {
         SpecEntry *spe = sd.m_entries[i];
 
@@ -230,7 +230,7 @@ void load_tiles(Cell *file_list)
       SpecDir sd(fp);
       delete fp;
 
-      for (int i = 0; i < sd.m_entries.Count(); i++)
+      for (int i = 0; i < sd.m_entries.count(); i++)
       {
         SpecEntry *spe = sd.m_entries[i];
 

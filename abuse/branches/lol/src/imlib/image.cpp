@@ -33,14 +33,14 @@ image_descriptor::image_descriptor(ivec2 size, int keep_dirties)
 void AImage::SetSize(ivec2 size)
 {
     m_size = size;
-    m_data.Resize(m_size.x * m_size.y);
+    m_data.resize(m_size.x * m_size.y);
 }
 
 AImage::~AImage()
 {
-    for (int i = image_list.Count(); i--; )
+    for (int i = image_list.count(); i--; )
         if (image_list[i] == this)
-            image_list.RemoveSwap(i);
+            image_list.remove_swap(i);
 
     delete m_special;
 }
@@ -69,10 +69,10 @@ AImage::AImage(ivec2 size, int create_descriptor)
 {
     m_size = size;
     m_special = NULL;
-    m_data.Resize(m_size.x * m_size.y);
+    m_data.resize(m_size.x * m_size.y);
     if (create_descriptor)
         m_special = new image_descriptor(size, create_descriptor == 2);
-    image_list.Push(this);
+    image_list.push(this);
 }
 
 AImage::AImage(bFILE *fp, SpecEntry *e /* = NULL */)
@@ -82,15 +82,15 @@ AImage::AImage(bFILE *fp, SpecEntry *e /* = NULL */)
     m_size.x = fp->read_uint16();
     m_size.y = fp->read_uint16();
     m_special = NULL;
-    m_data.Resize(m_size.x * m_size.y);
+    m_data.resize(m_size.x * m_size.y);
     for (int i = 0; i < m_size.y; i++)
         fp->read(scan_line(i), m_size.x);
-    image_list.Push(this);
+    image_list.push(this);
 }
 
 void image_uninit()
 {
-    while (image_list.Count())
+    while (image_list.count())
         delete image_list[0];
 }
 
@@ -328,15 +328,15 @@ void AImage::InClip(int x1, int y1, int x2, int y2)
 //
 void image_descriptor::ReduceDirties()
 {
-    if (m_dirties.Count())
+    if (m_dirties.count())
     {
-        for (int i = 1; i < m_dirties.Count(); ++i)
+        for (int i = 1; i < m_dirties.count(); ++i)
         {
             m_dirties[0].m_aa = lol::min(m_dirties[0].m_aa, m_dirties[i].m_aa);
             m_dirties[0].m_bb = lol::max(m_dirties[0].m_bb, m_dirties[i].m_bb);
         }
 
-        m_dirties.Resize(1);
+        m_dirties.resize(1);
     }
 }
 
@@ -353,7 +353,7 @@ void image_descriptor::DeleteDirty(ivec2 aa, ivec2 bb)
     if (!(aa < bb))
         return;
 
-    for (int i = m_dirties.Count(); i--; )
+    for (int i = m_dirties.count(); i--; )
     {
         ADirtyRect &rect = m_dirties[i];
 
@@ -365,7 +365,7 @@ void image_descriptor::DeleteDirty(ivec2 aa, ivec2 bb)
         if (bb.x >= rect.m_bb.x + 1 && aa.x <= rect.m_aa.x)
         {
             if (bb.y >= rect.m_bb.y + 1 && aa.y <= rect.m_aa.y)
-                m_dirties.RemoveSwap(i);
+                m_dirties.remove_swap(i);
             else if (bb.y >= rect.m_bb.y + 1)
                 rect.m_bb.y = aa.y - 1;
             else if (aa.y <= rect.m_aa.y)
@@ -429,7 +429,7 @@ void image_descriptor::DeleteDirty(ivec2 aa, ivec2 bb)
             else if (aa.y > rect.m_aa.y && bb.y - 1 < rect.m_bb.y)
                 m_dirties << ADirtyRect(ivec2(rect.m_aa.x, bb.y), rect.m_bb);
 
-            m_dirties.RemoveSwap(i);
+            m_dirties.remove_swap(i);
         }
     }
 }
@@ -448,7 +448,7 @@ void image_descriptor::AddDirty(ivec2 aa, ivec2 bb)
 
     array<ADirtyRect> to_add;
 
-    for (int i = m_dirties.Count(); i--; )
+    for (int i = m_dirties.count(); i--; )
     {
         ADirtyRect &rect = m_dirties[i];
 
@@ -456,7 +456,7 @@ void image_descriptor::AddDirty(ivec2 aa, ivec2 bb)
         if (aa.x <= rect.m_aa.x && aa.y <= rect.m_aa.y
              && bb.x >= rect.m_bb.x + 1 && bb.y >= rect.m_bb.y + 1)
         {
-            m_dirties.RemoveSwap(i);
+            m_dirties.remove_swap(i);
         }
         else if (bb.x - 1 >= rect.m_aa.x && bb.y - 1 >= rect.m_aa.y
                   && aa.x <= rect.m_bb.x && aa.y <= rect.m_bb.y)
@@ -475,13 +475,13 @@ void image_descriptor::AddDirty(ivec2 aa, ivec2 bb)
         }
     }
 
-    for (int i = 0; i < to_add.Count(); ++i)
+    for (int i = 0; i < to_add.count(); ++i)
         AddDirty(to_add[i].m_aa, to_add[i].m_bb);
 
     ASSERT(aa < bb);
     m_dirties << ADirtyRect(aa, bb - ivec2(1));
 
-    if (m_dirties.Count() >= MAX_DIRTY)
+    if (m_dirties.count() >= MAX_DIRTY)
         ReduceDirties(); // reduce to one dirty rectangle, we have too many
 }
 
@@ -590,7 +590,7 @@ void AImage::Scale(ivec2 new_size)
     memcpy(im, scan_line(0), old_size.x * old_size.y);
 
     m_size = new_size; // set the new height and width
-    m_data.Resize(m_size.x * m_size.y);
+    m_data.resize(m_size.x * m_size.y);
 
     uint8_t *sl1, *sl2;
     int y, y2, x2;

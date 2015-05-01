@@ -28,20 +28,20 @@ AIconSwitchButton::AIconSwitchButton(ivec2 pos, int id, int start_on, AWidgetLis
   : AWidget(pos, id)
 {
   m_buttons = buttons;
-  m_current = start_on < m_buttons.Count() ? start_on : -1;
+  m_current = start_on < m_buttons.count() ? start_on : -1;
   act = 0;
-  for (int i = 0; i < m_buttons.Count(); ++i)
+  for (int i = 0; i < m_buttons.count(); ++i)
       m_buttons[i]->m_pos = m_pos;
 }
 
 ibox2 AIconSwitchButton::GetArea()
 {
-    if (!m_buttons.Count())
+    if (!m_buttons.count())
         return ibox2(m_pos, m_pos);
 
     ibox2 ret(10000, 10000, -10000, -10000);
 
-    for (int i = 0; i < m_buttons.Count(); ++i)
+    for (int i = 0; i < m_buttons.count(); ++i)
     {
         ibox2 tmp = m_buttons[i]->GetArea();
         ret.aa = lol::min(ret.aa, tmp.aa);
@@ -53,13 +53,13 @@ ibox2 AIconSwitchButton::GetArea()
 
 AWidget *AIconSwitchButton::unlink(int id)
 {
-  for (int i = 0; i < m_buttons.Count(); ++i)
+  for (int i = 0; i < m_buttons.count(); ++i)
   {
     if (m_buttons[i]->m_id == id)
     {
       AWidget *ret = m_buttons[i];
-      m_buttons.Remove(i);
-      if (m_current >= m_buttons.Count())
+      m_buttons.remove(i);
+      if (m_current >= m_buttons.count())
         m_current = 0;
       return ret;
     }
@@ -76,7 +76,7 @@ void AIconSwitchButton::handle_event(Event &ev, AImage *screen, InputManager *im
        || (ev.type == EV_MOUSE_BUTTON && ev.mouse_button))
   {
     ++m_current;
-    if (m_current >= m_buttons.Count())
+    if (m_current >= m_buttons.count())
       m_current = 0;
     m_buttons[m_current]->Draw(act, screen);
     m_buttons[m_current]->handle_event(ev, screen, im);
@@ -152,8 +152,8 @@ AIconButton::AIconButton(ivec2 pos, int id, int Up, int down, int upa, int downa
 
 AIconSwitchButton::~AIconSwitchButton()
 {
-  for (int i = 0; i < m_buttons.Count(); ++i)
+  for (int i = 0; i < m_buttons.count(); ++i)
     delete m_buttons[i];
-  m_buttons.Empty();
+  m_buttons.empty();
 }
 
