@@ -115,7 +115,7 @@ public:
         /* FIXME: use the following construct for runtime checks */
         //return &m_data[y * m_size.x];
 
-        return m_data.Data() + y * m_size.x;
+        return m_data.data() + y * m_size.x;
     }
     AImage *copy(); // makes a copy of an image
     void clear(int color = -1); // -1 is background color

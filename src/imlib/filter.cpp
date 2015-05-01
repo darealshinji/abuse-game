@@ -21,14 +21,14 @@ Filter::Filter(int colors)
 {
     ASSERT(colors >= 0 && colors <= 256, "bad color count");
 
-    m_table.Resize(colors, 0);
+    m_table.resize(colors, 0);
 }
 
 // Creates a conversion filter from one palette to another
 Filter::Filter(Palette *from, Palette *to)
 {
     int size = lol::max(from->Count(), to->Count());
-    m_table.Resize(size);
+    m_table.resize(size);
 
     int dk = to->FindDarkest(1);
 
@@ -51,7 +51,7 @@ Filter::~Filter()
 
 void Filter::Set(int color_num, int change_to)
 {
-    ASSERT(color_num >= 0 && color_num < m_table.Count(), "Bad colors_num");
+    ASSERT(color_num >= 0 && color_num < m_table.count(), "Bad colors_num");
 
     m_table[color_num] = change_to;
 }
@@ -105,7 +105,7 @@ ColorFilter::ColorFilter(Palette *pal, int color_bits)
     int max = pal->Count();
     int mul = 1 << (8 - color_bits);
     m_size = 1 << color_bits;
-    m_table.Resize(m_size * m_size * m_size);
+    m_table.resize(m_size * m_size * m_size);
 
     /* For each colour in the RGB cube, find the nearest palette element. */
     for (int r = 0; r < m_size; r++)
@@ -133,8 +133,8 @@ ColorFilter::ColorFilter(SpecEntry *e, bFILE *fp)
 {
     fp->seek(e->offset, 0);
     m_size = fp->read_uint16();
-    m_table.Resize(m_size * m_size * m_size);
-    fp->read(m_table.Data(), m_table.Bytes());
+    m_table.resize(m_size * m_size * m_size);
+    fp->read(m_table.data(), m_table.bytes());
 }
 
 ColorFilter::~ColorFilter()
@@ -143,12 +143,12 @@ ColorFilter::~ColorFilter()
 
 size_t ColorFilter::DiskUsage()
 {
-    return sizeof(uint16_t) + m_table.Bytes();
+    return sizeof(uint16_t) + m_table.bytes();
 }
 
 int ColorFilter::Write(bFILE *fp)
 {
     fp->write_uint16(m_size);
-    return fp->write(m_table.Data(), m_table.Bytes()) == m_table.Bytes();
+    return fp->write(m_table.data(), m_table.bytes()) == m_table.bytes();
 }
 

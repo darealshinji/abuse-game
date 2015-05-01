@@ -49,7 +49,7 @@ public:
     uint32_t get_crc(int filenumber, int &failed);
     void set_crc(int filenumber, uint32_t crc);
     void clean_up();
-    int total_filenames() { return m_files.Count(); }
+    int total_filenames() { return m_files.count(); }
     int write_crc_file(char const *filename);
     int load_crc_file(char const *filename);
 

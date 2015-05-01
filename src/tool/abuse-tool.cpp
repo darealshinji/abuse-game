@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 
         dir.FullyLoad(&fp);
 
-        for (int i = 0; i < dir.m_entries.Count(); i++)
+        for (int i = 0; i < dir.m_entries.count(); i++)
         {
             SpecEntry *se = dir.m_entries[i];
 
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
     {
         int id = atoi(argv[3]);
 
-        if (id < 0 || id >= dir.m_entries.Count())
+        if (id < 0 || id >= dir.m_entries.count())
         {
             fprintf(stderr, "abuse-tool: id %i not found in %s\n", id, file);
             return EXIT_FAILURE;
@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
         int imgid = atoi(argv[3]);
         int palid = argc > 4 ? atoi(argv[4]) : -1;
 
-        for (int i = 0; palid == -1 && i < dir.m_entries.Count(); i++)
+        for (int i = 0; palid == -1 && i < dir.m_entries.count(); i++)
             if (dir.m_entries[i]->type == SPEC_PALETTE)
                 palid = i;
 
@@ -254,8 +254,8 @@ int main(int argc, char *argv[])
         int src = atoi(argv[3]);
         int dst = atoi(argv[4]);
 
-        if (src < 0 || src >= dir.m_entries.Count()
-             || dst < 0 || dst >= dir.m_entries.Count())
+        if (src < 0 || src >= dir.m_entries.count()
+             || dst < 0 || dst >= dir.m_entries.count())
         {
             fprintf(stderr, "abuse-tool: ids %i/%i out of range\n", src, dst);
             return EXIT_FAILURE;
@@ -272,7 +272,7 @@ int main(int argc, char *argv[])
     {
         int id = atoi(argv[3]);
 
-        if (id < 0 || id >= dir.m_entries.Count())
+        if (id < 0 || id >= dir.m_entries.count())
         {
             fprintf(stderr, "abuse-tool: id %i out of range\n", id);
             return EXIT_FAILURE;
@@ -288,13 +288,13 @@ int main(int argc, char *argv[])
     {
         int id = atoi(argv[3]);
 
-        if (id < 0 || id >= dir.m_entries.Count())
+        if (id < 0 || id >= dir.m_entries.count())
         {
             fprintf(stderr, "abuse-tool: id %i out of range\n", id);
             return EXIT_FAILURE;
         }
 
-        dir.m_entries.Remove(id);
+        dir.m_entries.remove(id);
         dir.FullyLoad(&fp);
     }
     else if (cmd == CMD_PUT || cmd == CMD_PUTPCX)
@@ -303,9 +303,9 @@ int main(int argc, char *argv[])
         uint8_t type = atoi(argv[4]);
 
         if (id == -1)
-            id = dir.m_entries.Count();
+            id = dir.m_entries.count();
 
-        if (id < 0 || id > dir.m_entries.Count())
+        if (id < 0 || id > dir.m_entries.count())
         {
             fprintf(stderr, "abuse-tool: id %i out of range\n", id);
             return EXIT_FAILURE;
@@ -313,8 +313,9 @@ int main(int argc, char *argv[])
 
         dir.FullyLoad(&fp);
 
-        dir.m_entries.Resize(dir.m_entries.Count() + 1);
-        for (int i = dir.m_entries.Count() - 1; i-- > id; )
+        // FIXME: use insert() here!
+        dir.m_entries.resize(dir.m_entries.count() + 1);
+        for (int i = dir.m_entries.count() - 1; i-- > id; )
             dir.m_entries[i + 1] = dir.m_entries[i];
 
         char *name = strrchr(argv[5], '/');
@@ -367,7 +368,7 @@ int main(int argc, char *argv[])
     dir.calc_offsets();
     fp.seek(0, SEEK_SET); // FIXME: create a new file
     dir.write(&fp);
-    for (int i = 0; i < dir.m_entries.Count(); i++)
+    for (int i = 0; i < dir.m_entries.count(); i++)
         fp.write(dir.m_entries[i]->data, dir.m_entries[i]->size);
 
     return EXIT_SUCCESS;

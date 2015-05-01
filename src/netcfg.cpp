@@ -340,8 +340,8 @@ int net_configuration::get_options(int server)
   if (server)
   {
     list << center_ifield(new ATextField(ivec2(x, y + 30), NET_NAME, symbol_str("your_name"), "************************", name), x, x + ns_w, nullptr);
-    list << center_ifield(new ATextField(ivec2(0, 0), NET_SERVER_NAME, symbol_str("server_name"), "************************", game_name), x, x + ns_w, list.Last());
-    list << center_ifield(new AInfoField(ivec2(0, 0), 0, symbol_str("min_play")), x, x + ns_w, list.Last());
+    list << center_ifield(new ATextField(ivec2(0, 0), NET_SERVER_NAME, symbol_str("server_name"), "************************", game_name), x, x + ns_w, list.last());
+    list << center_ifield(new AInfoField(ivec2(0, 0), 0, symbol_str("min_play")), x, x + ns_w, list.last());
 
     AButtonBox *b = new AButtonBox(ivec2(0, 0), NET_MIN, 1);
     b->add_button(new AButton(ivec2(0, 0), MIN_8, "8"));
@@ -355,11 +355,11 @@ int net_configuration::get_options(int server)
     b->add_button(r);
     b->add_button(new AButton(ivec2(0, 0), MIN_1,"1"));
     b->arrange_left_right();
-    center_ifield(b, x, x + ns_w, list.Last());
+    center_ifield(b, x, x + ns_w, list.last());
     b->arrange_left_right();
     list << b;
 
-    list << center_ifield(new AInfoField(ivec2(0, 0), 0, symbol_str("max_play")), x, x + ns_w, list.Last());
+    list << center_ifield(new AInfoField(ivec2(0, 0), 0, symbol_str("max_play")), x, x + ns_w, list.last());
 
     b = new AButtonBox(ivec2(0, 0), NET_MAX, 1);
     AButton *q = new AButton(ivec2(0, 0), MAX_8, "8");
@@ -372,11 +372,11 @@ int net_configuration::get_options(int server)
     b->add_button(new AButton(ivec2(0, 0), MAX_3, "3"));
     b->add_button(new AButton(ivec2(0, 0), MAX_2, "2"));
     b->arrange_left_right();
-    center_ifield(b, x, x + ns_w, list.Last());
+    center_ifield(b, x, x + ns_w, list.last());
     b->arrange_left_right();
     list << b;
 
-    list << center_ifield(new AInfoField(ivec2(0, 0), 0, symbol_str("level_size")), x, x + ns_w, list.Last());
+    list << center_ifield(new AInfoField(ivec2(0, 0), 0, symbol_str("level_size")), x, x + ns_w, list.last());
 
     b = new AButtonBox(ivec2(0, 0), LEVEL_BOX, 1);
     b->add_button(new AButton(ivec2(0, 0), LVL_8, symbol_str("lvl_8")));
@@ -385,11 +385,11 @@ int net_configuration::get_options(int server)
     q->push();
     b->add_button(q);
     b->arrange_left_right();
-    center_ifield(b, x, x + ns_w, list.Last());
+    center_ifield(b, x, x + ns_w, list.last());
     b->arrange_left_right();
     list << b;
 
-    list << center_ifield(new ATextField(ivec2(0, 0), NET_KILLS, symbol_str("kills_to_win"), "***", "25"), x, x + ns_w, list.Last());
+    list << center_ifield(new ATextField(ivec2(0, 0), NET_KILLS, symbol_str("kills_to_win"), "***", "25"), x, x + ns_w, list.last());
   }
   else
   {

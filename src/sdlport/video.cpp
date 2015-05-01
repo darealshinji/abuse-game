@@ -49,7 +49,7 @@ void CreateScreen(int argc, char **argv)
     mouse_yscale = 1 << 16;
 
     /* Temporary screen buffer */
-    g_screen.Resize(xres * yres);
+    g_screen.resize(xres * yres);
 
     // Create the screen image
     main_screen = new AImage(ivec2(xres, yres), 2);
@@ -123,7 +123,7 @@ void put_part_image(AImage *im, int x, int y, int x1, int y1, int x2, int y2)
     int w = xe - srcx;
     int h = ye - srcy;
 
-    dpixel = g_screen.Data() + x + y * xres;
+    dpixel = g_screen.data() + x + y * xres;
 
     // Update surface part
     for (int i = 0; i < h; i++)

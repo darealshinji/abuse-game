@@ -30,7 +30,7 @@ void update_dirty(AImage *im, int xoff, int yoff)
     }
     else
     {
-        for (int i = 0; i < im->m_special->m_dirties.Count(); ++i)
+        for (int i = 0; i < im->m_special->m_dirties.count(); ++i)
         {
             ADirtyRect &rect = im->m_special->m_dirties[i];
 
@@ -39,7 +39,7 @@ void update_dirty(AImage *im, int xoff, int yoff)
                            rect.m_bb.x + 1, rect.m_bb.y + 1);
         }
 
-        im->m_special->m_dirties.Resize(0);
+        im->m_special->m_dirties.resize(0);
     }
 
     UpdateScreen();

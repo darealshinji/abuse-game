@@ -387,7 +387,7 @@ AWindow::AWindow(ivec2 pos, ivec2 size, String const &name, AWidgetList const &w
     _moveable = true;
 
     _x1 = left_border();
-    _y1 = name.Count() ? top_border() : jw_top + 5;
+    _y1 = name.count() ? top_border() : jw_top + 5;
 
     m_surf = nullptr;
     inm = new InputManager(m_surf, widgets);
@@ -410,7 +410,7 @@ AWindow::AWindow(ivec2 pos, ivec2 size, String const &name, AWidgetList const &w
         m_size.y = lol::max(m_size.y, top_border() + bottom_border());
     m_surf = new AImage(m_size, 2);
     // Keep this from getting destroyed when image list is cleared
-    image_list.Pop();
+    image_list.pop();
     m_surf->clear(backg);
     inm->m_surf = m_surf;
 
@@ -437,7 +437,7 @@ void AWindow::reconfigure()
 {
     m_size = ivec2(2);
 
-    for (int i = 0; i < inm->m_fields.Count(); ++i)
+    for (int i = 0; i < inm->m_fields.count(); ++i)
     {
         inm->m_fields[i]->set_owner(this);
         ibox2 area = inm->m_fields[i]->GetArea();
@@ -530,16 +530,16 @@ int AWindow::bottom_border()
 // unlinks ID from fields list and return the pointer to it
 AWidget *InputManager::unlink(int id)
 {
-    for (int i = 0; i < m_fields.Count(); ++i)
+    for (int i = 0; i < m_fields.count(); ++i)
     {
         /* Does this item match the ID? */
         if (m_fields[i]->m_id == id)
         {
             AWidget *ret = m_fields[i];
-            m_fields.Remove(i);
+            m_fields.remove(i);
 
             if (m_active == i)
-                m_active = m_fields.Count() ? 0 : -1;
+                m_active = m_fields.count() ? 0 : -1;
 
             return ret;
         }
@@ -555,9 +555,9 @@ AWidget *InputManager::unlink(int id)
 
 InputManager::~InputManager()
 {
-    for (int i = 0; i < m_fields.Count(); ++i)
+    for (int i = 0; i < m_fields.count(); ++i)
         delete m_fields[i];
-    m_fields.Empty();
+    m_fields.empty();
 }
 
 void InputManager::clear_current()
@@ -586,7 +586,7 @@ void InputManager::handle_event(Event &ev, AWindow *j)
   {
     if ((ev.type==EV_MOUSE_BUTTON && ev.mouse_button==1) || ev.type==EV_MOUSE_MOVE)
     {
-      for (int i = 0; i < m_fields.Count(); ++i)
+      for (int i = 0; i < m_fields.count(); ++i)
       {
         ibox2 area = m_fields[i]->GetArea();
         if (ev.mouse_move >= area.aa && ev.mouse_move <= area.bb)
@@ -609,9 +609,9 @@ void InputManager::handle_event(Event &ev, AWindow *j)
       do
       {
         ++m_active;
-      } while (m_active < m_fields.Count() && !m_fields[m_active]->selectable());
+      } while (m_active < m_fields.count() && !m_fields[m_active]->selectable());
 
-      if (m_active >= m_fields.Count())
+      if (m_active >= m_fields.count())
         m_active = -1;
       if (m_active >= 0)
         m_fields[m_active]->Draw(1, m_surf);
@@ -645,7 +645,7 @@ void InputManager::redraw()
 {
     if (m_owner)
         m_surf = m_owner->m_surf;
-    for (int i = 0; i < m_fields.Count(); ++i)
+    for (int i = 0; i < m_fields.count(); ++i)
         m_fields[i]->draw_first(m_surf);
     if (m_active >= 0)
         m_fields[m_active]->Draw(1, m_surf);
@@ -660,7 +660,7 @@ InputManager::InputManager(AImage *screen, AWidgetList const &fields)
     m_surf = screen;
     m_fields = fields;
     m_active = -1;
-    for (int i = 0; i < m_fields.Count(); ++i)
+    for (int i = 0; i < m_fields.count(); ++i)
         if (m_fields[i]->selectable())
         {
             m_active = i;
@@ -680,7 +680,7 @@ InputManager::InputManager(AWindow *owner, AWidgetList const &fields)
     m_surf = nullptr;
     m_fields = fields;
     m_active = -1;
-    for (int i = 0; i < m_fields.Count(); ++i)
+    for (int i = 0; i < m_fields.count(); ++i)
         if (m_fields[i]->selectable())
         {
             m_active = i;
@@ -690,7 +690,7 @@ InputManager::InputManager(AWindow *owner, AWidgetList const &fields)
 
 void InputManager::grab_focus(AWidget *f)
 {
-    for (int i = 0; i < m_fields.Count(); ++i)
+    for (int i = 0; i < m_fields.count(); ++i)
         if (f == m_fields[i])
             m_grab = i;
     if (m_cur)
@@ -706,7 +706,7 @@ void InputManager::release_focus()
 
 void InputManager::remap(Filter *f)
 {
-    for (int i = 0; i < m_fields.Count(); ++i)
+    for (int i = 0; i < m_fields.count(); ++i)
         m_fields[i]->remap(f);
     redraw();
 }
@@ -719,7 +719,7 @@ void InputManager::Add(AWidgetList const &fields)
 
 AWidget *InputManager::get(int id)
 {
-    for (int i = 0; i < m_fields.Count(); ++i)
+    for (int i = 0; i < m_fields.count(); ++i)
     {
         AWidget *ret = m_fields[i]->find(id);
         if (ret)

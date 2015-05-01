@@ -582,7 +582,7 @@ int get_inputs_from_server(unsigned char *buf)
         kill_slackers();
         else if (ev.type!=EV_MOUSE_MOVE)  // no need to save mouse move events (likely to be a lot)
         {
-          input.Push(ev);
+          input.push(ev);
         }
       } while (wm->event_waiting());
 
@@ -594,8 +594,8 @@ int get_inputs_from_server(unsigned char *buf)
     if (abort)
     {
       wm->close_window(abort);
-      while (input.Count())               // push all the key events
-        wm->push_event(input.Pop());
+      while (input.count())               // push all the key events
+        wm->push_event(input.pop());
     }
   }
 

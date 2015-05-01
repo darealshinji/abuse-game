@@ -51,12 +51,12 @@ int crc_man_write_crc_file(char const *filename)
 
 int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
 {
-    String msg = String::Printf("%s", symbol_str("calc_crc"));
+    String msg = String::format("%s", symbol_str("calc_crc"));
     if (stat_man)
         stat_man->push(msg.C(), NULL);
 
     int total = 0;
-    for (int i = 0; i < m_files.Count(); ++i)
+    for (int i = 0; i < m_files.count(); ++i)
     {
         int failed = 0;
         get_crc(i, failed);
@@ -74,7 +74,7 @@ int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
             total++;
 
         if (stat_man)
-            stat_man->update(i * 100 / m_files.Count());
+            stat_man->update(i * 100 / m_files.count());
     }
     if (stat_man)
         stat_man->pop();
@@ -85,7 +85,7 @@ int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
 
     fp.write_uint16(total);
 
-    for (int i = 0; i < m_files.Count(); ++i)
+    for (int i = 0; i < m_files.count(); ++i)
     {
         int failed = 0;
         uint32_t crc = get_crc(i, failed);
@@ -93,8 +93,8 @@ int CrcManager::write_crc_file(char const *filename)  // return 0 on failure
         {
             fp.write_uint32(crc);
             String const &name = GetFileName(i);
-            fp.write_uint8(name.Count() + 1);
-            fp.write(name.C(), name.Count() + 1);
+            fp.write_uint8(name.count() + 1);
+            fp.write(name.C(), name.count() + 1);
         }
     }
     return 1;
@@ -112,7 +112,7 @@ int CrcManager::load_crc_file(char const *filename)
         String name;
         uint32_t crc = fp.read_uint32();
         uint8_t len = fp.read_uint8();
-        name.Resize(len);
+        name.resize(len);
         fp.read(name.C(), len);
         set_crc(GetFileNumber(name), crc);
     }
@@ -122,9 +122,9 @@ int CrcManager::load_crc_file(char const *filename)
 
 void CrcManager::clean_up()
 {
-    for (int i = 0; i < m_files.Count(); ++i)
+    for (int i = 0; i < m_files.count(); ++i)
         delete m_files[i];
-    m_files.Empty();
+    m_files.empty();
 }
 
 CrcedFile::CrcedFile(char const *name)
@@ -144,12 +144,12 @@ CrcManager::CrcManager()
 
 int CrcManager::GetFileNumber(String const &name)
 {
-    for (int i = 0; i < m_files.Count(); ++i)
+    for (int i = 0; i < m_files.count(); ++i)
         if (name == m_files[i]->m_name)
             return i;
 
-    m_files.Push(new CrcedFile(name.C()));
-    return m_files.Count() - 1;
+    m_files.push(new CrcedFile(name.C()));
+    return m_files.count() - 1;
 }
 
 String const &CrcManager::GetFileName(int filenumber)
@@ -217,7 +217,7 @@ int CacheList::prof_size()
     int size = 0;     // count up the size for a spec entry
     size += 2;        // total filenames
     for (int i = 0; i < crc_manager.total_filenames(); i++)
-        size += crc_manager.GetFileName(i).Count() + 2;    // filename + 0 + size of string
+        size += crc_manager.GetFileName(i).count() + 2;    // filename + 0 + size of string
 
     size += 4;       // number of entries saved
 
@@ -244,8 +244,8 @@ void CacheList::prof_write(bFILE *fp)
       for (i=0; i<crc_manager.total_filenames(); i++)
       {
         String const &name = crc_manager.GetFileName(i);
-        fp->write_uint8(name.Count() + 1);
-        fp->write(name.C(), name.Count() + 1);
+        fp->write_uint8(name.count() + 1);
+        fp->write(name.C(), name.count() + 1);
       }
 
       int tsaved=0;
@@ -697,7 +697,7 @@ void CacheList::locate(CacheItem *i, int local_only)
 
         if (fp->open_failure())
         {
-            Log::Error("Could not open file %s\n", crc_manager.GetFileName(i->file_number).C());
+            msg::error("Could not open file %s\n", crc_manager.GetFileName(i->file_number).C());
             delete fp;
             exit(0);
         }

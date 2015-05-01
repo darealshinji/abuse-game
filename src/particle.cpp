@@ -106,7 +106,7 @@ part_sequence::part_sequence(void *args)
   tframes = sd.type_total(SPEC_PARTICLE);
   frames=(int *)malloc(sizeof(int)*tframes);
 
-  for (int i = 0, j = 0; i < sd.m_entries.Count(); i++)
+  for (int i = 0, j = 0; i < sd.m_entries.count(); i++)
     if (sd.m_entries[i]->type == SPEC_PARTICLE)
       frames[j++] = cache.reg(fn, sd.m_entries[i]->name, SPEC_PARTICLE, 1);
 }

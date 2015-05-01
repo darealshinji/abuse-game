@@ -407,7 +407,7 @@ void AddLight(LightPatch *&first, ivec2 p1, ivec2 p2, LightSource *who)
         if (p1.x >= p->m_p1.x && p1.y >= p->m_p1.y
              && p2.x <= p->m_p2.x && p2.y <= p->m_p2.y)
         {
-            if (p->m_lights.Count() == MAX_LP)
+            if (p->m_lights.count() == MAX_LP)
                 return;
 
             if (p1.x > p->m_p1.x)
@@ -453,7 +453,7 @@ void AddLight(LightPatch *&first, ivec2 p1, ivec2 p2, LightSource *who)
             }
             InsertLight(first, p);
 
-            p->m_lights.Push(who);
+            p->m_lights.push(who);
             return;
         }
 
@@ -469,8 +469,8 @@ void AddLight(LightPatch *&first, ivec2 p1, ivec2 p2, LightSource *who)
             if (p2.y > p->m_p2.y)
                 AddLight(first, ivec2(p->m_p1.x, p->m_p2.y + 1), ivec2(p->m_p2.x, p2.y), who);
 
-            if (p->m_lights.Count() < MAX_LP)
-                p->m_lights.Push(who);
+            if (p->m_lights.count() < MAX_LP)
+                p->m_lights.push(who);
 
             return;
         }
@@ -535,7 +535,7 @@ static inline int CalcLightValue(LightPatch *lp, ivec2 screen)
 {
     int lv = min_light_level;
 
-    for (int i = 0; i < lp->m_lights.Count(); ++i)
+    for (int i = 0; i < lp->m_lights.count(); ++i)
     {
         LightSource *l = lp->m_lights[i];
 

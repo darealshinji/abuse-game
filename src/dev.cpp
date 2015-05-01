@@ -153,7 +153,7 @@ public:
     virtual void scroll_event(int newx, AImage *screen)
     {
         screen->Bar(m_pos, m_pos + m_size - ivec2(1), wm->dark_color());
-        String st = String::Printf("%d", newx);
+        String st = String::format("%d", newx);
         wm->font()->PutString(screen, m_pos + ivec2(30, 1), st, wm->bright_color());
         if (player_list)
             player_list->ambient = newx;
@@ -1345,7 +1345,7 @@ void dev_controll::make_ai_window(GameObject *o)
         for (int i = 0; i < figures[o->otype]->total_fields; i++)
         {
             String tmp = figures[o->otype]->fields[i]->descript_name;
-            while (tmp.Count() < maxl)
+            while (tmp.count() < maxl)
                 tmp += ' ';
             widgets << new ATextField(ivec2(wl, wh), DEV_AI_FIGURES + i, tmp.C(), "######",
                                       (double)o->get_var_by_name(figures[o->otype]->fields[i]->real_name, er));
@@ -1993,7 +1993,7 @@ void dev_controll::handle_event(Event &ev)
       {
         if (g_current_level->save(g_current_level->GetName().C(), 0))
         {
-          String msg = String::Printf(symbol_str("saved_level"),
+          String msg = String::format(symbol_str("saved_level"),
                                       g_current_level->GetName().C());
           the_game->show_help(msg.C());
           the_game->need_refresh();

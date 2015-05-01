@@ -572,7 +572,7 @@ SpecDir::~SpecDir()
 
 void SpecDir::FullyLoad(bFILE *fp)
 {
-    for (int i = 0; i < m_entries.Count(); ++i)
+    for (int i = 0; i < m_entries.count(); ++i)
     {
         SpecEntry *se = m_entries[i];
         free(se->data);
@@ -609,11 +609,11 @@ void SpecDir::calc_offsets()
     size_t o = SPEC_SIG_SIZE + 2;
 
     // calculate the size of directory info
-    for (int i = 0; i < m_entries.Count(); ++i)
+    for (int i = 0; i < m_entries.count(); ++i)
         o += 1 + 1 + strlen(m_entries[i]->name) + 1 + 1 + 8;
 
     // calculate offset for each entry
-    for (int i = 0; i < m_entries.Count(); ++i)
+    for (int i = 0; i < m_entries.count(); ++i)
     {
         m_entries[i]->offset = o;
         o += m_entries[i]->size;
@@ -622,7 +622,7 @@ void SpecDir::calc_offsets()
 
 SpecEntry *SpecDir::find(char const *name, int type)
 {
-    for (int i = 0; i < m_entries.Count(); ++i)
+    for (int i = 0; i < m_entries.count(); ++i)
         if (!strcmp(m_entries[i]->name, name) && m_entries[i]->type == type)
             return m_entries[i];
     return nullptr;
@@ -642,7 +642,7 @@ SpecEntry *SpecDir::find(int type)
 
 int SpecDir::find_number(char const *name)
 {
-    for (int i = 0; i < m_entries.Count(); ++i)
+    for (int i = 0; i < m_entries.count(); ++i)
         if (!strcmp(m_entries[i]->name, name))
             return i;
     return -1;
@@ -650,7 +650,7 @@ int SpecDir::find_number(char const *name)
 
 int SpecDir::find_number(int type)
 {
-    for (int i = 0; i < m_entries.Count(); ++i)
+    for (int i = 0; i < m_entries.count(); ++i)
         if (m_entries[i]->type == type)
             return i;
     return -1;
@@ -659,7 +659,7 @@ int SpecDir::find_number(int type)
 long SpecDir::type_total(int type)
 {
     int ret = 0;
-    for (int i = 0; i < m_entries.Count(); ++i)
+    for (int i = 0; i < m_entries.count(); ++i)
         if (m_entries[i]->type == type)
             ++ret;
     return ret;
@@ -668,7 +668,7 @@ long SpecDir::type_total(int type)
 void SpecDir::Print()
 {
     printf("[   Entry type   ][   Entry name   ][  Size  ][ Offset ]\n");
-    for (int i = 0; i < m_entries.Count(); ++i)
+    for (int i = 0; i < m_entries.count(); ++i)
         m_entries[i]->Print();
 }
 
@@ -683,7 +683,7 @@ void SpecDir::startup(bFILE *fp)
     if (!strcmp(buf, SPEC_SIGNATURE))
     {
         int total = fp->read_uint16();
-        m_entries.Resize(total);
+        m_entries.resize(total);
         long start = fp->tell();
 
         for (int i = 0; i < total; i++)
@@ -697,8 +697,8 @@ void SpecDir::startup(bFILE *fp)
             data_size += entry_size;
         }
 
-        m_data.Resize(data_size);
-        uint8_t *dp = m_data.Data();
+        m_data.resize(data_size);
+        uint8_t *dp = m_data.data();
 
         fp->seek(start, SEEK_SET);
         for (int i = 0; i < total; i++)
@@ -723,8 +723,8 @@ void SpecDir::startup(bFILE *fp)
     }
     else
     {
-        m_data.Empty();
-        m_entries.Empty();
+        m_data.empty();
+        m_entries.empty();
     }
 }
 
@@ -771,7 +771,7 @@ int write_string(bFILE *fp, char const *st)
 
 long SpecDir::data_start_offset()
 {
-    if (m_entries.Count())
+    if (m_entries.count())
         return m_entries[0]->offset;
 
     // If no entries, then no data, but return where it would start anyway
@@ -780,8 +780,8 @@ long SpecDir::data_start_offset()
 
 long SpecDir::data_end_offset()
 {
-    if (m_entries.Count())
-        return m_entries.Last()->offset + m_entries.Last()->size;
+    if (m_entries.count())
+        return m_entries.last()->offset + m_entries.last()->size;
 
   return SPEC_SIG_SIZE + 2;
 }
@@ -794,9 +794,9 @@ int SpecDir::write(bFILE *fp)
     if (fp->write(sig, sizeof(sig)) != sizeof(sig))
         return 0;
 
-    fp->write_uint16(m_entries.Count());
+    fp->write_uint16(m_entries.count());
 
-    for (int i = 0; i < m_entries.Count(); ++i)
+    for (int i = 0; i < m_entries.count(); ++i)
     {
         if (fp->write(&m_entries[i]->type, 1) != 1)
             return 0;
@@ -866,12 +866,12 @@ void write_uint8(FILE *fp, uint8_t x) { fputc((unsigned char)x,fp); }
 
 void SpecDir::remove(SpecEntry *e)
 {
-    for (int i = 0; i < m_entries.Count(); ++i)
+    for (int i = 0; i < m_entries.count(); ++i)
     {
         if (m_entries[i] == e)
         {
             delete e;
-            m_entries.Remove(i);
+            m_entries.remove(i);
             return;
         }
     }
@@ -880,14 +880,14 @@ void SpecDir::remove(SpecEntry *e)
 
 void SpecDir::add_by_hand(SpecEntry *e)
 {
-    m_entries.Push(e);
+    m_entries.push(e);
 }
 
 void SpecDir::delete_entries()   // if the directory was created by hand instead of by file
 {
-    for (int i = 0; i < m_entries.Count(); ++i)
+    for (int i = 0; i < m_entries.count(); ++i)
         delete m_entries[i];
-    m_entries.Empty();
+    m_entries.empty();
 }
 
 void note_open_fd(int fd, char const *str)
